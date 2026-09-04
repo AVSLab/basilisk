@@ -1,0 +1,13 @@
+.. _test_nHingedRigidBodyDefaultConfig:
+
+test_nHingedRigidBodyDefaultConfig
+==================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_nHingedRigidBodyDefaultConfig
+   :members:
+   :show-inheritance:
+

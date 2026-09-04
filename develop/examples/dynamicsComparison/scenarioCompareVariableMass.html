@@ -1,0 +1,709 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareVariableMass &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioCompareParetoRwPanels" href="scenarioCompareParetoRwPanels.html" />
+    <link rel="prev" title="scenarioCompareOrbitMultibody" href="scenarioCompareOrbitMultibody.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#comparing-the-back-substitution-and-mujoco-dynamics-engines">Comparing the Back-Substitution and MuJoCo Dynamics Engines</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="runAllComparisons.html">Comparison Overview and Execution Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareOrbit.html">Keplerian Orbit Baseline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareTorque.html">Rigid Body with Constant Torque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareRwPanels.html">Hub with Reaction Wheels and Hinged Panels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareFlexPanels.html">Lumped-Mass Flexible Panels and Runtime Scaling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareOrbitMultibody.html">Multi-Body in Orbit with Gravity-Gradient Torque</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Variable-Mass Fuel Slosh and Depletion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareParetoRwPanels.html">Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareParetoFlexPanels.html">Accuracy vs Runtime Pareto Front (Stiff Flexible Panels)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#research-sweeps-and-publication-tools">Research Sweeps and Publication Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioCompareVariableMass</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/dynamicsComparison/scenarioCompareVariableMass.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariocomparevariablemass">
+<span id="id1"></span><h1>scenarioCompareVariableMass<a class="headerlink" href="#scenariocomparevariablemass" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioCompareVariableMass">Variable-mass scenario in the dynamics-engine comparison series (see
+<a class="reference internal" href="scenarioCompareOrbit.html#scenariocompareorbit"><span class="std std-ref">scenarioCompareOrbit</span></a> for the introduction).</p>
+<p>Where the earlier scenarios hold the spacecraft mass properties fixed, this one lets them
+change. A spacecraft in a circular orbit performs a prograde orbit-raising burn: a main engine
+draws propellant from a spherical tank, so the total mass, the tank inertia, and the system
+center of mass all vary continuously through the burn, while the sloshing propellant reacts to
+the thrust acceleration.</p>
+<p>Modeling choices are deliberately those a GNC analyst would make rather than the ones that
+maximize the effect:</p>
+<ul class="simple">
+<li><p><strong>Engine.</strong> A monopropellant thruster, the MOOG Monarc-445, taken from the
+<a class="reference internal" href="../../Documentation/utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a> catalog. It is tied to the tank with <code class="docutils literal notranslate"><span class="pre">addThrusterSet</span></code> so the burn
+both applies thrust and consumes propellant, at roughly 0.19 kg/s.</p></li>
+<li><p><strong>Burn.</strong> Fifteen minutes of continuous orbit-raising thrust, which expends roughly twelve
+percent of the propellant.</p></li>
+<li><p><strong>Tank.</strong> A spherical tank sized for hydrazine: 1500 kg in a 0.75 m sphere, sitting at about
+85% fill. It uses the centered <code class="docutils literal notranslate"><span class="pre">FuelTankModelConstantVolume</span></code> model, so its center of mass
+stays put within the tank and the inertia simply scales with the remaining mass. The tank is
+mounted aft of the dry-structure center of mass, so as it empties the system center of mass
+migrates forward along the thrust axis.</p></li>
+<li><p><strong>Attitude.</strong> The spacecraft starts velocity-aligned with the corresponding orbital pitch rate,
+so the body-fixed engine initially points along the velocity vector. No attitude controller or
+prescribed attitude is modeled; the subsequent attitude follows the passive coupled dynamics.</p></li>
+<li><p><strong>Balance.</strong> Every slosh element’s equilibrium sits at the tank center and the nominal thrust
+line follows the tank axis. The deliberately seeded lateral slosh displacements offset the
+instantaneous system center of mass, however, so the initial burn carries a small physical
+moment. The same offset and thrust geometry are applied in both engines.</p></li>
+</ul>
+<section id="slosh-model">
+<h2>Slosh model<a class="headerlink" href="#slosh-model" title="Link to this heading"></a></h2>
+<p>The physical first lateral mode is a classical equivalent-mechanical model parameterized from
+Dodge, <em>The New “Dynamic Behavior of Liquids in Moving Containers”</em> (SwRI, 2000). For a spherical
+tank at this fill the mode carries about a third of the propellant. It is represented by a
+two-degree-of-freedom <a class="reference internal" href="../../Documentation/simulation/dynamics/sphericalPendulum/sphericalPendulum.html#sphericalpendulum"><span class="std std-ref">C++ Module: sphericalPendulum</span></a> hinged at the tank center and hanging aft.</p>
+<p>Three orthogonal <a class="reference internal" href="../../Documentation/simulation/dynamics/LinearSpringMassDamper/linearSpringMassDamper.html#linearspringmassdamper"><span class="std std-ref">C++ Module: linearSpringMassDamper</span></a> particles are additional benchmarking fixtures, not
+independent physical slosh modes. They ensure that the comparison exercises both Basilisk slosh
+effectors and their MuJoCo slide- and hinge-joint counterparts. Their mass is removed from the
+non-sloshing portion so the propellant budget closes. Every particle depletes proportionally with
+the tank.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The physical pendulum mode uses the bare-wall damping ratio 0.0026, and the benchmark
+spring-mass-dampers use the same ratio. Both engines represent the spherical pendulum with two
+angular coordinates. Basilisk applies a viscous force at the bob through the rod moment arm,
+<span class="math notranslate nohighlight">\({\bf l}\times(-d\,{\bf l}')\)</span>; the MuJoCo model applies the corresponding generalized
+torques to its two hinges. A real hydrazine tank would carry baffles or a diaphragm and damp
+one to two orders of magnitude harder.</p>
+</div>
+</section>
+<section id="running-it">
+<h2>Running it<a class="headerlink" href="#running-it" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioCompareVariableMass</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>The scenario builds the same vehicle two ways and overlays them: the back-substitution
+<a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> (BSM, used as the plotting baseline) and the MuJoCo
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>. Two switches on <a class="reference internal" href="#scenarioCompareVariableMass.run" title="scenarioCompareVariableMass.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a> control what is compared:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">useThruster</span></code> (default True) fires the engine; set False to deplete via an equivalent
+prescribed leak rate with no thrust force, isolating pure mass loss.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inOrbit</span></code> (default True) flies the burn under Earth gravity; set False for a deep-space burn
+from rest, which removes gravity as a variable and isolates the variable-mass dynamics.</p></li>
+</ul>
+<p>On the MuJoCo side, depletion is imposed by feeding each body’s <code class="docutils literal notranslate"><span class="pre">derivativeMassPropertiesInMsg</span></code> a
+constant mass-rate (their sum is the engine mass flow), matched to the BSM tank’s proportional
+depletion. Gravity (<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">C++ Module: NBodyGravity</span></a>) is applied to <em>every</em> massive body so the tree is in
+free-fall. The BSM’s system-CoM point gravity produces no internal gravity-gradient load, whereas
+MuJoCo’s per-body point gravity does; thrust and the explicit spring or pendulum laws provide the
+remaining internal restoring forces.</p>
+<p>The BSM tank uses <code class="docutils literal notranslate"><span class="pre">setUpdateOnly(True)</span></code>. Under that convention both engines apply the same
+nozzle thrust, integrate the retained component masses, and update their instantaneous centers of
+mass and inertias. They omit the additional depletion-rate forces and torques caused by the
+changing mass distribution and by momentum carried away through an offset nozzle as the
+spacecraft rotates. They also do not resolve transport from a specified tank pickup through a
+feed path. This is an instantaneous-property model rather than a momentum-closed open-system
+model. No empirical cross-engine correction torque is applied.</p>
+</section>
+<section id="what-the-comparison-shows">
+<h2>What the comparison shows<a class="headerlink" href="#what-the-comparison-shows" title="Link to this heading"></a></h2>
+<p>The two engines agree on the depleting masses to grams and track the same rigid-body and slosh
+states under the shared instantaneous-property convention. The controlled variants separate two
+effects:</p>
+<ol class="arabic simple">
+<li><p><strong>In orbit, differential point gravity.</strong> BSM applies gravity once at the system center of mass;
+MuJoCo applies one point force at each body center. The separated forces exert a net torque about
+the system center of mass. Neither treatment resolves gravity variation inside a rigid body.</p></li>
+<li><p><strong>In deep space, the common variable-mass convention.</strong> Removing gravity tests only depletion,
+thrust, and internal slosh. The full case measures the mapping between BSM’s translational and
+spherical-pendulum effectors and MuJoCo’s slide and hinge joints, without a fitted external load.
+The <code class="docutils literal notranslate"><span class="pre">test_variable_mass_deep_space_numerical_agreement</span></code> regression test also collapses the
+slosh masses and initial displacement to a rigid limit, where the engines agree to numerical
+precision.</p></li>
+</ol>
+<p>The pendulum damping is an internal generalized force in both engines. Motors on the two MuJoCo
+hinges apply the torques corresponding to the BSM bob damping force, so the child and parent
+receive equal and opposite torques. Applying the same torque only at a body site would remove
+angular momentum from the vehicle and would not match BSM.</p>
+</section>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>Each output file contains one plotting axis. Overlay and difference plots are stored separately.
+The burn raises the orbit and draws the tank down. Both engines predict the same qualitative rise
+and the same total system mass (dry hub plus depleting propellant), with the mass difference staying
+at the gram level. Their final semi-major axes differ by about 825 m after 900 seconds, or 0.34
+percent of the roughly 243 km BSM orbit rise. The deep-space control and forcing-scale estimate
+indicate that the different gravity application points dominate this residual: BSM applies point
+gravity at the system center of mass, while MuJoCo applies it to each body.</p>
+<img alt="../../_images/scenarioCompareVariableMass_orbit.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_orbit.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_orbit_difference.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_orbit_difference.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_fuelMass.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_fuelMass.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_fuelMass_difference.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_fuelMass_difference.svg" />
+<p>The hub body-rate and translational-slosh components are shown separately. The initial rate equals
+the orbital pitch rate; it then evolves passively with the slosh motion. Both engines overlay and
+the differences stay small.</p>
+<img alt="../../_images/scenarioCompareVariableMass_rate_x.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_rate_x.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_rate_y.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_rate_y.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_rate_z.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_rate_z.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_slosh_x.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_slosh_x.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_slosh_y.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_slosh_y.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_slosh_z.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_slosh_z.svg" />
+<p>The attitude and center-of-mass figures show the remaining cross-engine difference over the burn.</p>
+<img alt="../../_images/scenarioCompareVariableMass_attError.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_attError.svg" />
+<img alt="../../_images/scenarioCompareVariableMass_comError.svg" class="align-center" src="../../_images/scenarioCompareVariableMass_comError.svg" />
+</section>
+<section id="runtime-cost">
+<h2>Runtime cost<a class="headerlink" href="#runtime-cost" title="Link to this heading"></a></h2>
+<p>Wall-clock propagation cost is reported as the median of five interleaved trials after one
+discarded warm-up; model construction and recorder setup are excluded.</p>
+<p>Generate the optional local CSV with
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-C</span> <span class="pre">docs</span> <span class="pre">comparison-runtime-tables</span></code>; see
+<a class="reference internal" href="scenarioCompareOrbit.html#scenariocompareorbit"><span class="std std-ref">scenarioCompareOrbit</span></a> for the benchmark requirements and interpretation.</p>
+<p>Next comparison: <a class="reference internal" href="scenarioCompareParetoRwPanels.html#scenariocompareparetorwpanels"><span class="std std-ref">scenarioCompareParetoRwPanels</span></a> evaluates accuracy against
+runtime across fixed-step and adaptive integrators.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.bodyMassFlowRates">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">bodyMassFlowRates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#bodyMassFlowRates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.bodyMassFlowRates" title="Link to this definition"></a></dt>
+<dd><p>Constant per-body propellant mass-flow rates for the MuJoCo depletion wiring [kg/s].</p>
+<p>On the BSM side the fuel tank depletes its own bulk mass and every attached slosh particle
+<em>proportionally</em> to their current mass, so the mass fractions are exact invariants and each
+body drains at a constant rate equal to its initial mass fraction times the total mass flow
+(see <a class="reference internal" href="#scenarioCompareVariableMass.pullBSM" title="scenarioCompareVariableMass.pullBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">pullBSM()</span></code></a>). MuJoCo has no equivalent coupling, so the same schedule is reproduced
+directly: each body is given a constant, negative mass-rate feeding its
+<code class="docutils literal notranslate"><span class="pre">derivativeMassPropertiesInMsg</span></code>, and the rates sum to the engine’s total mass flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>body name -&gt; mass-rate [kg/s] (negative), for <code class="docutils literal notranslate"><span class="pre">tank</span></code> and the four slosh bodies.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.buildBSM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">buildBSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useThruster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inOrbit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simDuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#buildBSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.buildBSM" title="Link to this definition"></a></dt>
+<dd><p>Build (and initialize) the back-substitution variable-mass reference simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> (<em>float</em>) – integrator time step [s]</p></li>
+<li><p><strong>record</strong> (<em>bool</em>) – if True, attach the hub-state, fuel-tank and slosh recorders</p></li>
+<li><p><strong>useThruster</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, deplete the tank with the firing main engine that
+also applies thrust. If False, deplete it with an equivalent prescribed leak rate
+and no thrust force. Defaults to True.</p></li>
+<li><p><strong>inOrbit</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True (default) fly the burn on the circular parking orbit
+under point-mass Earth gravity. If False, run the identical vehicle as a deep-space
+burn with no gravity field and starting from rest, which removes the gravity-model
+difference so the two engines agree within the stated acceptance tolerances
+(see <a class="reference internal" href="#scenarioCompareVariableMass.run" title="scenarioCompareVariableMass.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a>).</p></li>
+<li><p><strong>simDuration</strong> (<em>float</em><em>, </em><em>optional</em>) – requested propagation horizon [s]. The thruster command
+remains active for at least this duration. Defaults to <code class="xref py py-data docutils literal notranslate"><span class="pre">SIM_DURATION</span></code>.</p></li>
+<li><p><strong>nearRigid</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, retain the same model topology
+with negligible slosh masses and zero residual slosh. Defaults to
+False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(scSim,</span> <span class="pre">recorders,</span> <span class="pre">handles)</span></code> where <code class="docutils literal notranslate"><span class="pre">recorders</span></code> is a dict of the attached
+recorders (empty when <code class="docutils literal notranslate"><span class="pre">record</span></code> is False) and <code class="docutils literal notranslate"><span class="pre">handles</span></code> keeps the created modules and
+stand-alone messages alive.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.buildMujoco">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">buildMujoco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useThruster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inOrbit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pendulumBobInertia</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#buildMujoco"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.buildMujoco" title="Link to this definition"></a></dt>
+<dd><p>Build (and initialize) the MuJoCo variable-mass simulation.</p>
+<p>The MJCF tree from <a class="reference internal" href="#scenarioCompareVariableMass.mujocoModel" title="scenarioCompareVariableMass.mujocoModel"><code class="xref py py-func docutils literal notranslate"><span class="pre">mujocoModel()</span></code></a> is fixed-mass; this function layers on the depletion
+(a constant mass-rate per body, from <a class="reference internal" href="#scenarioCompareVariableMass.bodyMassFlowRates" title="scenarioCompareVariableMass.bodyMassFlowRates"><code class="xref py py-func docutils literal notranslate"><span class="pre">bodyMassFlowRates()</span></code></a>), the point-mass gravity on every
+body, and the thrust (a constant <code class="docutils literal notranslate"><span class="pre">SingleActuatorMsg</span></code> on the <code class="docutils literal notranslate"><span class="pre">mainEngine</span></code> motor, omitted when
+<code class="docutils literal notranslate"><span class="pre">useThruster</span></code> is False) – see the module docstring for why each is done this way. Two build
+Initial conditions are all set <em>after</em> <code class="docutils literal notranslate"><span class="pre">InitializeSimulation</span></code> and taken from
+<code class="docutils literal notranslate"><span class="pre">initialState</span></code> so both engines start identically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> (<em>float</em>) – integrator time step [s]</p></li>
+<li><p><strong>record</strong> (<em>bool</em>) – if True, attach the hub-state, system-center-of-mass and slosh recorders</p></li>
+<li><p><strong>initialState</strong> (<em>dict</em>) – initial <code class="docutils literal notranslate"><span class="pre">r_BN_N</span></code> [m], <code class="docutils literal notranslate"><span class="pre">v_BN_N</span></code> [m/s], <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code> and
+<code class="docutils literal notranslate"><span class="pre">omega_BN_B</span></code> [rad/s] of the hub-origin frame, taken from the BSM reference so both
+engines start from the identical state.</p></li>
+<li><p><strong>useThruster</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True (default) fire the main engine; if False, deplete
+with no thrust force, matching the <code class="docutils literal notranslate"><span class="pre">useThruster=False</span></code> BSM leak-rate reference.</p></li>
+<li><p><strong>inOrbit</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True (default) add the point-mass gravity field; if False,
+omit it for the deep-space burn, matching <a class="reference internal" href="#scenarioCompareVariableMass.buildBSM" title="scenarioCompareVariableMass.buildBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">buildBSM()</span></code></a>.</p></li>
+<li><p><strong>pendulumBobInertia</strong> (<em>float</em><em>, </em><em>optional</em>) – initial MuJoCo bob inertia about each centroidal
+axis [kg*m^2]. Defaults to <code class="xref py py-data docutils literal notranslate"><span class="pre">PEND_BOB_INERTIA</span></code>.</p></li>
+<li><p><strong>nearRigid</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, use the negligible-mass slosh
+control configuration. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(scSim,</span> <span class="pre">recorders,</span> <span class="pre">handles)</span></code> matching <a class="reference internal" href="#scenarioCompareVariableMass.buildBSM" title="scenarioCompareVariableMass.buildBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">buildBSM()</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.earthMu">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">earthMu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#earthMu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.earthMu" title="Link to this definition"></a></dt>
+<dd><p>Earth gravitational parameter [m^3/s^2], from the same body the sim uses.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.gravityGradientRateEstimate">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">gravityGradientRateEstimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#gravityGradientRateEstimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.gravityGradientRateEstimate" title="Link to this definition"></a></dt>
+<dd><p>Standard gravity-gradient angular-acceleration scale <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">(mu/r^3)</span> <span class="pre">dI/I</span></code> [rad/s^2].</p>
+<p>This is the order-of-magnitude rate at which the MuJoCo hub attitude (per-body gravity, which
+carries a gravity-gradient torque) departs from the BSM hub attitude (single-point gravity at
+the system center of mass, which does not). The inertia spread is dominated by the tank and
+propellant mounted an arm <code class="docutils literal notranslate"><span class="pre">TANK_R_TB_B</span></code> off the hub center of mass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>angular-acceleration scale [rad/s^2].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.initialOrbitState">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">initialOrbitState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#initialOrbitState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.initialOrbitState" title="Link to this definition"></a></dt>
+<dd><p>Initial inertial position and velocity on the circular parking orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(rN</span> <span class="pre">[m],</span> <span class="pre">vN</span> <span class="pre">[m/s])</span></code> as numpy arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.initialThrustTorqueAboutCoM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">initialThrustTorqueAboutCoM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxThrust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#initialThrustTorqueAboutCoM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.initialThrustTorqueAboutCoM" title="Link to this definition"></a></dt>
+<dd><p>Return the initial body-frame thrust moment about the wet-system center of mass.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.mujocoModel">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">mujocoModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pendulumBobInertia</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#mujocoModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.mujocoModel" title="Link to this definition"></a></dt>
+<dd><p>Return the MJCF model of the variable-mass vehicle for the <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+<p>The tree mirrors the BSM effector stack: a free-floating <code class="docutils literal notranslate"><span class="pre">hub</span></code> carries a rigidly welded
+<code class="docutils literal notranslate"><span class="pre">tank</span></code> body (the non-sloshing propellant mass m0), three <code class="docutils literal notranslate"><span class="pre">slide</span></code>-jointed spring-mass-damper
+particles, and a two-hinge pendulum bob hanging aft along the settling axis. A <code class="docutils literal notranslate"><span class="pre">site</span></code>
+on the hub marks the main-engine application point, and a <code class="docutils literal notranslate"><span class="pre">motor</span></code> acting on it applies the
+thrust along the body +z axis.</p>
+<p>The masses written here are the INITIAL propellant masses. MuJoCo fixes body mass and inertia
+at model-compile time, so the depletion is layered on in <a class="reference internal" href="#scenarioCompareVariableMass.buildMujoco" title="scenarioCompareVariableMass.buildMujoco"><code class="xref py py-func docutils literal notranslate"><span class="pre">buildMujoco()</span></code></a> by feeding each
+propellant body’s mass-rate into its <code class="docutils literal notranslate"><span class="pre">derivativeMassPropertiesInMsg</span></code>: <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>
+integrates the per-body mass as a state and rescales the body inertia (linearly, with the
+center of mass fixed) every step. That matches the <code class="docutils literal notranslate"><span class="pre">FuelTankModelConstantVolume</span></code> law on the
+BSM side, where the tank inertia is <code class="docutils literal notranslate"><span class="pre">(2/5)</span> <span class="pre">m</span> <span class="pre">r^2</span></code> about a fixed centroid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pendulumBobInertia</strong> (<em>float</em><em>, </em><em>optional</em>) – initial MuJoCo bob inertia about each centroidal
+axis [kg*m^2]. MuJoCo requires this value to be positive; the BSM pendulum treats the
+bob as a point mass. Defaults to <code class="xref py py-data docutils literal notranslate"><span class="pre">PEND_BOB_INERTIA</span></code>.</p></li>
+<li><p><strong>nearRigid</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, use the negligible-mass slosh
+control configuration. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MJCF XML string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.nominalMassFlow">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">nominalMassFlow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxThrust</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steadyIsp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#nominalMassFlow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.nominalMassFlow" title="Link to this definition"></a></dt>
+<dd><p>Nominal propellant mass-flow rate of the engine [kg/s].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxThrust</strong> (<em>float</em>) – engine thrust [N]</p></li>
+<li><p><strong>steadyIsp</strong> (<em>float</em>) – specific impulse [s]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mass flow rate [kg/s].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.plotResults">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">plotResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bsm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inOrbit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figureStem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scenarioCompareVariableMass'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#plotResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.plotResults" title="Link to this definition"></a></dt>
+<dd><p>Build the scenario figures.</p>
+<p>The BSM curves are drawn as thick translucent underlays and the MuJoCo curves as thin lines on
+top, so the two engines stay distinguishable where they overlap. A dedicated figure shows the
+cross-engine attitude difference: in orbit it is dominated by the gravity-gradient torque the
+two gravity models treat differently; in deep space it measures the residual under the shared
+instantaneous-property and internal-damping conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bsm</strong> (<em>dict</em>) – BSM reference histories from <a class="reference internal" href="#scenarioCompareVariableMass.pullBSM" title="scenarioCompareVariableMass.pullBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">pullBSM()</span></code></a></p></li>
+<li><p><strong>mj</strong> (<em>dict</em><em>, </em><em>optional</em>) – MuJoCo histories from <a class="reference internal" href="#scenarioCompareVariableMass.pullMujoco" title="scenarioCompareVariableMass.pullMujoco"><code class="xref py py-func docutils literal notranslate"><span class="pre">pullMujoco()</span></code></a>, or None when MuJoCo is
+unavailable</p></li>
+<li><p><strong>inOrbit</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether the run was on orbit. Selects the first figure between
+the orbit-raise plot (in orbit) and the burn-speed plot (deep space).</p></li>
+<li><p><strong>figureStem</strong> (<em>str</em><em>, </em><em>optional</em>) – output-name prefix, used to distinguish orbit and deep-space
+runs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapping from figure name to matplotlib figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.pullBSM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">pullBSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#pullBSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.pullBSM" title="Link to this definition"></a></dt>
+<dd><p>Collect the BSM reference histories into a plain dictionary of numpy arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recorders</strong> (<em>dict</em>) – the recorder dict returned by <a class="reference internal" href="#scenarioCompareVariableMass.buildBSM" title="scenarioCompareVariableMass.buildBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">buildBSM()</span></code></a></p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>time, hub state, orbit, tank mass and slosh-state histories.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.pullMujoco">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">pullMujoco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#pullMujoco"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.pullMujoco" title="Link to this definition"></a></dt>
+<dd><p>Collect the MuJoCo histories into a dictionary matching <a class="reference internal" href="#scenarioCompareVariableMass.pullBSM" title="scenarioCompareVariableMass.pullBSM"><code class="xref py py-func docutils literal notranslate"><span class="pre">pullBSM()</span></code></a>.</p>
+<p>The hub-origin frame is read from the free-joint site, the system center of mass from
+<a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/MJSystemCoM/MJSystemCoM.html#mjsystemcom"><span class="std std-ref">C++ Module: MJSystemCoM</span></a>, and the propellant masses and slosh displacements from the per-body mass
+and slide-joint recorders. The total system mass is summed from the dry hub and the recorded
+depleting propellant-body masses, the direct analogue of the BSM <code class="docutils literal notranslate"><span class="pre">totalMass</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recorders</strong> (<em>dict</em>) – the recorder dict returned by <a class="reference internal" href="#scenarioCompareVariableMass.buildMujoco" title="scenarioCompareVariableMass.buildMujoco"><code class="xref py py-func docutils literal notranslate"><span class="pre">buildMujoco()</span></code></a></p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>time, hub state, system-center-of-mass orbit, mass and slosh histories.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.relativePrincipalAngle">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">relativePrincipalAngle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigmaA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigmaB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#relativePrincipalAngle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.relativePrincipalAngle" title="Link to this definition"></a></dt>
+<dd><p>Per-sample principal rotation angle between two MRP attitude histories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigmaA</strong> (<em>numpy.ndarray</em>) – first MRP history, shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code></p></li>
+<li><p><strong>sigmaB</strong> (<em>numpy.ndarray</em>) – second MRP history, shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>principal angle per sample [rad].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveJson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simDuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useThruster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inOrbit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveReference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveTiming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resultsDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.run" title="Link to this definition"></a></dt>
+<dd><p>Main function, see scenario description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, plot and show the simulation results.
+Defaults to False.</p></li>
+<li><p><strong>saveJson</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, write scalar comparison metrics to
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareVariableMass.json</span></code> in orbit or
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareVariableMass_deepSpace.json</span></code> in deep space.
+Defaults to False.</p></li>
+<li><p><strong>simDuration</strong> (<em>float</em><em>, </em><em>optional</em>) – burn/comparison window [s]. Defaults to <code class="docutils literal notranslate"><span class="pre">SIM_DURATION</span></code>.</p></li>
+<li><p><strong>useThruster</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True (default) deplete the tank with the firing main
+engine. If False, use an equivalent prescribed leak rate with no thrust force.</p></li>
+<li><p><strong>inOrbit</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True (default) fly under Earth gravity (engines separate by the
+gravity gradient); if False, run a deep-space burn from rest that isolates the shared
+instantaneous-property depletion and internal slosh model.</p></li>
+<li><p><strong>saveReference</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, write the BSM ground-truth trajectory to
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareVariableMass_reference.npz</span></code>. Defaults to False.</p></li>
+<li><p><strong>saveTiming</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, measure the BSM-vs-MJScene wall-clock cost with the
+selected MuJoCo model and write
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareVariableMass_runtime.csv</span></code>. Defaults to False.</p></li>
+<li><p><strong>nearRigid</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, retain the same topology with
+negligible slosh masses and zero residual slosh. This control is
+available only in deep space. Defaults to False.</p></li>
+<li><p><strong>resultsDir</strong> (<em>str</em><em>, </em><em>optional</em>) – explicit artifact directory. Defaults to
+the scenario <code class="docutils literal notranslate"><span class="pre">results</span></code> folder.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapping from figure name to matplotlib figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.sloshParameters">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">sloshParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nearRigid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#sloshParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.sloshParameters" title="Link to this definition"></a></dt>
+<dd><p>Derive the slosh model inputs from the literature ratios and the vehicle sizing.</p>
+<p>The pendulum is the primary element: its arm length is purely geometric, so its frequency
+<code class="docutils literal notranslate"><span class="pre">omega1</span> <span class="pre">=</span> <span class="pre">sqrt(a/L1)</span></code> emerges from the thrust acceleration rather than being an input. The
+spring-mass-dampers are then tuned to that same physical slosh frequency, so the benchmarking
+fixture at least oscillates at the right rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>slosh masses [kg], pendulum arm [m], slosh frequency [rad/s], spring constant
+[N/m], damping coefficients, the axial particle’s settled offset [m], and the tank fill
+fraction [-].</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.thrusterSpec">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">thrusterSpec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#thrusterSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.thrusterSpec" title="Link to this definition"></a></dt>
+<dd><p>Return the catalog <code class="docutils literal notranslate"><span class="pre">(MaxThrust</span> <span class="pre">[N],</span> <span class="pre">steadyIsp</span> <span class="pre">[s])</span></code> of the modeled engine.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.timeStep">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">timeStep</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#timeStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.timeStep" title="Link to this definition"></a></dt>
+<dd><p>Integrator step that resolves the slosh oscillation [s].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareVariableMass.velocityAlignedAttitude">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareVariableMass.</span></span><span class="sig-name descname"><span class="pre">velocityAlignedAttitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareVariableMass.html#velocityAlignedAttitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareVariableMass.velocityAlignedAttitude" title="Link to this definition"></a></dt>
+<dd><p>Body attitude and instantaneous rate aligned with the velocity vector at the epoch.</p>
+<p>The body frame is built with z along the velocity (the thrust axis), y along the orbit
+normal, and x completing the triad. The derivative of this alignment at the epoch is a pitch
+about the orbit normal at the orbital rate, which in body components is purely about the body
+y-axis. No controller maintains the alignment during propagation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rN</strong> (<em>numpy.ndarray</em>) – inertial position [m]</p></li>
+<li><p><strong>vN</strong> (<em>numpy.ndarray</em>) – inertial velocity [m/s]</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(sigma_BN,</span> <span class="pre">omega_BN_B</span> <span class="pre">[rad/s],</span> <span class="pre">meanMotion</span> <span class="pre">[rad/s])</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioCompareOrbitMultibody.html" class="btn btn-neutral float-left" title="scenarioCompareOrbitMultibody" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioCompareParetoRwPanels.html" class="btn btn-neutral float-right" title="scenarioCompareParetoRwPanels" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

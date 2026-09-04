@@ -1,0 +1,897 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareTorque &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioCompareTorque</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioCompareTorque</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Second scenario in the dynamics-engine comparison series (see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the introduction).</span>
+
+<span class="sd">This scenario extends the translational baseline to full six-degree-of-freedom motion</span>
+<span class="sd">with a constant body-frame torque and a non-zero, off-principal-axis initial angular</span>
+<span class="sd">velocity, exercising the coupled gyroscopic rotational dynamics</span>
+<span class="sd">:math:`[I]\dot{\pmb\omega} = -\pmb\omega\times[I]\pmb\omega + {\bf L}`.</span>
+
+<span class="sd">On the BSM side the torque is applied with an :ref:`extForceTorque` dynamic effector</span>
+<span class="sd">attached to the :ref:`spacecraft` hub. On the MuJoCo side the body is free (a single</span>
+<span class="sd">free joint) and the torque is produced by an ``MJTorqueActuator`` placed at the body</span>
+<span class="sd">origin site. Because that site rotates with the body, a constant ``torque_S`` is a</span>
+<span class="sd">constant body-frame torque, matching the BSM side exactly.</span>
+
+<span class="sd">Each engine is run twice, both with a fixed-step RK4 integrator at a small enough time step</span>
+<span class="sd">(0.1 s) that time-stepping truncation is well below the effect of interest:</span>
+
+<span class="sd">* **orbiting** -- on a Keplerian orbit with point-mass Earth gravity (:ref:`spacecraft`</span>
+<span class="sd">  gravity effector; MuJoCo :ref:`NBodyGravity`), carrying the ~7.5 km/s</span>
+<span class="sd">  orbital velocity; and</span>
+<span class="sd">* **at rest** -- at the origin with zero linear velocity and no gravity, i.e. pure rotation</span>
+<span class="sd">  under the body torque.</span>
+
+<span class="sd">For this single compact body neither gravity nor the translation it induces can torque</span>
+<span class="sd">the body about its center of mass, so the attitude must be *identical* in both cases. BSM</span>
+<span class="sd">passes exactly: its attitude is bit-for-bit the same orbiting or at rest, because it</span>
+<span class="sd">integrates attitude about the body and never references the inertial state. MuJoCo carries</span>
+<span class="sd">a small (:math:`\sim 10^{-6}` rad) spurious attitude change between the two cases that does</span>
+<span class="sd">not shrink as the step is reduced. MuJoCo 3.11.0 forms the spatial bias force in ``mj_rne``</span>
+<span class="sd">as :math:`{\bf v}\times^*([I]{\bf v})`. For pure translation about the body center of mass,</span>
+<span class="sd">the rotational part contains the identically-zero term</span>
+<span class="sd">:math:`{\bf v}_{\rm lin}\times(m{\bf v}_{\rm lin})`, evaluated as the difference of two</span>
+<span class="sd">rounded :math:`\mathcal{O}(m|{\bf v}_{\rm lin}|^2)` products. Directly recording</span>
+<span class="sd">``qfrc_bias`` strongly supports this term as the source of the attitude change.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    At 7.5 km/s along the generic direction :math:`[2,-3,6]/7`, a nonrotating free body</span>
+<span class="sd">    has an initial rotational ``qfrc_bias`` of</span>
+<span class="sd">    :math:`[-3.11\times10^{-7},\,1.56\times10^{-6},\,7.82\times10^{-7}]` N m. The same body moving</span>
+<span class="sd">    along a coordinate axis has zero bias and zero attitude drift. In a torque-free,</span>
+<span class="sd">    nonrotating propagation, each factor-of-two increase in speed multiplies the 600 s</span>
+<span class="sd">    attitude error by approximately four; doubling the mass multiplies it by approximately</span>
+<span class="sd">    two. These controls match the :math:`m|{\bf v}|^2` cancellation-error scale.</span>
+
+<span class="sd">Attitudes are compared by the **principal rotation angle of the relative direction cosine</span>
+<span class="sd">matrix**, :math:`4\,\arctan(|\pmb\sigma_{\rm rel}|)`, rather than by differencing attitude</span>
+<span class="sd">parameters: BSM integrates a Modified Rodrigues Parameter set (``sigma_BN``) while MuJoCo</span>
+<span class="sd">integrates a free-joint quaternion, and the principal angle is parameterization-invariant</span>
+<span class="sd">and the physically meaningful pointing error. This form stays well conditioned for small</span>
+<span class="sd">angles, unlike :math:`\arccos((\mathrm{tr}-1)/2)`.</span>
+
+<span class="sd">The MuJoCo scene runs with ``highOrderAttitudeIntegration`` so the free-joint quaternion is</span>
+<span class="sd">advanced at the integrator's full order, matching BSM's MRP attitude order. MuJoCo's default</span>
+<span class="sd">single exponential map of the stage-averaged body rate is only second-order on SO(3), which</span>
+<span class="sd">would otherwise dominate the cross-engine attitude difference.</span>
+
+<span class="sd">An independent control restricts the initial rate and torque to the body z principal axis.</span>
+<span class="sd">The gyroscopic cross term then vanishes, giving the exact solution</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    \omega_z(t) = \omega_{z0} + \frac{L_z}{I_z}t,\qquad</span>
+<span class="sd">    \theta_z(t) = \omega_{z0}t + \frac{L_z}{2I_z}t^2 .</span>
+
+<span class="sd">Both engines are compared directly with these rate and attitude histories.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed</span>
+<span class="sd">by using::</span>
+
+<span class="sd">    python3 scenarioCompareTorque.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The body angular velocity histories from the two engines overlie one another.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_rate_x.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_rate_y.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_rate_z.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Each engine's attitude change between the orbiting body and the same body at rest should be</span>
+<span class="sd">zero, since motion cannot torque the body about its center of mass. BSM sits at machine</span>
+<span class="sd">precision (:math:`\sim 10^{-16}` rad), identical orbiting or at rest; MuJoCo sits about ten</span>
+<span class="sd">orders higher (:math:`\sim 10^{-6}` rad). The gap does not close as the time step is reduced,</span>
+<span class="sd">identifying it as round-off in MuJoCo's gyroscopic bias rather than a time-stepping error.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_motionAttError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The cross-engine attitude difference (BSM versus MuJoCo, principal angle of the relative DCM)</span>
+<span class="sd">shows the same effect directly. **At rest** the two formulations agree at the RK4 truncation</span>
+<span class="sd">floor (:math:`\sim 10^{-8}` rad); **orbiting**, the difference rises to the</span>
+<span class="sd">:math:`\sim 10^{-6}` rad round-off the orbital velocity injects into MuJoCo.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_attError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The principal-axis control compares each engine directly with the closed-form rate and attitude.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_analyticRateError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareTorque_analyticAttError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Runtime cost</span>
+<span class="sd">------------</span>
+
+<span class="sd">Wall-clock cost of propagating this scenario with each engine, reported as the median</span>
+<span class="sd">of five measured trials after one discarded warm-up. Model setup is excluded. Both the</span>
+<span class="sd">absolute times and speedup ratio are specific to the machine and build.</span>
+<span class="sd">Generate the optional local CSV with</span>
+<span class="sd">``make -C docs comparison-runtime-tables``; see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the benchmark requirements and interpretation.</span>
+
+<span class="sd">Next comparison: :ref:`scenarioCompareRwPanels` adds reaction wheels and hinged</span>
+<span class="sd">flexible appendages.</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_runtimeTable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparePlots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparisonValidation</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+
+<span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+
+<span class="c1"># Paul Tol high-contrast palette shared by the comparison figures.</span>
+<span class="n">COLOR_BSM</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_BSM</span>
+<span class="n">COLOR_MUJOCO</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_MUJOCO</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Folder this scenario writes its JSON summary into.</span>
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+<span class="n">MASS</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+<span class="n">INERTIA_DIAG</span> <span class="o">=</span> <span class="p">(</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2] principal inertia about the center of mass</span>
+<span class="n">TORQUE_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># [N*m] constant body-frame torque</span>
+<span class="n">OMEGA0_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)</span>  <span class="c1"># [rad/s] initial body rate (off principal axis)</span>
+<span class="n">ANALYTIC_AXIS</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># body z principal axis</span>
+<span class="n">ANALYTIC_TORQUE_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+<span class="n">ANALYTIC_OMEGA0_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+
+
+<div class="viewcode-block" id="mujocoModel">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.mujocoModel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mujocoModel</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="n">MASS</span><span class="p">,</span> <span class="n">inertiaDiag</span><span class="o">=</span><span class="n">INERTIA_DIAG</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the MJCF model string for a single free rigid body.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mass (float, optional): body mass [kg].</span>
+<span class="sd">        inertiaDiag (tuple, optional): principal inertia values [kg*m^2].</span>
+<span class="sd">    """</span>
+    <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span> <span class="o">=</span> <span class="n">inertiaDiag</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;!-- No geoms, equalities, limits, or frictionloss in this model: disable the</span>
+<span class="s2">       collision and constraint pipelines so each derivative evaluation skips</span>
+<span class="s2">       broadphase and constraint-assembly bookkeeping (bit-identical results). --&gt;</span>
+<span class="s2">  &lt;option gravity="0 0 0"&gt;</span>
+<span class="s2">    &lt;flag contact="disable" constraint="disable"/&gt;</span>
+<span class="s2">  &lt;/option&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="hub"&gt;</span>
+<span class="s2">      &lt;freejoint/&gt;</span>
+<span class="s2">      &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">mass</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iz</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span></div>
+
+
+
+<div class="viewcode-block" id="initialOrbitState">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.initialOrbitState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the initial inertial position and velocity for the orbit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(rN, vN)`` position [m] and velocity [m/s].</span>
+<span class="sd">    """</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">7000.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rN</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.buildBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+             <span class="n">torque_B</span><span class="o">=</span><span class="n">TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">OMEGA0_B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the back-substitution torque simulation without propagating it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        withGravity (bool, optional): if True, place the body on a Keplerian orbit with</span>
+<span class="sd">            point-mass Earth gravity (the "orbiting" case). If False, start it at rest at the</span>
+<span class="sd">            origin with no gravity (the "at rest" case: pure rotation under the body torque).</span>
+<span class="sd">            Neither gravity nor the induced translation can torque the body about its center</span>
+<span class="sd">            of mass, so the attitude history is identical either way. Defaults to True.</span>
+<span class="sd">        record (bool, optional): attach the state recorder. Defaults to True.</span>
+<span class="sd">        torque_B (tuple, optional): constant body-frame torque [N*m].</span>
+<span class="sd">        omega0_B (tuple, optional): initial body rate [rad/s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, recorder, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scBSM"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">MASS</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">INERTIA_DIAG</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">withGravity</span><span class="p">:</span>
+        <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+        <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">extTorque</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extTorque</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"extTorque"</span>
+    <span class="n">torqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">(</span><span class="n">torqueRequestBody</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">torque_B</span><span class="p">)))</span>
+    <span class="n">extTorque</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueMsg</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extTorque</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">extTorque</span><span class="p">)</span>
+
+    <span class="c1"># Orbiting: initial position/velocity on the orbit. At rest: origin, zero velocity.</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span> <span class="k">if</span> <span class="n">withGravity</span> <span class="k">else</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [m]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [m/s]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">omega0_B</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">recorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">,</span> <span class="n">gravFactory</span><span class="p">,</span> <span class="n">extTorque</span><span class="p">,</span> <span class="n">torqueMsg</span><span class="p">,</span> <span class="n">integrator</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.runBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+           <span class="n">torque_B</span><span class="o">=</span><span class="n">TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">OMEGA0_B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the torqued body with the back-substitution :ref:`spacecraft`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildBSM</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="p">,</span> <span class="n">torque_B</span><span class="o">=</span><span class="n">torque_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">omega0_B</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="buildMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.buildMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">torque_B</span><span class="o">=</span><span class="n">TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">OMEGA0_B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the MuJoCo torque simulation without propagating it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        withGravity (bool, optional): if True, place the body on the Keplerian orbit with the</span>
+<span class="sd">            same point-mass Earth field via :ref:`NBodyGravity` (the "orbiting" case). If</span>
+<span class="sd">            False, start it at rest at the origin with no gravity (the "at rest" case). For</span>
+<span class="sd">            this compact single body gravity is a pure center-of-mass force with no</span>
+<span class="sd">            gravity-gradient torque, so the attitude is identical either way. Defaults to True.</span>
+<span class="sd">        record (bool, optional): attach the state recorder. Defaults to True.</span>
+<span class="sd">        torque_B (tuple, optional): constant body-frame torque [N*m].</span>
+<span class="sd">        omega0_B (tuple, optional): initial body rate [rad/s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, recorder, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">mujocoModel</span><span class="p">())</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scMujoco"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Advance the free-joint quaternion at the integrator's full order to match BSM's MRP</span>
+    <span class="c1"># attitude order; MuJoCo's default single exponential map is only second order on SO(3).</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">highOrderAttitudeIntegration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">gravity</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">withGravity</span><span class="p">:</span>
+        <span class="c1"># The factory creates NBodyGravity and registers every MJScene body as a</span>
+        <span class="c1"># target, matching the gravity-body setup used by the BSM model.</span>
+        <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+        <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+        <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">gravity</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">torqueActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"bodyTorque"</span><span class="p">,</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">())</span>
+    <span class="n">torqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TorqueAtSiteMsg</span><span class="p">()</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">TorqueAtSiteMsgPayload</span><span class="p">(</span><span class="n">torque_S</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">torque_B</span><span class="p">)))</span>
+    <span class="n">torqueActuator</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueMsg</span><span class="p">)</span>
+
+    <span class="n">recorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Orbiting: initial position/velocity on the orbit. At rest: origin, zero velocity.</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span> <span class="k">if</span> <span class="n">withGravity</span> <span class="k">else</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitude</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">omega0_B</span><span class="p">))</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="p">,</span> <span class="n">gravFactory</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span> <span class="n">hub</span><span class="p">,</span> <span class="n">torqueActuator</span><span class="p">,</span> <span class="n">torqueMsg</span><span class="p">,</span> <span class="n">integrator</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.runMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">torque_B</span><span class="o">=</span><span class="n">TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">OMEGA0_B</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the same torqued body with the :ref:`MJScene&lt;MJScene&gt;`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildMujoco</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="p">,</span> <span class="n">torque_B</span><span class="o">=</span><span class="n">torque_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">omega0_B</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="relativePrincipalAngle">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.relativePrincipalAngle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Per-sample principal rotation angle between two MRP attitude histories.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sigmaBSM (numpy.ndarray): BSM MRP history, shape ``(N, 3)``</span>
+<span class="sd">        sigmaMujoco (numpy.ndarray): MuJoCo MRP history, shape ``(N, 3)``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: principal angle per sample [rad].</span>
+<span class="sd">    """</span>
+    <span class="n">nSamples</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">requireEqualLength</span><span class="p">(</span>
+        <span class="s2">"torque attitude"</span><span class="p">,</span> <span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nSamples</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSamples</span><span class="p">):</span>
+        <span class="n">dcmRel</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="c1"># Use 4*atan(|sigma_rel|), which is well conditioned down to machine precision;</span>
+        <span class="c1"># arccos((trace-1)/2) collapses to zero for angles below ~1e-8 rad.</span>
+        <span class="n">angle</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcmRel</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">angle</span></div>
+
+
+
+<div class="viewcode-block" id="principalAxisAnalyticSolution">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.principalAxisAnalyticSolution">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">principalAxisAnalyticSolution</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the exact body rate and rotation angle for the principal-axis control."""</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">ANALYTIC_TORQUE_B</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">]</span> <span class="o">/</span> <span class="n">INERTIA_DIAG</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">]</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">omega</span><span class="p">[:,</span> <span class="n">ANALYTIC_AXIS</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ANALYTIC_OMEGA0_B</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">]</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">*</span><span class="n">timeAxis</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">ANALYTIC_OMEGA0_B</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">]</span><span class="o">*</span><span class="n">timeAxis</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">alpha</span><span class="o">*</span><span class="n">timeAxis</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">omega</span><span class="p">,</span> <span class="n">theta</span></div>
+
+
+
+<div class="viewcode-block" id="principalAxisAttitudeError">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.principalAxisAttitudeError">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">principalAxisAttitudeError</span><span class="p">(</span><span class="n">sigmaHist</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the principal-angle error relative to the exact principal-axis attitude."""</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">requireEqualLength</span><span class="p">(</span>
+        <span class="s2">"principal-axis attitude"</span><span class="p">,</span> <span class="n">sigmaHist</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">axis</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+        <span class="n">dcmRelative</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaHist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+            <span class="n">rbk</span><span class="o">.</span><span class="n">PRV2C</span><span class="p">(</span><span class="n">axis</span><span class="o">*</span><span class="n">angle</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcmRelative</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">error</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveTiming</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): if True, plot and show the simulation results.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        saveJson (bool, optional): if True, write the comparison metrics to</span>
+<span class="sd">            ``results/scenarioCompareTorque.json``. Defaults to False.</span>
+<span class="sd">        saveTiming (bool, optional): if True, measure the BSM-vs-MJScene wall-clock</span>
+<span class="sd">            cost of this scenario and write</span>
+<span class="sd">            ``results/scenarioCompareTorque_runtime.csv``. Defaults to False.</span>
+<span class="sd">        resultsDir (str, optional): explicit artifact directory. Defaults to</span>
+<span class="sd">            the scenario ``results`` folder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">600.0</span>  <span class="c1"># [s]</span>
+    <span class="n">recordDt</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">BODY_DATA</span><span class="p">[</span><span class="s2">"earth"</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+
+    <span class="k">if</span> <span class="n">saveTiming</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+            <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">pairedPropagationTimes</span><span class="p">(</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bsmSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">medianPropagationTime</span><span class="p">(</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">saveRuntimeTable</span><span class="p">(</span>
+            <span class="n">fileName</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+            <span class="p">[(</span><span class="s2">"Torqued rigid body (600 s, RK4 dt=0.1 s)"</span><span class="p">,</span>
+              <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span><span class="p">)],</span>
+            <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="c1"># Run each engine twice: orbiting (point-mass Earth gravity, initial orbital velocity) and</span>
+    <span class="c1"># at rest (no gravity, zero linear velocity -- pure rotation under the body torque). Neither</span>
+    <span class="c1"># gravity nor the translation it induces can torque a body about its own center of mass, so</span>
+    <span class="c1"># the attitude must be identical in both cases; the attitude change between them is therefore</span>
+    <span class="c1"># a direct per-engine error measure.</span>
+    <span class="n">bsmOrbitRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">bsmRestRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmOrbitRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+    <span class="n">bsmRestTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmRestRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+        <span class="s2">"torque BSM orbit/rest"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">bsmRestTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmOrbitRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">sigmaBSMRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmRestRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">omegaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmOrbitRec</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"torque BSM orbit"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+        <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">omegaBSM</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"torque BSM rest"</span><span class="p">,</span> <span class="n">bsmRestTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+        <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSMRest</span><span class="p">)</span>
+    <span class="n">bsmMotionAtt</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaBSMRest</span><span class="p">)</span>
+
+    <span class="n">attError</span> <span class="o">=</span> <span class="n">attErrorRest</span> <span class="o">=</span> <span class="n">mujocoMotionAtt</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">omegaMujoco</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="n">mujocoOrbitRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mujocoRestRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mujocoOrbitTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoOrbitRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">mujocoRestTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoRestRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque BSM/MuJoCo orbit"</span><span class="p">,</span>
+            <span class="n">timeAxis</span><span class="p">,</span> <span class="n">mujocoOrbitTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque MuJoCo orbit/rest"</span><span class="p">,</span>
+            <span class="n">mujocoOrbitTimes</span><span class="p">,</span> <span class="n">mujocoRestTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoOrbitRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">sigmaMujocoRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoRestRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">omegaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoOrbitRec</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="s2">"torque MuJoCo orbit"</span><span class="p">,</span> <span class="n">mujocoOrbitTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+            <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujoco</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">omegaMujoco</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="s2">"torque MuJoCo rest"</span><span class="p">,</span> <span class="n">mujocoRestTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+            <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujocoRest</span><span class="p">)</span>
+        <span class="c1"># Per-engine attitude change between the orbiting body and the same body at rest</span>
+        <span class="c1"># (exact answer: zero -- neither gravity nor the translation it causes can torque it).</span>
+        <span class="n">mujocoMotionAtt</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">)</span>
+        <span class="c1"># Cross-engine attitude difference, orbiting and at rest. At rest there is no linear</span>
+        <span class="c1"># velocity, so MuJoCo's velocity round-off is absent and this is the pure truncation</span>
+        <span class="c1"># floor at which the two rotational formulations agree.</span>
+        <span class="n">attError</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+        <span class="n">attErrorRest</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSMRest</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">)</span>
+
+    <span class="c1"># Independent analytic control: rotation and torque are confined to one principal axis,</span>
+    <span class="c1"># so the gyroscopic cross term vanishes and both rate and attitude are available in closed</span>
+    <span class="c1"># form. This complements the generic off-axis case above without weakening it.</span>
+    <span class="n">bsmAnalyticRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runBSM</span><span class="p">(</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">torque_B</span><span class="o">=</span><span class="n">ANALYTIC_TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">ANALYTIC_OMEGA0_B</span><span class="p">)</span>
+    <span class="n">analyticTime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmAnalyticRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+        <span class="s2">"torque baseline/analytic BSM"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">analyticTime</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">sigmaBSMAnalytic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmAnalyticRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">omegaBSMAnalytic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmAnalyticRec</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>
+    <span class="n">omegaExact</span><span class="p">,</span> <span class="n">thetaExact</span> <span class="o">=</span> <span class="n">principalAxisAnalyticSolution</span><span class="p">(</span><span class="n">analyticTime</span><span class="p">)</span>
+    <span class="n">bsmAnalyticRateError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omegaBSMAnalytic</span><span class="o">-</span><span class="n">omegaExact</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">bsmAnalyticAttError</span> <span class="o">=</span> <span class="n">principalAxisAttitudeError</span><span class="p">(</span>
+        <span class="n">sigmaBSMAnalytic</span><span class="p">,</span> <span class="n">thetaExact</span><span class="p">)</span>
+
+    <span class="n">mujocoAnalyticRateError</span> <span class="o">=</span> <span class="n">mujocoAnalyticAttError</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="n">mujocoAnalyticRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMujoco</span><span class="p">(</span>
+            <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">torque_B</span><span class="o">=</span><span class="n">ANALYTIC_TORQUE_B</span><span class="p">,</span> <span class="n">omega0_B</span><span class="o">=</span><span class="n">ANALYTIC_OMEGA0_B</span><span class="p">)</span>
+        <span class="n">mujocoAnalyticTime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoAnalyticRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque analytic BSM/MuJoCo"</span><span class="p">,</span>
+            <span class="n">analyticTime</span><span class="p">,</span> <span class="n">mujocoAnalyticTime</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">sigmaMujocoAnalytic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoAnalyticRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">omegaMujocoAnalytic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mujocoAnalyticRec</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>
+        <span class="n">mujocoAnalyticRateError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="n">omegaMujocoAnalytic</span><span class="o">-</span><span class="n">omegaExact</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mujocoAnalyticAttError</span> <span class="o">=</span> <span class="n">principalAxisAttitudeError</span><span class="p">(</span>
+            <span class="n">sigmaMujocoAnalytic</span><span class="p">,</span> <span class="n">thetaExact</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="n">writeJsonSummary</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">attErrorRest</span><span class="p">,</span>
+                         <span class="n">bsmMotionAtt</span><span class="p">,</span> <span class="n">mujocoMotionAtt</span><span class="p">,</span>
+                         <span class="n">bsmAnalyticRateError</span><span class="p">,</span> <span class="n">bsmAnalyticAttError</span><span class="p">,</span>
+                         <span class="n">mujocoAnalyticRateError</span><span class="p">,</span> <span class="n">mujocoAnalyticAttError</span><span class="p">,</span>
+                         <span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotResults</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">attErrorRest</span><span class="p">,</span>
+                             <span class="n">bsmMotionAtt</span><span class="p">,</span> <span class="n">mujocoMotionAtt</span><span class="p">,</span>
+                             <span class="n">analyticTime</span><span class="p">,</span> <span class="n">bsmAnalyticRateError</span><span class="p">,</span> <span class="n">bsmAnalyticAttError</span><span class="p">,</span>
+                             <span class="n">mujocoAnalyticRateError</span><span class="p">,</span> <span class="n">mujocoAnalyticAttError</span><span class="p">)</span>
+
+    <span class="n">_comparePlots</span><span class="o">.</span><span class="n">finalizeFigures</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<div class="viewcode-block" id="writeJsonSummary">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.writeJsonSummary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeJsonSummary</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">attErrorRest</span><span class="p">,</span>
+                     <span class="n">bsmMotionAtt</span><span class="p">,</span> <span class="n">mujocoMotionAtt</span><span class="p">,</span>
+                     <span class="n">bsmAnalyticRateError</span><span class="p">,</span> <span class="n">bsmAnalyticAttError</span><span class="p">,</span>
+                     <span class="n">mujocoAnalyticRateError</span><span class="p">,</span> <span class="n">mujocoAnalyticAttError</span><span class="p">,</span>
+                     <span class="n">targetResults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Write a JSON summary of the comparison metrics to the ``results`` folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timeAxis (numpy.ndarray): sample times [s]</span>
+<span class="sd">        omegaBSM (numpy.ndarray): BSM body-rate history [rad/s]</span>
+<span class="sd">        omegaMujoco (numpy.ndarray): MuJoCo body-rate history [rad/s] (or None)</span>
+<span class="sd">        attError (numpy.ndarray): cross-engine attitude error, orbiting [rad] (or None)</span>
+<span class="sd">        attErrorRest (numpy.ndarray): cross-engine attitude error, at rest [rad] (or None)</span>
+<span class="sd">        bsmMotionAtt (numpy.ndarray): BSM attitude change, orbiting vs at rest [rad]</span>
+<span class="sd">        mujocoMotionAtt (numpy.ndarray): MuJoCo attitude change, orbiting vs at rest [rad]</span>
+<span class="sd">            (or None). The exact answer is zero (motion cannot torque the body); the BSM</span>
+<span class="sd">            value is at machine precision, the MuJoCo value at its gyroscopic-bias round-off.</span>
+<span class="sd">        bsmAnalyticRateError (numpy.ndarray): BSM rate error in the analytic control [rad/s].</span>
+<span class="sd">        bsmAnalyticAttError (numpy.ndarray): BSM attitude error in the analytic control [rad].</span>
+<span class="sd">        mujocoAnalyticRateError (numpy.ndarray): MuJoCo analytic-control rate error [rad/s].</span>
+<span class="sd">        mujocoAnalyticAttError (numpy.ndarray): MuJoCo analytic-control attitude error [rad].</span>
+<span class="sd">        targetResults (str): directory for the JSON artifact</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"scenario"</span><span class="p">:</span> <span class="n">fileName</span><span class="p">,</span>
+        <span class="s2">"nSamples"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">)),</span>
+        <span class="s2">"analyticAxis"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">)[</span><span class="n">ANALYTIC_AXIS</span><span class="p">],</span>
+        <span class="s2">"analyticTorque"</span><span class="p">:</span> <span class="n">ANALYTIC_TORQUE_B</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">],</span>
+        <span class="s2">"analyticInitialRate"</span><span class="p">:</span> <span class="n">ANALYTIC_OMEGA0_B</span><span class="p">[</span><span class="n">ANALYTIC_AXIS</span><span class="p">],</span>
+        <span class="s2">"bsmAnalyticRateErrorMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">bsmAnalyticRateError</span><span class="p">)),</span>
+        <span class="s2">"bsmAnalyticAttitudeErrorMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">bsmAnalyticAttError</span><span class="p">)),</span>
+        <span class="c1"># Attitude change between the orbiting body and the same body at rest: the exact</span>
+        <span class="c1"># answer is zero (motion cannot torque the body), so this is the pure per-engine error.</span>
+        <span class="s2">"bsmMotionAttitudeMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">bsmMotionAtt</span><span class="p">)),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">attError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">omegaError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omegaBSM</span><span class="o">-</span><span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Cross-engine attitude difference: at rest (no linear velocity) the engines agree at</span>
+        <span class="c1"># the RK4 truncation floor; orbiting, the difference rises to MuJoCo's velocity round-off.</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"crossEngineAttitudeRestMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">attErrorRest</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"crossEngineAttitudeOrbitMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">attError</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"bodyRateErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">omegaError</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"mujocoMotionAttitudeMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mujocoMotionAtt</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"mujocoAnalyticRateErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mujocoAnalyticRateError</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"mujocoAnalyticAttitudeErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mujocoAnalyticAttError</span><span class="p">))</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">fileName</span><span class="o">+</span><span class="s2">".json"</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plotResults">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareTorque.html#scenarioCompareTorque.plotResults">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotResults</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">attErrorRest</span><span class="p">,</span>
+                <span class="n">bsmMotionAtt</span><span class="p">,</span> <span class="n">mujocoMotionAtt</span><span class="p">,</span>
+                <span class="n">analyticTime</span><span class="p">,</span> <span class="n">bsmAnalyticRateError</span><span class="p">,</span> <span class="n">bsmAnalyticAttError</span><span class="p">,</span>
+                <span class="n">mujocoAnalyticRateError</span><span class="p">,</span> <span class="n">mujocoAnalyticAttError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the scenario figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timeAxis (numpy.ndarray): sample times [s]</span>
+<span class="sd">        omegaBSM (numpy.ndarray): BSM body-rate history [rad/s]</span>
+<span class="sd">        omegaMujoco (numpy.ndarray): MuJoCo body-rate history [rad/s] (or None)</span>
+<span class="sd">        attError (numpy.ndarray): cross-engine attitude error, orbiting [rad] (or None)</span>
+<span class="sd">        attErrorRest (numpy.ndarray): cross-engine attitude error, at rest [rad] (or None)</span>
+<span class="sd">        bsmMotionAtt (numpy.ndarray): BSM attitude change, orbiting vs at rest [rad]</span>
+<span class="sd">        mujocoMotionAtt (numpy.ndarray): MuJoCo attitude change, orbiting vs at rest [rad]</span>
+<span class="sd">            (or None)</span>
+<span class="sd">        analyticTime (numpy.ndarray): principal-axis control sample times [s].</span>
+<span class="sd">        bsmAnalyticRateError (numpy.ndarray): BSM analytic rate error [rad/s].</span>
+<span class="sd">        bsmAnalyticAttError (numpy.ndarray): BSM analytic attitude error [rad].</span>
+<span class="sd">        mujocoAnalyticRateError (numpy.ndarray): MuJoCo analytic rate error [rad/s].</span>
+<span class="sd">        mujocoAnalyticAttError (numpy.ndarray): MuJoCo analytic attitude error [rad].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">timeMin</span> <span class="o">=</span> <span class="n">timeAxis</span><span class="o">/</span><span class="mf">60.0</span>  <span class="c1"># [min]</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">figureList</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_comparePlots</span><span class="o">.</span><span class="n">componentComparison</span><span class="p">(</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_rate"</span><span class="p">,</span> <span class="n">timeMin</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">"$\omega_</span><span class="si">{BN}</span><span class="s2">$"</span><span class="p">,</span> <span class="s2">"rad/s"</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Time [min]"</span><span class="p">))</span>
+
+    <span class="c1"># Attitude change of each engine between the orbiting body and the same body at rest.</span>
+    <span class="c1"># The exact answer is zero; BSM sits at machine precision, MuJoCo at its velocity-driven</span>
+    <span class="c1"># gyroscopic-bias round-off floor. This is a per-engine error curve, not a matched overlay.</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_motionAttError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="n">angleFloor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">1e-18</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">bsmMotionAtt</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"BSM"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mujocoMotionAtt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">mujocoMotionAtt</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [min]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Attitude difference [deg]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="c1"># Cross-engine attitude difference, at rest and orbiting. At rest the two formulations</span>
+    <span class="c1"># agree at the RK4 truncation floor; the orbital velocity raises the difference to</span>
+    <span class="c1"># MuJoCo's velocity round-off level. This is already a cross-engine residual, not a matched</span>
+    <span class="c1"># overlay of the same quantity.</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_attError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">angleFloor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">1e-16</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">attErrorRest</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">"At rest (no linear velocity)"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">timeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">attError</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="s2">"Orbiting (~7.5 km/s)"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [min]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Attitude difference [deg]"</span><span class="p">)</span>
+
+    <span class="n">analyticTimeMin</span> <span class="o">=</span> <span class="n">analyticTime</span><span class="o">/</span><span class="mf">60.0</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_analyticRateError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">analyticTimeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">bsmAnalyticRateError</span><span class="p">,</span> <span class="mf">1e-18</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mujocoAnalyticRateError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">analyticTimeMin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mujocoAnalyticRateError</span><span class="p">,</span> <span class="mf">1e-18</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [min]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Rate error [rad/s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_analyticAttError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="n">angleFloor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">1e-18</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">analyticTimeMin</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">bsmAnalyticAttError</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mujocoAnalyticAttError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">analyticTimeMin</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">mujocoAnalyticAttError</span><span class="p">),</span> <span class="n">angleFloor</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [min]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Attitude error [deg]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

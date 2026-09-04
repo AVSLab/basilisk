@@ -1,0 +1,13 @@
+.. _generate_rs_reference:
+
+generate_rs_reference
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: generate_rs_reference
+   :members:
+   :show-inheritance:
+

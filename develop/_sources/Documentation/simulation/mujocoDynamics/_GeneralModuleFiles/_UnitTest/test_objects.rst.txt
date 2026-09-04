@@ -1,0 +1,13 @@
+.. _test_objects:
+
+test_objects
+============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_objects
+   :members:
+   :show-inheritance:
+

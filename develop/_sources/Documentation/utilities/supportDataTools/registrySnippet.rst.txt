@@ -1,0 +1,13 @@
+.. _registrySnippet:
+
+registrySnippet
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: registrySnippet
+   :members:
+   :show-inheritance:
+

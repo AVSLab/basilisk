@@ -1,0 +1,1345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[BETA] Making Rust Modules &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Making Python Modules" href="pyModules.html" />
+    <link rel="prev" title="C++ Module with C-Wrapped Output Message" href="cppModules/cppModules-5.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><span class="beta-label">[BETA]</span> Making Rust Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rust-terms-used-in-this-guide">Rust Terms Used in This Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comparison-with-c-and-c-modules">Comparison with C and C++ Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-and-build-with-rust-support">Install and Build with Rust Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#quick-start-from-rustmoduletemplate">Quick-Start from <code class="docutils literal notranslate"><span class="pre">rustModuleTemplate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-layout">Module Layout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configure-the-module-package">Configure the Module Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-the-language-boundary">Generate the Language Boundary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#register-the-module-in-the-workspace">Register the Module in the Workspace</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#integrated-external-rust-modules">Integrated External Rust Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#write-the-module">Write the Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration-getters-setters-and-validation">Configuration Getters, Setters, and Validation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-lifecycle">Module Lifecycle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unused-lifecycle-parameters">Unused Lifecycle Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-ports-and-values">Message Ports and Values</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python-visible-configuration">Python-Visible Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rust-owned-private-state">Rust-Owned Private State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#basilisk-c-utilities">Basilisk C Utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linear-algebra-with-nalgebra">Linear Algebra with <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simulation-time">Simulation Time</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#runtime-context-and-logging">Runtime Context and Logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-the-module-from-python">Use the Module from Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#document-the-module">Document the Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-the-module">Test the Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#current-limitations">Current Limitations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbaModules.html">Making Numba Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+      <li class="breadcrumb-item active"><span class="beta-label">[BETA]</span> Making Rust Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/makingModules/rustModules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="beta-making-rust-modules">
+<span id="rustmodules"></span><h1><span class="beta-label">[BETA]</span> Making Rust Modules<a class="headerlink" href="#beta-making-rust-modules" title="Link to this heading"></a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Rust module support requires Rust 1.89 or newer. The current stable Rust
+toolchain is recommended.</p>
+</div>
+<aside class="sidebar">
+<p class="sidebar-title">Rust Module Support</p>
+<p>Rust module support is experimental. Its interface may change between
+Basilisk releases.</p>
+</aside>
+<p>Rust modules are compiled Basilisk modules whose lifecycle methods are written
+in Rust instead of C or C++. They use the normal <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> lifecycle,
+message system, Python configuration, module documentation, and unit-test
+structure. A Python user imports and schedules a Rust module in exactly the
+same way as another compiled Basilisk module.</p>
+<p>This guide is for developers who already understand C or C++ Basilisk modules.
+It introduces the Rust-specific terms and files needed to create a module
+inside the Basilisk source tree. The <a class="reference internal" href="../../Documentation/moduleTemplates/rustModuleTemplate/rustModuleTemplate.html#rustmoduletemplate"><span class="std std-ref">Rust Module: rustModuleTemplate</span></a> is the complete
+working example and should be used as the starting point for a new module.</p>
+<section id="rust-terms-used-in-this-guide">
+<h2>Rust Terms Used in This Guide<a class="headerlink" href="#rust-terms-used-in-this-guide" title="Link to this heading"></a></h2>
+<p>Rust uses different names for several familiar build concepts:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">rustc</span></code></dt><dd><p>The Rust compiler.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">Cargo</span></code></dt><dd><p>Rust’s build tool and dependency manager. Cargo reads <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code>, runs
+the module’s <code class="docutils literal notranslate"><span class="pre">build.rs</span></code> script, compiles the Rust source, and runs
+Rust-native tests. The standard Rust installer supplies both <code class="docutils literal notranslate"><span class="pre">rustc</span></code> and
+Cargo.</p>
+</dd>
+<dt>Cargo package</dt><dd><p>A directory described by one <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> manifest. Each Basilisk Rust
+module directory is a Cargo package.</p>
+</dd>
+<dt>crate</dt><dd><p>A Rust compilation unit. A Cargo package can contain one or more crates.
+Each Basilisk Rust module contains one library crate, so this guide
+occasionally uses <em>module crate</em> to mean the Rust library compiled from the
+module directory.</p>
+</dd>
+<dt>Cargo workspace</dt><dd><p>A group of related Cargo packages that share dependency resolution and one
+lockfile. All Rust packages inside the Basilisk repository belong to the
+workspace defined by <code class="docutils literal notranslate"><span class="pre">src/Cargo.toml</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">Cargo.lock</span></code></dt><dd><p>The file recording the exact dependency versions selected for a workspace.
+Basilisk commits one shared lockfile at <code class="docutils literal notranslate"><span class="pre">src/Cargo.lock</span></code> so local and CI
+builds use the same versions.</p>
+</dd>
+<dt>attribute</dt><dd><p>Metadata written above a Rust item with <code class="docutils literal notranslate"><span class="pre">#[...]</span></code>. For example,
+<code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code> identifies the configuration struct and asks
+Basilisk’s Rust tooling to generate its lifecycle interface.</p>
+</dd>
+<dt>trait</dt><dd><p>A Rust interface defining behavior that a type must provide. It is similar
+in purpose to a C++ abstract base-class interface. A module implements the
+<code class="docutils literal notranslate"><span class="pre">BskModule</span></code> trait to provide its lifecycle methods.</p>
+</dd>
+</dl>
+<p>The official <a class="reference external" href="https://doc.rust-lang.org/book/">Rust Book</a> provides an
+introduction to general Rust syntax. The
+<a class="reference external" href="https://doc.rust-lang.org/cargo/">Cargo Book</a> covers Cargo terminology and
+commands in more detail.</p>
+</section>
+<section id="comparison-with-c-and-c-modules">
+<h2>Comparison with C and C++ Modules<a class="headerlink" href="#comparison-with-c-and-c-modules" title="Link to this heading"></a></h2>
+<p>The Rust tooling generates the C header and SWIG interface needed to join the
+existing Basilisk build. The module author writes the Rust behavior and the
+normal Basilisk documentation and tests.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Mapping familiar Basilisk concepts to Rust</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 31.0%" />
+<col style="width: 31.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Basilisk concept</p></th>
+<th class="head"><p>C or C++</p></th>
+<th class="head"><p>Rust</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Implementation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">myModule.c/.cpp</span></code> and usually <code class="docutils literal notranslate"><span class="pre">myModule.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">myModule.rs</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Build description</p></td>
+<td><p>CMake source lists</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> plus workspace registration</p></td>
+</tr>
+<tr class="row-even"><td><p>SWIG and C boundary</p></td>
+<td><p>Hand-written <code class="docutils literal notranslate"><span class="pre">myModule.i</span></code> and public declarations</p></td>
+<td><p>Generated from the marked Rust configuration</p></td>
+</tr>
+<tr class="row-odd"><td><p>Python-visible configuration</p></td>
+<td><p>Config struct or public class fields</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> struct marked with <code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Private implementation state</p></td>
+<td><p>Private C++ members or fields hidden from SWIG</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BskModule::State</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Initialization</p></td>
+<td><p>Constructor and <code class="docutils literal notranslate"><span class="pre">SelfInit()</span></code></p></td>
+<td><p>Rust <code class="docutils literal notranslate"><span class="pre">Default</span></code>/<code class="docutils literal notranslate"><span class="pre">init()</span></code> and generated <code class="docutils literal notranslate"><span class="pre">SelfInit()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Reset and update</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Reset()</span></code> and <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reset()</span></code> and <code class="docutils literal notranslate"><span class="pre">update()</span></code> methods of <code class="docutils literal notranslate"><span class="pre">BskModule</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Message I/O</p></td>
+<td><p>Reader/writer fields and explicit read/write calls</p></td>
+<td><p>Annotated ports and generated named input/output values</p></td>
+</tr>
+<tr class="row-even"><td><p>Logging</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bskLogger</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">context.logger()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Expected failure</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> or <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code></p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">Err(BskError::new(...))</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="install-and-build-with-rust-support">
+<h2>Install and Build with Rust Support<a class="headerlink" href="#install-and-build-with-rust-support" title="Link to this heading"></a></h2>
+<p>Install the stable toolchain with the official
+<a class="reference external" href="https://rust-lang.org/tools/install/">rustup installer</a>. The
+<a class="reference internal" href="../../Build/installOnLinux.html#installlinux"><span class="std std-ref">Linux</span></a>, <a class="reference internal" href="../../Build/installOnMacOS.html#installmacos"><span class="std std-ref">macOS</span></a>, and
+<a class="reference internal" href="../../Build/installOnWindows.html#installwindows"><span class="std std-ref">Windows</span></a> setup pages contain platform-specific
+instructions.</p>
+<p>Open a new terminal after installing Rust and verify both tools:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rustc --version</span>
+<span class="go">cargo --version</span>
+</pre></div>
+</div>
+<p>Rust module discovery is disabled in a normal Basilisk build, so users who do
+not need Rust modules do not need these tools. Enable Rust modules with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 conanfile.py --rustModules True</span>
+</pre></div>
+</div>
+<p>On Windows, use <code class="docutils literal notranslate"><span class="pre">python</span></code> instead of <code class="docutils literal notranslate"><span class="pre">python3</span></code> if that is the command for
+the active Python installation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">rustModules</span></code> enables discovery and compilation of in-tree Rust modules and
+Rust modules supplied through <code class="docutils literal notranslate"><span class="pre">pathToExternalModules</span></code>. Cargo builds the Rust
+code, while Corrosion connects Cargo packages to Basilisk’s CMake build as
+ordinary CMake targets. Basilisk downloads a pinned Corrosion version
+automatically during the first Rust-enabled configuration, so developers only
+need to install Rust and Cargo.</p>
+<p>After the build, verify the template through its normal Python unit test:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 -m pytest src/moduleTemplates/rustModuleTemplate/_UnitTest -v</span>
+</pre></div>
+</div>
+</section>
+<section id="quick-start-from-rustmoduletemplate">
+<h2>Quick-Start from <code class="docutils literal notranslate"><span class="pre">rustModuleTemplate</span></code><a class="headerlink" href="#quick-start-from-rustmoduletemplate" title="Link to this heading"></a></h2>
+<p>Copy <code class="docutils literal notranslate"><span class="pre">src/moduleTemplates/rustModuleTemplate</span></code> into the desired
+<code class="docutils literal notranslate"><span class="pre">src/fswAlgorithms</span></code> or <code class="docutils literal notranslate"><span class="pre">src/simulation</span></code> category. Then:</p>
+<ol class="arabic simple">
+<li><p>Rename the directory to the new module name.</p></li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">rustModuleTemplate.rs</span></code> and <code class="docutils literal notranslate"><span class="pre">rustModuleTemplate.rst</span></code> so each
+filename matches the new module directory.</p></li>
+<li><p>Update the package name and <code class="docutils literal notranslate"><span class="pre">[lib]</span> <span class="pre">path</span></code> in <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code>.</p></li>
+<li><p>Rename the marked configuration struct in the Rust source.</p></li>
+<li><p>Pass that exact struct name to <code class="docutils literal notranslate"><span class="pre">generate_bindings()</span></code> in <code class="docutils literal notranslate"><span class="pre">build.rs</span></code>.</p></li>
+<li><p>Replace the template implementation, documentation, and Python unit test.</p></li>
+<li><p>Add the new module to the workspace as described in
+<a class="reference internal" href="#register-the-module-in-the-workspace">Register the Module in the Workspace</a>.</p></li>
+</ol>
+<p>The template intentionally demonstrates more than a minimal control law. It
+contains individual and fixed-size arrays of input and output messages,
+Python-visible parameters, Rust-owned private state, logging, expected errors,
+Rust-native tests, and a test-only panic used to verify the language boundary.</p>
+</section>
+<section id="module-layout">
+<h2>Module Layout<a class="headerlink" href="#module-layout" title="Link to this heading"></a></h2>
+<p>Place the files in a normal Basilisk module directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>src/fswAlgorithms/&lt;category&gt;/myModule/
+|-- Cargo.toml
+|-- build.rs
+|-- myModule.rs
+|-- myModule.rst
+`-- _UnitTest/
+    `-- test_myModule.py
+</pre></div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code></dt><dd><p>Describes the module package, Rust source path, output library, and
+dependencies. It fills the role that Cargo expects from a package manifest.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">build.rs</span></code></dt><dd><p>A short Cargo build script that runs before compilation. It asks
+<code class="docutils literal notranslate"><span class="pre">bsk-build</span></code> to generate the module’s C header and SWIG interface.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">myModule.rs</span></code></dt><dd><p>Contains the configuration struct, lifecycle implementation, private state,
+and optional Rust-native tests.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">myModule.rst</span></code></dt><dd><p>The normal Basilisk module documentation page.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_UnitTest/test_myModule.py</span></code></dt><dd><p>Tests the public Python interface and message behavior in a Basilisk
+simulation.</p>
+</dd>
+</dl>
+<p>No hand-written <code class="docutils literal notranslate"><span class="pre">.h</span></code> or <code class="docutils literal notranslate"><span class="pre">.i</span></code> file is required. Generated files are build
+products placed under <code class="docutils literal notranslate"><span class="pre">dist3</span></code> and are removed by the normal clean build.</p>
+</section>
+<section id="configure-the-module-package">
+<h2>Configure the Module Package<a class="headerlink" href="#configure-the-module-package" title="Link to this heading"></a></h2>
+<p>The module’s <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> should follow this pattern:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[package]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"myModule"</span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"0.1.0"</span>
+<span class="n">edition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2021"</span>
+<span class="n">rust-version</span><span class="p">.</span><span class="n">workspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="k">[package.metadata.basilisk]</span>
+<span class="n">module</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="k">[lib]</span>
+<span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"myModule.rs"</span>
+<span class="n">crate-type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"staticlib"</span><span class="p">]</span>
+
+<span class="k">[dependencies]</span>
+<span class="n">bsk-messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"../../../architecture/rust/bsk_messages"</span><span class="w"> </span><span class="p">}</span>
+<span class="n">bsk-build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"../../../architecture/rust/bsk_build"</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">[build-dependencies]</span>
+<span class="n">bsk-build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"../../../architecture/rust/bsk_build"</span><span class="p">,</span>
+<span class="w">              </span><span class="n">default-features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"codegen"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The important entries are:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">rust-version.workspace</span> <span class="pre">=</span> <span class="pre">true</span></code></dt><dd><p>Uses Basilisk’s minimum Rust version instead of declaring a different
+version for each module.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">[package.metadata.basilisk]</span></code></dt><dd><p>Marks this Cargo package as a Basilisk module. Support libraries under
+<code class="docutils literal notranslate"><span class="pre">src/architecture/rust</span></code> are Cargo packages too, but they do not have this
+marker and are not exposed as Python modules. During CMake configuration,
+Basilisk asks Cargo for workspace metadata and reads this typed Boolean
+marker from Cargo’s package model; Basilisk does not interpret
+<code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> syntax itself.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">[lib]</span> <span class="pre">path</span></code></dt><dd><p>Selects <code class="docutils literal notranslate"><span class="pre">myModule.rs</span></code> as the library source. Cargo would otherwise expect
+the conventional Rust path <code class="docutils literal notranslate"><span class="pre">src/lib.rs</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">crate-type</span> <span class="pre">=</span> <span class="pre">[&quot;staticlib&quot;]</span></code></dt><dd><p>Produces a native static library that Basilisk links into the generated
+Python module.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">[dependencies]</span></code></dt><dd><p>Lists Rust libraries used by the module:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bsk-messages</span></code> supplies Basilisk message value types, message ports,
+lifecycle types, context, logging, and errors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bsk-build</span></code> supplies the <code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code> attribute and runtime
+support.</p></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">[build-dependencies]</span></code></dt><dd><p>Lists code used only by <code class="docutils literal notranslate"><span class="pre">build.rs</span></code>. Disabling default features prevents
+the host build script from trying to link Basilisk runtime symbols; the
+<code class="docutils literal notranslate"><span class="pre">codegen</span></code> feature enables binding generation.</p>
+</dd>
+</dl>
+<p>The dependency paths are relative to the module directory. Adjust them when a
+module is at a different directory depth.</p>
+</section>
+<section id="generate-the-language-boundary">
+<h2>Generate the Language Boundary<a class="headerlink" href="#generate-the-language-boundary" title="Link to this heading"></a></h2>
+<p>The complete <code class="docutils literal notranslate"><span class="pre">build.rs</span></code> file is normally:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">bsk_build</span><span class="p">::</span><span class="n">generate_bindings</span><span class="p">(</span><span class="s">"MyModuleConfig"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Pass the exact name of the struct marked with <code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code>.
+Cargo compiles and runs <code class="docutils literal notranslate"><span class="pre">build.rs</span></code> as a separate host program before it
+compiles the module crate, so the build script cannot refer to
+<code class="docutils literal notranslate"><span class="pre">MyModuleConfig</span></code> as a Rust type. <code class="docutils literal notranslate"><span class="pre">generate_bindings()</span></code> passes the selected
+identifier into the subsequent Rust compilation, where the procedural
+attribute verifies that both names match. A stale or misspelled name therefore
+produces a compile error.</p>
+<p>During the build:</p>
+<ol class="arabic simple">
+<li><p>Cargo runs <code class="docutils literal notranslate"><span class="pre">build.rs</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bsk-build</span></code> uses <code class="docutils literal notranslate"><span class="pre">cbindgen</span></code> to generate a C-compatible header for the
+selected configuration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bsk-build</span></code> generates the module-specific SWIG interface.</p></li>
+<li><p>Rust compiles the module, and <code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code> verifies the selected
+configuration name while generating the lifecycle boundary.</p></li>
+<li><p>CMake links the Rust static library and generated wrapper into the normal
+Basilisk Python package.</p></li>
+</ol>
+<p>The generated header and SWIG interface are build products; do not edit them.</p>
+</section>
+<section id="register-the-module-in-the-workspace">
+<h2>Register the Module in the Workspace<a class="headerlink" href="#register-the-module-in-the-workspace" title="Link to this heading"></a></h2>
+<p>All in-tree Rust packages belong to the Cargo workspace rooted at
+<code class="docutils literal notranslate"><span class="pre">src/Cargo.toml</span></code>. The workspace gives Basilisk one dependency resolution and
+one committed <code class="docutils literal notranslate"><span class="pre">src/Cargo.lock</span></code>. Workspace registration is also required for
+module discovery: CMake considers the packages returned by <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">metadata</span></code>
+and selects those whose <code class="docutils literal notranslate"><span class="pre">[package.metadata.basilisk]</span></code> <code class="docutils literal notranslate"><span class="pre">module</span></code> value is
+<code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<p>Add the new module’s path, relative to <code class="docutils literal notranslate"><span class="pre">src</span></code>, to the explicit member list:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[workspace]</span>
+<span class="n">resolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2"</span>
+<span class="n">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"architecture/rust/bsk_build"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"architecture/rust/bsk_macros"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"architecture/rust/bsk_messages"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"architecture/rust/bsk_utilities"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"fswAlgorithms/&lt;category&gt;/myModule"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"moduleTemplates/rustModuleTemplate"</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>After adding the member or changing dependencies, let Cargo update the shared
+lockfile deliberately:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cargo check --manifest-path src/fswAlgorithms/&lt;category&gt;/myModule/Cargo.toml</span>
+<span class="go">git diff -- src/Cargo.lock</span>
+</pre></div>
+</div>
+<p>Review and commit both <code class="docutils literal notranslate"><span class="pre">src/Cargo.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">src/Cargo.lock</span></code> with the new
+module. Do not add a <code class="docutils literal notranslate"><span class="pre">Cargo.lock</span></code> inside the module directory. Cargo uses
+the workspace lockfile, and module-local lockfiles are ignored.</p>
+<p>Normal Basilisk and CI builds pass <code class="docutils literal notranslate"><span class="pre">--locked</span></code> to Cargo. A locked build fails
+when <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">src/Cargo.lock</span></code> disagree instead of silently
+selecting new dependency versions.</p>
+</section>
+<section id="integrated-external-rust-modules">
+<h2>Integrated External Rust Modules<a class="headerlink" href="#integrated-external-rust-modules" title="Link to this heading"></a></h2>
+<p>Rust modules can remain in a separate source repository while participating
+in an integrated Basilisk build through <code class="docutils literal notranslate"><span class="pre">pathToExternalModules</span></code>. Place each
+module directly under the external project’s <code class="docutils literal notranslate"><span class="pre">ExternalModules</span></code> directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>External/
+|-- Cargo.toml
+|-- Cargo.lock
+`-- ExternalModules/
+    `-- myRustModule/
+        |-- Cargo.toml
+        |-- build.rs
+        |-- myRustModule.rs
+        |-- myRustModule.rst
+        `-- _UnitTest/
+            `-- test_myRustModule.py
+</pre></div>
+</div>
+<p>A Cargo workspace at <code class="docutils literal notranslate"><span class="pre">External/Cargo.toml</span></code> is recommended so all Rust
+modules in that project share one dependency resolution and lockfile:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[workspace]</span>
+<span class="n">resolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2"</span>
+<span class="n">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"ExternalModules/myRustModule"</span><span class="p">]</span>
+
+<span class="k">[workspace.package]</span>
+<span class="n">rust-version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.89"</span>
+
+<span class="k">[profile.dev]</span>
+<span class="n">panic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"unwind"</span>
+
+<span class="k">[profile.release]</span>
+<span class="n">panic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"unwind"</span>
+</pre></div>
+</div>
+<p>An external module uses the same package marker, static-library crate type,
+source layout, and <code class="docutils literal notranslate"><span class="pre">build.rs</span></code> as an in-tree module. Its dependencies must
+point to the support crates in the Basilisk checkout used for the integrated
+build. For example:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[dependencies]</span>
+<span class="n">bsk-messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"/path/to/basilisk/src/architecture/rust/bsk_messages"</span><span class="w"> </span><span class="p">}</span>
+<span class="n">bsk-build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"/path/to/basilisk/src/architecture/rust/bsk_build"</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">[build-dependencies]</span>
+<span class="n">bsk-build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"/path/to/basilisk/src/architecture/rust/bsk_build"</span><span class="p">,</span>
+<span class="w">              </span><span class="n">default-features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"codegen"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Use paths relative to the external project when its location relative to the
+Basilisk checkout is controlled; this keeps the project portable between
+machines. Until the Basilisk Rust support crates are distributed separately,
+the Cargo dependency paths couple the external module to that checkout.</p>
+<p>Generate and commit the external workspace’s lockfile, then enable both build
+options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cargo generate-lockfile --manifest-path /path/to/External/Cargo.toml</span>
+<span class="go">python3 conanfile.py --clean --rustModules True \</span>
+<span class="go">    --pathToExternalModules "/path/to/External"</span>
+</pre></div>
+</div>
+<p>The resulting module is imported from <code class="docutils literal notranslate"><span class="pre">Basilisk.ExternalModules</span></code>. External
+C payload headers under <code class="docutils literal notranslate"><span class="pre">External/msgPayloadDefC</span></code> are included in the normal
+C-message generation step and are therefore available through
+<code class="docutils literal notranslate"><span class="pre">bsk-messages</span></code>. Rerun the same <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> command after adding or
+editing one of those payloads.</p>
+<p>For a project containing only one Rust module, the module may instead be an
+independent Cargo package with its own committed <code class="docutils literal notranslate"><span class="pre">Cargo.lock</span></code> and no
+workspace manifest at the external root. Basilisk discovers marked
+<code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code> files directly under <code class="docutils literal notranslate"><span class="pre">ExternalModules/&lt;module&gt;</span></code>. A shared
+external workspace is preferred when the project contains multiple Rust
+packages.</p>
+</section>
+<section id="write-the-module">
+<h2>Write the Module<a class="headerlink" href="#write-the-module" title="Link to this heading"></a></h2>
+<p>The following module has one Python-visible gain, one required input, one
+output, and no private state:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">bsk_messages</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+
+<span class="cp">#[bsk_build::module]</span>
+<span class="cp">#[repr(C)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">MyModuleConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="sd">/// [Nm] Proportional gain</span>
+<span class="w">    </span><span class="cp">#[bsk(validate = validate_gain)]</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">K</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span>
+<span class="w">    </span><span class="sd">/// [-] Attitude guidance input</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">attGuidInMsg</span><span class="p">:</span><span class="w"> </span><span class="nc">MsgReader</span><span class="o">&lt;</span><span class="n">AttGuidMsg</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">    </span><span class="sd">/// [Nm] Commanded body torque output</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">cmdTorqueOutMsg</span><span class="p">:</span><span class="w"> </span><span class="nc">MsgWriter</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">fn</span><span class="w"> </span><span class="nf">validate_gain</span><span class="p">(</span>
+<span class="w">    </span><span class="n">_config</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">MyModuleConfig</span><span class="p">,</span>
+<span class="w">    </span><span class="n">proposed_gain</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">f64</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">proposed_gain</span><span class="p">.</span><span class="n">is_finite</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">*</span><span class="n">proposed_gain</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">BskError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">"K must be finite and positive"</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+
+<span class="k">impl</span><span class="w"> </span><span class="n">BskModule</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">MyModuleConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">();</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Inputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModuleInputs</span><span class="p">;</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Outputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModuleOutputs</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">_state</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="bp">Self</span><span class="p">::</span><span class="n">State</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="c1">// [Nm]</span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(())</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_state</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="bp">Self</span><span class="p">::</span><span class="n">State</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_context</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">BskContext</span><span class="o">&lt;'</span><span class="nb">_</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_current_sim_nanos</span><span class="p">:</span><span class="w"> </span><span class="kt">u64</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Retain reset-time validation for defaults, internal changes,</span>
+<span class="w">        </span><span class="c1">// and relationships involving multiple fields.</span>
+<span class="w">        </span><span class="n">validate_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="p">::</span><span class="n">default</span><span class="p">())</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_state</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="bp">Self</span><span class="p">::</span><span class="n">State</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_context</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">BskContext</span><span class="o">&lt;'</span><span class="nb">_</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">inputs</span><span class="p">:</span><span class="w"> </span><span class="nc">Self</span><span class="p">::</span><span class="n">Inputs</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_current_sim_nanos</span><span class="p">:</span><span class="w"> </span><span class="kt">u64</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">guidance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inputs</span><span class="p">.</span><span class="n">attGuidInMsg</span><span class="p">;</span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MyModuleOutputs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">cmdTorqueOutMsg</span><span class="p">:</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">CmdTorqueBodyMsg</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">torqueRequestBody</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">guidance</span><span class="p">.</span><span class="n">sigma_BR</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="w">                    </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">guidance</span><span class="p">.</span><span class="n">sigma_BR</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="w">                    </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">guidance</span><span class="p">.</span><span class="n">sigma_BR</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">            </span><span class="p">}),</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The Rust-specific declarations mean:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">bsk_messages::*;</span></code></dt><dd><p>Imports the Basilisk Rust message values and module support types used in
+the file.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code></dt><dd><p>Requests a C-compatible field layout for the Python-visible configuration.
+The generated ABI copies complete typed values between the C++/SWIG wrapper
+and the Rust-owned module.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code></dt><dd><p>Identifies the one top-level module configuration, validates its supported
+field types, and generates the lifecycle entry points.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">pub</span></code></dt><dd><p>Makes a configuration field visible to <code class="docutils literal notranslate"><span class="pre">cbindgen</span></code>. The generated wrapper
+hides direct field access and exposes a Rust-backed Python property plus
+<code class="docutils literal notranslate"><span class="pre">getX</span></code> and <code class="docutils literal notranslate"><span class="pre">setX</span></code> methods.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">State</span></code>, <code class="docutils literal notranslate"><span class="pre">Inputs</span></code>, and <code class="docutils literal notranslate"><span class="pre">Outputs</span></code></dt><dd><p>Select the private state type and the named message-value structs used by
+the lifecycle methods. The input and output types are generated from the
+annotated ports. For <code class="docutils literal notranslate"><span class="pre">MyModuleConfig</span></code> they are named
+<code class="docutils literal notranslate"><span class="pre">MyModuleInputs</span></code> and <code class="docutils literal notranslate"><span class="pre">MyModuleOutputs</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">BskResult&lt;T&gt;</span></code></dt><dd><p>Represents either success, <code class="docutils literal notranslate"><span class="pre">Ok(T)</span></code>, or an expected module failure,
+<code class="docutils literal notranslate"><span class="pre">Err(BskError)</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="configuration-getters-setters-and-validation">
+<h2>Configuration Getters, Setters, and Validation<a class="headerlink" href="#configuration-getters-setters-and-validation" title="Link to this heading"></a></h2>
+<p>Every non-port configuration field receives generated getter and setter
+methods. For a field named <code class="docutils literal notranslate"><span class="pre">increment</span></code>, Python can use either the familiar
+property or the explicit methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">increment</span>
+
+<span class="n">module</span><span class="o">.</span><span class="n">setIncrement</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">getIncrement</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Both forms call the same guarded Rust accessor. Fixed-size arrays are copied
+and validated as complete values. Assigning the wrong number of elements
+raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> without changing the field.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">#[bsk(validate</span> <span class="pre">=</span> <span class="pre">function_name)]</span></code> when an assignment requires immediate
+validation. The named function receives the current configuration and a
+borrowed proposed value:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[bsk(validate = validate_gain)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">K</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span>
+
+<span class="k">fn</span><span class="w"> </span><span class="nf">validate_gain</span><span class="p">(</span>
+<span class="w">    </span><span class="n">_config</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">MyModuleConfig</span><span class="p">,</span>
+<span class="w">    </span><span class="n">proposed_gain</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">f64</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">proposed_gain</span><span class="p">.</span><span class="n">is_finite</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">*</span><span class="n">proposed_gain</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">BskError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">"K must be finite and positive"</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The generated setter calls the validator before assignment. Returning
+<code class="docutils literal notranslate"><span class="pre">Err(BskError)</span></code> raises Python <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> and preserves the previous
+value. The first argument provides the current configuration when checks need
+to involve other fields.</p>
+<p>Module code can still update <code class="docutils literal notranslate"><span class="pre">self.K</span></code> directly inside Rust. Such internal
+assignments do not call the external setter. Retain appropriate reset-time
+validation for required values, relationships involving several fields, and
+configuration that may be changed internally.</p>
+<p>Data arriving through an input message also does not pass through a
+configuration setter. Validate such data after reading it in <code class="docutils literal notranslate"><span class="pre">reset</span></code> or
+<code class="docutils literal notranslate"><span class="pre">update</span></code>. For example, <a class="reference internal" href="../../Documentation/fswAlgorithms/attControl/mrpPDRust/mrpPDRust.html#mrppdrust"><span class="std std-ref">Rust Module: mrpPDRust</span></a> validates its message-delivered
+spacecraft inertia during reset.</p>
+</section>
+<section id="module-lifecycle">
+<h2>Module Lifecycle<a class="headerlink" href="#module-lifecycle" title="Link to this heading"></a></h2>
+<p>The generated wrapper provides <code class="docutils literal notranslate"><span class="pre">SelfInit()</span></code>, <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> to Basilisk. The Rust implementation supplies these
+<code class="docutils literal notranslate"><span class="pre">BskModule</span></code> methods:</p>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">init(state)</span> <span class="pre">-&gt;</span> <span class="pre">BskResult&lt;()&gt;</span></code></dt><dd><p>Runs once while Rust constructs the module, before Python configures it.
+Override it to set non-zero configuration defaults or initial private
+state. Rust first initializes every configuration and state field through
+its <code class="docutils literal notranslate"><span class="pre">Default</span></code> implementation. The default <code class="docutils literal notranslate"><span class="pre">init</span></code> returns <code class="docutils literal notranslate"><span class="pre">Ok(())</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Default</span></code> provides the familiar initial values for primitive
+configuration fields: numeric fields start at zero, booleans at <code class="docutils literal notranslate"><span class="pre">false</span></code>,
+arrays are initialized element-by-element, and message ports start empty.
+Custom Rust-owned state uses its own <code class="docutils literal notranslate"><span class="pre">Default</span></code> implementation and may
+therefore begin with non-zero values, allocated collections, strings, or
+enum variants. Use <code class="docutils literal notranslate"><span class="pre">init</span></code> for any non-zero Python-visible configuration
+defaults that should be applied before the user configures the module.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">reset(state,</span> <span class="pre">context,</span> <span class="pre">current_sim_nanos)</span> <span class="pre">-&gt;</span> <span class="pre">BskResult&lt;Outputs&gt;</span></code></dt><dd><p>Runs at simulation start and on every Basilisk <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>. Use it for
+parameter validation and private-state reset. The default returns an
+<code class="docutils literal notranslate"><span class="pre">Outputs</span></code> value containing <code class="docutils literal notranslate"><span class="pre">None</span></code> for every port and therefore does not
+publish during reset. Override it to return <code class="docutils literal notranslate"><span class="pre">Some(payload)</span></code> for any port
+that requires an explicit reset value.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">update(state,</span> <span class="pre">context,</span> <span class="pre">inputs,</span> <span class="pre">current_sim_nanos)</span> <span class="pre">-&gt;</span> <span class="pre">BskResult&lt;Outputs&gt;</span></code></dt><dd><p>Runs on each task update. It receives message values through <code class="docutils literal notranslate"><span class="pre">inputs</span></code> and
+selects output messages through <code class="docutils literal notranslate"><span class="pre">outputs</span></code>. The generated wrapper performs
+the actual message reads and writes. <code class="docutils literal notranslate"><span class="pre">update</span></code> has no default and must be
+implemented.</p>
+</dd>
+</dl>
+<p>If <code class="docutils literal notranslate"><span class="pre">reset</span></code> or <code class="docutils literal notranslate"><span class="pre">update</span></code> returns <code class="docutils literal notranslate"><span class="pre">Err(BskError::new(&quot;...&quot;))</span></code>, the wrapper
+raises the normal Python <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> after Rust returns. No output
+message is written for the failed lifecycle call.</p>
+</section>
+<section id="unused-lifecycle-parameters">
+<h2>Unused Lifecycle Parameters<a class="headerlink" href="#unused-lifecycle-parameters" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">BskModule</span></code> trait fixes the lifecycle method signatures.  Keep an unused
+argument in the implementation and prefix its binding with an underscore to
+tell the Rust compiler that it is intentionally unused:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">fn</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
+<span class="w">    </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span>
+<span class="w">    </span><span class="n">_state</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="bp">Self</span><span class="p">::</span><span class="n">State</span><span class="p">,</span>
+<span class="w">    </span><span class="n">_context</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">BskContext</span><span class="o">&lt;'</span><span class="nb">_</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">_current_sim_nanos</span><span class="p">:</span><span class="w"> </span><span class="kt">u64</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="p">::</span><span class="n">default</span><span class="p">())</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Use a descriptive underscore-prefixed name instead of a bare <code class="docutils literal notranslate"><span class="pre">_</span></code> so the
+argument’s purpose remains clear.  Remove the underscore if the implementation
+later uses the value.</p>
+</section>
+<section id="message-ports-and-values">
+<h2>Message Ports and Values<a class="headerlink" href="#message-ports-and-values" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">bsk-messages</span></code> provides a Rust value type for each built-in Basilisk message.
+For example, the Rust <code class="docutils literal notranslate"><span class="pre">AttGuidMsg</span></code> corresponds to the familiar
+<code class="docutils literal notranslate"><span class="pre">AttGuidMsgPayload</span></code> data. A port uses one of two generic types:</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Rust ports use Basilisk’s generated C message interfaces, such as
+<code class="docutils literal notranslate"><span class="pre">AttGuidMsg_C</span></code>; Rust does not bind directly to the C++
+<code class="docutils literal notranslate"><span class="pre">Message&lt;Payload&gt;</span></code> classes. This does not prevent C++ interoperability.
+A Rust port can connect to a C or C++ module port with the same payload
+type, just as existing C and C++ Basilisk modules connect to each other.
+In Rust source, always declare ports with <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> from <code class="docutils literal notranslate"><span class="pre">bsk-messages</span></code>.</p>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">MsgReader&lt;AttGuidMsg&gt;</span></code></dt><dd><p>An input port that reads an <code class="docutils literal notranslate"><span class="pre">AttGuidMsg</span></code> value.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;CmdTorqueBodyMsg&gt;</span></code></dt><dd><p>An output port that writes a <code class="docutils literal notranslate"><span class="pre">CmdTorqueBodyMsg</span></code> value.</p>
+</dd>
+</dl>
+<p>The port type declares its direction: <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> is an input and
+<code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> is an output. Required readers and all writers need no port
+annotation. Add <code class="docutils literal notranslate"><span class="pre">#[bsk(optional)]</span></code> only when an input may be unconnected:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="sd">/// [-] Required attitude input</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">navAttInMsg</span><span class="p">:</span><span class="w"> </span><span class="nc">MsgReader</span><span class="o">&lt;</span><span class="n">NavAttMsg</span><span class="o">&gt;</span><span class="p">,</span>
+
+<span class="sd">/// [Nm] Optional disturbance estimate</span>
+<span class="cp">#[bsk(optional)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">disturbanceInMsg</span><span class="p">:</span><span class="w"> </span><span class="nc">MsgReader</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">,</span>
+
+<span class="sd">/// [Nm] Commanded body torque</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">cmdTorqueOutMsg</span><span class="p">:</span><span class="w"> </span><span class="nc">MsgWriter</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>A required input causes <code class="docutils literal notranslate"><span class="pre">Reset</span></code> or <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> to fail with
+<code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> when it is not connected. The generated input field for an
+optional port has type <code class="docutils literal notranslate"><span class="pre">Option&lt;Msg&gt;</span></code>: it is <code class="docutils literal notranslate"><span class="pre">Some(value)</span></code> when connected
+and <code class="docutils literal notranslate"><span class="pre">None</span></code> when unconnected.</p>
+<p>The generated input and output structs use the same field names as the ports.
+Any number of inputs and outputs is supported, and declaration order does not
+control message routing. Each output field has type <code class="docutils literal notranslate"><span class="pre">Option&lt;Msg&gt;</span></code>:
+<code class="docutils literal notranslate"><span class="pre">Some(payload)</span></code> publishes that port and <code class="docutils literal notranslate"><span class="pre">None</span></code> leaves it unchanged for the
+current lifecycle call.</p>
+<section id="writing-output-messages">
+<h3>Writing Output Messages<a class="headerlink" href="#writing-output-messages" title="Link to this heading"></a></h3>
+<p>Rust module logic returns message payload values in its generated <code class="docutils literal notranslate"><span class="pre">Outputs</span></code>
+struct. It does not call <code class="docutils literal notranslate"><span class="pre">MsgWriter</span></code> or fill in a Basilisk message header
+directly. Each returned field is matched by name to the corresponding
+<code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> configuration field. For example, the return value</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="nb">Ok</span><span class="p">(</span><span class="n">RustModuleTemplateOutputs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dataOutMsg</span><span class="p">:</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">data_out_msg</span><span class="p">),</span>
+<span class="w">    </span><span class="n">dataOutMsgs</span><span class="p">:</span><span class="w"> </span><span class="nc">data_out_msgs</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="nb">Some</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>writes <code class="docutils literal notranslate"><span class="pre">data_out_msg</span></code> to <code class="docutils literal notranslate"><span class="pre">dataOutMsg</span></code> and each wrapped element of
+<code class="docutils literal notranslate"><span class="pre">data_out_msgs</span></code> to the same-index element of <code class="docutils literal notranslate"><span class="pre">dataOutMsgs</span></code>. Return <code class="docutils literal notranslate"><span class="pre">None</span></code>
+for any individual field or array element that should not publish. Additional
+output ports are handled by adding their named optional payloads to the same
+generated output struct. <code class="docutils literal notranslate"><span class="pre">Outputs::default()</span></code> sets every field and array
+element to <code class="docutils literal notranslate"><span class="pre">None</span></code>, which is useful when a lifecycle call publishes nothing.</p>
+<p>After <code class="docutils literal notranslate"><span class="pre">reset</span></code> or <code class="docutils literal notranslate"><span class="pre">update</span></code> returns <code class="docutils literal notranslate"><span class="pre">Ok(...)</span></code>, the generated lifecycle
+code publishes each selected <code class="docutils literal notranslate"><span class="pre">Some(payload)</span></code> output and completes its
+message header automatically:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">moduleID</span></code> is the unique ID assigned when the Python/C++ module wrapper is
+constructed. Every output published by that module receives this ID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeWritten</span></code> is the <code class="docutils literal notranslate"><span class="pre">current_sim_nanos</span></code> value for that <code class="docutils literal notranslate"><span class="pre">Reset</span></code> or
+<code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> call [ns]. All outputs published by one lifecycle call
+receive the same timestamp.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">isWritten</span></code> is set to true by the normal Basilisk C message write
+interface.</p></li>
+</ul>
+<p>Thus, these header values do not appear in the Rust <code class="docutils literal notranslate"><span class="pre">Outputs</span></code> value and the
+module developer should not set them. <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code> initializes the output
+ports but does not publish payloads. A lifecycle call that returns <code class="docutils literal notranslate"><span class="pre">Err(...)</span></code>
+does not write any output. A successful call may publish all outputs, only a
+subset, or none. A skipped port retains its previous payload and message-header
+state.</p>
+</section>
+<section id="fixed-size-arrays-of-message-ports">
+<h3>Fixed-Size Arrays of Message Ports<a class="headerlink" href="#fixed-size-arrays-of-message-ports" title="Link to this heading"></a></h3>
+<p>Use a Rust array when a module has a fixed number of ports with the same
+message type. The array length is part of the module interface:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="sd">/// [-] Required navigation inputs</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">navAttInMsgs</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">MsgReader</span><span class="o">&lt;</span><span class="n">NavAttMsg</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+
+<span class="sd">/// [-] Optional navigation inputs</span>
+<span class="cp">#[bsk(optional)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">optionalNavAttInMsgs</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">MsgReader</span><span class="o">&lt;</span><span class="n">NavAttMsg</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+
+<span class="sd">/// [Nm] Commanded body torques</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">cmdTorqueOutMsgs</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">MsgWriter</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span>
+</pre></div>
+</div>
+<p>The generated lifecycle value fields preserve the same length. In this
+example, <code class="docutils literal notranslate"><span class="pre">inputs.navAttInMsgs</span></code> has type <code class="docutils literal notranslate"><span class="pre">[NavAttMsg;</span> <span class="pre">2]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">inputs.optionalNavAttInMsgs</span></code> has type <code class="docutils literal notranslate"><span class="pre">[Option&lt;NavAttMsg&gt;;</span> <span class="pre">2]</span></code>, and the
+output field has type <code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsgs:</span> <span class="pre">[Option&lt;CmdTorqueBodyMsg&gt;;</span> <span class="pre">2]</span></code>.
+Every element of a required input array must be connected. An unconnected
+required element reports its array index in the resulting <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.</p>
+<p>Process and return the arrays with normal Rust array operations:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="n">cmd_torques</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inputs</span><span class="p">.</span><span class="n">navAttInMsgs</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">navigation</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CmdTorqueBodyMsg</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">torqueRequestBody</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">navigation</span><span class="p">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="w">            </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">navigation</span><span class="p">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="w">            </span><span class="o">-</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">navigation</span><span class="p">.</span><span class="n">sigma_BN</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nb">Ok</span><span class="p">(</span><span class="n">MyModuleOutputs</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cmdTorqueOutMsgs</span><span class="p">:</span><span class="w"> </span><span class="nc">cmd_torques</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="nb">Some</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Construct the <code class="docutils literal notranslate"><span class="pre">[Option&lt;MessageType&gt;;</span> <span class="pre">N]</span></code> value with a literal array,
+<code class="docutils literal notranslate"><span class="pre">core::array::from_fn</span></code>, or the array <code class="docutils literal notranslate"><span class="pre">map</span></code> method. Each element is
+independent; for example, <code class="docutils literal notranslate"><span class="pre">[Some(first_torque),</span> <span class="pre">None]</span></code> publishes only array
+element zero.</p>
+<p>Python returns a list containing the fixed set of normal message interfaces:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">input_port</span><span class="p">,</span> <span class="n">source_message</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">navAttInMsgs</span><span class="p">,</span> <span class="n">source_messages</span><span class="p">):</span>
+    <span class="n">input_port</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source_message</span><span class="p">)</span>
+
+<span class="n">output_recorders</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">output_port</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">output_port</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">cmdTorqueOutMsgs</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Each list element is a live port, so calling <code class="docutils literal notranslate"><span class="pre">subscribeTo()</span></code> or
+<code class="docutils literal notranslate"><span class="pre">recorder()</span></code> affects the module directly. The property cannot be assigned.
+Adding, removing, or replacing entries in the returned Python list only
+changes that temporary list, not the module’s fixed set of ports.</p>
+<p>An optional input array can represent a variable number of connected inputs
+up to a fixed maximum, as a C module commonly does with a fixed-capacity
+message array. Its lifecycle value is an array of <code class="docutils literal notranslate"><span class="pre">Option&lt;Msg&gt;</span></code> values, so
+the Rust implementation can process the connected <code class="docutils literal notranslate"><span class="pre">Some</span></code> entries and skip
+the unconnected <code class="docutils literal notranslate"><span class="pre">None</span></code> entries.</p>
+<p>Only fixed-size message-port arrays are supported in the Python-visible
+configuration. A Rust <code class="docutils literal notranslate"><span class="pre">Vec&lt;MsgReader&lt;T&gt;&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">Vec&lt;MsgWriter&lt;T&gt;&gt;</span></code> does not
+have a stable C layout and is rejected. The dynamically sized C++
+<code class="docutils literal notranslate"><span class="pre">std::vector</span></code> message pattern does not yet have a Rust-module equivalent.</p>
+</section>
+<section id="adding-or-changing-a-basilisk-message">
+<h3>Adding or Changing a Basilisk Message<a class="headerlink" href="#adding-or-changing-a-basilisk-message" title="Link to this heading"></a></h3>
+<p>After adding or editing a Basilisk message payload, rerun the build with Rust
+module support enabled:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python conanfile.py --rustModules True</span>
+</pre></div>
+</div>
+<p>This first regenerates the normal C message interfaces and then generates the
+matching Rust bindings in Cargo’s build directory. No separate Rust generator
+must be run, and the generated bindings are not committed.</p>
+<p>When Rust modules are disabled, the Rust binding generator does not run.</p>
+</section>
+</section>
+<section id="python-visible-configuration">
+<h2>Python-Visible Configuration<a class="headerlink" href="#python-visible-configuration" title="Link to this heading"></a></h2>
+<p>The marked configuration struct is the equivalent of a C module config struct
+or the public fields of a C++ module. It can contain:</p>
+<ul class="simple">
+<li><p>scalar integer, floating-point, and Boolean parameters;</p></li>
+<li><p>fixed-size arrays such as <code class="docutils literal notranslate"><span class="pre">[f64;</span> <span class="pre">3]</span></code> and <code class="docutils literal notranslate"><span class="pre">[[f64;</span> <span class="pre">3];</span> <span class="pre">3]</span></code>;</p></li>
+<li><p>nested, by-value <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> parameter structs that derive
+<code class="docutils literal notranslate"><span class="pre">bsk_build::BskConfigValue</span></code>; and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> ports, individually or in fixed-size
+arrays.</p></li>
+</ul>
+<p>Every configuration field must implement Rust’s <code class="docutils literal notranslate"><span class="pre">Default</span></code> behavior because
+Rust constructs the complete module before calling <code class="docutils literal notranslate"><span class="pre">init</span></code>. Every non-port
+field must also implement <code class="docutils literal notranslate"><span class="pre">BskConfigValue</span></code>. This safety contract restricts
+the generated raw-copy boundary to types with matching Rust and C++ layouts,
+valid bit patterns, and no Rust ownership or borrowed references.</p>
+<p>Basilisk provides <code class="docutils literal notranslate"><span class="pre">BskConfigValue</span></code> for Boolean, fixed-width integer, and
+floating-point scalars and recursively for fixed-size arrays. A type alias for
+one of these types inherits the implementation. Module-defined nested structs
+must use plain <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> and derive <code class="docutils literal notranslate"><span class="pre">Clone</span></code>, <code class="docutils literal notranslate"><span class="pre">Copy</span></code>, <code class="docutils literal notranslate"><span class="pre">Default</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">bsk_build::BskConfigValue</span></code>. The derive verifies that the struct and all of
+its fields satisfy the same boundary contract.</p>
+<p>Configuration fields cannot contain raw pointers, Rust enums, dynamically
+sized strings, <code class="docutils literal notranslate"><span class="pre">Vec</span></code> collections, references, characters, or other owning
+Rust types. These types do not have a safe, general Python/C representation.
+Put them in private Rust state instead. Do not manually implement the unsafe
+<code class="docutils literal notranslate"><span class="pre">BskConfigValue</span></code> trait merely to bypass a compiler error; a manual
+implementation assumes responsibility for every cross-language layout and
+bit-validity guarantee enforced by the derive.</p>
+<p>Nested parameters can be grouped by value:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[repr(C)]</span>
+<span class="cp">#[derive(Clone, Copy, Default, bsk_build::BskConfigValue)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ControllerGains</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="sd">/// [Nm] Proportional gain</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">K</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span>
+<span class="w">    </span><span class="sd">/// [Nm/(rad/s)] Rate gain</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">P</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="cp">#[bsk_build::module]</span>
+<span class="cp">#[repr(C)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">MyModuleConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="sd">/// [-] Controller parameters</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">gains</span><span class="p">:</span><span class="w"> </span><span class="nc">ControllerGains</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// Message ports follow.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The getter returns a copy of a nested value. Modify that copy and assign the
+complete value through the setter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gains</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">gains</span>
+<span class="n">gains</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [Nm]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">gains</span> <span class="o">=</span> <span class="n">gains</span>
+</pre></div>
+</div>
+<p>Fixed-size arrays map to normal C arrays and appear as Python lists:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="sd">/// [Nm] Maximum torque on each body axis</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">maxTorques</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="kt">f64</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+<span class="sd">/// [-] Direction cosine matrix</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">dcm_BR</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="kt">f64</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">];</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">maxTorques</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># [Nm]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">dcm_BR</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>          <span class="c1"># [-]</span>
+                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Reading an array field from Python returns a copy. Reassign the list after
+changing an element:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">values</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">maxTorques</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.005</span>  <span class="c1"># [Nm]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">maxTorques</span> <span class="o">=</span> <span class="n">values</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../Documentation/moduleTemplates/rustModuleTemplate/rustModuleTemplate.html#rustmoduletemplate"><span class="std std-ref">Rust Module: rustModuleTemplate</span></a> module exercises both a nested configuration
+struct and a multidimensional fixed-size array through the complete generated
+Rust, C++, SWIG, and Python interface.</p>
+</section>
+<section id="rust-owned-private-state">
+<h2>Rust-Owned Private State<a class="headerlink" href="#rust-owned-private-state" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BskModule::State</span></code> stores implementation details that must persist between
+lifecycle calls but should not appear in Python. Unlike the configuration,
+this state never crosses the C interface and can use normal safe Rust types
+such as <code class="docutils literal notranslate"><span class="pre">Vec</span></code>, <code class="docutils literal notranslate"><span class="pre">String</span></code>, enums, and smart pointers:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[derive(Default)]</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">MyState</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">history</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">status</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span>
+<span class="w">    </span><span class="n">mode</span><span class="p">:</span><span class="w"> </span><span class="nc">InternalMode</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="cp">#[derive(Default)]</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">InternalMode</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cp">#[default]</span>
+<span class="w">    </span><span class="n">Idle</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Running</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span><span class="w"> </span><span class="n">BskModule</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">MyModuleConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyState</span><span class="p">;</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Inputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModuleInputs</span><span class="p">;</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Outputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyModuleOutputs</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span>
+<span class="w">        </span><span class="n">state</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="bp">Self</span><span class="p">::</span><span class="n">State</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_context</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">BskContext</span><span class="o">&lt;'</span><span class="nb">_</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_inputs</span><span class="p">:</span><span class="w"> </span><span class="nc">Self</span><span class="p">::</span><span class="n">Inputs</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_current_sim_nanos</span><span class="p">:</span><span class="w"> </span><span class="kt">u64</span><span class="p">,</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">BskResult</span><span class="o">&lt;</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">state</span><span class="p">.</span><span class="n">history</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="p">);</span>
+<span class="w">        </span><span class="n">state</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="s">"updated"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">state</span><span class="p">.</span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InternalMode</span><span class="p">::</span><span class="n">Running</span><span class="p">;</span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="bp">Self</span><span class="p">::</span><span class="n">Outputs</span><span class="p">::</span><span class="n">default</span><span class="p">())</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">State</span> <span class="pre">=</span> <span class="pre">();</span></code> when the module is stateless. Rust allocates and
+destroys the complete module instance, so ordinary Rust cleanup releases
+private state automatically.</p>
+</section>
+<section id="basilisk-c-utilities">
+<h2>Basilisk C Utilities<a class="headerlink" href="#basilisk-c-utilities" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">bsk-utilities</span></code> package provides safe Rust wrappers around selected
+Basilisk utilities that already have a C interface. An in-tree module enables
+the shared workspace dependency in <code class="docutils literal notranslate"><span class="pre">Cargo.toml</span></code>:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[dependencies]</span>
+<span class="n">bsk-utilities</span><span class="p">.</span><span class="n">workspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="k">[dev-dependencies]</span>
+<span class="n">bsk-utilities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"ffi-tests"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Import and call the wrappers with ordinary Rust values:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">bsk_utilities</span><span class="p">::</span><span class="n">attitude</span><span class="p">;</span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attitude</span><span class="p">::</span><span class="n">dcm_to_mrp</span><span class="p">(</span><span class="n">dcm</span><span class="p">);</span><span class="w"> </span><span class="c1">// [-]</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">wrapped_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attitude</span><span class="p">::</span><span class="n">wrap_to_pi</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span><span class="w"> </span><span class="c1">// [rad]</span>
+</pre></div>
+</div>
+<p>The safe wrappers convert fixed-size Rust arrays to the pointers expected by
+the existing C functions. The Basilisk build links their implementation from
+<code class="docutils literal notranslate"><span class="pre">ArchitectureUtilities</span></code>. The <code class="docutils literal notranslate"><span class="pre">ffi-tests</span></code> development feature compiles the
+same C sources into Rust test executables, allowing <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code> to execute
+utility-backed module code without a configured CMake build. Module code
+should not call functions in the generated <code class="docutils literal notranslate"><span class="pre">bsk_utilities::raw</span></code> module
+directly. See
+<a class="reference internal" href="../../Documentation/moduleTemplates/rustModuleTemplate/rustModuleTemplate.html#rustmoduletemplate"><span class="std std-ref">Rust Module: rustModuleTemplate</span></a> for an in-tree module that calls a safe utility
+wrapper from its update method.</p>
+</section>
+<section id="linear-algebra-with-nalgebra">
+<h2>Linear Algebra with <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code><a class="headerlink" href="#linear-algebra-with-nalgebra" title="Link to this heading"></a></h2>
+<p>Basilisk’s Rust workspace provides
+<a class="reference external" href="https://nalgebra.rs/">nalgebra</a> for vector and matrix operations. In-tree
+modules select the shared, reviewed version with
+<code class="docutils literal notranslate"><span class="pre">nalgebra.workspace</span> <span class="pre">=</span> <span class="pre">true</span></code> when they need linear algebra:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[dependencies]</span>
+<span class="n">nalgebra</span><span class="p">.</span><span class="n">workspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</pre></div>
+</div>
+<p>This is the Rust equivalent of using Eigen in a C++ Basilisk module. Common
+fixed-size types include <code class="docutils literal notranslate"><span class="pre">Vector3&lt;f64&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">Matrix3&lt;f64&gt;</span></code>:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">nalgebra</span><span class="p">::{</span><span class="n">Matrix3</span><span class="p">,</span><span class="w"> </span><span class="n">Vector3</span><span class="p">};</span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">inertia</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Matrix3</span><span class="p">::</span><span class="n">from_row_slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vehicle_config</span><span class="p">.</span><span class="n">ISCPntB_B</span><span class="p">);</span><span class="w"> </span><span class="c1">// [kg*m^2]</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">omega</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Vector3</span><span class="p">::</span><span class="n">from_column_slice</span><span class="p">(</span><span class="o">&amp;</span><span class="n">guidance</span><span class="p">.</span><span class="n">omega_BR_B</span><span class="p">);</span><span class="w"> </span><span class="c1">// [rad/s]</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">angular_momentum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inertia</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">omega</span><span class="p">;</span><span class="w"> </span><span class="c1">// [N*m*s]</span>
+</pre></div>
+</div>
+<p>Keep <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code> types inside lifecycle methods or Rust-owned private state.
+Python-visible configuration and Basilisk C message payloads must retain their
+C-compatible array types. Convert an array to a matrix with
+<code class="docutils literal notranslate"><span class="pre">Matrix3::from_row_slice</span></code> because Basilisk stores matrix payload fields in
+row-major order. Convert a result back to an array when constructing an output
+message:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="n">torque</span><span class="p">:</span><span class="w"> </span><span class="nc">Vector3</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calculate_torque</span><span class="p">();</span><span class="w"> </span><span class="c1">// [N*m]</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CmdTorqueBodyMsg</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">torqueRequestBody</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">torque</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">torque</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">torque</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../../Documentation/fswAlgorithms/attControl/mrpPDRust/mrpPDRust.html#mrppdrust"><span class="std std-ref">Rust Module: mrpPDRust</span></a> for a complete controller that uses <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code> while
+keeping its generated C/Python interface unchanged.</p>
+</section>
+<section id="simulation-time">
+<h2>Simulation Time<a class="headerlink" href="#simulation-time" title="Link to this heading"></a></h2>
+<p>Basilisk passes the current simulation time to <code class="docutils literal notranslate"><span class="pre">reset()</span></code> and <code class="docutils literal notranslate"><span class="pre">update()</span></code> as
+the <code class="docutils literal notranslate"><span class="pre">u64</span></code> value <code class="docutils literal notranslate"><span class="pre">current_sim_nanos</span></code> in nanoseconds.  Convert an absolute
+timestamp to seconds with <code class="docutils literal notranslate"><span class="pre">NANO2SEC</span></code>:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">bsk_messages</span><span class="p">::</span><span class="n">BskError</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">bsk_utilities</span><span class="p">::</span><span class="n">constants</span><span class="p">::</span><span class="n">NANO2SEC</span><span class="p">;</span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">absolute_time_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_sim_nanos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">NANO2SEC</span><span class="p">;</span><span class="w"> </span><span class="c1">// [s]</span>
+</pre></div>
+</div>
+<p>This conversion remains finite during simulations longer than
+<span class="math notranslate nohighlight">\(2^{53}\)</span> nanoseconds, approximately 104 days, although an <code class="docutils literal notranslate"><span class="pre">f64</span></code> can no
+longer preserve every individual nanosecond at that scale.</p>
+<p>For a relative time, subtract the integer timestamps before converting.  Use
+<code class="docutils literal notranslate"><span class="pre">checked_sub()</span></code> when the stored timestamp is expected to precede the current
+time:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span><span class="w"> </span><span class="n">elapsed_nanos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_sim_nanos</span>
+<span class="w">    </span><span class="p">.</span><span class="n">checked_sub</span><span class="p">(</span><span class="n">previous_sim_nanos</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ok_or_else</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="n">BskError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">"simulation time moved backwards"</span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
+<span class="kd">let</span><span class="w"> </span><span class="n">elapsed_time_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">elapsed_nanos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">f64</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">NANO2SEC</span><span class="p">;</span><span class="w"> </span><span class="c1">// [s]</span>
+</pre></div>
+</div>
+<p>Performing the subtraction first retains the precision of a small elapsed
+interval even when the absolute simulation time is large.  Store the previous
+timestamp as a <code class="docutils literal notranslate"><span class="pre">u64</span></code> and update it only after the elapsed-time calculation.</p>
+</section>
+<section id="runtime-context-and-logging">
+<h2>Runtime Context and Logging<a class="headerlink" href="#runtime-context-and-logging" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BskContext</span></code> gives each lifecycle call a temporary view of Basilisk runtime
+information and services:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">module_id()</span></code> returns the module identifier;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_tag()</span></code> returns the Python-visible model tag;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">call_counts()</span></code> returns the update-call count;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rng_seed()</span></code> returns the module random-number seed; and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logger()</span></code> returns the Basilisk logger.</p></li>
+</ul>
+<p>The context is borrowed only for the current call. Do not store references
+obtained from it in the configuration or private state.</p>
+<p>Use the logger for nonfatal diagnostics:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="n">context</span><span class="p">.</span><span class="n">logger</span><span class="p">().</span><span class="n">debug</span><span class="p">(</span><span class="s">"Starting update."</span><span class="p">);</span>
+<span class="n">context</span><span class="p">.</span><span class="n">logger</span><span class="p">().</span><span class="n">info</span><span class="p">(</span><span class="s">"Module parameters are valid."</span><span class="p">);</span>
+<span class="n">context</span><span class="p">.</span><span class="n">logger</span><span class="p">().</span><span class="n">warning</span><span class="p">(</span><span class="s">"Using a fallback input."</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>For an expected failure that must stop the lifecycle call, return an error:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">K</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">BskError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">"K must be positive"</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Do not deliberately use a Rust panic for validation or normal error control.
+The generated boundary catches unexpected panics so they do not unwind into
+C++. A caught panic becomes <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> and poisons that module instance
+because its private state may be partially updated. Later lifecycle calls on
+that instance fail, but Rust can still destroy it safely. An expected
+<code class="docutils literal notranslate"><span class="pre">BskError</span></code> does not poison the module.</p>
+</section>
+<section id="use-the-module-from-python">
+<h2>Use the Module from Python<a class="headerlink" href="#use-the-module-from-python" title="Link to this heading"></a></h2>
+<p>The generated wrapper is imported, configured, connected, and scheduled like
+another compiled module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">myModule</span>
+
+<span class="n">module</span> <span class="o">=</span> <span class="n">myModule</span><span class="o">.</span><span class="n">myModule</span><span class="p">()</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"myRustModule"</span>
+<span class="n">module</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.25</span>  <span class="c1"># [Nm]</span>
+<span class="n">module</span><span class="o">.</span><span class="n">attGuidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attitudeGuidanceMessage</span><span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"taskName"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Python object exposes generated properties for the marked configuration
+fields along with the normal <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> fields. Each property uses its Rust
+getter or setter. The generated <code class="docutils literal notranslate"><span class="pre">MyModuleConfig</span></code> proxy is an implementation
+detail and should not be constructed separately.</p>
+</section>
+<section id="document-the-module">
+<h2>Document the Module<a class="headerlink" href="#document-the-module" title="Link to this heading"></a></h2>
+<p>Keep the user-facing description in <code class="docutils literal notranslate"><span class="pre">myModule.rst</span></code> and follow the same
+documentation structure used by C and C++ modules. Use the
+<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">bsk-module-io::</span></code> directive for the message diagram and table. The
+<a class="reference internal" href="../../Documentation/moduleTemplates/rustModuleTemplate/rustModuleTemplate.html#rustmoduletemplate"><span class="std std-ref">Rust Module: rustModuleTemplate</span></a> documentation provides a complete example.</p>
+<p>Rust uses <code class="docutils literal notranslate"><span class="pre">///</span></code> for documentation attached to the following field, struct,
+or function. It uses <code class="docutils literal notranslate"><span class="pre">//!</span></code> for documentation about the containing source
+module. Follow Basilisk’s unit-first convention:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="sd">/// [m] Inertial position vector</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">position</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="kt">f64</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+<span class="sd">/// [m/s] Inertial velocity vector</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">velocity</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="kt">f64</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+<span class="sd">/// [-] Dimensionless gain</span>
+<span class="k">pub</span><span class="w"> </span><span class="n">gain</span><span class="p">:</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">cbindgen</span></code> copies these field comments into the generated C header, and the
+normal Doxygen/Breathe pipeline includes the generated module configuration
+API in the Sphinx page.</p>
+<p>Build Basilisk with Rust support before generating documentation:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 conanfile.py --rustModules True</span>
+<span class="go">cd docs</span>
+<span class="go">make html</span>
+</pre></div>
+</div>
+<p>The generated HTML is stored under <code class="docutils literal notranslate"><span class="pre">docs/build/html</span></code>. The Rust API section
+is omitted when its generated header is unavailable.</p>
+</section>
+<section id="test-the-module">
+<h2>Test the Module<a class="headerlink" href="#test-the-module" title="Link to this heading"></a></h2>
+<p>Every in-tree Rust module must have the normal Basilisk Python unit test. Add
+Rust-native tests when they provide useful direct coverage of private state,
+validation, numerical helpers, or other internal Rust behavior.</p>
+<section id="rust-native-tests">
+<h3>Rust-Native Tests<a class="headerlink" href="#rust-native-tests" title="Link to this heading"></a></h3>
+<p>Place <code class="docutils literal notranslate"><span class="pre">#[cfg(test)]</span></code> tests in <code class="docutils literal notranslate"><span class="pre">myModule.rs</span></code> or in the package’s Rust test
+layout. These tests do not link the compiled Basilisk library, so that library
+does not need to be built with <code class="docutils literal notranslate"><span class="pre">--rustModules</span> <span class="pre">True</span></code>. However,
+<code class="docutils literal notranslate"><span class="pre">bsk-messages</span></code> generates its Rust bindings from the normal C-message headers
+under <code class="docutils literal notranslate"><span class="pre">dist3/autoSource/cMsgCInterface</span></code>. Configure Basilisk at least once to
+generate those headers; either a normal or Rust-enabled configuration works:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 conanfile.py</span>
+</pre></div>
+</div>
+<p>Then run the Rust-native tests from the module directory:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cargo test --locked</span>
+</pre></div>
+</div>
+<p>The module attribute omits generated C lifecycle entry points during
+<code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">test</span></code>, so these tests can call <code class="docutils literal notranslate"><span class="pre">init</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, and <code class="docutils literal notranslate"><span class="pre">update</span></code>
+without linking Basilisk.</p>
+<p>To test code that calls <code class="docutils literal notranslate"><span class="pre">context.logger()</span></code>, add the test logger feature:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[dev-dependencies]</span>
+<span class="n">bsk-build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"../../../architecture/rust/bsk_build"</span><span class="p">,</span>
+<span class="w">              </span><span class="n">features</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"test_logger"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Rust-native logger calls then print to <code class="docutils literal notranslate"><span class="pre">stderr</span></code> instead of calling Basilisk
+C symbols. Use <code class="docutils literal notranslate"><span class="pre">BskModuleRuntime::for_testing()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">BskContext::for_testing()</span></code> to create a context, as demonstrated by
+<code class="docutils literal notranslate"><span class="pre">rustModuleTemplate.rs</span></code>.</p>
+</section>
+<section id="python-unit-test">
+<h3>Python Unit Test<a class="headerlink" href="#python-unit-test" title="Link to this heading"></a></h3>
+<p>Add <code class="docutils literal notranslate"><span class="pre">_UnitTest/test_myModule.py</span></code> to validate the public Python attributes,
+message connections, lifecycle behavior, and numerical results:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 -m pytest src/fswAlgorithms/&lt;category&gt;/myModule/_UnitTest -v</span>
+</pre></div>
+</div>
+<p>Guard the test before importing its generated wrapper. This skips the test in
+a Rust-disabled Basilisk build, while still reporting a missing wrapper as a
+failure when Rust support was requested:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+
+<span class="n">rustModulesEnabled</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"rustModules"</span><span class="p">)</span>
+<span class="n">pytestmark</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">rustModulesEnabled</span><span class="p">,</span>
+    <span class="n">reason</span><span class="o">=</span><span class="s2">"Requires Basilisk built with --rustModules True"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">rustModulesEnabled</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">myModule</span>
+</pre></div>
+</div>
+<p>After a Rust-enabled Basilisk build, the normal <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">run_all_test.py</span></code>
+workflow includes the module’s Python test. The same command also runs all
+Cargo workspace tests when <code class="docutils literal notranslate"><span class="pre">cargo</span></code> is installed and available on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.
+It reports that Rust tests were skipped, without failing, when Rust support is
+disabled or <code class="docutils literal notranslate"><span class="pre">cargo</span></code> is not available. The Cargo tests exercise the Rust
+packages directly without linking the generated Basilisk module library, but
+they still require the C-message headers produced by the Rust-enabled
+Basilisk configuration performed before <code class="docutils literal notranslate"><span class="pre">run_all_test.py</span></code>.</p>
+</section>
+<section id="contributor-checks">
+<h3>Contributor Checks<a class="headerlink" href="#contributor-checks" title="Link to this heading"></a></h3>
+<p>Before submitting a Rust module, run the complete workspace checks from the
+repository root:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">cargo fmt --all --check --manifest-path src/Cargo.toml</span>
+<span class="go">cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml</span>
+<span class="go">cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml</span>
+<span class="go">cargo clippy --workspace --all-targets --all-features --locked \</span>
+<span class="go">    --manifest-path src/Cargo.toml -- -D warnings</span>
+</pre></div>
+</div>
+<p>The repository’s local pre-commit hook runs the same Rust formatting check
+whenever Rust source is changed. The local hook reports a skip instead of
+failing when Cargo or <code class="docutils literal notranslate"><span class="pre">rustfmt</span></code> is not installed, keeping Rust optional for
+non-Rust development. Pull-request CI installs and always runs the formatter,
+checks the minimum supported Rust version, and verifies that generated
+language boundaries retain panic containment. Follow the
+<a class="reference internal" href="../../Support/Developer/bskModuleCheckoutList.html#bskmodulecheckoutlist"><span class="std std-ref">Basilisk Module Checkout List</span></a> for the remaining module review requirements.</p>
+</section>
+</section>
+<section id="current-limitations">
+<h2>Current Limitations<a class="headerlink" href="#current-limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Rust module support is experimental, and its generated interface may change
+between Basilisk releases.</p></li>
+<li><p>Python-visible configuration is limited to supported C-compatible types.
+Put dynamic Rust data in <code class="docutils literal notranslate"><span class="pre">BskModule::State</span></code>.</p></li>
+<li><p>Arbitrary Rust methods are not exported to Python. Configuration fields
+receive generated getters, setters, and properties; other public methods
+remain the standard Basilisk lifecycle and message interfaces.</p></li>
+<li><p>The Rust utility bindings cover C-compatible Basilisk utilities and
+constants. C++-only utilities require a C-compatible wrapper before Rust can
+use them; use <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code> for native Rust vector and matrix operations.</p></li>
+<li><p>After adding or changing a message payload, rerun
+<code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">conanfile.py</span> <span class="pre">--rustModules</span> <span class="pre">True</span></code> to regenerate the matching Rust
+bindings in the build directory.</p></li>
+</ul>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading"></a></h2>
+<p>The generated ABI is described in
+<a class="reference download internal" download="" href="../../_downloads/784af5d4ba685eac11d1909170afc275/bsk_rust_module.h"><code class="xref download docutils literal notranslate"><span class="pre">bsk_rust_module.h</span></code></a>.
+The Rust runtime and generation API are documented in
+<code class="docutils literal notranslate"><span class="pre">src/architecture/rust/bsk_build/src/lib.rs</span></code>. For a working implementation,
+configuration, Python test, and Rust-native tests, see
+<a class="reference internal" href="../../Documentation/moduleTemplates/rustModuleTemplate/rustModuleTemplate.html#rustmoduletemplate"><span class="std std-ref">Rust Module: rustModuleTemplate</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cppModules/cppModules-5.html" class="btn btn-neutral float-left" title="C++ Module with C-Wrapped Output Message" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyModules.html" class="btn btn-neutral float-right" title="Making Python Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

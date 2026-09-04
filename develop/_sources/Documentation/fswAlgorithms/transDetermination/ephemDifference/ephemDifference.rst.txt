@@ -1,0 +1,39 @@
+.. _ephemDifference:
+
+:module-type:`C` Module: ephemDifference
+========================================
+
+Executive Summary
+-----------------
+
+This module reads in the position and velocity of multiple orbital bodies and outputs position and velocity of each body relative to a single other orbital body position and velocity.  Up to 10 input ephemeris messages can be connected.
+
+More information can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/transDetermination/ephemDifference/_Documentation/Basilisk-ephemDifference-2019-03-27.pdf>`.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. _ModuleIO_ephemDifference:
+
+
+.. bsk-module-io:: ephemDifference
+    :caption: Module I/O Messages
+
+    input ephBaseInMsg EphemerisMsgPayload
+        base ephemeris input message name
+    input ephInMsg EphemerisMsgPayload
+        ephemeris input message to be converted, stored in ``changeBodies[i]``
+    output ephOutMsg EphemerisMsgPayload
+        converted ephemeris output message, stored in ``changeBodies[i]``
+
+
+----
+
+.. autodoxygenfile:: ephemDifference.h
+   :project: ephemDifference
+

@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>generate_rust_licenses &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">generate_rust_licenses</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for generate_rust_licenses</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1">#</span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Generate a deterministic Rust third-party license report.</span>
+
+<span class="sd">Defaults produce the report shipped with Basilisk. SDK extension projects can</span>
+<span class="sd">override the manifest, policy, output, project name, and project-license text.</span>
+<span class="sd">The report is derived from the locked Cargo workspace dependency graph. Use</span>
+<span class="sd">``--check`` in automation to verify that the committed report is current. A</span>
+<span class="sd">normal local check skips cleanly when the pinned generator is unavailable; CI</span>
+<span class="sd">uses ``--require-tool`` so that the same condition is an error there.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<span class="n">CARGO_ABOUT_VERSION</span> <span class="o">=</span> <span class="s2">"0.9.1"</span>
+<span class="n">REPOSITORY_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">WORKSPACE_MANIFEST</span> <span class="o">=</span> <span class="n">REPOSITORY_ROOT</span> <span class="o">/</span> <span class="s2">"src"</span> <span class="o">/</span> <span class="s2">"Cargo.toml"</span>
+<span class="n">SCRIPT_DIRECTORY</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">ABOUT_CONFIG</span> <span class="o">=</span> <span class="n">SCRIPT_DIRECTORY</span> <span class="o">/</span> <span class="s2">"licenses"</span> <span class="o">/</span> <span class="s2">"about.toml"</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">ABOUT_CONFIG</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+    <span class="c1"># bsk-sdk installs the synchronized generator beside its policy file.</span>
+    <span class="n">ABOUT_CONFIG</span> <span class="o">=</span> <span class="n">SCRIPT_DIRECTORY</span> <span class="o">/</span> <span class="s2">"about.toml"</span>
+<span class="n">LICENSE_REPORT</span> <span class="o">=</span> <span class="n">REPOSITORY_ROOT</span> <span class="o">/</span> <span class="s2">"LICENSES"</span> <span class="o">/</span> <span class="s2">"RUST-THIRD-PARTY.txt"</span>
+
+
+<div class="viewcode-block" id="find_cargo_about">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.find_cargo_about">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_cargo_about</span><span class="p">(</span><span class="n">require_tool</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the pinned ``cargo-about`` executable, if available."""</span>
+    <span class="n">executable</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"cargo-about"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">executable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"cargo-about is unavailable; install it with "</span>
+            <span class="s2">"`cargo install cargo-about "</span>
+            <span class="sa">f</span><span class="s2">"--version '=</span><span class="si">{</span><span class="n">CARGO_ABOUT_VERSION</span><span class="si">}</span><span class="s2">' --locked --features cli`"</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">require_tool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping Rust license check: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"--version"</span><span class="p">],</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"cargo-about </span><span class="si">{</span><span class="n">CARGO_ABOUT_VERSION</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">, found </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'unknown version'</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">executable</span></div>
+
+
+
+<div class="viewcode-block" id="cargo_about_data">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.cargo_about_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cargo_about_data</span><span class="p">(</span>
+    <span class="n">executable</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">workspace_manifest</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">about_config</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return cargo-about's JSON report for the locked workspace."""</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"bsk-rust-licenses-"</span><span class="p">)</span> <span class="k">as</span> <span class="n">directory</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"licenses.json"</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">executable</span><span class="p">,</span>
+                <span class="s2">"generate"</span><span class="p">,</span>
+                <span class="s2">"--workspace"</span><span class="p">,</span>
+                <span class="s2">"--locked"</span><span class="p">,</span>
+                <span class="s2">"--offline"</span><span class="p">,</span>
+                <span class="s2">"--fail"</span><span class="p">,</span>
+                <span class="s2">"--manifest-path"</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">workspace_manifest</span><span class="p">),</span>
+                <span class="s2">"--config"</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">about_config</span><span class="p">),</span>
+                <span class="s2">"--format"</span><span class="p">,</span>
+                <span class="s2">"json"</span><span class="p">,</span>
+                <span class="s2">"--output-file"</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">workspace_manifest</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="third_party_licenses">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.third_party_licenses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">third_party_licenses</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Remove Basilisk workspace crates from cargo-about license entries."""</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">license_entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"licenses"</span><span class="p">]:</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">license_entry</span><span class="p">)</span>
+        <span class="n">entry</span><span class="p">[</span><span class="s2">"used_by"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"used_by"</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">"crate"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"source"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"used_by"</span><span class="p">]:</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">entries</span></div>
+
+
+
+<div class="viewcode-block" id="dependency_notices">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.dependency_notices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dependency_notices</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Collect top-level third-party ``NOTICE`` files from reported crates."""</span>
+    <span class="n">packages</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"used_by"</span><span class="p">]:</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"crate"</span><span class="p">]</span>
+            <span class="n">packages</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">package</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">package</span><span class="p">[</span><span class="s1">'version'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">package</span>
+
+    <span class="n">notices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">package_name</span><span class="p">,</span> <span class="n">package</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">packages</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="n">package_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">package</span><span class="p">[</span><span class="s2">"manifest_path"</span><span class="p">])</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">package_root</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"NOTICE"</span><span class="p">):</span>
+                <span class="n">notices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">notices</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_newlines">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.normalize_newlines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_newlines</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return ``text`` with platform-independent line endings."""</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="render_report">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.render_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">render_report</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Basilisk"</span><span class="p">,</span>
+    <span class="n">manifest_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"src/Cargo.lock"</span><span class="p">,</span>
+    <span class="n">generator_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"src/architecture/rust/generate_rust_licenses.py"</span><span class="p">,</span>
+    <span class="n">project_license</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ISC License in the repository's LICENSE file."</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Render a deterministic, human-readable third-party license report."""</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="n">third_party_licenses</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> Rust Third-Party Licenses"</span>
+    <span class="n">underline_length</span> <span class="o">=</span> <span class="mi">35</span> <span class="k">if</span> <span class="n">project_name</span> <span class="o">==</span> <span class="s2">"Basilisk"</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">title</span><span class="p">,</span>
+        <span class="s2">"="</span> <span class="o">*</span> <span class="n">underline_length</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"This file is generated from </span><span class="si">{</span><span class="n">manifest_label</span><span class="si">}</span><span class="s2"> by"</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">generator_label</span><span class="si">}</span><span class="s2">. Do not edit it by hand."</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"It covers non-development Rust dependencies used to build or included in"</span><span class="p">,</span>
+        <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2">'s native Rust modules. </span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s2"> itself remains "</span>
+            <span class="s2">"licensed under the"</span>
+        <span class="p">),</span>
+        <span class="n">project_license</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="n">heading</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">heading</span><span class="p">,</span> <span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heading</span><span class="p">),</span> <span class="s2">""</span><span class="p">,</span> <span class="s2">"Used by:"</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"used_by"</span><span class="p">]:</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"crate"</span><span class="p">]</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">package</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">package</span><span class="p">[</span><span class="s1">'version'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">""</span><span class="p">,</span> <span class="n">normalize_newlines</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"text"</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(),</span> <span class="s2">""</span><span class="p">])</span>
+
+    <span class="n">notices</span> <span class="o">=</span> <span class="n">dependency_notices</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">notices</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">"Third-Party Notices"</span><span class="p">,</span> <span class="s2">"-------------------"</span><span class="p">,</span> <span class="s2">""</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">heading</span><span class="p">,</span> <span class="n">notice</span> <span class="ow">in</span> <span class="n">notices</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">heading</span><span class="p">,</span> <span class="s2">"~"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heading</span><span class="p">),</span> <span class="s2">""</span><span class="p">,</span> <span class="n">normalize_newlines</span><span class="p">(</span><span class="n">notice</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(),</span> <span class="s2">""</span><span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span></div>
+
+
+
+<div class="viewcode-block" id="check_report">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.check_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_report</span><span class="p">(</span><span class="n">expected</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">license_report</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">LICENSE_REPORT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the committed report matches ``expected``."""</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">license_report</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">if</span> <span class="n">license_report</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="k">if</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">expected</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rust third-party license report is current: </span><span class="si">{</span><span class="n">license_report</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="n">difference</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">unified_diff</span><span class="p">(</span>
+        <span class="n">actual</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span>
+        <span class="n">expected</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span>
+        <span class="n">fromfile</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">license_report</span><span class="p">),</span>
+        <span class="n">tofile</span><span class="o">=</span><span class="s2">"generated report"</span><span class="p">,</span>
+        <span class="n">lineterm</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">difference</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">"Rust third-party license report is stale; run "</span>
+        <span class="s2">"the Rust license generator without `--check`."</span><span class="p">,</span>
+        <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../Documentation/architecture/rust/generate_rust_licenses.html#generate_rust_licenses.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Generate or check the committed Rust third-party license report."""</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="n">has_basilisk_defaults</span> <span class="o">=</span> <span class="n">WORKSPACE_MANIFEST</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--check"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"verify rather than update the report"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--require-tool"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"fail instead of skipping when cargo-about is unavailable"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--manifest-path"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">WORKSPACE_MANIFEST</span> <span class="k">if</span> <span class="n">has_basilisk_defaults</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="ow">not</span> <span class="n">has_basilisk_defaults</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Cargo workspace manifest to inspect; required outside the "</span>
+            <span class="s2">"Basilisk source tree"</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--config"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">ABOUT_CONFIG</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"cargo-about policy file"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--output"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">LICENSE_REPORT</span> <span class="k">if</span> <span class="n">has_basilisk_defaults</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="ow">not</span> <span class="n">has_basilisk_defaults</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"third-party license report path; required outside the Basilisk "</span>
+            <span class="s2">"source tree"</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--project-name"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"Basilisk"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"project name displayed in the report"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--project-license"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"ISC License in the repository's LICENSE file."</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"project-license sentence displayed after the dependency overview"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--manifest-label"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"stable Cargo.lock label written into the report"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--generator-label"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"stable generator label written into the report"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">executable</span> <span class="o">=</span> <span class="n">find_cargo_about</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">require_tool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">executable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">workspace_manifest</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">manifest_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">about_config</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">using_basilisk_defaults</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">workspace_manifest</span> <span class="o">==</span> <span class="n">WORKSPACE_MANIFEST</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">about_config</span> <span class="o">==</span> <span class="n">ABOUT_CONFIG</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">output</span> <span class="o">==</span> <span class="n">LICENSE_REPORT</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">arguments</span><span class="o">.</span><span class="n">project_name</span> <span class="o">==</span> <span class="s2">"Basilisk"</span>
+        <span class="p">)</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="n">render_report</span><span class="p">(</span>
+            <span class="n">cargo_about_data</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="n">workspace_manifest</span><span class="p">,</span> <span class="n">about_config</span><span class="p">),</span>
+            <span class="n">project_name</span><span class="o">=</span><span class="n">arguments</span><span class="o">.</span><span class="n">project_name</span><span class="p">,</span>
+            <span class="n">project_license</span><span class="o">=</span><span class="n">arguments</span><span class="o">.</span><span class="n">project_license</span><span class="p">,</span>
+            <span class="n">manifest_label</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">arguments</span><span class="o">.</span><span class="n">manifest_label</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s2">"src/Cargo.lock"</span> <span class="k">if</span> <span class="n">using_basilisk_defaults</span> <span class="k">else</span> <span class="s2">"Cargo.lock"</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">generator_label</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">arguments</span><span class="o">.</span><span class="n">generator_label</span>
+                <span class="ow">or</span> <span class="p">(</span>
+                    <span class="s2">"src/architecture/rust/generate_rust_licenses.py"</span>
+                    <span class="k">if</span> <span class="n">using_basilisk_defaults</span>
+                    <span class="k">else</span> <span class="s2">"the bsk-sdk Rust license generator"</span>
+                <span class="p">)</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span>
+        <span class="ne">OSError</span><span class="p">,</span>
+        <span class="ne">RuntimeError</span><span class="p">,</span>
+        <span class="ne">UnicodeError</span><span class="p">,</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rust license generation failed: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">arguments</span><span class="o">.</span><span class="n">check</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">check_report</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

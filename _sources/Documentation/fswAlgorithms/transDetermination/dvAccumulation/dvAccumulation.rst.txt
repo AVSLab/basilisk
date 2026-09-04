@@ -1,0 +1,36 @@
+.. _dvAccumulation:
+
+:module-type:`C` Module: dvAccumulation
+=======================================
+
+Executive Summary
+-----------------
+
+This module reads in a message with an array of accelerometer measurements and integrates them to determine an accumulated :math:`\Delta\mathbf{v}` value.
+
+On reset the net :math:`\Delta\mathbf{v}` is set to zero.  The output navigation message contains the latest measurements time tag and the total :math:`\Delta\mathbf{v}`. More information on can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/transDetermination/dvAccumulation/_Documentation/Basilisk-dvAccumulation-2019-03-28.pdf>`.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. _ModuleIO_dvAccumulation:
+
+
+.. bsk-module-io:: dvAccumulation
+    :caption: Module I/O Messages
+
+    output dvAcumOutMsg NavTransMsgPayload
+        accumulated DV output message
+    input accPktInMsg AccDataMsgPayload
+        Input accelerometer message
+
+
+----
+
+.. autodoxygenfile:: dvAccumulation.h
+   :project: dvAccumulation
+

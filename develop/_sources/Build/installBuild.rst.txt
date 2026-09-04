@@ -1,0 +1,396 @@
+.. toctree::
+   :hidden:
+
+.. youtube:: t9VrmrVfJ0M
+   :width: 560
+   :height: 315
+
+.. _configureBuild:
+
+Building the Software Framework
+===============================
+
+This documents discusses the various  build options that can be
+used when configuring and compiling Basilisk. The build system makes use of the ``conan``
+`package manager <https://docs.conan.io/en/latest/>`__ which provides for cross platform manner support.
+As a result the Basilisk build instructions are platform agnostic.
+
+This page is broken up into distinct manners of building Basilisk starting with the simplest method that should work
+for the majority of users.  This is followed by increasingly more detailed discussions on the build system for users
+who want to customize.
+
+
+One-Step Configuring and Building the Basilisk Framework
+--------------------------------------------------------
+If you just installed the Basilisk source code, use the build script to configure and compile the framework. From the
+Basilisk root directory, this is done simply using::
+
+    python3 conanfile.py
+
+This one-line step will use ``conan`` to:
+
+- pull and compile any resource dependencies such a protobuffer, etc.
+- configure a CMake build in the ``dist3`` folder using the automatically selected, explicitly requested, or
+  previously cached generator
+- build the project.
+
+The build script does not install, upgrade, or otherwise modify Python packages. For a new clone, install the
+Python requirements before the first build and register the completed build as an editable package afterward, as
+shown in the platform-specific installation instructions. The editable installation is required only once per
+virtual environment; subsequent incremental or clean native rebuilds update the same ``dist3`` package in place and
+do not require another editable installation.
+
+By default the build is for Python3 with the support for :ref:`vizInterface`
+included to enable recording data for or live-streaming to :ref:`Vizard <Vizard>`.
+
+The script accepts the following options to customize this process.
+
+.. _buildTable1Label:
+.. list-table:: Options for One-Step Configure/Build Process
+    :widths: 15 15 10 60
+    :header-rows: 1
+
+    * - Option
+      - Values
+      - Default
+      - Description
+    * - ``vizInterface``
+      - Boolean
+      - True
+      - Includes the `Google Protobuffer <https://developers.google.com/protocol-buffers>`__ library to package
+        up Vizard data messages, and the `Zero-MQ <https://zeromq.org>`__ library to communicate with Vizard.
+    * - ``opNav``
+      - Boolean
+      - False
+      - Includes `OpenCV <https://opencv.org>`__ library to create visual navigation modules that use OpenCV to
+        process sensor images.  If this option is selected,
+        then the dependencies of  ``vizInterface`` are also loaded as some components require the same libraries.
+        Note that OpenCL related dependencies can take a while to compile, 10-20minutes is not unusual.  However,
+        once install they don't need to be rebuilt unless ``.conan`` is deleted or the dependency changes.
+    * - ``clean``
+      -
+      - None
+      - If flag is set, this deletes the distribution folder ``dist3`` and Basilisk Numba cache
+        artifacts to create a fresh setup and build
+    * - ``offline``
+      -
+      - None
+      - If set, prevents Conan, CMake dependency fetching, and Cargo from accessing the network. Every selected
+        dependency must already exist in the local caches; see :ref:`offlineBuild`.
+    * - ``buildProject``
+      - Boolean
+      - True
+      - If set to True, this option will compile the project right away after creating the IDE or make file
+    * - ``buildTesting``
+      - Boolean
+      - True
+      - Builds the native GoogleTest executables and registers them with CTest. Pip and wheel builds disable this
+        option because published packages do not run the native test executables.
+    * - ``buildType``
+      - Release, Debug
+      - Release
+      - Sets the build type.  This does not apply to the IDE project like Xcode and Visual Studio which
+        control the build type through their interface.
+    * - ``strictWarnings``
+      - Boolean
+      - False
+      - Enables additional compiler diagnostics for Basilisk C and C++ sources.  See
+        :ref:`strictCompilerWarnings`.
+    * - ``generator``
+      - see `here <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`__
+      - Automatically selected
+      - An existing build folder's generator is reused unless the same generator is explicitly requested. Changing
+        generators requires ``--clean`` because CMake cannot switch generators in an existing build directory. For a
+        new automatic build, Ninja is used on every platform when available; Ninja is optional and is not installed
+        by Basilisk. Without Ninja, Windows falls back to Visual Studio 2022 and macOS or Linux falls back to Unix
+        Makefiles. For a new build with ``--buildProject False``, Windows defaults to Visual Studio 2022 and macOS
+        defaults to Xcode. If unsure what generators are supported on your platform, run ``cmake --help``.
+    * - ``pathToExternalModules``
+      - String
+      - Empty
+      - path to external modules folder, see :ref:`buildExtModules`
+    * - ``mujoco``
+      - Boolean
+      - False
+      - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ dependencies
+    * - ``rustModules``
+      - Boolean
+      - False
+      - :beta:`Rust Module Support` Enables discovery and compilation of
+        in-tree Rust modules. Requires Rust and Cargo. See :ref:`rustModules`
+        for the minimum supported Rust version and setup details.
+    * - ``recorderPropertyRollback``
+      - Boolean
+      - False
+      - Version 2.8 changed the output format when querying non-numeric types in message recorders.
+        By using this flag, the previuos behavior is recovered. Note that this build flag will disappear
+        in the near future.
+
+Thus, for example, to create a build with ``opNav`` modes enabled, but no :ref:`vizInterface`, and using a
+clean distribution folder, and that is built right away, you could use::
+
+    python3 conanfile.py --clean --opNav True --vizInterface False --buildProject True
+
+The ``buildProject`` argument here is optional as its default value is ``True``.
+Native test targets are also enabled by default for source builds. To omit them when they are not needed, use::
+
+    python3 conanfile.py --buildTesting False
+
+.. _offlineBuild:
+
+Preparing for Offline Builds
+----------------------------
+The ``--offline`` flag provides a strict way to configure, clean, and incrementally rebuild Basilisk
+without network access. It disables Conan remotes and dependency builds, prevents CMake from downloading its
+GoogleTest and Corrosion support sources, and enables Cargo's offline mode. A cache miss therefore stops immediately
+with instructions to prepare the missing dependency while connected instead of waiting on a network timeout.
+
+Prepare the desired configuration once while connected. Include every optional feature and external module that you
+will need offline. For example, the full Basilisk configuration is prepared with::
+
+    python3 conanfile.py --opNav True --mujoco True --rustModules True \
+        --pathToExternalModules /path/to/External
+
+The online build stores Conan packages in the Conan cache, Rust crates in the Cargo cache, and the pinned GoogleTest
+and Corrosion sources under ``.bsk-cache/fetchcontent`` in the Basilisk checkout. The ``--clean`` option removes
+``dist3`` but intentionally preserves ``.bsk-cache``. While still connected, verify that a clean build can use only
+those caches::
+
+    python3 conanfile.py --offline --clean --opNav True --mujoco True --rustModules True \
+        --pathToExternalModules /path/to/External
+
+Use the same platform, compiler, build type, and feature options offline. Rust-enabled builds still require the Rust
+toolchain on ``PATH``; all builds require the normal compiler, CMake, SWIG, Conan, and Python environment to remain
+installed. If an external Rust module adds a new crate, or a selected Conan package is not cached for the active
+configuration, repeat the matching build once without ``--offline`` while connected.
+
+After configuration, routine source changes do not need Conan at all. The fastest offline incremental build is::
+
+    cmake --build dist3 --parallel 12
+
+This mode covers dependency resolution during compilation only. Runtime helpers that intentionally download optional
+data, such as ``bskLargeData`` or ``bskExamples``, still require either network access or separately prepared data.
+
+.. _strictCompilerWarnings:
+
+Strict Compiler Warnings
+------------------------
+Developers can enable additional compiler diagnostics with::
+
+    python3 conanfile.py --buildProject True --strictWarnings True
+
+The option is disabled by default and does not change the warning policy of a normal Basilisk build.  When enabled,
+Clang and GCC builds check additional cases involving numeric conversions, signedness, selected shadowed local
+declarations, format strings, implicit fallthrough, unused parameters, double promotion, and other potentially unsafe
+constructs.  Intentionally unused interface parameters are marked explicitly, and intentional numeric conversions
+are made explicit in the source.  Clang builds also diagnose implicit 64-bit to 32-bit conversions.  MSVC builds use
+warning level ``/W4`` and enable its size-conversion diagnostic.  Warnings remain warnings; this option does not enable
+``-Werror`` or otherwise make every warning a build failure.
+
+For example, a clean MuJoCo-enabled build with the additional diagnostics is created with::
+
+    python3 conanfile.py --clean --mujoco True --strictWarnings True
+
+The warning policy is defined in CMake so it is consistent across supported CMake generators, including Unix
+Makefiles, Ninja, and Xcode.  SWIG and Protocol Buffer generated source, Conan-provided dependencies, imported model
+implementations, and other third-party targets are not part of the Basilisk warning baseline.  Developers invoking
+CMake directly can enable the same policy with ``-DBSK_STRICT_WARNINGS=ON``.
+
+.. warning::
+
+    If you switch between building for release (default) and debug, you must re-run this command again.  Otherwise
+    you will not have the correct conan dependencies included for your build type.  In the IDE like Xcode, for
+    example, if you do a regular build you are building for debug, not for release.  Thus, be mindful of how
+    you are building the code.
+
+Inspecting the Build Toolchain
+------------------------------
+Every Basilisk build records its configured optional features, C and C++ compilers, build configuration, CMake
+generator, and versions of the principal build tools in the installed Python package, including a wheel.
+Rust-enabled builds also record the Rust compiler and target, Cargo, and Corrosion.  This information can be
+inspected when diagnosing a binary or build issue.
+
+For a concise, human-readable summary, use ``printBuildInfo()``::
+
+    from Basilisk import printBuildInfo
+
+    printBuildInfo()
+
+For a Rust-enabled build, this produces output similar to::
+
+    Basilisk Build Information
+      Version:        2.12.0 (extension ABI 2)
+      Target:         macOS arm64, 64-bit
+      Build:          Release, Unix Makefiles
+      Features:       vizInterface=on, opNav=off, mujoco=off, rustModules=on
+      C compiler:     AppleClang 21.0.0.21000101 (cc)
+      C++ compiler:   AppleClang 21.0.0.21000101 (c++)
+      Rust compiler:  rustc 1.97.1 (rustc)
+      Rust target:    aarch64-apple-darwin
+      C standard:     C17
+      C++ standard:   C++17
+      C++ ABI:        libc++ (210106, ABI 1), Itanium ABI
+      C++ runtime:    system, exceptions, RTTI
+      Python API:     0x03090000
+      Eigen:          3.4.0, 16-byte max alignment, NEON
+      SWIG runtime:   5
+      Conan profile:  Release, C++17, libc++
+
+    Build Tools
+      CMake:          4.2.0
+      Conan:          2.23.0
+      SWIG:           4.4.1
+      Python:         3.14.6
+      Cargo:          1.97.1
+      Corrosion:      0.6.1
+
+For programmatic inspection or custom formatting, use ``getBuildInfo()``.  It returns a copy of a versioned nested
+dictionary with four principal sections::
+
+    from Basilisk import getBuildInfo, hasBuildFeature
+
+    buildInfo = getBuildInfo()
+    mujocoEnabled = buildInfo["features"]["mujoco"]
+    opNavEnabled = hasBuildFeature("opNav")
+    rustModulesEnabled = hasBuildFeature("rustModules")
+    extensionAbiVersion = buildInfo["artifact"]["extensionAbiVersion"]
+    standardLibrary = buildInfo["abi"]["cxx"]["standardLibrary"]["family"]
+    compilerVersion = buildInfo["diagnostics"]["compilers"]["cxx"]["version"]
+    rustCompilerVersion = buildInfo["diagnostics"]["compilers"]["rust"]["version"]
+
+The top-level ``schemaVersion`` identifies the format of the complete dictionary, including the nested ``abi``
+section.
+
+``artifact`` identifies the Basilisk version, source revision when available, and extension ABI epoch.  The epoch is
+incremented when Basilisk intentionally changes the C/C++ object contract exposed to SDK extensions.  It does not
+promise compatibility between different Basilisk versions; the SDK's exact-version check remains required unless a
+future compatibility policy explicitly relaxes it.
+
+``features`` records whether ``vizInterface``, ``opNav``, ``mujoco``, and ``rustModules`` were enabled when CMake
+configured the core artifact.  ``hasBuildFeature()`` answers whether the installed Basilisk environment provides a
+capability: it combines those core values with capabilities supplied by installed optional Basilisk distributions
+such as ``bsk-opnav``.  Optional distributions declare their capabilities through package entry-point metadata and
+must have the same version as the core artifact.  A mismatched provider raises ``RuntimeError`` instead of exposing
+an incompatible compiled extension.  This distinction lets ``getBuildInfo()`` retain the core artifact's
+provenance while feature guards continue to work when Basilisk is distributed across multiple wheels.  Feature
+names are case-sensitive, and an unknown name raises ``KeyError``.  These values describe compiled Basilisk
+capabilities; they do not report the availability of external applications such as Vizard.
+
+``abi`` is captured by C and C++ translation units compiled with the selected Basilisk build configuration.  It
+records the actual target architecture, endianness, C and C++ language modes, compiler ABI, standard-library ABI and
+debug modes, runtime linkage, exceptions, RTTI, Python ABI, SWIG runtime epoch, and Eigen alignment and vectorization
+settings.  It also contains size, alignment, and field-offset canaries for important C, C++, messaging, and Eigen
+types.  These values are suitable inputs to a future BSK-SDK compatibility policy.  Layout canaries detect common
+binary mismatches but do not prove semantic compatibility.
+
+The public ``architecture/utilities/bskAbiDescriptor.h`` header is the single source of truth for the extension ABI
+version, canary types, and compiler-side extraction rules.  It is included by the existing BSK-SDK
+``architecture`` header synchronization, allowing Basilisk and an SDK extension to compile the same contract rather
+than maintaining parallel implementations.
+
+``diagnostics`` contains values observed by CMake, requested Conan settings, compiler details, and build-tool
+versions.  Rust compiler, Cargo, and Corrosion fields are empty when Rust modules are disabled.
+These diagnostics remain useful when reproducing a build, but they are not all binary-compatibility requirements.
+For example, CMake and Conan versions should not be compared as part of an SDK compatibility decision.  For Xcode
+and Visual Studio, ``diagnostics["build"]`` describes the multi-config generator while
+``abi["build"]["configuration"]`` records the configuration that actually compiled the installed descriptor.
+
+The standard-library ``pprint`` module provides an indented view when all recorded fields should be displayed::
+
+    from pprint import pprint
+    from Basilisk import getBuildInfo
+
+    pprint(getBuildInfo(), sort_dicts=False, width=100)
+
+Absolute build paths and timestamps are intentionally omitted from this metadata.  Source revision is empty and
+dirty state is reported as ``None`` when the source was built without Git metadata.  Source revision and dirty state
+are captured when CMake configures the package metadata.  Local incremental module-only builds refresh the compiled
+ABI descriptor, but they do not recapture Git provenance.  Reconfigure or do a clean package build before relying on
+these fields for release provenance.
+
+
+Doing Incremental Builds
+------------------------
+Once ``dist3`` has been configured, build ordinary source, header, module, and message changes directly through CMake::
+
+    cmake --build dist3 --config Release --parallel 12
+
+The build system tracks module implementations, SWIG includes, generated C-message interfaces, Rust bindings, and
+the payload inventory. Adding, renaming, or deleting a ``*Payload.h`` file causes CMake to reconfigure automatically,
+regenerate the current message manifest, and remove generated artifacts belonging to payloads that no longer exist.
+A clean build is not required for these changes. An unchanged build does not recompile native sources or regenerate
+SWIG wrappers.
+
+Running ``python conanfile.py`` again is safe when Conan options or dependencies need to be refreshed. It reruns
+dependency resolution and CMake configuration but preserves unchanged generated and compiled outputs, allowing the
+native build to remain incremental.
+
+Developers who prefer Xcode or Visual Studio can create an IDE project with
+``python conanfile.py --clean --buildProject False`` and then perform incremental builds in the IDE. The ``--clean``
+option is required when replacing an existing Ninja or Makefiles build because CMake cannot change the generator of
+an existing build directory. It is not otherwise part of the normal incremental-build workflow.
+
+Every loadable BSK module target depends on ABI metadata generation, so an incremental module-only build refreshes the
+compiled descriptor for the selected configuration.  This refreshes the ABI details under ``getBuildInfo()["abi"]``;
+the Git provenance fields under ``getBuildInfo()["artifact"]`` remain configure-time package metadata.  Internal
+libraries consume the same ABI settings but do not carry this dependency because multi-configuration generators share
+some of their generated sources.  Do not mix Debug and Release module binaries in one Basilisk package; switching
+configurations requires rebuilding the complete package.
+
+
+Speeding Up Builds with ``sccache``
+------------------------------------
+`sccache <https://github.com/mozilla/sccache>`__ is a compiler cache that caches individual C++ object
+files by content hash.  When source files have not changed, sccache returns the cached object instead of
+invoking the compiler, which can dramatically reduce clean-build times.
+
+Install sccache with your system package manager, for example on macOS::
+
+    brew install sccache
+
+Then set the following environment variables before building::
+
+    export CMAKE_C_COMPILER_LAUNCHER=sccache
+    export CMAKE_CXX_COMPILER_LAUNCHER=sccache
+
+With these set, any build invocation (``python3 conanfile.py``, ``pip install -e .``, etc.) will
+automatically use sccache.  A warm cache reduces a full rebuild to only the linking step plus any
+files that actually changed.
+
+To inspect cache statistics after a build::
+
+    sccache --show-stats
+
+.. note::
+
+    sccache is also enabled automatically in CI via ``CMAKE_C/CXX_COMPILER_LAUNCHER`` environment
+    variables set by the GitHub Actions build workflow.
+
+
+Running Project Tests
+---------------------
+
+The project employs two testing frameworks, specifically `Pytest <https://pytest.org>`__ for python
+executed tests and `Google Test <https://github.com/google/googletest>`__ for C/C++ executed tests.
+
+To run all tests execute the following from the project root directory
+
+.. code-block:: console
+
+    python run_all_test.py
+
+To run only the python test use the following commands.
+
+.. code-block:: console
+
+    cd src
+    pytest
+
+To run only the C/C++ tests use
+
+.. code-block:: console
+
+    cd dist3
+    ctest
+
+or on macOS ``ctest -C <Release or Debug>``.

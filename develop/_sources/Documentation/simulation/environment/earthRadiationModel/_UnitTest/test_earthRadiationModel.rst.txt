@@ -1,0 +1,13 @@
+.. _test_earthRadiationModel:
+
+test_earthRadiationModel
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_earthRadiationModel
+   :members:
+   :show-inheritance:
+

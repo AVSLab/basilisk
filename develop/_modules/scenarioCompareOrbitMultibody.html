@@ -1,0 +1,946 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareOrbitMultibody &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioCompareOrbitMultibody</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioCompareOrbitMultibody</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Multi-body-in-orbit scenario in the dynamics-engine comparison series (see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the introduction to the two engines, and</span>
+<span class="sd">:ref:`scenarioCompareRwPanels` for the free-floating multi-body it builds on).</span>
+
+<span class="sd">This scenario puts the reaction-wheel-and-panel multi-body of</span>
+<span class="sd">:ref:`scenarioCompareRwPanels` into a Keplerian orbit, adding point-mass gravity to the</span>
+<span class="sd">internal wheel and flex dynamics. This exposes a difference in how the two engines</span>
+<span class="sd">apply gravity to an *extended* body, so the scenario runs in two regimes:</span>
+
+<span class="sd">**Part A: a compact body (hub + reaction wheels).** All massive parts sit at the hub</span>
+<span class="sd">origin (the reaction-wheel bodies carry negligible mass), so gravity acts at a single</span>
+<span class="sd">point and exerts no gravity-gradient torque. The two engines agree closely: both reproduce</span>
+<span class="sd">the analytic Kepler orbit to the RK4 truncation level (cross-engine orbit difference of</span>
+<span class="sd">order :math:`10^{-7}` m), and the spinning-up wheels match to round-off. The hub attitude</span>
+<span class="sd">agrees to about :math:`10^{-4}` rad, several orders coarser than the free-floating</span>
+<span class="sd">machine-precision floor of :ref:`scenarioCompareRwPanels`. This floor is not a gravity</span>
+<span class="sd">effect but the MuJoCo gyroscopic-bias round-off characterized in</span>
+<span class="sd">:ref:`scenarioCompareTorque`, which any body at the ~7.5 km/s orbital speed incurs (the same</span>
+<span class="sd">size with gravity on or off). Part A therefore sets the noise floor for the extended-body</span>
+<span class="sd">attitude comparison below.</span>
+
+<span class="sd">**Part B: an extended body (hub + reaction wheels + offset flexible panels).** The two</span>
+<span class="sd">massive solar arrays sit well off the hub origin, and the engines apply gravity by</span>
+<span class="sd">different models:</span>
+
+<span class="sd">#. BSM evaluates the gravitational acceleration **once, at the system center of mass**</span>
+<span class="sd">   (tracked analytically as the panels flex) and applies it as a single uniform body force.</span>
+<span class="sd">   A uniform field exerts no net torque about the center of mass, so BSM produces **no</span>
+<span class="sd">   gravity-gradient torque**.</span>
+<span class="sd">#. The MuJoCo :ref:`NBodyGravity` evaluates gravity **per body, at each body's own</span>
+<span class="sd">   position**. The offset panels sit at a slightly different radius than the hub, so they</span>
+<span class="sd">   feel a slightly different acceleration. Forces at the separated body centers produce a</span>
+<span class="sd">   net torque about the system center of mass. This model does not resolve gravity variation</span>
+<span class="sd">   within an individual rigid body.</span>
+
+<span class="sd">Part B therefore does not converge to machine precision in attitude. Its magnitude is</span>
+<span class="sd">consistent with the differential point-force scale over the orbit and builds as a</span>
+<span class="sd">libration modulated by the hub's tumble.</span>
+
+<span class="sd">As in the other attitude-bearing comparisons, the MuJoCo scene enables</span>
+<span class="sd">``highOrderAttitudeIntegration`` so the hub quaternion is advanced at the integrator's</span>
+<span class="sd">full order, and attitudes are compared with the principal rotation angle of the relative</span>
+<span class="sd">direction cosine matrix, :math:`4\,\arctan(|\pmb\sigma_{\rm rel}|)`.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed</span>
+<span class="sd">by using::</span>
+
+<span class="sd">    python3 scenarioCompareOrbitMultibody.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">For the compact body (Part A) each engine tracks the analytic Kepler orbit to its RK4</span>
+<span class="sd">truncation level (about :math:`10^{-7}` m), and the two engines agree to the same level,</span>
+<span class="sd">confirming both integrate the same two-body equation of motion through the internal</span>
+<span class="sd">multi-body coupling.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareOrbitMultibody_compactOrbit.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">For the extended body (Part B) the hub attitudes separate: forces applied at the</span>
+<span class="sd">MuJoCo body centers exert a torque that the BSM single-point model omits. Over one orbit,</span>
+<span class="sd">the cross-engine attitude difference reaches 0.79 rad (46 degrees), nearly four orders of</span>
+<span class="sd">magnitude above the Part A floor. The response appears as a libration modulated by the</span>
+<span class="sd">hub's tumble.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareOrbitMultibody_attError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">After matching the initial total-center-of-mass position and velocity, both the compact</span>
+<span class="sd">and extended center-of-mass trajectories agree within :math:`2\times10^{-6}` m. The</span>
+<span class="sd">attitude, not the translational orbit, carries the differential-force effect.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareOrbitMultibody_regimes.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Runtime cost</span>
+<span class="sd">------------</span>
+
+<span class="sd">Wall-clock cost of propagating each regime (one full orbit) with each engine, reported</span>
+<span class="sd">as the median of five measured trials after one discarded warm-up. Model setup is</span>
+<span class="sd">excluded. Both the absolute times and speedup ratio are specific to the machine and</span>
+<span class="sd">build. Generate the optional local CSV with</span>
+<span class="sd">``make -C docs comparison-runtime-tables``; see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the benchmark requirements and interpretation.</span>
+
+<span class="sd">Next comparison: :ref:`scenarioCompareVariableMass` adds fuel depletion, moving mass</span>
+<span class="sd">properties, thrust, and propellant slosh.</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactionWheelStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">hingedRigidBodyStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_runtimeTable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparePlots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparisonValidation</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+
+<span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">MJSystemCoM</span>
+
+<span class="c1"># Paul Tol high-contrast palette shared by the comparison figures.</span>
+<span class="n">COLOR_BSM</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_BSM</span>
+<span class="n">COLOR_MUJOCO</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_MUJOCO</span>
+<span class="n">COLOR_REFERENCE</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_DIFF</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Folder this scenario writes its JSON summary into.</span>
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Model parameters (the same medium-class free-flyer as scenarioCompareRwPanels,</span>
+<span class="c1"># now placed in orbit). Part A omits the panels; Part B includes them.</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="n">HUB_MASS</span> <span class="o">=</span> <span class="mf">600.0</span>  <span class="c1"># [kg]</span>
+<span class="n">HUB_CORE_INERTIA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">380.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2] bare hub, before wheel inertia folds in</span>
+<span class="n">RW_JS</span> <span class="o">=</span> <span class="mf">0.08</span>  <span class="c1"># [kg*m^2] wheel axial inertia</span>
+<span class="n">RW_JT</span> <span class="o">=</span> <span class="mf">0.04</span>  <span class="c1"># [kg*m^2] wheel transverse inertia</span>
+<span class="n">RW_MASS</span> <span class="o">=</span> <span class="mf">1.0e-6</span>  <span class="c1"># [kg] negligible, matching the massless balanced-wheel idealization</span>
+<span class="n">RW_TORQUE</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">)</span>  <span class="c1"># [N*m] constant motor torque per wheel</span>
+<span class="n">PANEL_MASS</span> <span class="o">=</span> <span class="mf">50.0</span>  <span class="c1"># [kg]</span>
+<span class="n">PANEL_INERTIA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2] about the panel center of mass</span>
+<span class="n">PANEL_D</span> <span class="o">=</span> <span class="mf">1.2</span>  <span class="c1"># [m] hinge-axis to panel center-of-mass distance</span>
+<span class="n">PANEL_K</span> <span class="o">=</span> <span class="mf">150.0</span>  <span class="c1"># [N*m/rad] torsional spring stiffness</span>
+<span class="n">PANEL_C</span> <span class="o">=</span> <span class="mf">8.0</span>  <span class="c1"># [N*m*s/rad] torsional damping</span>
+<span class="n">PANEL_HINGE_X</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># [m] hinge offset from the hub origin along x</span>
+<span class="n">PANEL_THETA0</span> <span class="o">=</span> <span class="mf">12.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad] initial panel deflection</span>
+<span class="n">OMEGA0_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># [rad/s] initial hub rate</span>
+
+
+<div class="viewcode-block" id="panelRootDcm">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.panelRootDcm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panelRootDcm</span><span class="p">(</span><span class="n">hingeX</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the root-frame DCM that makes both panels extend away from the hub."""</span>
+    <span class="k">if</span> <span class="n">hingeX</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="hubInertiaBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.hubInertiaBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hubInertiaBSM</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""BSM hub inertia: bare hub plus the three folded-in wheel tensors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: 3x3 hub inertia tensor [kg*m^2].</span>
+<span class="sd">    """</span>
+    <span class="n">inertia</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">HUB_CORE_INERTIA</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">diag</span> <span class="o">=</span> <span class="p">[</span><span class="n">RW_JT</span><span class="p">,</span> <span class="n">RW_JT</span><span class="p">,</span> <span class="n">RW_JT</span><span class="p">]</span>
+        <span class="n">diag</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">RW_JS</span>
+        <span class="n">inertia</span> <span class="o">=</span> <span class="n">inertia</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inertia</span></div>
+
+
+
+<div class="viewcode-block" id="initialOrbitState">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.initialOrbitState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the initial inertial position and velocity and the classical elements.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(rN, vN, oe)`` with position [m], velocity [m/s], and the</span>
+<span class="sd">        ``ClassicElements`` used to generate them.</span>
+<span class="sd">    """</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">7000.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mf">33.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">48.2</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">347.8</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="mf">85.3</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rN</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vN</span><span class="p">),</span> <span class="n">oe</span></div>
+
+
+
+<div class="viewcode-block" id="initialBodyMassDistribution">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.initialBodyMassDistribution">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialBodyMassDistribution</span><span class="p">(</span><span class="n">withPanels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the initial body masses, center locations, and total center of mass.</span>
+
+<span class="sd">    Locations are expressed in the hub frame. The wheel centers coincide with the hub</span>
+<span class="sd">    center, while the panel centers follow the common BSM/MJCF hinge convention.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        withPanels (bool): include the two hinged panels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(masses, centers, systemCoM)`` in kg and m.</span>
+<span class="sd">    """</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">HUB_MASS</span><span class="p">,</span> <span class="n">RW_MASS</span><span class="p">,</span> <span class="n">RW_MASS</span><span class="p">,</span> <span class="n">RW_MASS</span><span class="p">]</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">masses</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">withPanels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PANEL_MASS</span><span class="p">)</span>
+            <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="n">sign</span><span class="o">*</span><span class="p">(</span><span class="n">PANEL_HINGE_X</span> <span class="o">+</span> <span class="n">PANEL_D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">)),</span>
+                <span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">PANEL_D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">),</span>
+            <span class="p">]))</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span>
+    <span class="n">systemCoM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">masses</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">masses</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">systemCoM</span></div>
+
+
+
+<div class="viewcode-block" id="initialMujocoRootState">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.initialMujocoRootState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialMujocoRootState</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">rCN_N</span><span class="p">,</span> <span class="n">vCN_N</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert a desired total-CoM state into the MuJoCo hub-origin state.</span>
+
+<span class="sd">    The initial attitude is identity and the hinge rates are zero, so the system CoM</span>
+<span class="sd">    velocity relative to the hub is ``omega_BN_B x c_B``.</span>
+<span class="sd">    """</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">c_B</span> <span class="o">=</span> <span class="n">initialBodyMassDistribution</span><span class="p">(</span><span class="n">withPanels</span><span class="p">)</span>
+    <span class="n">rBN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rCN_N</span><span class="p">)</span> <span class="o">-</span> <span class="n">c_B</span>
+    <span class="n">vBN_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vCN_N</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">OMEGA0_B</span><span class="p">),</span> <span class="n">c_B</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rBN_N</span><span class="p">,</span> <span class="n">vBN_N</span></div>
+
+
+
+<div class="viewcode-block" id="keplerTruth">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.keplerTruth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keplerTruth</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe0</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Analytic two-body position history of the system center of mass.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        oe0 (ClassicElements): initial classical orbital elements</span>
+<span class="sd">        times (numpy.ndarray): sample times [s]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: inertial position history, shape ``(N, 3)`` [m].</span>
+<span class="sd">    """</span>
+    <span class="n">meanMotion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mu</span><span class="o">/</span><span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">meanAnomaly0</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2M</span><span class="p">(</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">f2E</span><span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">oe0</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">oe0</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+        <span class="n">trueAnomaly</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">E2f</span><span class="p">(</span>
+            <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">M2E</span><span class="p">(</span><span class="n">meanAnomaly0</span><span class="o">+</span><span class="n">meanMotion</span><span class="o">*</span><span class="n">t</span><span class="p">,</span> <span class="n">oe0</span><span class="o">.</span><span class="n">e</span><span class="p">),</span> <span class="n">oe0</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">oe0</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">oe0</span><span class="o">.</span><span class="n">i</span>
+        <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">oe0</span><span class="o">.</span><span class="n">Omega</span><span class="p">,</span> <span class="n">oe0</span><span class="o">.</span><span class="n">omega</span><span class="p">,</span> <span class="n">trueAnomaly</span>
+        <span class="n">rN</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+        <span class="n">truth</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">rN</span>
+    <span class="k">return</span> <span class="n">truth</span></div>
+
+
+
+<div class="viewcode-block" id="mujocoModel">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.mujocoModel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mujocoModel</span><span class="p">(</span><span class="n">withPanels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the MJCF model: hub and three reaction wheels, optionally two hinged panels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        withPanels (bool): if True, attach the two offset flexible panels (Part B);</span>
+<span class="sd">            if False, the compact hub-and-wheels body (Part A).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: the MJCF XML string.</span>
+<span class="sd">    """</span>
+    <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span> <span class="o">=</span> <span class="n">HUB_CORE_INERTIA</span>
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">PANEL_INERTIA</span>
+    <span class="n">panelXml</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">withPanels</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">      &lt;body name="panelP" pos="</span><span class="si">{</span><span class="n">PANEL_HINGE_X</span><span class="si">}</span><span class="s2"> 0 0" quat="0 0 0 1"&gt;</span>
+<span class="s2">        &lt;joint name="panelP" type="hinge" axis="0 1 0" stiffness="</span><span class="si">{</span><span class="n">PANEL_K</span><span class="si">}</span><span class="s2">" damping="</span><span class="si">{</span><span class="n">PANEL_C</span><span class="si">}</span><span class="s2">" springref="0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_D</span><span class="si">}</span><span class="s2"> 0 0" mass="</span><span class="si">{</span><span class="n">PANEL_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="panelM" pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_HINGE_X</span><span class="si">}</span><span class="s2"> 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="panelM" type="hinge" axis="0 1 0" stiffness="</span><span class="si">{</span><span class="n">PANEL_K</span><span class="si">}</span><span class="s2">" damping="</span><span class="si">{</span><span class="n">PANEL_C</span><span class="si">}</span><span class="s2">" springref="0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_D</span><span class="si">}</span><span class="s2"> 0 0" mass="</span><span class="si">{</span><span class="n">PANEL_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;"""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;!-- No geoms, equalities, limits, or frictionloss in this model: disable the</span>
+<span class="s2">       collision and constraint pipelines so each derivative evaluation skips</span>
+<span class="s2">       broadphase and constraint-assembly bookkeeping (bit-identical results). --&gt;</span>
+<span class="s2">  &lt;option gravity="0 0 0"&gt;</span>
+<span class="s2">    &lt;flag contact="disable" constraint="disable"/&gt;</span>
+<span class="s2">  &lt;/option&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="hub"&gt;</span>
+<span class="s2">      &lt;freejoint/&gt;</span>
+<span class="s2">      &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">HUB_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iz</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+
+<span class="s2">      &lt;body name="rw_x" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_x" type="hinge" axis="1 0 0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="rw_y" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_y" type="hinge" axis="0 1 0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="rw_z" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_z" type="hinge" axis="0 0 1"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span><span class="si">{</span><span class="n">panelXml</span><span class="si">}</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">  &lt;actuator&gt;</span>
+<span class="s2">    &lt;motor name="rw_x" joint="rw_x"/&gt;</span>
+<span class="s2">    &lt;motor name="rw_y" joint="rw_y"/&gt;</span>
+<span class="s2">    &lt;motor name="rw_z" joint="rw_z"/&gt;</span>
+<span class="s2">  &lt;/actuator&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span></div>
+
+
+
+<div class="viewcode-block" id="buildBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.buildBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildBSM</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the back-substitution orbiting multi-body simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        withPanels (bool): include the offset flexible panels (Part B) or not (Part A).</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        record (bool, optional): attach state and wheel recorders. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, outputs, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hub"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">HUB_MASS</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">hubInertiaBSM</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">OMEGA0_B</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [m] initial system center-of-mass position</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [m/s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">rwEffector</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">ReactionWheelStateEffector</span><span class="p">()</span>
+    <span class="n">rwEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"rw"</span>
+    <span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">spinAxis</span> <span class="ow">in</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
+        <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">"custom"</span><span class="p">,</span> <span class="n">spinAxis</span><span class="p">,</span> <span class="n">Js</span><span class="o">=</span><span class="n">RW_JS</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rWB_B</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+                         <span class="n">useMaxTorque</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useMinTorque</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">rwFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="s2">"rw"</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">)</span>
+    <span class="n">rwCmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsg</span><span class="p">()</span>
+    <span class="n">rwCmdMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsgPayload</span><span class="p">(</span>
+        <span class="n">motorTorque</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">RW_TORQUE</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span><span class="o">*</span><span class="mi">33</span><span class="p">))</span>
+    <span class="n">rwEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwCmdMsg</span><span class="p">)</span>
+
+    <span class="c1"># Point-mass Earth gravity. The BSM effector evaluates this once at the system</span>
+    <span class="c1"># center of mass each step, so it carries no gravity-gradient torque.</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">panels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">withPanels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hingeX</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PANEL_HINGE_X</span><span class="p">,</span> <span class="o">-</span><span class="n">PANEL_HINGE_X</span><span class="p">):</span>
+            <span class="n">panel</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">PANEL_MASS</span>  <span class="c1"># [kg]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">PANEL_INERTIA</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">PANEL_D</span>  <span class="c1"># [m]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">PANEL_K</span>  <span class="c1"># [N*m/rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">PANEL_C</span>  <span class="c1"># [N*m*s/rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">hingeX</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">panelRootDcm</span><span class="p">(</span><span class="n">hingeX</span><span class="p">)</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="n">PANEL_THETA0</span>  <span class="c1"># [rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"panel"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">"P"</span> <span class="k">if</span> <span class="n">hingeX</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"M"</span><span class="p">)</span>
+            <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">panel</span><span class="p">)</span>
+            <span class="n">panels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">wheelRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">stateRecorder</span><span class="p">)</span>
+        <span class="n">wheelRecorder</span> <span class="o">=</span> <span class="n">rwEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">wheelRecorder</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">,</span> <span class="n">rwFactory</span><span class="p">,</span> <span class="n">rwCmdMsg</span><span class="p">,</span> <span class="n">gravFactory</span><span class="p">]</span> <span class="o">+</span> <span class="n">panels</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="p">(</span><span class="n">stateRecorder</span><span class="p">,</span> <span class="n">wheelRecorder</span><span class="p">),</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.runBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runBSM</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the orbiting multi-body with the back-substitution :ref:`spacecraft`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.buildMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildMujoco</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the MuJoCo orbiting multi-body simulation without propagating it.</span>
+
+<span class="sd">    Gravity is supplied by :ref:`NBodyGravity`, which evaluates the field at each body's</span>
+<span class="sd">    own position. For the compact Part A body every massive part is at the hub origin, so</span>
+<span class="sd">    this reduces to a single-point field matching BSM; for the extended Part B body the</span>
+<span class="sd">    offset panels see a slightly different field, producing the gravity-gradient</span>
+<span class="sd">    difference.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        withPanels (bool): include the offset flexible panels (Part B) or not (Part A).</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        record (bool, optional): attach hub, center-of-mass, and wheel recorders.</span>
+<span class="sd">            Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, outputs, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">mujocoModel</span><span class="p">(</span><span class="n">withPanels</span><span class="p">))</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hubMj"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">highOrderAttitudeIntegration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+
+    <span class="n">actuatorMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">"rw_x"</span><span class="p">,</span> <span class="s2">"rw_y"</span><span class="p">,</span> <span class="s2">"rw_z"</span><span class="p">]):</span>
+        <span class="n">actuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span>
+        <span class="n">cmdMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">RW_TORQUE</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">actuator</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+        <span class="n">actuatorMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+
+    <span class="c1"># The factory shares the Earth descriptor with the BSM setup, creates NBodyGravity,</span>
+    <span class="c1"># and registers every scene body as a target. Including the near-massless wheel</span>
+    <span class="c1"># bodies keeps the net force equal to the full system weight.</span>
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">earth</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createEarth</span><span class="p">()</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">earth</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">addBodiesTo</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+
+    <span class="n">hubRecorder</span> <span class="o">=</span> <span class="n">comRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">systemCoM</span> <span class="o">=</span> <span class="n">MJSystemCoM</span><span class="o">.</span><span class="n">MJSystemCoM</span><span class="p">()</span>
+    <span class="n">systemCoM</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"systemCoM"</span>
+    <span class="n">systemCoM</span><span class="o">.</span><span class="n">scene</span> <span class="o">=</span> <span class="n">scene</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">systemCoM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">wheelRecorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">hubRecorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">hubRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">comRecorder</span> <span class="o">=</span> <span class="n">systemCoM</span><span class="o">.</span><span class="n">comStatesOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">comRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"rw_x"</span><span class="p">,</span> <span class="s2">"rw_y"</span><span class="p">,</span> <span class="s2">"rw_z"</span><span class="p">]:</span>
+            <span class="n">wheelRec</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span>
+                <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">wheelRec</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">wheelRecorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelRec</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">withPanels</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"panelP"</span><span class="p">,</span> <span class="s2">"panelM"</span><span class="p">]:</span>
+            <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">)</span>
+    <span class="n">rBN_N</span><span class="p">,</span> <span class="n">vBN_N</span> <span class="o">=</span> <span class="n">initialMujocoRootState</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">rBN_N</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">(</span><span class="n">vBN_N</span><span class="p">)</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">OMEGA0_B</span><span class="p">))</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">hub</span><span class="p">,</span> <span class="n">systemCoM</span><span class="p">,</span> <span class="n">gravFactory</span><span class="p">,</span> <span class="n">gravity</span><span class="p">]</span> <span class="o">+</span> <span class="n">actuatorMsgs</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="p">(</span><span class="n">hubRecorder</span><span class="p">,</span> <span class="n">comRecorder</span><span class="p">,</span> <span class="n">wheelRecorders</span><span class="p">),</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.runMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runMujoco</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the orbiting multi-body with the :ref:`MJScene&lt;MJScene&gt;`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildMujoco</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="relativePrincipalAngle">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.relativePrincipalAngle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Per-sample principal rotation angle between two MRP attitude histories.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sigmaBSM (numpy.ndarray): BSM MRP history, shape ``(N, 3)``</span>
+<span class="sd">        sigmaMujoco (numpy.ndarray): MuJoCo MRP history, shape ``(N, 3)``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: principal angle per sample [rad].</span>
+<span class="sd">    """</span>
+    <span class="n">nSamples</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">requireEqualLength</span><span class="p">(</span>
+        <span class="s2">"orbiting multibody attitude"</span><span class="p">,</span> <span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nSamples</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSamples</span><span class="p">):</span>
+        <span class="n">dcmRel</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="c1"># 4*atan(|sigma_rel|) is well conditioned to machine precision, unlike</span>
+        <span class="c1"># arccos((trace-1)/2), which collapses for angles below ~1e-8 rad.</span>
+        <span class="n">angle</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcmRel</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">angle</span></div>
+
+
+
+<div class="viewcode-block" id="gravityGradientRateEstimate">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.gravityGradientRateEstimate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gravityGradientRateEstimate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Angular-acceleration scale for the modeled differential point gravity.</span>
+
+<span class="sd">    The numerator uses only the inertia contribution from the separation of the lumped</span>
+<span class="sd">    body centers, because the gravity module applies one point force at each body center.</span>
+<span class="sd">    The denominator includes the full initial system inertia about its center of mass.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mu (float): gravitational parameter [m^3/s^2]</span>
+<span class="sd">        oe0 (ClassicElements): initial classical orbital elements</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: angular-acceleration scale [rad/s^2].</span>
+<span class="sd">    """</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">oe0</span><span class="o">.</span><span class="n">a</span>  <span class="c1"># [m] near-circular orbit</span>
+    <span class="n">masses</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">systemCoM</span> <span class="o">=</span> <span class="n">initialBodyMassDistribution</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pointInertia</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">mass</span><span class="p">,</span> <span class="n">center</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">masses</span><span class="p">,</span> <span class="n">centers</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">center</span> <span class="o">-</span> <span class="n">systemCoM</span>
+        <span class="n">pointInertia</span> <span class="o">+=</span> <span class="n">mass</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
+
+    <span class="n">totalInertia</span> <span class="o">=</span> <span class="n">pointInertia</span> <span class="o">+</span> <span class="n">hubInertiaBSM</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">)</span>
+    <span class="n">dcmPanelToHub</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+    <span class="n">panelInertiaHub</span> <span class="o">=</span> <span class="n">dcmPanelToHub</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">PANEL_INERTIA</span><span class="p">)</span> <span class="o">@</span> <span class="n">dcmPanelToHub</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">totalInertia</span> <span class="o">+=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">panelInertiaHub</span>
+
+    <span class="n">pointMoments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">pointInertia</span><span class="p">)</span>
+    <span class="n">deltaPointInertia</span> <span class="o">=</span> <span class="n">pointMoments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pointMoments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="mf">3.0</span><span class="o">*</span><span class="p">(</span><span class="n">mu</span><span class="o">/</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">deltaPointInertia</span><span class="o">/</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">totalInertia</span><span class="p">)</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveTiming</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): if True, plot and show the simulation results.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        saveJson (bool, optional): if True, write the comparison metrics to</span>
+<span class="sd">            ``results/scenarioCompareOrbitMultibody.json``. Defaults to False.</span>
+<span class="sd">        saveTiming (bool, optional): if True, measure the BSM-vs-MJScene wall-clock</span>
+<span class="sd">            cost of both regimes and write</span>
+<span class="sd">            ``results/scenarioCompareOrbitMultibody_runtime.csv``. Defaults to False.</span>
+<span class="sd">        resultsDir (str, optional): explicit artifact directory. Defaults to</span>
+<span class="sd">            the scenario ``results`` folder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s] resolves the ~5 s panel oscillation for the fixed-step RK4</span>
+    <span class="n">recordDt</span> <span class="o">=</span> <span class="mf">60.0</span>  <span class="c1"># [s]</span>
+
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">BODY_DATA</span><span class="p">[</span><span class="s2">"earth"</span><span class="p">]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">planet</span><span class="o">.</span><span class="n">mu</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">oe0</span> <span class="o">=</span> <span class="n">initialOrbitState</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe0</span><span class="o">.</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="o">/</span><span class="n">mu</span><span class="p">)</span>  <span class="c1"># [s] one full orbital period (~5829 s)</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+
+    <span class="k">if</span> <span class="n">saveTiming</span><span class="p">:</span>
+        <span class="n">timingRows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">withPanels</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"Compact (hub + wheels)"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                                  <span class="p">(</span><span class="s2">"Extended (+ offset panels)"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+                <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">pairedPropagationTimes</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">wp</span><span class="o">=</span><span class="n">withPanels</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span>
+                        <span class="n">wp</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                    <span class="k">lambda</span> <span class="n">wp</span><span class="o">=</span><span class="n">withPanels</span><span class="p">:</span> <span class="n">buildMujoco</span><span class="p">(</span>
+                        <span class="n">wp</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bsmSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">medianPropagationTime</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">wp</span><span class="o">=</span><span class="n">withPanels</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span>
+                        <span class="n">wp</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">timingRows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">label</span><span class="p">,</span> <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span><span class="p">))</span>
+        <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">saveRuntimeTable</span><span class="p">(</span>
+            <span class="n">fileName</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">timingRows</span><span class="p">,</span>
+            <span class="n">caseHeader</span><span class="o">=</span><span class="s2">"Regime"</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="n">regimes</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># label -&gt; dict of per-regime arrays</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">withPanels</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"compact"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="s2">"extended"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)):</span>
+        <span class="n">bsmState</span><span class="p">,</span> <span class="n">bsmWheel</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runBSM</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">posBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">)</span>  <span class="c1"># [m] system center of mass</span>
+        <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">wheelBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmWheel</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"orbiting multibody </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> BSM"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">posBSM</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">wheels</span><span class="o">=</span><span class="n">wheelBSM</span><span class="p">)</span>
+
+        <span class="n">regime</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"withPanels"</span><span class="p">:</span> <span class="n">withPanels</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">:</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="s2">"posBSM"</span><span class="p">:</span> <span class="n">posBSM</span><span class="p">,</span>
+                  <span class="s2">"sigmaBSM"</span><span class="p">:</span> <span class="n">sigmaBSM</span><span class="p">,</span> <span class="s2">"wheelBSM"</span><span class="p">:</span> <span class="n">wheelBSM</span><span class="p">,</span>
+                  <span class="s2">"posMujoco"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"attError"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"wheelError"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+            <span class="n">mjHub</span><span class="p">,</span> <span class="n">mjCoM</span><span class="p">,</span> <span class="n">mjWheels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMujoco</span><span class="p">(</span><span class="n">withPanels</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+            <span class="n">mujocoHubTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjHub</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+            <span class="n">mujocoComTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjCoM</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+            <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"orbiting multibody </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> MuJoCo hub/CoM"</span><span class="p">,</span>
+                <span class="n">mujocoHubTimes</span><span class="p">,</span> <span class="n">mujocoComTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+            <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"orbiting multibody </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> BSM/MuJoCo"</span><span class="p">,</span>
+                <span class="n">timeAxis</span><span class="p">,</span> <span class="n">mujocoHubTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+            <span class="n">regime</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjCoM</span><span class="o">.</span><span class="n">r_CN_N</span><span class="p">)</span>  <span class="c1"># [m]</span>
+            <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjHub</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+            <span class="n">wheelMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+                                           <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">mjWheels</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+            <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"orbiting multibody </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> MuJoCo"</span><span class="p">,</span> <span class="n">mujocoHubTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+                <span class="n">position</span><span class="o">=</span><span class="n">regime</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">],</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujoco</span><span class="p">,</span>
+                <span class="n">wheels</span><span class="o">=</span><span class="n">wheelMujoco</span><span class="p">)</span>
+            <span class="n">regime</span><span class="p">[</span><span class="s2">"attError"</span><span class="p">]</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span>
+                <span class="n">regime</span><span class="p">[</span><span class="s2">"sigmaBSM"</span><span class="p">],</span> <span class="n">sigmaMujoco</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+            <span class="n">regime</span><span class="p">[</span><span class="s2">"wheelError"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="n">regime</span><span class="p">[</span><span class="s2">"wheelBSM"</span><span class="p">]</span> <span class="o">-</span> <span class="n">wheelMujoco</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+            <span class="n">regime</span><span class="p">[</span><span class="s2">"crossOrbit"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="n">regime</span><span class="p">[</span><span class="s2">"posBSM"</span><span class="p">]</span> <span class="o">-</span> <span class="n">regime</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [m]</span>
+
+        <span class="n">regime</span><span class="p">[</span><span class="s2">"truth"</span><span class="p">]</span> <span class="o">=</span> <span class="n">keplerTruth</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe0</span><span class="p">,</span> <span class="n">regime</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">regime</span><span class="p">[</span><span class="s2">"bsmVsKepler"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="n">regime</span><span class="p">[</span><span class="s2">"truth"</span><span class="p">]</span> <span class="o">-</span> <span class="n">regime</span><span class="p">[</span><span class="s2">"posBSM"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="n">regimes</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">regime</span>
+
+    <span class="n">ggRate</span> <span class="o">=</span> <span class="n">gravityGradientRateEstimate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe0</span><span class="p">)</span>  <span class="c1"># [rad/s^2]</span>
+
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="n">writeJsonSummary</span><span class="p">(</span><span class="n">regimes</span><span class="p">,</span> <span class="n">ggRate</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotResults</span><span class="p">(</span><span class="n">regimes</span><span class="p">,</span> <span class="n">ggRate</span><span class="p">)</span>
+
+    <span class="n">_comparePlots</span><span class="o">.</span><span class="n">finalizeFigures</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<div class="viewcode-block" id="writeJsonSummary">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.writeJsonSummary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeJsonSummary</span><span class="p">(</span><span class="n">regimes</span><span class="p">,</span> <span class="n">ggRate</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Write a JSON summary of the comparison metrics to the ``results`` folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regimes (dict): per-regime result arrays from :func:`run`.</span>
+<span class="sd">        ggRate (float): gravity-gradient angular-acceleration scale [rad/s^2].</span>
+<span class="sd">        targetResults (str): directory for the JSON artifact</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"scenario"</span><span class="p">:</span> <span class="n">fileName</span><span class="p">,</span>
+               <span class="s2">"gravityGradientRateEstimate"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ggRate</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">regime</span> <span class="ow">in</span> <span class="n">regimes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"nSamples"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])),</span>
+            <span class="s2">"bsmVsKeplerMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"bsmVsKepler"</span><span class="p">])),</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">regime</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">"crossParadigmOrbitMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"crossOrbit"</span><span class="p">]))</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">"crossParadigmAttitudeMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"attError"</span><span class="p">]))</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">"crossParadigmWheelSpeedMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"wheelError"</span><span class="p">]))</span>
+            <span class="c1"># Angular-acceleration scale implied by the peak attitude difference if it</span>
+            <span class="c1"># were 0.5*alpha*t^2; an order-of-magnitude figure to compare against</span>
+            <span class="c1"># gravityGradientRateEstimate (the difference is a tumble-modulated libration,</span>
+            <span class="c1"># not a clean power law).</span>
+            <span class="n">tEnd</span> <span class="o">=</span> <span class="n">regime</span><span class="p">[</span><span class="s2">"time"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">"attitudeAccelScaleFromPeak"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">regime</span><span class="p">[</span><span class="s2">"attError"</span><span class="p">])</span><span class="o">/</span><span class="n">tEnd</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">fileName</span><span class="o">+</span><span class="s2">".json"</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plotResults">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenarioCompareOrbitMultibody.plotResults">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotResults</span><span class="p">(</span><span class="n">regimes</span><span class="p">,</span> <span class="n">ggRate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the scenario figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        regimes (dict): per-regime result arrays from :func:`run`.</span>
+<span class="sd">        ggRate (float): gravity-gradient angular-acceleration scale [rad/s^2].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">compact</span> <span class="o">=</span> <span class="n">regimes</span><span class="p">[</span><span class="s2">"compact"</span><span class="p">]</span>
+    <span class="n">extended</span> <span class="o">=</span> <span class="n">regimes</span><span class="p">[</span><span class="s2">"extended"</span><span class="p">]</span>
+
+    <span class="c1"># Part A: compact-body orbit accuracy. Each engine and their mutual difference track</span>
+    <span class="c1"># the Kepler solution at the roughly 1e-7 m RK4 truncation scale.</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_compactOrbit"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"bsmVsKepler"</span><span class="p">],</span> <span class="mf">1e-12</span><span class="p">),</span>
+                <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM vs Kepler"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">compact</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mujocoVsKepler</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"truth"</span><span class="p">]</span><span class="o">-</span><span class="n">compact</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mujocoVsKepler</span><span class="p">,</span> <span class="mf">1e-12</span><span class="p">),</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo vs Kepler"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"crossOrbit"</span><span class="p">],</span> <span class="mf">1e-12</span><span class="p">),</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">COLOR_REFERENCE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM vs MuJoCo"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Center-of-mass</span><span class="se">\n</span><span class="s2">position error [m]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="c1"># Part B: extended-body attitude divergence from differential point forces at the</span>
+    <span class="c1"># MuJoCo body centers. Over one orbit it builds as a tumble-modulated libration.</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_attError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extended</span><span class="p">[</span><span class="s2">"attError"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extended</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">extended</span><span class="p">[</span><span class="s2">"attError"</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM vs MuJoCo hub attitude"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Hub attitude difference [deg]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="c1"># Total-center-of-mass orbit agreement for the compact and extended regimes.</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_regimes"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">compact</span><span class="p">[</span><span class="s2">"posMujoco"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="s2">"crossOrbit"</span><span class="p">],</span> <span class="mf">1e-12</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_BSM</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Compact (hub + wheels)"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">extended</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">extended</span><span class="p">[</span><span class="s2">"crossOrbit"</span><span class="p">],</span> <span class="mf">1e-12</span><span class="p">),</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Extended (+ offset panels)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"CoM position difference [m]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

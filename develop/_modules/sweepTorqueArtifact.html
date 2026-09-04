@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sweepTorqueArtifact &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sweepTorqueArtifact</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sweepTorqueArtifact</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Sweep driver for the velocity-regime round-off artifact of :ref:`scenarioCompareTorque`.</span>
+
+<span class="sd">Two sweeps, both storing JSON next to the other comparison metrics:</span>
+
+<span class="sd">#. **Velocity sweep**: propagate the torqued body with *no gravity* but a nonzero</span>
+<span class="sd">   inertial drift velocity. A force-free translation cannot torque the body about its</span>
+<span class="sd">   own center of mass, so the attitude change relative to the zero-velocity run is a</span>
+<span class="sd">   direct measure of each engine's velocity-dependent error, with gravity removed as a</span>
+<span class="sd">   confound.</span>
+<span class="sd">#. **dt sweep**: repeat the scenario's orbiting-vs-rest discriminator over a range of</span>
+<span class="sd">   integrator steps, to test whether the artifact converges away with the step size</span>
+<span class="sd">   (truncation error would; round-off does not).</span>
+
+<span class="sd">Results are written to ``results/sweepTorqueArtifact.json``.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparisonValidation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scenarioCompareTorque</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sct</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeGravBody</span>
+
+<span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+<span class="c1"># Generic inertial drift direction with three unequal nonzero components. Along a</span>
+<span class="c1"># coordinate axis the m(v x v) round-off products are exactly zero in floating point,</span>
+<span class="c1"># which hides the artifact; a generic direction exercises the rounded cancellation.</span>
+<span class="n">DRIFT_DIR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">])</span><span class="o">/</span><span class="mf">7.0</span>
+
+
+<div class="viewcode-block" id="runBSMDrift">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepTorqueArtifact.html#sweepTorqueArtifact.runBSMDrift">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runBSMDrift</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Torqued body, no gravity, constant inertial drift velocity ``speed`` [m/s]."""</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scBSM"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">sct</span><span class="o">.</span><span class="n">MASS</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sct</span><span class="o">.</span><span class="n">INERTIA_DIAG</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">extTorque</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">extTorque</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"extTorque"</span>
+    <span class="n">torqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">(</span><span class="n">torqueRequestBody</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">sct</span><span class="o">.</span><span class="n">TORQUE_B</span><span class="p">)))</span>
+    <span class="n">extTorque</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueMsg</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extTorque</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">extTorque</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">(</span><span class="n">speed</span><span class="o">*</span><span class="n">DRIFT_DIR</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sct</span><span class="o">.</span><span class="n">OMEGA0_B</span><span class="p">]</span>
+
+    <span class="n">recorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="runMujocoDrift">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepTorqueArtifact.html#sweepTorqueArtifact.runMujocoDrift">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runMujocoDrift</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Same drift case with the MJScene engine."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"Build Basilisk with --mujoco to run this sweep."</span><span class="p">)</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">sct</span><span class="o">.</span><span class="n">mujocoModel</span><span class="p">())</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scMujoco"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">highOrderAttitudeIntegration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+
+    <span class="n">torqueActuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"bodyTorque"</span><span class="p">,</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">())</span>
+    <span class="n">torqueMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">TorqueAtSiteMsg</span><span class="p">()</span>
+    <span class="n">torqueMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">TorqueAtSiteMsgPayload</span><span class="p">(</span><span class="n">torque_S</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">sct</span><span class="o">.</span><span class="n">TORQUE_B</span><span class="p">)))</span>
+    <span class="n">torqueActuator</span><span class="o">.</span><span class="n">torqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">torqueMsg</span><span class="p">)</span>
+
+    <span class="n">recorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">hub</span><span class="o">.</span><span class="n">setPosition</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setVelocity</span><span class="p">((</span><span class="n">speed</span><span class="o">*</span><span class="n">DRIFT_DIR</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitude</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sct</span><span class="o">.</span><span class="n">OMEGA0_B</span><span class="p">))</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="velocitySweep">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepTorqueArtifact.html#sweepTorqueArtifact.velocitySweep">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">velocitySweep</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Max attitude deviation vs the zero-velocity run, per engine, per speed."""</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateTaskHorizon</span><span class="p">(</span>
+        <span class="s2">"torque velocity sweep"</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">sampleInterval</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">recorderSampleInterval</span><span class="p">(</span>
+        <span class="n">dt</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">sigmaBSMRest</span> <span class="o">=</span> <span class="n">runBSMDrift</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span> <span class="o">=</span> <span class="n">runMujocoDrift</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+        <span class="s2">"torque velocity-sweep rest BSM/MuJoCo"</span><span class="p">,</span>
+        <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"torque velocity-sweep BSM rest"</span><span class="p">,</span>
+        <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSMRest</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"torque velocity-sweep MuJoCo rest"</span><span class="p">,</span>
+        <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujocoRest</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">speed</span> <span class="ow">in</span> <span class="n">speeds</span><span class="p">:</span>
+        <span class="n">timeBSM</span><span class="p">,</span> <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">runBSMDrift</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">runMujocoDrift</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque velocity-sweep BSM drift/rest"</span><span class="p">,</span>
+            <span class="n">timeBSM</span><span class="p">,</span> <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque velocity-sweep MuJoCo drift/rest"</span><span class="p">,</span>
+            <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="s2">"torque velocity-sweep BSM"</span><span class="p">,</span>
+            <span class="n">timeBSM</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSM</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="s2">"torque velocity-sweep MuJoCo"</span><span class="p">,</span>
+            <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujoco</span><span class="p">)</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"speed"</span><span class="p">:</span> <span class="n">speed</span><span class="p">,</span>  <span class="c1"># [m/s]</span>
+            <span class="s2">"bsmDriftAttMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">sct</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaBSMRest</span><span class="p">))),</span>  <span class="c1"># [rad]</span>
+            <span class="s2">"mujocoDriftAttMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">sct</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">))),</span>  <span class="c1"># [rad]</span>
+        <span class="p">})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"velocity </span><span class="si">{:8.1f}</span><span class="s2"> m/s: BSM </span><span class="si">{:.3e}</span><span class="s2"> rad, MuJoCo </span><span class="si">{:.3e}</span><span class="s2"> rad"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">speed</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"bsmDriftAttMax"</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"mujocoDriftAttMax"</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">rows</span></div>
+
+
+
+<div class="viewcode-block" id="dtSweep">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepTorqueArtifact.html#sweepTorqueArtifact.dtSweep">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dtSweep</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repeat the scenario's orbiting-vs-rest discriminator per integrator step."""</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dts</span><span class="p">:</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateTaskHorizon</span><span class="p">(</span>
+            <span class="s2">"torque time-step sweep"</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+        <span class="n">sampleInterval</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">recorderSampleInterval</span><span class="p">(</span>
+            <span class="n">dt</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">bsmOrbitRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sct</span><span class="o">.</span><span class="n">runBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">bsmRestRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sct</span><span class="o">.</span><span class="n">runBSM</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mjOrbitRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sct</span><span class="o">.</span><span class="n">runMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mjRestRec</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sct</span><span class="o">.</span><span class="n">runMujoco</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">withGravity</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmOrbitRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">sigmaBSMRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmRestRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjOrbitRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">sigmaMujocoRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjRestRec</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">timeBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bsmOrbitRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">timeBSMRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bsmRestRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">timeMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mjOrbitRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">timeMujocoRest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mjRestRec</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque dt-sweep BSM orbit/rest"</span><span class="p">,</span>
+            <span class="n">timeBSM</span><span class="p">,</span> <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque dt-sweep MuJoCo orbit/rest"</span><span class="p">,</span>
+            <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"torque dt-sweep BSM/MuJoCo orbit"</span><span class="p">,</span>
+            <span class="n">timeBSM</span><span class="p">,</span> <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">attitude</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="p">(</span><span class="s2">"BSM orbit"</span><span class="p">,</span> <span class="n">timeBSM</span><span class="p">,</span> <span class="n">sigmaBSM</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"BSM rest"</span><span class="p">,</span> <span class="n">timeBSMRest</span><span class="p">,</span> <span class="n">sigmaBSMRest</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"MuJoCo orbit"</span><span class="p">,</span> <span class="n">timeMujoco</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"MuJoCo rest"</span><span class="p">,</span> <span class="n">timeMujocoRest</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">)):</span>
+            <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+                <span class="s2">"torque dt-sweep "</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+                <span class="n">times</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">attitude</span><span class="p">)</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"dt"</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span>  <span class="c1"># [s]</span>
+            <span class="s2">"bsmMotionAttMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">sct</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaBSMRest</span><span class="p">))),</span>  <span class="c1"># [rad]</span>
+            <span class="s2">"mujocoMotionAttMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">sct</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">))),</span>  <span class="c1"># [rad]</span>
+            <span class="s2">"crossEngineRestAttMax"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="n">sct</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSMRest</span><span class="p">,</span> <span class="n">sigmaMujocoRest</span><span class="p">))),</span>  <span class="c1"># [rad]</span>
+        <span class="p">})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"dt </span><span class="si">{:7.4f}</span><span class="s2"> s: MuJoCo artifact </span><span class="si">{:.3e}</span><span class="s2"> rad, BSM artifact </span><span class="si">{:.3e}</span><span class="s2"> rad, "</span>
+              <span class="s2">"at-rest cross-engine </span><span class="si">{:.3e}</span><span class="s2"> rad"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                  <span class="n">dt</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"mujocoMotionAttMax"</span><span class="p">],</span> <span class="n">rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"bsmMotionAttMax"</span><span class="p">],</span>
+                  <span class="n">rows</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"crossEngineRestAttMax"</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">rows</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepTorqueArtifact.html#sweepTorqueArtifact.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">speeds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">750.0</span><span class="p">,</span> <span class="mf">2500.0</span><span class="p">,</span> <span class="mf">7500.0</span><span class="p">),</span>
+        <span class="n">dts</span><span class="o">=</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.0125</span><span class="p">),</span>
+        <span class="n">tf</span><span class="o">=</span><span class="mf">600.0</span><span class="p">,</span> <span class="n">recordDt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">velocitySweepDt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run both torque-artifact sweeps and return the generated metrics."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"Build Basilisk with --mujoco to run this sweep."</span><span class="p">)</span>
+
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">BODY_DATA</span><span class="p">[</span><span class="s2">"earth"</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"=== velocity sweep (no gravity, inertial drift) ==="</span><span class="p">)</span>
+    <span class="n">velRows</span> <span class="o">=</span> <span class="n">velocitySweep</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">velocitySweepDt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"=== dt sweep (orbiting vs rest discriminator) ==="</span><span class="p">)</span>
+    <span class="n">dtRows</span> <span class="o">=</span> <span class="n">dtSweep</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"sweepTorqueArtifact"</span><span class="p">,</span>
+        <span class="s2">"configuration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"tf"</span><span class="p">:</span> <span class="n">tf</span><span class="p">,</span> <span class="s2">"recordDt"</span><span class="p">:</span> <span class="n">recordDt</span><span class="p">,</span> <span class="s2">"velocitySweepDt"</span><span class="p">:</span> <span class="n">velocitySweepDt</span><span class="p">,</span>
+            <span class="s2">"body"</span><span class="p">:</span> <span class="s2">"same rigid body, torque, and initial rate as scenarioCompareTorque"</span><span class="p">,</span>
+            <span class="s2">"velocityCase"</span><span class="p">:</span> <span class="s2">"no gravity, constant inertial drift along velocityDirection"</span><span class="p">,</span>
+            <span class="s2">"velocityDirection"</span><span class="p">:</span> <span class="n">DRIFT_DIR</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">"dtCase"</span><span class="p">:</span> <span class="s2">"orbiting (a=7000 km Kepler) vs at-rest discriminator"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"velocitySweep"</span><span class="p">:</span> <span class="n">velRows</span><span class="p">,</span>
+        <span class="s2">"dtSweep"</span><span class="p">:</span> <span class="n">dtRows</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">outFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="s2">"sweepTorqueArtifact.json"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Wrote "</span> <span class="o">+</span> <span class="n">outFile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metrics</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

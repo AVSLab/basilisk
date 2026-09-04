@@ -1,0 +1,8 @@
+
+attGuidMsg.sigma_BR - Component 1
+=================================
+
+.. raw:: html
+   :file: /Users/runner/work/basilisk/basilisk/docs/source/_images/Scenarios/attGuidMsg.sigma_BR_1.html
+
+This plot shows component 1 of the attGuidMsg.sigma_BR variable.

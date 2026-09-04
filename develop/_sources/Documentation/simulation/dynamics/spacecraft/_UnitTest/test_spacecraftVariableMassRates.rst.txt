@@ -1,0 +1,13 @@
+.. _test_spacecraftVariableMassRates:
+
+test_spacecraftVariableMassRates
+================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_spacecraftVariableMassRates
+   :members:
+   :show-inheritance:
+

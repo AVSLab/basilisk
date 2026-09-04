@@ -1,0 +1,46 @@
+.. _rwMotorVoltage:
+
+:module-type:`C` Module: rwMotorVoltage
+=======================================
+
+Executive Summary
+-----------------
+
+This module  computes the RW motor voltage from the command torque.
+
+The module
+:download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf>`.
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: rwMotorVoltage
+    :caption: Module I/O Messages
+
+    output voltageOutMsg ArrayMotorVoltageMsgPayload
+        RW motor voltage output message
+    input torqueInMsg ArrayMotorTorqueMsgPayload
+        commanded RW motor torque input message
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        RW array configuration input message
+    input rwAvailInMsg RWAvailabilityMsgPayload
+        (optional) RW device availability message
+    input rwSpeedInMsg RWSpeedMsgPayload
+        (optional) RW device speed message
+
+Module Assumptions and Limitations
+----------------------------------
+The module ``Reset()`` function zeros the output message to ensure safe management of effector states when the algorithm is disabled.
+
+
+----
+
+.. autodoxygenfile:: rwMotorVoltage.h
+   :project: rwMotorVoltage
+

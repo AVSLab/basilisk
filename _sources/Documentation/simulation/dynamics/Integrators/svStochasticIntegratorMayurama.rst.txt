@@ -1,0 +1,8 @@
+.. _svStochasticIntegratorMayurama:
+
+svStochasticIntegratorMayurama
+==============================
+
+.. autodoxygenfile:: svStochasticIntegratorMayurama.h
+   :project: Integrators
+

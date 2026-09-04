@@ -1,0 +1,103 @@
+.. _inhomogeneousGeometricBrownianMotion:
+
+:module-type:`C++` Module: inhomogeneousGeometricBrownianMotion
+===============================================================
+
+Executive Summary
+-----------------
+The ``InhomogeneousGeometricBrownianMotion`` module is an abstract MuJoCo dynamics-task base class that implements a
+scalar inhomogeneous geometric Brownian motion (IGBM) stochastic process. It provides state registration,
+drift/diffusion setup, and parameter accessors. Derived classes define how the scalar stochastic state is mapped into
+output messages.
+
+Unlike the additive-noise :ref:`MeanRevertingNoise <meanRevertingNoise>` (Ornstein-Uhlenbeck) process, IGBM has
+*multiplicative* noise: the diffusion is proportional to the state, so the exact continuous process stays strictly
+positive when started positive with a positive mean. This makes it well suited to representing a
+multiplicatively-uncertain positive physical quantity (e.g. a density or a scale factor) that also mean-reverts. (See
+the note below on positivity under an explicit integrator.)
+
+Module Description
+------------------
+The internal scalar state :math:`X_t` follows the Itô stochastic differential equation
+
+.. math::
+   \text{d}X_t = \frac{1}{\tau}\,(\mu - X_t)\,\text{d}t + \sigma\,X_t\,\text{d}W_t
+
+where:
+
+- :math:`\mu` is the mean-reversion level (long-run mean)
+- :math:`\tau` is the mean-reversion time constant [s]
+- :math:`\sigma` is the volatility [s\ :sup:`-1/2`] of the multiplicative noise
+- :math:`\text{d}W` is a Wiener process increment
+
+Mirroring :ref:`MeanRevertingNoise <meanRevertingNoise>`, the process is configured in **stationary form**: the user
+sets the mean level :math:`\mu`, the time constant :math:`\tau`, and the stationary standard deviation
+:math:`\sigma_{st}`. The SDE volatility is derived internally as
+
+.. math::
+   \sigma^2 = \frac{2}{\tau}\,\frac{\sigma_{st}^2}{\mu^2 + \sigma_{st}^2}
+
+so that the stationary moments are exactly
+
+.. math::
+   \mathbb{E}[X_\infty] = \mu, \qquad
+   \operatorname{Var}[X_\infty] = \sigma_{st}^2.
+
+Because :math:`\sigma_{st}^2/(\mu^2+\sigma_{st}^2) < 1`, this parameterization automatically satisfies the IGBM
+stationarity condition :math:`2/\tau > \sigma^2`, so a stationary distribution always exists.
+
+At each update, the base class computes the drift
+
+.. math::
+   \dot{X} = \frac{\mu - X}{\tau}
+
+and configures one scalar diffusion source with the state-dependent amplitude
+
+.. math::
+   \sigma X
+
+The base class then calls the virtual hook:
+
+.. code-block:: cpp
+
+   writeOutput(CurrentSimNanos, x)
+
+which must be implemented by subclasses.
+
+Assuming :math:`\mu > 0` and :math:`X_0 > 0`, the *exact* continuous process stays
+strictly positive. The module integrates the SDE as written (pure math), so an
+**explicit** integrator carries no such guarantee: for a large time step or Wiener
+increment the numerically-integrated :math:`X` can occasionally go non-positive.
+Consumers that need a non-negative quantity (e.g. a density) should clamp the value they
+derive from :math:`X` (see :ref:`igbmAtmDensity`), rather than assume positivity here.
+
+Message Interfaces
+------------------
+This base class does not define concrete input or output messages.
+
+Subclasses are responsible for defining and publishing message interfaces in their ``writeOutput`` implementation.
+
+Detailed Behavior
+-----------------
+At each update step, the module performs the following operations:
+
+1. Ensures the scalar state was registered.
+2. Reads current state value :math:`X`.
+3. Sets the deterministic derivative :math:`\dot{X} = (\mu - X)/\tau`.
+4. Sets the scalar diffusion magnitude :math:`\sigma X` for one noise source, with :math:`\sigma` derived from the
+   stationary-form parameters.
+5. Calls subclass ``writeOutput(CurrentSimNanos, x)``.
+
+During state registration, the module:
+
+- registers a 1x1 state named ``inhomogeneousGBMState``,
+- assigns one noise source,
+- initializes the state to the mean-reversion level :math:`\mu` (a positive, stationary-consistent default, since
+  :math:`x = 0` is degenerate for the multiplicative diffusion; override with ``setStateValue`` if desired).
+
+
+----
+
+.. autodoxygenfile:: inhomogeneousGeometricBrownianMotion.h
+   :project: _GeneralModuleFiles6
+

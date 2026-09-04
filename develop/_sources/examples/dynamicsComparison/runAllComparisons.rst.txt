@@ -1,0 +1,13 @@
+.. _runAllComparisons:
+
+runAllComparisons
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: runAllComparisons
+   :members:
+   :show-inheritance:
+

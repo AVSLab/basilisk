@@ -1,0 +1,13 @@
+.. _scenarioCompareParetoFlexPanels:
+
+scenarioCompareParetoFlexPanels
+===============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioCompareParetoFlexPanels
+   :members:
+   :show-inheritance:
+

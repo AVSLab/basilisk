@@ -1,0 +1,8 @@
+.. _PIDController:
+
+PIDController
+=============
+
+.. autodoxygenfile:: PIDController.h
+   :project: _GeneralModuleFiles6
+

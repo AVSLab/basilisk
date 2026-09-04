@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gen_rust_utilities &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="generate_rust_licenses" href="generate_rust_licenses.html" />
+    <link rel="prev" title="rust" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">rust</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">gen_rust_utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generate_rust_licenses.html">generate_rust_licenses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTest/index.html">_UnitTest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_build/index.html">bsk_build</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_macros/index.html">bsk_macros</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_messages/index.html">bsk_messages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_utilities/index.html">bsk_utilities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="licenses/index.html">licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">rust</a></li>
+      <li class="breadcrumb-item active">gen_rust_utilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/rust/gen_rust_utilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gen-rust-utilities">
+<span id="id1"></span><h1>gen_rust_utilities<a class="headerlink" href="#gen-rust-utilities" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-gen_rust_utilities">Generate Rust FFI bindings for selected Basilisk C ABI utilities.</p>
+<p>The generated bindings intentionally cover only C ABI headers.  C++/Eigen APIs
+need a dedicated C shim and are excluded until that interface is designed.</p>
+<p>Install the exact command-line generator version before regenerating the
+committed bindings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cargo</span> <span class="n">install</span> <span class="n">bindgen</span><span class="o">-</span><span class="n">cli</span> <span class="o">--</span><span class="n">version</span> <span class="s1">'=0.72.1'</span> <span class="o">--</span><span class="n">locked</span>
+</pre></div>
+</div>
+<p>The script rejects missing or mismatched versions rather than producing
+tool-version-dependent changes to <code class="docutils literal notranslate"><span class="pre">bsk_utilities/src/raw.rs</span></code>.</p>
+<p>The script accepts two include-root layouts:</p>
+<ul class="simple">
+<li><p>Basilisk core (default here): <code class="docutils literal notranslate"><span class="pre">--bsk-include</span></code> points at (or defaults to)
+this repo’s own <code class="docutils literal notranslate"><span class="pre">src/</span></code> – headers are included bare, e.g.
+<code class="docutils literal notranslate"><span class="pre">architecture/utilities/astroConstants.h</span></code>.</p></li>
+<li><p>Vendored headers: an include root with a <code class="docutils literal notranslate"><span class="pre">Basilisk/</span></code> subdirectory. Headers
+are included as <code class="docutils literal notranslate"><span class="pre">Basilisk/architecture/utilities/astroConstants.h</span></code>.
+This layout is detected when <code class="docutils literal notranslate"><span class="pre">&lt;include-root&gt;/Basilisk</span></code> exists.</p></li>
+</ul>
+<dl class="py function">
+<dt class="sig sig-object py" id="gen_rust_utilities.find_bindgen">
+<span class="sig-prename descclassname"><span class="pre">gen_rust_utilities.</span></span><span class="sig-name descname"><span class="pre">find_bindgen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/gen_rust_utilities.html#find_bindgen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gen_rust_utilities.find_bindgen" title="Link to this definition"></a></dt>
+<dd><p>Return the pinned <code class="docutils literal notranslate"><span class="pre">bindgen</span></code> executable or stop with installation help.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gen_rust_utilities.find_default_include_root">
+<span class="sig-prename descclassname"><span class="pre">gen_rust_utilities.</span></span><span class="sig-name descname"><span class="pre">find_default_include_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../../_modules/gen_rust_utilities.html#find_default_include_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gen_rust_utilities.find_default_include_root" title="Link to this definition"></a></dt>
+<dd><p>Default to this repo’s own <code class="docutils literal notranslate"><span class="pre">src/</span></code> (Basilisk core layout).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gen_rust_utilities.main">
+<span class="sig-prename descclassname"><span class="pre">gen_rust_utilities.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/gen_rust_utilities.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gen_rust_utilities.main" title="Link to this definition"></a></dt>
+<dd><p>Generate <code class="docutils literal notranslate"><span class="pre">bsk_utilities/src/raw.rs</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gen_rust_utilities.resolve_layout">
+<span class="sig-prename descclassname"><span class="pre">gen_rust_utilities.</span></span><span class="sig-name descname"><span class="pre">resolve_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gen_rust_utilities.html#resolve_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gen_rust_utilities.resolve_layout" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">(basilisk_include_dir,</span> <span class="pre">header_prefix)</span></code> for this include root.</p>
+<p>A vendored root has a <code class="docutils literal notranslate"><span class="pre">Basilisk/</span></code> subdirectory containing
+the actual headers, with the root itself on the include path so
+<code class="docutils literal notranslate"><span class="pre">#include</span> <span class="pre">&quot;Basilisk/architecture/...&quot;</span></code> resolves; Basilisk core’s own
+<code class="docutils literal notranslate"><span class="pre">src/</span></code> <em>is</em> that directory already, with nothing to prefix.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gen_rust_utilities.run_bindgen">
+<span class="sig-prename descclassname"><span class="pre">gen_rust_utilities.</span></span><span class="sig-name descname"><span class="pre">run_bindgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basilisk_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/gen_rust_utilities.html#run_bindgen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gen_rust_utilities.run_bindgen" title="Link to this definition"></a></dt>
+<dd><p>Run bindgen over the selected C ABI headers.</p>
+<p><code class="docutils literal notranslate"><span class="pre">include_root</span></code> resolves the wrapper header’s own <code class="docutils literal notranslate"><span class="pre">#include</span></code> lines
+(written with <code class="docutils literal notranslate"><span class="pre">header_prefix</span></code>); <code class="docutils literal notranslate"><span class="pre">basilisk_dir</span></code> resolves the
+<em>internal</em> cross-includes Basilisk headers use among themselves, which
+are always bare (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;architecture/utilities/linearAlgebra.h&quot;</span></code>)
+regardless of <code class="docutils literal notranslate"><span class="pre">header_prefix</span></code>. The two are the same directory in
+Basilisk core’s own layout (no prefix) and different directories for a
+vendored root (see <code class="docutils literal notranslate"><span class="pre">resolve_layout</span></code>).</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="rust" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="generate_rust_licenses.html" class="btn btn-neutral float-right" title="generate_rust_licenses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

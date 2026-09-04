@@ -1,0 +1,13 @@
+.. _scenarioCompareTorque:
+
+scenarioCompareTorque
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioCompareTorque
+   :members:
+   :show-inheritance:
+

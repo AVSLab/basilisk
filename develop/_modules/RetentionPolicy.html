@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetentionPolicy &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">RetentionPolicy</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for RetentionPolicy</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">numbers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Integral</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">simHelpers</span>
+
+
+<span class="n">_DIRECT_VARIABLE_ERROR</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"addVariableLog supports direct module variables only; create a "</span>
+    <span class="s2">"PythonVariableLogger during simulation setup for nested or computed time "</span>
+    <span class="s2">"histories and retain its output with addRetentionFunction()"</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="VariableRetentionParameters">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.VariableRetentionParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VariableRetentionParameters</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Store the configuration and runtime logger for a retained variable.</span>
+
+<span class="sd">    :param str varName: Variable identifier in ``&lt;ModelTag&gt;.&lt;variableName&gt;`` format.</span>
+<span class="sd">    :param int varRate: Minimum variable recording period in nanoseconds.</span>
+<span class="sd">    :param int startIndex: Deprecated first retained component index.</span>
+<span class="sd">    :param int stopIndex: Deprecated last retained component index, inclusive.</span>
+<span class="sd">    :param str varType: Deprecated legacy C-array type name.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">varName</span><span class="p">,</span>
+        <span class="n">varRate</span><span class="p">,</span>
+        <span class="n">startIndex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stopIndex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">varType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varName</span> <span class="o">=</span> <span class="n">varName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varRate</span> <span class="o">=</span> <span class="n">varRate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">startIndex</span> <span class="o">=</span> <span class="n">startIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopIndex</span> <span class="o">=</span> <span class="n">stopIndex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varType</span> <span class="o">=</span> <span class="n">varType</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="MessageRetentionParameters">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.MessageRetentionParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MessageRetentionParameters</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Store the configuration for retained message fields.</span>
+
+<span class="sd">    :param str name: Name of the message recorder.</span>
+<span class="sd">    :param list retainedVars: Message payload fields to retain.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">retainedVars</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msgRecName</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retainedVars</span> <span class="o">=</span> <span class="n">retainedVars</span></div>
+
+
+
+<div class="viewcode-block" id="RetentionPolicy">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RetentionPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Control which simulation data is retained and how it is stored.</span>
+
+<span class="sd">    The first column of each retained message or variable array contains the</span>
+<span class="sd">    corresponding simulation time in nanoseconds.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">10_000_000_000</span><span class="p">):</span>  <span class="c1"># [ns]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logRate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messageLogList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varLogList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataCallback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retentionFunctions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">addMessageLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">retainedVars</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messageLogList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MessageRetentionParameters</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">retainedVars</span><span class="p">))</span>
+
+<div class="viewcode-block" id="RetentionPolicy.addVariableLog">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy.addVariableLog">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addVariableLog</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">variableName</span><span class="p">,</span>
+        <span class="n">startIndex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stopIndex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">varType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logRate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add a module variable to the retained Monte Carlo data.</span>
+
+<span class="sd">        The variable identifier must use ``&lt;ModelTag&gt;.&lt;variableName&gt;`` format</span>
+<span class="sd">        and refer to a direct public or getter-backed variable on a uniquely</span>
+<span class="sd">        tagged module that supports the standard ``logger()`` API. The final</span>
+<span class="sd">        period separates the model tag from the variable name, so model tags may</span>
+<span class="sd">        contain periods. The complete variable is retained by default;</span>
+<span class="sd">        multidimensional samples are flattened in row-major order.</span>
+<span class="sd">        ``startIndex``, ``stopIndex``, and ``varType`` are compatibility</span>
+<span class="sd">        arguments for the removed legacy variable-logging API and will be</span>
+<span class="sd">        removed after 2027-08-26. New code should select component columns from</span>
+<span class="sd">        the retained NumPy array instead.</span>
+
+<span class="sd">        :param str variableName: Model tag and direct module variable name.</span>
+<span class="sd">        :param int startIndex: Deprecated first retained component index.</span>
+<span class="sd">        :param int stopIndex: Deprecated last retained component index, inclusive.</span>
+<span class="sd">        :param str varType: Deprecated legacy C-array type name; ignored.</span>
+<span class="sd">        :param int logRate: Minimum recording period in nanoseconds. The policy</span>
+<span class="sd">            default is used when this argument is ``None``.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_splitVariableName</span><span class="p">(</span><span class="n">variableName</span><span class="p">)</span>
+        <span class="n">startIndex</span><span class="p">,</span> <span class="n">stopIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeLegacyIndices</span><span class="p">(</span>
+            <span class="n">startIndex</span><span class="p">,</span>
+            <span class="n">stopIndex</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">startIndex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stopIndex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">varType</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">deprecated</span><span class="o">.</span><span class="n">deprecationWarn</span><span class="p">(</span>
+                <span class="s2">"RetentionPolicy.addVariableLog legacy arguments"</span><span class="p">,</span>
+                <span class="s2">"2027/08/26"</span><span class="p">,</span>
+                <span class="s2">"Variable loggers now retain complete values directly. Select "</span>
+                <span class="s2">"components from the retained NumPy array instead."</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">logRate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logRate</span>
+        <span class="n">logRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeLogRate</span><span class="p">(</span><span class="n">logRate</span><span class="p">)</span>
+        <span class="n">variableParameters</span> <span class="o">=</span> <span class="n">VariableRetentionParameters</span><span class="p">(</span>
+            <span class="n">variableName</span><span class="p">,</span>
+            <span class="n">logRate</span><span class="p">,</span>
+            <span class="n">startIndex</span><span class="p">,</span>
+            <span class="n">stopIndex</span><span class="p">,</span>
+            <span class="n">varType</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varLogList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variableParameters</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalizeLegacyIndices</span><span class="p">(</span><span class="n">startIndex</span><span class="p">,</span> <span class="n">stopIndex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Normalize and validate a deprecated inclusive component range."""</span>
+        <span class="k">if</span> <span class="n">startIndex</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stopIndex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">startIndex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">startIndex</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">stopIndex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stopIndex</span> <span class="o">=</span> <span class="n">startIndex</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Integral</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="p">(</span><span class="n">startIndex</span><span class="p">,</span> <span class="n">stopIndex</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"startIndex and stopIndex must be integers"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">startIndex</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">stopIndex</span> <span class="o">&lt;</span> <span class="n">startIndex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"startIndex and stopIndex must define a nonnegative inclusive range"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">startIndex</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">stopIndex</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalizeLogRate</span><span class="p">(</span><span class="n">logRate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate and normalize a variable recording period in nanoseconds."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">logRate</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">logRate</span><span class="p">,</span> <span class="n">Integral</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"logRate must be an integer number of nanoseconds"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">logRate</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"logRate must be nonnegative"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">logRate</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_splitVariableName</span><span class="p">(</span><span class="n">variableName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Split and validate a retained module variable identifier."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variableName</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">variableName</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"variableName must be a non-empty string"</span><span class="p">)</span>
+
+        <span class="n">modelTag</span><span class="p">,</span> <span class="n">separator</span><span class="p">,</span> <span class="n">moduleVariableName</span> <span class="o">=</span> <span class="n">variableName</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">separator</span> <span class="o">==</span> <span class="s2">""</span> <span class="ow">or</span> <span class="n">modelTag</span> <span class="o">==</span> <span class="s2">""</span> <span class="ow">or</span> <span class="n">moduleVariableName</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"variableName must use '&lt;ModelTag&gt;.&lt;variableName&gt;' format"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">token</span> <span class="ow">in</span> <span class="n">moduleVariableName</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"["</span><span class="p">,</span> <span class="s2">"]"</span><span class="p">,</span> <span class="s2">"("</span><span class="p">,</span> <span class="s2">")"</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">_DIRECT_VARIABLE_ERROR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">modelTag</span><span class="p">,</span> <span class="n">moduleVariableName</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_findModelAndTask</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">modelTag</span><span class="p">,</span> <span class="n">retainedVariableName</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the uniquely tagged model and its owning simulation task."""</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">prefixModelTags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">simInstance</span><span class="o">.</span><span class="n">TaskList</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">task</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">:</span>
+                <span class="n">candidateTag</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">"ModelTag"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">candidateTag</span> <span class="o">==</span> <span class="n">modelTag</span><span class="p">:</span>
+                    <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">model</span><span class="p">,</span> <span class="n">task</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">candidateTag</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">candidateTag</span> <span class="o">!=</span> <span class="s2">""</span>
+                    <span class="ow">and</span> <span class="n">retainedVariableName</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">candidateTag</span> <span class="o">+</span> <span class="s2">"."</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">prefixModelTags</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidateTag</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prefixModelTags</span><span class="p">:</span>
+                <span class="n">matchingTags</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">prefixModelTags</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Could not find a model with ModelTag '</span><span class="si">{</span><span class="n">modelTag</span><span class="si">}</span><span class="s2">'. The "</span>
+                    <span class="sa">f</span><span class="s2">"identifier extends existing ModelTag(s): </span><span class="si">{</span><span class="n">matchingTags</span><span class="si">}</span><span class="s2">. "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_DIRECT_VARIABLE_ERROR</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not find a model with ModelTag '</span><span class="si">{</span><span class="n">modelTag</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"ModelTag '</span><span class="si">{</span><span class="n">modelTag</span><span class="si">}</span><span class="s2">' is not unique across simulation tasks"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getLoggerPriority</span><span class="p">(</span><span class="n">task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return a priority that schedules a logger after existing task models."""</span>
+        <span class="n">priorities</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="s2">"TaskModelPriorities"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">priorities</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">priorities</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">TaskModels</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Task '</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="si">}</span><span class="s2">' has inconsistent model-priority metadata"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">priorities</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Task '</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="si">}</span><span class="s2">' does not contain any models"</span><span class="p">)</span>
+        <span class="c1"># SysModelTask preserves insertion order for models with equal priority.</span>
+        <span class="c1"># Reusing the lowest priority therefore places the new logger last.</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">priorities</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RetentionPolicy.addLogsToSim">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy.addLogsToSim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addLogsToSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simInstance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create and schedule the variable loggers required by this policy."""</span>
+        <span class="n">RetentionPolicy</span><span class="o">.</span><span class="n">addRetentionPoliciesToSim</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_addLogsToSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simInstance</span><span class="p">,</span> <span class="n">loggerCache</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create variable loggers, sharing compatible duplicate requests."""</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">varLogList</span><span class="p">:</span>
+            <span class="n">modelTag</span><span class="p">,</span> <span class="n">moduleVariableName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitVariableName</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">)</span>
+            <span class="n">cachedLogger</span> <span class="o">=</span> <span class="n">loggerCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cachedLogger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">variable</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">cachedLogger</span>
+                <span class="k">continue</span>
+
+            <span class="n">model</span><span class="p">,</span> <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findModelAndTask</span><span class="p">(</span>
+                <span class="n">simInstance</span><span class="p">,</span>
+                <span class="n">modelTag</span><span class="p">,</span>
+                <span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">loggerFactory</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">"logger"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">loggerFactory</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Model '</span><span class="si">{</span><span class="n">modelTag</span><span class="si">}</span><span class="s2">' does not provide the standard logger() "</span>
+                    <span class="s2">"API; create a PythonVariableLogger during simulation setup "</span>
+                    <span class="s2">"and retain its output with addRetentionFunction()"</span>
+                <span class="p">)</span>
+
+            <span class="n">variableLogger</span> <span class="o">=</span> <span class="n">loggerFactory</span><span class="p">(</span><span class="n">moduleVariableName</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">varRate</span><span class="p">)</span>
+            <span class="n">variableLogger</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"RetentionLogger:</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">loggerPriority</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getLoggerPriority</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+            <span class="n">simInstance</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span>
+                <span class="n">task</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+                <span class="n">variableLogger</span><span class="p">,</span>
+                <span class="n">ModelPriority</span><span class="o">=</span><span class="n">loggerPriority</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">variable</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">variableLogger</span>
+            <span class="n">loggerCache</span><span class="p">[</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">]</span> <span class="o">=</span> <span class="n">variableLogger</span>
+
+<div class="viewcode-block" id="RetentionPolicy.addRetentionFunction">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy.addRetentionFunction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addRetentionFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add a callback that returns custom data after simulation execution.</span>
+
+<span class="sd">        The callback receives the completed simulation instance and must return</span>
+<span class="sd">        a dictionary. Its entries are merged into the retained ``custom`` data.</span>
+
+<span class="sd">        :param callable function: Post-simulation data extraction callback.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retentionFunctions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setDataCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataCallback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataCallback</span> <span class="o">=</span> <span class="n">dataCallback</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">executeCallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataCallback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataCallback</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RetentionPolicy.addRetentionPoliciesToSim">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy.addRetentionPoliciesToSim">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addRetentionPoliciesToSim</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">retentionPolicies</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add the variable loggers from a list of policies to a simulation.</span>
+
+<span class="sd">        Compatible duplicate requests share one logger. Requests for the same</span>
+<span class="sd">        retained-data key with different rates or component ranges are rejected.</span>
+
+<span class="sd">        :param simInstance: Simulation instance receiving the loggers.</span>
+<span class="sd">        :param list retentionPolicies: Retention policies defining data to log.</span>
+<span class="sd">        """</span>
+        <span class="n">retentionPolicies</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">retentionPolicies</span><span class="p">)</span>
+        <span class="n">requestedSignatures</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">retentionPolicy</span> <span class="ow">in</span> <span class="n">retentionPolicies</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">varLogList</span><span class="p">:</span>
+                <span class="n">loggerSignature</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">variable</span><span class="o">.</span><span class="n">varRate</span><span class="p">,</span>
+                    <span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span><span class="p">,</span>
+                    <span class="n">variable</span><span class="o">.</span><span class="n">stopIndex</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">existingSignature</span> <span class="o">=</span> <span class="n">requestedSignatures</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">existingSignature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">existingSignature</span> <span class="o">!=</span> <span class="n">loggerSignature</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Variable '</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="si">}</span><span class="s2">' has conflicting retention "</span>
+                        <span class="s2">"settings"</span>
+                    <span class="p">)</span>
+                <span class="n">requestedSignatures</span><span class="p">[</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">]</span> <span class="o">=</span> <span class="n">loggerSignature</span>
+
+        <span class="n">loggerCache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">retentionPolicy</span> <span class="ow">in</span> <span class="n">retentionPolicies</span><span class="p">:</span>
+            <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">_addLogsToSim</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">loggerCache</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRetainedVariableData</span><span class="p">(</span><span class="n">variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return one runtime variable logger as a time-column data array."""</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Variable logger '</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="si">}</span><span class="s2">' was not added to the simulation"</span>
+            <span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">moduleVariableName</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="o">.</span><span class="n">_splitVariableName</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">)</span>
+        <span class="n">logTimes</span> <span class="o">=</span> <span class="n">variable</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+        <span class="n">variableData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">logger</span><span class="p">[</span><span class="n">moduleVariableName</span><span class="p">])</span>
+        <span class="n">sampleCount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">logTimes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sampleCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">componentCount</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">variable</span><span class="o">.</span><span class="n">stopIndex</span><span class="o">-</span><span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span><span class="o">+</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">emptyData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">componentCount</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">logTimes</span><span class="p">,</span> <span class="n">emptyData</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">variableData</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">variableData</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sampleCount</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Variable logger '</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="si">}</span><span class="s2">' returned inconsistent sample data"</span>
+            <span class="p">)</span>
+
+        <span class="n">componentCount</span> <span class="o">=</span> <span class="n">variableData</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">sampleCount</span>
+        <span class="n">componentData</span> <span class="o">=</span> <span class="n">variableData</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sampleCount</span><span class="p">,</span> <span class="n">componentCount</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">stopIndex</span> <span class="o">&gt;=</span> <span class="n">componentData</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Legacy component range [</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">stopIndex</span><span class="si">}</span><span class="s2">] exceeds the width of '</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="si">}</span><span class="s2">'"</span>
+                <span class="p">)</span>
+            <span class="n">componentData</span> <span class="o">=</span> <span class="n">componentData</span><span class="p">[</span>
+                <span class="p">:,</span> <span class="n">variable</span><span class="o">.</span><span class="n">startIndex</span><span class="p">:</span><span class="n">variable</span><span class="o">.</span><span class="n">stopIndex</span><span class="o">+</span><span class="mi">1</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">logTimes</span><span class="p">,</span> <span class="n">componentData</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RetentionPolicy.getDataForRetention">
+<a class="viewcode-back" href="../Documentation/utilities/MonteCarlo/RetentionPolicy.html#RetentionPolicy.RetentionPolicy.getDataForRetention">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getDataForRetention</span><span class="p">(</span><span class="n">simInstance</span><span class="p">,</span> <span class="n">retentionPolicies</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the data selected by a list of retention policies.</span>
+
+<span class="sd">        The returned dictionary contains ``messages``, ``variables``, and</span>
+<span class="sd">        ``custom`` sub-dictionaries. Message and variable arrays have simulation</span>
+<span class="sd">        time prepended as their first column. Multidimensional variable samples</span>
+<span class="sd">        are flattened in row-major order.</span>
+
+<span class="sd">        :param simInstance: Simulation instance containing completed recorders.</span>
+<span class="sd">        :param list retentionPolicies: Policies defining the data to retain.</span>
+<span class="sd">        :return: Retained simulation data grouped by source.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        """</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"messages"</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">"variables"</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">"custom"</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">for</span> <span class="n">retentionPolicy</span> <span class="ow">in</span> <span class="n">retentionPolicies</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">msgParam</span> <span class="ow">in</span> <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">messageLogList</span><span class="p">:</span>
+                <span class="n">recorder</span> <span class="o">=</span> <span class="n">simInstance</span><span class="o">.</span><span class="n">msgRecList</span><span class="p">[</span><span class="n">msgParam</span><span class="o">.</span><span class="n">msgRecName</span><span class="p">]</span>
+                <span class="n">msgTimes</span> <span class="o">=</span> <span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">varName</span> <span class="ow">in</span> <span class="n">msgParam</span><span class="o">.</span><span class="n">retainedVars</span><span class="p">:</span>
+                    <span class="n">msgData</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">varName</span><span class="p">)</span>
+                    <span class="n">msgData</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">msgTimes</span><span class="p">,</span> <span class="n">msgData</span><span class="p">)</span>
+                    <span class="n">messageKey</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">msgParam</span><span class="o">.</span><span class="n">msgRecName</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">varName</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">][</span><span class="n">messageKey</span><span class="p">]</span> <span class="o">=</span> <span class="n">msgData</span>
+
+            <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">varLogList</span><span class="p">:</span>
+                <span class="n">retainedVariableData</span> <span class="o">=</span> <span class="n">RetentionPolicy</span><span class="o">.</span><span class="n">_getRetainedVariableData</span><span class="p">(</span>
+                    <span class="n">variable</span>
+                <span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"variables"</span><span class="p">][</span><span class="n">variable</span><span class="o">.</span><span class="n">varName</span><span class="p">]</span> <span class="o">=</span> <span class="n">retainedVariableData</span>
+
+            <span class="k">for</span> <span class="n">retentionFunction</span> <span class="ow">in</span> <span class="n">retentionPolicy</span><span class="o">.</span><span class="n">retentionFunctions</span><span class="p">:</span>
+                <span class="n">customData</span> <span class="o">=</span> <span class="n">retentionFunction</span><span class="p">(</span><span class="n">simInstance</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"custom"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">customData</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

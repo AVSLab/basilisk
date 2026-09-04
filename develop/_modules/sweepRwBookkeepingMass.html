@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sweepRwBookkeepingMass &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sweepRwBookkeepingMass</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for sweepRwBookkeepingMass</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Bookkeeping-mass sweep for :ref:`scenarioCompareRwPanels`.</span>
+
+<span class="sd">MuJoCo requires every wheel body to carry a positive mass, while the BSM</span>
+<span class="sd">balanced-wheel effector is ideally massless; the scenario uses a 1e-6 kg</span>
+<span class="sd">bookkeeping mass. This sweep reruns the comparison with that mass reduced to</span>
+<span class="sd">confirm it is what sets the ~1e-10 rad cross-engine agreement floor.</span>
+
+<span class="sd">Results are written to ``results/sweepRwBookkeepingMass.json``.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparisonValidation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scenarioCompareRwPanels</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">srp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="attitudeFloor">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepRwBookkeepingMass.html#sweepRwBookkeepingMass.attitudeFloor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">attitudeFloor</span><span class="p">(</span><span class="n">rwMass</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">tf</span><span class="o">=</span><span class="mf">120.0</span><span class="p">,</span> <span class="n">recordDt</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Max cross-engine hub-attitude principal angle with the given wheel mass [kg]."""</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateTaskHorizon</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel bookkeeping-mass sweep"</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">originalMass</span> <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">RW_MASS</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">srp</span><span class="o">.</span><span class="n">RW_MASS</span> <span class="o">=</span> <span class="n">rwMass</span>
+        <span class="n">bsmState</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">runBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">mjState</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">srp</span><span class="o">.</span><span class="n">runMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">srp</span><span class="o">.</span><span class="n">RW_MASS</span> <span class="o">=</span> <span class="n">originalMass</span>
+    <span class="n">bsmTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">mujocoTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mjState</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjState</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">sampleInterval</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">recorderSampleInterval</span><span class="p">(</span>
+        <span class="n">dt</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel bookkeeping-mass BSM/MuJoCo"</span><span class="p">,</span>
+        <span class="n">bsmTimes</span><span class="p">,</span> <span class="n">mujocoTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel bookkeeping-mass BSM"</span><span class="p">,</span>
+        <span class="n">bsmTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSM</span><span class="p">)</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel bookkeeping-mass MuJoCo"</span><span class="p">,</span>
+        <span class="n">mujocoTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">sampleInterval</span><span class="p">,</span> <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujoco</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">srp</span><span class="o">.</span><span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/sweepRwBookkeepingMass.html#sweepRwBookkeepingMass.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">rwMasses</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">,</span> <span class="mf">1.0e-10</span><span class="p">),</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">tf</span><span class="o">=</span><span class="mf">120.0</span><span class="p">,</span>
+        <span class="n">recordDt</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the bookkeeping-mass sweep and return the generated metrics."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">srp</span><span class="o">.</span><span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"Build Basilisk with --mujoco to run this sweep."</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">rwMass</span> <span class="ow">in</span> <span class="n">rwMasses</span><span class="p">:</span>
+        <span class="n">floor</span> <span class="o">=</span> <span class="n">attitudeFloor</span><span class="p">(</span><span class="n">rwMass</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"rwMass"</span><span class="p">:</span> <span class="n">rwMass</span><span class="p">,</span> <span class="s2">"hubAttitudePrincipalAngleMax"</span><span class="p">:</span> <span class="n">floor</span><span class="p">})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"RW_MASS </span><span class="si">{:.0e}</span><span class="s2"> kg -&gt; attitude floor </span><span class="si">{:.3e}</span><span class="s2"> rad"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rwMass</span><span class="p">,</span> <span class="n">floor</span><span class="p">))</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"sweepRwBookkeepingMass"</span><span class="p">,</span>
+        <span class="s2">"configuration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"dt"</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span>
+            <span class="s2">"tf"</span><span class="p">:</span> <span class="n">tf</span><span class="p">,</span>
+            <span class="s2">"recordDt"</span><span class="p">:</span> <span class="n">recordDt</span><span class="p">,</span>
+            <span class="s2">"note"</span><span class="p">:</span> <span class="s2">"scenarioCompareRwPanels with swept MuJoCo wheel bookkeeping mass"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"rows"</span><span class="p">:</span> <span class="n">rows</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">outFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="s2">"sweepRwBookkeepingMass.json"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Wrote "</span> <span class="o">+</span> <span class="n">outFile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metrics</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+.. _checkRustFormatting:
+
+checkRustFormatting
+===================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: checkRustFormatting
+   :members:
+   :show-inheritance:
+

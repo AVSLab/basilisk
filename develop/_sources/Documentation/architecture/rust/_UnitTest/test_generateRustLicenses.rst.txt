@@ -1,0 +1,13 @@
+.. _test_generateRustLicenses:
+
+test_generateRustLicenses
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_generateRustLicenses
+   :members:
+   :show-inheritance:
+

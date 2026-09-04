@@ -1,0 +1,13 @@
+.. _scenarioExtendingBoom:
+
+scenarioExtendingBoom
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioExtendingBoom
+   :members:
+   :show-inheritance:
+

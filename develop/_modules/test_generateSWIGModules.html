@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_generateSWIGModules &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_generateSWIGModules</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_generateSWIGModules</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">"""Unit tests for message auto-source generators."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">MSG_AUTO_SOURCE_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"msgAutoSource"</span>
+<span class="n">NEW_MESSAGING_TEMPLATE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"newMessaging.ih"</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">MSG_AUTO_SOURCE_DIR</span><span class="p">))</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">generatePackageInit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generatePayloadEqualityHeader</span><span class="w"> </span><span class="kn">import</span> <span class="n">generateEqualityHeader</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">generate_c_info</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generate a SWIG interface file for a simple test message payload."""</span>
+
+    <span class="c1"># The generator normally consumes metadata emitted by libclang.  This test</span>
+    <span class="c1"># only needs enough metadata to exercise the Python binding templates, so a</span>
+    <span class="c1"># single scalar field keeps the fixture small while still producing a valid</span>
+    <span class="c1"># payload extension block.</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"complete"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"size_bytes"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">,</span>
+                <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span>
+                <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"double"</span><span class="p">,</span>
+                <span class="s2">"offset_bytes"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+                <span class="s2">"size_bytes"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># [byte]</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">meta_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"CustomMsgPayload.json"</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"CustomMsgPayload.i"</span>
+    <span class="n">meta_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="c1"># Run the real generator instead of duplicating its formatting logic in the</span>
+    <span class="c1"># test.  The header path does not need to exist because generateSWIGModules.py</span>
+    <span class="c1"># only splices the path into the SWIG template.</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+            <span class="s2">"generateSWIGModules.py"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"CustomMsgPayload.h"</span><span class="p">),</span>
+            <span class="s2">"CustomMsgPayload"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">generate_c_info</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">meta_path</span><span class="p">),</span>
+            <span class="s2">"0"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">cwd</span><span class="o">=</span><span class="n">MSG_AUTO_SOURCE_DIR</span><span class="p">,</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_package_init_uses_only_cmake_manifest_entries">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_package_init_uses_only_cmake_manifest_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_package_init_uses_only_cmake_manifest_entries</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Package imports are sorted and limited to the inventory supplied by CMake."""</span>
+    <span class="n">header_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"headers"</span>
+    <span class="n">header_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">"ZuluMsgPayload.h"</span><span class="p">,</span>
+            <span class="s2">"AlphaMsgPayload.h"</span><span class="p">,</span>
+            <span class="s2">"IgnoredMsgPayload.hpp"</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="p">(</span><span class="n">header_path</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.txt"</span>
+    <span class="n">manifest_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+        <span class="s2">"ZuluMsgPayload</span><span class="se">\n</span><span class="s2">AlphaMsgPayload</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">previous_manifest_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.previous.txt"</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="s2">"""</span><span class="se">\</span>
+<span class="s2">from Basilisk.architecture.messaging.messagingSupport import *</span>
+<span class="s2">from Basilisk.architecture.messaging.AlphaMsgPayload import *</span>
+<span class="s2">from Basilisk.architecture.messaging.ZuluMsgPayload import *</span>
+<span class="s2">from Basilisk.architecture.messagingBase import *</span>
+<span class="s2">"""</span>
+
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"output"</span>
+    <span class="n">generatePackageInit</span><span class="o">.</span><span class="n">generate_package_init</span><span class="p">(</span>
+        <span class="n">output_path</span><span class="p">,</span>
+        <span class="n">manifest_path</span><span class="p">,</span>
+        <span class="n">previous_manifest_path</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">generated</span> <span class="o">=</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="s2">"__init__.py"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="k">assert</span> <span class="s2">"IgnoredMsgPayload"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="n">previous_manifest_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="s2">"AlphaMsgPayload</span><span class="se">\n</span><span class="s2">ZuluMsgPayload</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_package_init_rejects_duplicate_manifest_entries">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_package_init_rejects_duplicate_manifest_entries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_package_init_rejects_duplicate_manifest_entries</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Duplicate payload module names fail with their manifest line numbers."""</span>
+    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.txt"</span>
+    <span class="n">manifest_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+        <span class="s2">"DuplicateMsgPayload</span><span class="se">\n</span><span class="s2">DuplicateMsgPayload</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"lines 1 and 2"</span><span class="p">):</span>
+        <span class="n">generatePackageInit</span><span class="o">.</span><span class="n">generate_package_init</span><span class="p">(</span>
+            <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"output"</span><span class="p">,</span>
+            <span class="n">manifest_path</span><span class="p">,</span>
+            <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.previous.txt"</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_package_init_rejects_invalid_manifest_entry">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_package_init_rejects_invalid_manifest_entry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_package_init_rejects_invalid_manifest_entry</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Only payload module names can be emitted as package imports."""</span>
+    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.txt"</span>
+    <span class="n">manifest_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"UnexpectedMsgPayload.hpp</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"Invalid payload module"</span><span class="p">):</span>
+        <span class="n">generatePackageInit</span><span class="o">.</span><span class="n">generate_package_init</span><span class="p">(</span>
+            <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"output"</span><span class="p">,</span>
+            <span class="n">manifest_path</span><span class="p">,</span>
+            <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.previous.txt"</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_package_init_removes_only_stale_payload_artifacts">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_package_init_removes_only_stale_payload_artifacts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_package_init_removes_only_stale_payload_artifacts</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Removed or renamed payloads lose only their known generated artifacts."""</span>
+    <span class="n">module_output_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"Basilisk"</span> <span class="o">/</span> <span class="s2">"architecture"</span> <span class="o">/</span> <span class="s2">"messaging"</span>
+    <span class="n">module_output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">auto_source_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">"autoSource"</span>
+    <span class="p">(</span><span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"cMsgMeta"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">current_payload</span> <span class="o">=</span> <span class="s2">"RenamedMsgPayload"</span>
+    <span class="n">removed_payload</span> <span class="o">=</span> <span class="s2">"OriginalMsgPayload"</span>
+    <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.txt"</span>
+    <span class="n">manifest_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">current_payload</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">previous_manifest_path</span> <span class="o">=</span> <span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"messagePayloads.previous.txt"</span>
+    <span class="n">previous_manifest_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">removed_artifacts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">generatePackageInit</span><span class="o">.</span><span class="n">payload_artifact_paths</span><span class="p">(</span>
+        <span class="n">removed_payload</span><span class="p">,</span>
+        <span class="n">module_output_path</span><span class="p">,</span>
+        <span class="n">auto_source_path</span><span class="p">,</span>
+    <span class="p">))</span>
+    <span class="n">required_artifacts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.py"</span><span class="p">,</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">PYTHON_wrap.cxx"</span><span class="p">,</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.so"</span><span class="p">,</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.pyd"</span><span class="p">,</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.dylib"</span><span class="p">,</span>
+        <span class="n">auto_source_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.i"</span><span class="p">,</span>
+        <span class="n">auto_source_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">_equality.h"</span><span class="p">,</span>
+        <span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"cMsgMeta"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.json"</span><span class="p">,</span>
+        <span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"cMsgMeta"</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.d"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">assert</span> <span class="n">required_artifacts</span> <span class="o">&lt;=</span> <span class="n">removed_artifacts</span>
+    <span class="k">for</span> <span class="n">artifact_path</span> <span class="ow">in</span> <span class="n">removed_artifacts</span><span class="p">:</span>
+        <span class="n">artifact_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"stale"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="n">retained_artifacts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">current_payload</span><span class="si">}</span><span class="s2">.py"</span><span class="p">,</span>
+        <span class="n">module_output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">removed_payload</span><span class="si">}</span><span class="s2">.user-notes"</span><span class="p">,</span>
+        <span class="n">auto_source_path</span> <span class="o">/</span> <span class="s2">"unrelated.json"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">artifact_path</span> <span class="ow">in</span> <span class="n">retained_artifacts</span><span class="p">:</span>
+        <span class="n">artifact_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"retain"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="n">removed_payloads</span> <span class="o">=</span> <span class="n">generatePackageInit</span><span class="o">.</span><span class="n">generate_package_init</span><span class="p">(</span>
+        <span class="n">module_output_path</span><span class="p">,</span>
+        <span class="n">manifest_path</span><span class="p">,</span>
+        <span class="n">previous_manifest_path</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">removed_payloads</span> <span class="o">==</span> <span class="p">[</span><span class="n">removed_payload</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">artifact_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">for</span> <span class="n">artifact_path</span> <span class="ow">in</span> <span class="n">removed_artifacts</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">artifact_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">for</span> <span class="n">artifact_path</span> <span class="ow">in</span> <span class="n">retained_artifacts</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">previous_manifest_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">current_payload</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="p">)</span>
+    <span class="n">package_init</span> <span class="o">=</span> <span class="p">(</span><span class="n">module_output_path</span> <span class="o">/</span> <span class="s2">"__init__.py"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">current_payload</span> <span class="ow">in</span> <span class="n">package_init</span>
+    <span class="k">assert</span> <span class="n">removed_payload</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">package_init</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_render_read_functor_namespace</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Render the generated ``ReadFunctor`` Python helpers for execution."""</span>
+
+    <span class="n">template</span> <span class="o">=</span> <span class="n">NEW_MESSAGING_TEMPLATE</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"            def subscribeTo(self, source):"</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"        %}"</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">template</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"messageType ## _C"</span><span class="p">,</span> <span class="s2">"CustomMsg_C"</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"messageTypePayload"</span><span class="p">,</span> <span class="s2">"CustomMsgPayload"</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">read_functor_methods</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"messageType"</span><span class="p">,</span> <span class="s2">"CustomMsg"</span><span class="p">)</span>
+    <span class="n">read_functor_methods</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">read_functor_methods</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s2">"    "</span><span class="p">)</span>
+
+    <span class="n">namespace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">class_source</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+        <span class="s2">"class CustomMsg:"</span><span class="p">,</span>
+        <span class="s2">"    pass"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"class OtherMsg:"</span><span class="p">,</span>
+        <span class="s2">"    pass"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"class CustomMsgReader:"</span><span class="p">,</span>
+        <span class="s2">"    def __init__(self):"</span><span class="p">,</span>
+        <span class="s2">"        self.subscribed_to = None"</span><span class="p">,</span>
+        <span class="s2">"        self.keepalive_source = None"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"    def __subscribe_to(self, source):"</span><span class="p">,</span>
+        <span class="s2">"        self.subscribed_to = source"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"    def _install_keepalive(self, source):"</span><span class="p">,</span>
+        <span class="s2">"        self.keepalive_source = source"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"    def __is_subscribed_to(self, source):"</span><span class="p">,</span>
+        <span class="s2">"        return source is self.subscribed_to"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="n">read_functor_methods</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">exec</span><span class="p">(</span><span class="n">class_source</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">namespace</span>
+
+
+<div class="viewcode-block" id="test_generated_message_bindings_use_module_local_classes">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_generated_message_bindings_use_module_local_classes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_generated_message_bindings_use_module_local_classes</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generated subscription helpers do not assume the Basilisk package path."""</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_messaging_template</span> <span class="o">=</span> <span class="n">NEW_MESSAGING_TEMPLATE</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">mport "architecture/messaging/messagingBase.i"'</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">mport "architecture/messaging/messagingSupport.i"'</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "architecture/messaging/messagingSupportTypemaps.swg"'</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"from Basilisk.architecture.messaging.messagingSupport import *"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"ThrustConfigArray"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"reactionWheelSupport.h"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"macroDefinitions.h"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">"fswDefinitions.h"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">"from Basilisk.architecture.messaging.messageType"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">"if type(source) == messageType ## _C:"</span> <span class="ow">in</span> <span class="n">new_messaging_template</span>
+    <span class="k">assert</span> <span class="s2">"from Basilisk.architecture.messaging import CustomMsg"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore Message::Message(const Message &amp;);"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore Message::operator=(const Message &amp;);"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"from Basilisk.architecture.messaging import _msgKeepAlive"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"elif type(source) == CustomMsg:"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"recorder = self._recorder(timeDiff)"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"_msgKeepAlive.retainRecorderSource(recorder, self)"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"if args:"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"_msgKeepAlive.retainRecorderConstructorSource(self, args[0], CustomMsg)"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_keepalive_callbacks_skip_python_finalization">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_keepalive_callbacks_skip_python_finalization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_keepalive_callbacks_skip_python_finalization</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Keep-alive callbacks do not acquire the GIL while Python is finalizing."""</span>
+
+    <span class="n">template</span> <span class="o">=</span> <span class="n">NEW_MESSAGING_TEMPLATE</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="n">finalizing_guard</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"#if PY_VERSION_HEX &gt;= 0x030D0000 &amp;&amp; "</span>
+        <span class="s2">"(!defined(Py_LIMITED_API) || Py_LIMITED_API+0 &gt;= 0x030D0000)"</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">finalizing_guard</span> <span class="ow">in</span> <span class="n">template</span>
+    <span class="k">assert</span> <span class="s2">"if (Py_IsFinalizing()) return false;"</span> <span class="ow">in</span> <span class="n">template</span>
+    <span class="k">assert</span> <span class="s2">"_bsk_python_shutting_down.load(std::memory_order_acquire)"</span> <span class="ow">in</span> <span class="n">template</span>
+    <span class="k">assert</span> <span class="s2">"_bsk_atexit.register(_bsk_mark_python_shutting_down)"</span> <span class="ow">in</span> <span class="n">template</span>
+    <span class="k">assert</span> <span class="n">template</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"if (!_bsk_python_runtime_is_usable()) return;"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="s2">"_bsk_readfunctor_acquire(source);"</span> <span class="ow">in</span> <span class="n">template</span></div>
+
+
+
+<div class="viewcode-block" id="test_generated_interface_hides_read_functor_ownership_operations">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_generated_interface_hides_read_functor_ownership_operations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_generated_interface_hides_read_functor_ownership_operations</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generated bindings omit C++-only reader ownership operations."""</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore ReadFunctor::ReadFunctor(ReadFunctor &amp;&amp;);"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore ReadFunctor::operator=(const ReadFunctor &amp;);"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore ReadFunctor::operator=(ReadFunctor &amp;&amp;);"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%i</span><span class="s2">gnore ReadFunctor::setSource;"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_generated_read_functor_without_c_interface_uses_cpp_message">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_generated_read_functor_without_c_interface_uses_cpp_message">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_generated_read_functor_without_c_interface_uses_cpp_message</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generated helpers still work when no C-interface symbol exists."""</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">_generate_swig_interface</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s2">"cMsgCInterface/CustomMsg_C.h"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"</span><span class="si">%e</span><span class="s2">xtend CustomMsg_C"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"CustomMsg_C"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+
+    <span class="n">namespace</span> <span class="o">=</span> <span class="n">_render_read_functor_namespace</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="s2">"CustomMsg_C"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">namespace</span>
+
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">"CustomMsgReader"</span><span class="p">]()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">"CustomMsg"</span><span class="p">]()</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">subscribed_to</span> <span class="ow">is</span> <span class="n">source</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">keepalive_source</span> <span class="ow">is</span> <span class="n">source</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="n">other_source</span> <span class="o">=</span> <span class="n">namespace</span><span class="p">[</span><span class="s2">"OtherMsg"</span><span class="p">]()</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isSubscribedTo</span><span class="p">(</span><span class="n">other_source</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"tried to subscribe ReadFunctor&lt;CustomMsgPayload&gt;"</span><span class="p">):</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">other_source</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_fixed_array_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_fixed_array_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_fixed_array_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generated equality compares fixed numeric array payloads element-wise."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"dataVector"</span><span class="p">,</span>
+                <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"array"</span><span class="p">,</span>
+                <span class="s2">"shape"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">"element"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"double"</span><span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"CModuleTemplateMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">"std::memcmp"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"struct PayloadEqualityTraits&lt;CModuleTemplateMsgPayload&gt;"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s1">'#include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"'</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"static constexpr bool supported = true"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"for (int i0 = 0; i0 &lt; 3; ++i0)"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"if (!(lhs.dataVector[i0] == rhs.dataVector[i0]))"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"return true;"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_nested_struct_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_nested_struct_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_nested_struct_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generated equality walks nested struct arrays field by field."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"reactionWheels"</span><span class="p">,</span>
+                <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"array"</span><span class="p">,</span>
+                <span class="s2">"shape"</span><span class="p">:</span> <span class="p">[</span><span class="mi">36</span><span class="p">],</span>
+                <span class="s2">"element"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"struct"</span><span class="p">,</span>
+                    <span class="s2">"typeName"</span><span class="p">:</span> <span class="s2">"RWConfigElementMsgPayload"</span><span class="p">,</span>
+                    <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"gsHat_B"</span><span class="p">,</span>
+                            <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"array"</span><span class="p">,</span>
+                            <span class="s2">"shape"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                            <span class="s2">"element"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"double"</span><span class="p">},</span>
+                        <span class="p">},</span>
+                        <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Js"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"double"</span><span class="p">},</span>
+                    <span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"RWConstellationMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"architecture/msgPayloadDefC/RWConstellationMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">"for (int i0 = 0; i0 &lt; 36; ++i0)"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"for (int i1 = 0; i1 &lt; 3; ++i1)"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"lhs.reactionWheels[i0].gsHat_B[i1] == rhs.reactionWheels[i0].gsHat_B[i1]"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"lhs.reactionWheels[i0].Js == rhs.reactionWheels[i0].Js"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"return true;"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_generates_eigen_comparison">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_generates_eigen_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_generates_eigen_comparison</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generated equality compares Eigen dimensions and coefficients."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"qpos"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"unknown"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"Eigen::VectorXd"</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"MJSceneStateMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">"lhs.qpos.rows() != rhs.qpos.rows()"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"lhs.qpos.cols() != rhs.qpos.cols()"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"if ((lhs.qpos.array() != rhs.qpos.array()).any())"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"return true;"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_uses_operator_equal_for_safe_stl_fields">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_uses_operator_equal_for_safe_stl_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_uses_operator_equal_for_safe_stl_fields</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generated equality uses ``operator==`` for supported STL payload fields."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"keyboardInput"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"unknown"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"std::string"</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"samples"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"unknown"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"std::vector&lt;double&gt;"</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"StringVectorMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"architecture/msgPayloadDefCpp/StringVectorMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s2">"if (!(lhs.keyboardInput == rhs.keyboardInput))"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"if (!(lhs.samples == rhs.samples))"</span> <span class="ow">in</span> <span class="n">generated</span>
+    <span class="k">assert</span> <span class="s2">"return true;"</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_returns_none_for_unsupported_fields">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_returns_none_for_unsupported_fields">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_returns_none_for_unsupported_fields</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Payloads with pointer or unsupported fields return None — no specialization generated."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"frameNumber"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"int"</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"imagePointer"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"pointer"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"void *"</span><span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"vizEventReplies"</span><span class="p">,</span>
+                <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"unknown"</span><span class="p">,</span>
+                <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"std::vector&lt;VizEventReply&gt;"</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"lateField"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"int"</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"VizUserInputMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"architecture/msgPayloadDefCpp/VizUserInputMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_payload_equality_uses_external_header_include">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_generateSWIGModules.html#test_generateSWIGModules.test_payload_equality_uses_external_header_include">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_payload_equality_uses_external_header_include</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generated equality includes an external payload from its public root."""</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"fields"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="s2">"ctype"</span><span class="p">:</span> <span class="s2">"double"</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="n">generated</span> <span class="o">=</span> <span class="n">generateEqualityHeader</span><span class="p">(</span>
+        <span class="n">meta</span><span class="p">,</span>
+        <span class="s2">"CustomModuleMsgPayload"</span><span class="p">,</span>
+        <span class="s2">"msgPayloadDefC/CustomModuleMsgPayload.h"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">generated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="s1">'#include "msgPayloadDefC/CustomModuleMsgPayload.h"'</span> <span class="ow">in</span> <span class="n">generated</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

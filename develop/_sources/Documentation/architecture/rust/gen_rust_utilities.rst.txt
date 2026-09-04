@@ -1,0 +1,13 @@
+.. _gen_rust_utilities:
+
+gen_rust_utilities
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: gen_rust_utilities
+   :members:
+   :show-inheritance:
+

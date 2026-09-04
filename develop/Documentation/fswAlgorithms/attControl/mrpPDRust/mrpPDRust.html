@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Module: mrpPDRust &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="mrpPDRust" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">fswAlgorithms</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">attControl</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../lowPassFilterTorqueCommand/index.html">lowPassFilterTorqueCommand</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpFeedback/index.html">mrpFeedback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpPD/index.html">mrpPD</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">mrpPDRust</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mrpSteering/index.html">mrpSteering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtbFeedforward/index.html">mtbFeedforward</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtbMomentumManagement/index.html">mtbMomentumManagement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtbMomentumManagementSimple/index.html">mtbMomentumManagementSimple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prvSteering/index.html">prvSteering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../rateServoFullNonlinear/index.html">rateServoFullNonlinear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../thrMomentumManagement/index.html">thrMomentumManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../attDetermination/index.html">attDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../attGuidance/index.html">attGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dvGuidance/index.html">dvGuidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../effectorInterfaces/index.html">effectorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../formationFlying/index.html">formationFlying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../fswUtilities/index.html">fswUtilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../imageProcessing/index.html">imageProcessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../opticalNavigation/index.html">opticalNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../orbitControl/index.html">orbitControl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../rwConfigData/index.html">rwConfigData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensorInterfaces/index.html">sensorInterfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../smallBodyNavigation/index.html">smallBodyNavigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stateEstimation/index.html">stateEstimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../transDetermination/index.html">transDetermination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vehicleConfigData/index.html">vehicleConfigData</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">fswAlgorithms</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">attControl</a></li>
+          <li class="breadcrumb-item"><a href="index.html">mrpPDRust</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-rust">Rust</span> Module: mrpPDRust</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/fswAlgorithms/attControl/mrpPDRust/mrpPDRust.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rust-module-mrppdrust">
+<span id="mrppdrust"></span><h1><span class="module-type-label module-type-rust">Rust</span> Module: mrpPDRust<a class="headerlink" href="#rust-module-mrppdrust" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is a native Rust port of the C <a class="reference internal" href="../mrpPD/mrpPD.html#mrppd"><span class="std std-ref">C Module: mrpPD</span></a> module. The two
+implementations intentionally expose equivalent configuration parameters,
+message ports, inertia caching, and control-law results.</p>
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mrpPDRust</span></code> provides modified Rodrigues parameter (MRP)
+proportional-derivative attitude control. It is a native Rust counterpart to
+<code class="docutils literal notranslate"><span class="pre">mrpPD</span></code> and is similar to <a class="reference internal" href="../mrpFeedback/mrpFeedback.html#mrpfeedback"><span class="std std-ref">C Module: mrpFeedback</span></a>, but it does not include
+reaction-wheel or integral-feedback terms. When the modeled dynamics are
+known and the requested external torque is realized, the controller
+asymptotically tracks a general reference attitude trajectory.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>The following diagram and table list the module input and output messages.
+Both input messages are required.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../../_images/graphviz-ef7938fbdb444ea3973931b2feae1965bc916bac.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">mrpPDRust module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cmdTorqueOutMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.html#cmdtorquebodymsgpayload"><span class="std std-ref">CmdTorqueBodyMsgPayload</span></a></p></td>
+<td><p>Commanded external control torque in body-frame components.</p></td>
+</tr>
+<tr class="row-odd"><td><p>vehConfigInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/VehicleConfigMsgPayload.html#vehicleconfigmsgpayload"><span class="std std-ref">VehicleConfigMsgPayload</span></a></p></td>
+<td><p>Spacecraft inertia and mass properties. The inertia is cached during reset.</p></td>
+</tr>
+<tr class="row-even"><td><p>guidInMsg</p></td>
+<td><p><a class="reference internal" href="../../../architecture/msgPayloadDefC/AttGuidMsgPayload.html#attguidmsgpayload"><span class="std std-ref">AttGuidMsgPayload</span></a></p></td>
+<td><p>Attitude error, angular-rate tracking error, reference-frame rate, and reference-frame acceleration.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>The module implements the MRP feedback law discussed in section 8.4.1 of
+<a class="reference external" href="https://doi.org/10.2514/4.105210">Analytical Mechanics of Space Systems</a>. Define
+<span class="math notranslate nohighlight">\(\pmb{\omega}_{BN}\)</span>
+as the body angular rate, <span class="math notranslate nohighlight">\(\pmb{\omega}_{RN}\)</span> as the reference-frame
+angular rate, and
+<span class="math notranslate nohighlight">\(\delta\pmb{\omega}=\pmb{\omega}_{BR}\)</span> as their tracking error. The
+requested external control torque is</p>
+<div class="math notranslate nohighlight" id="equation-eq-mrppdrust-control">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-mrppdrust-control" title="Link to this equation"></a></span>\[{\bf L}_{r} =
+-K\pmb{\sigma}_{BR}
+-P\delta\pmb{\omega}
++\pmb{\omega}_{RN}\times[I]\pmb{\omega}_{BN}
++[I]\left(
+    \dot{\pmb{\omega}}_{RN}
+    -\pmb{\omega}_{BN}\times\pmb{\omega}_{RN}
+\right)
+-{\bf L}.\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(K\)</span> is the MRP proportional gain, <span class="math notranslate nohighlight">\(P\)</span> is the angular-rate
+error gain, <span class="math notranslate nohighlight">\([I]\)</span> is the spacecraft inertia about point B, and
+<span class="math notranslate nohighlight">\({\bf L}\)</span> is a known external body torque. The generated Rust lifecycle
+wrapper reads the input payloads and publishes the returned
+<code class="docutils literal notranslate"><span class="pre">CmdTorqueBodyMsgPayload</span></code> with the module ID and current simulation time.</p>
+<p>During reset, the module validates both required input connections and caches
+<code class="docutils literal notranslate"><span class="pre">vehConfigInMsg.ISCPntB_B</span></code> as a fixed-size <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code> matrix in Rust-owned
+private state. Because inertia arrives through a message rather than a
+configuration setter, reset verifies that it is finite, symmetric, and
+positive definite before caching it. Reset does not publish an output, matching
+the C implementation. Each update converts the C-compatible guidance arrays
+to <code class="docutils literal notranslate"><span class="pre">nalgebra</span></code> vectors, evaluates the control law, and returns the commanded
+torque as a message array. The inertia remains fixed until the next reset.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The controller assumes a rigid spacecraft whose inertia tensor does not
+change between resets. The inertia must be finite, symmetric, and positive
+definite. The controller assumes the reference attitude, reference rates, and
+reference accelerations are dynamically consistent. The requested external
+control torque must be realized by an actuator system such as a thruster
+cluster; this module does not perform actuator allocation.</p>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>Create the controller, configure its gains, connect both required inputs, and
+add it to a task like any other compiled Basilisk module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">mrpPDRust</span>
+
+<span class="n">controller</span> <span class="o">=</span> <span class="n">mrpPDRust</span><span class="o">.</span><span class="n">mrpPDRust</span><span class="p">()</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mrpPDRust"</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.15</span>             <span class="c1"># [N*m]</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mf">150.0</span>            <span class="c1"># [N*m*s]</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">knownTorquePntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+
+<span class="n">controller</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">guidance_message</span><span class="p">)</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vehicle_config_message</span><span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"controlTask"</span><span class="p">,</span> <span class="n">controller</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Python-visible configuration is equivalent to <code class="docutils literal notranslate"><span class="pre">mrpPD</span></code>:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">K</span></code></dt><dd><p>MRP proportional feedback gain [N*m].</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">P</span></code></dt><dd><p>Angular-rate tracking-error feedback gain [N*m*s].</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">knownTorquePntB_B</span></code></dt><dd><p>Optional known external torque expressed in body-frame components [N*m].
+Its typed Rust default is a zero vector.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">guidInMsg</span></code></dt><dd><p>Required attitude-guidance input.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">vehConfigInMsg</span></code></dt><dd><p>Required vehicle-configuration input. Update the message and reset the
+module when the modeled inertia changes.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code></dt><dd><p>Commanded external body torque output.</p>
+</dd>
+</dl>
+<p>Leaving either input disconnected causes initialization to raise
+<code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> with the missing port name. The module’s gains default to
+zero; set <code class="docutils literal notranslate"><span class="pre">K</span></code> and <code class="docutils literal notranslate"><span class="pre">P</span></code> explicitly before initializing the simulation.
+Generated setters require both gains to be finite and nonnegative and every
+known-torque component to be finite. Invalid assignments raise
+<code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> immediately without changing the previous value. Explicit
+methods such as <code class="docutils literal notranslate"><span class="pre">setK(value)</span></code>, <code class="docutils literal notranslate"><span class="pre">getK()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">setKnownTorquePntB_B(value)</span></code> are equivalent to property access.</p>
+<p>Inertia is not a Python configuration property of this module. It arrives
+through <code class="docutils literal notranslate"><span class="pre">vehConfigInMsg</span></code> and is therefore validated during reset. An
+invalid inertia raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> before the controller caches or uses
+the matrix.</p>
+</section>
+<section id="generated-module-api">
+<h2>Generated Module API<a class="headerlink" href="#generated-module-api" title="Link to this heading"></a></h2>
+<p>This C-compatible interface is generated from the Rust module source.</p>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv415MrpPDRustConfig">
+<span id="_CPPv315MrpPDRustConfig"></span><span id="_CPPv215MrpPDRustConfig"></span><span id="MrpPDRustConfig"></span><span class="target" id="struct_mrp_p_d_rust_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MrpPDRustConfig</span></span></span><a class="headerlink" href="#_CPPv415MrpPDRustConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;mrpPDRust.h&gt;</em></div>
+<p>Python-visible controller configuration and message ports. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig1KE">
+<span id="_CPPv3N15MrpPDRustConfig1KE"></span><span id="_CPPv2N15MrpPDRustConfig1KE"></span><span id="MrpPDRustConfig::K__double"></span><span class="target" id="struct_mrp_p_d_rust_config_1a41705f15fa5c62f278de231eb0f5fa17"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">K</span></span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig1KE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*m] Proportional gain applied to the MRP attitude error </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig1PE">
+<span id="_CPPv3N15MrpPDRustConfig1PE"></span><span id="_CPPv2N15MrpPDRustConfig1PE"></span><span id="MrpPDRustConfig::P__double"></span><span class="target" id="struct_mrp_p_d_rust_config_1a97d7322218d9d7cf849c4d925a783127"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">P</span></span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig1PE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*m*s] Derivative gain applied to the angular-rate tracking error </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig17knownTorquePntB_BE">
+<span id="_CPPv3N15MrpPDRustConfig17knownTorquePntB_BE"></span><span id="_CPPv2N15MrpPDRustConfig17knownTorquePntB_BE"></span><span id="MrpPDRustConfig::knownTorquePntB_B__doubleA"></span><span class="target" id="struct_mrp_p_d_rust_config_1a4b799d2be71c8a881fd94c2e27963441"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">knownTorquePntB_B</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig17knownTorquePntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*m] Known external torque about point B, expressed in body components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig15cmdTorqueOutMsgE">
+<span id="_CPPv3N15MrpPDRustConfig15cmdTorqueOutMsgE"></span><span id="_CPPv2N15MrpPDRustConfig15cmdTorqueOutMsgE"></span><span id="MrpPDRustConfig::cmdTorqueOutMsg__CmdTorqueBodyMsg_C"></span><span class="target" id="struct_mrp_p_d_rust_config_1ac57e8e022ff62c04bbb1c7f7d7a6aea1"></span><span class="n"><span class="pre">CmdTorqueBodyMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cmdTorqueOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig15cmdTorqueOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*m] Commanded external control torque </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig9guidInMsgE">
+<span id="_CPPv3N15MrpPDRustConfig9guidInMsgE"></span><span id="_CPPv2N15MrpPDRustConfig9guidInMsgE"></span><span id="MrpPDRustConfig::guidInMsg__AttGuidMsg_C"></span><span class="target" id="struct_mrp_p_d_rust_config_1ab2037b7890634eb9d130f0a5edae409b"></span><span class="n"><span class="pre">AttGuidMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">guidInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig9guidInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Attitude and angular-rate tracking errors </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15MrpPDRustConfig14vehConfigInMsgE">
+<span id="_CPPv3N15MrpPDRustConfig14vehConfigInMsgE"></span><span id="_CPPv2N15MrpPDRustConfig14vehConfigInMsgE"></span><span id="MrpPDRustConfig::vehConfigInMsg__VehicleConfigMsg_C"></span><span class="target" id="struct_mrp_p_d_rust_config_1a3da0f260a4eb27f3d315f947a82453c5"></span><span class="n"><span class="pre">VehicleConfigMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">vehConfigInMsg</span></span></span><a class="headerlink" href="#_CPPv4N15MrpPDRustConfig14vehConfigInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Spacecraft mass properties </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="mrpPDRust" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

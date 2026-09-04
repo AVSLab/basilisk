@@ -1,0 +1,8 @@
+.. _THRTimePair:
+
+THRTimePair
+===========
+
+.. autodoxygenfile:: THRTimePair.h
+   :project: _GeneralModuleFiles4
+

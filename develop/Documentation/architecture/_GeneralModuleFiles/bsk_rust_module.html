@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bsk_rust_module &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="numbaModel" href="numbaModel.html" />
+    <link rel="prev" title="_GeneralModuleFiles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">bsk_rust_module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="numbaModel.html">numbaModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model.html">sys_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model_task.html">sys_model_task</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rust/index.html">rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">bsk_rust_module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/_GeneralModuleFiles/bsk_rust_module.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bsk-rust-module">
+<span id="id1"></span><h1>bsk_rust_module<a class="headerlink" href="#bsk-rust-module" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420BskRustModuleRuntime">
+<span id="_CPPv320BskRustModuleRuntime"></span><span id="_CPPv220BskRustModuleRuntime"></span><span id="BskRustModuleRuntime"></span><span class="target" id="struct_bsk_rust_module_runtime"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BskRustModuleRuntime</span></span></span><a class="headerlink" href="#_CPPv420BskRustModuleRuntime" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;bsk_rust_module.h&gt;</em></div>
+<p>Snapshot of the <code class="docutils literal notranslate"><a class="reference internal" href="sys_model.html#class_sys_model"><span class="std std-ref"><span class="pre">SysModel</span></span></a></code> runtime fields a Rust module may need. </p>
+<p>Embedded in the context passed to every lifecycle call and valid only for that call. Do not retain it afterward; <code class="docutils literal notranslate"><a class="reference internal" href="#struct_bsk_rust_module_runtime_1aa4a8c5e446d52c761af59ae4cc5329e2"><span class="std std-ref"><span class="pre">modelTag</span></span></a></code> in particular is a borrowed pointer. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleRuntime8moduleIDE">
+<span id="_CPPv3N20BskRustModuleRuntime8moduleIDE"></span><span id="_CPPv2N20BskRustModuleRuntime8moduleIDE"></span><span id="BskRustModuleRuntime::moduleID__int64_t"></span><span class="target" id="struct_bsk_rust_module_runtime_1aca61111582c95d1b287dcff0accb3a37"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">moduleID</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleRuntime8moduleIDE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] unique ID assigned by ModuleIdGenerator </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleRuntime8modelTagE">
+<span id="_CPPv3N20BskRustModuleRuntime8modelTagE"></span><span id="_CPPv2N20BskRustModuleRuntime8modelTagE"></span><span id="BskRustModuleRuntime::modelTag__cCP"></span><span class="target" id="struct_bsk_rust_module_runtime_1aa4a8c5e446d52c761af59ae4cc5329e2"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">modelTag</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleRuntime8modelTagE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] <a class="reference internal" href="sys_model.html#class_sys_model_1a6eb39d65095f52ef68087d08e7198999"><span class="std std-ref">SysModel::ModelTag</span></a>, borrowed for this call only </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleRuntime10callCountsE">
+<span id="_CPPv3N20BskRustModuleRuntime10callCountsE"></span><span id="_CPPv2N20BskRustModuleRuntime10callCountsE"></span><span id="BskRustModuleRuntime::callCounts__uint64_t"></span><span class="target" id="struct_bsk_rust_module_runtime_1a0dce27d90d5fa57274b5034d5df82e82"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">callCounts</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleRuntime10callCountsE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] <a class="reference internal" href="sys_model.html#class_sys_model_1af30fdd530ff18fc7df838f59ead897c1"><span class="std std-ref">SysModel::CallCounts</span></a> step counter </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleRuntime7rngSeedE">
+<span id="_CPPv3N20BskRustModuleRuntime7rngSeedE"></span><span id="_CPPv2N20BskRustModuleRuntime7rngSeedE"></span><span id="BskRustModuleRuntime::rngSeed__uint32_t"></span><span class="target" id="struct_bsk_rust_module_runtime_1a313abaeef187214d10d06763d2002e33"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rngSeed</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleRuntime7rngSeedE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] <a class="reference internal" href="sys_model.html#class_sys_model_1a3bb74feb36c93509bd136648c18445ed"><span class="std std-ref">SysModel::RNGSeed</span></a></p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv420BskRustModuleContext">
+<span id="_CPPv320BskRustModuleContext"></span><span id="_CPPv220BskRustModuleContext"></span><span id="BskRustModuleContext"></span><span class="target" id="struct_bsk_rust_module_context"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BskRustModuleContext</span></span></span><a class="headerlink" href="#_CPPv420BskRustModuleContext" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;bsk_rust_module.h&gt;</em></div>
+<p>Borrowed framework services supplied to a Rust lifecycle call. </p>
+<p>The wrapper owns every referenced value. Rust may use this structure only for the duration of the lifecycle call and must not retain either pointer. <code class="docutils literal notranslate"><span class="pre">runtime.modelTag</span></code> borrows the wrapper’s <code class="docutils literal notranslate"><a class="reference internal" href="sys_model.html#class_sys_model_1a6eb39d65095f52ef68087d08e7198999"><span class="std std-ref"><span class="pre">SysModel::ModelTag</span></span></a></code> storage, while <code class="docutils literal notranslate"><a class="reference internal" href="#struct_bsk_rust_module_context_1ab9e802c2e32ecbf6c9b74a5691848001"><span class="std std-ref"><span class="pre">bskLogger</span></span></a></code> refers to the wrapper’s logging object.</p>
+<p>The shared C++ wrapper constructs this value immediately before each opaque-handle lifecycle call. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleContext7runtimeE">
+<span id="_CPPv3N20BskRustModuleContext7runtimeE"></span><span id="_CPPv2N20BskRustModuleContext7runtimeE"></span><span id="BskRustModuleContext::runtime__BskRustModuleRuntime"></span><span class="target" id="struct_bsk_rust_module_context_1a36100e46c4c14768bac8ae3f800b3ba8"></span><a class="reference internal" href="#_CPPv420BskRustModuleRuntime" title="BskRustModuleRuntime"><span class="n"><span class="pre">BskRustModuleRuntime</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">runtime</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleContext7runtimeE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] borrowed <a class="reference internal" href="sys_model.html#class_sys_model"><span class="std std-ref">SysModel</span></a> runtime snapshot </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N20BskRustModuleContext9bskLoggerE">
+<span id="_CPPv3N20BskRustModuleContext9bskLoggerE"></span><span id="_CPPv2N20BskRustModuleContext9bskLoggerE"></span><span id="BskRustModuleContext::bskLogger__BSKLoggerP"></span><span class="target" id="struct_bsk_rust_module_context_1ab9e802c2e32ecbf6c9b74a5691848001"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N20BskRustModuleContext9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] borrowed Basilisk logger </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.BSK_RUST_MODULE_ABI_VERSION">
+<span class="target" id="bsk__rust__module_8h_1acb2eaa62bc80118b8dbba73573294151"></span><span class="sig-name descname"><span class="n"><span class="pre">BSK_RUST_MODULE_ABI_VERSION</span></span></span><a class="headerlink" href="#c.BSK_RUST_MODULE_ABI_VERSION" title="Link to this definition"></a><br /></dt>
+<dd><p>Version of the generated Rust-module C ABI used by bsk-build and bsk-sdk. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.BSK_RUST_EXTERN_C_BEGIN">
+<span class="target" id="bsk__rust__module_8h_1a804eb601561b70da8c675a594a6f1e68"></span><span class="sig-name descname"><span class="n"><span class="pre">BSK_RUST_EXTERN_C_BEGIN</span></span></span><a class="headerlink" href="#c.BSK_RUST_EXTERN_C_BEGIN" title="Link to this definition"></a><br /></dt>
+<dd><p>Declares Rust-owned module allocation plus the three BSK lifecycle entry points for a module implemented in Rust. </p>
+<p><strong>Background</strong></p>
+<p>Basilisk C modules consist of two parts:</p>
+<p><ol class="loweralpha simple">
+<li><p>A plain-C <em>config struct</em> that holds all parameters, message ports, and optional persistent state.</p></li>
+<li><p>Three <em>lifecycle functions</em> — <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code>, <code class="docutils literal notranslate"><span class="pre">Reset</span></code>, <code class="docutils literal notranslate"><span class="pre">Update</span></code> — called by the Basilisk task scheduler at well-defined points.</p></li>
+</ol>
+</p>
+<p>For Rust modules the lifecycle functions are compiled into a Rust static library linked into the SWIG-generated Python module. <code class="docutils literal notranslate"><span class="pre">BSK_RUST_DECL</span></code> emits the matching <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> <em>declarations</em> so that the C compiler and the SWIG-generated glue can find them. Unlike the C-module wrapper, the Rust wrapper hides direct parameter fields and exposes generated properties backed by guarded Rust getters and setters.</p>
+<p><strong>Macro-generated workflow</strong></p>
+<p>Writing raw <code class="docutils literal notranslate"><span class="pre">unsafe</span> <span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> Rust is error-prone. The recommended workflow uses <code class="docutils literal notranslate"><span class="pre">build.rs</span></code> to generate the C header while the <code class="docutils literal notranslate"><span class="pre">#[bsk_build::module]</span></code> procedural attribute emits the <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> lifecycle entry points that read/write messages around the module’s own <code class="docutils literal notranslate"><span class="pre">update</span></code>. The user implements <code class="docutils literal notranslate"><span class="pre">init</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code>, and <code class="docutils literal notranslate"><span class="pre">update</span></code> in safe Rust with named, typed message values and <code class="docutils literal notranslate"><span class="pre">BskResult</span></code> return types — no FFI boilerplate by hand. A <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> field is an input, a <code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> field is an output, and only an input that may be unlinked needs the <code class="docutils literal notranslate"><span class="pre">#[bsk(optional)]</span></code> annotation. See the Basilisk documentation’s “Making Rust Modules” page for the full guide.</p>
+<p><strong>Config struct field ordering</strong></p>
+<p>A Rust module config contains only Python-visible parameters and message ports. Framework metadata, logging, and internal Rust state live outside this FFI view. The suggested layout is:: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>typedef struct {
+    // 1. Scalar / array parameters
+    double K;                             //!&lt; [Nm]       proportional gain
+    double P;                             //!&lt; [Nm/(rad/s)] rate gain
+
+    // 2. Input message ports
+    AttGuidMsg_C attGuidInMsg;            //!&lt; [-]  attitude guidance
+
+    // 3. Output message ports
+    CmdTorqueBodyMsg_C cmdTorqueOutMsg;   //!&lt; [Nm] control torque
+} myModuleConfig;
+
+BSK_RUST_DECL(myModule, myModuleConfig, myModuleConfigHandle)
+</pre></div>
+</div>
+</p>
+<p>On the Rust side, <code class="docutils literal notranslate"><span class="pre">attGuidInMsg</span></code>/<code class="docutils literal notranslate"><span class="pre">cmdTorqueOutMsg</span></code> above use <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;AttGuidMsg&gt;</span></code>/<code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;CmdTorqueBodyMsg&gt;</span></code><p>. Those types identify the port direction without another annotation — see the “Making</p>
+<p>Rust Modules” documentation page for the complete Rust form.</p>
+</p>
+<p><strong>moduleID</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">moduleID</span></code> is a unique <code class="docutils literal notranslate"><span class="pre">int64_t</span></code> assigned by Basilisk’s <code class="docutils literal notranslate"><span class="pre">ModuleIdGenerator</span></code> when the Python-visible C++ wrapper’s <code class="docutils literal notranslate"><a class="reference internal" href="sys_model.html#class_sys_model"><span class="std std-ref"><span class="pre">SysModel</span></span></a></code> base is constructed. Task registration does not assign the ID. It is stamped onto every outgoing message header (via <code class="docutils literal notranslate"><span class="pre">*_C_write</span></code>) so that message recording and the logging subsystem can identify which module produced a given message. The generated lifecycle code forwards it to every <code class="docutils literal notranslate"><span class="pre">*_C_write</span></code> call automatically.</p>
+<p><strong>Lifecycle context — <a class="reference internal" href="#struct_bsk_rust_module_runtime"><span class="std std-ref">BskRustModuleRuntime</span></a></strong></p>
+<p>A Rust module has no C++ base class, so this struct mirrors the relevant <code class="docutils literal notranslate"><a class="reference internal" href="sys_model.html#class_sys_model"><span class="std std-ref"><span class="pre">SysModel</span></span></a></code> fields (module ID, name, …) for each lifecycle call. <code class="docutils literal notranslate"><span class="pre">BskContext</span></code> gives safe Rust module logic a borrowed view of that snapshot. Runtime services do not appear in the public config struct.</p>
+<p><code class="docutils literal notranslate"><span class="pre">modelTag</span></code> is a borrowed pointer valid only for the duration of the call. On the Rust side this is enforced by the compiler, not just this comment: <code class="docutils literal notranslate"><span class="pre">BskContext::model_tag()</span></code> returns a <code class="docutils literal notranslate"><span class="pre">&amp;str</span></code> tied to that context borrow, so safe module logic cannot retain it past the lifecycle call that received it.</p>
+<p><strong>currentSimNanos</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">currentSimNanos</span></code> is the current simulation time in nanoseconds [ns], passed to both <code class="docutils literal notranslate"><span class="pre">Reset</span></code> and <code class="docutils literal notranslate"><span class="pre">Update</span></code> (not <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code>). It is also written into each outgoing message header by <code class="docutils literal notranslate"><span class="pre">*_C_write</span></code>. (BSK C modules call this parameter <code class="docutils literal notranslate"><span class="pre">callTime</span></code>; Rust modules use the more explicit C++ <code class="docutils literal notranslate"><a class="reference internal" href="sys_model.html#class_sys_model"><span class="std std-ref"><span class="pre">SysModel</span></span></a></code> name <code class="docutils literal notranslate"><span class="pre">currentSimNanos</span></code>.)</p>
+<p><strong>Logging</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">BskContext::logger()</span></code> supplies the same standard logging a hand-written C module has through the no-throw logging adapter. Its borrowed <code class="docutils literal notranslate"><span class="pre">BskLoggerRef</span></code> provides <code class="docutils literal notranslate"><span class="pre">.debug()</span></code>/<code class="docutils literal notranslate"><span class="pre">.info()</span></code>/<code class="docutils literal notranslate"><span class="pre">.warning()</span></code> methods. The shared wrapper borrows its framework-managed logger into the lifecycle context. The logger does not appear in the public config struct. A no-throw C++ adapter catches any logger exception before returning to Rust. Expected configuration, input, and runtime failures return <code class="docutils literal notranslate"><span class="pre">Err(BskError::new(...))</span></code> from a lifecycle method; they are not logging operations. The generated boundary carries that failure as data and raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> only after Rust has returned normally.</p>
+<p><strong>Message port patterns</strong></p>
+<p>The Rust field type identifies the port role. The procedural attribute generates named input and output value structs whose fields retain those config field names:: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pub</span> <span class="n">attGuidInMsg</span><span class="p">:</span> <span class="n">MsgReader</span><span class="o">&lt;</span><span class="n">AttGuidMsg</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="c1">#[bsk(optional)]</span>
+<span class="n">pub</span> <span class="n">disturbanceInMsg</span><span class="p">:</span> <span class="n">MsgReader</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">pub</span> <span class="n">cmdTorqueOutMsg</span><span class="p">:</span> <span class="n">MsgWriter</span><span class="o">&lt;</span><span class="n">CmdTorqueBodyMsg</span><span class="o">&gt;</span><span class="p">,</span>
+</pre></div>
+</div>
+</p>
+<p><em>Required input</em> — an unannotated <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> checks connectivity in <code class="docutils literal notranslate"><span class="pre">Reset</span></code> and before each <code class="docutils literal notranslate"><span class="pre">Update</span></code> read; a missing connection returns an expected Rust error that the C++ wrapper translates into <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.</p>
+<p><em>Optional input</em> — <code class="docutils literal notranslate"><span class="pre">#[bsk(optional)]</span></code> on a <code class="docutils literal notranslate"><span class="pre">MsgReader&lt;T&gt;</span></code> gives the generated input field type <code class="docutils literal notranslate"><span class="pre">Option&lt;Msg&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">None</span></code> when unlinked) instead of raising an error.</p>
+<p><em>Output</em> — a <code class="docutils literal notranslate"><span class="pre">MsgWriter&lt;T&gt;</span></code> is initialized automatically in <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code> and written from the same named field returned by <code class="docutils literal notranslate"><span class="pre">reset</span></code> or <code class="docutils literal notranslate"><span class="pre">update</span></code>.</p>
+<p><strong>Python wiring</strong> (same as any BSK C module):: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctrl</span> <span class="o">=</span> <span class="n">myModule</span><span class="o">.</span><span class="n">myModule</span><span class="p">()</span>                    <span class="c1"># Python wrapper class</span>
+<span class="n">ctrl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"myCtrl"</span>
+<span class="n">ctrl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">5.0</span>                                  <span class="c1"># set parameters</span>
+<span class="n">ctrl</span><span class="o">.</span><span class="n">attGuidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>   <span class="c1"># connect input</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">)</span>               <span class="c1"># schedule the module</span>
+<span class="c1"># ctrl.cmdTorqueOutMsg is readable after InitializeSimulation()</span>
+</pre></div>
+</div>
+</p>
+<p><strong>Stateful modules — Rust-owned state</strong></p>
+<p>Modules that need persistent implementation state set the <code class="docutils literal notranslate"><span class="pre">BskModule::State</span></code> associated type. This state is stored beside the config inside the opaque Rust module instance and never crosses the FFI boundary. It may therefore contain ordinary Rust collections, strings, enums, and smart pointers:: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#[derive(Default)]</span>
+<span class="n">pub</span> <span class="n">struct</span> <span class="n">MyState</span> <span class="p">{</span>
+    <span class="n">history</span><span class="p">:</span> <span class="n">Vec</span><span class="o">&lt;</span><span class="n">f64</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">impl</span> <span class="n">BskModule</span> <span class="k">for</span> <span class="n">myModuleConfig</span> <span class="p">{</span>
+    <span class="nb">type</span> <span class="n">State</span> <span class="o">=</span> <span class="n">MyState</span><span class="p">;</span>
+    <span class="o">//</span> <span class="n">reset</span><span class="p">()</span><span class="o">/</span><span class="n">update</span><span class="p">()</span> <span class="n">receive</span> <span class="o">&amp;</span><span class="n">mut</span> <span class="n">Self</span><span class="p">::</span><span class="n">State</span> <span class="ow">and</span> <span class="k">return</span> <span class="n">BskResult</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<p>The generated <code class="docutils literal notranslate"><span class="pre">Destroy_name</span></code> function runs ordinary Rust drop glue for both the config and state. No <code class="docutils literal notranslate"><span class="pre">Cleanup_*</span></code> function, raw state pointer, or custom destructor is needed. Stateless modules use <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">State</span> <span class="pre">=</span> <span class="pre">();</span></code>.</p>
+<p><strong>Grouping parameters — nested structs</strong></p>
+<p>A field may be another <code class="docutils literal notranslate"><span class="pre">#[repr(C)]</span></code> struct defined in the same crate, by value (not a pointer), to group related parameters:: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#[repr(C)]</span>
+<span class="n">pub</span> <span class="n">struct</span> <span class="n">Vec2</span> <span class="p">{</span> <span class="n">pub</span> <span class="n">x</span><span class="p">:</span> <span class="n">f64</span><span class="p">,</span> <span class="n">pub</span> <span class="n">y</span><span class="p">:</span> <span class="n">f64</span> <span class="p">}</span>
+
+<span class="c1">#[bsk_build::module]</span>
+<span class="c1">#[repr(C)]</span>
+<span class="n">pub</span> <span class="n">struct</span> <span class="n">myModuleConfig</span> <span class="p">{</span>
+    <span class="n">pub</span> <span class="n">target</span><span class="p">:</span> <span class="n">Vec2</span><span class="p">,</span>
+    <span class="o">//</span> <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<p><code class="docutils literal notranslate"><span class="pre">bsk-build</span></code> generates <code class="docutils literal notranslate"><span class="pre">Vec2</span></code>’s C struct alongside <code class="docutils literal notranslate"><span class="pre">myModuleConfig</span></code> and Python transfers the complete nested value through the generated getter and setter.</p>
+<p>A raw pointer to one of these structs (<code class="docutils literal notranslate"><span class="pre">*mut</span> <span class="pre">Vec2</span></code>), or to any other type, is rejected. SWIG’s pointer-field setter would transfer ownership away from the Python object with nothing on the Rust side to ever free it; this applies just as much to a pointer to a primitive (<code class="docutils literal notranslate"><span class="pre">*mut</span> <span class="pre">u8</span></code>) as to a struct, so there is currently no supported field type for a persistent string or byte-buffer parameter.</p>
+<p>A field also may not be a Rust <code class="docutils literal notranslate"><span class="pre">enum</span></code>, even a fieldless <code class="docutils literal notranslate"><span class="pre">#[repr(u8)]</span></code> (or similar) one. An invalid integer discriminant copied across an FFI boundary would be undefined behavior before Rust could validate it. Use the underlying integer type as the field (e.g. <code class="docutils literal notranslate"><span class="pre">pub</span> <span class="pre">mode:</span> <span class="pre">u8</span></code>), validate it in the generated setter, and convert it to the Rust enum only after the value is known to be valid. </p>
+</dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.BSK_RUST_EXTERN_C_END">
+<span class="target" id="bsk__rust__module_8h_1aba8cb7a3e2a2460f1cd1d8c5ac91e0b5"></span><span class="sig-name descname"><span class="n"><span class="pre">BSK_RUST_EXTERN_C_END</span></span></span><a class="headerlink" href="#c.BSK_RUST_EXTERN_C_END" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.BSK_RUST_DECL">
+<span class="target" id="bsk__rust__module_8h_1a57b2a1d9cd1a5ef341091097b437764c"></span><span class="sig-name descname"><span class="n"><span class="pre">BSK_RUST_DECL</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">name</span></span>, <span class="n"><span class="pre">configType</span></span>, <span class="n"><span class="pre">handleType</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.BSK_RUST_DECL" title="Link to this definition"></a><br /></dt>
+<dd><p>Emit <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> allocation and lifecycle function declarations for a Rust-backed Basilisk module named <code class="docutils literal notranslate"><span class="pre">name</span></code>, whose config view is <code class="docutils literal notranslate"><span class="pre">configType</span></code> and whose opaque instance type is <code class="docutils literal notranslate"><span class="pre">handleType</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Create_name(&amp;handle)</span></code> Constructs the complete module instance in Rust, including arbitrary Rust-owned state, and writes its opaque owning handle. Returns null on success or an owning <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> on failure.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Config_name(handle)</span></code> Returns a borrowed pointer to the instance’s FFI-safe parameter and message-port view. The pointer remains valid until <code class="docutils literal notranslate"><span class="pre">Destroy_name</span></code>. Generated wrappers use this view only for message ports; Python-facing configuration values use the guarded accessors below.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GetConfigField_name</span></code> / <code class="docutils literal notranslate"><span class="pre">SetConfigField_name</span></code> Copy one generated configuration value across the C boundary. The field index and byte size are generated from the same Rust struct. Setters validate the complete typed value before changing it and return an expected error without modifying the previous value when validation fails.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ConfigFieldDeprecationDate_name</span></code> / <code class="docutils literal notranslate"><span class="pre">ConfigFieldDeprecationMessage_name</span></code> Return static metadata used by the generated Python getter, setter, and property. Null means that the field is not deprecated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ModuleDeprecationDate_name</span></code> / <code class="docutils literal notranslate"><span class="pre">ModuleDeprecationMessage_name</span></code> Return static metadata used by the generated Python module constructor. Null means that the module is not deprecated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Destroy_name(handle)</span></code> Runs the config and internal state’s Rust drop glue and returns the complete allocation to Rust. Returns null on success or an owning <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> if Rust catches a panic while dropping the instance.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SelfInit_name(handle,</span> <span class="pre">context)</span></code> Called once at task registration. The generated lifecycle code initialises output message ports (<code class="docutils literal notranslate"><span class="pre">*_C_init</span></code>). Returns null on success or an owning <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> on failure.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Reset_name(handle,</span> <span class="pre">currentSimNanos,</span> <span class="pre">context)</span></code> Called before the first step and on explicit resets. The generated lifecycle code checks required input connectivity, then calls <code class="docutils literal notranslate"><span class="pre">BskModule::reset</span></code> with a safe borrowed context. It writes outputs only after <code class="docutils literal notranslate"><span class="pre">reset</span></code> returns <code class="docutils literal notranslate"><span class="pre">Ok</span></code>. Returns null on success or an owning <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> on failure.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Update_name(handle,</span> <span class="pre">currentSimNanos,</span> <span class="pre">context)</span></code> Called every simulation step. The generated lifecycle code reads all input messages, calls <code class="docutils literal notranslate"><span class="pre">BskModule::update</span></code> with a safe borrowed context, and writes output messages only after <code class="docutils literal notranslate"><span class="pre">update</span></code> returns <code class="docutils literal notranslate"><span class="pre">Ok</span></code>. Returns null on success or an owning <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> on failure.</p>
+<p>Every generated Rust definition uses the non-unwinding C ABI and catches Rust panics before returning. The caller owns every non-null error result and must release it with <code class="docutils literal notranslate"><span class="pre">Destroy_BskRustError</span></code>. A panic caught during <code class="docutils literal notranslate"><span class="pre">SelfInit</span></code>, <code class="docutils literal notranslate"><span class="pre">Reset</span></code>, or <code class="docutils literal notranslate"><span class="pre">Update</span></code> poisons that module instance because its internal invariants may be incomplete. Subsequent lifecycle calls return an error without re-entering module code. Expected <code class="docutils literal notranslate"><span class="pre">BskError</span></code> results do not poison the instance, and <code class="docutils literal notranslate"><span class="pre">Destroy_name</span></code> remains valid for poisoned instances. The guarded boundary returns the panic diagnostic through <code class="docutils literal notranslate"><span class="pre">BskRustError</span></code> and suppresses duplicate default Rust panic-hook output only on the thread executing that call. Panics outside a generated boundary continue through the previously installed application hook.</p>
+<p><code class="docutils literal notranslate"><span class="pre">configType</span></code> must be declared before this macro. bsk-build passes whatever struct name the crate’s <code class="docutils literal notranslate"><span class="pre">impl</span> <span class="pre">BskModule</span></code> block actually uses, which need not match <code class="docutils literal notranslate"><span class="pre">name##Config</span></code>. </p>
+</dd></dl>
+
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_GeneralModuleFiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="numbaModel.html" class="btn btn-neutral float-right" title="numbaModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

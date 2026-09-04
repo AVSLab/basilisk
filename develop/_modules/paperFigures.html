@@ -1,0 +1,1274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>paperFigures &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">paperFigures</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for paperFigures</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Print-quality figures for the dynamics-engine comparison paper.</span>
+
+<span class="sd">The scenario scripts emit documentation figures sized for web pages; this script</span>
+<span class="sd">re-renders the figures placed in the paper from the stored ``results/*.json``</span>
+<span class="sd">metrics, with fonts and legends sized for two-column print inclusion and one</span>
+<span class="sd">consistent color scheme (Paul Tol high-contrast: BSM blue, MuJoCo red, third</span>
+<span class="sd">series yellow).</span>
+
+<span class="sd">Run after ``runAllComparisons.py`` and the sweep drivers. The input hashes in</span>
+<span class="sd">``results/provenance.json`` are checked before any figure is rendered::</span>
+
+<span class="sd">    python3 paperFigures.py [outputDir]</span>
+
+<span class="sd">To regenerate every publication input, render the print figures, and replace</span>
+<span class="sd">the manifest with hashes from one clean, matching Release build, run::</span>
+
+<span class="sd">    python3 paperFigures.py --update-provenance [outputDir]</span>
+
+<span class="sd">The update command reruns every scenario and sweep that supplies a paper figure,</span>
+<span class="sd">table, or quantitative claim. It also regenerates the deep-space full-slosh and</span>
+<span class="sd">near-rigid controls; no pre-existing result file is certified.</span>
+
+<span class="sd">``outputDir`` defaults to ``results/paper`` next to this script.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">thisFolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">thisFolder</span><span class="p">,</span> <span class="s2">"results"</span><span class="p">)</span>
+<span class="n">repoRoot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">thisFolder</span><span class="p">,</span> <span class="s2">".."</span><span class="p">,</span> <span class="s2">".."</span><span class="p">))</span>
+<span class="n">BUILD_RECEIPT_ENV</span> <span class="o">=</span> <span class="s2">"BSK_DYNAMICS_COMPARISON_BUILD_RECEIPT"</span>
+
+<span class="n">PAPER_RENDER_INPUT_FILES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"scenarioCompareParetoRwPanels.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoFlexPanels.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareFlexPanels.json"</span><span class="p">,</span>
+    <span class="s2">"sweepOrbitDt.json"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueArtifact.json"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PAPER_INPUT_FILES</span> <span class="o">=</span> <span class="n">PAPER_RENDER_INPUT_FILES</span>
+<span class="n">PAPER_EVIDENCE_FILES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"scenarioCompareOrbit.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareTorque.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareRwPanels.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareFlexPanels.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareOrbitMultibody.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareVariableMass.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareVariableMass_deepSpace.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareVariableMass_deepSpace_rigid.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoRwPanels.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoFlexPanels.json"</span><span class="p">,</span>
+    <span class="s2">"sweepOrbitDt.json"</span><span class="p">,</span>
+    <span class="s2">"sweepRwBookkeepingMass.json"</span><span class="p">,</span>
+    <span class="s2">"sweepSloshDisplacement.json"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueArtifact.json"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueMechanismChecks.json"</span><span class="p">,</span>
+    <span class="s2">"sweepVariableMassPendulumInertia.json"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareOrbit_runtime.csv"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareTorque_runtime.csv"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareRwPanels_runtime.csv"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareOrbitMultibody_runtime.csv"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareVariableMass_runtime.csv"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareRwPanels_attError.svg"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareOrbitMultibody_attError.svg"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareOrbitMultibody_regimes.svg"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareVariableMass_deepSpace_attError.svg"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PAPER_GENERATOR_FILES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"examples/dynamicsComparison/_comparePlots.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/_comparisonValidation.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/_runtimeTable.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/paperFigures.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/runAllComparisons.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareFlexPanels.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareOrbit.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareOrbitMultibody.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareParetoFlexPanels.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareParetoRwPanels.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareRwPanels.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareTorque.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/scenarioCompareVariableMass.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepOrbitDt.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepRwBookkeepingMass.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepSloshDisplacement.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepTorqueArtifact.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepTorqueMechanismChecks.py"</span><span class="p">,</span>
+    <span class="s2">"examples/dynamicsComparison/sweepVariableMassPendulumInertia.py"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PAPER_SCENARIOS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"scenarioCompareParetoRwPanels"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoFlexPanels"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareFlexPanels"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PAPER_SWEEPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"sweepOrbitDt"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueArtifact"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PUBLICATION_SWEEPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"sweepOrbitDt"</span><span class="p">,</span>
+    <span class="s2">"sweepRwBookkeepingMass"</span><span class="p">,</span>
+    <span class="s2">"sweepSloshDisplacement"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueArtifact"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueMechanismChecks"</span><span class="p">,</span>
+    <span class="s2">"sweepVariableMassPendulumInertia"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PAPER_OUTPUT_FILES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"scenarioCompareParetoRwPanels_frontier.pdf"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoRwPanels_frontierPosition.pdf"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoFlexPanels_frontier.pdf"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareParetoFlexPanels_frontierPosition.pdf"</span><span class="p">,</span>
+    <span class="s2">"scenarioCompareFlexPanels_runtime.pdf"</span><span class="p">,</span>
+    <span class="s2">"sweepOrbitDt.pdf"</span><span class="p">,</span>
+    <span class="s2">"sweepTorqueArtifact.pdf"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">PDF_METADATA</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Creator"</span><span class="p">:</span> <span class="s2">"Basilisk dynamics-engine comparison"</span><span class="p">,</span>
+    <span class="s2">"CreationDate"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s2">"ModDate"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">BLUE</span> <span class="o">=</span> <span class="s2">"#004488"</span>    <span class="c1"># BSM</span>
+<span class="n">RED</span> <span class="o">=</span> <span class="s2">"#BB5566"</span>     <span class="c1"># MuJoCo</span>
+<span class="n">YELLOW</span> <span class="o">=</span> <span class="s2">"#DDAA33"</span>  <span class="c1"># third series (spinningBodyNDOF, at-rest cross-engine, ...)</span>
+<span class="n">GRAY</span> <span class="o">=</span> <span class="s2">"#666666"</span>
+
+<span class="n">STYLE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">"axes.labelsize"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">"axes.titlesize"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">"legend.fontsize"</span><span class="p">:</span> <span class="mf">7.0</span><span class="p">,</span>
+    <span class="s2">"xtick.labelsize"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">"ytick.labelsize"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">"lines.linewidth"</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="s2">"lines.markersize"</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="s2">"legend.framealpha"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+    <span class="s2">"figure.constrained_layout.use"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Marker per integrator family, shared by both Pareto panels and stated in the</span>
+<span class="c1"># paper's figure caption -- keep the two in sync.</span>
+<span class="n">INTEGRATOR_MARKERS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">"Euler"</span><span class="p">,</span> <span class="s2">"v"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"RK2"</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"RK4"</span><span class="p">,</span> <span class="s2">"o"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"RKF45"</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"RKF78"</span><span class="p">,</span> <span class="s2">"^"</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resultsDirectory</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return an explicit results directory or the scenario default."""</span>
+    <span class="k">return</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">resultsPath</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">loadJson</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">),</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">".json"</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sha256File">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.sha256File">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sha256File</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the hexadecimal SHA-256 digest of one artifact."""</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">),</span> <span class="sa">b</span><span class="s2">""</span><span class="p">):</span>
+            <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gitOutput</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run a read-only Git query against the Basilisk source tree."""</span>
+    <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">(</span><span class="s2">"git"</span><span class="p">,</span> <span class="s2">"-C"</span><span class="p">,</span> <span class="n">repoRoot</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">),</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_basiliskPackageRoot</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Locate the configured Basilisk package without importing native modules."""</span>
+    <span class="n">specification</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">"Basilisk"</span><span class="p">)</span>
+    <span class="n">locations</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span> <span class="k">if</span> <span class="n">specification</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">specification</span><span class="o">.</span><span class="n">submodule_search_locations</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">locations</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Cannot locate the configured Basilisk package; put its build "</span>
+            <span class="s2">"directory on PYTHONPATH."</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">locations</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_buildRoot</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return the CMake build directory containing the Basilisk package."""</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_basiliskPackageRoot</span><span class="p">())</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_getBuildInfo</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Load build metadata only after any requested clean rebuild is complete."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">getBuildInfo</span>
+    <span class="k">return</span> <span class="n">getBuildInfo</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_matchingSourceRevision</span><span class="p">(</span><span class="n">requireClean</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return HEAD and build metadata after validating the publication build."""</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"rev-parse"</span><span class="p">,</span> <span class="s2">"HEAD"</span><span class="p">)</span>
+    <span class="n">buildInfo</span> <span class="o">=</span> <span class="n">_getBuildInfo</span><span class="p">()</span>
+    <span class="n">artifact</span> <span class="o">=</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"artifact"</span><span class="p">]</span>
+    <span class="n">configuration</span> <span class="o">=</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"diagnostics"</span><span class="p">][</span><span class="s2">"build"</span><span class="p">][</span><span class="s2">"configuration"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">artifact</span><span class="p">[</span><span class="s2">"sourceRevision"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">head</span> <span class="ow">or</span> <span class="n">artifact</span><span class="p">[</span><span class="s2">"sourceDirty"</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"The Basilisk package was not configured from the clean current "</span>
+            <span class="s2">"commit; reconfigure and rebuild it before publishing figures."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">requireClean</span> <span class="ow">and</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"status"</span><span class="p">,</span> <span class="s2">"--porcelain"</span><span class="p">,</span> <span class="s2">"--untracked-files=no"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Tracked source changes are present; commit them and rebuild before "</span>
+            <span class="s2">"refreshing publication provenance."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">configuration</span> <span class="o">!=</span> <span class="s2">"Release"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Publication artifacts require a Release build, not "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">configuration</span><span class="si">!r}</span><span class="s2">."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"features"</span><span class="p">][</span><span class="s2">"mujoco"</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Publication artifacts require a MuJoCo-enabled Basilisk build."</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_nativeBuildFingerprint</span><span class="p">(</span><span class="n">packageRoot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Hash every native extension in the imported Basilisk package."""</span>
+    <span class="n">packageRoot</span> <span class="o">=</span> <span class="n">packageRoot</span> <span class="ow">or</span> <span class="n">_basiliskPackageRoot</span><span class="p">()</span>
+    <span class="n">nativeFiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">packageRoot</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".so"</span><span class="p">,</span> <span class="s2">".dylib"</span><span class="p">,</span> <span class="s2">".pyd"</span><span class="p">)):</span>
+                <span class="n">nativeFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+    <span class="n">nativeFiles</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nativeFiles</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"No native Basilisk extensions were found under </span><span class="si">{</span><span class="n">packageRoot</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">nativeFiles</span><span class="p">:</span>
+        <span class="n">relativePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">packageRoot</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">relativePath</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\0</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">),</span> <span class="sa">b</span><span class="s2">""</span><span class="p">):</span>
+                <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\0</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"sha256-path-content-v1"</span><span class="p">,</span>
+        <span class="s2">"fileCount"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">nativeFiles</span><span class="p">),</span>
+        <span class="s2">"sha256"</span><span class="p">:</span> <span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mujocoDependencyFingerprint</span><span class="p">(</span><span class="n">buildRoot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="s2">"Release"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Hash the MuJoCo binary selected by the configured Conan toolchain."""</span>
+    <span class="n">buildRoot</span> <span class="o">=</span> <span class="n">buildRoot</span> <span class="ow">or</span> <span class="n">_buildRoot</span><span class="p">()</span>
+    <span class="n">generatorRoot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="s2">"generators"</span><span class="p">)</span>
+    <span class="n">searchRoot</span> <span class="o">=</span> <span class="n">generatorRoot</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">generatorRoot</span><span class="p">)</span> <span class="k">else</span> <span class="n">buildRoot</span>
+    <span class="n">configFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">searchRoot</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"mujoco-config.cmake"</span><span class="p">),</span>
+        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">dataFiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">searchRoot</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"mujoco-*-data.cmake"</span><span class="p">),</span>
+        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">configFiles</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">dataFiles</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Cannot locate the configured MuJoCo package metadata under "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">buildRoot</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">configText</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">versionMatch</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">'set\(mujoco_VERSION_STRING "([^"]+)"\)'</span><span class="p">,</span> <span class="n">configText</span><span class="p">)</span>
+    <span class="n">packageRoot</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">dataFile</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dataFile</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">dataText</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">packageMatch</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">'set\(mujoco_PACKAGE_FOLDER_[^ ]+ "([^"]+)"\)'</span><span class="p">,</span> <span class="n">dataText</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">packageMatch</span><span class="p">:</span>
+            <span class="n">packageRoot</span> <span class="o">=</span> <span class="n">packageMatch</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">versionMatch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">packageRoot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Configured MuJoCo package metadata is incomplete."</span><span class="p">)</span>
+
+    <span class="n">binaryFiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"lib"</span><span class="p">,</span> <span class="s2">"bin"</span><span class="p">):</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packageRoot</span><span class="p">,</span> <span class="n">subdirectory</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">directory</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">lowerName</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="s2">"mujoco"</span> <span class="ow">in</span> <span class="n">lowerName</span>
+                    <span class="ow">and</span> <span class="n">lowerName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                        <span class="p">(</span><span class="s2">".so"</span><span class="p">,</span> <span class="s2">".dylib"</span><span class="p">,</span> <span class="s2">".dll"</span><span class="p">,</span> <span class="s2">".a"</span><span class="p">,</span> <span class="s2">".lib"</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">binaryFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+    <span class="n">binaryFiles</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">binaryFiles</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">binaryFiles</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"No MuJoCo binary was found under configured package </span><span class="si">{</span><span class="n">packageRoot</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">binaryFiles</span><span class="p">:</span>
+        <span class="n">relativePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">packageRoot</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">relativePath</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\0</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">),</span> <span class="sa">b</span><span class="s2">""</span><span class="p">):</span>
+                <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\0</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">manifestPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packageRoot</span><span class="p">,</span> <span class="s2">"conanmanifest.txt"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"version"</span><span class="p">:</span> <span class="n">versionMatch</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"sha256-path-content-v1"</span><span class="p">,</span>
+        <span class="s2">"fileCount"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">binaryFiles</span><span class="p">),</span>
+        <span class="s2">"sha256"</span><span class="p">:</span> <span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
+        <span class="s2">"conanManifestSha256"</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">sha256File</span><span class="p">(</span><span class="n">manifestPath</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">manifestPath</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_provenanceFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">),</span> <span class="s2">"provenance.json"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_outputDirectory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">),</span> <span class="s2">"paper"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hashFiles</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Hash a required set of files under one artifact root."""</span>
+    <span class="n">hashes</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">artifactPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">artifactPath</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing publication artifact </span><span class="si">{</span><span class="n">artifactPath</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">hashes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sha256File</span><span class="p">(</span><span class="n">artifactPath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_physicalMemoryBytes</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return installed physical memory in bytes when the host exposes it."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"sysconf"</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"sysconf_names"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="s2">"SC_PHYS_PAGES"</span> <span class="ow">in</span> <span class="n">names</span> <span class="ow">and</span> <span class="s2">"SC_PAGE_SIZE"</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">sysconf</span><span class="p">(</span><span class="s2">"SC_PHYS_PAGES"</span><span class="p">)</span><span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">sysconf</span><span class="p">(</span><span class="s2">"SC_PAGE_SIZE"</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cmakeCacheValue</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return one value from the existing build tree's CMake cache."""</span>
+    <span class="n">cachePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">,</span> <span class="s2">"CMakeCache.txt"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cachePath</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cachePath</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">":"</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cmakeCommand</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the CMake executable recorded by the existing build tree."""</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">_cmakeCacheValue</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">,</span> <span class="s2">"CMAKE_COMMAND"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">command</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">command</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"cmake"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot locate CMake for the publication rebuild."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">command</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cmakeSourceDirectory</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the source directory recorded by the existing build tree."""</span>
+    <span class="n">sourceDirectory</span> <span class="o">=</span> <span class="n">_cmakeCacheValue</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">,</span> <span class="s2">"CMAKE_HOME_DIRECTORY"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">sourceDirectory</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sourceDirectory</span><span class="p">,</span> <span class="s2">"CMakeLists.txt"</span><span class="p">))</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Cannot locate the configured CMake source directory from "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">buildRoot</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sourceDirectory</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hardwareIdentity</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return non-sensitive host details that identify timing hardware."""</span>
+    <span class="n">identity</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"model"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">(),</span>
+        <span class="s2">"processor"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">processor</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"Darwin"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">identity</span>
+
+    <span class="n">profiler</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"system_profiler"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">profiler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">identity</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">profiler</span><span class="p">,</span> <span class="s2">"SPHardwareDataType"</span><span class="p">,</span> <span class="s2">"-json"</span><span class="p">],</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">hardware</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">completed</span><span class="o">.</span><span class="n">stdout</span><span class="p">)[</span><span class="s2">"SPHardwareDataType"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">SubprocessError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">identity</span>
+
+    <span class="n">identity</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="s2">"model"</span><span class="p">:</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">hardware</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"machine_name"</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">hardware</span><span class="p">[</span><span class="s1">'machine_model'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span>
+                <span class="k">if</span> <span class="n">hardware</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"machine_model"</span><span class="p">)</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
+        <span class="p">))),</span>
+        <span class="s2">"processor"</span><span class="p">:</span> <span class="n">hardware</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chip_type"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">identity</span><span class="p">[</span><span class="s2">"processor"</span><span class="p">],</span>
+        <span class="s2">"processorConfiguration"</span><span class="p">:</span> <span class="n">hardware</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"number_processors"</span><span class="p">),</span>
+        <span class="s2">"memory"</span><span class="p">:</span> <span class="n">hardware</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"physical_memory"</span><span class="p">),</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="n">identity</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_currentBuildReceipt</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">cleanRebuild</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Describe the exact source, Basilisk binaries, and MuJoCo dependency."""</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"schemaVersion"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"generatedAt"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+            <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z"</span>
+        <span class="p">),</span>
+        <span class="s2">"cleanRebuild"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">cleanRebuild</span><span class="p">),</span>
+        <span class="s2">"sourceRevision"</span><span class="p">:</span> <span class="n">head</span><span class="p">,</span>
+        <span class="s2">"sourceTree"</span><span class="p">:</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"rev-parse"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">head</span><span class="si">}</span><span class="s2">^</span><span class="se">{{</span><span class="s2">tree</span><span class="se">}}</span><span class="s2">"</span><span class="p">),</span>
+        <span class="s2">"configuration"</span><span class="p">:</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"diagnostics"</span><span class="p">][</span><span class="s2">"build"</span><span class="p">][</span><span class="s2">"configuration"</span><span class="p">],</span>
+        <span class="s2">"nativeExtensions"</span><span class="p">:</span> <span class="n">_nativeBuildFingerprint</span><span class="p">(),</span>
+        <span class="s2">"mujocoDependency"</span><span class="p">:</span> <span class="n">_mujocoDependencyFingerprint</span><span class="p">(</span>
+            <span class="n">configuration</span><span class="o">=</span><span class="n">buildInfo</span><span class="p">[</span><span class="s2">"diagnostics"</span><span class="p">][</span><span class="s2">"build"</span><span class="p">][</span><span class="s2">"configuration"</span><span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validateBuildReceipt</span><span class="p">(</span><span class="n">receipt</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">requireCleanRebuild</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject a stale, incomplete, or non-clean publication build receipt."""</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">_currentBuildReceipt</span><span class="p">(</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">cleanRebuild</span><span class="o">=</span><span class="n">receipt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cleanRebuild"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="s2">"schemaVersion"</span><span class="p">,</span>
+        <span class="s2">"sourceRevision"</span><span class="p">,</span>
+        <span class="s2">"sourceTree"</span><span class="p">,</span>
+        <span class="s2">"configuration"</span><span class="p">,</span>
+        <span class="s2">"nativeExtensions"</span><span class="p">,</span>
+        <span class="s2">"mujocoDependency"</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">receipt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Publication build receipt field </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> does not match "</span>
+                <span class="s2">"the current build."</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">requireCleanRebuild</span> <span class="ow">and</span> <span class="n">receipt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cleanRebuild"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Publication provenance requires a clean rebuild receipt."</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">receipt</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_writeBuildReceipt</span><span class="p">(</span><span class="n">receipt</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Write one clean-build receipt outside the source tree."""</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">receipt</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_requiredBuildReceipt</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Load the receipt passed by the clean-build parent process."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">BUILD_RECEIPT_ENV</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Run paperFigures.py --update-provenance as a script so it can "</span>
+            <span class="s2">"perform and record the required clean rebuild."</span>
+        <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">receipt</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_validateBuildReceipt</span><span class="p">(</span>
+        <span class="n">receipt</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">requireCleanRebuild</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cleanBuildAndRerun</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Reconfigure and clean-rebuild Basilisk, then rerun this command."""</span>
+    <span class="k">if</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"status"</span><span class="p">,</span> <span class="s2">"--porcelain"</span><span class="p">,</span> <span class="s2">"--untracked-files=no"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Commit tracked source changes before preparing publication artifacts."</span>
+        <span class="p">)</span>
+    <span class="n">buildRoot</span> <span class="o">=</span> <span class="n">_buildRoot</span><span class="p">()</span>
+    <span class="n">cmakeCommand</span> <span class="o">=</span> <span class="n">_cmakeCommand</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">)</span>
+    <span class="n">sourceDirectory</span> <span class="o">=</span> <span class="n">_cmakeSourceDirectory</span><span class="p">(</span><span class="n">buildRoot</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">cmakeCommand</span><span class="p">,</span> <span class="s2">"-S"</span><span class="p">,</span> <span class="n">sourceDirectory</span><span class="p">,</span> <span class="s2">"-B"</span><span class="p">,</span> <span class="n">buildRoot</span><span class="p">],</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cwd</span><span class="o">=</span><span class="n">repoRoot</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">buildCommand</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">cmakeCommand</span><span class="p">,</span>
+        <span class="s2">"--build"</span><span class="p">,</span>
+        <span class="n">buildRoot</span><span class="p">,</span>
+        <span class="s2">"--config"</span><span class="p">,</span>
+        <span class="s2">"Release"</span><span class="p">,</span>
+        <span class="s2">"--clean-first"</span><span class="p">,</span>
+        <span class="s2">"--parallel"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">buildCommand</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">repoRoot</span><span class="p">)</span>
+    <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span> <span class="o">=</span> <span class="n">_matchingSourceRevision</span><span class="p">(</span><span class="n">requireClean</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">receipt</span> <span class="o">=</span> <span class="n">_currentBuildReceipt</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">cleanRebuild</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">descriptor</span><span class="p">,</span> <span class="n">receiptPath</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="s2">"dynamicsComparisonBuildReceipt-"</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="o">=</span><span class="s2">".json"</span><span class="p">,</span>
+        <span class="nb">dir</span><span class="o">=</span><span class="n">buildRoot</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_writeBuildReceipt</span><span class="p">(</span><span class="n">receipt</span><span class="p">,</span> <span class="n">receiptPath</span><span class="p">)</span>
+        <span class="n">environment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">environment</span><span class="p">[</span><span class="n">BUILD_RECEIPT_ENV</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiptPath</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">repoRoot</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">environment</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">completed</span><span class="o">.</span><span class="n">returncode</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">receiptPath</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">receiptPath</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="regeneratePublicationInputs">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.regeneratePublicationInputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">regeneratePublicationInputs</span><span class="p">(</span><span class="n">scenarioRunKwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sweepRunKwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Regenerate every JSON file consumed by the print renderer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        scenarioRunKwargs (dict, optional): per-scenario keyword overrides.</span>
+<span class="sd">            Publication provenance uses the full defaults; reduced overrides are</span>
+<span class="sd">            useful for exercising the rendering pipeline during development.</span>
+<span class="sd">        sweepRunKwargs (dict, optional): per-sweep keyword overrides with the</span>
+<span class="sd">            same development-only purpose.</span>
+<span class="sd">        resultsDir (str, optional): destination for regenerated JSON inputs.</span>
+<span class="sd">            Defaults to the scenario ``results`` directory.</span>
+<span class="sd">    """</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">scenarioOverrides</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">{}</span> <span class="k">if</span> <span class="n">scenarioRunKwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">scenarioRunKwargs</span>
+    <span class="p">)</span>
+    <span class="n">sweepOverrides</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">sweepRunKwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sweepRunKwargs</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PAPER_INPUT_FILES</span><span class="p">:</span>
+        <span class="n">inputPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputPath</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">inputPath</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">moduleName</span> <span class="ow">in</span> <span class="n">PAPER_SCENARIOS</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Regenerating publication input: "</span> <span class="o">+</span> <span class="n">moduleName</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">moduleName</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">scenarioOverrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">moduleName</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"showPlots"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"saveJson"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"resultsDir"</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">)</span>
+            <span class="n">module</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">moduleName</span> <span class="ow">in</span> <span class="n">PAPER_SWEEPS</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Regenerating publication input: "</span> <span class="o">+</span> <span class="n">moduleName</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">moduleName</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sweepOverrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">moduleName</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"saveJson"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"resultsDir"</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">)</span>
+            <span class="n">module</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="n">_hashFiles</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">PAPER_INPUT_FILES</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_saveResultFigures</span><span class="p">(</span><span class="n">figureList</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">,</span> <span class="n">selectedNames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Save selected scenario figures into the publication evidence directory."""</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span> <span class="k">if</span> <span class="n">selectedNames</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">selectedNames</span><span class="p">)</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Scenario did not return required publication figures: "</span>
+            <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+        <span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">figureList</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">".svg"</span><span class="p">),</span>
+            <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="regeneratePublicationEvidence">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.regeneratePublicationEvidence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">regeneratePublicationEvidence</span><span class="p">(</span><span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Regenerate every data and scenario-figure artifact used by the paper."""</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PAPER_EVIDENCE_FILES</span><span class="p">:</span>
+        <span class="n">artifactPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">artifactPath</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">artifactPath</span><span class="p">)</span>
+
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"runAllComparisons"</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">,</span>
+        <span class="n">saveDocumentationFigures</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">variableMass</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"scenarioCompareVariableMass"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">deepSpaceFigures</span> <span class="o">=</span> <span class="n">variableMass</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">saveJson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">inOrbit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">_saveResultFigures</span><span class="p">(</span>
+            <span class="n">deepSpaceFigures</span><span class="p">,</span>
+            <span class="n">targetResults</span><span class="p">,</span>
+            <span class="p">(</span><span class="s2">"scenarioCompareVariableMass_deepSpace_attError"</span><span class="p">,),</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">variableMass</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">saveJson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">inOrbit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">nearRigid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">moduleName</span> <span class="ow">in</span> <span class="n">PUBLICATION_SWEEPS</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Regenerating publication evidence: "</span> <span class="o">+</span> <span class="n">moduleName</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">moduleName</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">saveJson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="n">_hashFiles</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">PAPER_EVIDENCE_FILES</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_publicationProvenance</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">buildReceipt</span><span class="p">,</span>
+                           <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataFiles</span><span class="o">=</span><span class="n">PAPER_EVIDENCE_FILES</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build a fresh manifest for the generated data, binaries, and figures."""</span>
+    <span class="n">artifact</span> <span class="o">=</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"artifact"</span><span class="p">]</span>
+    <span class="n">diagnostics</span> <span class="o">=</span> <span class="n">buildInfo</span><span class="p">[</span><span class="s2">"diagnostics"</span><span class="p">]</span>
+    <span class="n">compiler</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s2">"compilers"</span><span class="p">][</span><span class="s2">"cxx"</span><span class="p">]</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s2">"target"</span><span class="p">]</span>
+    <span class="n">dataFiles</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"schemaVersion"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">"generatedAt"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+            <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z"</span>
+        <span class="p">),</span>
+        <span class="s2">"basilisk"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"commit"</span><span class="p">:</span> <span class="n">head</span><span class="p">,</span>
+            <span class="s2">"sourceTree"</span><span class="p">:</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"rev-parse"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">head</span><span class="si">}</span><span class="s2">^</span><span class="se">{{</span><span class="s2">tree</span><span class="se">}}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="s2">"trackedWorktreeClean"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"build"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"basiliskVersion"</span><span class="p">:</span> <span class="n">artifact</span><span class="p">[</span><span class="s2">"basiliskVersion"</span><span class="p">],</span>
+            <span class="s2">"sourceRevision"</span><span class="p">:</span> <span class="n">head</span><span class="p">,</span>
+            <span class="s2">"sourceDirty"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"configuration"</span><span class="p">:</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s2">"build"</span><span class="p">][</span><span class="s2">"configuration"</span><span class="p">],</span>
+            <span class="s2">"target"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">target</span><span class="p">[</span><span class="s1">'system'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">target</span><span class="p">[</span><span class="s1">'processor'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"compiler"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">compiler</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">compiler</span><span class="p">[</span><span class="s1">'version'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"python"</span><span class="p">:</span> <span class="n">diagnostics</span><span class="p">[</span><span class="s2">"tools"</span><span class="p">][</span><span class="s2">"python"</span><span class="p">],</span>
+            <span class="s2">"receipt"</span><span class="p">:</span> <span class="n">buildReceipt</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"environment"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"platform"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">(),</span>
+            <span class="s2">"hardware"</span><span class="p">:</span> <span class="n">_hardwareIdentity</span><span class="p">(),</span>
+            <span class="s2">"logicalCpuCount"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span>
+            <span class="s2">"physicalMemoryBytes"</span><span class="p">:</span> <span class="n">_physicalMemoryBytes</span><span class="p">(),</span>
+            <span class="s2">"python"</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span>
+            <span class="s2">"numpy"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">"matplotlib"</span><span class="p">:</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+            <span class="s2">"timingProtocol"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"warmupRuns"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"measuredRuns"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s2">"interleavedEngineOrder"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"reportedStatistic"</span><span class="p">:</span> <span class="s2">"median"</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s2">"artifacts"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"evidenceFiles"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">),</span>
+            <span class="s2">"basiliskDataSha256"</span><span class="p">:</span> <span class="n">_hashFiles</span><span class="p">(</span>
+                <span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">),</span> <span class="n">dataFiles</span>
+            <span class="p">),</span>
+            <span class="s2">"basiliskPrintFiguresSha256"</span><span class="p">:</span> <span class="n">_hashFiles</span><span class="p">(</span>
+                <span class="n">outputDir</span><span class="p">,</span> <span class="n">PAPER_OUTPUT_FILES</span>
+            <span class="p">),</span>
+            <span class="s2">"generatorSourceSha256"</span><span class="p">:</span> <span class="n">_hashFiles</span><span class="p">(</span>
+                <span class="n">repoRoot</span><span class="p">,</span> <span class="n">PAPER_GENERATOR_FILES</span>
+            <span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_writeProvenance</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Replace one provenance file with the supplied complete manifest."""</span>
+    <span class="n">provenanceFile</span> <span class="o">=</span> <span class="n">_provenanceFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">provenanceFile</span><span class="p">)),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">provenanceFile</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">provenanceFile</span>
+
+
+<div class="viewcode-block" id="updateInputProvenance">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.updateInputProvenance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">updateInputProvenance</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outputDir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Regenerate publication inputs and replace their complete provenance."""</span>
+    <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span> <span class="o">=</span> <span class="n">_matchingSourceRevision</span><span class="p">(</span><span class="n">requireClean</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">buildReceipt</span> <span class="o">=</span> <span class="n">_requiredBuildReceipt</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">)</span>
+    <span class="n">regeneratePublicationEvidence</span><span class="p">(</span><span class="n">resultsDir</span><span class="o">=</span><span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">outputDir</span> <span class="o">=</span> <span class="n">_outputDirectory</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">_renderFiguresInFreshProcess</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">provenance</span> <span class="o">=</span> <span class="n">_publicationProvenance</span><span class="p">(</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">buildReceipt</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">provenanceFile</span> <span class="o">=</span> <span class="n">_writeProvenance</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Publication provenance written to "</span> <span class="o">+</span> <span class="n">provenanceFile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">provenance</span></div>
+
+
+
+<div class="viewcode-block" id="validateInputProvenance">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.validateInputProvenance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validateInputProvenance</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verifySource</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject missing, stale, or source-inconsistent publication inputs."""</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">_resultsDirectory</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">provenanceFile</span> <span class="o">=</span> <span class="n">_provenanceFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">provenanceFile</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Missing </span><span class="si">{</span><span class="n">provenanceFile</span><span class="si">}</span><span class="s2">; regenerate the data and run "</span>
+            <span class="s2">"paperFigures.py --update-provenance."</span>
+        <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">provenanceFile</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">provenance</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"schemaVersion"</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Publication provenance uses an obsolete schema; regenerate it with "</span>
+            <span class="s2">"paperFigures.py --update-provenance."</span>
+        <span class="p">)</span>
+    <span class="n">revision</span> <span class="o">=</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"basilisk"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"commit"</span><span class="p">)</span>
+    <span class="n">build</span> <span class="o">=</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"build"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="ow">not</span> <span class="n">revision</span>
+        <span class="ow">or</span> <span class="n">build</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sourceRevision"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">revision</span>
+        <span class="ow">or</span> <span class="n">build</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sourceDirty"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Publication provenance does not identify one clean Basilisk source revision."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verifySource</span><span class="p">:</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">buildInfo</span> <span class="o">=</span> <span class="n">_matchingSourceRevision</span><span class="p">(</span><span class="n">requireClean</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">revision</span> <span class="o">!=</span> <span class="n">head</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Publication inputs were generated from a different Basilisk commit."</span>
+            <span class="p">)</span>
+        <span class="n">sourceTree</span> <span class="o">=</span> <span class="n">_gitOutput</span><span class="p">(</span><span class="s2">"rev-parse"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">head</span><span class="si">}</span><span class="s2">^</span><span class="se">{{</span><span class="s2">tree</span><span class="se">}}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">provenance</span><span class="p">[</span><span class="s2">"basilisk"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sourceTree"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">sourceTree</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Publication provenance has an inconsistent Git source-tree hash."</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_validateBuildReceipt</span><span class="p">(</span>
+                <span class="n">build</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"receipt"</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="n">head</span><span class="p">,</span>
+                <span class="n">buildInfo</span><span class="p">,</span>
+                <span class="n">requireCleanRebuild</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
+    <span class="n">artifacts</span> <span class="o">=</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"artifacts"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">evidenceFiles</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">artifacts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"evidenceFiles"</span><span class="p">,</span> <span class="p">()))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">PAPER_RENDER_INPUT_FILES</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">evidenceFiles</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Publication provenance does not cover every print-renderer input."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verifySource</span> <span class="ow">and</span> <span class="n">evidenceFiles</span> <span class="o">!=</span> <span class="n">PAPER_EVIDENCE_FILES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Publication provenance does not cover the complete paper evidence set."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">verifySource</span><span class="p">:</span>
+        <span class="n">expectedGenerators</span> <span class="o">=</span> <span class="n">_hashFiles</span><span class="p">(</span><span class="n">repoRoot</span><span class="p">,</span> <span class="n">PAPER_GENERATOR_FILES</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">artifacts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"generatorSourceSha256"</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expectedGenerators</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Publication generator source hashes do not match the current checkout."</span>
+            <span class="p">)</span>
+
+    <span class="n">hashes</span> <span class="o">=</span> <span class="n">artifacts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"basiliskDataSha256"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">evidenceFiles</span><span class="p">:</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Publication provenance has no SHA-256 hash for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">inputPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputPath</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing paper evidence </span><span class="si">{</span><span class="n">inputPath</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">sha256File</span><span class="p">(</span><span class="n">inputPath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">actual</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Publication evidence hash mismatch for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">; regenerate the "</span>
+                <span class="s2">"provenance before rendering."</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">provenance</span></div>
+
+
+
+<div class="viewcode-block" id="validateFigureProvenance">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.validateFigureProvenance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validateFigureProvenance</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject missing or changed print figures after deterministic rendering."""</span>
+    <span class="n">hashes</span> <span class="o">=</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"artifacts"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">"basiliskPrintFiguresSha256"</span><span class="p">,</span> <span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PAPER_OUTPUT_FILES</span><span class="p">:</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Publication provenance has no SHA-256 hash for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="n">figurePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">figurePath</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing paper figure </span><span class="si">{</span><span class="n">figurePath</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sha256File</span><span class="p">(</span><span class="n">figurePath</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Publication figure hash mismatch for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">; regenerate all "</span>
+                <span class="s2">"publication artifacts with --update-provenance."</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="markerFor">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.markerFor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">markerFor</span><span class="p">(</span><span class="n">integratorName</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Marker for an svIntegrator name; RKF45 checked before RK4 by order below."""</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">marker</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">INTEGRATOR_MARKERS</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">integratorName</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">marker</span>
+    <span class="k">return</span> <span class="s2">"x"</span></div>
+
+
+
+<div class="viewcode-block" id="paretoPanel">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.paretoPanel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">paretoPanel</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">errorKey</span><span class="p">,</span> <span class="n">errorLabel</span><span class="p">,</span> <span class="n">floorKey</span><span class="p">,</span> <span class="n">outFile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""One work-precision panel: error vs wall-clock, both engines, marker per integrator."""</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">engine</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"bsm"</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">),</span> <span class="p">(</span><span class="s2">"mujoco"</span><span class="p">,</span> <span class="n">RED</span><span class="p">)):</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">engine</span><span class="p">]</span>
+        <span class="n">families</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">families</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">familyRows</span> <span class="ow">in</span> <span class="n">families</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">familyRows</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">])</span>
+            <span class="n">adaptive</span> <span class="o">=</span> <span class="s2">"RKF"</span> <span class="ow">in</span> <span class="n">integratorName</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">familyRows</span><span class="p">],</span>
+                      <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">errorKey</span><span class="p">],</span> <span class="mf">1e-18</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">familyRows</span><span class="p">],</span>
+                      <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span> <span class="k">if</span> <span class="n">adaptive</span> <span class="k">else</span> <span class="s2">"--"</span><span class="p">,</span>
+                      <span class="n">marker</span><span class="o">=</span><span class="n">markerFor</span><span class="p">(</span><span class="n">integratorName</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                      <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">color</span> <span class="k">if</span> <span class="n">adaptive</span> <span class="k">else</span> <span class="s2">"white"</span><span class="p">,</span>
+                      <span class="n">markeredgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">floorKey</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">floorKey</span><span class="p">]</span><span class="o">*</span><span class="mf">1.6</span><span class="p">,</span> <span class="s2">"reference floor"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mf">6.5</span><span class="p">,</span>
+            <span class="n">ha</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yaxis_transform</span><span class="p">())</span>
+
+    <span class="c1"># Compact custom legend: engine colors + integrator markers.</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM"</span><span class="p">),</span>
+               <span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">RED</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo"</span><span class="p">)]</span>
+    <span class="n">present</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"bsm"</span><span class="p">]}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">marker</span> <span class="ow">in</span> <span class="n">INTEGRATOR_MARKERS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">present</span><span class="p">):</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+                                  <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">,</span> <span class="n">handlelength</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span>
+              <span class="n">columnspacing</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"wall-clock time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">errorLabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">PDF_METADATA</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">paretoFigures</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">study</span><span class="p">,</span> <span class="n">jsonName</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"RwPanels"</span><span class="p">,</span> <span class="s2">"scenarioCompareParetoRwPanels"</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">"FlexPanels"</span><span class="p">,</span> <span class="s2">"scenarioCompareParetoFlexPanels"</span><span class="p">)):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">loadJson</span><span class="p">(</span><span class="n">jsonName</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+        <span class="n">paretoPanel</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">,</span> <span class="s2">"final attitude error [rad]"</span><span class="p">,</span>
+                    <span class="s2">"sharedReferenceThreshold"</span><span class="p">,</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">jsonName</span> <span class="o">+</span> <span class="s2">"_frontier.pdf"</span><span class="p">))</span>
+        <span class="n">paretoPanel</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"positionError"</span><span class="p">,</span> <span class="s2">"final position error [m]"</span><span class="p">,</span>
+                    <span class="s2">"sharedPositionReferenceThreshold"</span><span class="p">,</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">jsonName</span> <span class="o">+</span> <span class="s2">"_frontierPosition.pdf"</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="scalingFigure">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.scalingFigure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scalingFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Wall-clock vs DOF for the three implementations, with BSM/MuJoCo ratio labels."""</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">loadJson</span><span class="p">(</span><span class="s2">"scenarioCompareFlexPanels"</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)[</span><span class="s2">"rows"</span><span class="p">]</span>
+    <span class="n">dof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"dof"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+    <span class="n">bsm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"bsmWall"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+    <span class="n">ndof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"ndofWall"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+    <span class="n">mujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"mujocoWall"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="n">bsm</span><span class="p">,</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM nHingedRigidBody"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="n">ndof</span><span class="p">,</span> <span class="s2">"^-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">YELLOW</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM spinningBodyNDOF"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="n">mujoco</span><span class="p">,</span> <span class="s2">"s-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">RED</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">yBsm</span><span class="p">,</span> <span class="n">yMujoco</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="n">bsm</span><span class="p">,</span> <span class="n">mujoco</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yBsm</span><span class="o">*</span><span class="n">yMujoco</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">yBsm</span><span class="o">/</span><span class="n">yMujoco</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">$</span><span class="se">\\</span><span class="s2">times$"</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">"center"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"system degrees of freedom"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"wall-clock for 600 steps [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="s2">"scenarioCompareFlexPanels_runtime.pdf"</span><span class="p">),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">PDF_METADATA</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">orbitDtFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">loadJson</span><span class="p">(</span><span class="s2">"sweepOrbitDt"</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)[</span><span class="s2">"rows"</span><span class="p">]</span>
+    <span class="n">dts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+    <span class="n">analytic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"bsmVsAnalyticMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+    <span class="n">cross</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"crossParadigmPosMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.2</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">analytic</span><span class="p">,</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"engine vs analytic Kepler"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">cross</span><span class="p">,</span> <span class="s2">"s-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">RED</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM vs MuJoCo"</span><span class="p">)</span>
+    <span class="n">dref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dts</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">dts</span><span class="o">.</span><span class="n">min</span><span class="p">()])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dref</span><span class="p">,</span> <span class="n">analytic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">dref</span><span class="o">/</span><span class="n">dts</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\propto \Delta t^4$"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"integrator step $\Delta t$ [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"max position difference [m]"</span><span class="p">)</span>
+    <span class="c1"># Pad below the flat cross-engine series so the legend sits in empty space.</span>
+    <span class="n">positiveCross</span> <span class="o">=</span> <span class="n">cross</span><span class="p">[</span><span class="n">cross</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">positiveCross</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="n">positiveCross</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">/</span><span class="mf">60.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower right"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="s2">"sweepOrbitDt.pdf"</span><span class="p">),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">PDF_METADATA</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">torqueArtifactFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">loadJson</span><span class="p">(</span><span class="s2">"sweepTorqueArtifact"</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">))</span>
+
+    <span class="n">dts</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"dtSweep"</span><span class="p">]]</span>
+    <span class="n">mujocoArtifact</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"mujocoMotionAttMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"dtSweep"</span><span class="p">]]</span>
+    <span class="n">bsmArtifact</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"bsmMotionAttMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"dtSweep"</span><span class="p">]]</span>
+    <span class="n">restCross</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"crossEngineRestAttMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"dtSweep"</span><span class="p">]]</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">mujocoArtifact</span><span class="p">,</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">RED</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo orbiting-vs-rest"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">restCross</span><span class="p">,</span> <span class="s2">"s-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">YELLOW</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"cross-engine, at rest"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dts</span><span class="p">,</span> <span class="n">bsmArtifact</span><span class="p">,</span> <span class="s2">"^-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM orbiting-vs-rest"</span><span class="p">)</span>
+    <span class="n">dref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">max</span><span class="p">(</span><span class="n">dts</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">dts</span><span class="p">)])</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">dref</span><span class="p">,</span> <span class="n">restCross</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">dref</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">dts</span><span class="p">))</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">GRAY</span><span class="p">,</span>
+               <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\propto \Delta t^4$"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"integrator step $\Delta t$ [s]"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"max principal angle [rad]"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower right"</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="n">speeds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"speed"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"velocitySweep"</span><span class="p">]])</span><span class="o">/</span><span class="mf">1000.0</span>
+    <span class="n">mujocoDrift</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"mujocoDriftAttMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"velocitySweep"</span><span class="p">]]</span>
+    <span class="n">bsmDrift</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"bsmDriftAttMax"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"velocitySweep"</span><span class="p">]]</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">mujocoDrift</span><span class="p">,</span> <span class="s2">"o-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">RED</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"MuJoCo drifting-vs-rest"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">speeds</span><span class="p">,</span> <span class="n">bsmDrift</span><span class="p">,</span> <span class="s2">"^-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">BLUE</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"BSM drifting-vs-rest"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"inertial drift speed [km/s]"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"max principal angle [rad]"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"center right"</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="s2">"sweepTorqueArtifact.pdf"</span><span class="p">),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">PDF_METADATA</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_renderFigures</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Render every print figure into an existing or new output directory."""</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PAPER_OUTPUT_FILES</span><span class="p">:</span>
+        <span class="n">figurePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">figurePath</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">figurePath</span><span class="p">)</span>
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">STYLE</span><span class="p">)</span>
+
+    <span class="n">paretoFigures</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">scalingFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">orbitDtFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">torqueArtifactFigure</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Paper figures written to "</span> <span class="o">+</span> <span class="n">outputDir</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_renderFiguresInFreshProcess</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Render PDFs without inheriting Matplotlib state from scenario runs."""</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">outputDir</span><span class="p">),</span>
+        <span class="s2">"--render-only"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="s2">"--results-dir"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">resultsDir</span><span class="p">)))</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">repoRoot</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/paperFigures.html#paperFigures.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">outputDir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">provenanceFile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verifySource</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Validate stored inputs, render figures, and verify their exact hashes."""</span>
+    <span class="n">provenance</span> <span class="o">=</span> <span class="n">validateInputProvenance</span><span class="p">(</span>
+        <span class="n">provenanceFile</span><span class="p">,</span> <span class="n">verifySource</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">outputDir</span> <span class="o">=</span> <span class="n">_outputDirectory</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">_renderFiguresInFreshProcess</span><span class="p">(</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">resultsDir</span><span class="p">)</span>
+    <span class="n">validateFigureProvenance</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">provenance</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"outputDir"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"?"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--provenance"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--update-provenance"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--render-only"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--results-dir"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">arguments</span><span class="o">.</span><span class="n">render_only</span><span class="p">:</span>
+        <span class="n">_renderFigures</span><span class="p">(</span>
+            <span class="n">_outputDirectory</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">results_dir</span><span class="p">),</span>
+            <span class="n">arguments</span><span class="o">.</span><span class="n">results_dir</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">arguments</span><span class="o">.</span><span class="n">update_provenance</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">BUILD_RECEIPT_ENV</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">_cleanBuildAndRerun</span><span class="p">())</span>
+        <span class="n">updateInputProvenance</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">provenance</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">outputDir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">run</span><span class="p">(</span><span class="n">arguments</span><span class="o">.</span><span class="n">outputDir</span><span class="p">,</span> <span class="n">arguments</span><span class="o">.</span><span class="n">provenance</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

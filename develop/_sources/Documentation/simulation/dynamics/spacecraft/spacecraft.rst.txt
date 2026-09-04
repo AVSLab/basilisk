@@ -1,0 +1,152 @@
+.. _spacecraft:
+
+:module-type:`C++` Module: spacecraft
+=====================================
+
+
+Executive Summary
+-----------------
+This module provides the spacecraft rigid body translational and rotation motion.  It is the typical module used to simulate the 6-DOF spacecraft motion.  This ``spacecraft`` module is setup such that additional spacecraft effectors can be added such as :ref:`reactionWheelStateEffector`, :ref:`thrusterDynamicEffector`, etc.  See `Dr. Cody Allard's dissertation <http://hanspeterschaub.info/Papers/grads/CodyAllard.pdf>`__ for more information.
+
+
+This is an instantiation of the :ref:`dynamicObject` abstract class that is a spacecraft with :ref:`stateEffector`'s and
+:ref:`dynamicEffector`'s attached to it. The ``spacecraft`` module allows for both translation and
+rotation. :ref:`stateEffector`'s such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching
+stateEffectors. :ref:`dynamicEffector`'s such as thrusters, external force and torque, SRP etc can be added to the spacecraft
+by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
+the hub.
+
+The optional ``pointMassTranslationalOnly`` flag can be set to ``True`` to model the hub as a point mass and only
+integrate the translational position and velocity states. This mode is intended for dynamics comparisons or simple
+point-mass propagation where the rotational hub states and post-integration attitude bookkeeping are unnecessary.
+When enabled, the hub mass ``mHub`` must be positive and the hub center offset ``r_BcB_B`` must be zero.
+State effectors are not supported because they add internal generalized coordinates and mass-property coupling.
+Dynamic effectors may still be attached. Their translational force outputs are included in the point-mass acceleration,
+but torque outputs are ignored because there is no rotational equation of motion. If a dynamic effector requires hub
+attitude or angular-rate states to compute its force or torque, the spacecraft exposes fixed states initialized from
+``sigma_BNInit`` and ``omega_BN_BInit`` with zero derivatives. Thus attitude-dependent force models use the initial
+attitude as a fixed orientation in this mode. The optional attitude reference input message is not supported in
+``pointMassTranslationalOnly`` mode.
+
+In the default 6-DOF mode, ``spacecraft`` automatically uses a direct fixed-mass hub-only dynamics path when no
+state effectors are attached and the hub body-frame origin :math:`B` is colocated with the hub center of mass
+(``r_BcB_B`` is zero). This optimization preserves the rigid-hub translational and rotational equations of motion,
+including gravity and dynamic-effector force and torque contributions, while bypassing the general back-substitution
+matrix assembly required for coupled multi-body state effectors. If a state effector is attached, or if point
+:math:`B` is offset from the hub center of mass, the module uses the general back-substitution formulation.
+
+The module
+:download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+
+.. bsk-module-io:: spacecraft
+    :caption: Module I/O Messages
+
+    output scStateOutMsg SCStatesMsgPayload
+        Spacecraft state output message.
+    output scMassStateOutMsg SCMassPropsMsgPayload
+        Output message containing the spacecraft mass properties.
+    input attRefInMsg AttRefMsgPayload
+        (Optional) Input message to specify a prescribed attitude motion.
+    input transRefInMsg TransRefMsgPayload
+        (Optional) Input message to specify a prescribed translational motion.
+
+User Guide
+----------
+This section is to outline the steps needed to setup a Spacecraft module in python using Basilisk.
+
+#.  Import the spacecraft class::
+
+        from Basilisk.simulation import spacecraft
+
+#.  Create an instantiation of a spacecraft::
+
+        scObject = spacecraft.Spacecraft()
+
+#.  Define all physical parameters for the hub. For example::
+
+        scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+
+    Do this for all of the parameters for a hub::
+
+        scObject.hub.mHub, scObject.hub.r_BcB_B, scObject.hub.IHubPntBc_B
+
+    seen in the spacecraft Parameters Table. If you only have translation, you only need to specify the mass (if you only have conservative forces acting on the spacecraft then you don't even need to specify a mass). If you only have rotation, you only need to specify the inertia, and if you have both, you need to specify the mass, the inertia and if you have a offset between the center of mass of the spacecraft and point :math:`B`.
+
+#.  Define the initial conditions of the states::
+
+        scObject.hub.r_CN_NInit,  scObject.hub.v_CN_NInit, scObject.hub.sigma_BNInit, scObject.hub.omega_BN_BInit
+
+#.  To run a translation-only point-mass propagation, set::
+
+        scObject.pointMassTranslationalOnly = True
+
+    This only integrates the hub position and velocity. Dynamic effectors can be attached if their translational
+    force contribution should act on the point mass, but state effectors cannot be attached.
+
+    When ``pointMassTranslationalOnly`` is left at its default value of ``False``, no additional setting is needed to
+    use the fixed-mass hub-only optimization. It is selected automatically for a hub-only spacecraft with
+    ``r_BcB_B`` equal to zero, and it is bypassed automatically for spacecraft with state effectors or a nonzero hub
+    center offset.
+
+#.  Finally, add the spacecraft to the task::
+
+        unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+#.  If you want to prescribe the spacecraft hub rotational motion, this can be specified through an optional
+    input message of type :ref:`attRefMsgPayload`::
+
+        scObject.attRefInMsg.subscribeTo(someAttRefMsg)
+#.  If you want to prescribe the spacecraft hub translational motion, this can be specified through an optional
+    input message of type :ref:`transRefMsgPayload`::
+
+        scObject.transRefInMsg.subscribeTo(someTransRefMsg)
+
+
+.. list-table:: Spacecraft Parameters Table
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Variable Name
+      - Variable Type
+      - Description
+    * - r_CN_NInit
+      - double[3]
+      - Inertial position of S/C
+    * - v_CN_NInit
+      - double[3]
+      - Inertial velocity of S/C
+    * - sigma_BNInit
+      - double[3]
+      - Initial attitude of B frame represented as an MRP
+    * - omega_BN_BInit
+      - double[3]
+      - Initial angular velocity of B frame expressed in B frame
+    * - mHub
+      - double[1]
+      - Hub mass
+    * - IHubPntBc_B
+      - double[3][3]
+      - Inertia in B frame
+    * - r_BcB_B
+      - double[3]
+      - Center of mass location in B frame
+    * - pointMassTranslationalOnly
+      - bool
+      - If ``True``, integrate only translational point-mass dynamics
+
+
+----
+
+.. autodoxygenfile:: spacecraft.h
+   :project: spacecraft
+

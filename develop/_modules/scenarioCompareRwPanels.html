@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareRwPanels &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioCompareRwPanels</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioCompareRwPanels</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Third scenario in the dynamics-engine comparison series (see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the introduction).</span>
+
+<span class="sd">This scenario models a free-floating spacecraft: a central hub carrying three</span>
+<span class="sd">orthogonal reaction wheels (commanded with constant motor torques) and two symmetric</span>
+<span class="sd">solar arrays modeled as torsional spring-damper hinged rigid bodies, initially</span>
+<span class="sd">deflected. With gravity off, the comparison isolates the internal multi-body coupling:</span>
+<span class="sd">wheel reaction torques, panel flexing, and the hub's rigid-body response.</span>
+
+<span class="sd">Matching the two engines requires accounting for how each models the components:</span>
+
+<span class="sd">#. **Reaction wheels.** Basilisk's back-substitution *balanced* :ref:`reactionWheelStateEffector`</span>
+<span class="sd">   adds no mass or inertia to the system; it injects only the spin-axis reaction and</span>
+<span class="sd">   gyroscopic terms. MuJoCo models each wheel as a real spinning rigid body. The two are</span>
+<span class="sd">   made equivalent by folding each wheel's inertia tensor into the BSM hub inertia,</span>
+<span class="sd">   setting the BSM ``Js`` to the wheel axial inertia, and giving the MuJoCo wheel bodies</span>
+<span class="sd">   negligible mass. A non-zero wheel mass would shift the system center of mass</span>
+<span class="sd">   differently in the two formulations once the offset panels are attached.</span>
+
+<span class="sd">#. **Hinged panels.** The :ref:`hingedRigidBodyStateEffector` is a torsional</span>
+<span class="sd">   spring(``k``)-damper(``c``) hinge with the panel center of mass a distance ``d`` from</span>
+<span class="sd">   the hinge axis. The equivalent MuJoCo construction is a ``hinge`` joint with matching</span>
+<span class="sd">   ``stiffness`` and ``damping``, the child body's center of mass offset by ``-d`` along</span>
+<span class="sd">   its local x-axis (the effector's sign convention), and a matching inertia tensor. The</span>
+<span class="sd">   positive-x root frame is rotated by 180 degrees about z so both arrays extend outward</span>
+<span class="sd">   and their hinge axes are mirrored.</span>
+
+<span class="sd">The hub attitude is compared with the principal rotation angle of the relative direction</span>
+<span class="sd">cosine matrix, as in :ref:`scenarioCompareTorque`. The MuJoCo scene is run with</span>
+<span class="sd">``highOrderAttitudeIntegration`` enabled so the hub quaternion is advanced at the</span>
+<span class="sd">integrator's full order, matching BSM's MRP attitude order.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed</span>
+<span class="sd">by using::</span>
+
+<span class="sd">    python3 scenarioCompareRwPanels.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The hub angular velocities from the two engines lie on top of one another as the wheels</span>
+<span class="sd">spin up and the panels oscillate.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_rate_x.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_rate_y.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_rate_z.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The panel hinge angles match between the two engines through the damped oscillation.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_panelPositive.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_panelNegative.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The cross-engine hub attitude difference remains near :math:`10^{-11}` rad for this</span>
+<span class="sd">eleven-degree-of-freedom system. The small positive wheel mass required by MuJoCo sets</span>
+<span class="sd">this nominal floor; reducing that bookkeeping mass lowers the difference further.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareRwPanels_attError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">Runtime cost</span>
+<span class="sd">------------</span>
+
+<span class="sd">The optional local benchmark reports the wall-clock cost of propagating this system</span>
+<span class="sd">with each engine as the median of five measured trials after one discarded warm-up.</span>
+<span class="sd">Model setup is excluded. Both the absolute times and speedup are specific to the</span>
+<span class="sd">machine and build.</span>
+<span class="sd">Generate the optional local CSV with</span>
+<span class="sd">``make -C docs comparison-runtime-tables``; see</span>
+<span class="sd">:ref:`scenarioCompareOrbit` for the benchmark requirements and interpretation.</span>
+
+<span class="sd">Next comparison: :ref:`scenarioCompareFlexPanels` increases the number of flexible</span>
+<span class="sd">degrees of freedom and measures runtime scaling.</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simIncludeRW</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactionWheelStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">hingedRigidBodyStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_runtimeTable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparePlots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparisonValidation</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+
+<span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+
+<span class="c1"># Paul Tol high-contrast palette shared by the comparison figures.</span>
+<span class="n">COLOR_BSM</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_BSM</span>
+<span class="n">COLOR_MUJOCO</span> <span class="o">=</span> <span class="n">_comparePlots</span><span class="o">.</span><span class="n">COLOR_MUJOCO</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Folder this scenario writes its JSON summary into.</span>
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+<span class="n">HUB_MASS</span> <span class="o">=</span> <span class="mf">600.0</span>  <span class="c1"># [kg]</span>
+<span class="n">HUB_CORE_INERTIA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">380.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2] bare hub, before wheel inertia is folded in</span>
+<span class="n">RW_JS</span> <span class="o">=</span> <span class="mf">0.08</span>  <span class="c1"># [kg*m^2] wheel axial inertia</span>
+<span class="n">RW_JT</span> <span class="o">=</span> <span class="mf">0.04</span>  <span class="c1"># [kg*m^2] wheel transverse inertia</span>
+<span class="n">RW_MASS</span> <span class="o">=</span> <span class="mf">1.0e-6</span>  <span class="c1"># [kg] negligible, matching the massless balanced-wheel idealization</span>
+<span class="n">RW_TORQUE</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">)</span>  <span class="c1"># [N*m] constant motor torque per wheel</span>
+<span class="n">PANEL_MASS</span> <span class="o">=</span> <span class="mf">50.0</span>  <span class="c1"># [kg]</span>
+<span class="n">PANEL_INERTIA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2] about the panel center of mass</span>
+<span class="n">PANEL_D</span> <span class="o">=</span> <span class="mf">1.2</span>  <span class="c1"># [m] hinge-axis to panel center-of-mass distance</span>
+<span class="n">PANEL_K</span> <span class="o">=</span> <span class="mf">150.0</span>  <span class="c1"># [N*m/rad] torsional spring stiffness</span>
+<span class="n">PANEL_C</span> <span class="o">=</span> <span class="mf">8.0</span>  <span class="c1"># [N*m*s/rad] torsional damping</span>
+<span class="n">PANEL_HINGE_X</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># [m] hinge offset from the hub origin along x</span>
+<span class="n">PANEL_THETA0</span> <span class="o">=</span> <span class="mf">12.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad] initial panel deflection</span>
+<span class="n">OMEGA0_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># [rad/s] initial hub rate</span>
+
+
+<div class="viewcode-block" id="panelRootDcm">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.panelRootDcm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panelRootDcm</span><span class="p">(</span><span class="n">hingeX</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the root-frame DCM that makes both panels extend away from the hub."""</span>
+    <span class="k">if</span> <span class="n">hingeX</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="hubInertiaBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.hubInertiaBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hubInertiaBSM</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""BSM hub inertia: bare hub plus the three folded-in wheel tensors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: 3x3 hub inertia tensor [kg*m^2].</span>
+<span class="sd">    """</span>
+    <span class="n">inertia</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">HUB_CORE_INERTIA</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">diag</span> <span class="o">=</span> <span class="p">[</span><span class="n">RW_JT</span><span class="p">,</span> <span class="n">RW_JT</span><span class="p">,</span> <span class="n">RW_JT</span><span class="p">]</span>
+        <span class="n">diag</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">RW_JS</span>
+        <span class="n">inertia</span> <span class="o">=</span> <span class="n">inertia</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inertia</span></div>
+
+
+
+<div class="viewcode-block" id="mujocoModel">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.mujocoModel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mujocoModel</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return the MJCF model: hub, three reaction wheels, two hinged panels."""</span>
+    <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span> <span class="o">=</span> <span class="n">HUB_CORE_INERTIA</span>
+    <span class="n">ip</span> <span class="o">=</span> <span class="n">PANEL_INERTIA</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;!-- No geoms, equalities, limits, or frictionloss in this model: disable the</span>
+<span class="s2">       collision and constraint pipelines so each derivative evaluation skips</span>
+<span class="s2">       broadphase and constraint-assembly bookkeeping (bit-identical results). --&gt;</span>
+<span class="s2">  &lt;option gravity="0 0 0"&gt;</span>
+<span class="s2">    &lt;flag contact="disable" constraint="disable"/&gt;</span>
+<span class="s2">  &lt;/option&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="hub"&gt;</span>
+<span class="s2">      &lt;freejoint/&gt;</span>
+<span class="s2">      &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">HUB_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iz</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+
+<span class="s2">      &lt;body name="rw_x" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_x" type="hinge" axis="1 0 0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="rw_y" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_y" type="hinge" axis="0 1 0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="rw_z" pos="0 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="rw_z" type="hinge" axis="0 0 1"/&gt;</span>
+<span class="s2">        &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">RW_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JT</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">RW_JS</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+
+<span class="s2">      &lt;body name="panelP" pos="</span><span class="si">{</span><span class="n">PANEL_HINGE_X</span><span class="si">}</span><span class="s2"> 0 0" quat="0 0 0 1"&gt;</span>
+<span class="s2">        &lt;joint name="panelP" type="hinge" axis="0 1 0" stiffness="</span><span class="si">{</span><span class="n">PANEL_K</span><span class="si">}</span><span class="s2">" damping="</span><span class="si">{</span><span class="n">PANEL_C</span><span class="si">}</span><span class="s2">" springref="0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_D</span><span class="si">}</span><span class="s2"> 0 0" mass="</span><span class="si">{</span><span class="n">PANEL_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">      &lt;body name="panelM" pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_HINGE_X</span><span class="si">}</span><span class="s2"> 0 0"&gt;</span>
+<span class="s2">        &lt;joint name="panelM" type="hinge" axis="0 1 0" stiffness="</span><span class="si">{</span><span class="n">PANEL_K</span><span class="si">}</span><span class="s2">" damping="</span><span class="si">{</span><span class="n">PANEL_C</span><span class="si">}</span><span class="s2">" springref="0"/&gt;</span>
+<span class="s2">        &lt;inertial pos="</span><span class="si">{</span><span class="o">-</span><span class="n">PANEL_D</span><span class="si">}</span><span class="s2"> 0 0" mass="</span><span class="si">{</span><span class="n">PANEL_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ip</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      &lt;/body&gt;</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">  &lt;actuator&gt;</span>
+<span class="s2">    &lt;motor name="rw_x" joint="rw_x"/&gt;</span>
+<span class="s2">    &lt;motor name="rw_y" joint="rw_y"/&gt;</span>
+<span class="s2">    &lt;motor name="rw_z" joint="rw_z"/&gt;</span>
+<span class="s2">  &lt;/actuator&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span></div>
+
+
+
+<div class="viewcode-block" id="buildBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.buildBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the back-substitution hub-wheel-panel simulation without propagating it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        record (bool, optional): attach state, wheel, and panel recorders. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, outputs, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hub"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">HUB_MASS</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">hubInertiaBSM</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">OMEGA0_B</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">rwEffector</span> <span class="o">=</span> <span class="n">reactionWheelStateEffector</span><span class="o">.</span><span class="n">ReactionWheelStateEffector</span><span class="p">()</span>
+    <span class="n">rwEffector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"rw"</span>
+    <span class="n">rwFactory</span> <span class="o">=</span> <span class="n">simIncludeRW</span><span class="o">.</span><span class="n">rwFactory</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">spinAxis</span> <span class="ow">in</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
+        <span class="n">rwFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">"custom"</span><span class="p">,</span> <span class="n">spinAxis</span><span class="p">,</span> <span class="n">Js</span><span class="o">=</span><span class="n">RW_JS</span><span class="p">,</span> <span class="n">Omega</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rWB_B</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+                         <span class="n">useMaxTorque</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useMinTorque</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">rwFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="s2">"rw"</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">)</span>
+    <span class="n">rwCmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsg</span><span class="p">()</span>
+    <span class="n">rwCmdMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">ArrayMotorTorqueMsgPayload</span><span class="p">(</span>
+        <span class="n">motorTorque</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">RW_TORQUE</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span><span class="o">*</span><span class="mi">33</span><span class="p">))</span>
+    <span class="n">rwEffector</span><span class="o">.</span><span class="n">rwMotorCmdInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">rwCmdMsg</span><span class="p">)</span>
+
+    <span class="n">panels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">hingeX</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PANEL_HINGE_X</span><span class="p">,</span> <span class="o">-</span><span class="n">PANEL_HINGE_X</span><span class="p">):</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">PANEL_MASS</span>  <span class="c1"># [kg]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">PANEL_INERTIA</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">PANEL_D</span>  <span class="c1"># [m]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">PANEL_K</span>  <span class="c1"># [N*m/rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">PANEL_C</span>  <span class="c1"># [N*m*s/rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">hingeX</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">panelRootDcm</span><span class="p">(</span><span class="n">hingeX</span><span class="p">)</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="n">PANEL_THETA0</span>  <span class="c1"># [rad]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"panel"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">"P"</span> <span class="k">if</span> <span class="n">hingeX</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"M"</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">panel</span><span class="p">)</span>
+        <span class="n">panels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">wheelRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">panelRecorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">stateRecorder</span><span class="p">)</span>
+        <span class="n">wheelRecorder</span> <span class="o">=</span> <span class="n">rwEffector</span><span class="o">.</span><span class="n">rwSpeedOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">wheelRecorder</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">panel</span> <span class="ow">in</span> <span class="n">panels</span><span class="p">:</span>
+            <span class="n">panelRec</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">panelRec</span><span class="p">)</span>
+            <span class="n">panelRecorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panelRec</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">rwEffector</span><span class="p">,</span> <span class="n">rwFactory</span><span class="p">,</span> <span class="n">rwCmdMsg</span><span class="p">]</span> <span class="o">+</span> <span class="n">panels</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">stateRecorder</span><span class="p">,</span> <span class="n">wheelRecorder</span><span class="p">,</span> <span class="n">panelRecorders</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.runBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the hub-wheel-panel system with the back-substitution :ref:`spacecraft`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="buildMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.buildMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the MuJoCo hub-wheel-panel simulation without propagating it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (float): integrator time step [s]</span>
+<span class="sd">        tf (float): final simulation time [s]</span>
+<span class="sd">        recordDt (float): recorder sampling period [s]</span>
+<span class="sd">        record (bool, optional): attach state, wheel, and panel recorders. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(simulation, outputs, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">mujocoModel</span><span class="p">())</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hubMj"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Advance the hub quaternion at the integrator's full order; MuJoCo's default single</span>
+    <span class="c1"># exponential map of the stage-averaged body rate would floor the attitude error at</span>
+    <span class="c1"># second order.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">highOrderAttitudeIntegration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRK4</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+
+    <span class="n">actuatorMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">"rw_x"</span><span class="p">,</span> <span class="s2">"rw_y"</span><span class="p">,</span> <span class="s2">"rw_z"</span><span class="p">]):</span>
+        <span class="n">actuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">cmdMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsg</span><span class="p">()</span>
+        <span class="n">cmdMsg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SingleActuatorMsgPayload</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">RW_TORQUE</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">actuator</span><span class="o">.</span><span class="n">actuatorInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+        <span class="n">actuatorMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmdMsg</span><span class="p">)</span>
+
+    <span class="n">stateRecorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">wheelRecorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">panelRecorders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">stateRecorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">stateRecorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"rw_x"</span><span class="p">,</span> <span class="s2">"rw_y"</span><span class="p">,</span> <span class="s2">"rw_z"</span><span class="p">]:</span>
+            <span class="n">wheelRec</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">stateDotOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span>
+                <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">wheelRec</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">wheelRecorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheelRec</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"panelP"</span><span class="p">,</span> <span class="s2">"panelM"</span><span class="p">]:</span>
+            <span class="n">panelRec</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span>
+                <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">recordDt</span><span class="p">))</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">panelRec</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">panelRecorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panelRec</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">OMEGA0_B</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"panelP"</span><span class="p">,</span> <span class="s2">"panelM"</span><span class="p">]:</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">PANEL_THETA0</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">))</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">scene</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">hub</span><span class="p">]</span> <span class="o">+</span> <span class="n">actuatorMsgs</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">stateRecorder</span><span class="p">,</span> <span class="n">wheelRecorders</span><span class="p">,</span> <span class="n">panelRecorders</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="runMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.runMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">runMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate the same hub-wheel-panel system with the :ref:`MJScene&lt;MJScene&gt;`."""</span>
+    <span class="n">scSim</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">buildMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">,</span> <span class="n">handles</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="relativePrincipalAngle">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.relativePrincipalAngle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Per-sample principal rotation angle between two MRP attitude histories.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sigmaBSM (numpy.ndarray): BSM MRP history, shape ``(N, 3)``</span>
+<span class="sd">        sigmaMujoco (numpy.ndarray): MuJoCo MRP history, shape ``(N, 3)``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: principal angle per sample [rad].</span>
+<span class="sd">    """</span>
+    <span class="n">nSamples</span> <span class="o">=</span> <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">requireEqualLength</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel panel attitude"</span><span class="p">,</span> <span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nSamples</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nSamples</span><span class="p">):</span>
+        <span class="n">dcmRel</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaMujoco</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="c1"># Use 4*atan(|sigma_rel|), which is well conditioned down to machine precision;</span>
+        <span class="c1"># arccos((trace-1)/2) collapses to zero for angles below ~1e-8 rad.</span>
+        <span class="n">angle</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcmRel</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">angle</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveTiming</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): if True, plot and show the simulation results.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        saveJson (bool, optional): if True, write the comparison metrics to</span>
+<span class="sd">            ``results/scenarioCompareRwPanels.json``. Defaults to False.</span>
+<span class="sd">        saveTiming (bool, optional): if True, measure the BSM-vs-MJScene wall-clock</span>
+<span class="sd">            cost of this scenario and write</span>
+<span class="sd">            ``results/scenarioCompareRwPanels_runtime.csv``. Defaults to False.</span>
+<span class="sd">        resultsDir (str, optional): explicit artifact directory. Defaults to</span>
+<span class="sd">            the scenario ``results`` folder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># [s]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">120.0</span>  <span class="c1"># [s]</span>
+    <span class="n">recordDt</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [s]</span>
+    <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+
+    <span class="k">if</span> <span class="n">saveTiming</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+            <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">pairedPropagationTimes</span><span class="p">(</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bsmSeconds</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">medianPropagationTime</span><span class="p">(</span>
+                <span class="k">lambda</span><span class="p">:</span> <span class="n">buildBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">mujocoSeconds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">saveRuntimeTable</span><span class="p">(</span>
+            <span class="n">fileName</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+            <span class="p">[(</span><span class="s2">"Hub + 3 RWs + 2 flex panels, 11 DOF (120 s, dt=0.02 s)"</span><span class="p">,</span>
+              <span class="n">bsmSeconds</span><span class="p">,</span> <span class="n">mujocoSeconds</span><span class="p">)],</span>
+            <span class="n">resultsDir</span><span class="o">=</span><span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="n">bsmState</span><span class="p">,</span> <span class="n">bsmWheel</span><span class="p">,</span> <span class="n">bsmPanels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runBSM</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+    <span class="n">timeAxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+    <span class="n">sigmaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+    <span class="n">omegaBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmState</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">wheelBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bsmWheel</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">panelBSM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">theta</span><span class="p">))</span>
+                                    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">bsmPanels</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+    <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+        <span class="s2">"reaction-wheel panel BSM"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+        <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">omegaBSM</span><span class="p">,</span> <span class="n">wheels</span><span class="o">=</span><span class="n">wheelBSM</span><span class="p">,</span> <span class="n">panels</span><span class="o">=</span><span class="n">panelBSM</span><span class="p">)</span>
+
+    <span class="n">attError</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">omegaMujoco</span> <span class="o">=</span> <span class="n">wheelMujoco</span> <span class="o">=</span> <span class="n">panelMujoco</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="n">mjState</span><span class="p">,</span> <span class="n">mjWheels</span><span class="p">,</span> <span class="n">mjPanels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">runMujoco</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">mujocoTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjState</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateMatchingHistories</span><span class="p">(</span>
+            <span class="s2">"reaction-wheel panel BSM/MuJoCo"</span><span class="p">,</span>
+            <span class="n">timeAxis</span><span class="p">,</span> <span class="n">mujocoTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">)</span>
+        <span class="n">sigmaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjState</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)</span>
+        <span class="n">omegaMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mjState</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">wheelMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+                                       <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">mjWheels</span><span class="p">])</span>  <span class="c1"># [rad/s]</span>
+        <span class="n">panelMujoco</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+                                       <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">mjPanels</span><span class="p">])</span>  <span class="c1"># [rad]</span>
+        <span class="n">_comparisonValidation</span><span class="o">.</span><span class="n">validateHistory</span><span class="p">(</span>
+            <span class="s2">"reaction-wheel panel MuJoCo"</span><span class="p">,</span> <span class="n">mujocoTimes</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">recordDt</span><span class="p">,</span>
+            <span class="n">attitude</span><span class="o">=</span><span class="n">sigmaMujoco</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">omegaMujoco</span><span class="p">,</span>
+            <span class="n">wheels</span><span class="o">=</span><span class="n">wheelMujoco</span><span class="p">,</span> <span class="n">panels</span><span class="o">=</span><span class="n">panelMujoco</span><span class="p">)</span>
+        <span class="n">attError</span> <span class="o">=</span> <span class="n">relativePrincipalAngle</span><span class="p">(</span><span class="n">sigmaBSM</span><span class="p">,</span> <span class="n">sigmaMujoco</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="n">writeJsonSummary</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">wheelBSM</span><span class="p">,</span> <span class="n">wheelMujoco</span><span class="p">,</span>
+                         <span class="n">panelBSM</span><span class="p">,</span> <span class="n">panelMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotResults</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span>
+                             <span class="n">panelBSM</span><span class="p">,</span> <span class="n">panelMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">)</span>
+
+    <span class="n">_comparePlots</span><span class="o">.</span><span class="n">finalizeFigures</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<div class="viewcode-block" id="writeJsonSummary">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.writeJsonSummary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">writeJsonSummary</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">wheelBSM</span><span class="p">,</span> <span class="n">wheelMujoco</span><span class="p">,</span>
+                     <span class="n">panelBSM</span><span class="p">,</span> <span class="n">panelMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">,</span> <span class="n">targetResults</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Write a JSON summary of the comparison metrics to the ``results`` folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timeAxis (numpy.ndarray): sample times [s]</span>
+<span class="sd">        omegaBSM (numpy.ndarray): BSM hub-rate history [rad/s]</span>
+<span class="sd">        omegaMujoco (numpy.ndarray): MuJoCo hub-rate history [rad/s] (or None)</span>
+<span class="sd">        wheelBSM (numpy.ndarray): BSM wheel-speed history [rad/s]</span>
+<span class="sd">        wheelMujoco (numpy.ndarray): MuJoCo wheel-speed history [rad/s] (or None)</span>
+<span class="sd">        panelBSM (numpy.ndarray): BSM panel-angle history [rad]</span>
+<span class="sd">        panelMujoco (numpy.ndarray): MuJoCo panel-angle history [rad] (or None)</span>
+<span class="sd">        attError (numpy.ndarray): cross-engine attitude error [rad] (or None)</span>
+<span class="sd">        targetResults (str): directory for the JSON artifact</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"scenario"</span><span class="p">:</span> <span class="n">fileName</span><span class="p">,</span> <span class="s2">"nSamples"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">))}</span>
+    <span class="k">if</span> <span class="n">attError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"hubAttitudePrincipalAngleMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">attError</span><span class="p">))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"hubBodyRateErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">omegaBSM</span><span class="o">-</span><span class="n">omegaMujoco</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"wheelSpeedErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">wheelBSM</span><span class="o">-</span><span class="n">wheelMujoco</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"panelAngleErrorMax"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">panelBSM</span><span class="o">-</span><span class="n">panelMujoco</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">fileName</span><span class="o">+</span><span class="s2">".json"</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plotResults">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenarioCompareRwPanels.plotResults">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotResults</span><span class="p">(</span><span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span>
+                <span class="n">panelBSM</span><span class="p">,</span> <span class="n">panelMujoco</span><span class="p">,</span> <span class="n">attError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the scenario figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timeAxis (numpy.ndarray): sample times [s]</span>
+<span class="sd">        omegaBSM (numpy.ndarray): BSM hub-rate history [rad/s]</span>
+<span class="sd">        omegaMujoco (numpy.ndarray): MuJoCo hub-rate history [rad/s] (or None)</span>
+<span class="sd">        panelBSM (numpy.ndarray): BSM panel-angle history [rad]</span>
+<span class="sd">        panelMujoco (numpy.ndarray): MuJoCo panel-angle history [rad] (or None)</span>
+<span class="sd">        attError (numpy.ndarray): cross-engine attitude error [rad] (or None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">figureList</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_comparePlots</span><span class="o">.</span><span class="n">componentComparison</span><span class="p">(</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_rate"</span><span class="p">,</span> <span class="n">timeAxis</span><span class="p">,</span> <span class="n">omegaBSM</span><span class="p">,</span> <span class="n">omegaMujoco</span><span class="p">,</span>
+        <span class="n">quantity</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\omega_</span><span class="si">{BN}</span><span class="s2">$"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"rad/s"</span><span class="p">))</span>
+
+    <span class="n">panelNames</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"panelPositive"</span><span class="p">,</span> <span class="s2">"panelNegative"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">panelBSM</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">figureList</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_comparePlots</span><span class="o">.</span><span class="n">scalarComparison</span><span class="p">(</span>
+            <span class="n">fileName</span><span class="o">+</span><span class="s2">"_"</span><span class="o">+</span><span class="n">panelNames</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+            <span class="n">timeAxis</span><span class="p">,</span>
+            <span class="n">panelBSM</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span>
+            <span class="kc">None</span> <span class="k">if</span> <span class="n">panelMujoco</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">panelMujoco</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">R2D</span><span class="p">,</span>
+            <span class="s2">"Hinge angle [deg]"</span><span class="p">,</span>
+        <span class="p">))</span>
+
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span><span class="o">+</span><span class="s2">"_attError"</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span>
+            <span class="n">timeAxis</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">attError</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mf">1e-16</span><span class="p">)),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">COLOR_MUJOCO</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Attitude difference [deg]"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

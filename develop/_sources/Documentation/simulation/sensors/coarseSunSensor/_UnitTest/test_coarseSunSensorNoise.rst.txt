@@ -1,0 +1,13 @@
+.. _test_coarseSunSensorNoise:
+
+test_coarseSunSensorNoise
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_coarseSunSensorNoise
+   :members:
+   :show-inheritance:
+

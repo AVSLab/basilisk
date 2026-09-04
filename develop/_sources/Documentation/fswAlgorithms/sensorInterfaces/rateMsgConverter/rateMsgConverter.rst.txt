@@ -1,0 +1,30 @@
+.. _rateMsgConverter:
+
+:module-type:`C` Module: rateMsgConverter
+=========================================
+
+Executive Summary
+-----------------
+
+The purpose of this module is to read in the IMU sensor body message from message type :ref:`IMUSensorBodyMsgPayload`, and store it in the output message of type :ref:`NavAttMsgPayload`.  The output message of type  :ref:`NavAttMsgPayload` is used as a common attitude input message by the FSW modules.  This output message is first zeroed, and then the rate vector is copied into the variable `omega\_BN\_B`.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: rateMsgConverter
+    :caption: Module I/O Messages
+
+    output navRateOutMsg NavAttMsgPayload
+        attitude output message
+    input imuRateInMsg IMUSensorBodyMsgPayload
+        attitude input message
+
+
+----
+
+.. autodoxygenfile:: rateMsgConverter.h
+   :project: rateMsgConverter
+

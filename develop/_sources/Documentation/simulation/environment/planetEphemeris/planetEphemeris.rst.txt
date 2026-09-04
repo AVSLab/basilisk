@@ -1,0 +1,89 @@
+.. _planetEphemeris:
+
+:module-type:`C++` Module: planetEphemeris
+==========================================
+
+Executive Summary
+-----------------
+
+The planetEphemeris module uses classical heliocentric orbit elements to specify a planet's
+position and velocity vectors.
+
+By default, every output position and velocity is heliocentric.  The optional
+``zeroBase`` setting translates all output states to one of the bodies
+propagated by the module.  This provides the same translational-origin concept
+as ``spiceInterface.zeroBase`` while retaining J2000-aligned coordinate axes.
+
+Optionally, the planet's orientation can also be specified through a right
+ascension angle, a declination angle, and a local sidereal time at epoch.  The
+planet rotation about its third (polar) axis can be specified as well.  If the
+planet attitude information is incomplete or missing, then an inertially fixed
+zero planet orientation is modeled.  The module accepts a vector of classical
+orbit elements and orientation information and outputs a corresponding series
+of planet ephemeris messages.  The module
+:download:`PDF Description </../../src/simulation/environment/planetEphemeris/_Documentation/Basilisk-planetEphemeris-20190422.pdf>`
+contains further information on the model and its use.
+
+Reference Origin Selection
+--------------------------
+
+Set ``zeroBase`` to a configured planet name to express every output position
+and velocity relative to that body::
+
+    ephemeris = planetEphemeris.PlanetEphemeris()
+    ephemeris.setPlanetNames(
+        planetEphemeris.StringVector(["earth", "moon"])
+    )
+    ephemeris.planetElements = planetEphemeris.classicElementVector(
+        [earthElements, moonElements]
+    )
+    ephemeris.zeroBase = "earth"
+
+With this configuration, the Earth output has zero position and velocity, and
+the Moon output is the heliocentric Moon state minus the heliocentric Earth
+state.  Planet names, timestamps, attitudes, and attitude rates are unchanged.
+Leaving ``zeroBase`` empty preserves the default heliocentric outputs.
+
+Module Assumptions and Limitations
+----------------------------------
+
+.. warning::
+
+   ``zeroBase`` only works for a body configured in the same
+   ``PlanetEphemeris`` instance.  Separate ``PlanetEphemeris`` instances do not
+   exchange states.  Selecting a name that was not supplied to
+   ``setPlanetNames()`` stops initialization with an error.
+
+The module propagates each body's orbit independently as a two-body
+heliocentric orbit.  The ``zeroBase`` translation changes only the output
+coordinate origin; it does not create a hierarchical or mutually coupled
+planet system.
+
+User Guide
+----------
+
+Configure all bodies that must share an output origin on one module instance,
+provide one classical-element set per body, and set ``zeroBase`` before
+initializing the simulation.  Consumers of the resulting messages, including
+gravity models, navigation modules, and Vizard, must use states expressed
+relative to that same origin.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all module input and output messages.  The user sets
+module message connections from Python.  The message type links to the message
+structure definition, while the description explains its use.
+
+
+.. bsk-module-io:: planetEphemeris
+    :caption: Module I/O Messages
+
+    output planetOutMsgs SpicePlanetStateMsgPayload
+        vector of planet spice state output messages.
+
+
+----
+
+.. autodoxygenfile:: planetEphemeris.h
+   :project: planetEphemeris
+

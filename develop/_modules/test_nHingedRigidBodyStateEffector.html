@@ -1,0 +1,660 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_nHingedRigidBodyStateEffector &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_nHingedRigidBodyStateEffector</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_nHingedRigidBodyStateEffector</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'SimCode'</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">splitPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'/modules'</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">splitPath</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'/PythonModules'</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">unitTestSupport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dualHingedRigidBodyStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">nHingedRigidBodyStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">gravityEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">pythonVariableLogger</span>
+
+
+<div class="viewcode-block" id="test_nHingedRigidBodyAllTest">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/NHingedRigidBodies/_UnitTest/test_nHingedRigidBodyStateEffector.html#test_nHingedRigidBodyStateEffector.test_nHingedRigidBodyAllTest">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"testCase"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">'NoGravity'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'Gravity'</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed</span>
+<span class="c1"># @pytest.mark.skipif(conditionstring)</span>
+<span class="c1"># uncomment this line if this test has an expected failure, adjust message as needed</span>
+<span class="c1"># @pytest.mark.xfail() # need to update how the RW states are defined</span>
+<span class="c1"># provide a unique test method name, starting with test_</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nHingedRigidBodyAllTest</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">testCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">In this integrated test there are two hinged rigid bodies connected to the spacecraft hub, one with 4 \</span>
+<span class="sd">interconnected panels and one with 3 interconnected panels.  Depending on the scenario, there are different \</span>
+<span class="sd">success criteria.  Each scenario checks the conservation of orbital angular momentum, the conservation of orbital \</span>
+<span class="sd">energy, the conservation of rotational angular momentum and the conservation of rotational energy.</span>
+
+
+<span class="sd">**Test Parameters:**</span>
+
+<span class="sd">- testCase: [string]</span>
+<span class="sd">    defines whether or not the gravity is included in this test.</span>
+
+<span class="sd">**Description of Variables Being Tested**</span>
+
+<span class="sd">This test checks the conservation of the spacecraft orbital angular momentum, the rotational angular momentum, \</span>
+<span class="sd">the orbital energy and the rotational energy.</span>
+
+<span class="sd">**Test Descriptions:**</span>
+
+<span class="sd">testCase == 'Gravity'</span>
+<span class="sd">In this test the simulation is placed into orbit around Earth with point gravity and has no damping in \</span>
+<span class="sd">the hinged rigid bodies.</span>
+
+<span class="sd">testCase == 'NoGravity'</span>
+<span class="sd">In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies.</span>
+
+<span class="sd">The following figures show the conservation of the quantities described in the success criteria for each scenario. \</span>
+<span class="sd">The conservation plots are all relative difference plots. All conservation plots show integration error which is the \</span>
+<span class="sd">desired result. In the python test these values are automatically checked therefore when the tests pass, these \</span>
+<span class="sd">values have all been confirmed to be conserved.</span>
+
+<span class="sd">    """</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">nHingedRigidBody</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">testCase</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<div class="viewcode-block" id="test_nHingedRigidBodyOutputMessagesMatchDual">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/NHingedRigidBodies/_UnitTest/test_nHingedRigidBodyStateEffector.html#test_nHingedRigidBodyStateEffector.test_nHingedRigidBodyOutputMessagesMatchDual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nHingedRigidBodyOutputMessagesMatchDual</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Verify both output-message vectors against the equivalent dual-hinged model.</span>
+
+<span class="sd">    A two-panel N-hinged effector and a dual-hinged effector are given identical geometry, mass</span>
+<span class="sd">    properties, and initial states on the same spacecraft. The hub starts with a non-identity</span>
+<span class="sd">    attitude and nonzero translational and angular velocity so that every inertial transformation</span>
+<span class="sd">    contributes. The test runs for two steps and compares each panel's angle, angle rate, inertial</span>
+<span class="sd">    position, inertial velocity, attitude, and angular velocity.</span>
+<span class="sd">    """</span>
+    <span class="n">timeStep</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [s]</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"TestProcess"</span><span class="p">)</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"unitTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">timeStep</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spacecraftBody"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1000.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2000.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3000.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [m/s]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">]]</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">panelMass</span> <span class="o">=</span> <span class="mf">50.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">panelHalfLength</span> <span class="o">=</span> <span class="mf">0.75</span>  <span class="c1"># [m]</span>
+    <span class="n">panelInertia</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">]]</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">springConstant</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [N*m/rad]</span>
+    <span class="n">dampingCoefficient</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [N*m*s/rad]</span>
+    <span class="n">thetaInit</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">thetaDotInit</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">hingePosition_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+    <span class="n">dcm_HB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+
+    <span class="n">nHinged</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">nHinged</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="n">hingePosition_B</span>
+    <span class="n">nHinged</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">dcm_HB</span>
+    <span class="k">for</span> <span class="n">panelIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">()</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">panelMass</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">panelHalfLength</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">springConstant</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">dampingCoefficient</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">panelInertia</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="n">thetaInit</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="n">thetaDotInit</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">theta_0</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+        <span class="n">nHinged</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="n">dualHinged</span> <span class="o">=</span> <span class="n">dualHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">DualHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">mass1</span> <span class="o">=</span> <span class="n">panelMass</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">mass2</span> <span class="o">=</span> <span class="n">panelMass</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">d1</span> <span class="o">=</span> <span class="n">panelHalfLength</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">d2</span> <span class="o">=</span> <span class="n">panelHalfLength</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">panelHalfLength</span>  <span class="c1"># [m]</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">thetaH2S1</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad] the N hinged chain carries no fixed offset between hinges</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">k1</span> <span class="o">=</span> <span class="n">springConstant</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">k2</span> <span class="o">=</span> <span class="n">springConstant</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="n">dampingCoefficient</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">c2</span> <span class="o">=</span> <span class="n">dampingCoefficient</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">IPntS1_S1</span> <span class="o">=</span> <span class="n">panelInertia</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">IPntS2_S2</span> <span class="o">=</span> <span class="n">panelInertia</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">theta1Init</span> <span class="o">=</span> <span class="n">thetaInit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">theta2Init</span> <span class="o">=</span> <span class="n">thetaInit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">theta1DotInit</span> <span class="o">=</span> <span class="n">thetaDotInit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">theta2DotInit</span> <span class="o">=</span> <span class="n">thetaDotInit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">r_H1B_B</span> <span class="o">=</span> <span class="n">hingePosition_B</span>
+    <span class="n">dualHinged</span><span class="o">.</span><span class="n">dcm_H1B</span> <span class="o">=</span> <span class="n">dcm_HB</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">nHinged</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">dualHinged</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"unitTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">nStateRecorders</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">nHinged</span><span class="o">.</span><span class="n">nHingedRigidBodyOutMsgs</span><span class="p">]</span>
+    <span class="n">nConfigRecorders</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">nHinged</span><span class="o">.</span><span class="n">nHingedRigidBodyConfigLogOutMsgs</span><span class="p">]</span>
+    <span class="n">dualStateRecorders</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">dualHinged</span><span class="o">.</span><span class="n">dualHingedRigidBodyOutMsgs</span><span class="p">]</span>
+    <span class="n">dualConfigRecorders</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">dualHinged</span><span class="o">.</span><span class="n">dualHingedRigidBodyConfigLogOutMsgs</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="n">nStateRecorders</span> <span class="o">+</span> <span class="n">nConfigRecorders</span> <span class="o">+</span> <span class="n">dualStateRecorders</span> <span class="o">+</span> <span class="n">dualConfigRecorders</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"unitTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">timeStep</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-13</span>
+    <span class="k">for</span> <span class="n">panelIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">nStateRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">dualStateRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">nStateRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span><span class="o">.</span><span class="n">thetaDot</span><span class="p">,</span> <span class="n">dualStateRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">]</span><span class="o">.</span><span class="n">thetaDot</span><span class="p">,</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">fieldName</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"r_BN_N"</span><span class="p">,</span> <span class="s2">"v_BN_N"</span><span class="p">,</span> <span class="s2">"sigma_BN"</span><span class="p">,</span> <span class="s2">"omega_BN_B"</span><span class="p">):</span>
+            <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">nConfigRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">],</span> <span class="n">fieldName</span><span class="p">),</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">dualConfigRecorders</span><span class="p">[</span><span class="n">panelIndex</span><span class="p">],</span> <span class="n">fieldName</span><span class="p">),</span>
+                <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_nHingedRigidBodyDynamicEffectorSegmentBounds">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/NHingedRigidBodies/_UnitTest/test_nHingedRigidBodyStateEffector.html#test_nHingedRigidBodyStateEffector.test_nHingedRigidBodyDynamicEffectorSegmentBounds">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"segment, shouldRaise"</span><span class="p">,</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nHingedRigidBodyDynamicEffectorSegmentBounds</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">shouldRaise</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Verify that dynamic effectors can attach only to existing panels.</span>
+
+<span class="sd">    A three-panel chain accepts its first and last panel numbers and rejects the adjacent values</span>
+<span class="sd">    outside the valid one-based range.</span>
+
+<span class="sd">    **Test Parameters:**</span>
+
+<span class="sd">    - segment: [int]</span>
+<span class="sd">        one-based panel number supplied to ``addDynamicEffector``</span>
+<span class="sd">    - shouldRaise: [bool]</span>
+<span class="sd">        whether the panel number is outside the valid range</span>
+<span class="sd">    """</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">())</span>
+
+    <span class="n">child</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">shouldRaise</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"non-existent panel"</span><span class="p">):</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_nHingedRigidBodyPanelValidation">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/NHingedRigidBodies/_UnitTest/test_nHingedRigidBodyStateEffector.html#test_nHingedRigidBodyStateEffector.test_nHingedRigidBodyPanelValidation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"chain, expectedError"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">'UnequalMass'</span><span class="p">,</span> <span class="s2">"same mass and the same hinge"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'UnequalDistance'</span><span class="p">,</span> <span class="s2">"same mass and the same hinge"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'NoPanels'</span><span class="p">,</span> <span class="s2">"at least one hinged panel"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'MasslessPanels'</span><span class="p">,</span> <span class="s2">"panel mass must be greater than 0"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'UnequalInertia'</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nHingedRigidBodyPanelValidation</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">expectedError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">The equations of motion are derived for a chain of identical panels, factoring one panel mass and</span>
+<span class="sd">one hinge to center of mass distance out of the sums that run over the chain. An uneven chain</span>
+<span class="sd">integrates without complaint and a massless one reaches the hub states as NaN, so initialization</span>
+<span class="sd">must reject both. The inertia is not factored out, so dissimilar inertia tensors must initialize.</span>
+
+<span class="sd">**Test Parameters:**</span>
+
+<span class="sd">- chain: [string]</span>
+<span class="sd">    panel-chain configuration to initialize</span>
+<span class="sd">- expectedError: [string]</span>
+<span class="sd">    text the rejection message must carry, or None when the chain must initialize</span>
+<span class="sd">    """</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spacecraftBody"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>  <span class="c1"># [kg*m^2]</span>
+
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">chain</span> <span class="o">!=</span> <span class="s1">'NoPanels'</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">factor</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]:</span>
+            <span class="n">panel</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">()</span>
+            <span class="n">massScale</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">chain</span> <span class="o">==</span> <span class="s1">'MasslessPanels'</span> <span class="k">else</span> <span class="p">(</span><span class="n">factor</span> <span class="k">if</span> <span class="n">chain</span> <span class="o">==</span> <span class="s1">'UnequalMass'</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">50.0</span> <span class="o">*</span> <span class="n">massScale</span>  <span class="c1"># [kg]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="p">(</span><span class="n">factor</span> <span class="k">if</span> <span class="n">chain</span> <span class="o">==</span> <span class="s1">'UnequalDistance'</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [m]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [N*m/rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [N*m*s/rad]</span>
+            <span class="n">inertiaScale</span> <span class="o">=</span> <span class="n">factor</span> <span class="k">if</span> <span class="n">chain</span> <span class="o">==</span> <span class="s1">'UnequalInertia'</span> <span class="k">else</span> <span class="mf">1.0</span>  <span class="c1"># [-]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="p">(</span><span class="n">inertiaScale</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">]))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"TestProcess"</span><span class="p">)</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"unitTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"unitTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">expectedError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">expectedError</span><span class="p">):</span>
+            <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">nHingedRigidBody</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">testCase</span><span class="p">):</span>
+    <span class="c1"># The __tracebackhide__ setting influences pytest showing of tracebacks:</span>
+    <span class="c1"># the mrp_steering_tracking() function will not be shown unless the</span>
+    <span class="c1"># --fulltrace command line option is specified.</span>
+    <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty list to store test log messages</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"spacecraftBody"</span>
+
+    <span class="n">unitTaskName</span> <span class="o">=</span> <span class="s2">"unitTask"</span>  <span class="c1"># arbitrary name (don't change)</span>
+    <span class="n">unitProcessName</span> <span class="o">=</span> <span class="s2">"TestProcess"</span>  <span class="c1"># arbitrary name (don't change)</span>
+
+    <span class="c1">#   Create a sim module as an empty container</span>
+    <span class="n">unitTestSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+
+    <span class="c1"># Create test thread</span>
+    <span class="n">testProcessRate</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">)</span>  <span class="c1"># update process rate update time</span>
+    <span class="n">plottingRate</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">testProc</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">unitProcessName</span><span class="p">)</span>
+    <span class="n">testProc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">testProcessRate</span><span class="p">))</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">()</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]]</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+
+    <span class="c1"># Define Variable for a panel</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">]]</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mf">0.75</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="mf">500.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">theta_0</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Add panels to effector 4 to one 3 to the other</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="c1"># 3 on effector 2</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="c1"># Add effector to spaceCraft</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="p">)</span>
+
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">750.0</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">900.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">]]</span>
+
+    <span class="c1"># Set the initial values for the states</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]]</span>
+
+    <span class="c1"># Add test module to runtime call list</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testCase</span> <span class="o">==</span> <span class="s1">'Gravity'</span><span class="p">:</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"earth_planet_data"</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415E+15</span> <span class="c1"># meters!</span>
+        <span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">unitTestSim</span><span class="o">.</span><span class="n">earthGravBody</span><span class="p">])</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4020338.690396649</span><span class="p">],</span>	<span class="p">[</span><span class="mf">7490566.741852513</span><span class="p">],</span>	<span class="p">[</span><span class="mf">5248299.211589362</span><span class="p">]]</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">5199.77710904224</span><span class="p">],</span>	<span class="p">[</span><span class="o">-</span><span class="mf">3436.681645356935</span><span class="p">],</span>	<span class="p">[</span><span class="mf">1041.576797498721</span><span class="p">]]</span>
+
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">dataLog</span><span class="p">)</span>
+
+    <span class="n">scObjectLog</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">logger</span><span class="p">([</span><span class="s2">"totOrbEnergy"</span><span class="p">,</span> <span class="s2">"totOrbAngMomPntN_N"</span><span class="p">,</span> <span class="s2">"totRotAngMomPntC_N"</span><span class="p">,</span> <span class="s2">"totRotEnergy"</span><span class="p">])</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">scObjectLog</span><span class="p">)</span>
+
+    <span class="n">theta1Name</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector1</span><span class="o">.</span><span class="n">nameOfThetaState</span>
+    <span class="n">theta2Name</span> <span class="o">=</span> <span class="n">unitTestSim</span><span class="o">.</span><span class="n">effector2</span><span class="o">.</span><span class="n">nameOfThetaState</span>
+    <span class="n">stateLog</span> <span class="o">=</span> <span class="n">pythonVariableLogger</span><span class="o">.</span><span class="n">PythonVariableLogger</span><span class="p">({</span>
+        <span class="s2">"theta1"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">theta1Name</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">(),</span>
+        <span class="s2">"theta2"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">theta2Name</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">(),</span>
+    <span class="p">})</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">unitTaskName</span><span class="p">,</span> <span class="n">stateLog</span><span class="p">)</span>
+
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="n">stopTime</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stopTime</span><span class="p">))</span>
+    <span class="n">unitTestSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">nHingedRigidBody1ThetasOut</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">stateLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">theta1</span><span class="p">)</span>
+    <span class="n">nHingedRigidBody2ThetasOut</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">stateLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">stateLog</span><span class="o">.</span><span class="n">theta2</span><span class="p">)</span>
+
+    <span class="n">orbEnergy</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbEnergy</span><span class="p">)</span>
+    <span class="n">orbAngMom_N</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totOrbAngMomPntN_N</span><span class="p">)</span>
+    <span class="n">rotAngMom_N</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotAngMomPntC_N</span><span class="p">)</span>
+    <span class="n">rotEnergy</span> <span class="o">=</span> <span class="n">simHelpers</span><span class="o">.</span><span class="n">addTimeColumn</span><span class="p">(</span><span class="n">scObjectLog</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">scObjectLog</span><span class="o">.</span><span class="n">totRotEnergy</span><span class="p">)</span>
+
+    <span class="n">initialOrbAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">initialRotAngMom_N</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]]</span>
+
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">initialOrbEnergy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]</span>
+
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">initialRotEnergy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]</span>
+
+    <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotEnergy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">orbAngMom_N</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="n">orbAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time (s)"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Relative Difference"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Change in Orbital Angular Momentum "</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">orbEnergy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">orbEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time (s)"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Relative Difference"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Change in Orbital Energy "</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">rotAngMom_N</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span><span class="o">/</span><span class="n">rotAngMom_N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time (s)"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Relative Difference"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Change in Rotational Angular Momentum"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="p">(</span><span class="n">rotEnergy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">rotEnergy</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Time (s)"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Relative Difference"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Change in Rotational Energy"</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 1 Theta 1 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 1 Theta 2 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 1 Theta 3 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody1ThetasOut</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 1 Theta 4 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 2 Theta 1 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 2 Theta 2 (deg)'</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">nHingedRigidBody2ThetasOut</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="s1">'-b'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Time (s)'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Panel 2 Theta 3 (deg)'</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1e-10</span>
+
+    <span class="n">finalOrbAngMom</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+    <span class="n">finalRotAngMom</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+    <span class="n">finalRotEnergy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalRotEnergy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+    <span class="n">finalOrbEnergy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove time column</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbAngMom_N</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: N Hinged Rigid Body integrated test failed orbital angular momentum unit test"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialRotAngMom_N</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalRotAngMom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialRotAngMom_N</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">"FAILED: N Hinged Rigid Body integrated test failed rotational angular momentum unit test"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialRotEnergy</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalRotEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialRotEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: N Hinged Rigid Body integrated test failed rotational energy unit test"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialOrbEnergy</span><span class="p">)):</span>
+        <span class="c1"># check a vector values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unitTestSupport</span><span class="o">.</span><span class="n">isArrayEqualRelative</span><span class="p">(</span><span class="n">finalOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initialOrbEnergy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: N Hinged Rigid Body integrated test failed orbital energy unit test"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"PASSED: "</span> <span class="o">+</span> <span class="s2">" N Hinged Rigid Body integrated test"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Error tolerance for all tests was"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+
+
+    <span class="k">assert</span> <span class="n">testFailCount</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessages</span>
+    <span class="c1"># return fail count and join into a single string all messages in the list</span>
+    <span class="c1"># testMessage</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">nHingedRigidBody</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span>  <span class="s2">"Gravity"</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

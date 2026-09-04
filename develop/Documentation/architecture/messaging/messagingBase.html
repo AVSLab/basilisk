@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>messagingBase &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="msgHeader" href="msgHeader.html" />
+    <link rel="prev" title="messaging" href="messaging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">messaging</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="messaging.html">messaging</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">messagingBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="msgHeader.html">msgHeader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="payloadEqualityTraits.html">payloadEqualityTraits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTest/index.html">_UnitTest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cMsgCInterface/index.html">cMsgCInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cMsgCInterfacePy/index.html">cMsgCInterfacePy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rust/index.html">rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">messaging</a></li>
+      <li class="breadcrumb-item active">messagingBase</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/messaging/messagingBase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="messagingbase">
+<span id="id1"></span><h1>messagingBase<a class="headerlink" href="#messagingbase" title="Link to this heading"></a></h1>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418messagePointerData">
+<span id="_CPPv318messagePointerData"></span><span id="_CPPv218messagePointerData"></span><span id="messagePointerData"></span><span class="target" id="structmessage_pointer_data"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">messagePointerData</span></span></span><a class="headerlink" href="#_CPPv418messagePointerData" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messagingBase.h&gt;</em></div>
+<p>Holds type-erased pointers to a message’s header and payload. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18messagePointerData6headerE">
+<span id="_CPPv3N18messagePointerData6headerE"></span><span id="_CPPv2N18messagePointerData6headerE"></span><span id="messagePointerData::header__voidP"></span><span class="target" id="structmessage_pointer_data_1a592c11d3b7ecf7b2f32b4b908138da89"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">header</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18messagePointerData6headerE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to the message header </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18messagePointerData7payloadE">
+<span id="_CPPv3N18messagePointerData7payloadE"></span><span id="_CPPv2N18messagePointerData7payloadE"></span><span id="messagePointerData::payload__voidP"></span><span class="target" id="structmessage_pointer_data_1a09a3c983da370d3d7507a4ca4e1d7e73"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payload</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18messagePointerData7payloadE" title="Link to this definition"></a><br /></dt>
+<dd><p>pointer to the message payload </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv411MessageBase">
+<span id="_CPPv311MessageBase"></span><span id="_CPPv211MessageBase"></span><span id="MessageBase"></span><span class="target" id="class_message_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MessageBase</span></span></span><a class="headerlink" href="#_CPPv411MessageBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messagingBase.h&gt;</em></div>
+<p>A base class for <a class="reference internal" href="messaging.html#class_message"><span class="std std-ref">Message</span></a> that enables type-erased pointer access. </p>
+<p>Subclassed by <a class="reference internal" href="messaging.html#class_message"><span class="std std-ref">Message&lt; messageType &gt;</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11MessageBase11GetPointersEv">
+<span id="_CPPv3N11MessageBase11GetPointersEv"></span><span id="_CPPv2N11MessageBase11GetPointersEv"></span><span id="MessageBase::GetPointers__void"></span><span class="target" id="class_message_base_1ad01ac98703b9de9de928ca1991c810f5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418messagePointerData" title="messagePointerData"><span class="n"><span class="pre">messagePointerData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">GetPointers</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11MessageBase11GetPointersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a borrowed view of the type-erased message header and payload pointers.</p>
+<p>The returned <code class="docutils literal notranslate"><a class="reference internal" href="#structmessage_pointer_data"><span class="std std-ref"><span class="pre">messagePointerData</span></span></a></code> structure is owned by this object and remains valid only while the associated <code class="docutils literal notranslate"><a class="reference internal" href="messaging.html#class_message"><span class="std std-ref"><span class="pre">Message</span></span></a></code> exists. Its header and payload addresses are non-owning and remain valid only for the lifetime of that message. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11MessageBase14setPointerDataEPvPv">
+<span id="_CPPv3N11MessageBase14setPointerDataEPvPv"></span><span id="_CPPv2N11MessageBase14setPointerDataEPvPv"></span><span id="MessageBase::setPointerData__voidP.voidP"></span><span class="target" id="class_message_base_1ae69a1957e0ca3e597a4b28f9b4abfd66"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPointerData</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">headerPointer</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">payloadPointer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11MessageBase14setPointerDataEPvPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Update the stored pointers and any previously returned borrowed view. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11MessageBase8pointersE">
+<span id="_CPPv3N11MessageBase8pointersE"></span><span id="_CPPv2N11MessageBase8pointersE"></span><span id="MessageBase::pointers__messagePointerData"></span><span class="target" id="class_message_base_1a7b1ecd10cb4c0898f93f73351a8fefa3"></span><a class="reference internal" href="#_CPPv418messagePointerData" title="messagePointerData"><span class="n"><span class="pre">messagePointerData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pointers</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N11MessageBase8pointersE" title="Link to this definition"></a><br /></dt>
+<dd><p>stores the message’s header/payload pointers </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11MessageBase9referenceE">
+<span id="_CPPv3N11MessageBase9referenceE"></span><span id="_CPPv2N11MessageBase9referenceE"></span><span id="MessageBase::reference__messagePointerData"></span><span class="target" id="class_message_base_1aa543e972a9abd3b504db0738e21a8e1a"></span><a class="reference internal" href="#_CPPv418messagePointerData" title="messagePointerData"><span class="n"><span class="pre">messagePointerData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reference</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N11MessageBase9referenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>cached storage for the borrowed pointer view </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415ReadFunctorBase">
+<span id="_CPPv315ReadFunctorBase"></span><span id="_CPPv215ReadFunctorBase"></span><span id="ReadFunctorBase"></span><span class="target" id="class_read_functor_base"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReadFunctorBase</span></span></span><a class="headerlink" href="#_CPPv415ReadFunctorBase" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;messagingBase.h&gt;</em></div>
+<p>A base class for <a class="reference internal" href="messaging.html#class_read_functor"><span class="std std-ref">ReadFunctor</span></a> that enables type-erased pointer access. </p>
+<p>Subclassed by <a class="reference internal" href="messaging.html#class_read_functor"><span class="std std-ref">ReadFunctor&lt; messageType &gt;</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase15ReadFunctorBaseEv">
+<span id="_CPPv3N15ReadFunctorBase15ReadFunctorBaseEv"></span><span id="_CPPv2N15ReadFunctorBase15ReadFunctorBaseEv"></span><span id="ReadFunctorBase::ReadFunctorBase"></span><span class="target" id="class_read_functor_base_1ade229bb0d312b8412c5aa73cf0cefe3d"></span><span class="sig-name descname"><span class="n"><span class="pre">ReadFunctorBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase15ReadFunctorBaseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>constructor </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase11GetPointersEv">
+<span id="_CPPv3N15ReadFunctorBase11GetPointersEv"></span><span id="_CPPv2N15ReadFunctorBase11GetPointersEv"></span><span id="ReadFunctorBase::GetPointers__void"></span><span class="target" id="class_read_functor_base_1a1b4b9f7849f1c5d85a8f3eb25f86754c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418messagePointerData" title="messagePointerData"><span class="n"><span class="pre">messagePointerData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">GetPointers</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase11GetPointersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a borrowed view of the type-erased source header and payload pointers.</p>
+<p>The returned <code class="docutils literal notranslate"><a class="reference internal" href="#structmessage_pointer_data"><span class="std std-ref"><span class="pre">messagePointerData</span></span></a></code> structure is owned by this object and remains valid only while the associated <code class="docutils literal notranslate"><a class="reference internal" href="messaging.html#class_read_functor"><span class="std std-ref"><span class="pre">ReadFunctor</span></span></a></code> exists. Its non-null header and payload addresses are non-owning and remain valid only while the reader is subscribed and the source message exists. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-functions">Protected Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase14setPointerDataEPvPv">
+<span id="_CPPv3N15ReadFunctorBase14setPointerDataEPvPv"></span><span id="_CPPv2N15ReadFunctorBase14setPointerDataEPvPv"></span><span id="ReadFunctorBase::setPointerData__voidP.voidP"></span><span class="target" id="class_read_functor_base_1aea558fab01766b2c78b1f8ceee8fb565"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPointerData</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">headerPointer</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">payloadPointer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase14setPointerDataEPvPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Update the stored pointers and any previously returned borrowed view. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase16clearPointerDataEv">
+<span id="_CPPv3N15ReadFunctorBase16clearPointerDataEv"></span><span id="_CPPv2N15ReadFunctorBase16clearPointerDataEv"></span><span id="ReadFunctorBase::clearPointerData"></span><span class="target" id="class_read_functor_base_1aff2355556c053c8e548aaa4dc89b95e1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clearPointerData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase16clearPointerDataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Clear the stored pointers and any previously returned borrowed view. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase13headerVoidPtrE">
+<span id="_CPPv3N15ReadFunctorBase13headerVoidPtrE"></span><span id="_CPPv2N15ReadFunctorBase13headerVoidPtrE"></span><span id="ReadFunctorBase::headerVoidPtr__voidP"></span><span class="target" id="class_read_functor_base_1a09627ad86e8ca438db794bdb4e36420f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">headerVoidPtr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase13headerVoidPtrE" title="Link to this definition"></a><br /></dt>
+<dd><p>type-erased header pointer for external interface access </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase14payloadVoidPtrE">
+<span id="_CPPv3N15ReadFunctorBase14payloadVoidPtrE"></span><span id="_CPPv2N15ReadFunctorBase14payloadVoidPtrE"></span><span id="ReadFunctorBase::payloadVoidPtr__voidP"></span><span class="target" id="class_read_functor_base_1ae6d4854b25437234c065366824f98b6f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payloadVoidPtr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase14payloadVoidPtrE" title="Link to this definition"></a><br /></dt>
+<dd><p>type-erased payload pointer for external interface access </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ReadFunctorBase9referenceE">
+<span id="_CPPv3N15ReadFunctorBase9referenceE"></span><span id="_CPPv2N15ReadFunctorBase9referenceE"></span><span id="ReadFunctorBase::reference__messagePointerData"></span><span class="target" id="class_read_functor_base_1ae267d1fc9a5b37c30893caf69c240bd8"></span><a class="reference internal" href="#_CPPv418messagePointerData" title="messagePointerData"><span class="n"><span class="pre">messagePointerData</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reference</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><a class="headerlink" href="#_CPPv4N15ReadFunctorBase9referenceE" title="Link to this definition"></a><br /></dt>
+<dd><p>cached storage for the borrowed pointer view </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="messaging.html" class="btn btn-neutral float-left" title="messaging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="msgHeader.html" class="btn btn-neutral float-right" title="msgHeader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

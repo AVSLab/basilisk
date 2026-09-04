@@ -1,0 +1,13 @@
+.. _test_magnetometerNoise:
+
+test_magnetometerNoise
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_magnetometerNoise
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,13 @@
+.. _test_rustDeprecation:
+
+test_rustDeprecation
+====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_rustDeprecation
+   :members:
+   :show-inheritance:
+

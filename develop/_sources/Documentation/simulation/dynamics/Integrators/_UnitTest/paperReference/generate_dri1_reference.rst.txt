@@ -1,0 +1,13 @@
+.. _generate_dri1_reference:
+
+generate_dri1_reference
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: generate_dri1_reference
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,84 @@
+.. _igbmNoiseStateEffector:
+
+:module-type:`C++` Module: igbmNoiseStateEffector
+=================================================
+
+Executive Summary
+-----------------
+The ``IgbmNoiseStateEffector`` module is a spacecraft
+:ref:`StateEffector<StateEffector>` that propagates a single scalar correction
+:math:`\delta` whose multiplicative factor :math:`(1+\delta)` follows an
+inhomogeneous geometric Brownian motion (IGBM).
+
+It is the multiplicative-noise counterpart to
+:ref:`meanRevertingNoiseStateEffector`: the correction has the same
+:math:`(1+\delta)` form consumed by e.g. :ref:`dragDynamicEffector`
+(``densityCorrectionStateName``). The exact factor :math:`1+\delta` is positive, but the
+module integrates the SDE as written, so an explicit integrator can occasionally make it
+non-positive for a large step/increment; a consumer that needs a non-negative quantity
+clamps it downstream (``DragDynamicEffector`` clamps the corrected density to be
+non-negative).
+
+Module Description
+------------------
+The multiplicative factor :math:`X = 1 + \delta` follows the Itô SDE
+
+.. math::
+   \text{d}X = \frac{1}{\tau}(\mu - X)\,\text{d}t + \sigma X\,\text{d}W
+
+so the registered correction state evolves as
+
+.. math::
+   \text{d}\delta = \frac{\mu - 1 - \delta}{\tau}\,\text{d}t + \sigma (1+\delta)\,\text{d}W
+
+Like the other IGBM/OU noise classes, the process is configured in stationary form: the
+mean level :math:`\mu` of the factor (``setMean``, defaults to 1 for a mean-preserving
+correction), the time constant :math:`\tau` (``setTimeConstant``), and the stationary
+standard deviation :math:`\sigma_{st}` (``setStationaryStd``). The SDE volatility is
+derived internally as
+
+.. math::
+   \sigma^2 = \frac{2}{\tau}\,\frac{\sigma_{st}^2}{\mu^2 + \sigma_{st}^2}
+
+so the factor's stationary mean and standard deviation are exactly :math:`\mu` and
+:math:`\sigma_{st}`, and the IGBM stationarity condition :math:`2/\tau > \sigma^2` holds
+by construction.
+
+No module-specific input or output messages are used. Other modules can consume
+the state by reading it from the dynamics state manager by name.
+
+The registered state name can be set or queried using ``setStateName("...")`` and ``getStateName()``.
+
+Detailed Behavior
+-----------------
+At each integrator sub-step, the module:
+
+1. Reads the internal correction :math:`\delta` and forms the factor :math:`X = 1+\delta`.
+2. Sets deterministic drift :math:`\dot{\delta} = (\mu - X)/\tau`.
+3. Sets one diffusion term with state-dependent amplitude :math:`\sigma X`.
+
+At state registration the correction defaults to :math:`\mu - 1` (the factor at its mean
+level), since a zero factor is degenerate for the multiplicative diffusion; override with
+``setStateValue`` if desired.
+
+Module Assumptions and Limitations
+----------------------------------
+- Because the registered state has a stochastic diffusion source, a stochastic
+  integrator must be used for the parent spacecraft dynamics.
+- The diffusion is multiplicative (state-dependent), so a strong stochastic integrator
+  (e.g. Euler-Maruyama or an SRI method) must be used; weak integrators do not reproduce
+  the correct sample-path statistics.
+- The module integrates the SDE as written. The exact factor :math:`1+\delta` is positive,
+  but an explicit integrator can occasionally produce a non-positive factor for a large
+  step or Wiener increment; a consumer requiring positivity (e.g. a density) must clamp the
+  derived quantity downstream.
+- ``setMean(m)`` requires :math:`\mu > 0`; ``setTimeConstant(t)`` requires
+  :math:`\tau > 0`; ``setStationaryStd(s)`` requires :math:`\sigma_{st} \ge 0`;
+  ``setStateValue`` requires an initial factor :math:`1+\delta > 0`.
+
+
+----
+
+.. autodoxygenfile:: igbmNoiseStateEffector.h
+   :project: igbmNoiseStateEffector
+

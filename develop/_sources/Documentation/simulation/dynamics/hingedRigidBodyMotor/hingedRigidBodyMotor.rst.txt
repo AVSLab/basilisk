@@ -1,0 +1,150 @@
+.. _hingedRigidBodyMotor:
+
+:module-type:`C++` Module: hingedRigidBodyMotor
+===============================================
+
+Executive Summary
+-----------------
+This module implements an ideal proportional-derivative (PD) hinge controller.  It calculates a commanded hinge torque
+from sensed and reference hinge angles and angular rates.  Despite the module name, it does not model the electrical or
+mechanical dynamics of a physical motor.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.
+The module msg connection is set by the user from python.
+The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: hingedRigidBodyMotor
+    :caption: Module I/O Messages
+
+    input hingedBodyStateSensedInMsg HingedRigidBodyMsgPayload
+        sensed rigid body state (theta, theta dot).
+    input hingedBodyStateReferenceInMsg HingedRigidBodyMsgPayload
+        reference hinged rigid body state (theta, theta dot).
+    output motorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        motor torque on hinged rigid body.
+
+Detailed Model Description
+--------------------------
+
+Control Law and Gain Definitions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The controller calculates the commanded hinge torque according to
+
+.. math::
+
+    u = K(\theta_r-\theta_s) + P(\dot{\theta}_r-\dot{\theta}_s),
+
+where
+
+.. list-table::
+    :widths: 15 20 65
+    :header-rows: 1
+
+    * - Symbol
+      - Units
+      - Meaning
+    * - :math:`u`
+      - N m
+      - Commanded torque applied to the hinge.
+    * - :math:`\theta_r`, :math:`\theta_s`
+      - rad
+      - Reference and sensed hinge angles, respectively.
+    * - :math:`\dot{\theta}_r`, :math:`\dot{\theta}_s`
+      - rad/s
+      - Reference and sensed hinge angular rates, respectively.
+    * - :math:`K`
+      - N m/rad
+      - Proportional gain on hinge-angle tracking error.
+    * - :math:`P`
+      - N m s/rad
+      - Derivative gain on hinge-rate tracking error.  The name ``P`` is retained for API compatibility; it is the
+        derivative gain commonly denoted by :math:`K_d` in PD-controller notation.
+    * - :math:`u_{\max}`
+      - N m
+      - Optional symmetric torque magnitude limit configured through ``uMax``.
+
+The gains must be finite and nonnegative.  Positive :math:`K` and :math:`P` produce a restoring torque that reduces the
+reference-tracking error.  Set ``K = 0`` to disable angle feedback for a rate-only controller, or set ``P = 0`` to
+disable rate feedback for a proportional-only controller.  Setting both gains to zero commands zero torque.  ``Reset()``
+reports an error if either gain is negative or non-finite.
+
+Relationship to State-Effector Stiffness and Damping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The motor gains should not be confused with the ``k`` and ``c`` parameters of
+:ref:`spinningBodyOneDOFStateEffector` or :ref:`hingedRigidBodyStateEffector`.  The state-effector parameters represent
+passive physical joint stiffness and damping.  In contrast, ``K`` and ``P`` define active feedback torque commanded by
+this module.  If both are enabled, their torques act together in the coupled dynamics model.  Set the state-effector
+``k`` and ``c`` parameters to zero for an ideal torque-driven hinge without passive compliance, or give them nonzero
+values only when physical joint stiffness and damping are intentionally part of the model.
+
+Gain Selection
+~~~~~~~~~~~~~~
+
+For an isolated hinge with equivalent rotational inertia :math:`J_{\mathrm{eq}}`, a useful initial gain estimate follows
+from the standard second-order response:
+
+.. math::
+
+    K = J_{\mathrm{eq}}\omega_n^2, \qquad
+    P = 2\zeta J_{\mathrm{eq}}\omega_n,
+
+where :math:`J_{\mathrm{eq}}` is the equivalent hinge inertia in kg m^2, :math:`\omega_n` is the desired natural
+frequency in rad/s, and :math:`\zeta` is the desired dimensionless damping ratio.  In a coupled spacecraft and appendage
+system, :math:`J_{\mathrm{eq}}` is configuration dependent, so these relations are only a starting point.  Validate the
+gains across the intended configurations and simulation time steps.
+
+Module Assumptions and Limitations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The optional ``uMax`` parameter applies a symmetric limit to the ideal controller output after evaluating the PD control
+law:
+
+.. math::
+
+    u_{\mathrm{out}} = \operatorname{clamp}(u, -u_{\max}, u_{\max}).
+
+Set ``uMax`` to a finite value in N m.  A nonnegative value specifies the maximum torque magnitude, while a negative
+value disables saturation; the default is ``uMax = -1.0`` N m.  In particular, ``uMax = 0`` commands zero torque.
+``Reset()`` reports an error if ``uMax`` is non-finite.
+
+The limit does not model motor current, voltage, speed-torque curves, gearboxes, backlash, actuator dynamics, asymmetric
+torque limits, rate limits, or thermal effects.  Large gains can still make the simulated dynamics numerically stiff.
+Model those effects separately when they are important to the analysis.
+
+User Guide
+----------
+
+This section contains a conceptual overview of the code and an example for the prospective user.
+
+Module Setup
+~~~~~~~~~~~~
+
+The interface module is created in python using:
+
+.. code-block:: python
+    :linenos:
+
+    testModule = hingedRigidBodyMotor.HingedRigidBodyMotor()
+    testModule.ModelTag = "hingedRigidBodyMotor"
+
+
+A sample setup is done using:
+
+.. code-block:: python
+    :linenos:
+
+    testModule.K = 1.0  # [N m/rad] hinge-angle tracking gain
+    testModule.P = 1.0  # [N m s/rad] hinge-rate tracking gain
+    testModule.uMax = 0.5  # [N m] optional symmetric torque limit
+
+
+----
+
+.. autodoxygenfile:: hingedRigidBodyMotor.h
+   :project: hingedRigidBodyMotor
+

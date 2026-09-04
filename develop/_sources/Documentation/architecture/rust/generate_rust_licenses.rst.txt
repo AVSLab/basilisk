@@ -1,0 +1,13 @@
+.. _generate_rust_licenses:
+
+generate_rust_licenses
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: generate_rust_licenses
+   :members:
+   :show-inheritance:
+

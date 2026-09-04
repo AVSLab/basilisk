@@ -1,0 +1,171 @@
+.. _rustModuleTemplate:
+
+:module-type:`Rust` Module: rustModuleTemplate
+==============================================
+
+Executive Summary
+-----------------
+
+This basic Rust Basilisk module can be copied as a starting point for a new
+Rust module. It demonstrates both an individual message connection and a
+fixed-size array of two message connections. The module reads optional input
+messages, increments each first data-vector element, and writes the results to
+the corresponding outputs. Its implementation is in ``rustModuleTemplate.rs``
+beside this documentation file, following the normal Basilisk module naming
+convention.
+
+Message Connection Descriptions
+-------------------------------
+
+The following diagram and table list the module input and output messages.
+
+.. bsk-module-io:: rustModuleTemplate
+   :caption: Module I/O Messages
+   :module-type: Rust
+
+   input dataInMsg CModuleTemplateMsgPayload
+      (optional) Input data vector. A zero vector is used when this message is
+      not connected.
+
+   input dataInMsgs CModuleTemplateMsgPayload
+      (optional, two-element array) Input data vectors. A zero vector is used
+      for each element that is not connected.
+
+   output dataOutMsg CModuleTemplateMsgPayload
+      Input data vector with its first element incremented by the module state.
+
+   output dataOutMsgs CModuleTemplateMsgPayload
+      (two-element array) Input data vectors with each first element
+      incremented by the module state.
+
+Module Assumptions and Limitations
+----------------------------------
+
+This module is a template only and does not model a physical system. It
+demonstrates the Rust module lifecycle, explicit message-port annotations,
+named input and output values, optional message inputs, output messages, and
+fixed-size arrays of message ports. It also demonstrates a Python-configurable
+``increment`` parameter that is initialized in Rust, validated immediately by
+its generated setter, and checked again during reset. The nested
+``sampleParameters`` value and two-dimensional ``sampleMatrix`` array exercise
+composite configuration types through the generated Rust, C++, SWIG, and
+Python interfaces. The ``legacyDummy`` parameter demonstrates generated
+Basilisk deprecation warnings. The
+``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
+the generated ABI contains an unexpected Rust panic before it crosses into
+C++. The private module state also calls the safe
+``bsk_utilities::attitude::wrap_to_pi`` wrapper, illustrating access to
+Basilisk's existing C utility implementation without exposing raw pointers.
+
+User Guide
+----------
+
+Enable Rust module support when configuring Basilisk as described in
+:ref:`rustModules`. Import and add the module to a task like any other
+compiled Basilisk module:
+
+.. code-block:: python
+
+   from Basilisk.architecture import messaging
+   from Basilisk.moduleTemplates import rustModuleTemplate
+
+   module = rustModuleTemplate.rustModuleTemplate()
+   simulation.AddModelToTask("taskName", module)
+
+``module.increment`` defaults to 1 and must be finite and strictly positive.
+Assigning an invalid value raises ``BasiliskError`` immediately and preserves
+the previous value. ``module.getIncrement()`` and
+``module.setIncrement(value)`` use the same generated Rust getter and setter
+as the ``module.increment`` property. Reset repeats the validation as a
+defensive check for defaults or changes made inside Rust.
+
+The template also exposes grouped parameters and a fixed-size matrix. Nested
+configuration getters return a copy, so modify the copy and assign the whole
+value back to the module. Multidimensional Rust arrays appear as nested Python
+lists:
+
+.. code-block:: python
+
+   parameters = module.sampleParameters
+   parameters.gain = 2.5  # [-]
+   parameters.offset = -0.25  # [-]
+   module.sampleParameters = parameters
+
+   module.sampleMatrix = [[1.0, 2.0, 3.0],   # [-]
+                          [4.0, 5.0, 6.0]]
+
+Both setters reject non-finite components, and the array setter also rejects a
+value with anything other than six total elements. A failed setter preserves
+the preceding configuration value.
+
+The unused ``legacyDummy`` sample parameter is deprecated in favor of
+``dummy``. Reading or writing it demonstrates the standard dated Basilisk
+deprecation warning generated from the field annotation. New modules only
+need such an annotation when retaining an old property during a migration.
+
+Leave ``module.panicOnUpdate`` set to its default value of ``False`` during
+normal use. Setting it to ``True`` deliberately panics during update so the
+unit tests can verify panic containment and the rejection of later lifecycle
+calls on the poisoned instance. Rust still destroys the instance normally.
+The panic is reported once as ``BasiliskError`` without an additional default
+Rust panic-hook report.
+Operational modules should return ``BskError`` for expected failures rather
+than adding a similar test hook.
+
+The template's Rust implementation shows how one individual output and a
+fixed-size output array are published together:
+
+.. code-block:: rust
+
+   Ok(RustModuleTemplateOutputs {
+       dataOutMsg: Some(data_out_msg),
+       dataOutMsgs: data_out_msgs.map(Some),
+   })
+
+The generated lifecycle writes each ``Some(payload)`` to its corresponding
+port. Here it writes ``data_out_msg`` to ``dataOutMsg`` and both elements of
+``data_out_msgs`` to the matching elements of ``dataOutMsgs``. Returning
+``None`` for an individual field or array element skips that output for the
+current call. Basilisk automatically stamps each published message with this
+module's ``moduleID`` and current simulation time and sets its ``isWritten``
+flag. The template returns the default all-``None`` output value from reset,
+so it begins publishing only when update runs.
+
+Connect ``module.dataInMsg`` when input data is available. When it is unconnected,
+the module starts from a zero vector.
+
+The ``dataInMsgs`` and ``dataOutMsgs`` fields demonstrate fixed-size arrays of
+message ports. Python exposes each as a two-element list of normal Basilisk
+message interfaces:
+
+.. code-block:: python
+
+   input_messages = [
+       messaging.CModuleTemplateMsg().write(first_payload),
+       messaging.CModuleTemplateMsg().write(second_payload),
+   ]
+   for input_port, input_message in zip(module.dataInMsgs, input_messages):
+       input_port.subscribeTo(input_message)
+
+   output_recorders = [
+       output_port.recorder() for output_port in module.dataOutMsgs
+   ]
+   for recorder in output_recorders:
+       simulation.AddModelToTask("taskName", recorder)
+
+Each element is a live port. The array length is fixed by the Rust declaration,
+and the property cannot be assigned. Changing the entries or length of the
+returned Python list does not change the module's fixed set of ports. See
+:ref:`rustModules` for required arrays, optional arrays, lifecycle value types,
+and the current fixed-size-only limitation.
+
+
+Generated Module API
+--------------------
+
+This C-compatible interface is generated from the Rust module source.
+
+.. autodoxygenfile:: rustModuleTemplate.h
+   :project: BasiliskRustModules
+   :sections: innerclass briefdescription detaileddescription public-attrib public-func
+

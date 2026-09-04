@@ -1,0 +1,13 @@
+.. _test_magnetometerFaults:
+
+test_magnetometerFaults
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_magnetometerFaults
+   :members:
+   :show-inheritance:
+

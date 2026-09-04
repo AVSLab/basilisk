@@ -1,0 +1,929 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareParetoFlexPanels &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioCompareParetoFlexPanels</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioCompareParetoFlexPanels</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Accuracy-versus-runtime Pareto study on a stability-limited, sixteen-segment flexible</span>
+<span class="sd">solar array (see :ref:`scenarioCompareFlexPanels` for the lumped-mass model and</span>
+<span class="sd">:ref:`scenarioCompareParetoRwPanels` for the companion study on a slower, well-resolved</span>
+<span class="sd">system).</span>
+
+<span class="sd">This scenario repeats the work-precision (Pareto) sweep of</span>
+<span class="sd">:ref:`scenarioCompareParetoRwPanels` on a harder problem: each solar array is discretized</span>
+<span class="sd">into ``N = 16`` rigid segments, giving 38 system degrees of freedom and a wide spread of</span>
+<span class="sd">vibration frequencies. Damping is light (:math:`\zeta\approx0.01`), so the</span>
+<span class="sd">highest-frequency mode is oscillatory and sets a hard explicit stability limit on the</span>
+<span class="sd">step size. The dynamics are stability-limited rather than classically stiff: a stiff</span>
+<span class="sd">system has widely separated real eigenvalues and rewards implicit methods, whereas here</span>
+<span class="sd">the fast eigenvalues are lightly damped complex pairs that must be resolved for phase</span>
+<span class="sd">accuracy. The case stress-tests how each explicit integrator behaves near its stability</span>
+<span class="sd">boundary.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    Basilisk's ``svIntegrator`` system offers only explicit Runge-Kutta methods (Euler,</span>
+<span class="sd">    RK2, RK4, RKF45, RKF78), and :ref:`MJScene&lt;MJScene&gt;` is driven by the Basilisk</span>
+<span class="sd">    integrator, so MuJoCo's implicit solvers are bypassed. This study characterizes the</span>
+<span class="sd">    explicit family only.</span>
+
+<span class="sd">The sweep runs fixed-step integrators (RK2, RK4) over a range of time steps and adaptive</span>
+<span class="sd">integrators (RKF45, RKF78) over a range of tolerances, measures the wall-clock time and</span>
+<span class="sd">the final attitude error (principal angle of the relative direction cosine matrix</span>
+<span class="sd">against a per-engine tight reference), and assembles a Pareto front.</span>
+
+<span class="sd">Two effects dominate the result:</span>
+
+<span class="sd">#. **Fixed-step integrators are stability-bound, not accuracy-bound.** Once the step is</span>
+<span class="sd">   small enough to be stable, a high-order method is already very accurate, so the usual</span>
+<span class="sd">   graded accuracy-cost tradeoff collapses; slightly larger steps go unstable. Diverged</span>
+<span class="sd">   configurations are detected and excluded.</span>
+<span class="sd">#. **Adaptive integrators give a clean, controllable front.** Because they subdivide the</span>
+<span class="sd">   step to satisfy the tolerance (and to remain stable), RKF45 and RKF78 trace a smooth</span>
+<span class="sd">   accuracy-versus-cost curve and are the efficient choice for this stability-limited</span>
+<span class="sd">   model.</span>
+
+<span class="sd">As in :ref:`scenarioCompareParetoRwPanels`, the :ref:`MJScene&lt;MJScene&gt;` runs enable</span>
+<span class="sd">``highOrderAttitudeIntegration`` so the free-joint attitude quaternion is advanced at the</span>
+<span class="sd">integrator's full order. The adaptive ladders therefore hold the task (macro) time step</span>
+<span class="sd">fixed and vary only the tolerance, which controls the error down to machine precision.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    **What the reference "truth" is, and what it is not.** The reference is *per-engine*:</span>
+<span class="sd">    each engine's error is measured against its own tight solution, not against the other</span>
+<span class="sd">    engine or a shared truth, so these plots rank each engine's integrator work-precision</span>
+<span class="sd">    rather than absolute cross-engine accuracy.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples/dynamicsComparison`` and executed</span>
+<span class="sd">by using::</span>
+
+<span class="sd">    python3 scenarioCompareParetoFlexPanels.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    To bound CI time, the automated documentation build uses a one-second horizon</span>
+<span class="sd">    and only two adaptive RKF45 tolerances. The figures below exercise the plotting</span>
+<span class="sd">    path but do not contain the fixed-step configurations, stability boundary, or</span>
+<span class="sd">    complete adaptive ladders described above. Run this script directly with its</span>
+<span class="sd">    defaults to generate the full work-precision study.</span>
+
+<span class="sd">The two reduced adaptive configurations are colored by integrator and shaped by</span>
+<span class="sd">engine.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_pareto.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">For this two-point documentation profile, the frontier only connects the sampled</span>
+<span class="sd">adaptive results and does not establish the cheapest achievable accuracy.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_frontier.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The same reduced plotting workflow is repeated for hub inertial position error,</span>
+<span class="sd">giving a companion view of the translational coupling.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioCompareParetoFlexPanels_frontierPosition.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">This is the final comparison. Return to :ref:`scenarioCompareOrbit` to start the</span>
+<span class="sd">series from its Keplerian baseline.</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">_comparePlots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_runtimeTable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">nHingedRigidBodyStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+<span class="n">couldImportMujoco</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Folder this scenario writes its JSON summary into.</span>
+<span class="n">resultsPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"results"</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Model parameters: a stability-limited, lightly damped 16-segment high-frequency array.</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="n">N_SEGMENTS</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># segments per chain (38 system degrees of freedom)</span>
+<span class="n">HUB_MASS</span> <span class="o">=</span> <span class="mf">600.0</span>  <span class="c1"># [kg]</span>
+<span class="n">HUB_INERTIA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">380.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">)</span>  <span class="c1"># [kg*m^2]</span>
+<span class="n">PANEL_TOTAL_MASS</span> <span class="o">=</span> <span class="mf">60.0</span>  <span class="c1"># [kg] total mass of one array, split across its segments</span>
+<span class="n">PANEL_TOTAL_LEN</span> <span class="o">=</span> <span class="mf">3.0</span>  <span class="c1"># [m] total length of one array</span>
+<span class="n">PANEL_K</span> <span class="o">=</span> <span class="mf">120.0</span>  <span class="c1"># [N*m/rad] per-hinge torsional stiffness</span>
+<span class="n">PANEL_C</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># [N*m*s/rad] per-hinge damping (light, so vibration persists)</span>
+<span class="n">PANEL_HINGE_X</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># [m] root-hinge offset from hub origin along x</span>
+<span class="n">ROOT_THETA0</span> <span class="o">=</span> <span class="mf">8.0</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>  <span class="c1"># [rad] initial deflection of the root segment</span>
+<span class="n">OMEGA0_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.010</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># [rad/s] initial hub rate</span>
+
+<span class="n">SIM_DURATION</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [s] propagation horizon for every configuration</span>
+<span class="n">TIMING_TRIALS</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># number of trials for median/min/std reporting</span>
+<span class="n">TIMING_WARMUP_SEC</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [s] discarded warmup sim time absorbing one-time process costs</span>
+
+<span class="c1"># Macro (task) time step shared by every adaptive-integrator configuration. With</span>
+<span class="c1"># high-order attitude integration the macro step is not a separate accuracy knob, so the</span>
+<span class="c1"># adaptive ladders hold it fixed and vary only the tolerance. It is small enough that</span>
+<span class="c1"># RKF78 stays stable at the loosest tolerance; a larger macro step diverges.</span>
+<span class="n">ADAPTIVE_MACRO_DT</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [s]</span>
+
+<span class="c1"># Reference (truth): a high-order adaptive integrator at the tightest tolerance, using</span>
+<span class="c1"># the same macro step as the adaptive sweep.</span>
+<span class="n">REFERENCE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"integrator"</span><span class="p">:</span> <span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="s2">"dt"</span><span class="p">:</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="s2">"tol"</span><span class="p">:</span> <span class="mf">1.0e-13</span><span class="p">}</span>
+
+<span class="c1"># Same integrator and macro step with the tolerance relaxed one notch; its disagreement</span>
+<span class="c1"># with the reference is a conservative self-consistency threshold.</span>
+<span class="n">REFERENCE_CHECK</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"integrator"</span><span class="p">:</span> <span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="s2">"dt"</span><span class="p">:</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="s2">"tol"</span><span class="p">:</span> <span class="mf">1.0e-12</span><span class="p">}</span>
+
+<span class="c1"># Full Pareto sweep. Fixed-step integrators vary dt around the explicit stability limit;</span>
+<span class="c1"># adaptive integrators hold the macro step at ``ADAPTIVE_MACRO_DT`` and vary only the</span>
+<span class="c1"># tolerance. A fixed-step configuration is either stable (and then already near the</span>
+<span class="c1"># metric floor) or it diverges and is dropped at run time, so the lists probe a wide</span>
+<span class="c1"># range. ``runAllComparisons.py`` uses this sweep for the published figures.</span>
+<span class="n">FULL_SWEEP_CONFIGS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK2"</span><span class="p">,</span> <span class="mf">1.0e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK2"</span><span class="p">,</span> <span class="mf">8.0e-4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK2"</span><span class="p">,</span> <span class="mf">5.0e-4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK2"</span><span class="p">,</span> <span class="mf">2.5e-4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="mf">2.5e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="mf">2.0e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="mf">1.0e-3</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRK4"</span><span class="p">,</span> <span class="mf">5.0e-4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="c1"># Adaptive ladders: fixed macro step, tolerance swept over many decades.</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-4</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">3.0e-5</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-5</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">3.0e-6</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-7</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-9</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-10</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-11</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF45"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-12</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-7</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-9</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-10</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-11</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"svIntegratorRKF78"</span><span class="p">,</span> <span class="n">ADAPTIVE_MACRO_DT</span><span class="p">,</span> <span class="mf">1.0e-12</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Default sweep; the unit test overrides this with a reduced set.</span>
+<span class="n">SWEEP_CONFIGS</span> <span class="o">=</span> <span class="n">FULL_SWEEP_CONFIGS</span>
+
+<span class="c1"># Paul Tol high-contrast colors. Markers distinguish the five integrator families.</span>
+<span class="n">TOL_COLORS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"#004488"</span><span class="p">,</span> <span class="s2">"#BB5566"</span><span class="p">,</span> <span class="s2">"#DDAA33"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tolColor</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TOL_COLORS</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">TOL_COLORS</span><span class="p">)]</span>
+
+
+<span class="n">INTEGRATOR_STYLE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"svIntegratorEuler"</span><span class="p">:</span> <span class="p">(</span><span class="n">tolColor</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"Euler"</span><span class="p">),</span>
+    <span class="s2">"svIntegratorRK2"</span><span class="p">:</span> <span class="p">(</span><span class="n">tolColor</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">"RK2"</span><span class="p">),</span>
+    <span class="s2">"svIntegratorRK4"</span><span class="p">:</span> <span class="p">(</span><span class="n">tolColor</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"^"</span><span class="p">,</span> <span class="s2">"RK4"</span><span class="p">),</span>
+    <span class="s2">"svIntegratorRKF45"</span><span class="p">:</span> <span class="p">(</span><span class="n">tolColor</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="s2">"D"</span><span class="p">,</span> <span class="s2">"RKF45 (adaptive)"</span><span class="p">),</span>
+    <span class="s2">"svIntegratorRKF78"</span><span class="p">:</span> <span class="p">(</span><span class="n">tolColor</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s2">"v"</span><span class="p">,</span> <span class="s2">"RKF78 (adaptive)"</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="segmentMass">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.segmentMass">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segmentMass</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Mass of one chain segment [kg]."""</span>
+    <span class="k">return</span> <span class="n">PANEL_TOTAL_MASS</span><span class="o">/</span><span class="n">N_SEGMENTS</span></div>
+
+
+
+<div class="viewcode-block" id="segmentHalfLength">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.segmentHalfLength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segmentHalfLength</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Half-length ``d`` of one chain segment [m]."""</span>
+    <span class="k">return</span> <span class="n">PANEL_TOTAL_LEN</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">N_SEGMENTS</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="segmentInertia">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.segmentInertia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segmentInertia</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Slender-bar inertia tensor of one chain segment about its center of mass.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: 3x3 inertia tensor [kg*m^2].</span>
+<span class="sd">    """</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="n">segmentMass</span><span class="p">()</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">segmentHalfLength</span><span class="p">()</span>  <span class="c1"># [m]</span>
+    <span class="n">iBar</span> <span class="o">=</span> <span class="n">mass</span><span class="o">*</span><span class="n">length</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">12.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">iAxial</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">iBar</span><span class="o">*</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0e-4</span><span class="p">)</span>  <span class="c1"># [kg*m^2] small, well-posed axial inertia</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="n">iAxial</span><span class="p">,</span> <span class="n">iBar</span><span class="p">,</span> <span class="n">iBar</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="panelRootDcm">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.panelRootDcm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panelRootDcm</span><span class="p">(</span><span class="n">sign</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the root-frame DCM that makes both panel chains extend outward."""</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="mujocoModel">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.mujocoModel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mujocoModel</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return the MJCF model: hub with two ``N``-segment hinged chains."""</span>
+    <span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">,</span> <span class="n">iz</span> <span class="o">=</span> <span class="n">HUB_INERTIA</span>
+    <span class="n">halfLen</span> <span class="o">=</span> <span class="n">segmentHalfLength</span><span class="p">()</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="n">segmentMass</span><span class="p">()</span>
+    <span class="n">inertia</span> <span class="o">=</span> <span class="n">segmentInertia</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">chain</span><span class="p">(</span><span class="n">sign</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N_SEGMENTS</span><span class="p">)):</span>
+            <span class="n">jointName</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sign</span><span class="o">*</span><span class="n">PANEL_HINGE_X</span><span class="si">}</span><span class="s2"> 0 0"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">halfLen</span><span class="si">}</span><span class="s2"> 0 0"</span>
+            <span class="n">rootQuat</span> <span class="o">=</span> <span class="s1">' quat="0 0 0 1"'</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">""</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">'&lt;body name="</span><span class="si">{</span><span class="n">jointName</span><span class="si">}</span><span class="s1">" pos="</span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s1">"</span><span class="si">{</span><span class="n">rootQuat</span><span class="si">}</span><span class="s1">&gt;'</span>
+                <span class="sa">f</span><span class="s1">'&lt;joint name="</span><span class="si">{</span><span class="n">jointName</span><span class="si">}</span><span class="s1">" type="hinge" axis="0 1 0" '</span>
+                <span class="sa">f</span><span class="s1">'stiffness="</span><span class="si">{</span><span class="n">PANEL_K</span><span class="si">}</span><span class="s1">" damping="</span><span class="si">{</span><span class="n">PANEL_C</span><span class="si">}</span><span class="s1">" springref="0"/&gt;'</span>
+                <span class="sa">f</span><span class="s1">'&lt;inertial pos="</span><span class="si">{</span><span class="o">-</span><span class="n">halfLen</span><span class="si">}</span><span class="s1"> 0 0" mass="</span><span class="si">{</span><span class="n">mass</span><span class="si">}</span><span class="s1">" '</span>
+                <span class="sa">f</span><span class="s1">'fullinertia="</span><span class="si">{</span><span class="n">inertia</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">inertia</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">inertia</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1"> 0 0 0"/&gt;'</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">body</span><span class="si">}</span><span class="s1">'</span>
+                <span class="sa">f</span><span class="s1">'&lt;/body&gt;'</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">body</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;!-- No geoms, equalities, limits, or frictionloss in this model: disable the</span>
+<span class="s2">       collision and constraint pipelines so each derivative evaluation skips</span>
+<span class="s2">       broadphase and constraint-assembly bookkeeping (bit-identical results). --&gt;</span>
+<span class="s2">  &lt;option gravity="0 0 0"&gt;</span>
+<span class="s2">    &lt;flag contact="disable" constraint="disable"/&gt;</span>
+<span class="s2">  &lt;/option&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="hub"&gt;</span>
+<span class="s2">      &lt;freejoint/&gt;</span>
+<span class="s2">      &lt;inertial pos="0 0 0" mass="</span><span class="si">{</span><span class="n">HUB_MASS</span><span class="si">}</span><span class="s2">" fullinertia="</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iy</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">iz</span><span class="si">}</span><span class="s2"> 0 0 0"/&gt;</span>
+<span class="s2">      </span><span class="si">{</span><span class="n">chain</span><span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">"pP"</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">      </span><span class="si">{</span><span class="n">chain</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">"pM"</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span></div>
+
+
+
+<div class="viewcode-block" id="makeIntegrator">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.makeIntegrator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makeIntegrator</span><span class="p">(</span><span class="n">dynObject</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create and attach an integrator, applying the tolerance if adaptive.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dynObject: the ``Spacecraft`` or ``MJScene`` to integrate.</span>
+<span class="sd">        integratorName (str): attribute name in ``svIntegrators``.</span>
+<span class="sd">        tol (float): relative and absolute tolerance for adaptive integrators, or None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the integrator instance (which the caller must keep referenced).</span>
+<span class="sd">    """</span>
+    <span class="n">integrator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">svIntegrators</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">)(</span><span class="n">dynObject</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">integrator</span><span class="o">.</span><span class="n">relTol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="n">integrator</span><span class="o">.</span><span class="n">absTol</span> <span class="o">=</span> <span class="n">tol</span>
+    <span class="n">dynObject</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">integrator</span></div>
+
+
+
+<div class="viewcode-block" id="buildBSM">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.buildBSM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildBSM</span><span class="p">(</span><span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="o">=</span><span class="n">SIM_DURATION</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the back-substitution (BSM) 16-segment flexible-array simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        integratorName (str): integrator attribute in ``svIntegrators``.</span>
+<span class="sd">        dt (float): task (macro) time step [s].</span>
+<span class="sd">        tol (float): adaptive tolerance, or None for fixed-step integrators.</span>
+<span class="sd">        simDuration (float, optional): propagation horizon [s].</span>
+<span class="sd">        record (bool, optional): attach a final-state recorder. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(scSim, recorder, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hub"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">HUB_MASS</span>  <span class="c1"># [kg]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">HUB_INERTIA</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">OMEGA0_B</span><span class="p">]</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">makeIntegrator</span><span class="p">(</span><span class="n">scObject</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
+
+    <span class="n">inertia</span> <span class="o">=</span> <span class="n">segmentInertia</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">effector</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">NHingedRigidBodyStateEffector</span><span class="p">()</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"chain</span><span class="si">{</span><span class="s1">'P'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">sign</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'M'</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">sign</span><span class="o">*</span><span class="n">PANEL_HINGE_X</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [m]</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">panelRootDcm</span><span class="p">(</span><span class="n">sign</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_SEGMENTS</span><span class="p">):</span>
+            <span class="n">panel</span> <span class="o">=</span> <span class="n">nHingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedPanel</span><span class="p">()</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">segmentMass</span><span class="p">()</span>  <span class="c1"># [kg]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">segmentHalfLength</span><span class="p">()</span>  <span class="c1"># [m]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">PANEL_K</span>  <span class="c1"># [N*m/rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">PANEL_C</span>  <span class="c1"># [N*m*s/rad]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="n">inertia</span>  <span class="c1"># [kg*m^2]</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="n">ROOT_THETA0</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">addHingedPanel</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">effector</span><span class="p">)</span>
+        <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+
+    <span class="n">recorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="p">[</span><span class="n">scObject</span><span class="p">,</span> <span class="n">integrator</span><span class="p">]</span> <span class="o">+</span> <span class="n">chains</span></div>
+
+
+
+<div class="viewcode-block" id="buildMujoco">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.buildMujoco">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">buildMujoco</span><span class="p">(</span><span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="o">=</span><span class="n">SIM_DURATION</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the MuJoCo 16-segment flexible-array simulation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        integratorName (str): integrator attribute in ``svIntegrators``.</span>
+<span class="sd">        dt (float): task (macro) time step [s].</span>
+<span class="sd">        tol (float): adaptive tolerance, or None for fixed-step integrators.</span>
+<span class="sd">        simDuration (float, optional): propagation horizon [s].</span>
+<span class="sd">        record (bool, optional): attach a final-state recorder. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(scSim, recorder, handles)``.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dyn"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">mujocoModel</span><span class="p">())</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hubMj"</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">extraEoMCall</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Full-order attitude integration so the hub quaternion error converges at the RK</span>
+    <span class="c1"># method's order and is controlled by the adaptive tolerance, not the macro step.</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">highOrderAttitudeIntegration</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">makeIntegrator</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
+
+    <span class="n">hub</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"hub"</span><span class="p">)</span>
+    <span class="n">recorder</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">:</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"dynTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">setAttitudeRate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">OMEGA0_B</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"pP_0"</span><span class="p">,</span> <span class="s2">"pM_0"</span><span class="p">):</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ROOT_THETA0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="p">[</span><span class="n">scene</span><span class="p">,</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">hub</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="finalState">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.finalState">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">finalState</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="o">=</span><span class="n">SIM_DURATION</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate one configuration and return its final hub attitude and position.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        builder (callable): ``buildBSM`` or ``buildMujoco``.</span>
+<span class="sd">        integratorName (str): integrator attribute name.</span>
+<span class="sd">        dt (float): task time step [s].</span>
+<span class="sd">        tol (float): adaptive tolerance, or None.</span>
+<span class="sd">        simDuration (float, optional): propagation horizon [s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(sigma_BN, r_BN_N)`` at the final time -- the attitude MRP (shape</span>
+<span class="sd">        ``(3,)``) and the hub inertial position [m] (shape ``(3,)``) -- or ``(None, None)``</span>
+<span class="sd">        if the run diverged.</span>
+<span class="sd">    """</span>
+    <span class="n">stopTimeNanos</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">simDuration</span><span class="p">)</span>
+    <span class="n">taskStepNanos</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stopTimeNanos</span> <span class="o">%</span> <span class="n">taskStepNanos</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"dt=</span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2"> s does not divide the </span><span class="si">{</span><span class="n">simDuration</span><span class="si">}</span><span class="s2"> s comparison horizon"</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">builder</span><span class="p">(</span><span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">stopTimeNanos</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"Encountered NaN acceleration"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">())</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>  <span class="c1"># [s]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+            <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">simDuration</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># [m] hub inertial position</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">r</span><span class="p">))):</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">r</span></div>
+
+
+
+<div class="viewcode-block" id="principalAngle">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.principalAngle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">principalAngle</span><span class="p">(</span><span class="n">sigmaA</span><span class="p">,</span> <span class="n">sigmaB</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Principal rotation angle between two attitudes given as MRPs [rad].</span>
+
+<span class="sd">    Computed from the relative MRP as ``4*atan(|sigma_rel|)``, which stays well</span>
+<span class="sd">    conditioned down to machine precision, unlike ``arccos((trace(C)-1)/2)``, which loses</span>
+<span class="sd">    resolution below ~1e-8 rad.</span>
+<span class="sd">    """</span>
+    <span class="n">dcmRel</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaA</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaB</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">sigmaRel</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcmRel</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sigmaRel</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="sweepEngine">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.sweepEngine">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sweepEngine</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">REFERENCE</span><span class="p">,</span> <span class="n">referenceCheck</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">sweepConfigs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simDuration</span><span class="o">=</span><span class="n">SIM_DURATION</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the reference and every sweep configuration for one engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        builder (callable): ``buildBSM`` or ``buildMujoco``.</span>
+<span class="sd">        reference (dict): reference (truth) configuration with keys ``integrator``,</span>
+<span class="sd">            ``dt`` and ``tol``.</span>
+<span class="sd">        referenceCheck (dict): second high-accuracy configuration whose disagreement with</span>
+<span class="sd">            the reference estimates its self-consistency. Defaults to</span>
+<span class="sd">            :data:`REFERENCE_CHECK`.</span>
+<span class="sd">        sweepConfigs (sequence, optional): configurations to evaluate. Defaults to</span>
+<span class="sd">            :data:`SWEEP_CONFIGS`.</span>
+<span class="sd">        simDuration (float, optional): propagation horizon [s].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: ``(rows, attitudeFloor, positionFloor)`` -- one dict per successful</span>
+<span class="sd">        configuration (attitude error, position error, wall-clock) and the estimated</span>
+<span class="sd">        reference accuracies in attitude [rad] and hub position [m]. Errors at or below a</span>
+<span class="sd">        floor only indicate agreement with the reference to round-off.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">referenceCheck</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">referenceCheck</span> <span class="o">=</span> <span class="n">REFERENCE_CHECK</span>
+    <span class="n">referenceSigma</span><span class="p">,</span> <span class="n">referenceR</span> <span class="o">=</span> <span class="n">finalState</span><span class="p">(</span>
+        <span class="n">builder</span><span class="p">,</span> <span class="n">reference</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="n">reference</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">],</span> <span class="n">reference</span><span class="p">[</span><span class="s2">"tol"</span><span class="p">],</span> <span class="n">simDuration</span><span class="p">)</span>
+    <span class="n">checkSigma</span><span class="p">,</span> <span class="n">checkR</span> <span class="o">=</span> <span class="n">finalState</span><span class="p">(</span>
+        <span class="n">builder</span><span class="p">,</span> <span class="n">referenceCheck</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="n">referenceCheck</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">],</span>
+        <span class="n">referenceCheck</span><span class="p">[</span><span class="s2">"tol"</span><span class="p">],</span> <span class="n">simDuration</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">referenceSigma</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">checkSigma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Pareto reference or reference-check propagation failed."</span><span class="p">)</span>
+    <span class="n">attitudeFloor</span> <span class="o">=</span> <span class="n">principalAngle</span><span class="p">(</span><span class="n">checkSigma</span><span class="p">,</span> <span class="n">referenceSigma</span><span class="p">)</span>
+    <span class="n">positionFloor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">checkR</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">referenceR</span><span class="p">)))</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">configurations</span> <span class="o">=</span> <span class="n">SWEEP_CONFIGS</span> <span class="k">if</span> <span class="n">sweepConfigs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sweepConfigs</span>
+    <span class="k">for</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span> <span class="ow">in</span> <span class="n">configurations</span><span class="p">:</span>
+        <span class="n">sigma</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">finalState</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sigma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># diverged: stability limit exceeded</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"integrator"</span><span class="p">:</span> <span class="n">integratorName</span><span class="p">,</span>
+            <span class="s2">"dt"</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span>
+            <span class="s2">"tol"</span><span class="p">:</span> <span class="n">tol</span><span class="p">,</span>
+            <span class="s2">"error"</span><span class="p">:</span> <span class="n">principalAngle</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">referenceSigma</span><span class="p">),</span>
+            <span class="s2">"positionError"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">referenceR</span><span class="p">))),</span>
+        <span class="p">})</span>
+    <span class="k">return</span> <span class="n">rows</span><span class="p">,</span> <span class="n">attitudeFloor</span><span class="p">,</span> <span class="n">positionFloor</span></div>
+
+
+
+<div class="viewcode-block" id="addInterleavedTimings">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.addInterleavedTimings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addInterleavedTimings</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">simDuration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Attach recorder-free timing statistics, alternating engine order by trial."""</span>
+    <span class="n">rowSets</span> <span class="o">=</span> <span class="p">((</span><span class="s2">"bsm"</span><span class="p">,</span> <span class="n">buildBSM</span><span class="p">,</span> <span class="n">bsmRows</span><span class="p">),</span> <span class="p">(</span><span class="s2">"mujoco"</span><span class="p">,</span> <span class="n">buildMujoco</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">))</span>
+    <span class="n">rowMaps</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="p">{(</span><span class="n">row</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"tol"</span><span class="p">]):</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">engine</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">rowSets</span>
+    <span class="p">}</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"dt"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"tol"</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">rowSets</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span>
+    <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">configuredBuilder</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">stopTime</span><span class="p">):</span>
+        <span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="n">configuration</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">():</span>
+            <span class="n">simulation</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span> <span class="o">=</span> <span class="n">builder</span><span class="p">(</span>
+                <span class="n">integratorName</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">simDuration</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stopTime</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">handles</span>
+
+        <span class="k">return</span> <span class="n">build</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">warmups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">destinations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">engine</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">rowSets</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">rowMaps</span><span class="p">[</span><span class="n">engine</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">measured</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configuredBuilder</span><span class="p">(</span><span class="n">builder</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">simDuration</span><span class="p">))</span>
+            <span class="n">warmups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configuredBuilder</span><span class="p">(</span>
+                <span class="n">builder</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">simDuration</span><span class="p">,</span> <span class="n">TIMING_WARMUP_SEC</span><span class="p">)))</span>
+            <span class="n">destinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">_runtimeTable</span><span class="o">.</span><span class="n">interleavedPropagationStats</span><span class="p">(</span>
+            <span class="n">measured</span><span class="p">,</span> <span class="n">TIMING_TRIALS</span><span class="p">,</span> <span class="n">warmups</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">destinations</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">"median"</span><span class="p">]</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"wallMin"</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">"min"</span><span class="p">]</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"wallStd"</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">"std"</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="paretoFrontier">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.paretoFrontier">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">paretoFrontier</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">errorKey</span><span class="o">=</span><span class="s2">"error"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the non-dominated subset, sorted by increasing wall-clock time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rows (list): per-configuration dicts with ``wall`` and the metric ``errorKey``.</span>
+<span class="sd">        errorKey (str): row key of the error metric to build the frontier over</span>
+<span class="sd">            (``"error"`` for attitude, ``"positionError"`` for hub position).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: the non-dominated configurations.</span>
+<span class="sd">    """</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]))</span>
+    <span class="n">frontier</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">bestError</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ordered</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bestError</span><span class="p">:</span>
+            <span class="n">frontier</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">bestError</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">frontier</span></div>
+
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showPlots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveJson</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sweepConfigs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simDuration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">referenceCheck</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resultsDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Main function, see scenario description.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        showPlots (bool, optional): if True, plot and show the simulation results.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        saveJson (bool, optional): if True, write the Pareto data to</span>
+<span class="sd">            ``results/scenarioCompareParetoFlexPanels.json``. Defaults to</span>
+<span class="sd">            False.</span>
+<span class="sd">        sweepConfigs (list, optional): override the integrator sweep (the unit test</span>
+<span class="sd">            passes a reduced set). Defaults to :data:`SWEEP_CONFIGS`.</span>
+<span class="sd">        simDuration (float, optional): override the propagation horizon [s]. Defaults to</span>
+<span class="sd">            :data:`SIM_DURATION`.</span>
+<span class="sd">        reference (dict, optional): override the reference (truth) configuration.</span>
+<span class="sd">            Defaults to :data:`REFERENCE`.</span>
+<span class="sd">        referenceCheck (dict, optional): override the reference-error-estimate</span>
+<span class="sd">            configuration. Defaults to :data:`REFERENCE_CHECK`.</span>
+<span class="sd">        resultsDir (str, optional): explicit artifact directory. Defaults to</span>
+<span class="sd">            the scenario ``results`` folder.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">configurations</span> <span class="o">=</span> <span class="n">SWEEP_CONFIGS</span> <span class="k">if</span> <span class="n">sweepConfigs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sweepConfigs</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">SIM_DURATION</span> <span class="k">if</span> <span class="n">simDuration</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">simDuration</span>  <span class="c1"># [s]</span>
+    <span class="n">referenceConfig</span> <span class="o">=</span> <span class="n">reference</span> <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">REFERENCE</span>
+    <span class="n">checkConfig</span> <span class="o">=</span> <span class="n">referenceCheck</span> <span class="k">if</span> <span class="n">referenceCheck</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">REFERENCE_CHECK</span>
+
+    <span class="n">bsmRows</span><span class="p">,</span> <span class="n">bsmFloor</span><span class="p">,</span> <span class="n">bsmPosFloor</span> <span class="o">=</span> <span class="n">sweepEngine</span><span class="p">(</span>
+        <span class="n">buildBSM</span><span class="p">,</span> <span class="n">referenceConfig</span><span class="p">,</span> <span class="n">checkConfig</span><span class="p">,</span> <span class="n">configurations</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">couldImportMujoco</span><span class="p">:</span>
+        <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">mujocoFloor</span><span class="p">,</span> <span class="n">mujocoPosFloor</span> <span class="o">=</span> <span class="n">sweepEngine</span><span class="p">(</span>
+            <span class="n">buildMujoco</span><span class="p">,</span> <span class="n">referenceConfig</span><span class="p">,</span> <span class="n">checkConfig</span><span class="p">,</span> <span class="n">configurations</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">mujocoFloor</span><span class="p">,</span> <span class="n">mujocoPosFloor</span> <span class="o">=</span> <span class="p">[],</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="n">addInterleavedTimings</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+    <span class="n">referenceThreshold</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bsmFloor</span><span class="p">,</span> <span class="n">mujocoFloor</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">positionReferenceThreshold</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bsmPosFloor</span><span class="p">,</span> <span class="n">mujocoPosFloor</span><span class="p">)</span>  <span class="c1"># [m]</span>
+
+    <span class="k">if</span> <span class="n">saveJson</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        <span class="n">targetResults</span> <span class="o">=</span> <span class="n">resultsPath</span> <span class="k">if</span> <span class="n">resultsDir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">resultsDir</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetResults</span><span class="p">,</span> <span class="n">fileName</span><span class="o">+</span><span class="s2">".json"</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"scenario"</span><span class="p">:</span> <span class="n">fileName</span><span class="p">,</span> <span class="s2">"nSegments"</span><span class="p">:</span> <span class="n">N_SEGMENTS</span><span class="p">,</span>
+                       <span class="s2">"configuration"</span><span class="p">:</span> <span class="p">{</span>
+                           <span class="s2">"simDuration"</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+                           <span class="s2">"reference"</span><span class="p">:</span> <span class="n">referenceConfig</span><span class="p">,</span>
+                           <span class="s2">"referenceCheck"</span><span class="p">:</span> <span class="n">checkConfig</span><span class="p">,</span>
+                           <span class="s2">"sweepConfigs"</span><span class="p">:</span> <span class="p">[</span>
+                               <span class="p">{</span><span class="s2">"integrator"</span><span class="p">:</span> <span class="n">integrator</span><span class="p">,</span> <span class="s2">"dt"</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span> <span class="s2">"tol"</span><span class="p">:</span> <span class="n">tol</span><span class="p">}</span>
+                               <span class="k">for</span> <span class="n">integrator</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tol</span> <span class="ow">in</span> <span class="n">configurations</span><span class="p">]},</span>
+                       <span class="s2">"referenceSelfConsistency"</span><span class="p">:</span> <span class="p">{</span>
+                           <span class="s2">"bsm"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"attitude"</span><span class="p">:</span> <span class="n">bsmFloor</span><span class="p">,</span> <span class="s2">"position"</span><span class="p">:</span> <span class="n">bsmPosFloor</span><span class="p">},</span>
+                           <span class="s2">"mujoco"</span><span class="p">:</span> <span class="p">{</span>
+                               <span class="s2">"attitude"</span><span class="p">:</span> <span class="n">mujocoFloor</span><span class="p">,</span> <span class="s2">"position"</span><span class="p">:</span> <span class="n">mujocoPosFloor</span><span class="p">}},</span>
+                       <span class="s2">"sharedReferenceThreshold"</span><span class="p">:</span> <span class="n">referenceThreshold</span><span class="p">,</span>
+                       <span class="s2">"sharedPositionReferenceThreshold"</span><span class="p">:</span> <span class="n">positionReferenceThreshold</span><span class="p">,</span>
+                       <span class="s2">"bsm"</span><span class="p">:</span> <span class="n">bsmRows</span><span class="p">,</span> <span class="s2">"mujoco"</span><span class="p">:</span> <span class="n">mujocoRows</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="n">plotResults</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">referenceThreshold</span><span class="p">,</span>
+                             <span class="n">positionReferenceThreshold</span><span class="p">)</span>
+
+    <span class="n">_comparePlots</span><span class="o">.</span><span class="n">finalizeFigures</span><span class="p">(</span><span class="n">figureList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">showPlots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_paretoScatter</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">errorKey</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Scatter every configuration: color = integrator, filled = BSM, open = MuJoCo.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bsmRows (list): BSM-engine sweep results.</span>
+<span class="sd">        mujocoRows (list): MuJoCo-engine sweep results (possibly empty).</span>
+<span class="sd">        errorKey (str): row key of the error metric to plot on the y-axis.</span>
+<span class="sd">        ylabel (str): y-axis label.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.figure.Figure: the scatter figure.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Legend outside the axes so it does not overlap the data points.</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="n">seenLabels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">rows</span><span class="p">,</span> <span class="n">engineLabel</span><span class="p">,</span> <span class="n">filled</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="s2">"BSM"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">(</span><span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"mujoco"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">color</span><span class="p">,</span> <span class="n">marker</span><span class="p">,</span> <span class="n">intLabel</span> <span class="o">=</span> <span class="n">INTEGRATOR_STYLE</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">]]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"integrator"</span><span class="p">],</span> <span class="n">engineLabel</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seenLabels</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">intLabel</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">engineLabel</span><span class="si">}</span><span class="s2">)"</span>
+                <span class="n">seenLabels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="k">if</span> <span class="n">errorKey</span> <span class="o">==</span> <span class="s2">"error"</span> <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">],</span> <span class="n">value</span><span class="p">,</span>
+                       <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+                       <span class="n">facecolors</span><span class="o">=</span><span class="n">color</span> <span class="k">if</span> <span class="n">filled</span> <span class="k">else</span> <span class="s2">"none"</span><span class="p">,</span>
+                       <span class="n">edgecolors</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wall-clock time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">handles</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"center left"</span><span class="p">,</span>
+                  <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_paretoFrontierPlot</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">errorKey</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot the non-dominated frontier of each engine for one error metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bsmRows (list): BSM-engine sweep results.</span>
+<span class="sd">        mujocoRows (list): MuJoCo-engine sweep results (possibly empty).</span>
+<span class="sd">        errorKey (str): row key of the error metric to build the frontier over.</span>
+<span class="sd">        ylabel (str): y-axis label.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.figure.Figure: the frontier figure.</span>
+<span class="sd">    """</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rows</span><span class="p">,</span> <span class="n">engineLabel</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="s2">"Back-substitution (BSM)"</span><span class="p">,</span> <span class="n">tolColor</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
+            <span class="p">(</span><span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"MuJoCo"</span><span class="p">,</span> <span class="n">tolColor</span><span class="p">(</span><span class="mi">1</span><span class="p">))):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">frontier</span> <span class="o">=</span> <span class="n">paretoFrontier</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">errorKey</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">r</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span><span class="o">*</span><span class="n">macros</span><span class="o">.</span><span class="n">R2D</span> <span class="k">if</span> <span class="n">errorKey</span> <span class="o">==</span> <span class="s2">"error"</span> <span class="k">else</span> <span class="n">r</span><span class="p">[</span><span class="n">errorKey</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">frontier</span>
+        <span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"wall"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">frontier</span><span class="p">],</span> <span class="n">values</span><span class="p">,</span>
+                <span class="s2">"-o"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">engineLabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Wall-clock time [s]"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">handles</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"center left"</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<div class="viewcode-block" id="plotResults">
+<a class="viewcode-back" href="../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenarioCompareParetoFlexPanels.plotResults">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotResults</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="n">referenceThreshold</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">positionReferenceThreshold</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build the Pareto and frontier figures for both attitude and hub-position error.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bsmRows (list): BSM-engine sweep results.</span>
+<span class="sd">        mujocoRows (list): MuJoCo-engine sweep results (possibly empty).</span>
+<span class="sd">        referenceThreshold (float): conservative attitude reference self-consistency</span>
+<span class="sd">            threshold [rad], recorded in JSON but not drawn here.</span>
+<span class="sd">        positionReferenceThreshold (float): conservative position reference</span>
+<span class="sd">            self-consistency threshold [m], recorded in JSON but not drawn here.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: mapping from figure name to matplotlib figure.</span>
+<span class="sd">    """</span>
+    <span class="n">attLabel</span> <span class="o">=</span> <span class="s2">"Attitude error [deg]"</span>
+    <span class="n">posLabel</span> <span class="o">=</span> <span class="s2">"Final hub position error [m]"</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_pareto"</span><span class="p">:</span> <span class="n">_paretoScatter</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">,</span> <span class="n">attLabel</span><span class="p">),</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_frontier"</span><span class="p">:</span> <span class="n">_paretoFrontierPlot</span><span class="p">(</span><span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">,</span> <span class="n">attLabel</span><span class="p">),</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_paretoPosition"</span><span class="p">:</span> <span class="n">_paretoScatter</span><span class="p">(</span>
+            <span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"positionError"</span><span class="p">,</span> <span class="n">posLabel</span><span class="p">),</span>
+        <span class="n">fileName</span><span class="o">+</span><span class="s2">"_frontierPosition"</span><span class="p">:</span> <span class="n">_paretoFrontierPlot</span><span class="p">(</span>
+            <span class="n">bsmRows</span><span class="p">,</span> <span class="n">mujocoRows</span><span class="p">,</span> <span class="s2">"positionError"</span><span class="p">,</span> <span class="n">posLabel</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

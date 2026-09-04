@@ -1,0 +1,8 @@
+.. _svStochasticIntegratorRS:
+
+svStochasticIntegratorRS
+========================
+
+.. autodoxygenfile:: svStochasticIntegratorRS.h
+   :project: Integrators
+

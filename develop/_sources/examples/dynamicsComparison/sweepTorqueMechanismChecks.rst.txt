@@ -1,0 +1,13 @@
+.. _sweepTorqueMechanismChecks:
+
+sweepTorqueMechanismChecks
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: sweepTorqueMechanismChecks
+   :members:
+   :show-inheritance:
+

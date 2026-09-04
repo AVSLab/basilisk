@@ -1,0 +1,13 @@
+.. _scenarioCompareRwPanels:
+
+scenarioCompareRwPanels
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioCompareRwPanels
+   :members:
+   :show-inheritance:
+

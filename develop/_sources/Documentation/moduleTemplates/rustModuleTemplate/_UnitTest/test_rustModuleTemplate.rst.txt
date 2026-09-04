@@ -1,0 +1,13 @@
+.. _test_rustModuleTemplate:
+
+test_rustModuleTemplate
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_rustModuleTemplate
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,13 @@
+.. _sweepVariableMassPendulumInertia:
+
+sweepVariableMassPendulumInertia
+================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: sweepVariableMassPendulumInertia
+   :members:
+   :show-inheritance:
+

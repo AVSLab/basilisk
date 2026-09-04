@@ -1,0 +1,8 @@
+.. _RWConfigPayload:
+
+RWConfigPayload
+===============
+
+.. autodoxygenfile:: RWConfigPayload.h
+   :project: _GeneralModuleFiles4
+

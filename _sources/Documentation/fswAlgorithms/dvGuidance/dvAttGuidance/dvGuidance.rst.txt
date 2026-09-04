@@ -1,0 +1,33 @@
+.. _dvGuidance:
+
+:module-type:`C` Module: dvGuidance
+===================================
+
+Executive Summary
+-----------------
+
+This module creates a time varying attitude reference frame message that allows the orbit correction burn direction to rotate at a constant rate.
+
+A message is read in containing the base :math:`\Delta\mathbf{v}` direction, the burn duration, as well as a nominal rotation axis.  A base burn frame is created relative to which a constant rotation about the 3rd frame axis is performed.  The output message contains the full reference frame states including the constant angular velocity vector and a zero angular acceleration vector. More information can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/dvGuidance/dvAttGuidance/_Documentation/Basilisk-dvGuidance-2019-03-28.pdf>`.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: dvGuidance
+    :caption: Module I/O Messages
+
+    output attRefOutMsg AttRefMsgPayload
+        attitude reference output message
+    input burnDataInMsg DvBurnCmdMsgPayload
+        Input message that configures the vehicle burn
+
+
+----
+
+.. autodoxygenfile:: dvGuidance.h
+   :project: dvAttGuidance
+

@@ -1,0 +1,13 @@
+.. _sweepRwBookkeepingMass:
+
+sweepRwBookkeepingMass
+======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: sweepRwBookkeepingMass
+   :members:
+   :show-inheritance:
+

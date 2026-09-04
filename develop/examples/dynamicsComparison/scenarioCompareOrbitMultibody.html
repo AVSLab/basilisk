@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioCompareOrbitMultibody &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioCompareVariableMass" href="scenarioCompareVariableMass.html" />
+    <link rel="prev" title="scenarioCompareFlexPanels" href="scenarioCompareFlexPanels.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbital-simulations">Orbital Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#attitude-simulations">Attitude Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#orbit-control">Orbit Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#planetary-environments">Planetary Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sensors">Spacecraft Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-sub-systems">Spacecraft Sub-Systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-body-dynamics-simulations-with-mujoco">Multi-Body Dynamics Simulations with MuJoCo</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#comparing-the-back-substitution-and-mujoco-dynamics-engines">Comparing the Back-Substitution and MuJoCo Dynamics Engines</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="runAllComparisons.html">Comparison Overview and Execution Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareOrbit.html">Keplerian Orbit Baseline</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareTorque.html">Rigid Body with Constant Torque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareRwPanels.html">Hub with Reaction Wheels and Hinged Panels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareFlexPanels.html">Lumped-Mass Flexible Panels and Runtime Scaling</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Multi-Body in Orbit with Gravity-Gradient Torque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareVariableMass.html">Variable-Mass Fuel Slosh and Depletion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareParetoRwPanels.html">Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scenarioCompareParetoFlexPanels.html">Accuracy vs Runtime Pareto Front (Stiff Flexible Panels)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../index.html#research-sweeps-and-publication-tools">Research Sweeps and Publication Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#constrained-spacecraft-dynamics-simulations">Constrained Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#complex-spacecraft-dynamics-simulations">Complex Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#prescribed-motion-spacecraft-dynamics-simulations">Prescribed Motion Spacecraft Dynamics Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#mission-simulations">Mission Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#spacecraft-formation-flying">Spacecraft Formation Flying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#small-body-navigation-simulations">Small Body Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#bsksim-architecture"><code class="docutils literal notranslate"><span class="pre">bskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multisatbsksim-architecture"><code class="docutils literal notranslate"><span class="pre">MultiSatBskSim()</span></code> Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#optical-navigation-simulations">Optical Navigation Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#monte-carlo-simulations">Monte Carlo Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-simulation-options">Advanced Simulation Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multi-threading-basilisk-simulations">Multi-Threading Basilisk Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#advanced-visualizations">Advanced Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">scenarioCompareOrbitMultibody</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/dynamicsComparison/scenarioCompareOrbitMultibody.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scenariocompareorbitmultibody">
+<span id="id1"></span><h1>scenarioCompareOrbitMultibody<a class="headerlink" href="#scenariocompareorbitmultibody" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-scenarioCompareOrbitMultibody">Multi-body-in-orbit scenario in the dynamics-engine comparison series (see
+<a class="reference internal" href="scenarioCompareOrbit.html#scenariocompareorbit"><span class="std std-ref">scenarioCompareOrbit</span></a> for the introduction to the two engines, and
+<a class="reference internal" href="scenarioCompareRwPanels.html#scenariocomparerwpanels"><span class="std std-ref">scenarioCompareRwPanels</span></a> for the free-floating multi-body it builds on).</p>
+<p>This scenario puts the reaction-wheel-and-panel multi-body of
+<a class="reference internal" href="scenarioCompareRwPanels.html#scenariocomparerwpanels"><span class="std std-ref">scenarioCompareRwPanels</span></a> into a Keplerian orbit, adding point-mass gravity to the
+internal wheel and flex dynamics. This exposes a difference in how the two engines
+apply gravity to an <em>extended</em> body, so the scenario runs in two regimes:</p>
+<p><strong>Part A: a compact body (hub + reaction wheels).</strong> All massive parts sit at the hub
+origin (the reaction-wheel bodies carry negligible mass), so gravity acts at a single
+point and exerts no gravity-gradient torque. The two engines agree closely: both reproduce
+the analytic Kepler orbit to the RK4 truncation level (cross-engine orbit difference of
+order <span class="math notranslate nohighlight">\(10^{-7}\)</span> m), and the spinning-up wheels match to round-off. The hub attitude
+agrees to about <span class="math notranslate nohighlight">\(10^{-4}\)</span> rad, several orders coarser than the free-floating
+machine-precision floor of <a class="reference internal" href="scenarioCompareRwPanels.html#scenariocomparerwpanels"><span class="std std-ref">scenarioCompareRwPanels</span></a>. This floor is not a gravity
+effect but the MuJoCo gyroscopic-bias round-off characterized in
+<a class="reference internal" href="scenarioCompareTorque.html#scenariocomparetorque"><span class="std std-ref">scenarioCompareTorque</span></a>, which any body at the ~7.5 km/s orbital speed incurs (the same
+size with gravity on or off). Part A therefore sets the noise floor for the extended-body
+attitude comparison below.</p>
+<p><strong>Part B: an extended body (hub + reaction wheels + offset flexible panels).</strong> The two
+massive solar arrays sit well off the hub origin, and the engines apply gravity by
+different models:</p>
+<ol class="arabic simple">
+<li><p>BSM evaluates the gravitational acceleration <strong>once, at the system center of mass</strong>
+(tracked analytically as the panels flex) and applies it as a single uniform body force.
+A uniform field exerts no net torque about the center of mass, so BSM produces <strong>no
+gravity-gradient torque</strong>.</p></li>
+<li><p>The MuJoCo <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">C++ Module: NBodyGravity</span></a> evaluates gravity <strong>per body, at each body’s own
+position</strong>. The offset panels sit at a slightly different radius than the hub, so they
+feel a slightly different acceleration. Forces at the separated body centers produce a
+net torque about the system center of mass. This model does not resolve gravity variation
+within an individual rigid body.</p></li>
+</ol>
+<p>Part B therefore does not converge to machine precision in attitude. Its magnitude is
+consistent with the differential point-force scale over the orbit and builds as a
+libration modulated by the hub’s tumble.</p>
+<p>As in the other attitude-bearing comparisons, the MuJoCo scene enables
+<code class="docutils literal notranslate"><span class="pre">highOrderAttitudeIntegration</span></code> so the hub quaternion is advanced at the integrator’s
+full order, and attitudes are compared with the principal rotation angle of the relative
+direction cosine matrix, <span class="math notranslate nohighlight">\(4\,\arctan(|\pmb\sigma_{\rm rel}|)\)</span>.</p>
+<p>The script is found in the folder <code class="docutils literal notranslate"><span class="pre">basilisk/examples/dynamicsComparison</span></code> and executed
+by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">scenarioCompareOrbitMultibody</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<section id="illustration-of-simulation-results">
+<h2>Illustration of Simulation Results<a class="headerlink" href="#illustration-of-simulation-results" title="Link to this heading"></a></h2>
+<p>For the compact body (Part A) each engine tracks the analytic Kepler orbit to its RK4
+truncation level (about <span class="math notranslate nohighlight">\(10^{-7}\)</span> m), and the two engines agree to the same level,
+confirming both integrate the same two-body equation of motion through the internal
+multi-body coupling.</p>
+<img alt="../../_images/scenarioCompareOrbitMultibody_compactOrbit.svg" class="align-center" src="../../_images/scenarioCompareOrbitMultibody_compactOrbit.svg" />
+<p>For the extended body (Part B) the hub attitudes separate: forces applied at the
+MuJoCo body centers exert a torque that the BSM single-point model omits. Over one orbit,
+the cross-engine attitude difference reaches 0.79 rad (46 degrees), nearly four orders of
+magnitude above the Part A floor. The response appears as a libration modulated by the
+hub’s tumble.</p>
+<img alt="../../_images/scenarioCompareOrbitMultibody_attError.svg" class="align-center" src="../../_images/scenarioCompareOrbitMultibody_attError.svg" />
+<p>After matching the initial total-center-of-mass position and velocity, both the compact
+and extended center-of-mass trajectories agree within <span class="math notranslate nohighlight">\(2\times10^{-6}\)</span> m. The
+attitude, not the translational orbit, carries the differential-force effect.</p>
+<img alt="../../_images/scenarioCompareOrbitMultibody_regimes.svg" class="align-center" src="../../_images/scenarioCompareOrbitMultibody_regimes.svg" />
+</section>
+<section id="runtime-cost">
+<h2>Runtime cost<a class="headerlink" href="#runtime-cost" title="Link to this heading"></a></h2>
+<p>Wall-clock cost of propagating each regime (one full orbit) with each engine, reported
+as the median of five measured trials after one discarded warm-up. Model setup is
+excluded. Both the absolute times and speedup ratio are specific to the machine and
+build. Generate the optional local CSV with
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">-C</span> <span class="pre">docs</span> <span class="pre">comparison-runtime-tables</span></code>; see
+<a class="reference internal" href="scenarioCompareOrbit.html#scenariocompareorbit"><span class="std std-ref">scenarioCompareOrbit</span></a> for the benchmark requirements and interpretation.</p>
+<p>Next comparison: <a class="reference internal" href="scenarioCompareVariableMass.html#scenariocomparevariablemass"><span class="std std-ref">scenarioCompareVariableMass</span></a> adds fuel depletion, moving mass
+properties, thrust, and propellant slosh.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.buildBSM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">buildBSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recordDt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#buildBSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.buildBSM" title="Link to this definition"></a></dt>
+<dd><p>Build the back-substitution orbiting multi-body simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>withPanels</strong> (<em>bool</em>) – include the offset flexible panels (Part B) or not (Part A).</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – integrator time step [s]</p></li>
+<li><p><strong>tf</strong> (<em>float</em>) – final simulation time [s]</p></li>
+<li><p><strong>recordDt</strong> (<em>float</em>) – recorder sampling period [s]</p></li>
+<li><p><strong>record</strong> (<em>bool</em><em>, </em><em>optional</em>) – attach state and wheel recorders. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(simulation,</span> <span class="pre">outputs,</span> <span class="pre">handles)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.buildMujoco">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">buildMujoco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recordDt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#buildMujoco"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.buildMujoco" title="Link to this definition"></a></dt>
+<dd><p>Build the MuJoCo orbiting multi-body simulation without propagating it.</p>
+<p>Gravity is supplied by <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/NBodyGravity/NBodyGravity.html#nbodygravity"><span class="std std-ref">C++ Module: NBodyGravity</span></a>, which evaluates the field at each body’s
+own position. For the compact Part A body every massive part is at the hub origin, so
+this reduces to a single-point field matching BSM; for the extended Part B body the
+offset panels see a slightly different field, producing the gravity-gradient
+difference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>withPanels</strong> (<em>bool</em>) – include the offset flexible panels (Part B) or not (Part A).</p></li>
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – integrator time step [s]</p></li>
+<li><p><strong>tf</strong> (<em>float</em>) – final simulation time [s]</p></li>
+<li><p><strong>recordDt</strong> (<em>float</em>) – recorder sampling period [s]</p></li>
+<li><p><strong>record</strong> (<em>bool</em><em>, </em><em>optional</em>) – attach hub, center-of-mass, and wheel recorders.
+Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(simulation,</span> <span class="pre">outputs,</span> <span class="pre">handles)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.gravityGradientRateEstimate">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">gravityGradientRateEstimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oe0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#gravityGradientRateEstimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.gravityGradientRateEstimate" title="Link to this definition"></a></dt>
+<dd><p>Angular-acceleration scale for the modeled differential point gravity.</p>
+<p>The numerator uses only the inertia contribution from the separation of the lumped
+body centers, because the gravity module applies one point force at each body center.
+The denominator includes the full initial system inertia about its center of mass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+<li><p><strong>oe0</strong> (<em>ClassicElements</em>) – initial classical orbital elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>angular-acceleration scale [rad/s^2].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.hubInertiaBSM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">hubInertiaBSM</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#hubInertiaBSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.hubInertiaBSM" title="Link to this definition"></a></dt>
+<dd><p>BSM hub inertia: bare hub plus the three folded-in wheel tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>3x3 hub inertia tensor [kg*m^2].</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.initialBodyMassDistribution">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">initialBodyMassDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#initialBodyMassDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.initialBodyMassDistribution" title="Link to this definition"></a></dt>
+<dd><p>Return the initial body masses, center locations, and total center of mass.</p>
+<p>Locations are expressed in the hub frame. The wheel centers coincide with the hub
+center, while the panel centers follow the common BSM/MJCF hinge convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>withPanels</strong> (<em>bool</em>) – include the two hinged panels.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(masses,</span> <span class="pre">centers,</span> <span class="pre">systemCoM)</span></code> in kg and m.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.initialMujocoRootState">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">initialMujocoRootState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rCN_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vCN_N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#initialMujocoRootState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.initialMujocoRootState" title="Link to this definition"></a></dt>
+<dd><p>Convert a desired total-CoM state into the MuJoCo hub-origin state.</p>
+<p>The initial attitude is identity and the hinge rates are zero, so the system CoM
+velocity relative to the hub is <code class="docutils literal notranslate"><span class="pre">omega_BN_B</span> <span class="pre">x</span> <span class="pre">c_B</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.initialOrbitState">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">initialOrbitState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#initialOrbitState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.initialOrbitState" title="Link to this definition"></a></dt>
+<dd><p>Return the initial inertial position and velocity and the classical elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(rN,</span> <span class="pre">vN,</span> <span class="pre">oe)</span></code> with position [m], velocity [m/s], and the
+<code class="docutils literal notranslate"><span class="pre">ClassicElements</span></code> used to generate them.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.keplerTruth">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">keplerTruth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oe0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#keplerTruth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.keplerTruth" title="Link to this definition"></a></dt>
+<dd><p>Analytic two-body position history of the system center of mass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>float</em>) – gravitational parameter [m^3/s^2]</p></li>
+<li><p><strong>oe0</strong> (<em>ClassicElements</em>) – initial classical orbital elements</p></li>
+<li><p><strong>times</strong> (<em>numpy.ndarray</em>) – sample times [s]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>inertial position history, shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code> [m].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.mujocoModel">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">mujocoModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#mujocoModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.mujocoModel" title="Link to this definition"></a></dt>
+<dd><p>Return the MJCF model: hub and three reaction wheels, optionally two hinged panels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>withPanels</strong> (<em>bool</em>) – if True, attach the two offset flexible panels (Part B);
+if False, the compact hub-and-wheels body (Part A).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the MJCF XML string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.panelRootDcm">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">panelRootDcm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hingeX</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#panelRootDcm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.panelRootDcm" title="Link to this definition"></a></dt>
+<dd><p>Return the root-frame DCM that makes both panels extend away from the hub.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.plotResults">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">plotResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regimes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ggRate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#plotResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.plotResults" title="Link to this definition"></a></dt>
+<dd><p>Build the scenario figures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regimes</strong> (<em>dict</em>) – per-regime result arrays from <a class="reference internal" href="#scenarioCompareOrbitMultibody.run" title="scenarioCompareOrbitMultibody.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a>.</p></li>
+<li><p><strong>ggRate</strong> (<em>float</em>) – gravity-gradient angular-acceleration scale [rad/s^2].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapping from figure name to matplotlib figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.relativePrincipalAngle">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">relativePrincipalAngle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigmaBSM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigmaMujoco</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#relativePrincipalAngle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.relativePrincipalAngle" title="Link to this definition"></a></dt>
+<dd><p>Per-sample principal rotation angle between two MRP attitude histories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sigmaBSM</strong> (<em>numpy.ndarray</em>) – BSM MRP history, shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code></p></li>
+<li><p><strong>sigmaMujoco</strong> (<em>numpy.ndarray</em>) – MuJoCo MRP history, shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">3)</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>principal angle per sample [rad].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.run">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">showPlots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveJson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveTiming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resultsDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.run" title="Link to this definition"></a></dt>
+<dd><p>Main function, see scenario description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>showPlots</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, plot and show the simulation results.
+Defaults to False.</p></li>
+<li><p><strong>saveJson</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, write the comparison metrics to
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareOrbitMultibody.json</span></code>. Defaults to False.</p></li>
+<li><p><strong>saveTiming</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, measure the BSM-vs-MJScene wall-clock
+cost of both regimes and write
+<code class="docutils literal notranslate"><span class="pre">results/scenarioCompareOrbitMultibody_runtime.csv</span></code>. Defaults to False.</p></li>
+<li><p><strong>resultsDir</strong> (<em>str</em><em>, </em><em>optional</em>) – explicit artifact directory. Defaults to
+the scenario <code class="docutils literal notranslate"><span class="pre">results</span></code> folder.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapping from figure name to matplotlib figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.runBSM">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">runBSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recordDt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#runBSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.runBSM" title="Link to this definition"></a></dt>
+<dd><p>Propagate the orbiting multi-body with the back-substitution <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.runMujoco">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">runMujoco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withPanels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recordDt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#runMujoco"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.runMujoco" title="Link to this definition"></a></dt>
+<dd><p>Propagate the orbiting multi-body with the <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenarioCompareOrbitMultibody.writeJsonSummary">
+<span class="sig-prename descclassname"><span class="pre">scenarioCompareOrbitMultibody.</span></span><span class="sig-name descname"><span class="pre">writeJsonSummary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regimes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ggRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetResults</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/scenarioCompareOrbitMultibody.html#writeJsonSummary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scenarioCompareOrbitMultibody.writeJsonSummary" title="Link to this definition"></a></dt>
+<dd><p>Write a JSON summary of the comparison metrics to the <code class="docutils literal notranslate"><span class="pre">results</span></code> folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regimes</strong> (<em>dict</em>) – per-regime result arrays from <a class="reference internal" href="#scenarioCompareOrbitMultibody.run" title="scenarioCompareOrbitMultibody.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a>.</p></li>
+<li><p><strong>ggRate</strong> (<em>float</em>) – gravity-gradient angular-acceleration scale [rad/s^2].</p></li>
+<li><p><strong>targetResults</strong> (<em>str</em>) – directory for the JSON artifact</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scenarioCompareFlexPanels.html" class="btn btn-neutral float-left" title="scenarioCompareFlexPanels" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioCompareVariableMass.html" class="btn btn-neutral float-right" title="scenarioCompareVariableMass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
