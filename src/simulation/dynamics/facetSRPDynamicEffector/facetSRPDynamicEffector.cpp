@@ -31,11 +31,33 @@ const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
  @param currentSimNanos [ns] Time the method is called
 */
 void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
+    this->validateConfiguration();
+
+    // Default to full sunlight if no eclipse message is connected
+    this->sunVisibilityFactor.illuminationFactor = 1.0;
+}
+
+/*! This method runs every configuration check from each initialization path, since Reset() runs
+ only when the effector is also added to a task */
+void FacetSRPDynamicEffector::validateConfiguration() {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("FacetSRPDynamicEffector.sunInMsg was not linked.");
     }
-    // Default to full sunlight if no eclipse message is connected
-    this->sunVisibilityFactor.illuminationFactor = 1.0;
+
+    // the force loop walks every geometry list by numFacets
+    if (this->numFacets != this->scGeometry.facetAreaList.size()) {
+        bskLogger.bskError("FacetSRPDynamicEffector: the facet count set by setNumFacets does not "
+                           "match the number of facets added by addFacet.");
+    }
+    if (this->numArticulatedFacets > this->numFacets) {
+        bskLogger.bskError("FacetSRPDynamicEffector: more articulated facets are declared than "
+                           "there are facets.");
+    }
+    if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
+        bskLogger.bskError("FacetSRPDynamicEffector: the articulated facet count set by "
+                           "setNumArticulatedFacets does not match the number of articulation "
+                           "messages added by addArticulatedFacet.");
+    }
 }
 
 /*! This method populates the spacecraft facet geometry structure with user-input facet information.
@@ -75,6 +97,11 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
     this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
 }
 
+/*! This is the constructor, marking the effector as attachable to a state effector */
+FacetSRPDynamicEffector::FacetSRPDynamicEffector() {
+    this->isAttachableToStateEffector = true;
+}
+
 /*! This method gives the module access to the hub inertial attitude and position.
 
  @param states Dynamic parameter states
@@ -82,6 +109,17 @@ void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayl
 void FacetSRPDynamicEffector::linkInStates(DynParamManager& states) {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubPosition = states.getStateObject(this->stateNameOfPosition);
+    this->validateConfiguration();
+}
+
+/*! This method gives the module access to its parent state effector's inertial properties.
+
+ @param properties Dynamic parameter properties
+*/
+void FacetSRPDynamicEffector::linkInProperties(DynParamManager& properties) {
+    this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
+    this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
+    this->validateConfiguration();
 }
 
 /*! This method reads the Sun state input message. If time-varying facet articulations are considered,
@@ -104,21 +142,16 @@ void FacetSRPDynamicEffector::ReadMessages() {
     }
 
     // Read the facet articulation angle data
-    if (this->articulatedFacetDataInMsgs.size() == this->numArticulatedFacets) {
-        HingedRigidBodyMsgPayload facetAngleMsg;
-        this->facetArticulationAngleList.clear();
-        for (uint64_t i = 0; i < this->numArticulatedFacets; i++) {
-            if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
-                    facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
-                    this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
-                    this->facetAngleMsgRead = true;
-                } else {
-                this->facetAngleMsgRead = false;
-            }
+    HingedRigidBodyMsgPayload facetAngleMsg;
+    this->facetArticulationAngleList.clear();
+    for (uint64_t i = 0; i < this->numArticulatedFacets; i++) {
+        if (this->articulatedFacetDataInMsgs[i].isLinked() && this->articulatedFacetDataInMsgs[i].isWritten()) {
+            facetAngleMsg = this->articulatedFacetDataInMsgs[i]();
+            this->facetArticulationAngleList.push_back(facetAngleMsg.theta);
         }
-    } else {
-        bskLogger.bskError("NUMBER OF ARTICULATED FACETS DOES NOT MATCH COUNTED VALUE.");
     }
+    // a partial read would shift the angles off their facets
+    this->facetAngleMsgRead = (this->facetArticulationAngleList.size() == this->numArticulatedFacets);
 }
 
 /*! This method computes the srp force and torque acting about the hub point B in B frame components.
@@ -130,12 +163,17 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
     // Read the input messages
     ReadMessages();
 
-    // Compute dcm_BN
-    Eigen::MRPd sigma_BN(this->hubSigma->getState().data());
+    // the hub state names are assigned only when attached to the hub
+    Eigen::MRPd sigma_BN;
+    Eigen::Vector3d r_BN_N;
+    if (!this->stateNameOfSigma.empty()) {
+        sigma_BN = Eigen::MRPd(this->hubSigma->getState().data());
+        r_BN_N = this->hubPosition->getState();
+    } else {
+        sigma_BN = Eigen::MRPd(this->inertialAttitudeProperty->data());
+        r_BN_N = *this->inertialPositionProperty;
+    }
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
-
-    // Grab the current spacecraft inertial position
-    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
 
     // Calculate the Sun unit direction vector relative to point B in B frame components
     Eigen::Vector3d r_SB_B = dcm_BN * (this->r_SN_N - r_BN_N);

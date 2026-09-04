@@ -1,0 +1,6 @@
+- Added support for :ref:`facetSRPDynamicEffector` to be attached to a branching state effector.
+- :ref:`facetSRPDynamicEffector` now rejects a facet count that does not match the facets added.
+- Fixed :ref:`facetSRPDynamicEffector` applying one facet's articulation angle to another when only some articulation messages had been written.
+- Fixed :ref:`simIncludeThruster` defaulting ``addToSpacecraftSubcomponent()`` to a segment that every parent effector rejects.
+- Documented the branching setup in each effector that supports it, which previously appeared only on the dynamic effector side.
+- Reorganized the effector branching compatibility table in :ref:`bskPrinciples-11` into lists of supported parents, supported children, and effectors not supported for branching.

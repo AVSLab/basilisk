@@ -113,3 +113,16 @@ This section is to outline the steps needed to setup a Translating Body State Ef
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, translatingBody)
+
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by the translating body rather than by the hub::
+
+    translatingBody.addDynamicEffector(childEffector)
+
+The child then reads this effector's inertial position, velocity, attitude, and angular velocity
+in place of the hub's, and any geometry given to the child is expressed in that translating body's frame
+rather than the hub body frame. Both this effector and the child are still added to the task in
+the usual way.

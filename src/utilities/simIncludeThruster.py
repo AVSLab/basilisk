@@ -236,7 +236,7 @@ class thrusterFactory(object):
 
         return
 
-    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=0, r_PcP_P=None):
+    def addToSpacecraftSubcomponent(self, modelTag, thEffector, baseEffector, segment=1, r_PcP_P=None):
         """
             This function is for adding a thruster cluster to intermediate bodies
 
@@ -246,9 +246,15 @@ class thrusterFactory(object):
                 module model tag string
             thEffector: thrusterEffector
                 thruster effector handle
-            baseEffector: intermediate body to be attached to, see table for compatibility guide
-            segment: if subcomponent is multi-body, designate which integer segment
-            default segment to base segment
+            baseEffector: stateEffector
+                intermediate body to be attached to, see :ref:`bskPrinciples-11` for the state
+                effectors that can host one
+            segment: int
+                one-based segment of a multi-body base effector, counting outward from the hub and
+                defaulting to the segment attached to the hub
+            r_PcP_P: list
+                [m] parent body center of mass relative to the parent body frame origin, in parent
+                frame components, left unset when the two points coincide
         """
 
         thEffector.ModelTag = modelTag

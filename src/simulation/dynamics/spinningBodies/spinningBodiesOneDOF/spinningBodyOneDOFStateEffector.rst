@@ -111,3 +111,16 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by the spinning body rather than by the hub::
+
+    spinningBody.addDynamicEffector(childEffector)
+
+The child then reads this effector's inertial position, velocity, attitude, and angular velocity
+in place of the hub's, and any geometry given to the child is expressed in that spinning body's frame
+rather than the hub body frame. Both this effector and the child are still added to the task in
+the usual way.

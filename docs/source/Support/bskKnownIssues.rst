@@ -18,6 +18,16 @@ Version |release| (July 7, 2026)
   panels, but the module accepted a per-panel mass and hinge to center of mass distance and
   integrated silently wrong dynamics when either varied along the chain. Initialization now rejects
   such a chain.
+- The :ref:`facetSRPDynamicEffector` indexed its articulation angles by facet while building the
+  list only from messages that had been written, so an incomplete read applied one facet's angle to
+  another. The facets now articulate only once every articulation message has been written.
+- The :ref:`facetSRPDynamicEffector` walked its facet geometry lists by the count given to
+  ``setNumFacets()`` rather than by the number of facets actually added, so a larger count read past
+  the end of every list and a smaller one silently dropped facets. Initialization now rejects a
+  mismatch.
+- :ref:`simIncludeThruster` defaulted the ``segment`` argument of ``addToSpacecraftSubcomponent()``
+  to 0, but attachment segments are numbered from 1, so every parent effector rejected the call
+  unless a segment was named. The default is now the segment attached to the hub.
 - The :ref:`linearTranslationNDOFStateEffector` and the :ref:`spinningBodyNDOFStateEffector` allocated
   a state and a configuration log output message for every body added to the chain and freed neither,
   so each effector leaked both for the life of the process. This is fixed in the current version.
