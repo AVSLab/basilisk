@@ -1,0 +1,88 @@
+name: Collect Usage Metrics
+
+on:
+  schedule:
+    # Run daily after the public PyPI datasets normally finish updating.
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: usage-metrics
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: Collect PyPI and GitHub metrics
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10  # [min]
+    env:
+      METRICS_BRANCH: usage-metrics
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Test collector
+        run: >-
+          python -m unittest discover
+          -s .github/scripts/tests
+          -p 'test_collect_usage_metrics.py'
+
+      - name: Restore existing history
+        shell: bash
+        run: |
+          set -euo pipefail
+          metrics_directory="${RUNNER_TEMP}/usage-metrics-data"
+          mkdir -p "${metrics_directory}"
+          if git fetch origin "${METRICS_BRANCH}:refs/remotes/origin/${METRICS_BRANCH}"; then
+            if git cat-file -e "origin/${METRICS_BRANCH}:metrics.csv"; then
+              git show "origin/${METRICS_BRANCH}:metrics.csv" > "${metrics_directory}/metrics.csv"
+            fi
+          fi
+
+      - name: Collect metrics
+        env:
+          BSK_TRAFFIC_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+        run: >-
+          python .github/scripts/collect_usage_metrics.py
+          --output-dir "${RUNNER_TEMP}/usage-metrics-data"
+          --package bsk
+          --repository "${GITHUB_REPOSITORY}"
+
+      - name: Publish durable history
+        shell: bash
+        run: |
+          set -euo pipefail
+          metrics_directory="${RUNNER_TEMP}/usage-metrics-data"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git show-ref --verify --quiet "refs/remotes/origin/${METRICS_BRANCH}"; then
+            git switch --force-create "${METRICS_BRANCH}" "origin/${METRICS_BRANCH}"
+          else
+            git switch --orphan "${METRICS_BRANCH}"
+          fi
+
+          install -m 0644 "${metrics_directory}/metrics.csv" metrics.csv
+          install -m 0644 "${metrics_directory}/summary.json" summary.json
+          install -m 0644 "${metrics_directory}/README.md" README.md
+          install -m 0644 "${metrics_directory}/usage.svg" usage.svg
+          touch .nojekyll
+          git add -- .nojekyll README.md metrics.csv summary.json usage.svg
+
+          if git diff --cached --quiet; then
+            echo "Usage metrics did not change."
+            exit 0
+          fi
+
+          git commit -m "Update usage metrics"
+          git push origin "HEAD:${METRICS_BRANCH}"
