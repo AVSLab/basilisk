@@ -79,6 +79,8 @@ public:
     BSKLogger bskLogger;                                        //!< BSK Logging
 
 private:
+    void initializeWheelConfiguration(RWConfigPayload& rw);
+
     ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};          //!< One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< Time for previous valid thruster firing
 

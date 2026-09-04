@@ -61,7 +61,23 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& states)
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 }
 
-/*! @brief Register the effector dynamics states.
+/*! @brief Initialize model-dependent derived reaction-wheel configuration values.
+ *
+ * @param[in,out] rw Reaction-wheel configuration to initialize.
+ */
+void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& rw)
+{
+    if (rw.RWModel == JitterFullyCoupled) {
+        rw.d = rw.U_s / rw.mass;
+        rw.J13 = rw.U_d;
+    }
+}
+
+/*! @brief Initialize the wheel configuration and register the effector dynamics states.
+ *
+ * For fully coupled jitter wheels, this method derives the center-of-mass offset and off-diagonal inertia from the
+ * configured static and dynamic imbalance parameters. It then registers and initializes the wheel-speed states and,
+ * when required, the wheel-angle states.
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
@@ -75,7 +91,8 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
-        const auto& rw = *ReactionWheelData[i];
+        auto& rw = *ReactionWheelData[i];
+        this->initializeWheelConfiguration(rw);
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
@@ -408,7 +425,10 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
 }
 
 
-/*! Reset the module to its original configuration values.
+/*! Reset the reaction-wheel command and output buffers.
+ *
+ * This method refreshes model-dependent derived wheel configuration values, initializes the command entry for each
+ * configured wheel, reports a zero Stribeck coefficient, and clears the wheel-speed output buffer.
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
@@ -425,14 +445,10 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]]
         this->NewRWCmds.push_back(RWCmdInitializer);
 
         auto & rw = *rwPtr;
+        this->initializeWheelConfiguration(rw);
         if (rw.betaStatic == 0.0)
         {
             bskLogger.bskLog(BSK_WARNING, "Stribeck coefficient currently zero and should be positive to activate this friction model, or negative to turn it off!");
-        }
-        //! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
-        if (rw.RWModel == JitterFullyCoupled) {
-            rw.d = rw.U_s/rw.mass; //!< determine CoM offset from static imbalance parameter
-            rw.J13 = rw.U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
         }
     }
 
