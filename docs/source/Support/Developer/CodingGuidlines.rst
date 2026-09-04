@@ -218,7 +218,13 @@ C/C++ Exceptions
 Python Exceptions
 -----------------
 
--  Variables are to be lower camelCase. This is done to maintain consistency across the C/C++ and Python code bases which are interfaced via SWIG.
+-  General-purpose Python implementation and tooling names are to follow
+   PEP 8. This includes using ``under_scored`` names for functions, methods,
+   local variables, and parameters.
+-  Public BSK module attributes, message variables, mathematical quantities,
+   and names shared across C/C++ and Python interfaces are to retain the
+   established Basilisk naming conventions. This includes lower ``camelCase``
+   where applicable and the frame and attitude notation described above.
 -  Inline comments are accepted so long as they are kept brief.
 -  Binary operator spaces will be adhered to as specified in PEP 8, however, not for math symbols operations. E.g. no spaces are included around \*, /, +, -, etc
 
