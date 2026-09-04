@@ -27,14 +27,14 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 
-/*! back substitution matrix structure*/
+/*! Backsubstitution matrix structure*/
 struct BackSubMatrices {
-    Eigen::Matrix3d matrixA;             //!< Back-Substitution matrix A
-    Eigen::Matrix3d matrixB;             //!< Back-Substitution matrix B
-    Eigen::Matrix3d matrixC;             //!< Back-Substitution matrix C
-    Eigen::Matrix3d matrixD;             //!< Back-Substitution matrix D
-    Eigen::Vector3d vecTrans;            //!< Back-Substitution translation vector
-    Eigen::Vector3d vecRot;              //!< Back-Substitution rotation vector
+    Eigen::Matrix3d matrixA;             //!< Backsubstitution matrix A
+    Eigen::Matrix3d matrixB;             //!< Backsubstitution matrix B
+    Eigen::Matrix3d matrixC;             //!< Backsubstitution matrix C
+    Eigen::Matrix3d matrixD;             //!< Backsubstitution matrix D
+    Eigen::Vector3d vecTrans;            //!< Backsubstitution translation vector
+    Eigen::Vector3d vecRot;              //!< Backsubstitution rotation vector
 };
 
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that

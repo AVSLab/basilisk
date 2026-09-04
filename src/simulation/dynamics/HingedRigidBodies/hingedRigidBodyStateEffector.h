@@ -75,10 +75,10 @@ private:
         effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
     };
 
-    // Terms needed for back substitution
-    Eigen::Vector3d aTheta;         //!< term needed for back substitution
-    Eigen::Vector3d bTheta;         //!< term needed for back substitution
-    double cTheta;                  //!< term needed for back substitution
+    // Terms needed for Backsubstitution
+    Eigen::Vector3d aTheta;         //!< term needed for Backsubstitution
+    Eigen::Vector3d bTheta;         //!< term needed for Backsubstitution
+    double cTheta;                  //!< term needed for Backsubstitution
 
     // Vector quantities
     Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from primary body frame P origin to Hinge location.  If a single spacecraft body is modeled than P is the same as B

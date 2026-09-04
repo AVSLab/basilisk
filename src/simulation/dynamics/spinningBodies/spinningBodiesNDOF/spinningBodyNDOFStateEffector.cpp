@@ -418,10 +418,10 @@ void SpinningBodyNDOFStateEffector::computeInertiaProperties(std::shared_ptr<Spi
     spinningBody->IPrimeSPntSc_B = spinningBody->omegaTilde_SB_B * spinningBody->ISPntSc_B - spinningBody->ISPntSc_B * spinningBody->omegaTilde_SB_B;
 }
 
-/*! @brief Update the effector back-substitution contributions.
+/*! @brief Update the effector Backsubstitution contributions.
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
@@ -474,7 +474,7 @@ void SpinningBodyNDOFStateEffector::updateContributions(double integTime,
 
 /*! @brief Compute loads from attached dynamic effectors.
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  * @param[in] integTime [s] Current integration time.
  */
 void SpinningBodyNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
@@ -533,9 +533,9 @@ void SpinningBodyNDOFStateEffector::computeMTheta(Eigen::MatrixXd& MTheta)
     }
 }
 
-/*! @brief Compute the A-theta-star back-substitution matrix.
+/*! @brief Compute the A-theta-star Backsubstitution matrix.
  *
- * @param[out] AThetaStar A-theta-star back-substitution matrix.
+ * @param[out] AThetaStar A-theta-star Backsubstitution matrix.
  */
 void
 SpinningBodyNDOFStateEffector::computeAThetaStar(Eigen::MatrixX3d& AThetaStar)
@@ -555,9 +555,9 @@ SpinningBodyNDOFStateEffector::computeAThetaStar(Eigen::MatrixX3d& AThetaStar)
     }
 }
 
-/*! @brief Compute the B-theta-star back-substitution matrix.
+/*! @brief Compute the B-theta-star Backsubstitution matrix.
  *
- * @param[out] BThetaStar B-theta-star back-substitution matrix.
+ * @param[out] BThetaStar B-theta-star Backsubstitution matrix.
  */
 void
 SpinningBodyNDOFStateEffector::computeBThetaStar(Eigen::MatrixX3d& BThetaStar)
@@ -580,9 +580,9 @@ SpinningBodyNDOFStateEffector::computeBThetaStar(Eigen::MatrixX3d& BThetaStar)
     }
 }
 
-/*! @brief Compute the C-theta-star back-substitution vector.
+/*! @brief Compute the C-theta-star Backsubstitution vector.
  *
- * @param[out] CThetaStar C-theta-star back-substitution vector.
+ * @param[out] CThetaStar C-theta-star Backsubstitution vector.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
 void SpinningBodyNDOFStateEffector::computeCThetaStar(Eigen::VectorXd& CThetaStar,
@@ -639,9 +639,9 @@ void SpinningBodyNDOFStateEffector::computeCThetaStar(Eigen::VectorXd& CThetaSta
     }
 }
 
-/*! @brief Compute the back-substitution matrices.
+/*! @brief Compute the Backsubstitution matrices.
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  */
 void SpinningBodyNDOFStateEffector::computeBackSubMatrices(BackSubMatrices& backSubContr) const
 {
@@ -664,9 +664,9 @@ void SpinningBodyNDOFStateEffector::computeBackSubMatrices(BackSubMatrices& back
     }
 }
 
-/*! @brief Compute the back-substitution vectors.
+/*! @brief Compute the Backsubstitution vectors.
  *
- * @param[in,out] backSubContr Back-substitution contributions.
+ * @param[in,out] backSubContr Backsubstitution contributions.
  */
 void SpinningBodyNDOFStateEffector::computeBackSubVectors(BackSubMatrices &backSubContr) const
 {

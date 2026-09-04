@@ -194,7 +194,7 @@ def test_effectorBranchingIntegratedTest(show_plots, stateEffector, isParent, dy
     :math:`{}^{\mathcal{P}_j}\mathbf{r}_{Pc_j/P_j}` come from the state effector module.
 
     Neither of those checks can see an error inside the parent's own equations of motion. The
-    parent's back-substitution stays internally consistent even when one of its terms is wrong, so
+    parent's Backsubstitution stays internally consistent even when one of its terms is wrong, so
     the momentum it hands the hub still matches the momentum its own coordinates lose. Energy is
     not blind in the same way: a wrong generalized force does work that the applied load does not
     account for. All state effector dampers are therefore set to zero, and the change in the

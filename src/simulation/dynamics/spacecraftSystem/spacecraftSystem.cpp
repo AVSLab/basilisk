@@ -677,7 +677,7 @@ void SpacecraftSystem::equationsOfMotionSC(double integTimeSeconds, double timeS
         spacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
-    // - Loop through state effectors to get contributions for back-substitution
+    // - Loop through state effectors to get contributions for Backsubstitution
     std::vector<StateEffector*>::iterator it;
     for(it = spacecraft.states.begin(); it != spacecraft.states.end(); it++)
     {
@@ -804,7 +804,7 @@ void SpacecraftSystem::equationsOfMotionSystem(double integTimeSeconds, double t
         }
     }
 
-    // - Loop through state effectors to get contributions for back-substitution
+    // - Loop through state effectors to get contributions for Backsubstitution
     std::vector<StateEffector*>::iterator it;
     for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
     {

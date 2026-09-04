@@ -233,7 +233,7 @@ def initialOrbitState(mu):
 
 def buildBSM(mu, dt, tf, recordDt, withGravity=True, record=True,
              torque_B=TORQUE_B, omega0_B=OMEGA0_B):
-    """Build the back-substitution torque simulation without propagating it.
+    """Build the Backsubstitution torque simulation without propagating it.
 
     Args:
         mu (float): gravitational parameter [m^3/s^2]
@@ -301,7 +301,7 @@ def buildBSM(mu, dt, tf, recordDt, withGravity=True, record=True,
 
 def runBSM(mu, dt, tf, recordDt, withGravity=True,
            torque_B=TORQUE_B, omega0_B=OMEGA0_B):
-    """Propagate the torqued body with the back-substitution :ref:`spacecraft`."""
+    """Propagate the torqued body with the Backsubstitution :ref:`spacecraft`."""
     scSim, recorder, handles = buildBSM(
         mu, dt, tf, recordDt, withGravity, torque_B=torque_B, omega0_B=omega0_B)
     scSim.ExecuteSimulation()

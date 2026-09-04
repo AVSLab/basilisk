@@ -112,11 +112,11 @@ private:
     StateData* thetaState;           //!< state manager of theta for hinged rigid body
     StateData* thetaDotState;        //!< state manager of thetaDot for hinged rigid body
     std::vector<HingedPanel> PanelVec; //!< vector containing all the info on the different panels
-    Eigen::MatrixXd matrixADHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixEDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixX3d matrixFDHRB;   //!< [-] term needed for back substitution
-    Eigen::MatrixX3d matrixGDHRB;   //!< [-] term needed for back substitution
-    Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixADHRB;    //!< [-] term needed for Backsubstitution
+    Eigen::MatrixXd matrixEDHRB;    //!< [-] term needed for Backsubstitution
+    Eigen::MatrixX3d matrixFDHRB;   //!< [-] term needed for Backsubstitution
+    Eigen::MatrixX3d matrixGDHRB;   //!< [-] term needed for Backsubstitution
+    Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for Backsubstitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};       //!< Hub attitude relative to the inertial frame
     StateData* hubSigmaState = nullptr;        //!< hub attitude state, read live for the published kinematics

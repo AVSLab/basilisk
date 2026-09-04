@@ -322,7 +322,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
  method
 
  @param integTime [s] Time the method is called
- @param backSubContr State effector contribution matrices for back-substitution
+ @param backSubContr State effector contribution matrices for Backsubstitution
  @param sigma_BN Current B frame attitude with respect to the inertial frame
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components

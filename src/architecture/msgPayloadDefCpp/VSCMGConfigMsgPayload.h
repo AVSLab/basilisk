@@ -101,19 +101,19 @@ VSCMGConfigMsgPayload
 	Eigen::Matrix3d rPrimeTildeGcB_B;   //!< [m/s] tilde matrix of body frame time derivative of rGcB_B
 	Eigen::Matrix3d rPrimeTildeWcB_B;   //!< [m/s] tilde matrix of body frame time derivative of rWcB_B
 
-	Eigen::Vector3d aOmega; //!< [1/m] parameter used in coupled jitter back substitution
-	Eigen::Vector3d bOmega; //!< [-] parameter used in coupled jitter back substitution
-	double cOmega;          //!< [-] parameter used in coupled jitter back substitution
-	double dOmega;          //!< [rad/s^2] parameter used in coupled jitter back substitution
-	double eOmega;          //!< [kg-m^2] parameter used in coupled jitter back substitution
-	Eigen::Vector3d agamma; //!< [1/m] parameter used in coupled jitter back substitution
-	Eigen::Vector3d bgamma; //!< [-] parameter used in coupled jitter back substitution
-	double cgamma;          //!< [-] parameter used in coupled jitter back substitution
-	double dgamma;          //!< [rad/s^2] parameter used in coupled jitter back substitution
-	double egamma;          //!< [kg-m^2] parameter used in coupled jitter back substitution
-	Eigen::Vector3d p;      //!< [1/m] parameter used in coupled jitter back substitution
-	Eigen::Vector3d q;      //!< [-] parameter used in coupled jitter back substitution
-	double s;               //!< [rad/s^2] parameter used in coupled jitter back substitution
+	Eigen::Vector3d aOmega; //!< [1/m] parameter used in coupled jitter Backsubstitution
+	Eigen::Vector3d bOmega; //!< [-] parameter used in coupled jitter Backsubstitution
+	double cOmega;          //!< [-] parameter used in coupled jitter Backsubstitution
+	double dOmega;          //!< [rad/s^2] parameter used in coupled jitter Backsubstitution
+	double eOmega;          //!< [kg-m^2] parameter used in coupled jitter Backsubstitution
+	Eigen::Vector3d agamma; //!< [1/m] parameter used in coupled jitter Backsubstitution
+	Eigen::Vector3d bgamma; //!< [-] parameter used in coupled jitter Backsubstitution
+	double cgamma;          //!< [-] parameter used in coupled jitter Backsubstitution
+	double dgamma;          //!< [rad/s^2] parameter used in coupled jitter Backsubstitution
+	double egamma;          //!< [kg-m^2] parameter used in coupled jitter Backsubstitution
+	Eigen::Vector3d p;      //!< [1/m] parameter used in coupled jitter Backsubstitution
+	Eigen::Vector3d q;      //!< [-] parameter used in coupled jitter Backsubstitution
+	double s;               //!< [rad/s^2] parameter used in coupled jitter Backsubstitution
 
 	double gravityTorqueWheel_s;    //!< [N-m] gravitational torque on the wheel about wheel spin axis
 	double gravityTorqueGimbal_g;   //!< [N-m] gravitational torque on the gimbal about gimbal third axis
