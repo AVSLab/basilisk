@@ -14,6 +14,30 @@ This parallel coupling assumption can be relaxed to allow select configurations 
 attached in series to each other as opposed to being attached directly to the hub. See
 :ref:`bskPrinciples-11` for a description on using this added functionality.
 
+Effector Initialization and Configuration Validation
+----------------------------------------------------
+
+Attaching an effector to a spacecraft does not automatically add that effector to a simulation task. The scheduler
+calls an effector's ``Reset()`` method only when the effector is explicitly added to a task with
+``AddModelToTask()``. Consequently, configuration work required by the equations of motion must not rely exclusively
+on ``Reset()``. An attached-only effector still participates in the spacecraft dynamics and must be fully initialized
+and validated before those dynamics are evaluated.
+
+Place shared configuration validation, normalization, and initialization of derived dynamics parameters in a
+dedicated helper method. Call that helper from ``Reset()`` to preserve the normal scheduled-module behavior and from
+each applicable attachment path:
+
+- A state effector should call the helper from ``registerStates()``.
+- A dynamic effector attached directly to a spacecraft should call the helper from ``linkInStates()``.
+- A dynamic effector that supports attachment to another state effector should also call the helper from
+  ``linkInProperties()``.
+
+The helper must be safe to call more than once because an effector can be both attached to a spacecraft and scheduled
+as a task model. Keep operations that are strictly part of the scheduled-module lifecycle, such as clearing a command
+or output buffer, in ``Reset()`` when they are not required by the spacecraft dynamics. Unit tests should exercise the
+attached-only configuration by omitting ``AddModelToTask()`` for the effector and confirming that invalid inputs are
+rejected or that required derived parameters are initialized during spacecraft initialization.
+
 State Effector Augmentation
 ---------------------------
 For a state effector, three changes must be made.
