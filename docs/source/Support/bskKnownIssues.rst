@@ -10,6 +10,20 @@ Basilisk Known Issues
 
 Version |release| (July 7, 2026)
 --------------------------------
+- Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
+  configuration overrides, and regenerate a project's XML after an interrupted cache update.
+  Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen
+  configuration bypasses XML cache reuse to prevent stale output. XML caches now follow the
+  selected build directory so cleaning an alternate ``BUILDDIR`` removes its cache as well.
+  Relative Doxygen input settings are resolved from ``docs/source``, not the temporary cache
+  directory, preventing missing includes, tag files, or input filters during generation.
+  Headers found through that working directory and their transitive includes are tracked for
+  cache invalidation, including when those headers are added or removed.
+  Configuration option order is preserved for included settings and overrides. File-inclusion
+  documentation commands bypass reuse, including in aliases and with preprocessing disabled.
+  Projects using ``CITE_BIB_FILES`` also bypass reuse so bibliography edits cannot leave stale citations.
+  Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
+  pages after header edits. Older saved Sphinx environments are reread once to restore those records.
 - GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
