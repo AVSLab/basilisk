@@ -279,7 +279,8 @@ html_theme_options = {
     'style_nav_header_background': '#CFB87C',
     # Toc options
     'collapse_navigation': True,
-    'sticky_navigation': True,
+    # Scroll the sidebar independently of the main document.
+    'sticky_navigation': False,
     'navigation_depth': 4,
     'includehidden': True,
     'titles_only': False
@@ -287,6 +288,10 @@ html_theme_options = {
 
 html_css_files = [
     'css/custom.css',
+]
+
+html_js_files = [
+    'js/sidebar.js',
 ]
 
 html_logo = "./_images/static/Basilisk-Logo.png"
