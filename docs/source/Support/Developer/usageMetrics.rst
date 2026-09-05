@@ -17,6 +17,12 @@ branch, so readers see the latest published data without waiting for another
 documentation build. The plotted lines show seven-day trailing means; exact
 daily values remain available in ``metrics.csv``.
 
+A plotted mean requires seven consecutive observed UTC dates. Explicit zero
+counts are included, but missing dates are unknown and break the series until
+another complete window is available. In particular, ClickPy's lack of records
+for a date does not establish zero downloads: it may reflect an ingestion gap.
+The latest reported day's count may still be partial.
+
 .. image:: https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/usage.svg
    :alt: Daily Basilisk PyPI download and GitHub clone activity
    :width: 100%
@@ -34,7 +40,8 @@ The branch contains the following generated files:
 
 ``summary.json``
     Machine-readable current totals, source coverage dates, and the latest
-    GitHub clone window.
+    successfully retrieved GitHub clone window. Schema version 2 also records
+    each source's status, last attempt, last successful collection, and error.
 
 ``README.md``
     A human-readable summary and the interpretation caveats for each metric.
@@ -48,6 +55,42 @@ PyPI history is read from the public PyPI data replicated by
 ``bandersnatch``, ``z3c.pypimirror``, ``Artifactory``, and ``devpi``, matching
 the `PyPI Stats known-mirror list <https://pypistats.org/faqs>`__. The separate
 ``pip`` count selects records whose installer is identified as ``pip``.
+
+Both PyPI counts exclude records with a known filename that does not end in
+``.whl``, ``.tar.gz``, or ``.zip``. This removes identifiable metadata sidecars
+and signatures. Older records without filenames are retained because they
+cannot be reliably classified. A successful collection refreshes returned
+historical dates with this filter; totals can decrease after the first refresh.
+
+Missing CSV values are blank rather than zero. If a source has never been
+collected successfully, its unavailable summary counts are JSON ``null``.
+
+Source Failures and Freshness
+------------------------------
+
+The collector retrieves PyPI and GitHub data independently. When one source
+fails, it publishes the available observations and retains the other source's
+earlier data. It does not copy old fork or release counts into a new daily
+snapshot. The last successful GitHub API window is retained as a whole, including
+its unique-cloner count; it is never reconstructed by adding daily unique counts.
+
+In ``summary.json``, ``collection_status`` is ``complete`` or ``partial``.
+Each entry under ``sources`` contains ``status`` (``ok`` or ``error``),
+``last_attempt_at``, ``last_success_at``, and ``error``. The README and plot also
+show source freshness. ``generated_at`` is the artifact generation time, not
+the freshness of every source. Even a successful API request may return delayed
+data, so check the source coverage dates as well.
+
+After publishing a partial collection, the workflow reports a failed run so
+maintainers can investigate. If both sources fail, it leaves published artifacts
+unchanged and fails without publishing. A remote lookup, fetch, or history
+restore failure also stops publication. Only a successful remote lookup that
+confirms the metrics branch is absent permits an initial collection.
+
+The workflow restores both ``metrics.csv`` and ``summary.json``. Version 1
+summaries are accepted and upgraded; if PyPI is unavailable during that upgrade,
+``pypi.counting_policy`` remains ``legacy_unfiltered`` until a successful refresh.
+Normal filtered collections use ``distribution_files_or_unknown_filename``.
 
 GitHub Configuration
 --------------------
@@ -113,6 +156,13 @@ Interpretation Limits
 PyPI supplies file-download events, not successful installations or unique
 users. Repeated installs, continuous integration, caches, mirrors, and other
 installers affect the counts.
+
+PyPI changed its download logging on August 24, 2026, to exclude metadata
+requests, leaving older source records unchanged. Although the collector removes
+identifiable non-distribution files, older entries without filenames may still
+include these requests. Historical totals and trends are therefore not fully
+comparable across this change. See `PyPI's explanation of the counting change
+<https://blog.pypi.org/posts/2026-08-31-download-counts/>`__.
 
 GitHub's window-level unique-cloner count must not be added across windows or
 dates because the same user can occur more than once. The fork count represents

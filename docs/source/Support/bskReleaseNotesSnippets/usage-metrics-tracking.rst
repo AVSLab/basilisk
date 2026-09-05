@@ -1,1 +1,3 @@
 - Added daily PyPI and GitHub usage-metrics collection with durable CSV history, a generated summary, and a live documentation plot sourced from the ``usage-metrics`` branch.
+- Protected retained usage history against restore failures, preserved independent source observations during outages with explicit freshness reporting, filtered identifiable non-distribution PyPI requests, and required complete seven-day windows for usage plots.
+- Retried interrupted usage-metrics HTTP response reads and preserved healthy-source data when those retries are exhausted.
