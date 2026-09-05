@@ -327,19 +327,22 @@ function(bsk_add_rust_module_sources)
     "${_bindings_prebuild_target}"
   )
 
-  # Corrosion owns the Cargo invocation and static-library byproduct, while
-  # this module's build.rs owns the generated header and SWIG interface.
-  # Give CMake an explicit producer rule for those two files so Make/Ninja do
-  # not reject the missing generated interface before Cargo has run.
+  # Register build.rs outputs on Corrosion's public post-build hook. Cargo
+  # checks its own dependency graph on every build; Ninja must likewise
+  # recheck these byproducts before deciding whether SWIG/C++ needs to run.
+  # A separate OUTPUT rule depending on the Cargo custom target provides only
+  # ordering, so Ninja can cache the old binding timestamps and miss an edit
+  # until the next build. BYPRODUCTS also preserves no-op builds: unchanged
+  # bindings keep their timestamps and do not force wrapper regeneration.
   set(_cargo_build_target "cargo-build_${_rust_target}")
   set(_bindings_target "_rust_bindings_${RUST_TARGET}")
   add_custom_command(
-    OUTPUT "${RUST_HEADER}" "${RUST_INTERFACE}"
+    TARGET "${_cargo_build_target}" POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E compare_files
             "${RUST_HEADER}" "${RUST_HEADER}"
     COMMAND "${CMAKE_COMMAND}" -E compare_files
             "${RUST_INTERFACE}" "${RUST_INTERFACE}"
-    DEPENDS "${_cargo_build_target}"
+    BYPRODUCTS "${RUST_HEADER}" "${RUST_INTERFACE}"
     COMMENT "Verifying generated Rust bindings for '${RUST_TARGET}'"
     VERBATIM
   )

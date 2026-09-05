@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- Incremental Ninja builds could leave Rust module wrappers one build behind
+  after a Rust edit changed the generated bindings. Cargo's build target now
+  declares the binding files as byproducts so SWIG and C++ rebuild during the
+  same invocation; unchanged bindings do not force wrapper regeneration.
 - Rust configuration arrays whose element type is an alias of ``bool`` could
   fail to compile in the generated C++ accessor. Boolean aliases and alias
   chains now use the same safe array storage as plain ``bool`` fields.
