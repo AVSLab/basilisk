@@ -57,6 +57,8 @@ function(GenCMessages TARGET searchDir)
 
         # Add these files as sources for the TARGET
         target_sources(${TARGET} PRIVATE ${generatedFiles})
+        set_property(TARGET ${TARGET} APPEND PROPERTY
+                     BSK_C_MESSAGE_INTERFACE_FILES ${generatedFiles})
     endforeach()
 endfunction(GenCMessages)
 
@@ -80,6 +82,24 @@ endif()
 # Generate and add C message source files to the library
 GenCMessages(${LIB_NAME} "../..")
 GenCMessages(${LIB_NAME} "${EXTERNAL_MODULES_PATH}")
+
+# Retire interfaces before any build-time consumer (in particular Rust's
+# bindgen scan) can read them. Python wrapper cleanup runs later and does not
+# order Cargo, so it cannot own this cleanup. Inspect the generated directory
+# as well as the current target to repair build trees from earlier betas that
+# did not retain a separate C-interface manifest.
+get_target_property(currentInterfaces ${LIB_NAME} BSK_C_MESSAGE_INTERFACE_FILES)
+file(GLOB previousInterfaces
+     "${CMSGCINTERFACE_DIR}/*_C.h" "${CMSGCINTERFACE_DIR}/*_C.cpp")
+foreach(previousInterface IN LISTS previousInterfaces)
+    if(NOT previousInterface IN_LIST currentInterfaces)
+        file(STRINGS "${previousInterface}" generatedMarker LIMIT_COUNT 1
+             REGEX "(Header|Implementation) generated automatically through CMake[.]")
+        if(generatedMarker)
+            file(REMOVE "${previousInterface}")
+        endif()
+    endif()
+endforeach()
 
 # Link all necessary libraries
 #target_link_libraries(${LIB_NAME} ArchitectureUtilities)
