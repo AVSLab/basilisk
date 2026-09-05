@@ -1,1 +1,0 @@
-- Incremental builds now retire obsolete generated C-message interfaces before Rust binding generation when a payload is deleted, renamed, or moved to the C++ message tree, including External messages.

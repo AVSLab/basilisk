@@ -10,24 +10,6 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- Rust module configuration arrays were inadvertently limited to 32 elements
-  by an array-wide ``Default`` requirement. They now initialize element by
-  element through ``BskConfigValue``, including larger nested dimensions.
-  Nested parameter structs retain their own ``Default`` implementations.
-- Incremental Ninja builds could leave Rust module wrappers one build behind
-  after a Rust edit changed the generated bindings. Cargo's build target now
-  declares the binding files as byproducts so SWIG and C++ rebuild during the
-  same invocation; unchanged bindings do not force wrapper regeneration.
-- Rust configuration arrays whose element type is an alias of ``bool`` could
-  fail to compile in the generated C++ accessor. Boolean aliases and alias
-  chains now use the same safe array storage as plain ``bool`` fields.
-- Rust private module state now requires ``Send`` so the compiler rejects
-  thread-bound values before Basilisk hands an instance to a simulation worker.
-  This does not permit concurrent access to an individual module instance.
-- Rust input readers moved into module state could outlive their message source after
-  the original Python port was unsubscribed. Explicit reads now require the current
-  lifecycle context (``port.read(context)?``), and the generated lifecycle rejects
-  moved readers and restores input subscriptions changed by Rust module code.
 - Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
   configuration overrides, and regenerate a project's XML after an interrupted cache update.
   Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen
