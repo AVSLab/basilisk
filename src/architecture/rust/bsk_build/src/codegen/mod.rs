@@ -543,8 +543,12 @@ fn render_swig_interface(
         .collect::<BTreeSet<_>>()
         .into_iter()
         .map(|c_type| {
+            // Different Rust aliases can resolve to the same vector type. Let SWIG
+            // reuse its first instantiation without warning about these duplicates.
             format!(
-                "%template(__BskRustVector_{}) std::vector<{c_type}>;\n",
+                "%warnfilter(404) std::vector<{c_type}>;\n\
+                 %template(__BskRustVector_{}) std::vector<{c_type}>;\n\
+                 %warnfilter() std::vector<{c_type}>;\n",
                 sanitize_identifier(c_type)
             )
         })
@@ -612,6 +616,7 @@ fn render_swig_interface(
         "%module {module_name}\n\
          %{{\n\
          #include \"{header}\"\n\
+         #include \"architecture/_GeneralModuleFiles/bsk_rust_config_array.h\"\n\
          %}}\n\
          \n\
          #define BSK_RUST_DECL(name, configType, handleType)\n\
@@ -746,48 +751,11 @@ fn render_config_accessor(
             )
         })
         .collect::<String>();
-    if c_type == "bool" {
-        return format!(
-            "%extend {wrapper_type} {{\n\
-             \x20 std::vector<bool> {hidden_getter}() {{\n\
-             \x20   const size_t length = static_cast<size_t>({length_expression});\n\
-             \x20   auto rawValue = std::make_unique<bool[]>(length);\n\
-             \x20   $self->__bskGetConfigField(\n\
-             \x20       {index}, rawValue.get(), length * sizeof(bool));\n\
-             \x20   std::vector<bool> value;\n\
-             \x20   value.reserve(length);\n\
-             \x20   for (size_t index = 0; index < length; ++index) {{\n\
-             \x20     value.push_back(rawValue[index]);\n\
-             \x20   }}\n\
-             \x20   return value;\n\
-             \x20 }}\n\
-             \x20 void {hidden_setter}(const std::vector<bool> &value) {{\n\
-             \x20   const size_t length = static_cast<size_t>({length_expression});\n\
-             \x20   if (value.size() != length) {{\n\
-             \x20     throw BasiliskError(\n\
-             \x20         \"{module_name}.{field_name} has the wrong number of values\");\n\
-             \x20   }}\n\
-             \x20   auto rawValue = std::make_unique<bool[]>(length);\n\
-             \x20   for (size_t index = 0; index < length; ++index) {{\n\
-             \x20     rawValue[index] = value[index];\n\
-             \x20   }}\n\
-             \x20   $self->__bskSetConfigField(\n\
-             \x20       {index}, rawValue.get(), length * sizeof(bool));\n\
-             \x20 }}\n\
-             {dimension_accessors}\
-             {python_methods}\
-             }}\n\
-             \n"
-        );
-    }
     format!(
         "%extend {wrapper_type} {{\n\
          \x20 std::vector<{c_type}> {hidden_getter}() {{\n\
          \x20   const size_t length = static_cast<size_t>({length_expression});\n\
-         \x20   std::vector<{c_type}> value(length);\n\
-         \x20   $self->__bskGetConfigField(\n\
-         \x20       {index}, value.data(), value.size() * sizeof({c_type}));\n\
-         \x20   return value;\n\
+         \x20   return bskRustGetConfigArray<{c_type}>($self, {index}, length);\n\
          \x20 }}\n\
          \x20 void {hidden_setter}(const std::vector<{c_type}> &value) {{\n\
          \x20   const size_t length = static_cast<size_t>({length_expression});\n\
@@ -795,8 +763,7 @@ fn render_config_accessor(
          \x20     throw BasiliskError(\n\
          \x20         \"{module_name}.{field_name} has the wrong number of values\");\n\
          \x20   }}\n\
-         \x20   $self->__bskSetConfigField(\n\
-         \x20       {index}, value.data(), value.size() * sizeof({c_type}));\n\
+         \x20   bskRustSetConfigArray<{c_type}>($self, {index}, value);\n\
          \x20 }}\n\
          {dimension_accessors}\
          {python_methods}\
@@ -1082,13 +1049,44 @@ typedef struct ExampleConfig {
         assert!(interface.contains("self.__bsk_reshape_matrix("));
         assert!(interface.contains("matrix = property(getMatrix, setMatrix)"));
         assert!(interface.contains("std::vector<bool> __bsk_get_flags"));
-        assert!(interface.contains("std::make_unique<bool[]>(length)"));
+        assert!(interface.contains("bskRustGetConfigArray<bool>($self, 3, length)"));
+        assert!(interface.contains("bskRustSetConfigArray<bool>($self, 3, value)"));
+        assert!(interface.contains("bsk_rust_config_array.h"));
         assert!(interface.contains("flags = property(getFlags, setFlags)"));
         assert!(interface.contains("ConfigFieldDeprecationDate_example"));
         assert!(interface.contains("ModuleDeprecationDate_example"));
         assert!(interface.contains("ModuleDeprecationMessage_example"));
         assert!(interface.contains("%rust_wrap_2(example, ExampleConfig, ExampleConfigHandle)"));
         assert!(!interface.contains("%template(example)"));
+    }
+
+    /// Preserve alias names and let C++ resolve Boolean storage, including alias chains.
+    #[test]
+    fn aliased_arrays_use_the_same_typed_helpers_as_plain_arrays() {
+        let header = r#"
+typedef bool Flag;
+typedef Flag FlagAlias;
+typedef struct ExampleConfig {
+  Flag flags[3];
+  FlagAlias matrix[2][2];
+} ExampleConfig;
+"#;
+        let metadata = analyze_bindings(header, "ExampleConfig", &BTreeSet::new());
+        let interface = render_swig_interface(
+            "ExampleConfig",
+            "example",
+            Path::new("example.h"),
+            &metadata,
+        );
+        assert!(interface.contains("std::vector<Flag> __bsk_get_flags"));
+        assert!(interface.contains("bskRustGetConfigArray<Flag>($self, 0, length)"));
+        assert!(interface.contains("bskRustSetConfigArray<Flag>($self, 0, value)"));
+        assert!(interface.contains("bskRustGetConfigArray<FlagAlias>($self, 1, length)"));
+        assert!(interface.contains("bskRustSetConfigArray<FlagAlias>($self, 1, value)"));
+        assert!(interface.contains("%warnfilter(404) std::vector<FlagAlias>;"));
+        assert!(interface.contains("%warnfilter() std::vector<FlagAlias>;"));
+        assert!(interface.contains("self.__bsk_matrix_dim_1()"));
+        assert!(!interface.contains("value.data()"));
     }
 
     #[test]

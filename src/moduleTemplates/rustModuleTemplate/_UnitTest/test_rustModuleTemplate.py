@@ -112,6 +112,8 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
         ("data_out_msgs", _ExpectedCModuleTemplatePort * 2),
         ("legacy_dummy", ctypes.c_double),
         ("panic_on_update", ctypes.c_bool),
+        ("sample_flags", ctypes.c_bool * 3),
+        ("sample_flag_matrix", (ctypes.c_bool * 2) * 2),
     ]
 
 
@@ -392,6 +394,8 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateConfig.data_out_msgs.offset == 368
     assert _ExpectedRustModuleTemplateConfig.legacy_dummy.offset == 512
     assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 520
+    assert _ExpectedRustModuleTemplateConfig.sample_flags.offset == 521
+    assert _ExpectedRustModuleTemplateConfig.sample_flag_matrix.offset == 524
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate

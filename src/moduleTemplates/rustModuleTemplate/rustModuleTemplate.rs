@@ -30,6 +30,11 @@ pub struct RustModuleTemplateParameters {
     pub offset: f64,
 }
 
+/// Boolean configuration alias; Python still receives ordinary bool values.
+pub type RustModuleTemplateFlag = bool;
+/// Alias chain used by the two-dimensional Boolean configuration example.
+pub type RustModuleTemplateFlagAlias = RustModuleTemplateFlag;
+
 /// Rust module configuration and message ports.
 #[bsk_build::module]
 #[repr(C)]
@@ -60,6 +65,10 @@ pub struct RustModuleTemplateConfig {
     pub legacyDummy: f64,
     /// [-] Test-only fault injection that deliberately panics during update
     pub panicOnUpdate: bool,
+    /// Boolean array illustrating configuration through a type alias
+    pub sampleFlags: [RustModuleTemplateFlag; 3],
+    /// Boolean matrix illustrating configuration through an alias chain
+    pub sampleFlagMatrix: [[RustModuleTemplateFlagAlias; 2]; 2],
 }
 
 /// Validate a proposed value before the generated ``increment`` setter stores it.
@@ -278,6 +287,8 @@ mod tests {
         assert_eq!(offset_of!(RustModuleTemplateConfig, dataOutMsgs), 368);
         assert_eq!(offset_of!(RustModuleTemplateConfig, legacyDummy), 512);
         assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 520);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, sampleFlags), 521);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, sampleFlagMatrix), 524);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -326,6 +337,8 @@ mod tests {
             dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
             legacyDummy: 0.0, // [-]
             panicOnUpdate: false,
+            sampleFlags: [false; 3],
+            sampleFlagMatrix: [[false; 2]; 2],
         };
         let mut state = RustModuleTemplateState::default();
 
@@ -371,6 +384,8 @@ mod tests {
             dataOutMsgs: core::array::from_fn(|_| MsgWriter::default()),
             legacyDummy: 0.0, // [-]
             panicOnUpdate: false,
+            sampleFlags: [false; 3],
+            sampleFlagMatrix: [[false; 2]; 2],
         };
         let mut state = RustModuleTemplateState::default();
 
