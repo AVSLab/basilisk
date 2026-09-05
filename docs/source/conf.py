@@ -10,6 +10,7 @@
 
 import datetime
 import shutil
+import tempfile
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -28,6 +29,7 @@ import numpy as np
 
 from docutils import nodes
 from docutils.parsers.rst import roles
+from generated_documentation import sync_generated_tree
 
 def beta_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     label = nodes.inline(rawtext, "[BETA]", classes=['beta-label'])
@@ -389,11 +391,12 @@ epub_exclude_files = ['search.html']
 from glob import glob
 
 class fileCrawler():
-    def __init__(self, newFiles=False, rust_header_dir=None):
+    def __init__(self, newFiles=False, rust_header_dir=None, documentation_root="./Documentation"):
         self.newFiles = newFiles
         self.breathe_projects_source = {}
         self.counter = 0
         self.rust_header_dir = Path(rust_header_dir).resolve() if rust_header_dir else None
+        self.documentation_root = Path(documentation_root)
 
     def grabRelevantFiles(self,dir_path):
         dirs_in_dir = glob(dir_path + '*/')
@@ -719,9 +722,7 @@ class fileCrawler():
         # Create the .rst file for the python module
         if not py_file_paths == []:
             # Add the module path to sys.path so sphinx can produce docs
-            src_dir = path[path.find("/")+1:]
-            src_dir = src_dir[src_dir.find("/")+1:]
-            sys.path.append(os.path.abspath(officialSrc+"/"+src_dir))
+            sys.path.append(os.path.abspath(os.path.dirname(py_file_paths[0])))
 
         for py_file in sorted(py_file_paths):
             fileName = os.path.basename(py_file)
@@ -812,18 +813,18 @@ class fileCrawler():
 
         index_path = os.path.relpath(srcDir, officialSrc)
         if index_path == ".":
-            index_path = "/"
+            index_path = ""
 
-        try:
-            os.makedirs(officialDoc + index_path)
-        except:
-            pass
+        documentation_path = self.documentation_root / index_path
+
+        documentation_path.mkdir(parents=True, exist_ok=True)
+        documentation_path_string = documentation_path.as_posix()
 
         # Populate the index.rst file of the local directory
-        self.populateDocIndex(officialDoc+"/"+index_path, file_paths, dir_paths)
+        self.populateDocIndex(documentation_path_string, file_paths, dir_paths)
 
         # Generate the correct auto-doc function for C, C++, Python, and Rust modules
-        sources = self.generateAutoDoc(officialDoc+"/"+index_path, file_paths)
+        sources = self.generateAutoDoc(documentation_path_string, file_paths)
 
         # Need to update the translation layer from doxygen to sphinx (breathe)
         self.breathe_projects_source.update(sources)
@@ -839,28 +840,48 @@ class fileCrawler():
 
 rebuild = not single_page_docname
 officialSrc = "../../src"
-officialDoc = "./Documentation/"
 
 default_rust_header_dir = (
     Path(__file__).resolve().parents[2] / "dist3" / "rust" / "include"
 )
 rust_header_dir = os.environ.get("BSK_RUST_HEADER_DIR", default_rust_header_dir)
-fileCrawler = fileCrawler(rebuild, rust_header_dir)
 import pickle
 
 if rebuild:
-    if os.path.exists(officialDoc):
-        shutil.rmtree(officialDoc)
-    # adjust the fileCrawler path to a local folder to just build a sub-system
-    breathe_projects_source = fileCrawler.run(officialSrc)
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/fswAlgorithms")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/environment")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/moduleTemplates")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/simulation/vizard")
-    # breathe_projects_source = fileCrawler.run(officialSrc+"/architecture")
-    breathe_projects_source = fileCrawler.run("../../examples")
-    # breathe_projects_source = fileCrawler.run("../../supportData")
-    # breathe_projects_source = fileCrawler.run("../../externalTools")
+    documentation_source_root = Path(__file__).resolve().parent
+    with tempfile.TemporaryDirectory(
+        prefix=".bsk-generated-docs-", dir=documentation_source_root
+    ) as staging_directory:
+        staging_root = Path(staging_directory)
+        staged_documentation_root = staging_root / "Documentation"
+        file_crawler = fileCrawler(
+            rebuild, rust_header_dir, staged_documentation_root
+        )
+
+        # Adjust the fileCrawler path to a local folder to build a subsystem.
+        breathe_projects_source = file_crawler.run(officialSrc)
+        # breathe_projects_source = file_crawler.run(officialSrc+"/fswAlgorithms")
+        # breathe_projects_source = file_crawler.run(officialSrc+"/simulation/environment")
+        # breathe_projects_source = file_crawler.run(officialSrc+"/moduleTemplates")
+        # breathe_projects_source = file_crawler.run(officialSrc+"/simulation/vizard")
+        # breathe_projects_source = file_crawler.run(officialSrc+"/architecture")
+        breathe_projects_source = file_crawler.run("../../examples")
+        # breathe_projects_source = file_crawler.run("../../supportData")
+        # breathe_projects_source = file_crawler.run("../../externalTools")
+
+        for generated_root_name in ("Documentation", "examples"):
+            sync_counts = sync_generated_tree(
+                staging_root / generated_root_name,
+                documentation_source_root / generated_root_name,
+            )
+            print(
+                f"Generated {generated_root_name} documentation: "
+                f"{sync_counts['added']} added, "
+                f"{sync_counts['updated']} updated, "
+                f"{sync_counts['unchanged']} unchanged, "
+                f"{sync_counts['removed']} removed"
+            )
+
     with open("breathe.data", 'wb') as f:
         pickle.dump(breathe_projects_source, f)
 else:

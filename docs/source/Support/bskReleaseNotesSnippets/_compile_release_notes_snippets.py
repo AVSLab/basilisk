@@ -37,8 +37,11 @@ def main() -> None:
         compiled_lines.extend(text.splitlines())
 
     output = "\n".join(compiled_lines).rstrip() if compiled_lines else ""
-    OUTPUT_FILE.write_text(output, encoding="utf-8")
-    print(f"Wrote {OUTPUT_FILE}")
+    if OUTPUT_FILE.is_file() and OUTPUT_FILE.read_text(encoding="utf-8") == output:
+        print(f"Unchanged {OUTPUT_FILE}")
+    else:
+        OUTPUT_FILE.write_text(output, encoding="utf-8")
+        print(f"Wrote {OUTPUT_FILE}")
     print(f"Included {len(snippet_files)} snippet file(s)")
 
 
