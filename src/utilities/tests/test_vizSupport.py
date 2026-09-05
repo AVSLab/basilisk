@@ -262,7 +262,6 @@ def test_create_custom_models_from_mjscene_keeps_multi_geom_bodies(monkeypatch):
         custom_models.append(kwargs)
 
     monkeypatch.setattr(vizSupport, "createCustomModel", capture_custom_model)
-    monkeypatch.setattr(vizSupport, "mjSceneMultiShapeList", [])
     monkeypatch.setattr(
         vizSupport,
         "vizInterface",
@@ -276,7 +275,7 @@ def test_create_custom_models_from_mjscene_keeps_multi_geom_bodies(monkeypatch):
         raising=False,
     )
 
-    viz = SimpleNamespace(scData=FakeVizScData())
+    viz = SimpleNamespace(scData=FakeVizScData(), _mjSceneMultiShapes=[])
 
     vizSupport._handleMJScene(
         viz,
@@ -315,7 +314,7 @@ def test_create_custom_models_from_mjscene_keeps_multi_geom_bodies(monkeypatch):
     ])
 
     assert len(viz.scData[0].msmInfo.msmList) == 1
-    assert len(vizSupport.mjSceneMultiShapeList) == 1
+    assert len(viz._mjSceneMultiShapes) == 1
     panel_bar = viz.scData[0].msmInfo.msmList[0]
     assert panel_bar.shape == "CYLINDER"
     assert panel_bar.dimensions == pytest.approx([
