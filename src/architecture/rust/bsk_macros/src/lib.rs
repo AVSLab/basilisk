@@ -60,6 +60,8 @@ pub fn module(arguments: TokenStream, input: TokenStream) -> TokenStream {
 /// ``#[repr(C)]`` with no generic parameters. Every field must be public and
 /// implement ``bsk_build::BskConfigValue`` recursively. The struct must also
 /// derive or manually implement ``Copy`` and ``Default``.
+/// Its generated ``default_value`` delegates to that ``Default`` implementation,
+/// preserving custom initialization even when the struct is an array element.
 #[proc_macro_derive(BskConfigValue)]
 pub fn derive_bsk_config_value(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -139,7 +141,13 @@ fn expand_module_with_options(
                         ::core::default::Default::default()
                     }))
                 }
-                _ => quote!(::core::default::Default::default()),
+                Some((_, _, PortShape::Single)) => {
+                    quote!(::core::default::Default::default())
+                }
+                None => {
+                    let field_type = &field.ty;
+                    quote!(<#field_type as ::bsk_build::BskConfigValue>::default_value())
+                }
             };
             quote!(#field_name: #initializer)
         })
@@ -1590,6 +1598,9 @@ fn expand_bsk_config_value(input: DeriveInput) -> syn::Result<TokenStream2> {
         where
             #(#field_types: ::bsk_build::BskConfigValue,)*
         {
+            fn default_value() -> Self {
+                ::core::default::Default::default()
+            }
         }
     })
 }
@@ -1698,6 +1709,33 @@ mod tests {
         assert!(expanded.contains("unsafe impl :: bsk_build :: BskConfigValue"));
         assert!(expanded.contains("for ControllerGains"));
         assert!(expanded.contains("f64 : :: bsk_build :: BskConfigValue"));
+        assert!(expanded.contains("fn default_value () -> Self"));
+        assert!(expanded.contains(":: core :: default :: Default :: default ()"));
+    }
+
+    /// Initializers use resolved configuration types instead of parsing aliases.
+    #[test]
+    fn config_array_initializers_use_the_config_value_trait() {
+        let input: ItemStruct = parse_quote! {
+            #[repr(C)]
+            pub struct ArrayConfig {
+                pub values: [f64; 64],
+                pub matrix: [[f64; 33]; 2],
+                pub alias: ArrayAlias,
+            }
+        };
+        let expanded = expand_module(input)
+            .expect("large arrays must expand")
+            .to_string();
+        assert!(expanded.contains(
+            "values : < [f64 ; 64] as :: bsk_build :: BskConfigValue > :: default_value ()"
+        ));
+        assert!(expanded.contains(
+            "matrix : < [[f64 ; 33] ; 2] as :: bsk_build :: BskConfigValue > :: default_value ()"
+        ));
+        assert!(expanded.contains(
+            "alias : < ArrayAlias as :: bsk_build :: BskConfigValue > :: default_value ()"
+        ));
     }
 
     #[test]
