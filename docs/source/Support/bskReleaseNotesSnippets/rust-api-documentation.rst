@@ -1,0 +1,1 @@
+- Correct secondary Rust API and module-template documentation for selective output publishing, inferred message-port directions, and build-generated custom-message bindings.

@@ -25,9 +25,10 @@
 //! the module compilation, and ``#[bsk_build::module]`` rejects a mismatch
 //! before emitting the language boundary.
 //!
-//! ``cbindgen`` reads the crate's C-compatible types and emits two build
-//! artifacts. The ``#[bsk_build::module]`` procedural attribute emits named
-//! message I/O values and the Rust lifecycle entry points.
+//! ``bsk-build`` emits two build artifacts, using ``cbindgen`` to render the
+//! crate's C-compatible types in the header. The ``#[bsk_build::module]``
+//! procedural attribute emits named message I/O values and the Rust lifecycle
+//! entry points.
 //!
 //! * **``<ModuleName>.h``** in ``$OUT_DIR`` by default — C header for
 //!   CMake/SWIG, generated from the Rust struct.  Set ``BSK_HEADER_PATH`` to
@@ -145,8 +146,12 @@
 //!   named input struct.
 //! * ``#[bsk(optional)]`` on a ``MsgReader<Foo>`` creates an ``Option<Foo>``
 //!   field that is ``None`` when the port is unlinked.
-//! * ``MsgWriter<Foo>`` creates a ``Foo`` field in the generated named output
-//!   struct.
+//! * ``MsgWriter<Foo>`` creates an ``Option<Foo>`` field in the generated
+//!   named output struct. ``Some(payload)`` selects that port for publication;
+//!   ``None`` leaves its payload and message header unchanged.
+//! * A fixed-size port array applies the same rule to each element. For
+//!   example, ``[MsgWriter<Foo>; N]`` creates ``[Option<Foo>; N]``, allowing
+//!   each output element to be selected independently.
 //!
 //! Given ``MyModuleConfig``, the attribute names those structs
 //! ``MyModuleInputs`` and ``MyModuleOutputs``. Set ``BskModule::Inputs`` and
@@ -157,9 +162,22 @@
 //! an expected [`BskError`] that the C++ wrapper translates into the standard
 //! Basilisk error after Rust returns.
 //!
-//! For BSK built-in messages this works out-of-the-box. Custom message
-//! types need their own ``*_C`` C-interface header on the module's include
-//! path; the field is then treated identically to any built-in message port.
+//! During ``update``, normally use the copied payloads in ``inputs``. An
+//! explicit input read in ``reset`` or ``update`` must call
+//! ``self.inputPort.read(context)?`` with that call's [`BskContext`]. Keep
+//! readers in their declared configuration fields; retain copied payloads in
+//! private state rather than moving or retaining the readers themselves.
+//! See [`MsgReader::read`] for the linkage and lifetime checks.
+//!
+//! Built-in and custom C messages both need generated Rust bindings from
+//! ``bsk-messages``; putting a ``*_C.h`` header on the C++ include path alone
+//! is not sufficient. After adding or editing an in-tree payload, rerun
+//! ``python conanfile.py --rustModules True`` from the Basilisk repository root.
+//! The build regenerates the C message interfaces and then the Rust payload
+//! types, port types, and [`Msg`] implementations in Cargo's build directory.
+//! Do not commit these generated bindings. For external modules, the CMake
+//! integration must also supply the custom generated C-message directories
+//! to both ``bsk-messages`` and ``bsk-build``.
 //!
 //! # Rust-owned state
 //!
@@ -180,8 +198,12 @@
 //! [`BskResult`]. Use ``Err(BskError::new("..."))`` for an expected invalid
 //! configuration, unavailable input, or runtime failure. The generated ABI
 //! boundary returns that failure as data, and the C++ wrapper raises
-//! ``BasiliskError`` only after Rust has returned normally. Output messages
-//! are written only after the lifecycle method returns ``Ok``.
+//! ``BasiliskError`` only after Rust has returned normally. After ``reset`` or
+//! ``update`` returns ``Ok(outputs)``, the generated lifecycle publishes only
+//! the ``Some(payload)`` fields and array elements. It supplies the module ID,
+//! the call's ``current_sim_nanos`` timestamp, and the ``isWritten`` flag.
+//! ``Outputs::default()`` selects no outputs, so the default ``reset`` does not
+//! publish. Returning an error publishes nothing.
 //! Expected errors do not invalidate the module instance, so callers may
 //! correct its configuration and retry. A caught panic can leave arbitrary
 //! internal invariants incomplete; generated instances therefore become
@@ -196,12 +218,13 @@
 //! # Nested structs
 //!
 //! A field whose type is another plain ``#[repr(C)]`` struct (by value, not a
-//! pointer) is supported when it derives ``Clone``, ``Copy``, ``Default``, and
-//! [`BskConfigValue`]. The derive checks that every nested field is itself an
-//! approved configuration value. ``cbindgen`` emits referenced structs in
-//! dependency order. The getter and setter transfer the complete nested
-//! value. Nesting may be arbitrarily deep, but not self-referential because C
-//! cannot represent a struct containing itself by value.
+//! pointer) is supported when it implements ``Clone``, ``Copy``, and
+//! ``Default`` and derives [`BskConfigValue`]. The derive checks that every
+//! nested field is itself an approved configuration value. ``cbindgen`` emits
+//! referenced structs in dependency order. The getter and setter transfer the
+//! complete nested value. Nesting may be arbitrarily deep, but not
+//! self-referential because C cannot represent a struct containing itself by
+//! value.
 //! Keep `MsgReader`/`MsgWriter` fields on the top-level config struct, where
 //! the module lifecycle adapter processes them. Keep internal state in
 //! [`BskModule::State`].
@@ -259,7 +282,10 @@
 /// structs plus the C ABI lifecycle and guarded configuration-accessor
 /// functions. ``MsgReader<T>`` fields are inputs and ``MsgWriter<T>`` fields
 /// are outputs. Add ``#[bsk(optional)]`` only to an input that may be
-/// unlinked. The module's ``build.rs`` passes this type's exact name to
+/// unlinked. Generated output values use ``Option<T>`` (or ``[Option<T>; N]``
+/// for a port array): only ``Some(payload)`` values are published after a
+/// successful reset or update. Their default is ``None``.
+/// The module's ``build.rs`` passes this type's exact name to
 /// [`generate_bindings`] when generating the C header and wrapper artifacts.
 pub use bsk_macros::{module, BskConfigValue};
 
