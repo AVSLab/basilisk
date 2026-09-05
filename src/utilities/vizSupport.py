@@ -611,7 +611,6 @@ def _getMJSceneGeomVizInfos(scene):
 
 def _makeMJSceneMultiShape(vizInfo):
     """Create one Vizard MultiShape primitive from geom visual data."""
-    global mjSceneMultiShapeList
     multiShape = vizInterface.MultiShape()
     multiShape.isOn = 1
     multiShape.position = vizInfo["offset"]
@@ -622,18 +621,25 @@ def _makeMJSceneMultiShape(vizInfo):
     multiShape.shape = vizInfo["modelPath"]
     multiShape.dimensions = vizInfo["multiShapeDimensions"]
     multiShape.rotation = vizInfo["multiShapeRotation"]
-    mjSceneMultiShapeList.append(multiShape)
     return multiShape
 
 
-def _appendMJSceneMultiShapes(scData, vizInfos):
-    """Attach additional MuJoCo geoms to a Vizard spacecraft entry."""
+def _appendMJSceneMultiShapes(viz, scData, vizInfos):
+    """Attach extra geoms and retain their Python owners on the visualization.
+
+    ``MultiShapeVector`` stores raw C++ pointers, and ``VizSpacecraftData`` is
+    copied into the visualization's spacecraft vector. Retain the generated
+    shapes on ``viz``, not on the temporary spacecraft proxy or a global list.
+    """
     if not vizInfos:
         return
 
     msmInfo = getattr(scData, "msmInfo", vizInterface.MultiShapeInfo())
     msmList = list(getattr(msmInfo, "msmList", []))
-    msmList.extend(_makeMJSceneMultiShape(vizInfo) for vizInfo in vizInfos)
+    generatedShapes = [_makeMJSceneMultiShape(vizInfo) for vizInfo in vizInfos]
+    # Keep owners alive before exposing their pointers to C++.
+    viz._mjSceneMultiShapes.extend(generatedShapes)
+    msmList.extend(generatedShapes)
     msmInfo.msmList = vizInterface.MultiShapeVector(msmList)
     scData.msmInfo = msmInfo
 
@@ -666,7 +672,6 @@ def _createCustomModelsFromMJScene(viz, scene, bodyGeomVizInfos=None):
         )
 
 
-mjSceneMultiShapeList = []
 customModelList = []
 
 
@@ -1413,7 +1418,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
         scData.spacecraftName = hubName
         scData.scStateInMsg.subscribeTo(sc.getBody(hubName).getOrigin().stateOutMsg)
         _applyVisuals(scData, **_visuals(hubName, is_hub=True))
-        _appendMJSceneMultiShapes(scData, bodyGeomVizInfos.get(hubName, [])[1:])
+        _appendMJSceneMultiShapes(viz, scData, bodyGeomVizInfos.get(hubName, [])[1:])
         viz.scData.push_back(scData)
 
     for name in bodyNames:
@@ -1425,7 +1430,7 @@ def _handleMJScene(viz, sc, scSim, c, planetNameList, planetInfoList, spiceMsgLi
         scData.parentSpacecraftName = sc.getBodyParentName(name)
         scData.scStateInMsg.subscribeTo(sc.getBody(name).getOrigin().stateOutMsg)
         _applyVisuals(scData, **_visuals(name, is_hub=False))
-        _appendMJSceneMultiShapes(scData, bodyGeomVizInfos.get(name, [])[1:])
+        _appendMJSceneMultiShapes(viz, scData, bodyGeomVizInfos.get(name, [])[1:])
         viz.scData.push_back(scData)
 
     _createCustomModelsFromMJScene(viz, sc, bodyGeomVizInfos)
@@ -1660,6 +1665,10 @@ def enableUnityVisualization(
         Vizard spacecraft name must be unique across this list.  For an
         MJScene, the emitted names are the local MuJoCo body names.
 
+        Auto-generated MuJoCo shapes are retained for the lifetime of this
+        visualization instance. Creating another visualization does not
+        release those shapes.
+
         **Gravity bodies** - attach a ``gravBodyFactory`` body list to the scene
         before calling this function so that planets appear in Vizard::
 
@@ -1761,6 +1770,9 @@ def enableUnityVisualization(
 
     # set up the Vizard interface module
     scSim.vizMessenger = vizInterface.VizInterface()
+    # Internal ownership metadata, not a user-configurable SWIG field. The
+    # simulation's task list retains this Python module while it is scheduled.
+    object.__setattr__(scSim.vizMessenger, "_mjSceneMultiShapes", [])
     scSim.vizMessenger.settings = vizInterface.VizSettings()
     scSim.vizMessenger.ModelTag = "vizMessenger"
     scSim.AddModelToTask(simTaskName, scSim.vizMessenger)
@@ -1846,7 +1858,6 @@ def enableUnityVisualization(
     planetInfoList = []
     spiceMsgList = []
     scSim.vizMessenger.scData.clear()
-    del mjSceneMultiShapeList[:]
     spacecraftParentName = ""
     usedSpacecraftNames = set()
 
