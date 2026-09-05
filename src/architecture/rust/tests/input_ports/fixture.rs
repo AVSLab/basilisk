@@ -13,12 +13,26 @@
 #![allow(non_snake_case)]
 
 use bsk_build::{BskContext, BskError, BskModule, BskResult, Msg, MsgReader};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
 thread_local! {
     static SOURCE_VALUES: RefCell<HashMap<usize, TestMessage>> = RefCell::default();
     static READ_COUNT: RefCell<usize> = const { RefCell::new(0) };
+    static SAVED_INIT_READERS: RefCell<Option<[MsgReader<TestMessage>; 3]>> = const { RefCell::new(None) };
+    static INIT_BEHAVIOR: Cell<(usize, u32)> = const { Cell::new((0, 0)) };
+    static DROPPED_INPUT_LINKS: Cell<Option<[bool; 3]>> = const { Cell::new(None) };
+}
+
+/// Select a scalar/array slot (or all three) and a callback outcome for the next init.
+pub fn set_init_behavior(slot: usize, failure: u32) {
+    INIT_BEHAVIOR.set((slot, failure));
+    DROPPED_INPUT_LINKS.set(None);
+}
+
+/// Observe input cleanup when a rejected construction drops its configuration.
+pub fn dropped_input_links() -> Option<[bool; 3]> {
+    DROPPED_INPUT_LINKS.take()
 }
 
 /// Test payload with a non-physical marker value.
@@ -166,6 +180,14 @@ impl ReaderConfig {
                 self.dataInMsg = temporary;
                 self.value = self.dataInMsg.read(context)?.0;
             }
+            7 => {
+                // Safe code can retain readers outside State, even when the
+                // real C-backed port is not Send. A later init must not accept them.
+                let [first, second] = std::mem::take(&mut self.dataInMsgs);
+                SAVED_INIT_READERS.with_borrow_mut(|saved| {
+                    *saved = Some([std::mem::take(&mut self.dataInMsg), first, second]);
+                });
+            }
             _ => unreachable!(),
         }
         match self.failure {
@@ -180,6 +202,27 @@ impl BskModule for ReaderConfig {
     type State = ReaderState;
     type Inputs = ReaderInputs;
     type Outputs = ReaderOutputs;
+
+    fn init(&mut self, _state: &mut ReaderState) -> BskResult<()> {
+        let (slot, failure) = INIT_BEHAVIOR.replace((0, 0));
+        if let Some([single, first, second]) = SAVED_INIT_READERS.with_borrow_mut(Option::take) {
+            match slot {
+                0 => self.dataInMsg = single,
+                1 => self.dataInMsgs[0] = first,
+                2 => self.dataInMsgs[1] = second,
+                3 => {
+                    self.dataInMsg = single;
+                    self.dataInMsgs = [first, second];
+                }
+                _ => unreachable!(),
+            }
+        }
+        match failure {
+            1 => Err(BskError::new("intentional init error")),
+            2 => panic!("intentional init panic"),
+            _ => Ok(()),
+        }
+    }
 
     fn reset(
         &mut self,
@@ -199,5 +242,16 @@ impl BskModule for ReaderConfig {
     ) -> BskResult<Self::Outputs> {
         self.automaticValue = inputs.dataInMsg.map_or(0, |message| message.0);
         self.exercise(state, context)
+    }
+}
+
+impl Drop for ReaderConfig {
+    fn drop(&mut self) {
+        // Check restoration before destruction without touching message sources.
+        DROPPED_INPUT_LINKS.set(Some([
+            self.dataInMsg.is_linked(),
+            self.dataInMsgs[0].is_linked(),
+            self.dataInMsgs[1].is_linked(),
+        ]));
     }
 }

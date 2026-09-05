@@ -615,6 +615,11 @@ The generated wrapper provides ``SelfInit()``, ``Reset()``, and
    enum variants. Use ``init`` for any non-zero Python-visible configuration
    defaults that should be applied before the user configures the module.
 
+   Leave input message ports empty in ``init``. Connect them from Python after
+   creating the module; do not install readers retained from another instance.
+   The generated constructor rejects changes to input subscriptions, restores
+   the empty ports, and raises ``BasiliskError`` without returning a module.
+
 ``reset(state, context, current_sim_nanos) -> BskResult<Outputs>``
    Runs at simulation start and on every Basilisk ``Reset()``. Use it for
    parameter validation and private-state reset. The default returns an
