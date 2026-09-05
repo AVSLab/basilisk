@@ -1,6 +1,6 @@
 @ECHO OFF
 
-pushd %~dp0
+pushd "%~dp0"
 
 REM Command file for Sphinx documentation
 
@@ -11,6 +11,8 @@ set SOURCEDIR=source
 set BUILDDIR=build
 
 if "%1" == "" goto help
+
+if /I "%1"=="clean" goto clean
 
 if /I "%1"=="comparison-runtime-tables" (
 	py -3 generateDynamicsComparisonRuntimeTables.py || python generateDynamicsComparisonRuntimeTables.py
@@ -41,6 +43,36 @@ goto end
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:clean
+if exist "%BUILDDIR%" (
+	rmdir /S /Q "%BUILDDIR%"
+	if errorlevel 1 goto clean_failed
+)
+if exist "%SOURCEDIR%\Documentation" (
+	rmdir /S /Q "%SOURCEDIR%\Documentation"
+	if errorlevel 1 goto clean_failed
+)
+if exist "%SOURCEDIR%\breathe.data" (
+	del /F /Q "%SOURCEDIR%\breathe.data"
+	if errorlevel 1 goto clean_failed
+)
+if exist "%SOURCEDIR%\externalTools" (
+	rmdir /S /Q "%SOURCEDIR%\externalTools"
+	if errorlevel 1 goto clean_failed
+)
+if exist "%SOURCEDIR%\examples" (
+	rmdir /S /Q "%SOURCEDIR%\examples"
+	if errorlevel 1 goto clean_failed
+)
+goto end
+
+:clean_failed
+set "CLEAN_EXIT_CODE=%ERRORLEVEL%"
+echo Failed to clean generated documentation.
+popd
+exit /b %CLEAN_EXIT_CODE%
 
 :end
 popd
