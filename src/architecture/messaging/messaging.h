@@ -39,6 +39,8 @@ class Recorder;
 template<typename messageType>
 class ReadFunctor : public ReadFunctorBase{
 private:
+    using SourceCallback = void (*)(void*);  //!< Source-reference callback type used by the keep-alive bridge.
+
     messageType* payloadPointer = nullptr; //!< -- pointer to the incoming msg data
     MsgHeader *headerPointer = nullptr;    //!< -- pointer to the incoming msg header
     bool initialized = false;              //!< -- flag indicating if the input message is connected to another message
@@ -51,8 +53,8 @@ private:
     // null callbacks and pays nothing. The callbacks (set only from SWIG) do the GIL-safe
     // Py_INCREF/Py_DECREF; this header never touches Python.
     void* sourceHandle = nullptr;            //!< -- opaque owner token (a PyObject* in practice)
-    void  (*acquireSource)(void*) = nullptr; //!< -- +1 the owner (Py_INCREF under the GIL)
-    void  (*releaseSource)(void*) = nullptr; //!< -- -1 the owner (Py_DECREF under the GIL)
+    SourceCallback acquireSource = nullptr;  //!< -- +1 the owner (Py_INCREF under the GIL)
+    SourceCallback releaseSource = nullptr;  //!< -- -1 the owner (Py_DECREF under the GIL)
     bool replacingSource = false;            //!< -- prevents ownership changes during a release callback
 
     //! keep replacement callbacks from changing the reader until the incoming state is committed
@@ -75,8 +77,8 @@ private:
     class SourceHandleGuard {
     public:
         SourceHandleGuard(void* handle,
-                          void (*acquire)(void*),
-                          void (*release)(void*),
+                          SourceCallback acquire,
+                          SourceCallback release,
                           bool acquireReference)
             : handle(handle),
               release(release) {
@@ -97,13 +99,13 @@ private:
 
     private:
         void* handle;
-        void (*release)(void*);
+        SourceCallback release;
     };
 
     //! release our hold on the current source (if any), then forget it
     void releaseHandle_() {
         void* handle = this->sourceHandle;
-        void (*release)(void*) = this->releaseSource;
+        SourceCallback release = this->releaseSource;
         this->sourceHandle = nullptr;
         this->acquireSource = nullptr;
         this->releaseSource = nullptr;
@@ -183,8 +185,8 @@ public:
         BSKLogger incomingLogger = other.bskLogger;
         messageType incomingZeroPayload = other.zeroMsgPayload;
         void* incomingHandle = other.sourceHandle;
-        void (*incomingAcquire)(void*) = other.acquireSource;
-        void (*incomingRelease)(void*) = other.releaseSource;
+        SourceCallback incomingAcquire = other.acquireSource;
+        SourceCallback incomingRelease = other.releaseSource;
 
         SourceReplacementGuard replacementGuard(this->replacingSource);
         SourceHandleGuard incomingOwner(incomingHandle,
@@ -241,8 +243,8 @@ public:
         BSKLogger incomingLogger = std::move(other.bskLogger);
         messageType incomingZeroPayload = std::move(other.zeroMsgPayload);
         void* incomingHandle = other.sourceHandle;
-        void (*incomingAcquire)(void*) = other.acquireSource;
-        void (*incomingRelease)(void*) = other.releaseSource;
+        SourceCallback incomingAcquire = other.acquireSource;
+        SourceCallback incomingRelease = other.releaseSource;
         other.payloadPointer = nullptr;
         other.headerPointer = nullptr;
         other.clearPointerData();

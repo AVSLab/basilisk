@@ -108,6 +108,8 @@ public:
     BSKLogger bskLogger;  //!< Logger proxy exposed to Python-side Numba modules.
 
 protected:
+    using StateUpdateCallback = void (*)(void**, uint64_t);  //!< Compiled Numba update function type.
+
     std::vector<ReaderSlot> readerSlots_;    //!< One entry per registered reader functor.
     std::vector<uint8_t>    readLinked_;     //!< Per-reader linkage flags refreshed each tick.
     size_t                  readCount_ = 0;  //!< Number of reader entries stored in ``allPtrs_``.
@@ -115,5 +117,5 @@ protected:
     std::vector<void*>      userPointers_;   //!< Staged user pointers appended after readers and writers.
     std::vector<void*>      allPtrs_;        //!< Flat pointer table laid out as ``[reads | writes | user]``.
     std::vector<MsgHeader*> writeHeaders_;   //!< Headers corresponding to registered writable payloads.
-    void (*stateUpdateFunc_)(void**, uint64_t) = nullptr;  //!< Compiled Numba state update callback.
+    StateUpdateCallback stateUpdateFunc_ = nullptr;  //!< Compiled Numba state update callback.
 };

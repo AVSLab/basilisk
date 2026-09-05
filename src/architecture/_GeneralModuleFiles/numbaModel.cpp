@@ -45,7 +45,7 @@ uintptr_t NumbaModel::getReadLinkedPtr() const {
 }
 
 void NumbaModel::setStateUpdateFunc(uintptr_t funcPtr) {
-    stateUpdateFunc_ = reinterpret_cast<void(*)(void**, uint64_t)>(funcPtr);
+    stateUpdateFunc_ = reinterpret_cast<StateUpdateCallback>(funcPtr);
 }
 
 void NumbaModel::finalizeAllPtrs() {
