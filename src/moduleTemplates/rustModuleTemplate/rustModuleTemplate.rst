@@ -46,7 +46,8 @@ its generated setter, and checked again during reset. The nested
 composite configuration types through the generated Rust, C++, SWIG, and
 Python interfaces. The ``sampleFlags`` array and ``sampleFlagMatrix`` matrix
 demonstrate Boolean configuration through Rust type aliases. These sample
-configuration fields do not affect the module's outputs.
+fields and the 64-element ``sampleArray`` illustrate configuration without
+affecting the module's outputs.
 The ``legacyDummy`` parameter demonstrates generated
 Basilisk deprecation warnings. The
 ``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
@@ -108,6 +109,19 @@ Their getters return copied lists of Python ``bool`` values. The corresponding
 ``setSampleFlags()`` and ``setSampleFlagMatrix()`` methods accept the same
 lists; assigning the wrong number of elements raises ``BasiliskError`` and
 leaves the field unchanged.
+
+The ``sampleArray`` field demonstrates a numeric array larger than 32 entries.
+All 64 entries start at zero without special initialization in ``init()``:
+
+.. code-block:: python
+
+   module.sampleArray = [float(index) / 64.0 for index in range(64)]  # [-]
+   coefficients = module.getSampleArray()
+
+Its property and ``setSampleArray()`` method require exactly 64 finite values.
+The getter returns a copy; an invalid assignment leaves the preceding array
+unchanged. See :ref:`rustModules` for initialization of larger arrays and
+nested parameter structs.
 
 The unused ``legacyDummy`` sample parameter is deprecated in favor of
 ``dummy``. Reading or writing it demonstrates the standard dated Basilisk

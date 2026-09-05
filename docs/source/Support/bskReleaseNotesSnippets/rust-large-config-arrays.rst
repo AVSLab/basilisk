@@ -1,0 +1,1 @@
+- Removed the unintended 32-element limit on Rust module configuration arrays with element-wise initialization that preserves custom parameter defaults. Added a 64-element :ref:`rustModuleTemplate` example, regression tests, and guidance for large arrays inside nested parameter structs.

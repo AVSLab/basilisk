@@ -80,13 +80,14 @@
 //! | ``MsgReader<Foo>`` / ``MsgWriter<Foo>`` | ``Foo_C`` |
 //! | ``[T; N]`` (compile-time ``N``) | ``T name[N]`` (see "Fixed-size arrays") |
 //!
-//! Rust allocates the complete module instance. It initializes every config
-//! field and the associated [`BskModule::State`] through ``Default`` before
-//! calling [`BskModule::init`]. Built-in supported field types already
-//! implement `Default`; module-defined nested structs and state types must
-//! derive or implement it. Every Python-visible non-port field must implement
-//! [`BskConfigValue`], which restricts the raw-copy boundary to approved
-//! scalars, fixed arrays, and recursively checked nested structures.
+//! Rust allocates and initializes the complete module before calling
+//! [`BskModule::init`]. Python-visible values use
+//! [`BskConfigValue::default_value`]: scalars and nested structs use their
+//! ``Default`` implementation, while arrays initialize their elements
+//! recursively. Ports and the associated [`BskModule::State`] use ``Default``.
+//! Module-defined nested structs and state types must derive or implement it.
+//! [`BskConfigValue`] restricts the raw-copy boundary to approved scalars,
+//! fixed arrays, and recursively checked nested structures.
 //!
 //! # Module deprecation
 //!
@@ -212,6 +213,12 @@
 //! fixed-size value and rejects a sequence with the wrong length before
 //! entering Rust. The getter returns a Python list. Multi-dimensional arrays
 //! retain C row-major memory order and appear as nested Python lists.
+//! There is no Basilisk 32-element limit: arrays initialize element by element
+//! through [`BskConfigValue::default_value`], including nested dimensions.
+//! A containing parameter struct still needs its own ``Default`` implementation.
+//! If an array field is too large for Rust's standard ``#[derive(Default)]``,
+//! implement ``Default`` for that struct using an array literal or
+//! ``core::array::from_fn``.
 //!
 //! # Identifying the module config
 //!
@@ -286,6 +293,8 @@ pub use bsk_macros::{module, BskConfigValue};
 /// fn require_config_value<T: BskConfigValue>() {}
 /// require_config_value::<ControllerGains>();
 /// require_config_value::<[ControllerGains; 2]>();
+/// require_config_value::<[ControllerGains; 64]>();
+/// assert_eq!(<[f64; 64]>::default_value(), [0.0; 64]);
 /// ```
 ///
 /// Types without a universally valid C representation are rejected:
@@ -313,14 +322,26 @@ pub use bsk_macros::{module, BskConfigValue};
 /// cross-language representation contract above. Prefer the derive macro;
 /// keep strings, vectors, enums, pointers, references, and owning Rust types
 /// in [`BskModule::State`].
-pub unsafe trait BskConfigValue: Copy + Default {}
+pub unsafe trait BskConfigValue: Copy {
+    /// Construct the initial value used before the module's ``init`` method.
+    ///
+    /// Scalars and derived nested structs use their Rust ``Default``
+    /// implementation. Arrays initialize each element recursively, without
+    /// requiring the whole array to implement ``Default`` (which Rust only
+    /// supplies for lengths up to 32).
+    fn default_value() -> Self;
+}
 
 macro_rules! impl_bsk_config_value {
     ($($value_type:ty),+ $(,)?) => {
         $(
             // SAFETY: Each primitive has the same cbindgen C representation,
             // accepts every bit pattern produced by that C type, and owns no data.
-            unsafe impl BskConfigValue for $value_type {}
+            unsafe impl BskConfigValue for $value_type {
+                fn default_value() -> Self {
+                    Self::default()
+                }
+            }
         )+
     };
 }
@@ -332,8 +353,10 @@ impl_bsk_config_value!(bool, f32, f64, i8, i16, i32, i64, u8, u16, u32, u64,);
 unsafe impl<T, const LENGTH: usize> BskConfigValue for [T; LENGTH]
 where
     T: BskConfigValue,
-    [T; LENGTH]: Default,
 {
+    fn default_value() -> Self {
+        core::array::from_fn(|_| T::default_value())
+    }
 }
 
 /// An expected failure reported by a Rust Basilisk module.
@@ -1670,10 +1693,11 @@ pub trait BskModule {
     type Outputs;
 
     /// Called before Python has configured any fields. The configuration and
-    /// state have already been initialized through their respective
-    /// ``Default`` implementations. Override this method to set non-default
-    /// parameters or state values. Returning an error prevents construction
-    /// of the module's opaque instance.
+    /// state have already been initialized in Rust. Configuration arrays use
+    /// element-wise defaults; scalars, nested structs, ports, and private
+    /// state use their ``Default`` implementations. Override this method to
+    /// set non-default parameters or state values. Returning an error prevents
+    /// construction of the module's opaque instance.
     fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
         Ok(())
     }

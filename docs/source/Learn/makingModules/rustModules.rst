@@ -602,8 +602,10 @@ The generated wrapper provides ``SelfInit()``, ``Reset()``, and
 ``init(state) -> BskResult<()>``
    Runs once while Rust constructs the module, before Python configures it.
    Override it to set non-zero configuration defaults or initial private
-   state. Rust first initializes every configuration and state field through
-   its ``Default`` implementation. The default ``init`` returns ``Ok(())``.
+   state. Rust first initializes the complete configuration and private state.
+   Scalars, nested parameter structs, ports, and private state use their
+   ``Default`` implementations; configuration arrays initialize each element
+   recursively. The default ``init`` returns ``Ok(())``.
 
    ``Default`` provides the familiar initial values for primitive
    configuration fields: numeric fields start at zero, booleans at ``false``,
@@ -879,18 +881,20 @@ or the public fields of a C++ module. It can contain:
 * ``MsgReader<T>`` and ``MsgWriter<T>`` ports, individually or in fixed-size
   arrays.
 
-Every configuration field must implement Rust's ``Default`` behavior because
 Rust constructs the complete module before calling ``init``. Every non-port
-field must also implement ``BskConfigValue``. This safety contract restricts
-the generated raw-copy boundary to types with matching Rust and C++ layouts,
+configuration field must implement ``BskConfigValue``, which supplies its
+initial value without requiring an array-wide ``Default`` implementation.
+This safety contract restricts the generated raw-copy boundary to types with
+matching Rust and C++ layouts,
 valid bit patterns, and no Rust ownership or borrowed references.
 
 Basilisk provides ``BskConfigValue`` for Boolean, fixed-width integer, and
 floating-point scalars and recursively for fixed-size arrays. A type alias for
 one of these types inherits the implementation. Module-defined nested structs
-must use plain ``#[repr(C)]`` and derive ``Clone``, ``Copy``, ``Default``, and
-``bsk_build::BskConfigValue``. The derive verifies that the struct and all of
-its fields satisfy the same boundary contract.
+must use plain ``#[repr(C)]`` and derive ``Clone``, ``Copy``, and
+``bsk_build::BskConfigValue``. They must also derive or implement ``Default``.
+The ``BskConfigValue`` derive verifies that the struct and all of its fields
+satisfy the same boundary contract and preserves the struct's own defaults.
 
 Configuration fields cannot contain raw pointers, Rust enums, dynamically
 sized strings, ``Vec`` collections, references, characters, or other owning
@@ -946,6 +950,45 @@ Fixed-size arrays map to normal C arrays and appear as Python lists:
                      [0.0, 1.0, 0.0],
                      [0.0, 0.0, 1.0]]
 
+There is no 32-element limit on module configuration arrays. For example,
+add this field directly to the marked configuration struct in your module's
+``.rs`` file:
+
+.. code-block:: rust
+
+    /// [-] Calibration coefficients, initialized to zero
+    pub coefficients: [f64; 64],
+
+Arrays are initialized element-by-element, including multidimensional arrays.
+The length must still be known at compile time. In Python, assign a complete
+list with the declared number of elements; getters return all entries and
+setters reject an incorrect number of values.
+
+For a large array inside a *nested parameter struct*, Rust's standard
+``#[derive(Default)]`` does not handle array lengths above 32. Implement
+``Default`` for that struct instead. For example, place this helper type in
+your module's ``.rs`` file and use ``CalibrationTable`` as a configuration
+field type:
+
+.. code-block:: rust
+
+    #[repr(C)]
+    #[derive(Clone, Copy, bsk_build::BskConfigValue)]
+    pub struct CalibrationTable {
+        /// [-] Calibration coefficients
+        pub coefficients: [f64; 64],
+    }
+
+    impl Default for CalibrationTable {
+        fn default() -> Self {
+            Self { coefficients: [0.0; 64] }
+        }
+    }
+
+For arrays of parameter structs with their own defaults, use
+``core::array::from_fn(|_| ParameterType::default())`` inside that manual
+implementation. This preserves each element's custom defaults.
+
 Reading an array field from Python returns a copy. Reassign the list after
 changing an element:
 
@@ -961,8 +1004,9 @@ for an alias or an alias chain. Multidimensional Boolean arrays use nested
 lists, just like numeric arrays.
 
 The :ref:`rustModuleTemplate` module demonstrates nested configuration
-structs, multidimensional fixed-size arrays, and Boolean aliases through the
-complete generated Rust, C++, SWIG, and Python interface.
+structs, multidimensional fixed-size arrays, Boolean aliases, and a
+64-element numeric array through the complete generated Rust, C++, SWIG, and
+Python interface.
 
 Rust-Owned Private State
 ------------------------

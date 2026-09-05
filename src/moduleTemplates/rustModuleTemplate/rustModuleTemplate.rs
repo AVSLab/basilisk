@@ -69,6 +69,9 @@ pub struct RustModuleTemplateConfig {
     pub sampleFlags: [RustModuleTemplateFlag; 3],
     /// Boolean matrix illustrating configuration through an alias chain
     pub sampleFlagMatrix: [[RustModuleTemplateFlagAlias; 2]; 2],
+    /// [-] Fixed-size configuration array larger than 32 elements
+    #[bsk(validate = validate_sample_array)]
+    pub sampleArray: [f64; 64],
 }
 
 /// Validate a proposed value before the generated ``increment`` setter stores it.
@@ -123,6 +126,20 @@ fn validate_sample_matrix(
     Ok(())
 }
 
+/// Validate every element of the larger sample array before storing it.
+///
+/// :param _config: Current module configuration, unused by this validator.
+/// :param values: Proposed 64-element sample array [-].
+/// :returns: Success when every element is finite.
+fn validate_sample_array(_config: &RustModuleTemplateConfig, values: &[f64; 64]) -> BskResult<()> {
+    if values.iter().any(|value| !value.is_finite()) {
+        return Err(BskError::new(
+            "rustModuleTemplate.sampleArray components must be finite",
+        ));
+    }
+    Ok(())
+}
+
 /// Rust-owned state that is never exposed through C, C++, or Python.
 ///
 /// Unlike the configuration view, this type does not use ``#[repr(C)]`` and
@@ -166,10 +183,12 @@ impl BskModule for RustModuleTemplateConfig {
 
     fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
         // Before init runs, every configuration field and the private state
-        // have been initialized through Rust's Default trait. Numeric fields
-        // are zero, booleans are false, and message ports are empty. Custom
-        // state can define other defaults. Set non-zero configuration defaults
-        // here before Python configures the module.
+        // have been initialized in Rust. Arrays initialize each element, so
+        // sampleArray needs no special handling for its 64 entries. Numeric
+        // values are zero, booleans are false, and message ports are empty.
+        // Nested parameter structs and private state use their Default
+        // implementations, which may define other defaults. Set non-zero
+        // configuration defaults here before Python configures the module.
         self.increment = 1.0; // [-]
         Ok(())
     }
@@ -185,6 +204,7 @@ impl BskModule for RustModuleTemplateConfig {
         validate_increment(self, &self.increment)?;
         validate_sample_parameters(self, &self.sampleParameters)?;
         validate_sample_matrix(self, &self.sampleMatrix)?;
+        validate_sample_array(self, &self.sampleArray)?;
 
         // Reset both Python-visible configuration and private Rust state.
         self.dummy = 0.0; // [-]
@@ -275,7 +295,7 @@ mod tests {
         assert_eq!(offset_of!(RustModuleTemplateParameters, gain), 0);
         assert_eq!(offset_of!(RustModuleTemplateParameters, offset), 8);
 
-        assert_eq!(size_of::<RustModuleTemplateConfig>(), 528);
+        assert_eq!(size_of::<RustModuleTemplateConfig>(), 1040);
         assert_eq!(align_of::<RustModuleTemplateConfig>(), 8);
         assert_eq!(offset_of!(RustModuleTemplateConfig, dummy), 0);
         assert_eq!(offset_of!(RustModuleTemplateConfig, increment), 8);
@@ -289,6 +309,7 @@ mod tests {
         assert_eq!(offset_of!(RustModuleTemplateConfig, panicOnUpdate), 520);
         assert_eq!(offset_of!(RustModuleTemplateConfig, sampleFlags), 521);
         assert_eq!(offset_of!(RustModuleTemplateConfig, sampleFlagMatrix), 524);
+        assert_eq!(offset_of!(RustModuleTemplateConfig, sampleArray), 528);
     }
 
     /// Verify that generated input and output values use the config port names.
@@ -339,6 +360,7 @@ mod tests {
             panicOnUpdate: false,
             sampleFlags: [false; 3],
             sampleFlagMatrix: [[false; 2]; 2],
+            sampleArray: [0.0; 64], // [-]
         };
         let mut state = RustModuleTemplateState::default();
 
@@ -386,6 +408,7 @@ mod tests {
             panicOnUpdate: false,
             sampleFlags: [false; 3],
             sampleFlagMatrix: [[false; 2]; 2],
+            sampleArray: [0.0; 64], // [-]
         };
         let mut state = RustModuleTemplateState::default();
 

@@ -114,6 +114,7 @@ class _ExpectedRustModuleTemplateConfig(ctypes.Structure):
         ("panic_on_update", ctypes.c_bool),
         ("sample_flags", ctypes.c_bool * 3),
         ("sample_flag_matrix", (ctypes.c_bool * 2) * 2),
+        ("sample_array", ctypes.c_double * 64),
     ]
 
 
@@ -382,7 +383,7 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateParameters.gain.offset == 0
     assert _ExpectedRustModuleTemplateParameters.offset.offset == 8
 
-    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 528
+    assert ctypes.sizeof(_ExpectedRustModuleTemplateConfig) == 1040
     assert ctypes.alignment(_ExpectedRustModuleTemplateConfig) == 8
     assert _ExpectedRustModuleTemplateConfig.dummy.offset == 0
     assert _ExpectedRustModuleTemplateConfig.increment.offset == 8
@@ -396,6 +397,7 @@ def test_rust_module_template_abi_layout():
     assert _ExpectedRustModuleTemplateConfig.panic_on_update.offset == 520
     assert _ExpectedRustModuleTemplateConfig.sample_flags.offset == 521
     assert _ExpectedRustModuleTemplateConfig.sample_flag_matrix.offset == 524
+    assert _ExpectedRustModuleTemplateConfig.sample_array.offset == 528
 
     extension = ctypes.CDLL(rustModuleTemplate._rustModuleTemplate.__file__)
     get_config = extension.Config_rustModuleTemplate

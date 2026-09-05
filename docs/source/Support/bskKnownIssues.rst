@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- Rust module configuration arrays were inadvertently limited to 32 elements
+  by an array-wide ``Default`` requirement. They now initialize element by
+  element through ``BskConfigValue``, including larger nested dimensions.
+  Nested parameter structs retain their own ``Default`` implementations.
 - Incremental Ninja builds could leave Rust module wrappers one build behind
   after a Rust edit changed the generated bindings. Cargo's build target now
   declares the binding files as byproducts so SWIG and C++ rebuild during the
