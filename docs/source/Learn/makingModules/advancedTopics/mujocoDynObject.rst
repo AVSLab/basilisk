@@ -56,6 +56,13 @@ representing physical structures like vehicle parts or robot links. Bodies have 
 of mass, and inertia tensor) and usually a 3D geometry, which impacts their visualization and contact dynamics.
 Only rigid body modeling is supported in Basilisk at this time.
 
+Bodies without an XML ``name`` receive generated names when ``MJScene`` is
+constructed. These names are unique within the scene and can be retrieved with
+``scene.getBodyNames()``. Body, parent, and geometry lookups use the same names,
+so visualization can be configured before ``InitializeSimulation()``. Prefer
+explicit XML names when referring to a particular body in simulation code;
+when visualizing multiple scenes together, give their bodies distinct names.
+
 Joints are the connections between bodies that
 constrain their relative motion, allowing specific types of movement such as rotation (e.g., hinges),
 translation (e.g., sliders), or free rotation (e.g. spherical joint). Alternatively, one may see joints as *introducing*

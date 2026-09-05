@@ -16,7 +16,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""Exercise MuJoCo visualization ownership with the real SWIG interfaces."""
+"""Exercise MuJoCo visualization setup and ownership with real SWIG interfaces."""
 
 import gc
 import weakref
@@ -38,6 +38,7 @@ if visualization_enabled:
 
 def _make_scene(name):
     """Create a root and a child body, each needing an additional Vizard shape."""
+    child_name = f"{name}_panel" if name else ""
     # MJCF positions and sizes are in [m], with colors and quaternions [-].
     return mujoco.MJScene(f"""
         <mujoco>
@@ -46,7 +47,7 @@ def _make_scene(name):
               <freejoint/>
               <geom type="box" size="0.5 0.5 0.5"/>
               <geom type="sphere" size="0.2" pos="0 0 1" rgba="1 0 0 1"/>
-              <body name="{name}_panel" pos="0 0 2">
+              <body name="{child_name}" pos="0 0 2">
                 <joint type="hinge"/>
                 <geom type="box" size="0.5 0.1 0.5"/>
                 <geom type="cylinder" size="0.05 0.5" pos="1 0 0"
@@ -101,6 +102,37 @@ def _geometry_snapshot(visualization):
                 list(shape.positiveColor),
             ))
     return snapshot
+
+
+def test_unnamed_bodies_visualize_before_initialization(tmp_path):
+    """Unnamed roots and children retain their hierarchy and geometry during setup."""
+    # Leave the root and child unnamed in the multi-geometry scene.
+    scene = _make_scene("")
+    names = list(scene.getBodyNames())
+    output_readers = [scene.getBody(name).getOrigin().stateOutMsg.addSubscriber() for name in names]
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("process")
+    step_seconds = 0.1  # [s]
+    process.addTask(simulation.CreateNewTask("task", macros.sec2nano(step_seconds)))
+    simulation.AddModelToTask("task", scene)
+
+    visualization = vizSupport.enableUnityVisualization(
+        simulation, "task", scene, saveFile=str(tmp_path / "unnamed.bin")
+    )
+    bodies = visualization.scData
+    assert len(bodies) == 2
+    assert bodies[0].spacecraftName == names[0]
+    assert bodies[1].spacecraftName == names[1]
+    assert bodies[1].parentSpacecraftName == names[0]
+    geometry = _geometry_snapshot(visualization)
+    assert [shape[0] for shape in geometry] == names
+    assert all(not reader.isWritten() for reader in output_readers)
+
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(macros.sec2nano(step_seconds))
+    simulation.ExecuteSimulation()
+    assert _geometry_snapshot(visualization) == geometry
+    assert all(reader.isWritten() for reader in output_readers)
 
 
 @pytest.mark.parametrize("second_uses_mujoco", [False, True], ids=["spacecraft", "mujoco"])
