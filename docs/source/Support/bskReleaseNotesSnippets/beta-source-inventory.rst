@@ -1,0 +1,1 @@
+- CMake source discovery now watches build-relevant file extensions, preventing Python bytecode, plots, logs, and compiled Cargo artifacts from unnecessarily triggering reconfiguration.
