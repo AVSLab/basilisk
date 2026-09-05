@@ -19,6 +19,7 @@ import os
 import pytest
 
 from Basilisk import hasBuildFeature
+from Basilisk.architecture.bskLogging import BasiliskError
 
 mujocoEnabled = hasBuildFeature("mujoco")
 pytestmark = pytest.mark.skipif(
@@ -92,6 +93,72 @@ def test_adaptive_free_joint_translation_tolerances_are_stage_independent():
 
     assert integrator.getRelativeTolerance("mujocoQpos") == pytest.approx(0.0)
     assert integrator.getRelativeTolerance("mujocoQvel") == pytest.approx(0.0)
+
+
+@pytest.mark.parametrize("root_name", ["", 'name="_nameless_1"'], ids=["unnamed-root", "named-root"])
+def test_unnamed_body_introspection(root_name):
+    """Body, parent, and geometry names agree before initialization and after reset.
+
+    Cover unnamed roots and children, a named child of an unnamed parent, and
+    explicit names that would otherwise collide with generated names. Creating
+    another scene must not change the generated names for identical XML.
+    """
+    # MJCF positions and geometry sizes are in [m].
+    xml = f"""
+        <mujoco>
+          <worldbody>
+            <body {root_name}>
+              <freejoint/>
+              <geom type="box" size="0.5 0.5 0.5"/>
+              <body pos="0 0 2">
+                <joint type="hinge"/>
+                <geom type="sphere" size="0.2"/>
+                <body name="named_tip" pos="0 0 1">
+                  <joint type="hinge"/>
+                  <geom type="sphere" size="0.1"/>
+                </body>
+              </body>
+            </body>
+            <body pos="3 0 0">
+              <freejoint/>
+              <geom type="box" size="0.3 0.3 0.3"/>
+            </body>
+            <body name="_nameless_0" pos="6 0 0">
+              <freejoint/>
+              <geom type="box" size="0.4 0.4 0.4"/>
+            </body>
+          </worldbody>
+        </mujoco>
+    """
+    scene = mujoco.MJScene(xml)
+    names = list(scene.getBodyNames())
+    assert len(names) == len(set(names)) == 5
+    assert all(names)
+    assert names[2] == "named_tip"
+    assert names[4] == "_nameless_0"
+    if root_name:
+        assert names[0] == "_nameless_1"
+    parents = ["world", names[0], names[1], "world", "world"]
+    scene_reader = scene.stateOutMsg.addSubscriber()
+
+    def check_introspection():
+        """Check all public lookups without asking MuJoCo to recompile."""
+        assert list(scene.getBodyNames()) == names
+        assert [scene.getBodyParentName(name) for name in names] == parents
+        assert [scene.getBody(name).getName() for name in names] == names
+        geoms = scene.getGeomInfos()
+        assert [geoms[index].bodyName for index in range(len(geoms))] == names
+        with pytest.raises(BasiliskError, match="unknown body 'missing'"):
+            scene.getBodyParentName("missing")
+
+    check_introspection()
+    assert not scene_reader.isWritten()
+    other_scene = mujoco.MJScene(xml)
+    assert list(other_scene.getBodyNames()) == names
+
+    scene.Reset(0)  # [ns]
+    check_introspection()
+    assert scene_reader.isWritten()
 
 
 if __name__ == "__main__":

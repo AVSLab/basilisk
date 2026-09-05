@@ -20,7 +20,9 @@
 #include "MJSpec.h"
 
 #include <cassert>
+#include <cstddef>
 #include <iterator>
+#include <unordered_set>
 
 #include "MJScene.h"
 
@@ -28,6 +30,37 @@ using MJBasilisk::detail::checkedMjtSizeCast;
 
 namespace
 {
+/**
+ * @brief Assigns scene-local names to unnamed bodies before model compilation.
+ * @param spec The parsed MuJoCo specification.
+ */
+void nameUnnamedBodies(mjSpec* spec)
+{
+    std::unordered_set<std::string> bodyNames;
+    std::vector<mjsBody*> unnamedBodies;
+    for (auto element = mjs_firstElement(spec, mjOBJ_BODY); element;
+         element = mjs_nextElement(spec, element)) {
+        auto body = mjs_asBody(element);
+        assert(body != nullptr);
+        auto name = MJBasilisk::detail::getSpecObjectName(body);
+        if (name.empty()) {
+            unnamedBodies.push_back(body);
+        } else {
+            bodyNames.insert(name);
+        }
+    }
+
+    // Reserve every explicit name first, including bodies later in the tree.
+    std::size_t namelessIndex = 0;
+    for (auto body : unnamedBodies) {
+        std::string name;
+        do {
+            name = "_nameless_" + std::to_string(namelessIndex++);
+        } while (!bodyNames.insert(name).second);
+        MJBasilisk::detail::setSpecObjectName(body, name);
+    }
+}
+
 std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[maybe_unused]])
 {
     std::string value;
@@ -107,6 +140,10 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
 
     // Make sure the gravity is deactivated
     std::fill_n(this->spec->option.gravity, 3, 0);
+
+    // Body wrappers and pre-initialization parent/geometry queries must use
+    // the same names as the initial compiled model, without an extra recompile.
+    nameUnnamedBodies(this->spec.get());
 
     // Initial compilation of the model and data
     this->model.reset(mj_compile(this->spec.get(), this->virtualFileSystem.get()));
