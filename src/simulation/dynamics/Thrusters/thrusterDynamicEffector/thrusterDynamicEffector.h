@@ -41,7 +41,7 @@
 
 
 /*! @brief thruster dynamic effector class */
-class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
+class ThrusterDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
@@ -62,12 +62,12 @@ public:
     void computeBlowDownDecay(std::shared_ptr<THRSimConfig> CurrentThruster);
 
 public:
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< -- input message with thruster commands
-    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< -- output message vector for thruster data
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< output message vector for thruster data
 
     int stepsInRamp;                               //!< class variable
-    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< -- Thruster information
-    std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
+    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< Thruster information
+    std::vector<double> NewThrustCmds;             //!< Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
     double prevFireTime;                           //!< s  Previous thruster firing time
@@ -80,17 +80,17 @@ public:
     Eigen::MatrixXd* inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
     Eigen::Vector3d r_PcP_P;                     //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if thrusters attached to non-hub body)
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger;                      //!< BSK Logging
 
 private:
-    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< -- Message buffer for thruster data
-    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< -- One-time allocation for savings
+    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< Message buffer for thruster data
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< One-time allocation for savings
 
     std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
-    uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
+    uint64_t prevCommandTime;                       //!< Time for previous valid thruster firing
 
 };
 

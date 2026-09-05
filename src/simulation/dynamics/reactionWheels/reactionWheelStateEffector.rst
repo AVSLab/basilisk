@@ -34,6 +34,17 @@ The reaction wheel state effector module provides functionality for simulating r
 It includes safety mechanisms to prevent numerical instability that can occur with excessive wheel acceleration
 or when using unlimited torque with small spacecraft inertia.
 
+Initialization and Reset
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When the attached spacecraft registers the effector states, the module initializes the wheel-speed and applicable
+wheel-angle states. For each fully coupled jitter wheel, it also derives the center-of-mass offset ``d`` from
+``U_s / mass`` and sets the off-diagonal inertia ``J13`` to ``U_d``. This mandatory attachment path initializes the
+dynamics configuration even when the reaction wheel state effector is not added to a simulation task.
+
+The ``Reset()`` method refreshes these derived configuration values, initializes every wheel's command entry to zero,
+reports a warning when a Stribeck coefficient is zero, and clears the wheel-speed output buffer.
+
 Threshold Parameters
 ~~~~~~~~~~~~~~~~~~~~
 

@@ -237,9 +237,9 @@ Support Files
    Master File <mujoco/BSK_mujocoMasters>
    Models Folder <mujoco/mujocoModels/index>
 
-Comparing the Back-Substitution and MuJoCo Dynamics Engines
------------------------------------------------------------
-These scenarios validate and benchmark the back-substitution :ref:`spacecraft`
+Comparing the Backsubstitution Method and MuJoCo Dynamics Engines
+-----------------------------------------------------------------
+These scenarios validate and benchmark the Backsubstitution :ref:`spacecraft`
 against the MuJoCo-based :ref:`MJScene<MJScene>` on equivalent problems of increasing
 complexity, best studied in order. Start with the overview for build requirements,
 execution order, expected artifacts, approximate runtimes, and interpretation limits.

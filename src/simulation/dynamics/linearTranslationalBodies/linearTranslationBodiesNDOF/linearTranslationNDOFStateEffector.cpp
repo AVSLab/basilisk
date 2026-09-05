@@ -83,13 +83,19 @@ void TranslatingBody::setC(double c) {
     }
 }
 
-/*! This method is used to reset the module. */
+/*! This method is used to reset the module.
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
+ */
 void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
-/*! This method is used to add a translating body. */
+/*! This method is used to add a translating body.
+ *
+ * @param[in] newBody Translating-body configuration to add.
+ */
 void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody) {
     // Pushback new body
     translatingBodyVec.push_back(newBody);
@@ -112,7 +118,10 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     newBody->nameOfInertialAngVelocityProperty = "linearTranslationInertialAngVelocity" + bodySuffix;
 }
 
-/*! This method is used to get a translating body. */
+/*! This method is used to get a translating body.
+ *
+ * @param[in] index Zero-based body index.
+ */
 std::shared_ptr<TranslatingBody> LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index) {
     assert(("Index must be less than the number of translating body axes", index < static_cast<uint64_t>(this->N)));
 
@@ -156,7 +165,10 @@ void LinearTranslationNDOFStateEffector::readInputMessages()
     }
 }
 
-/*! This method takes the computed rho states and outputs them to the messaging system. */
+/*! This method takes the computed rho states and outputs them to the messaging system.
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
+ */
 void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->computeTranslatingBodyInertialStates();
@@ -195,12 +207,15 @@ void LinearTranslationNDOFStateEffector::prependSpacecraftNameToStates()
     this->nameOfRhoDotState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoDotState;
 }
 
-/*! This method allows the TB state effector to have access to the hub states and gravity*/
-void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& statesIn)
+/*! This method allows the TB state effector to have access to the hub states and gravity
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& states)
 {
-    this->inertialPositionProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->hubSigmaState = statesIn.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
+    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
+    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
 }
 
 /*! This method runs every configuration check. Spacecraft initialization always reaches it through
@@ -265,12 +280,15 @@ LinearTranslationNDOFStateEffector::checkJointMassMatrix()
     }
 }
 
-/*! This method allows the TB state effector to register its states: rho and rhoDot with the dynamic parameter manager */
-void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
+/*! This method allows the TB state effector to register its states: rho and rhoDot with the dynamic parameter manager
+ *
+ * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
+ */
+void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
     // Register the rho states
-    this->rhoState = states.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoState);
-    this->rhoDotState = states.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoDotState);
+    this->rhoState = statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoState);
+    this->rhoDotState = statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoDotState);
     Eigen::MatrixXd RhoInitMatrix(N,1);
     Eigen::MatrixXd RhoDotInitMatrix(N,1);
     int i = 0;
@@ -282,7 +300,7 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& states)
     this->rhoState->setState(RhoInitMatrix);
     this->rhoDotState->setState(RhoDotInitMatrix);
 
-    this->registerProperties(states);
+    this->registerProperties(statesIn);
     this->validateConfiguration();
 }
 
@@ -326,7 +344,10 @@ LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
 }
 
 /*! This method allows the TB state effector to provide its contributions to the mass props and mass prop rates of the
- spacecraft */
+ spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     this->effProps.mEff = 0.0;
@@ -411,7 +432,14 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
 }
 
 /*! This method allows the TB state effector to give its contributions to the matrices needed for the back-sub
- method */
+ method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Backsubstitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void LinearTranslationNDOFStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
@@ -473,7 +501,10 @@ LinearTranslationNDOFStateEffector::computeDependentEffectors(BackSubMatrices& b
     }
 }
 
-/*! This method compute MRho for back-sub */
+/*! This method compute MRho for back-sub
+ *
+ * @param[out] MRho Translating-body joint mass matrix.
+ */
 void LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
 {
     for (int n = 0; n<this->N; n++) {
@@ -493,7 +524,10 @@ void LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
     }
 }
 
-/*! This method compute ARhoStar for back-sub */
+/*! This method compute ARhoStar for back-sub
+ *
+ * @param[out] ARhoStar A-rho-star Backsubstitution matrix.
+ */
 void
 LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
 {
@@ -508,7 +542,10 @@ LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
     }
 }
 
-/*! This method compute BRhoStar for back-sub */
+/*! This method compute BRhoStar for back-sub
+ *
+ * @param[out] BRhoStar B-rho-star Backsubstitution matrix.
+ */
 void
 LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
 {
@@ -526,7 +563,11 @@ LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
     }
 }
 
-/*! This method compute CRhoStar for back-sub */
+/*! This method compute CRhoStar for back-sub
+ *
+ * @param[out] CRhoStar C-rho-star Backsubstitution vector.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar,
                                                       const Eigen::Vector3d& g_N)
 {
@@ -559,7 +600,10 @@ void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoSt
     }
 }
 
-/*! This method computes the back-sub contributions of the system */
+/*! This method computes the back-sub contributions of the system
+ *
+ * @param[in,out] backSubContr Backsubstitution contributions.
+ */
 void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
 {
     for (int i = 0; i<this->N; i++) {
@@ -586,7 +630,13 @@ void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatr
     }
 }
 
-/*! This method is used to find the derivatives for the TB stateEffector: rhoDDot and the kinematic derivative */
+/*! This method is used to find the derivatives for the TB stateEffector: rhoDDot and the kinematic derivative
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     // Find rDDotLoc_BN_B
@@ -599,7 +649,13 @@ void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[m
     this->rhoDotState->setDerivative(rhoDDot);
 }
 
-/*! This method is for calculating the contributions of the TB state effector to the energy and momentum of the spacecraft */
+/*! This method is for calculating the contributions of the TB state effector to the energy and momentum of the spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                                                       Eigen::Vector3d & rotAngMomPntCContr_B,
                                                                       double & rotEnergyContr,
@@ -655,7 +711,10 @@ void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
     }
 }
 
-/*! This method is used so that the simulation will ask TB to update messages */
+/*! This method is used so that the simulation will ask TB to update messages
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
 void LinearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();

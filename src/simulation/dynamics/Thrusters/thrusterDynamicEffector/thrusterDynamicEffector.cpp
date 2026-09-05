@@ -56,7 +56,8 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
 
 
 /*! This method is used to reset the module.
-
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
@@ -434,36 +435,40 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
 /*! This method is used to update the blow down effects to the thrust and/or Isp
 * at every computeForceTorque call when the thrusters are attached to a fuel
 * tank subject to blow down effects.
-
+ *
+ * @param[in,out] CurrentThruster Thruster configuration whose blow-down properties are updated.
  */
-void ThrusterDynamicEffector::computeBlowDownDecay(std::shared_ptr<THRSimConfig> currentThruster)
+void ThrusterDynamicEffector::computeBlowDownDecay(std::shared_ptr<THRSimConfig> CurrentThruster)
 {
-    THROperation *ops = &(currentThruster->ThrustOps);
+    THROperation *ops = &(CurrentThruster->ThrustOps);
 
-    if (!currentThruster->thrBlowDownCoeff.empty()) {
+    if (!CurrentThruster->thrBlowDownCoeff.empty()) {
         double thrustBlowDown = 0.0;
         double thrOrder = 1.0;
-        for(auto thrCoeff = currentThruster->thrBlowDownCoeff.rbegin(); thrCoeff !=
-                                               currentThruster->thrBlowDownCoeff.rend(); thrCoeff++) {
+        for(auto thrCoeff = CurrentThruster->thrBlowDownCoeff.rbegin(); thrCoeff !=
+                                               CurrentThruster->thrBlowDownCoeff.rend(); thrCoeff++) {
             thrustBlowDown += *thrCoeff * thrOrder;
             thrOrder *= fuelMass; // Fuel mass assigned in fuel tank's updateEffectorMassProps method
         }
-        ops->thrustBlowDownFactor = std::clamp(thrustBlowDown / currentThruster->MaxThrust, double (0.0), double (1.0));
+        ops->thrustBlowDownFactor = std::clamp(thrustBlowDown / CurrentThruster->MaxThrust, double (0.0), double (1.0));
     }
 
-    if (!currentThruster->ispBlowDownCoeff.empty()) {
+    if (!CurrentThruster->ispBlowDownCoeff.empty()) {
         double ispBlowDown = 0.0;
         double ispOrder = 1.0;
-        for (auto ispCoeff = currentThruster->ispBlowDownCoeff.rbegin(); ispCoeff !=
-                                                currentThruster->ispBlowDownCoeff.rend(); ispCoeff++) {
+        for (auto ispCoeff = CurrentThruster->ispBlowDownCoeff.rbegin(); ispCoeff !=
+                                                CurrentThruster->ispBlowDownCoeff.rend(); ispCoeff++) {
             ispBlowDown += *ispCoeff * ispOrder;
             ispOrder *= fuelMass; // Fuel mass assigned in fuel tank's updateEffectorMassProps method
         }
-        ops->ispBlowDownFactor = std::clamp(ispBlowDown / currentThruster->steadyIsp, double (0.0), double (1.0));
+        ops->ispBlowDownFactor = std::clamp(ispBlowDown / CurrentThruster->steadyIsp, double (0.0), double (1.0));
     }
 }
 
-/*! This method computes contributions to the fuel mass depletion. */
+/*! This method computes contributions to the fuel mass depletion.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void ThrusterDynamicEffector::computeStateContribution(double integTime [[maybe_unused]]){
 
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
@@ -620,7 +625,7 @@ double ThrusterDynamicEffector::thrFactorToTime(std::shared_ptr<THRSimConfig> th
     double rampDirection = std::copysign(1.0,
                                          it->ThrustFactor - thrData->ThrustOps.ThrustFactor);
 
-    // Initialize the time computation functiosn based on ramp direction
+    // Initialize the time computation functions based on ramp direction
     double prevValidThrFactor = rampDirection < 0 ? 1.0 : 0.0;
     double prevValidDelta = 0.0;
     for(it=thrRamp->begin(); it!=thrRamp->end(); it++)

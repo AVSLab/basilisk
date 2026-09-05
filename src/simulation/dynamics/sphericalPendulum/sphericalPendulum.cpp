@@ -66,16 +66,22 @@ SphericalPendulum::~SphericalPendulum()
 	return;
 }
 
-/*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states */
-void SphericalPendulum::linkInStates(DynParamManager& statesIn)
+/*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void SphericalPendulum::linkInStates(DynParamManager& states)
 {
     // - Grab access to gravity
-    this->g_N = statesIn.getPropertyReference(this->propName_vehicleGravity);
+    this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 
     return;
 }
 
-/*! This is the method for the spherical pendulum to register its states: l and lDot */
+/*! This is the method for the spherical pendulum to register its states: l and lDot
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void SphericalPendulum::registerStates(DynParamManager& states)
 {
     if (!eigenIsPositiveSemidefiniteMatrix(this->D)) {
@@ -114,7 +120,10 @@ void SphericalPendulum::registerStates(DynParamManager& states)
 	return;
 }
 
-/*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle */
+/*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
 
@@ -122,7 +131,7 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
 	this->phi = this->phiState->getStateReference()(0,0);
 	this->theta = this->thetaState->getStateReference()(0,0);
 
-	// mantain phi and theta between 0 and 2pi
+	// maintain phi and theta between 0 and 2pi
 	if (this->phi>2*M_PI) {
 		this->phi=this->phi-2*M_PI;
 		Eigen::MatrixXd phiInitMatrix(1,1);
@@ -203,7 +212,10 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
     return;
 }
 
-/*! This is method is used to pass mass properties information to the fuelTank */
+/*! This method is used to pass mass properties information to the fuel tank
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
 {
     if (this->massState == nullptr) {
@@ -224,7 +236,14 @@ void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
     return;
 }
 
-/*! This method is for the FSP to add its contributions to the back-sub method */
+/*! This method is for the FSP to add its contributions to the back-sub method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Backsubstitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
     if (this->massFSP <= 0.0) {
@@ -331,7 +350,13 @@ void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], B
 }
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is
- derived using the back-sub method */
+ derived using the back-sub method
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
 
@@ -364,7 +389,13 @@ void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]], Ei
     return;
 }
 
-/*! This method is for the FSP to add its contributions to energy and momentum */
+/*! This method is for the FSP to add its contributions to energy and momentum
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
@@ -386,6 +417,10 @@ void SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_un
 
 }
 
+/*! @brief Apply post-integration state modifications.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void SphericalPendulum::modifyStates(double integTime [[maybe_unused]]){
 	// when theta>45° change reference system in order to avoid singularities on aPhi, bPhi, cPhi
 	if (fabs(cos(this->theta))<sqrt(2)/2){

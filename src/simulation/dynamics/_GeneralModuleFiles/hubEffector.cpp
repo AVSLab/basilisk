@@ -73,7 +73,10 @@ void HubEffector::validateConfiguration()
 }
 
 /*! This method allows the hub access to gravity and also gets access to the properties in the dyn Manager because uses
- these values in the computeDerivatives method call */
+ these values in the computeDerivatives method call
+ *
+ * @param[in] statesIn Dynamic parameter manager containing the required states.
+ */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
     this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
@@ -92,7 +95,10 @@ void HubEffector::prependSpacecraftNameToStates()
     return;
 }
 
-/*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B */
+/*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void HubEffector::registerStates(DynParamManager& states)
 {
     // - Register the hub states and set with initial values
@@ -114,7 +120,10 @@ void HubEffector::registerStates(DynParamManager& states)
     return;
 }
 
-/*! This method allows the hub to register only translational states: r_BN_N and v_BN_N */
+/*! This method allows the hub to register only translational states: r_BN_N and v_BN_N
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void HubEffector::registerTranslationalStates(DynParamManager& states)
 {
     // - Register the hub translational states and set with initial values
@@ -127,7 +136,10 @@ void HubEffector::registerTranslationalStates(DynParamManager& states)
     return;
 }
 
-/*! This method allows the hub to register fixed attitude states for point-mass dynamics with dynamic effectors */
+/*! This method allows the hub to register fixed attitude states for point-mass dynamics with dynamic effectors
+ *
+ * @param[in,out] states Dynamic parameter manager used to register states or properties.
+ */
 void HubEffector::registerAttitudeStates(DynParamManager& states)
 {
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
@@ -139,7 +151,10 @@ void HubEffector::registerAttitudeStates(DynParamManager& states)
     return;
 }
 
-/*! This method allows the hub to give its mass properties to the spacecraft */
+/*! This method allows the hub to give its mass properties to the spacecraft
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Give the mass to mass props
@@ -164,7 +179,13 @@ void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 }
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
- derivatives */
+ derivatives
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B [[maybe_unused]], Eigen::MRPd sigma_BN)
 {
     // - Get variables from state manager
@@ -210,7 +231,12 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::V
 }
 
 /*! This method computes direct derivatives for a fixed-mass hub-only spacecraft whose body
- frame origin is at the hub center of mass. */
+ frame origin is at the hub center of mass.
+ *
+ * @param[in] forceExternal_N [N] External force expressed in inertial-frame components.
+ * @param[in] forceExternal_B [N] External force expressed in body-frame components.
+ * @param[in] torquePntB_B [N*m] External torque about point B in body-frame components.
+ */
 void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
                                             const Eigen::Vector3d& forceExternal_B,
                                             const Eigen::Vector3d& torquePntB_B)
@@ -238,7 +264,13 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
     return;
 }
 
-/*! This method is for computing the energy and momentum contributions from the hub */
+/*! This method is for computing the energy and momentum contributions from the hub
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                double & rotEnergyContr, Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
@@ -257,7 +289,10 @@ void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]]
     return;
 }
 
-/*! This method is for switching the MRPs */
+/*! This method is for switching the MRPs
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void HubEffector::modifyStates(double integTime [[maybe_unused]])
 {
     // Lets switch those MRPs!!
@@ -270,7 +305,10 @@ void HubEffector::modifyStates(double integTime [[maybe_unused]])
     return;
 }
 
-/*! This method is used to set the gravitational velocity state equal to the base velocity state */
+/*! This method is used to set the gravitational velocity state equal to the base velocity state
+ *
+ * @param[in] v_CN_N [m/s] Unused center-of-mass velocity retained for interface compatibility.
+ */
 void HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
 {
     this->gravVelocityState->setState(this->velocityState->getStateReference());

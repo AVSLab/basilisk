@@ -36,8 +36,18 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector()
 
 }
 
-/*! This method is used to reset the module */
+/*! Validate and initialize the constraint gains when the scheduler resets the model.
+
+ @param CurrentSimNanos [ns] Time at which the reset occurs
+ */
 void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+    this->initializeGains();
+}
+
+/*! Validate that either the tuning parameters or individual gains were configured. */
+void ConstraintDynamicEffector::validateConfiguration()
 {
     // check if any individual gains are not specified
     bool gainset = this->k_d != 0 || this->c_d != 0 || this->k_a != 0 || this->c_a != 0;
@@ -45,8 +55,13 @@ void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("Alpha must be set to a positive nonzero value prior to initialization");
     }
     if (this->beta <= 0 && !gainset) {
-        bskLogger.bskError("Beta must be set to a positive nonzero value prior to initializaiton");
+        bskLogger.bskError("Beta must be set to a positive nonzero value prior to initialization");
     }
+}
+
+/*! Populate unspecified individual gains from the configured tuning parameters. */
+void ConstraintDynamicEffector::initializeGains()
+{
     // if individual k's or c's are already set, don't use alpha & beta
     if (this->k_d == 0) {
         this->k_d = pow(this->alpha,2);
@@ -62,22 +77,42 @@ void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
+/*! @brief Set the initial separation between connection points.
+ *
+ * @param[in] r_P2P1_B1Init [m] Initial separation from connection point P1 to P2.
+ */
 void ConstraintDynamicEffector::setR_P2P1_B1Init(Eigen::Vector3d r_P2P1_B1Init) {
     this->r_P2P1_B1Init = r_P2P1_B1Init;
 }
 
+/*! @brief Set the first body's connection-point position.
+ *
+ * @param[in] r_P1B1_B1 [m] Position of connection point P1 relative to hub B1.
+ */
 void ConstraintDynamicEffector::setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1) {
     this->r_P1B1_B1 = r_P1B1_B1;
 }
 
+/*! @brief Set the second body's connection-point position.
+ *
+ * @param[in] r_P2B2_B2 [m] Position of connection point P2 relative to hub B2.
+ */
 void ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2) {
     this->r_P2B2_B2 = r_P2B2_B2;
 }
 
+/*! @brief Set the initial relative attitude constraint.
+ *
+ * @param[in] sigma_B2B1Init Initial attitude of body B2 relative to body B1.
+ */
 void ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init) {
     this->dcm_B2B1Init = sigma_B2B1Init.toRotationMatrix().transpose();
 }
 
+/*! @brief Set the proportional Baumgarte tuning parameter.
+ *
+ * @param[in] alpha [1/s] Proportional Baumgarte tuning parameter.
+ */
 void ConstraintDynamicEffector::setAlpha(double alpha) {
     if (alpha > 0.0)
         this->alpha = alpha;
@@ -86,6 +121,10 @@ void ConstraintDynamicEffector::setAlpha(double alpha) {
     }
 }
 
+/*! @brief Set the derivative Baumgarte tuning parameter.
+ *
+ * @param[in] beta [1/s] Derivative Baumgarte tuning parameter.
+ */
 void ConstraintDynamicEffector::setBeta(double beta) {
     if (beta > 0.0)
         this->beta = beta;
@@ -94,6 +133,10 @@ void ConstraintDynamicEffector::setBeta(double beta) {
     }
 }
 
+/*! @brief Set the direction-constraint proportional gain.
+ *
+ * @param[in] k_d [1/s^2] Direction-constraint proportional gain.
+ */
 void ConstraintDynamicEffector::setK_d(double k_d) {
     if (k_d > 0.0)
         this->k_d = k_d;
@@ -102,6 +145,10 @@ void ConstraintDynamicEffector::setK_d(double k_d) {
     }
 }
 
+/*! @brief Set the direction-constraint derivative gain.
+ *
+ * @param[in] c_d [1/s] Direction-constraint derivative gain.
+ */
 void ConstraintDynamicEffector::setC_d(double c_d) {
     if (c_d > 0.0)
         this->c_d = c_d;
@@ -110,6 +157,10 @@ void ConstraintDynamicEffector::setC_d(double c_d) {
     }
 }
 
+/*! @brief Set the attitude-constraint proportional gain.
+ *
+ * @param[in] k_a [1/s^2] Attitude-constraint proportional gain.
+ */
 void ConstraintDynamicEffector::setK_a(double k_a) {
     if (k_a > 0.0)
         this->k_a = k_a;
@@ -118,6 +169,10 @@ void ConstraintDynamicEffector::setK_a(double k_a) {
     }
 }
 
+/*! @brief Set the attitude-constraint derivative gain.
+ *
+ * @param[in] c_a [1/s] Attitude-constraint derivative gain.
+ */
 void ConstraintDynamicEffector::setC_a(double c_a) {
     if (c_a > 0.0)
         this->c_a = c_a;
@@ -126,6 +181,10 @@ void ConstraintDynamicEffector::setC_a(double c_a) {
     }
 }
 
+/*! @brief Add a spacecraft position-state name.
+ *
+ * @param[in] value Position-state name to add.
+ */
 void ConstraintDynamicEffector::setStateNameOfPosition(std::string value) {
     if (!value.empty()) {
         this->stateNameOfPosition.push_back(value);
@@ -134,6 +193,10 @@ void ConstraintDynamicEffector::setStateNameOfPosition(std::string value) {
     }
 }
 
+/*! @brief Add a spacecraft velocity-state name.
+ *
+ * @param[in] value Velocity-state name to add.
+ */
 void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value) {
     if (!value.empty()) {
         this->stateNameOfVelocity.push_back(value);
@@ -142,6 +205,10 @@ void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value) {
     }
 }
 
+/*! @brief Add a spacecraft attitude-state name.
+ *
+ * @param[in] value Attitude-state name to add.
+ */
 void ConstraintDynamicEffector::setStateNameOfSigma(std::string value) {
     if (!value.empty()) {
         this->stateNameOfSigma.push_back(value);
@@ -150,6 +217,10 @@ void ConstraintDynamicEffector::setStateNameOfSigma(std::string value) {
     }
 }
 
+/*! @brief Add a spacecraft angular-velocity-state name.
+ *
+ * @param[in] value Angular-velocity-state name to add.
+ */
 void ConstraintDynamicEffector::setStateNameOfOmega(std::string value) {
     if (!value.empty()) {
         this->stateNameOfOmega.push_back(value);
@@ -158,6 +229,10 @@ void ConstraintDynamicEffector::setStateNameOfOmega(std::string value) {
     }
 }
 
+/*! @brief Add an inertial-position property name.
+ *
+ * @param[in] value Inertial-position property name to add.
+ */
 void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) {
     if (!value.empty()) {
         this->propName_inertialPosition.push_back(value);
@@ -166,6 +241,10 @@ void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) 
     }
 }
 
+/*! @brief Add an inertial-velocity property name.
+ *
+ * @param[in] value Inertial-velocity property name to add.
+ */
 void ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value) {
     if (!value.empty()) {
         this->propName_inertialVelocity.push_back(value);
@@ -174,6 +253,10 @@ void ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value) 
     }
 }
 
+/*! @brief Add an inertial-attitude property name.
+ *
+ * @param[in] value Inertial-attitude property name to add.
+ */
 void ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value) {
     if (!value.empty()) {
         this->propName_inertialAttitude.push_back(value);
@@ -182,6 +265,10 @@ void ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value) 
     }
 }
 
+/*! @brief Add an inertial-angular-velocity property name.
+ *
+ * @param[in] value Inertial-angular-velocity property name to add.
+ */
 void ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string value) {
     if (!value.empty()) {
         this->propName_inertialAngVelocity.push_back(value);
@@ -233,6 +320,9 @@ void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
 
+    this->validateConfiguration();
+    this->initializeGains();
+
     int stateIdx = -1;
     if (this->scInitCounter == 0) {
         this->parent1.parentType = "hub";
@@ -266,6 +356,9 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
     if (this->scInitCounter > 1) {
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
+
+    this->validateConfiguration();
+    this->initializeGains();
 
     int propIdx = -1;
     if (this->scInitCounter == 0) {

@@ -42,7 +42,10 @@ uint64_t FuelTank::effectorID = 1;
 FuelTank::~FuelTank() {
 }
 
-/*! optionally set the name of the mass state to be used by the state manager */
+/*! optionally set the name of the mass state to be used by the state manager
+ *
+ * @param[in] nameOfMassState Name assigned to the tank mass state.
+ */
 void FuelTank::setNameOfMassState(const std::string &nameOfMassState) {
     this->nameOfMassState = nameOfMassState;
 }
@@ -52,7 +55,10 @@ std::string FuelTank::getNameOfMassState() const {
     return this->nameOfMassState;
 }
 
-/*! set fuel tank orientation relative to the hub frame */
+/*! set fuel tank orientation relative to the hub frame
+ *
+ * @param[in] dcm_TB Direction cosine matrix defining the tank orientation relative to the hub.
+ */
 void FuelTank::setDcm_TB(const Eigen::Matrix3d &dcm_TB) {
     this->dcm_TB = dcm_TB;
 }
@@ -62,7 +68,10 @@ Eigen::Matrix3d FuelTank::getDcm_TB() const {
     return this->dcm_TB;
 }
 
-/*! set fuel tank location relative to the hub frame */
+/*! set fuel tank location relative to the hub frame
+ *
+ * @param[in] r_TB_B [m] Tank position relative to the hub, expressed in body-frame components.
+ */
 void FuelTank::setR_TB_B(const Eigen::Vector3d &r_TB_B) {
     this->r_TB_B = r_TB_B;
 }
@@ -72,7 +81,10 @@ Eigen::Vector3d FuelTank::getR_TB_B() const {
     return this->r_TB_B;
 }
 
-/*! set update only mass depletion flag */
+/*! set update only mass depletion flag
+ *
+ * @param[in] updateOnly Flag selecting update-only mass depletion.
+ */
 void FuelTank::setUpdateOnly(bool updateOnly) {
     this->updateOnly = updateOnly;
 }
@@ -82,7 +94,10 @@ bool FuelTank::getUpdateOnly() const {
     return this->updateOnly;
 }
 
-/*! set fuel leak rate */
+/*! set fuel leak rate
+ *
+ * @param[in] fuelLeakRate [kg/s] Fuel leak mass flow rate.
+ */
 void FuelTank::setFuelLeakRate(double fuelLeakRate) {
     this->fuelLeakRate = fuelLeakRate;
 }
@@ -100,35 +115,50 @@ void FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model) {
     this->fuelTankModel = model;
 }
 
-/*! Attach a fuel slosh particle to the tank */
+/*! Attach a fuel slosh particle to the tank
+ *
+ * @param[in] particle Fuel-slosh particle to attach.
+ */
 void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
     // Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
 }
 
-/*! Attach a thruster dynamic effector to the tank */
+/*! Attach a thruster dynamic effector to the tank
+ *
+ * @param[in] dynEff Thruster dynamic effector to attach.
+ */
 void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
     thrDynEffectors.push_back(dynEff);
     dynEff->fuelMass = this->fuelTankModel->propMassInit;
 }
 
-/*! Attach a thruster state effector to the tank */
+/*! Attach a thruster state effector to the tank
+ *
+ * @param[in] stateEff Thruster state effector to attach.
+ */
 void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
     thrStateEffectors.push_back(stateEff);
 }
 
-/*! Link states that the module accesses */
-void FuelTank::linkInStates(DynParamManager &statesIn) {
+/*! Link states that the module accesses
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
+ */
+void FuelTank::linkInStates(DynParamManager &states) {
     // Grab access to the hubs omega_BN_N
-    this->omegaState = statesIn.getStateObject(this->stateNameOfOmega);
+    this->omegaState = states.getStateObject(this->stateNameOfOmega);
     for (auto* fuelSloshParticle: this->fuelSloshParticles) {
         // runs after the whole registerStates pass, so the flag is scoped to one pass
         fuelSloshParticle->hasRegisteredStates = false;
     }
 }
 
-/*! Register the tank mass state before any attached fuel-slosh states. */
-void FuelTank::registerStates(DynParamManager &statesIn) {
+/*! Register the tank mass state before any attached fuel-slosh states.
+ *
+ * @param[in,out] states Dynamic parameter manager used to register the tank mass state.
+ */
+void FuelTank::registerStates(DynParamManager &states) {
     for (auto* fuelSloshParticle: this->fuelSloshParticles) {
         if (fuelSloshParticle->hasRegisteredStates) {
             this->bskLogger.bskLog(
@@ -138,13 +168,17 @@ void FuelTank::registerStates(DynParamManager &statesIn) {
     }
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
-    this->massState = statesIn.registerState(1, 1, this->getNameOfMassState());
+    this->massState = states.registerState(1, 1, this->getNameOfMassState());
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
     this->emptyTankWarningPrinted = false;
 }
 
-/*! Update derivatives of the retained tank mass properties. */
+/*! Update derivatives of the retained tank mass properties.
+ *
+ * @param[in] mass [kg] Mass value.
+ * @param[in] massRate [kg/s] Mass rate.
+ */
 void FuelTank::updateRetainedMassPropertyDerivatives(double mass,
                                                      double massRate)
 {
@@ -170,7 +204,10 @@ void FuelTank::updateRetainedMassPropertyDerivatives(double mass,
     this->effProps.IEffPrimePntB_BDynamics.setZero();
 }
 
-/*! Fuel tank add its contributions the mass of the vehicle. */
+/*! Fuel tank adds its contribution to the mass of the vehicle.
+ *
+ * @param[in] integTime [s] Current integration time.
+ */
 void FuelTank::updateEffectorMassProps(double integTime) {
     // Add contributions of the mass of the tank
     double massLocal = this->massState->getState()(0, 0);
@@ -269,7 +306,14 @@ void FuelTank::updateEffectorMassProps(double integTime) {
         this->effProps.mEffDot != 0.0;
 }
 
-/*! Fuel tank adds its contributions to the matrices for the back-sub method. */
+/*! Fuel tank adds its contributions to the matrices for the back-sub method.
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] backSubContr Backsubstitution contributions.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
+ */
 void FuelTank::updateContributions(double integTime [[maybe_unused]],
                                    BackSubMatrices &backSubContr,
                                    Eigen::MRPd sigma_BN [[maybe_unused]],
@@ -305,7 +349,13 @@ void FuelTank::updateContributions(double integTime [[maybe_unused]],
     }
 }
 
-/*! Fuel tank computes its derivative */
+/*! Fuel tank computes its derivative
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] rDDot_BN_N [m/s^2] Hub translational acceleration expressed in inertial-frame components.
+ * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
+ * @param[in] sigma_BN Hub attitude relative to the inertial frame.
+ */
 void FuelTank::computeDerivatives(double integTime [[maybe_unused]],
                                   Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
                                   Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
@@ -320,7 +370,13 @@ void FuelTank::computeDerivatives(double integTime [[maybe_unused]],
     this->massState->setDerivative(conv);
 }
 
-/*! Fuel tank contributes to the energy and momentum calculations */
+/*! Fuel tank contributes to the energy and momentum calculations
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in,out] rotAngMomPntCContr_B [kg*m^2/s] Rotational angular momentum contribution.
+ * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
+ * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
+ */
 void FuelTank::updateEnergyMomContributions(double integTime [[maybe_unused]],
                                             Eigen::Vector3d &rotAngMomPntCContr_B,
                                             double &rotEnergyContr,

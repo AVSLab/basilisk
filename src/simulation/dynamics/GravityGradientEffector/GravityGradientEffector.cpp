@@ -33,8 +33,9 @@ GravityGradientEffector::~GravityGradientEffector()
 }
 
 
-/*! This method is used to set the effector, and check same module variables
+/*! Reset the effector outputs and validate its configuration.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
 */
 void GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
@@ -43,15 +44,17 @@ void GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->torqueExternalPntB_B.fill(0.0);
     this->forceExternal_N.fill(0.0);
 
-    if (this->planetPropertyNames.size()==0) {
-        bskLogger.bskError("planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
-    }
-
-    /* empty the vector of planet state pointers */
-    static_cast<void>(this->r_PN_N.empty());
-    static_cast<void>(this->muPlanet.empty());
+    this->validateConfiguration();
 
     return;
+}
+
+/*! Validate that at least one gravity-gradient source planet was configured. */
+void GravityGradientEffector::validateConfiguration()
+{
+    if (this->planetPropertyNames.empty()) {
+        bskLogger.bskError("planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+    }
 }
 
 /*! This method adds planet names to a vector.
@@ -67,7 +70,8 @@ void GravityGradientEffector::addPlanetName(std::string planetName)
 
 
 /*! Write the gravity gradient torque output message.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -79,10 +83,13 @@ void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to link the gravity gradient effector to the hub position, inertia tensor and center of mass vector.
-
+ *
+ * @param[in] states Dynamic parameter manager containing the required states and properties.
  */
 
 void GravityGradientEffector::linkInStates(DynParamManager& states){
+    this->validateConfiguration();
+
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->r_BN_N = states.getStateObject(this->stateNameOfPosition);
     this->ISCPntB_B = states.getPropertyReference(this->propName_inertiaSC);
@@ -97,7 +104,10 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
 }
 
 /*! This method computes the body forces and torques for the gravity gradient effector.
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
 	// Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();

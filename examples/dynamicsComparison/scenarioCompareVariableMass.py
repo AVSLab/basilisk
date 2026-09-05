@@ -76,7 +76,7 @@ Running it
 
     python3 scenarioCompareVariableMass.py
 
-The scenario builds the same vehicle two ways and overlays them: the back-substitution
+The scenario builds the same vehicle two ways and overlays them: the Backsubstitution
 :ref:`spacecraft` (BSM, used as the plotting baseline) and the MuJoCo
 :ref:`MJScene<MJScene>`. Two switches on :func:`run` control what is compared:
 
@@ -472,7 +472,7 @@ def velocityAlignedAttitude(rN, vN, mu):
 
 def buildBSM(dt, record, useThruster=True, inOrbit=True,
              simDuration=SIM_DURATION, nearRigid=False):
-    """Build (and initialize) the back-substitution variable-mass reference simulation.
+    """Build (and initialize) the Backsubstitution variable-mass reference simulation.
 
     Args:
         dt (float): integrator time step [s]

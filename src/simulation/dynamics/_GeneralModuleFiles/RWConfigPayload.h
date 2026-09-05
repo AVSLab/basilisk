@@ -58,9 +58,9 @@ RWConfigPayload
     double Omega_max = -1.0;    //!< [rad/s], max wheel speed, negative values turn off wheel saturation
     double P_max = -1.0;        //!< [N-m/s], maximum wheel power, negative values turn off power limit
     RWModels RWModel = BalancedWheels;       //!< [-], Type of imbalance model to use
-    Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter back substitution
-    Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter back substitution
-    double cOmega = 0.0;        //!< [-], parameter used in coupled jitter back substitution
+    Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter Backsubstitution
+    Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter Backsubstitution
+    double cOmega = 0.0;        //!< [-], parameter used in coupled jitter Backsubstitution
     Eigen::Matrix3d IRWPntWc_B;         //!< RW inertia about point Wc in B frame components
     Eigen::Matrix3d IPrimeRWPntWc_B;    //!< RW inertia B-frame derivative
     Eigen::Vector3d rWcB_B;             //!< position of Wc relative to B in B-frame components

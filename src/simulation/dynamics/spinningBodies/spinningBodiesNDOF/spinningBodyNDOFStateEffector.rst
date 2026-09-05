@@ -109,3 +109,17 @@ This section is to outline the steps needed to setup a Spinning Body N DoF State
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+
+Initialization and Reset
+------------------------
+Attaching the effector to a spacecraft causes its configuration to be validated when the spacecraft registers
+the effector states.  Initialization requires at least one body and a positive mass for the final body.  It also
+rejects an invalid initial rotation matrix or an invalid inertia tensor for any body with positive mass.  Spin
+axes are normalized and validated by ``setSHat_S()`` when configured.
+
+The spacecraft drives the effector dynamics.  Add the effector to a task to process its optional torque, lock,
+and reference inputs and to update its output messages through ``UpdateState()``.
+
+When the effector is scheduled, its ``Reset()`` repeats the chain validation.
+``Reset()`` does not reset the integrated angle or angle-rate states; those states receive their configured
+initial values when they are registered with the spacecraft dynamics.

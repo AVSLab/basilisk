@@ -22,14 +22,13 @@
 #
 
 """
-Regression tests for issue #469: Reset() configuration checks for effectors.
+Regression tests for issue #1534: state-effector configuration validation.
 
-``SpinningBodyNDOFStateEffector::Reset()`` iterates over every attached spinning
-body and validates that each ``dcm_S0P`` is a proper rotation and each
+When its spacecraft registers states, ``SpinningBodyNDOFStateEffector``
+validates that each attached body's ``dcm_S0P`` is a proper rotation and each
 ``ISPntSc_S`` is a symmetric, positive-definite inertia tensor. These tests
-break exactly one precondition at a time on an attached body and assert
-initialization raises a ``BasiliskError``. (``sHat_S`` is validated by its own
-setter, so it cannot reach ``Reset()`` in an invalid state.)
+break exactly one precondition at a time and assert initialization raises a
+``BasiliskError``. (``sHat_S`` is validated by its own setter.)
 """
 
 import pytest
@@ -64,8 +63,10 @@ RESET_ERROR_CASES = [
 
 @pytest.mark.parametrize("brokenPrecondition, expectedMessage, breakIt", RESET_ERROR_CASES,
                          ids=[c[0] for c in RESET_ERROR_CASES])
-def test_spinningBodyNDOF_resetErrors(brokenPrecondition, expectedMessage, breakIt):
-    """Reset() must raise a BasiliskError naming the misconfigured quantity."""
+@pytest.mark.parametrize("validationPath", ["attachment", "reset"])
+def test_spinningBodyNDOF_rejectsInvalidConfiguration(brokenPrecondition, expectedMessage, breakIt,
+                                                      validationPath):
+    """Attachment initialization and direct Reset() must reject the same invalid configuration."""
     unitTestSim = SimulationBaseClass.SimBaseClass()
     testProc = unitTestSim.CreateNewProcess("testProcess")
     testProc.addTask(unitTestSim.CreateNewTask("testTask", macros.sec2nano(0.001)))
@@ -80,8 +81,12 @@ def test_spinningBodyNDOF_resetErrors(brokenPrecondition, expectedMessage, break
     breakIt(body)
     spinningBodyEffector.addSpinningBody(body)
 
+    if validationPath == "reset":
+        with pytest.raises(BasiliskError, match=expectedMessage):
+            spinningBodyEffector.Reset(0)
+        return
+
     scObject.addStateEffector(spinningBodyEffector)
-    unitTestSim.AddModelToTask("testTask", spinningBodyEffector)
     unitTestSim.AddModelToTask("testTask", scObject)
 
     with pytest.raises(BasiliskError, match=expectedMessage):
@@ -103,7 +108,6 @@ def test_spinningBodyNDOF_resetAcceptsValidConfig():
     spinningBodyEffector.addSpinningBody(_validBody())
 
     scObject.addStateEffector(spinningBodyEffector)
-    unitTestSim.AddModelToTask("testTask", spinningBodyEffector)
     unitTestSim.AddModelToTask("testTask", scObject)
 
     unitTestSim.InitializeSimulation()
@@ -133,14 +137,40 @@ def test_spinningBodyNDOF_resetAcceptsMasslessConnector():
     spinningBodyEffector.addSpinningBody(_validBody())
 
     scObject.addStateEffector(spinningBodyEffector)
-    unitTestSim.AddModelToTask("testTask", spinningBodyEffector)
     unitTestSim.AddModelToTask("testTask", scObject)
 
     unitTestSim.InitializeSimulation()
 
 
+@pytest.mark.parametrize("validationPath", ["attachment", "reset"])
+def test_spinningBodyNDOF_rejectsEmptyChain(validationPath):
+    """Attachment initialization and direct Reset() must reject an empty body chain."""
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    testProc = unitTestSim.CreateNewProcess("testProcess")
+    timeStep = macros.sec2nano(0.001)  # [ns]
+    testProc.addTask(unitTestSim.CreateNewTask("testTask", timeStep))
+
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg-m^2]
+
+    spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    if validationPath == "reset":
+        with pytest.raises(BasiliskError, match="at least one spinning body"):
+            spinningBodyEffector.Reset(0)
+        return
+
+    scObject.addStateEffector(spinningBodyEffector)
+    unitTestSim.AddModelToTask("testTask", scObject)
+
+    with pytest.raises(BasiliskError, match="at least one spinning body"):
+        unitTestSim.InitializeSimulation()
+
+
 if __name__ == "__main__":
     test_spinningBodyNDOF_resetAcceptsValidConfig()
     test_spinningBodyNDOF_resetAcceptsMasslessConnector()
+    test_spinningBodyNDOF_rejectsEmptyChain("attachment")
     for case in RESET_ERROR_CASES:
-        test_spinningBodyNDOF_resetErrors(*case)
+        test_spinningBodyNDOF_rejectsInvalidConfiguration(*case, "attachment")

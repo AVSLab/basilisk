@@ -18,7 +18,7 @@
 Unit tests for the automatic hub-only spacecraft dynamics fast path.
 
 When no state effectors are attached and point :math:`B` is colocated with the
-hub center of mass, ``Spacecraft`` can bypass the general back-substitution
+hub center of mass, ``Spacecraft`` can bypass the general Backsubstitution
 matrix assembly and ask ``HubEffector`` to compute direct rigid-body
 derivatives.  This test validates the resulting translational and rotational
 dynamics against a simple analytic case.

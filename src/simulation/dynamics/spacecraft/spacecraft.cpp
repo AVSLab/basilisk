@@ -409,7 +409,7 @@ void Spacecraft::updateSCMassProps(double time)
 }
 
 /*! Return true if the spacecraft can use direct rigid-hub equations instead of
- the full back-substitution path. */
+ the full Backsubstitution path. */
 bool Spacecraft::useHubOnlyFastPath() const
 {
     return this->states.empty() && this->hub.r_BcB_B.isZero();
@@ -527,7 +527,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         this->sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
-    // - Loop through state effectors to get contributions for back-substitution
+    // - Loop through state effectors to get contributions for Backsubstitution
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {

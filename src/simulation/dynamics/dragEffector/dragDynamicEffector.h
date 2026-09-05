@@ -42,12 +42,12 @@
 //! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
 typedef struct {
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
-    double dragCoeff;                        //!< --  Nondimensional drag coefficient
+    double dragCoeff;                        //!<  Nondimensional drag coefficient
     Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
 }DragBaseData;
 
 /*! @brief drag dynamic effector */
-class DragDynamicEffector: public SysModel, public DynamicEffector {
+class DragDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     DragDynamicEffector();
     ~DragDynamicEffector();
@@ -62,19 +62,20 @@ public:
     double getDensity();
 
 public:
-    DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
-    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< -- message used to read density inputs
-    ReadFunctor<WindMsgPayload> windVelInMsg;              //!< -- message used to read wind velocity inputs
-    std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
-    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
+    DragBaseData coreParams;                               //!< Struct used to hold drag parameters
+    ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg;        //!< message used to read density inputs
+    ReadFunctor<WindMsgPayload> windVelInMsg;              //!< message used to read wind velocity inputs
+    std::string modelType;                                 //!< String used to set the type of model used to compute drag
+    StateData *hubSigma;                                   //!< Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    std::string densityCorrectionStateName = "";           //!< -- If not '', finds a state with this name to get ``densityCorrection``
-    StateData *densityCorrection;                          //!< -- Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
+    std::string densityCorrectionStateName = "";           //!< If not '', finds a state with this name to get ``densityCorrection``
+    StateData *densityCorrection;                          //!< Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
     Eigen::Vector3d v_B;                                   //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is linked, else relative to inertial frame N)
-    Eigen::Vector3d v_hat_B;                               //!< -- Drag force direction in the body frame
-    BSKLogger bskLogger;                                   //!< -- BSK Logging
+    Eigen::Vector3d v_hat_B;                               //!< Drag force direction in the body frame
+    BSKLogger bskLogger;                                   //!< BSK Logging
 
 private:
+    void validateConfiguration();  //!< Validate required input-message connections
     AtmoPropsMsgPayload atmoInData;
     WindMsgPayload windInData;
 

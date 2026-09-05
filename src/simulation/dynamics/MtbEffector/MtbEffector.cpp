@@ -35,10 +35,26 @@ MtbEffector::~MtbEffector()
 {
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
+/*! Reset the effector outputs and validate required input-message connections.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
 */
 void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+
+    /*
+     * Zero the effector output forces and torques.
+     */
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+    this->forceExternal_N.fill(0.0);
+
+    return;
+}
+
+/*! Validate that all required input messages are connected. */
+void MtbEffector::validateConfiguration()
 {
     /*
      * Check that required input messages are connected.
@@ -52,20 +68,12 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!this->mtbParamsInMsg.isLinked()) {
         bskLogger.bskError("MtbEffector.mtbParamsInMsg was not linked.");
     }
-
-    /*
-     * Zero the effector output forces and torques.
-     */
-    this->forceExternal_B.fill(0.0);
-    this->torqueExternalPntB_B.fill(0.0);
-    this->forceExternal_N.fill(0.0);
-
-    return;
 }
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-
-*/
+ *
+ * @param[in] CurrentSimNanos [ns] Current simulation time.
+ */
 void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     /*
@@ -78,10 +86,13 @@ void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 
 
 /*! This method is used to link the magnetic torque bar effector to the hub attitude.
-
+ *
+ * @param[in] states Dynamic parameter manager containing the required states.
  */
 void MtbEffector::linkInStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+
     /*
      * Link the Body relative to Inertial frame modified modriguez parameter.
      */
@@ -91,8 +102,10 @@ void MtbEffector::linkInStates(DynParamManager& states)
 }
 
 /*! This method computes the body torque contribution from all magnetic torque bars.
-
-*/
+ *
+ * @param[in] integTime [s] Current integration time.
+ * @param[in] timeStep [s] Integration time step.
+ */
 void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     /*
@@ -157,7 +170,8 @@ void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double t
 }
 
 /*! Write the magnetic torque bar output message.
-
+ *
+ * @param[in] CurrentClock [ns] Current simulation time.
  */
 void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {

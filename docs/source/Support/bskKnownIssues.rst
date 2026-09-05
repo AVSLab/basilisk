@@ -24,6 +24,10 @@ Version |release| (July 7, 2026)
   Projects using ``CITE_BIB_FILES`` also bypass reuse so bibliography edits cannot leave stale citations.
   Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
   pages after header edits. Older saved Sphinx environments are reread once to restore those records.
+- Configuration checks in several state and dynamic effectors ran only from ``Reset()``, which the scheduler does
+  not invoke unless the effector is separately added to a task.  Attached-only effectors could therefore bypass
+  validation.  The affected effectors now perform the same checks from their guaranteed spacecraft initialization
+  hooks, including the property-linking path used by branch-attached dynamic effectors.
 - GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
@@ -62,7 +66,7 @@ Version |release| (July 7, 2026)
   configuration log without rotating the hub-relative terms into inertial components, so the logged panel
   velocities were wrong for any non-identity hub attitude. This is fixed in the current version.
 - The :ref:`hingedRigidBodyStateEffector` built its published panel velocity and angular velocity
-  from a hub angular velocity cached during back-substitution, so the logged values lagged the
+  from a hub angular velocity cached during Backsubstitution, so the logged values lagged the
   integrated state by a step. This is fixed in the current version.
 - The :ref:`hingedRigidBodyStateEffector` added body-frame relative velocity terms directly onto the
   inertial hub velocity when forming both its logged velocities. This is fixed in the current version.

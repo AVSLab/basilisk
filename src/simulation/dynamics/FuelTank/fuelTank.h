@@ -106,7 +106,7 @@ public:
     double thetaStar{};                                 //!< [rad] angle from vertical to top of fuel
     double thetaDotStar{};                              //!< [rad/s] derivative of angle from vertical to top of fuel
     double thetaDDotStar{};                             //!< [rad/s^2] second derivative of angle from vertical to top of fuel
-    Eigen::Vector3d k3;                                 //!< -- Direction of fuel depletion
+    Eigen::Vector3d k3;                                 //!< Direction of fuel depletion
 
     FuelTankModelEmptying() = default;
 
@@ -265,32 +265,32 @@ public:
 };
 
 /*! Fuel tank effector model class */
-class FuelTank :
+class FuelTank final :
         public StateEffector, public SysModel {
 public:
-    std::vector<FuelSlosh *> fuelSloshParticles;        //!< -- vector of fuel slosh particles
-    std::vector<ThrusterDynamicEffector *> thrDynEffectors;        //!< -- Vector of dynamic effectors for thrusters
-    std::vector<ThrusterStateEffector *> thrStateEffectors;        //!< -- Vector of state effectors for thrusters
+    std::vector<FuelSlosh *> fuelSloshParticles;        //!< vector of fuel slosh particles
+    std::vector<ThrusterDynamicEffector *> thrDynEffectors;        //!< Vector of dynamic effectors for thrusters
+    std::vector<ThrusterStateEffector *> thrStateEffectors;        //!< Vector of state effectors for thrusters
     ReadFunctor<MassFlowRateMsgPayload> fuelLeakRateInMsg; //!< (optional) fuel leak mass flow rate input message
-    Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< -- fuel tank output message name
+    Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
-    std::string nameOfMassState{};                      //!< -- Legacy public mass state name; Python users should use accessors
-    Eigen::Matrix3d dcm_TB;                             //!< -- Legacy public DCM from body frame to tank frame
+    std::string nameOfMassState{};                      //!< Legacy public mass state name; Python users should use accessors
+    Eigen::Matrix3d dcm_TB;                             //!< Legacy public DCM from body frame to tank frame
     Eigen::Vector3d r_TB_B;                             //!< [m] Legacy public tank position in B frame; Python users should use accessors
-    bool updateOnly = true;                             //!< -- Legacy public update-only flag; Python users should use accessors
+    bool updateOnly = true;                             //!< Legacy public update-only flag; Python users should use accessors
     double fuelLeakRate{};                              //!< [kg/s] Legacy public leak rate; Python users should use accessors
 
 private:
-    StateData *omegaState{};                            //!< -- state data for omega_BN of the hub
-    StateData *massState{};                             //!< -- state data for mass state
+    StateData *omegaState{};                            //!< state data for omega_BN of the hub
+    StateData *massState{};                             //!< state data for mass state
     double fuelConsumption{};                           //!< [kg/s] rate of fuel being consumed
     double tankFuelConsumption{};                       //!< [kg/s] rate of fuel being consumed from tank
-    std::shared_ptr<FuelTankModel> fuelTankModel;       //!< -- style of tank to simulate
+    std::shared_ptr<FuelTankModel> fuelTankModel;       //!< style of tank to simulate
     Eigen::Matrix3d ITankPntT_B;
     Eigen::Vector3d r_TcB_B;
     void updateRetainedMassPropertyDerivatives(double mass, double massRate);
     static uint64_t effectorID;                         //!< [] ID number of this fuel tank effector
-    bool emptyTankWarningPrinted = false;               //!< -- flag indicating if the empty tank warning has been logged
+    bool emptyTankWarningPrinted = false;               //!< flag indicating if the empty tank warning has been logged
 
 public:
     FuelTank();
@@ -298,35 +298,35 @@ public:
     void writeOutputMessages(uint64_t currentClock);
     void UpdateState(uint64_t currentSimNanos) override;
     void setTankModel(std::shared_ptr<FuelTankModel> model);
-    void setDcm_TB(const Eigen::Matrix3d &dcm_TB);       //!< -- Setter for the tank frame orientation
-    Eigen::Matrix3d getDcm_TB() const;                   //!< -- Getter for the tank frame orientation
+    void setDcm_TB(const Eigen::Matrix3d &dcm_TB);       //!< Setter for the tank frame orientation
+    Eigen::Matrix3d getDcm_TB() const;                   //!< Getter for the tank frame orientation
     void setR_TB_B(const Eigen::Vector3d &r_TB_B);       //!< [m] Setter for the tank location
     Eigen::Vector3d getR_TB_B() const;                   //!< [m] Getter for the tank location
-    void setUpdateOnly(bool updateOnly);                 //!< -- Setter for update only mass depletion
-    bool getUpdateOnly() const;                          //!< -- Getter for update only mass depletion
+    void setUpdateOnly(bool updateOnly);                 //!< Setter for update only mass depletion
+    bool getUpdateOnly() const;                          //!< Getter for update only mass depletion
     void setFuelLeakRate(double fuelLeakRate);           //!< [kg/s] Setter for the fuel leak rate
     double getFuelLeakRate() const;                      //!< [kg/s] Getter for the fuel leak rate
-    void pushFuelSloshParticle(FuelSlosh *particle);            //!< -- Attach fuel slosh particle
-    void registerStates(DynParamManager &states) override;      //!< -- Register mass state with state manager
-    void linkInStates(DynParamManager &states) override;        //!< -- Give the tank access to other states
-    void updateEffectorMassProps(double integTime) override;    //!< -- Add contribution mass props from the tank
-    void setNameOfMassState(const std::string &nameOfMassState); //!< -- Setter for fuel tank mass state name
-    std::string getNameOfMassState() const;              //!< -- Getter for fuel tank mass state name
-    void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< -- Add DynamicEffector thruster
-    void addThrusterSet(ThrusterStateEffector *stateEff);       //!< -- Add StateEffector thruster
+    void pushFuelSloshParticle(FuelSlosh *particle);            //!< Attach fuel slosh particle
+    void registerStates(DynParamManager &states) override;      //!< Register mass state with state manager
+    void linkInStates(DynParamManager &states) override;        //!< Give the tank access to other states
+    void updateEffectorMassProps(double integTime) override;    //!< Add contribution mass props from the tank
+    void setNameOfMassState(const std::string &nameOfMassState); //!< Setter for fuel tank mass state name
+    std::string getNameOfMassState() const;              //!< Getter for fuel tank mass state name
+    void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< Add DynamicEffector thruster
+    void addThrusterSet(ThrusterStateEffector *stateEff);       //!< Add StateEffector thruster
     void updateContributions(double integTime,
                              BackSubMatrices &backSubContr,
                              Eigen::MRPd sigma_BN,
                              Eigen::Vector3d omega_BN_B,
-                             Eigen::Vector3d g_N) override;     //!< -- Back-sub contributions
+                             Eigen::Vector3d g_N) override;     //!< Back-sub contributions
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d &rotAngMomPntCContr_B,
                                       double &rotEnergyContr,
-                                      Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
+                                      Eigen::Vector3d omega_BN_B) override;  //!< Energy and momentum calculations
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
-                            Eigen::MRPd sigma_BN) override; //!< -- Calculate stateEffector's derivatives
+                            Eigen::MRPd sigma_BN) override; //!< Calculate stateEffector's derivatives
 };
 
 

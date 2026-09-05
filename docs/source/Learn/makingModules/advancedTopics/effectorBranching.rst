@@ -3,8 +3,8 @@
 Enabling Branching of Basilisk Effectors
 ========================================
 
-Back-substitution is the default method that manages the dynamics under the hood of Basilisk. The
-backsubstitution formulation assumes that all dynamical modules, a.k.a. "effectors", influencing the
+The Backsubstitution Method is the default formulation that manages the dynamics under the hood of
+Basilisk. It assumes that all dynamical modules, a.k.a. "effectors", influencing the
 dynamics of the spacecraft are attached directly to its central hub in parallel. These effectors are
 sub-classed as either :ref:`dynamicEffector` (provide external forces and torques acting on the
 body, but doesn't have state differential equations to integrate) or :ref:`stateEffector` (has
@@ -13,6 +13,30 @@ internal state differential equations to integrate that couple with the spacecra
 This parallel coupling assumption can be relaxed to allow select configurations of effectors to be
 attached in series to each other as opposed to being attached directly to the hub. See
 :ref:`bskPrinciples-11` for a description on using this added functionality.
+
+Effector Initialization and Configuration Validation
+----------------------------------------------------
+
+Attaching an effector to a spacecraft does not automatically add that effector to a simulation task. The scheduler
+calls an effector's ``Reset()`` method only when the effector is explicitly added to a task with
+``AddModelToTask()``. Consequently, configuration work required by the equations of motion must not rely exclusively
+on ``Reset()``. An attached-only effector still participates in the spacecraft dynamics and must be fully initialized
+and validated before those dynamics are evaluated.
+
+Place shared configuration validation, normalization, and initialization of derived dynamics parameters in a
+dedicated helper method. Call that helper from ``Reset()`` to preserve the normal scheduled-module behavior and from
+each applicable attachment path:
+
+- A state effector should call the helper from ``registerStates()``.
+- A dynamic effector attached directly to a spacecraft should call the helper from ``linkInStates()``.
+- A dynamic effector that supports attachment to another state effector should also call the helper from
+  ``linkInProperties()``.
+
+The helper must be safe to call more than once because an effector can be both attached to a spacecraft and scheduled
+as a task model. Keep operations that are strictly part of the scheduled-module lifecycle, such as clearing a command
+or output buffer, in ``Reset()`` when they are not required by the spacecraft dynamics. Unit tests should exercise the
+attached-only configuration by omitting ``AddModelToTask()`` for the effector and confirming that invalid inputs are
+rejected or that required derived parameters are initialized during spacecraft initialization.
 
 State Effector Augmentation
 ---------------------------
@@ -83,11 +107,11 @@ Additional Resources
     the state effector does not get knowledge of where dynamic effectors are attached to make such a
     correction.
 
-A more complete description of back-substitution, :ref:`stateEffector`, and :ref:`dynamicEffector`
+A more complete description of the Backsubstitution Method, :ref:`stateEffector`, and :ref:`dynamicEffector`
 can be found in :ref:`spacecraft` and its linked PDF description, particularly the Equations of
 Motion section. Specifics on setting up the corresponding integrated tests for any newly enabled
 branching effectors can be found in :ref:`test_effectorBranching_integrated`. A more detailed
-description of this augmentation of the back-substitution method can be found in the following
+description of this augmentation of the Backsubstitution Method can be found in the following
 conference paper.
 
 .. note::

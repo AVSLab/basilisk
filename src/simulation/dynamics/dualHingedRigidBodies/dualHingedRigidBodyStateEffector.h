@@ -35,19 +35,19 @@
 #include "architecture/messaging/messaging.h"
 
 /*! @brief dual hinged rigid body state effector */
-class DualHingedRigidBodyStateEffector : public StateEffector, public SysModel {
+class DualHingedRigidBodyStateEffector final : public StateEffector, public SysModel {
 public:
     DualHingedRigidBodyStateEffector();
     ~DualHingedRigidBodyStateEffector();
-    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;  //!< -- Method for adding attached dynamic effector
-    void registerProperties(DynParamManager& states) override;       //!< -- Method for registering the panel inertial properties
+    void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment) override;  //!< Method for adding attached dynamic effector
+    void registerProperties(DynParamManager& states) override;       //!< Method for registering the panel inertial properties
     void registerStates(DynParamManager& statesIn) override;     //!< class method
     void linkInStates(DynParamManager& states) override;         //!< class method
     void updateEffectorMassProps(double integTime) override;     //!< class method
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< -- Back-sub contributions
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< -- Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< -- Method for each stateEffector to calculate derivatives
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< Method for each stateEffector to calculate derivatives
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessages(uint64_t CurrentClock) override;
@@ -79,17 +79,17 @@ public:
     std::string nameOfTheta1DotState; //!< [-] Identifier for the thetaDot state data container
     std::string nameOfTheta2State;    //!< [-] Identifier for the theta state data container
     std::string nameOfTheta2DotState; //!< [-] Identifier for the thetaDot state data container
-    std::string nameOfInertialPositionProperty1;      //!< -- identifier for the panel 1 inertial position property
-    std::string nameOfInertialVelocityProperty1;      //!< -- identifier for the panel 1 inertial velocity property
-    std::string nameOfInertialAttitudeProperty1;      //!< -- identifier for the panel 1 inertial attitude property
-    std::string nameOfInertialAngVelocityProperty1;   //!< -- identifier for the panel 1 inertial angular velocity property
-    std::string nameOfInertialPositionProperty2;      //!< -- identifier for the panel 2 inertial position property
-    std::string nameOfInertialVelocityProperty2;      //!< -- identifier for the panel 2 inertial velocity property
-    std::string nameOfInertialAttitudeProperty2;      //!< -- identifier for the panel 2 inertial attitude property
-    std::string nameOfInertialAngVelocityProperty2;   //!< -- identifier for the panel 2 inertial angular velocity property
-    BSKLogger bskLogger;                      //!< -- BSK Logging
-    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< -- (optional) motor torque input message
-    std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< -- state output message vector for all panels
+    std::string nameOfInertialPositionProperty1;      //!< identifier for the panel 1 inertial position property
+    std::string nameOfInertialVelocityProperty1;      //!< identifier for the panel 1 inertial velocity property
+    std::string nameOfInertialAttitudeProperty1;      //!< identifier for the panel 1 inertial attitude property
+    std::string nameOfInertialAngVelocityProperty1;   //!< identifier for the panel 1 inertial angular velocity property
+    std::string nameOfInertialPositionProperty2;      //!< identifier for the panel 2 inertial position property
+    std::string nameOfInertialVelocityProperty2;      //!< identifier for the panel 2 inertial velocity property
+    std::string nameOfInertialAttitudeProperty2;      //!< identifier for the panel 2 inertial attitude property
+    std::string nameOfInertialAngVelocityProperty2;   //!< identifier for the panel 2 inertial angular velocity property
+    BSKLogger bskLogger;                      //!< BSK Logging
+    ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< (optional) motor torque input message
+    std::vector<Message<HingedRigidBodyMsgPayload>*> dualHingedRigidBodyOutMsgs; //!< state output message vector for all panels
     std::vector<Message<SCStatesMsgPayload>*> dualHingedRigidBodyConfigLogOutMsgs; //!< panel state config log message vector for all panels
     std::vector<DynamicEffector*> dynEffectors;           //!< Vector of dynamic effectors attached
     std::vector<int> dynEffectorSegments;                 //!< Segment index for each attached dynamic effector
@@ -98,7 +98,7 @@ private:
     static uint64_t effectorID;        //!< [] ID number of this panel
     Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
     Eigen::Vector3d r_H2P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 2 location
-    Eigen::Matrix3d dcm_H1P;          //!< -- DCM from primary body frame to hinge 1 frame
+    Eigen::Matrix3d dcm_H1P;          //!< DCM from primary body frame to hinge 1 frame
     double u1;                        //!< [N-m] motor torques on panel 1
     double u2;                        //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B
@@ -128,8 +128,8 @@ private:
     double theta1Dot;                 //!< [rad/s] hinged rigid body angle rate
     double theta2;                    //!< [rad] hinged rigid body angle
     double theta2Dot;                 //!< [rad/s] hinged rigid body angle rate
-    Eigen::Matrix2d matrixADHRB;      //!< [-] term needed for back substitution
-    Eigen::Matrix2d matrixEDHRB;      //!< [-] term needed for back substitution
+    Eigen::Matrix2d matrixADHRB;      //!< [-] term needed for Backsubstitution
+    Eigen::Matrix2d matrixEDHRB;      //!< [-] term needed for Backsubstitution
     Eigen::MatrixXd matrixFDHRB;
     Eigen::MatrixXd matrixGDHRB;
     Eigen::Vector2d vectorVDHRB;
@@ -141,7 +141,7 @@ private:
     std::vector<Eigen::Vector3d> v_SN_N;      //!< [m/s] inertial velocity vector of S relative to inertial frame
     std::vector<Eigen::MatrixXd*> r_HN_N;     //!< [m] position vector of hinge point H relative to inertial frame
     std::vector<Eigen::MatrixXd*> v_HN_N;     //!< [m/s] inertial velocity vector of H relative to inertial frame
-    std::vector<Eigen::MatrixXd*> sigma_SN;   //!< -- MRP attitude of panel frame S relative to inertial frame
+    std::vector<Eigen::MatrixXd*> sigma_SN;   //!< MRP attitude of panel frame S relative to inertial frame
     std::vector<Eigen::MatrixXd*> omega_SN_S; //!< [rad/s] inertial panel frame angular velocity vector
     Eigen::MRPd sigma_BN{0.0, 0.0, 0.0};        //!< Hub/Inertial attitude represented by MRP of body relative to inertial frame
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components

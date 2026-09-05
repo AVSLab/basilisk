@@ -45,7 +45,7 @@ typedef enum {
 
 //  SRP effects on body
 /*! @brief solar radiation pressure dynamic effector */
-class RadiationPressure: public SysModel, public DynamicEffector{
+class RadiationPressure final: public SysModel, public DynamicEffector{
 public:
     RadiationPressure();
     ~RadiationPressure();
@@ -60,28 +60,29 @@ public:
     void addForceLookupBEntry(Eigen::Vector3d vec);
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
     void addSHatLookupBEntry(Eigen::Vector3d vec);
-    
+
 private:
-    void computeCannonballModel(Eigen::Vector3d rSunB_B);
+    void validateConfiguration();
+    void computeCannonballModel(Eigen::Vector3d rSunB_N);
     void computeLookupModel(Eigen::Vector3d rSunB_B);
 
 public:
     double  area; //!< m^2 Body surface area
-    double  coefficientReflection;                  //!< -- Factor grouping surface optical properties
-    ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg;   //!< -- sun state input message
-    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< -- (optional) sun eclipse input message
-    std::vector<Eigen::Vector3d> lookupForce_B;     //!< -- Force on S/C at 1 AU from sun
-    std::vector<Eigen::Vector3d> lookupTorque_B;    //!< -- Torque on S/C
-    std::vector<Eigen::Vector3d> lookupSHat_B;      //!< -- S/C to sun unit vector defined in the body frame.
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    double  coefficientReflection;                  //!< Factor grouping surface optical properties
+    ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg;   //!< sun state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< (optional) sun eclipse input message
+    std::vector<Eigen::Vector3d> lookupForce_B;     //!< Force on S/C at 1 AU from sun
+    std::vector<Eigen::Vector3d> lookupTorque_B;    //!< Torque on S/C
+    std::vector<Eigen::Vector3d> lookupSHat_B;      //!< S/C to sun unit vector defined in the body frame.
+    BSKLogger bskLogger;                      //!< BSK Logging
 
 private:
-    srpModel_t  srpModel; //!< -- specifies which SRP model to use
-    SpicePlanetStateMsgPayload sunEphmInBuffer;    //!< -- Buffer for incoming ephemeris message data
-    bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
+    srpModel_t  srpModel; //!< specifies which SRP model to use
+    SpicePlanetStateMsgPayload sunEphmInBuffer;    //!< Buffer for incoming ephemeris message data
+    bool stateRead; //!< Indicates a successful read of incoming SC state message data
     EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
-    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
+    StateData *hubR_N;                          //!< State data access to inertial position for the hub
+    StateData *hubSigma;                                   //!< Hub/Inertial attitude represented by MRP
 
 };
 

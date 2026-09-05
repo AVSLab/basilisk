@@ -49,7 +49,7 @@ typedef struct {
 
 
 /*! @brief faceted atmospheric drag dynamic effector */
-class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
+class FacetDragDynamicEffector final: public SysModel, public DynamicEffector {
 public:
 
 
@@ -65,7 +65,7 @@ public:
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
 private:
-
+    void validateConfiguration();
     void plateDrag();
     void updateDragDir();
     double getDensity();
@@ -73,19 +73,19 @@ public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
     ReadFunctor<WindMsgPayload> windVelInMsg;       //!< wind velocity input message
-    StateData *hubSigma = nullptr;                  //!< -- Hub/Inertial attitude represented by MRP
+    StateData *hubSigma = nullptr;                  //!< Hub/Inertial attitude represented by MRP
     StateData *hubVelocity = nullptr;               //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                            //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is linked, else relative to inertial frame N)
-    Eigen::Vector3d v_hat_B;                        //!< -- Drag force direction in the body frame
-    BSKLogger bskLogger;                            //!< -- BSK Logging
+    Eigen::Vector3d v_hat_B;                        //!< Drag force direction in the body frame
+    BSKLogger bskLogger;                            //!< BSK Logging
 
 private:
     AtmoPropsMsgPayload atmoInData;
     WindMsgPayload windInData;
-    SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
+    SpacecraftGeometryData scGeometry;              //!< Struct to hold spacecraft facet data
 
     Eigen::MatrixXd *inertialVelocityProperty = nullptr;  //!< m/s parent frame origin inertial velocity
-    Eigen::MatrixXd *inertialAttitudeProperty = nullptr;  //!< -- parent frame attitude relative to the inertial frame
+    Eigen::MatrixXd *inertialAttitudeProperty = nullptr;  //!< parent frame attitude relative to the inertial frame
 };
 
 #endif

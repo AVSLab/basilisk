@@ -326,7 +326,7 @@ def makeIntegrator(dynObject, integratorName, tol):
 
 
 def buildBSM(integratorName, dt, tol, record=True):
-    """Build the back-substitution (BSM) hub-wheel-panel simulation with the given integrator.
+    """Build the Backsubstitution (BSM) hub-wheel-panel simulation with the given integrator.
 
     Args:
         integratorName (str): integrator attribute in ``svIntegrators``.
@@ -773,7 +773,7 @@ def _paretoFrontierPlot(bsmRows, mujocoRows, errorKey, ylabel):
     """
     fig, ax = plt.subplots(figsize=(8, 4), layout="constrained")
     for rows, engineLabel, color in (
-            (bsmRows, "Back-substitution (BSM)", tolColor(0)),
+            (bsmRows, "Backsubstitution (BSM)", tolColor(0)),
             (mujocoRows, "MuJoCo", tolColor(1))):
         if not rows:
             continue

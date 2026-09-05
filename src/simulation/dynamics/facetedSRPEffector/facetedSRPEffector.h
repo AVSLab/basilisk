@@ -33,7 +33,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 
 /*! @brief Faceted solar radiation pressure dynamic effector */
-class FacetedSRPEffector: public SysModel, public DynamicEffector {
+class FacetedSRPEffector final: public SysModel, public DynamicEffector {
 public:
     FacetedSRPEffector() = default;  //!< Constructor
     ~FacetedSRPEffector() = default;  //!< Destructor
@@ -49,6 +49,9 @@ public:
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;  //!< (optional) Sun eclipse input message
 
 private:
+    void validateConfiguration();  //!< Validate required input-message connections
+    void initializeFacetData();  //!< Size and initialize cached per-facet data
+
     /* Facet input message data */
     std::vector<double> facetAreaList;  //!< [m^2] List of facet areas
     std::vector<double> facetProjectedAreaList;  //!< [m^2] List of facet projected areas

@@ -26,9 +26,9 @@ attitude as a fixed orientation in this mode. The optional attitude reference in
 In the default 6-DOF mode, ``spacecraft`` automatically uses a direct fixed-mass hub-only dynamics path when no
 state effectors are attached and the hub body-frame origin :math:`B` is colocated with the hub center of mass
 (``r_BcB_B`` is zero). This optimization preserves the rigid-hub translational and rotational equations of motion,
-including gravity and dynamic-effector force and torque contributions, while bypassing the general back-substitution
+including gravity and dynamic-effector force and torque contributions, while bypassing the general Backsubstitution
 matrix assembly required for coupled multi-body state effectors. If a state effector is attached, or if point
-:math:`B` is offset from the hub center of mass, the module uses the general back-substitution formulation.
+:math:`B` is offset from the hub center of mass, the module uses the general Backsubstitution formulation.
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/spacecraft/_Documentation/Spacecraft/Basilisk-SPACECRAFT-20170808.pdf>`

@@ -27,14 +27,14 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 
-/*! back substitution matrix structure*/
+/*! Backsubstitution matrix structure*/
 struct BackSubMatrices {
-    Eigen::Matrix3d matrixA;             //!< Back-Substitution matrix A
-    Eigen::Matrix3d matrixB;             //!< Back-Substitution matrix B
-    Eigen::Matrix3d matrixC;             //!< Back-Substitution matrix C
-    Eigen::Matrix3d matrixD;             //!< Back-Substitution matrix D
-    Eigen::Vector3d vecTrans;            //!< Back-Substitution translation vector
-    Eigen::Vector3d vecRot;              //!< Back-Substitution rotation vector
+    Eigen::Matrix3d matrixA;             //!< Backsubstitution matrix A
+    Eigen::Matrix3d matrixB;             //!< Backsubstitution matrix B
+    Eigen::Matrix3d matrixC;             //!< Backsubstitution matrix C
+    Eigen::Matrix3d matrixD;             //!< Backsubstitution matrix D
+    Eigen::Vector3d vecTrans;            //!< Backsubstitution translation vector
+    Eigen::Vector3d vecRot;              //!< Backsubstitution rotation vector
 };
 
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
@@ -46,7 +46,7 @@ typedef struct {
     Eigen::Vector3d rEff_CB_B;             //!< [m] Center of mass of effector with respect to point B in B frame comp
     Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Body-frame derivative of the retained effector CoM
     Eigen::Matrix3d IEffPrimePntB_B;       //!< [kg m^2/s] Body-frame derivative of retained effector inertia
-    bool hasMassPropertyRateDynamics;      //!< -- True when the equations of motion use explicit rate overrides
+    bool hasMassPropertyRateDynamics;      //!< True when the equations of motion use explicit rate overrides
     double mEffDotDynamics;                //!< [kg/s] Mass rate substituted into generic rate-dependent terms
     Eigen::Vector3d rEffPrime_CB_BDynamics; //!< [m/s] CoM derivative used by generic rate terms
     Eigen::Matrix3d IEffPrimePntB_BDynamics; //!< [kg m^2/s] Inertia rate substituted into generic rate-dependent terms
@@ -149,7 +149,7 @@ public:
     BSKLogger bskLogger;                   //!< BSK Logging
 
 public:
-    StateEffector();                       //!< Contructor
+    StateEffector();                       //!< Constructor
     virtual ~StateEffector();              //!< Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< Method for stateEffector to give mass contributions
     virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions

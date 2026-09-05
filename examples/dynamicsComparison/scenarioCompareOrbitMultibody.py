@@ -330,7 +330,7 @@ def mujocoModel(withPanels):
 
 
 def buildBSM(withPanels, mu, dt, tf, recordDt, record=True):
-    """Build the back-substitution orbiting multi-body simulation.
+    """Build the Backsubstitution orbiting multi-body simulation.
 
     Args:
         withPanels (bool): include the offset flexible panels (Part B) or not (Part A).
@@ -413,7 +413,7 @@ def buildBSM(withPanels, mu, dt, tf, recordDt, record=True):
 
 
 def runBSM(withPanels, mu, dt, tf, recordDt):
-    """Propagate the orbiting multi-body with the back-substitution :ref:`spacecraft`."""
+    """Propagate the orbiting multi-body with the Backsubstitution :ref:`spacecraft`."""
     scSim, outputs, handles = buildBSM(withPanels, mu, dt, tf, recordDt)
     scSim.ExecuteSimulation()
     return (*outputs, handles)

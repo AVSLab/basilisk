@@ -24,7 +24,7 @@
 #include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
- overriden by the user.*/
+ overridden by the user.*/
 RadiationPressure::RadiationPressure()
     :area(0.0)  // [m^2]
     ,coefficientReflection(1.2)
@@ -48,10 +48,17 @@ RadiationPressure::~RadiationPressure()
 
 
 
-/*! Reset the module to origina configuration values.
+/*! Validate the module configuration when the scheduler resets the model.
 
+ @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void RadiationPressure::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! Validate that the required Sun ephemeris input is connected. */
+void RadiationPressure::validateConfiguration()
 {
     if(!this->sunEphmInMsg.isLinked())
     {
@@ -62,15 +69,17 @@ void RadiationPressure::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 /*! This method retrieves pointers to parameters/data stored
  in the dynamic parameter manager
 
- @param states Dynamic parameter manager
+ @param[in] statesIn Dynamic parameter manager containing the required states.
  */
-void RadiationPressure::linkInStates(DynParamManager& states)
+void RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
-    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
-    this->hubR_N = states.getStateObject(this->stateNameOfPosition);
+    this->validateConfiguration();
+
+    this->hubSigma = statesIn.getStateObject(this->stateNameOfSigma);
+    this->hubR_N = statesIn.getStateObject(this->stateNameOfPosition);
 }
 
-/*! This method is used to read the incoming ephmeris and
+/*! This method is used to read the incoming ephemeris and
  spacecraft state messages. The data is stored in the associated
  buffer structure.
 
@@ -87,7 +96,7 @@ void RadiationPressure::readInputMessages()
     }
 }
 
-/*! This method computes the dynamic effect due to solar raidation pressure.
+/*! This method computes the dynamic effect due to solar radiation pressure.
  It is an inherited method from the DynamicEffector class and
  is designed to be called by the simulation dynamics engine.
 
@@ -102,18 +111,18 @@ void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], do
 
     Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getState();
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
-    Eigen::Vector3d s_N = sun_r_N - r_N;
+    Eigen::Vector3d rSunB_N = sun_r_N - r_N;
 
     if (this->srpModel == SRP_CANNONBALL_MODEL) {
-        this->computeCannonballModel(s_N);
+        this->computeCannonballModel(rSunB_N);
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.illuminationFactor;
     }
     else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_NB;
         sigmaLocal_NB = (Eigen::Vector3d)this->hubSigma->getState();
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
-        Eigen::Vector3d s_B = dcmLocal_BN*(sun_r_N - r_N);
-        this->computeLookupModel(s_B);
+        Eigen::Vector3d rSunB_B = dcmLocal_BN * rSunB_N;
+        this->computeLookupModel(rSunB_B);
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.illuminationFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.illuminationFactor;
     } else {
@@ -138,7 +147,7 @@ void RadiationPressure::setUseCannonballModel()
     this->srpModel = SRP_CANNONBALL_MODEL;
 }
 
-/*! Sets the model to the faceted table-lookup model, evaluted on the CPU, in computing the solar radiation force
+/*! Sets the model to the faceted table-lookup model, evaluated on the CPU, in computing the solar radiation force
 
  */
 void RadiationPressure::setUseFacetedCPUModel()
@@ -156,16 +165,16 @@ void RadiationPressure::setUseFacetedCPUModel()
  *   Solar Radiation Equations obtained from
  *   Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986
 
- @param s_N (m) Position vector to the Sun relative to the inertial frame
+ @param[in] rSunB_N [m] Spacecraft-to-Sun position vector expressed in inertial-frame components.
  */
-void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
+void RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
 {
-    /* Magnitude of sun vector in the body frame */
-    double sunDist = s_N.norm();
+    /* Magnitude of the spacecraft-to-Sun vector */
+    double sunDist = rSunB_N.norm();
     /* Computing the force vector [N]*/
     double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU*1000.,2)) / (SPEED_LIGHT * pow(sunDist, 3));
     if (stateRead)
-        this->forceExternal_N = scaleFactor*(s_N);
+        this->forceExternal_N = scaleFactor*(rSunB_N);
     else
         this->forceExternal_N.setZero();
 }
@@ -177,15 +186,15 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
  *   with a solar flux at 1AU. Force and torque values are scaled.
  *
 
- @param s_B (m) Position vector of the Sun relative to the body frame
+ @param[in] rSunB_B [m] Spacecraft-to-Sun position vector expressed in body-frame components.
  */
-void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
+void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 {
     double tmpDotProduct = 0;
     double currentDotProduct = 0;
     size_t currentIdx = 0;
-    double sunDist = s_B.norm();
-    Eigen::Vector3d sHat_B = s_B/sunDist;
+    double sunDist = rSunB_B.norm();
+    Eigen::Vector3d sHat_B = rSunB_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
 
     if (!this->stateRead) {
@@ -199,7 +208,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     // Therefore, we must scale the force by its distance from the sun squared.
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use and generate lookup table as azimuth and elevation
-    // because then we can use a simple gradient decent search to find the nearest next attitude
+    // because then we can use a simple gradient descent search to find the nearest next attitude
     for(size_t i = 0; i < this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);

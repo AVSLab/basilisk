@@ -13,6 +13,20 @@ included test is validating the interaction between two spacecraft rigid body hu
 attached through a constraint effector. In this case, two identical spacecraft are connected
 by a 0.1 meter long arm which is enforced with high stiffness and damping to be virtually rigid.
 
+Message Connection Descriptions
+-------------------------------
+The following table lists the module input and output messages. The module message connections are set by the
+user from Python. The message type links to the corresponding message structure definition, while the description
+explains how the message is used.
+
+.. bsk-module-io:: constraintDynamicEffector
+    :caption: Module I/O Messages
+
+    input effectorStatusInMsg DeviceStatusMsgPayload
+        (Optional) Device status input; when linked, a nonzero status enables filtering and output-message publication.
+    output constraintElements ConstDynEffectorMsgPayload
+        Constraint force, torque, violation, and filtered force and torque magnitude output message.
+
 Detailed Module Description
 ---------------------------
 
@@ -55,7 +69,7 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     constraintEffector.setAlpha(1E2)
     constraintEffector.setBeta(1e3)
 
-#. (Optional) Define exact gains for the direction and attitude constraints separately. These are internally set based on alpha and beta during reset, but can be overridden in this way::
+#. (Optional) Define exact gains for the direction and attitude constraints separately. These are internally set based on alpha and beta during attachment initialization or reset, but can be overridden in this way::
 
     constraintEffector.setK_d(alpha**2)
     constraintEffector.setC_d(2*beta)
@@ -128,3 +142,16 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     constraintEffector.setFilterData(wc)
 
 #. The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable ``constraintElements``.
+
+Initialization and Reset
+------------------------
+The effector can be attached to spacecraft hubs or to state-effector branches.  Both attachment paths require
+positive ``alpha`` and ``beta`` tuning parameters when all individual gains remain at zero.  During the same
+initialization, each zero-valued individual gain is derived from ``alpha`` and ``beta``.  This setup occurs while
+the parent states or properties are linked, so it does not depend on separately scheduling the effector.
+
+Constraint force and torque evaluation is driven by the parent dynamics.  Add the effector to a task to process
+its optional status input and to update its filtered-force and filtered-torque output message.
+
+When the effector is scheduled, its ``Reset()`` repeats the gain validation and derivation.
+It does not clear the constraint filter history or change the parent attachments.
