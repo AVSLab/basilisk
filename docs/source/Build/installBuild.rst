@@ -323,6 +323,11 @@ moving a payload from the C message tree to the C++ message tree, including payl
 A clean build is not required for these changes. An unchanged build does not recompile native sources or regenerate
 SWIG wrappers.
 
+Source-inventory checks ignore files such as Python bytecode, plots, logs, and compiled Cargo artifacts. Generated
+files with source extensions (such as ``.h``, ``.cpp``, or ``.i``) should remain outside the source trees: CMake's
+recursive change detection can still see them even in directories excluded from module discovery. Standard Basilisk
+and Cargo builds already place these artifacts under ``dist3``.
+
 Running ``python conanfile.py`` again is safe when Conan options or dependencies need to be refreshed. It reruns
 dependency resolution and CMake configuration but preserves unchanged generated and compiled outputs, allowing the
 native build to remain incremental.

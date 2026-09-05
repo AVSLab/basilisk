@@ -14,6 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import os
 import re
 import shutil
 import subprocess
@@ -28,6 +29,13 @@ ENVIRONMENT_CMAKE = Path(sys.executable).with_name("cmake")
 CMAKE = shutil.which("cmake") or (
     str(ENVIRONMENT_CMAKE) if ENVIRONMENT_CMAKE.is_file() else None
 )
+ENVIRONMENT_NINJA = Path(sys.executable).with_name("ninja")
+NINJA = shutil.which("ninja") or (
+    str(ENVIRONMENT_NINJA) if ENVIRONMENT_NINJA.is_file() else None
+)
+GENERATORS = [None] if os.name == "nt" else ["Unix Makefiles"]
+if NINJA:
+    GENERATORS.append("Ninja")
 
 
 def _write_file(path: Path) -> None:
@@ -40,8 +48,8 @@ def _write_file(path: Path) -> None:
 
 
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
-def test_source_inventory_uses_one_glob_per_root(tmp_path):
-    """Inventory each source root once and index its relevant source files.
+def test_source_inventory_watches_build_file_types(tmp_path):
+    """Collect and index the relevant source files under each source root.
 
     :param tmp_path: Temporary directory supplied by pytest.
     """
@@ -113,7 +121,87 @@ endif()
     glob_checks = re.findall(
         r"^file\(GLOB", verify_globs.read_text(encoding="utf-8"), re.MULTILINE
     )
-    assert len(glob_checks) == 2
+    # Both roots watch the eight supported extensions, never a catch-all '*'.
+    assert len(glob_checks) == 16
+
+
+@pytest.mark.skipif(CMAKE is None, reason="CMake is required")
+@pytest.mark.parametrize("generator", GENERATORS)
+def test_inventory_ignores_artifacts_and_discovers_new_sources(tmp_path, generator):
+    """Ignore output files while discovering source additions and removals.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param generator: Native build generator to exercise.
+    """
+    project = tmp_path / "project"
+    source_root = tmp_path / "modules"
+    build = tmp_path / "build"
+    project.mkdir()
+    _write_file(source_root / "existing/module.cpp")
+    (project / "CMakeLists.txt").write_text(
+        f"""cmake_minimum_required(VERSION 3.26)
+project(inventoryChanges NONE)
+include("{REPOSITORY_ROOT.as_posix()}/src/cmake/bskSourceInventory.cmake")
+bsk_collect_source_inventory(sources "{source_root.as_posix()}")
+file(WRITE "${{CMAKE_BINARY_DIR}}/discovered.txt" "${{sources}}")
+file(APPEND "${{CMAKE_BINARY_DIR}}/configure-runs.txt" "configured\\n")
+""",
+        encoding="utf-8",
+    )
+    command = [CMAKE, "-S", str(project), "-B", str(build)]
+    if generator:
+        command.extend(["-G", generator])
+    if generator == "Ninja":
+        command.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
+    subprocess.run(command, check=True, capture_output=True, text=True)
+
+    def native_build():
+        """Check the inventory through a normal native build."""
+        subprocess.run(
+            [CMAKE, "--build", str(build)],
+            check=True, capture_output=True, text=True,
+        )
+
+    native_build()
+    configure_runs = build / "configure-runs.txt"
+    original_runs = configure_runs.read_text(encoding="utf-8")
+    artifacts = [
+        source_root / "existing/__pycache__/module.cpython-314.pyc",
+        source_root / "existing/_UnitTest/plots/result.png",
+        source_root / "existing/_UnitTest/run.log",
+        source_root / "target/release/deps/module.rlib",
+        source_root / "target/release/deps/module.rmeta",
+    ]
+    for artifact in artifacts:
+        _write_file(artifact)
+    native_build()
+    assert configure_runs.read_text(encoding="utf-8") == original_runs
+    for artifact in artifacts:
+        artifact.unlink()
+    native_build()
+    assert configure_runs.read_text(encoding="utf-8") == original_runs
+
+    # New directories, ownership manifests, and messages must still be found
+    # on the first build, without requiring a manual configure command.
+    new_sources = [
+        source_root / "new/module/module.i",
+        source_root / "new/module/ModuleSources.cmake",
+        source_root / "new/msgPayloadDefC/AddedMsgPayload.h",
+    ]
+    for new_source in new_sources:
+        _write_file(new_source)
+    native_build()
+    discovered = (build / "discovered.txt").read_text(encoding="utf-8").split(";")
+    assert all(path.as_posix() in discovered for path in new_sources)
+    assert configure_runs.read_text(encoding="utf-8") != original_runs
+    for new_source in new_sources:
+        new_source.unlink()
+    native_build()
+    discovered = (build / "discovered.txt").read_text(encoding="utf-8").split(";")
+    assert all(path.as_posix() not in discovered for path in new_sources)
+    unchanged_runs = configure_runs.read_text(encoding="utf-8")
+    native_build()
+    assert configure_runs.read_text(encoding="utf-8") == unchanged_runs
 
 
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")

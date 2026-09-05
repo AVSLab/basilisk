@@ -29,18 +29,27 @@ function(bsk_collect_source_inventory OUTPUT_VARIABLE)
       continue()
     endif()
 
-    if(CMAKE_SCRIPT_MODE_FILE)
-      file(GLOB_RECURSE ROOT_SOURCE_INVENTORY
-           LIST_DIRECTORIES false
-           "${ABSOLUTE_SOURCE_ROOT}/*")
-    else()
-      file(GLOB_RECURSE ROOT_SOURCE_INVENTORY
-           LIST_DIRECTORIES false
-           CONFIGURE_DEPENDS
-           "${ABSOLUTE_SOURCE_ROOT}/*")
+    # CONFIGURE_DEPENDS watches the glob result before any list filtering.
+    # Match source extensions in the glob itself so bytecode, plots, logs,
+    # and compiled Cargo artifacts do not force CMake to reconfigure.
+    set(SOURCE_PATTERNS)
+    foreach(SOURCE_EXTENSION c cpp h hpp i cmake rst py)
+      list(APPEND SOURCE_PATTERNS "${ABSOLUTE_SOURCE_ROOT}/*.${SOURCE_EXTENSION}")
+    endforeach()
+    set(CONFIGURE_DEPENDENCY_OPTION)
+    if(NOT CMAKE_SCRIPT_MODE_FILE)
+      set(CONFIGURE_DEPENDENCY_OPTION CONFIGURE_DEPENDS)
     endif()
+    file(GLOB_RECURSE ROOT_SOURCE_INVENTORY
+         LIST_DIRECTORIES false
+         ${CONFIGURE_DEPENDENCY_OPTION}
+         ${SOURCE_PATTERNS})
+    # Keep extension matching consistent on platforms with case-insensitive globs.
     list(FILTER ROOT_SOURCE_INVENTORY
          INCLUDE REGEX "\\.(c|cpp|h|hpp|i|cmake|rst|py)$")
+    # These directories must never supply modules. CMake cannot exclude
+    # directories from its recursive verification globs, so generated files
+    # with source extensions still belong outside the source roots (dist3).
     list(FILTER ROOT_SOURCE_INVENTORY
          EXCLUDE REGEX "(^|/)(target|__pycache__)(/|$)")
     list(APPEND SOURCE_INVENTORY ${ROOT_SOURCE_INVENTORY})
