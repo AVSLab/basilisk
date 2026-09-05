@@ -38,16 +38,9 @@ jobs:
           -p 'test_collect_usage_metrics.py'
 
       - name: Restore existing history
-        shell: bash
-        run: |
-          set -euo pipefail
-          metrics_directory="${RUNNER_TEMP}/usage-metrics-data"
-          mkdir -p "${metrics_directory}"
-          if git fetch origin "${METRICS_BRANCH}:refs/remotes/origin/${METRICS_BRANCH}"; then
-            if git cat-file -e "origin/${METRICS_BRANCH}:metrics.csv"; then
-              git show "origin/${METRICS_BRANCH}:metrics.csv" > "${metrics_directory}/metrics.csv"
-            fi
-          fi
+        run: >-
+          bash .github/scripts/restore_usage_metrics.sh
+          "${RUNNER_TEMP}/usage-metrics-data" "${METRICS_BRANCH}"
 
       - name: Collect metrics
         env:
@@ -86,3 +79,19 @@ jobs:
 
           git commit -m "Update usage metrics"
           git push origin "HEAD:${METRICS_BRANCH}"
+
+      # Publish available observations before reporting a partial failure so
+      # a PyPI outage cannot prevent retention of GitHub's short-lived data.
+      - name: Report collection status
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["RUNNER_TEMP"]) / "usage-metrics-data" / "summary.json"
+          summary = json.loads(path.read_text(encoding="utf-8"))
+          failed = [name for name, source in summary["sources"].items() if source["status"] == "error"]
+          if failed:
+              raise SystemExit("Available metrics were published, but collection failed for: " + ", ".join(failed))
+          PY
