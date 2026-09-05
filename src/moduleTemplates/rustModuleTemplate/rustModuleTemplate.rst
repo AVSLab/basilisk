@@ -37,9 +37,10 @@ Module Assumptions and Limitations
 ----------------------------------
 
 This module is a template only and does not model a physical system. It
-demonstrates the Rust module lifecycle, explicit message-port annotations,
-named input and output values, optional message inputs, output messages, and
-fixed-size arrays of message ports. It also demonstrates a Python-configurable
+demonstrates the Rust module lifecycle, message-port directions inferred from
+``MsgReader<T>`` and ``MsgWriter<T>``, optional inputs marked with
+``#[bsk(optional)]``, named input and output values, selective output publishing,
+and fixed-size arrays of message ports. It also demonstrates a Python-configurable
 ``increment`` parameter that is initialized in Rust, validated immediately by
 its generated setter, and checked again during reset. The nested
 ``sampleParameters`` value and two-dimensional ``sampleMatrix`` array exercise

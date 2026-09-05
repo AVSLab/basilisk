@@ -56,8 +56,10 @@ For a Rust module:
   layout, with a matching ``[lib] path``?
 - Does ``build.rs`` call ``bsk_build::generate_bindings()`` with the exact
   marked configuration struct name?
-- Does the configuration struct contain only public parameters and annotated
-  message ports, with no runtime, logger, or raw-pointer fields?
+- Does the configuration struct contain only public parameters and
+  ``MsgReader<T>``/``MsgWriter<T>`` message ports, with no runtime, logger, or
+  raw-pointer fields? Port direction follows from the type; only optional
+  inputs need ``#[bsk(optional)]``.
 - Does every non-port configuration field implement ``BskConfigValue``, with
   nested parameter structs using plain ``#[repr(C)]`` and the
   ``bsk_build::BskConfigValue`` derive rather than a manual unsafe
