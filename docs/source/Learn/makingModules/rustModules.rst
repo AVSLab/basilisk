@@ -964,8 +964,9 @@ Rust-Owned Private State
 
 ``BskModule::State`` stores implementation details that must persist between
 lifecycle calls but should not appear in Python. Unlike the configuration,
-this state never crosses the C interface and can use normal safe Rust types
-such as ``Vec``, ``String``, enums, and smart pointers:
+this state has no C layout requirement and can use normal Rust types such as
+``Vec``, ``String``, enums, and smart pointers. It must implement ``Default``
+and ``Send``, as in this example:
 
 .. code-block:: rust
 
@@ -1005,6 +1006,27 @@ such as ``Vec``, ``String``, enums, and smart pointers:
 Use ``type State = ();`` when the module is stateless. Rust allocates and
 destroys the complete module instance, so ordinary Rust cleanup releases
 private state automatically.
+
+``Send`` means that Rust can safely transfer exclusive ownership of the state
+to another thread. Basilisk can construct a module on the Python caller's
+thread, execute its lifecycle on a simulation worker, and destroy it on the
+caller thread. This applies even to the default one-worker simulation setup.
+The compiler checks ``Send`` automatically; numeric fields, arrays,
+``Vec<f64>``, and ``String`` already satisfy it. No extra annotation or runtime
+lock is needed for the example above.
+
+Thread-bound types such as ``Rc<T>`` and ``MutexGuard`` cannot be stored in
+``State``. Prefer owned values such as ``Vec<T>`` or ``Box<T>`` when sharing is
+unnecessary. For shared ownership, ``Arc<T>`` is an option when its contents
+also satisfy Rust's thread-safety requirements. Do not add ``unsafe impl Send``
+just to silence a compiler error.
+
+This requirement does not make a module safe for simultaneous calls. Basilisk
+must still serialize lifecycle calls, configuration access, and destruction
+of each instance. The separate ``Sync`` requirement, which permits sharing
+references across threads, is not imposed on private state; for example,
+``RefCell<Vec<f64>>`` remains allowed. Keep borrowed lifecycle contexts and
+message ports out of private state, and retain copied message payloads instead.
 
 Basilisk C Utilities
 --------------------

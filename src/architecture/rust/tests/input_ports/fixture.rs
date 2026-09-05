@@ -7,15 +7,17 @@
 // copyright notice and this permission notice appear in all copies.
 
 //! Test-only module exercising generated lifecycle code without a C++ library.
-//! The mock port rejects reads of freed sources before dereferencing memory.
+//! The mock port resolves opaque source identities without dereferencing pointers.
+//! Its reader is naturally Send, so the lifetime regressions remain possible
+//! without bypassing the module-state thread-transfer requirement.
 #![allow(non_snake_case)]
 
 use bsk_build::{BskContext, BskError, BskModule, BskResult, Msg, MsgReader};
 use std::cell::RefCell;
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 thread_local! {
-    static LIVE_SOURCES: RefCell<HashSet<usize>> = RefCell::default();
+    static SOURCE_VALUES: RefCell<HashMap<usize, TestMessage>> = RefCell::default();
     static READ_COUNT: RefCell<usize> = const { RefCell::new(0) };
 }
 
@@ -25,15 +27,15 @@ pub struct TestMessage(pub u64);
 
 #[derive(Default)]
 pub struct TestPort {
-    data: *const TestMessage,
-    header: *const (),
+    data: usize,
+    header: usize,
     linked: bool,
 }
 
 // SAFETY: This mock uses only TestPort's Rust representation, never C++.
-// Linkage and pointer inspection do not dereference the source. Reads check
-// the test registry before dereferencing the boxed payload; restore only
-// copies subscription metadata. No output ports use this test message.
+// Source addresses are opaque registry keys, never dereferenced. Reads obtain
+// copied values from the test registry; restore only copies subscription
+// metadata. No output ports use this test message.
 unsafe impl Msg for TestMessage {
     type Port = TestPort;
 
@@ -41,10 +43,10 @@ unsafe impl Msg for TestMessage {
         port.linked
     }
     fn __is_initialized(port: &TestPort) -> bool {
-        !port.data.is_null() && !port.header.is_null()
+        port.data != 0 && port.header != 0
     }
     fn __port_pointers(port: &TestPort) -> (*const (), *const ()) {
-        (port.data.cast(), port.header)
+        (port.data as *const (), port.header as *const ())
     }
     unsafe fn __restore_subscription(
         port: &mut TestPort,
@@ -52,15 +54,17 @@ unsafe impl Msg for TestMessage {
         header: *const (),
         linked: bool,
     ) {
-        port.data = data.cast();
-        port.header = header;
+        port.data = data as usize;
+        port.header = header as usize;
         port.linked = linked;
     }
     unsafe fn __read(port: &mut TestPort) -> Self {
         READ_COUNT.with_borrow_mut(|count| *count += 1);
-        assert!(LIVE_SOURCES.with_borrow(|sources| sources.contains(&(port.data as usize))));
-        // SAFETY: The registry contains only live Source allocations on this thread.
-        unsafe { *port.data }
+        SOURCE_VALUES.with_borrow(|sources| {
+            *sources
+                .get(&port.data)
+                .expect("read of a released mock source")
+        })
     }
     unsafe fn __init(_port: &mut TestPort) {
         unreachable!("this fixture has no output ports")
@@ -76,7 +80,8 @@ pub struct Source(Box<TestMessage>);
 impl Source {
     pub fn new(value: u64) -> Self {
         let source = Self(Box::new(TestMessage(value)));
-        LIVE_SOURCES.with_borrow_mut(|sources| sources.insert(source.pointer() as usize));
+        SOURCE_VALUES
+            .with_borrow_mut(|sources| sources.insert(source.pointer() as usize, *source.0));
         source
     }
 
@@ -92,15 +97,15 @@ impl Source {
     pub unsafe fn subscribe(&self, reader: &mut MsgReader<TestMessage>) {
         // SAFETY: MsgReader is repr(transparent) over TestPort.
         let port = unsafe { &mut *(reader as *mut MsgReader<TestMessage>).cast::<TestPort>() };
-        port.data = self.pointer();
-        port.header = self.pointer().cast();
+        port.data = self.pointer() as usize;
+        port.header = port.data;
         port.linked = true;
     }
 }
 
 impl Drop for Source {
     fn drop(&mut self) {
-        LIVE_SOURCES.with_borrow_mut(|sources| sources.remove(&(self.pointer() as usize)));
+        SOURCE_VALUES.with_borrow_mut(|sources| sources.remove(&(self.pointer() as usize)));
     }
 }
 

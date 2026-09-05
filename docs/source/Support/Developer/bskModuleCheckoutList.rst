@@ -63,7 +63,8 @@ For a Rust module:
   ``bsk_build::BskConfigValue`` derive rather than a manual unsafe
   implementation?
 - Does the ``BskModule`` implementation declare ``type State`` and keep
-  internal Rust-only state there, using ``()`` when stateless?
+  internal Rust-only state there, using ``()`` when stateless? Does that state
+  satisfy ``Default + Send`` without unsafe workarounds for thread-bound values?
 - Does lifecycle code obtain runtime metadata and logging through
   ``BskContext`` rather than retaining borrowed framework pointers?
 - Do ``init``, ``reset``, and ``update`` return ``BskResult``, with expected
