@@ -929,6 +929,7 @@ pub struct BskModuleContext {
 pub struct BskContext<'a> {
     runtime: &'a BskModuleRuntime,
     logger: BskLoggerRef<'a>,
+    input_bindings: &'a [BskInputPortBinding],
 }
 
 impl<'a> BskContext<'a> {
@@ -961,11 +962,13 @@ impl<'a> BskContext<'a> {
     ///
     /// The returned context borrows `runtime`, which is normally created with
     /// [`BskModuleRuntime::for_testing`]. Logging uses the `test_logger`
-    /// implementation when that feature is enabled.
+    /// implementation when that feature is enabled. It does not authorize
+    /// C-message reads; pure Rust tests should pass copied input payloads.
     pub const fn for_testing(runtime: &'a BskModuleRuntime) -> Self {
         Self {
             runtime,
             logger: BskLoggerRef::from_raw(core::ptr::null_mut()),
+            input_bindings: &[],
         }
     }
 
@@ -983,7 +986,22 @@ impl<'a> BskContext<'a> {
         Self {
             runtime: &context.runtime,
             logger: BskLoggerRef::from_raw(context.bsk_logger),
+            input_bindings: &[],
         }
+    }
+
+    /// Authorize the input subscriptions retained for this lifecycle call.
+    ///
+    /// # Safety
+    ///
+    /// Every binding must describe a canonical configuration input slot whose
+    /// source is kept alive by the caller for the returned context's lifetime.
+    /// The generated lifecycle must restore altered subscriptions before
+    /// returning to the caller, including when module code fails or panics.
+    #[doc(hidden)]
+    pub unsafe fn __with_input_bindings(mut self, bindings: &'a [BskInputPortBinding]) -> Self {
+        self.input_bindings = bindings;
+        self
     }
 }
 
@@ -1066,13 +1084,15 @@ mod runtime_abi_tests {
 ///   obey that function's pointer, ownership, and lifetime requirements;
 /// * [`Msg::__is_initialized`] and [`Msg::__port_pointers`] must report the
 ///   actual C payload and header pointer state without dereferencing either
-///   pointer.
+///   pointer; linkage inspection must likewise access only the port itself;
+/// * [`Msg::__restore_subscription`] must restore only subscription metadata,
+///   without dereferencing the source or changing the port's inline payload.
 ///
 /// A mismatched port representation lets the generated C++ wrapper access the
 /// Rust allocation with the wrong layout and can cause undefined behavior.
 /// `bsk-messages` generates and audits these implementations; ordinary module
 /// authors should not implement this trait manually.
-pub unsafe trait Msg: Sized + Copy {
+pub unsafe trait Msg: Sized + Copy + 'static {
     /// The C-interface port type this message is read from / written to.
     type Port: Default;
     #[doc(hidden)]
@@ -1081,6 +1101,21 @@ pub unsafe trait Msg: Sized + Copy {
     fn __is_initialized(port: &Self::Port) -> bool;
     #[doc(hidden)]
     fn __port_pointers(port: &Self::Port) -> (*const (), *const ());
+    /// Restore subscription metadata without dereferencing the source pointers.
+    ///
+    /// # Safety
+    ///
+    /// The pointers and linkage flag must come from a valid subscription for
+    /// this exact port and message type, with its source still kept alive.
+    /// Implementations must only update the two subscription pointers and the
+    /// port's own linkage flag; they must not read or write either pointee.
+    #[doc(hidden)]
+    unsafe fn __restore_subscription(
+        port: &mut Self::Port,
+        data: *const (),
+        header: *const (),
+        linked: bool,
+    );
     /// Read through the underlying C message interface.
     ///
     /// # Safety
@@ -1117,15 +1152,83 @@ impl<T: Msg> Default for MsgReader<T> {
 }
 
 impl<T: Msg> MsgReader<T> {
+    fn current_binding(&mut self) -> BskInputPortBinding {
+        let (data, header) = T::__port_pointers(&self.0);
+        BskInputPortBinding {
+            port: core::ptr::addr_of!(self.0).cast(),
+            message_type: core::any::TypeId::of::<T>(),
+            data,
+            header,
+            linked: self.is_linked(),
+        }
+    }
+
+    /// Snapshot a canonical input slot before invoking module code.
+    ///
+    /// This does not authorize reading. Only the generated lifecycle can
+    /// attach these snapshots to a context with a live-source guarantee.
+    #[doc(hidden)]
+    pub fn __capture_binding(&mut self) -> BskInputPortBinding {
+        self.current_binding()
+    }
+
+    /// Restore a subscription changed by module code, and report the change.
+    ///
+    /// # Safety
+    ///
+    /// `expected` must have been captured from this exact configuration slot
+    /// before the current callback, and its source must still be kept alive.
+    #[doc(hidden)]
+    pub unsafe fn __restore_binding(&mut self, expected: &BskInputPortBinding) -> BskResult<()> {
+        if self.current_binding() != *expected {
+            unsafe {
+                T::__restore_subscription(
+                    &mut self.0,
+                    expected.data,
+                    expected.header,
+                    expected.linked,
+                )
+            };
+            return Err(BskError::new(
+                "Basilisk input message port was moved or rebound by Rust module code; \
+                 its subscription has been restored. Store message payloads, not message readers, in State",
+            ));
+        }
+        Ok(())
+    }
+
     /// Whether another module has subscribed this port to a source message.
     pub fn is_linked(&mut self) -> bool {
         T::__is_linked(&mut self.0)
     }
     /// Read the current message value.
     ///
-    /// Returns an error instead of calling the C message interface when the
-    /// input is unlinked or its port pointers have not been initialized.
-    pub fn read(&mut self) -> BskResult<T> {
+    /// Pass the context supplied to `reset` or `update`. It authorizes only
+    /// the original configuration input slots and their subscriptions for
+    /// that call. A moved, swapped, or retained reader is not authorized.
+    /// Prefer the generated `inputs` payloads during `update`; store copied
+    /// payloads in `State`, not readers.
+    ///
+    /// Returns an error without dereferencing source pointers if the reader
+    /// is unauthorized, unlinked, or uninitialized. A context created with
+    /// [`BskContext::for_testing`] does not authorize C-message reads.
+    ///
+    /// Reads without a lifecycle context are rejected at compile time:
+    ///
+    /// ```compile_fail
+    /// use bsk_build::{Msg, MsgReader};
+    /// fn read_without_context<T: Msg>(reader: &mut MsgReader<T>) {
+    ///     let _ = reader.read();
+    /// }
+    /// ```
+    pub fn read(&mut self, context: &BskContext<'_>) -> BskResult<T> {
+        let binding = self.current_binding();
+        if !context.input_bindings.contains(&binding) {
+            return Err(BskError::new(
+                "Basilisk input message reader is not authorized by this lifecycle context; \
+                 read the original configuration port, not a moved or retained reader",
+            ));
+        }
         if !self.is_linked() {
             return Err(BskError::new(
                 "cannot read an unlinked Basilisk input message",
@@ -1136,11 +1239,39 @@ impl<T: Msg> MsgReader<T> {
                 "cannot read a Basilisk input message with uninitialized port pointers",
             ));
         }
-        // SAFETY: The private generated port representation prevents safe Rust
-        // code from changing these pointers. The checks above establish that
-        // they are non-null; the Basilisk subscription FFI guarantees that a
-        // linked port points to a live source message.
+        // SAFETY: The context proves that this exact slot, message type, and
+        // subscription match the current callback's live-source guarantee.
+        // The checks above additionally establish linkage and initialization.
         Ok(unsafe { T::__read(&mut self.0) })
+    }
+}
+
+/// A subscription snapshot, retained privately outside user configuration.
+///
+/// Addresses identify slots; this type never dereferences its pointers.
+#[doc(hidden)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BskInputPortBinding {
+    port: *const (),
+    message_type: core::any::TypeId,
+    data: *const (),
+    header: *const (),
+    linked: bool,
+}
+
+/// Complete a callback after restoring its input subscriptions.
+///
+/// The original error/panic takes precedence over a restoration diagnostic.
+/// Resuming a panic lets the outer FFI boundary report it and poison the module.
+#[doc(hidden)]
+pub fn __finish_input_callback<T>(
+    outcome: std::thread::Result<BskResult<T>>,
+    restored: BskResult<()>,
+) -> BskResult<T> {
+    match outcome {
+        Ok(Ok(value)) => restored.map(|()| value),
+        Ok(Err(error)) => Err(error),
+        Err(panic) => std::panic::resume_unwind(panic),
     }
 }
 
@@ -1245,7 +1376,11 @@ impl<T: Msg> MsgWriter<T> {
 #[doc(hidden)]
 pub trait BskModuleInput<Message: Msg>: Sized {
     fn validate(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<()>;
-    fn read(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<Self>;
+    fn read(
+        port: &mut MsgReader<Message>,
+        missing_message: &str,
+        context: &BskContext<'_>,
+    ) -> BskResult<Self>;
 }
 
 impl<Message: Msg> BskModuleInput<Message> for Message {
@@ -1257,9 +1392,13 @@ impl<Message: Msg> BskModuleInput<Message> for Message {
         }
     }
 
-    fn read(port: &mut MsgReader<Message>, missing_message: &str) -> BskResult<Self> {
+    fn read(
+        port: &mut MsgReader<Message>,
+        missing_message: &str,
+        context: &BskContext<'_>,
+    ) -> BskResult<Self> {
         Self::validate(port, missing_message)?;
-        port.read()
+        port.read(context)
     }
 }
 
@@ -1268,9 +1407,13 @@ impl<Message: Msg> BskModuleInput<Message> for Option<Message> {
         Ok(())
     }
 
-    fn read(port: &mut MsgReader<Message>, _missing_message: &str) -> BskResult<Self> {
+    fn read(
+        port: &mut MsgReader<Message>,
+        _missing_message: &str,
+        context: &BskContext<'_>,
+    ) -> BskResult<Self> {
         if port.is_linked() {
-            port.read().map(Some)
+            port.read(context).map(Some)
         } else {
             Ok(None)
         }
@@ -1309,6 +1452,15 @@ mod module_input_tests {
             let pointer = port.bound_address as *const ();
             (pointer, pointer)
         }
+        unsafe fn __restore_subscription(
+            port: &mut Self::Port,
+            data: *const (),
+            _header: *const (),
+            linked: bool,
+        ) {
+            port.bound_address = data as usize;
+            port.linked = linked;
+        }
         unsafe fn __read(port: &mut Self::Port) -> Self {
             port.value
         }
@@ -1334,9 +1486,14 @@ mod module_input_tests {
             value: TestMessage(42),
             ..TestPort::default()
         });
+        let bindings = [reader.__capture_binding()];
+        let runtime = BskModuleRuntime::for_testing();
+        // SAFETY: TestMessage reads only inline Rust storage, with no C source.
+        let context = unsafe { BskContext::for_testing(&runtime).__with_input_bindings(&bindings) };
         let value = <TestMessage as BskModuleInput<TestMessage>>::read(
             &mut reader,
             "missing required input",
+            &context,
         )
         .expect("linked input must be readable");
         assert_eq!(value, TestMessage(42));
@@ -1353,6 +1510,7 @@ mod module_input_tests {
         let value = <Option<TestMessage> as BskModuleInput<TestMessage>>::read(
             &mut reader,
             "optional input",
+            &BskContext::for_testing(&BskModuleRuntime::for_testing()),
         )
         .expect("an optional input must remain readable when unlinked");
         assert_eq!(value, None);
@@ -1372,25 +1530,45 @@ mod module_input_tests {
     #[test]
     fn safe_read_rejects_unlinked_and_uninitialized_ports() {
         let mut unlinked = MsgReader::<TestMessage>(TestPort::default());
+        let mut uninitialized = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            ..TestPort::default()
+        });
+        let bindings = [
+            unlinked.__capture_binding(),
+            uninitialized.__capture_binding(),
+        ];
+        let runtime = BskModuleRuntime::for_testing();
+        // SAFETY: These test ports never dereference a C source.
+        let context = unsafe { BskContext::for_testing(&runtime).__with_input_bindings(&bindings) };
         let error = unlinked
-            .read()
+            .read(&context)
             .expect_err("a safe read must reject an unlinked port");
         assert_eq!(
             error,
             BskError::new("cannot read an unlinked Basilisk input message")
         );
 
-        let mut uninitialized = MsgReader::<TestMessage>(TestPort {
-            linked: true,
-            ..TestPort::default()
-        });
         let error = uninitialized
-            .read()
+            .read(&context)
             .expect_err("a safe read must reject invalid port pointers");
         assert_eq!(
             error,
             BskError::new("cannot read a Basilisk input message with uninitialized port pointers")
         );
+    }
+
+    #[test]
+    /// A fabricated testing context cannot replace a live caller's ownership guarantee.
+    fn testing_context_does_not_authorize_input_reads() {
+        let mut reader = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            initialized: true,
+            ..TestPort::default()
+        });
+        let runtime = BskModuleRuntime::for_testing();
+        let error = reader.read(&BskContext::for_testing(&runtime)).unwrap_err();
+        assert!(error.to_string().contains("not authorized"));
     }
 
     #[test]

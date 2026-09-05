@@ -305,6 +305,15 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
+            "    unsafe fn __restore_subscription(port: &mut {message_type}_C, \
+             data: *const (), header: *const (), linked: bool) {{ \
+             port.payloadPointer = data.cast_mut().cast(); \
+             port.headerPointer = header.cast_mut().cast(); \
+             port.header.isLinked = i64::from(linked); }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
             "    unsafe fn __read(port: &mut {message_type}_C) -> Self {{ unsafe {{ \
              {message_type}_C_read(port) }} }}"
         )?;

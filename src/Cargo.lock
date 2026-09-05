@@ -61,6 +61,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bsk-input-port-tests"
+version = "0.1.0"
+dependencies = [
+ "bsk-build",
+]
+
+[[package]]
 name = "bsk-macros"
 version = "0.1.0"
 dependencies = [

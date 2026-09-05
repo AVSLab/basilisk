@@ -1,0 +1,26 @@
+# ISC License
+#
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+
+[package]
+name = "bsk-input-port-tests"
+version = "0.1.0"
+edition = "2021"
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+# Compile the fixture as a normal library, so its generated lifecycle entry
+# points are present. Integration tests then exercise the real macro expansion.
+# This is not a discoverable Basilisk module and needs no C/C++ runtime.
+[lib]
+path = "fixture.rs"
+test = false
+doctest = false
+
+[dependencies]
+bsk-build = { path = "../../bsk_build", default-features = false }

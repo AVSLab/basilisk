@@ -702,6 +702,38 @@ control message routing. Each output field has type ``Option<Msg>``:
 ``Some(payload)`` publishes that port and ``None`` leaves it unchanged for the
 current lifecycle call.
 
+Reading and Retaining Input Data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Inside ``update``, normally use the generated ``inputs`` argument; its fields
+already contain copied message payloads. If ``reset`` or ``update`` needs an
+explicit read, pass the lifecycle's ``context`` to the original input port.
+For example, inside ``mrpPDRust``'s ``reset`` method:
+
+.. code-block:: rust
+
+    let vehicle_config = self.vehConfigInMsg.read(context)?;
+
+For an optional input, check ``is_linked()`` before an explicit read. The
+generated optional fields in ``inputs`` already provide ``Some(payload)`` or
+``None`` as described above.
+
+Keep the ``MsgReader`` fields in their declared configuration slots. To retain
+input data between calls, copy the payload or the required values into
+``State``; do not move or swap the readers themselves. Python's subscription
+ownership keeps the source alive for the original port, not for a reader
+moved into Rust state. Explicit reads therefore require the current context
+and reject moved, retained, or changed readers before accessing source memory.
+If Rust code changes an input subscription, the generated lifecycle restores
+it before returning, including on errors and panics, and reports an error for
+an otherwise successful callback. Python may still subscribe, unsubscribe, or
+change a source between lifecycle calls as usual.
+
+``BskContext::for_testing()`` does not authorize C-message reads. Pure Rust
+tests should supply payloads through the generated ``Inputs`` value; use the
+Python module tests to exercise actual message subscriptions and reset-time
+reads.
+
 Writing Output Messages
 ~~~~~~~~~~~~~~~~~~~~~~~
 
