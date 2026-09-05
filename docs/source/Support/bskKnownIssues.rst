@@ -8,8 +8,8 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is deprecated.  Use ``messaging`` instead.
 
-Version |release| (July 7, 2026)
---------------------------------
+Version |release|
+-----------------
 - Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
   configuration overrides, and regenerate a project's XML after an interrupted cache update.
   Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen
@@ -24,6 +24,15 @@ Version |release| (July 7, 2026)
   Projects using ``CITE_BIB_FILES`` also bypass reuse so bibliography edits cannot leave stale citations.
   Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
   pages after header edits. Older saved Sphinx environments are reread once to restore those records.
+- GitHub issue 1538: PyPI changed its download logging on August 24, 2026, to exclude
+  metadata requests. The :ref:`usageMetrics` collector filters identifiable
+  non-distribution files, but older source records without filenames cannot be
+  classified reliably. Historical download trends remain only partially comparable
+  across this upstream change.
+- GitHub issue 1538: Interrupted HTTP response reads could stop usage-metrics
+  collection before saving data from the healthy source. The collector now retries
+  these failures and, if retries are exhausted, saves available observations while
+  marking the failed source's retained data as stale.
 - GitHub issue 1459: ``RetentionPolicy.addVariableLog()`` still called the removed
   ``SimBaseClass.AddVariableForLogging()`` and ``GetLogVariableData()`` methods, causing every
   Monte Carlo variable-retention request to fail with ``AttributeError``. Variable retention now
