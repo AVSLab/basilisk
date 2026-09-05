@@ -44,7 +44,10 @@ fixed-size arrays of message ports. It also demonstrates a Python-configurable
 its generated setter, and checked again during reset. The nested
 ``sampleParameters`` value and two-dimensional ``sampleMatrix`` array exercise
 composite configuration types through the generated Rust, C++, SWIG, and
-Python interfaces. The ``legacyDummy`` parameter demonstrates generated
+Python interfaces. The ``sampleFlags`` array and ``sampleFlagMatrix`` matrix
+demonstrate Boolean configuration through Rust type aliases. These sample
+configuration fields do not affect the module's outputs.
+The ``legacyDummy`` parameter demonstrates generated
 Basilisk deprecation warnings. The
 ``panicOnUpdate`` field is a test-only fault-injection hook used to verify that
 the generated ABI contains an unexpected Rust panic before it crosses into
@@ -92,6 +95,19 @@ lists:
 Both setters reject non-finite components, and the array setter also rejects a
 value with anything other than six total elements. A failed setter preserves
 the preceding configuration value.
+
+Boolean arrays work the same way, including when their Rust element type is
+an alias of ``bool``. The template's Boolean fields default to ``False``:
+
+.. code-block:: python
+
+   module.sampleFlags = [True, False, True]
+   module.sampleFlagMatrix = [[True, False], [False, True]]
+
+Their getters return copied lists of Python ``bool`` values. The corresponding
+``setSampleFlags()`` and ``setSampleFlagMatrix()`` methods accept the same
+lists; assigning the wrong number of elements raises ``BasiliskError`` and
+leaves the field unchanged.
 
 The unused ``legacyDummy`` sample parameter is deprecated in favor of
 ``dummy``. Reading or writing it demonstrates the standard dated Basilisk

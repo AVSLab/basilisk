@@ -1,0 +1,1 @@
+- Fixed generated accessors for Rust Boolean configuration arrays that use type aliases, including alias chains and multidimensional arrays. Added examples to :ref:`rustModuleTemplate` and regression tests for the Python properties and setter/getter methods.

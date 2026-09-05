@@ -955,9 +955,14 @@ changing an element:
     values[0] = 0.005  # [Nm]
     module.maxTorques = values
 
-The :ref:`rustModuleTemplate` module exercises both a nested configuration
-struct and a multidimensional fixed-size array through the complete generated
-Rust, C++, SWIG, and Python interface.
+Boolean arrays, including arrays whose element type is a Rust alias of
+``bool``, use lists of Python ``bool`` values. No special annotation is needed
+for an alias or an alias chain. Multidimensional Boolean arrays use nested
+lists, just like numeric arrays.
+
+The :ref:`rustModuleTemplate` module demonstrates nested configuration
+structs, multidimensional fixed-size arrays, and Boolean aliases through the
+complete generated Rust, C++, SWIG, and Python interface.
 
 Rust-Owned Private State
 ------------------------

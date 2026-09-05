@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- Rust configuration arrays whose element type is an alias of ``bool`` could
+  fail to compile in the generated C++ accessor. Boolean aliases and alias
+  chains now use the same safe array storage as plain ``bool`` fields.
 - Rust private module state now requires ``Send`` so the compiler rejects
   thread-bound values before Basilisk hands an instance to a simulation worker.
   This does not permit concurrent access to an individual module instance.
