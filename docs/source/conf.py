@@ -184,6 +184,7 @@ extensions = [
     "sphinx_rtd_theme",
     'recommonmark',
     'breathe',
+    'doxygen_cache',
     'sphinx_copybutton',
     'bsk_module_io',
     'sphinxcontrib.youtube'
@@ -208,6 +209,7 @@ breathe_doxygen_config_options = {
     'WARN_AS_ERROR': 'YES'
     , 'WARN_IF_UNDOCUMENTED': 'YES'  # Ensure undocumented variables, functions, etc., raise warnings
 }
+breathe_doxygen_aliases = {}
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']
@@ -702,7 +704,7 @@ class fileCrawler():
                             name += str(self.counter)
                             self.counter += 1
                         lines += (
-                            f".. autodoxygenfile:: {module_file}\n"
+                            f".. doxygenfile:: {module_file}\n"
                             f"   :project: {name}"
                         )
                         if module_file == "bsk_rust_module.h":
@@ -774,7 +776,7 @@ class fileCrawler():
                     "module source.\n\n"
                 )
                 lines += (
-                    ".. autodoxygenfile:: " + generated_header.name + "\n"
+                    ".. doxygenfile:: " + generated_header.name + "\n"
                     "   :project: " + project_name + "\n"
                     "   :sections: innerclass briefdescription "
                     "detaileddescription public-attrib public-func\n\n"
@@ -859,15 +861,15 @@ if rebuild:
         )
 
         # Adjust the fileCrawler path to a local folder to build a subsystem.
-        breathe_projects_source = file_crawler.run(officialSrc)
-        # breathe_projects_source = file_crawler.run(officialSrc+"/fswAlgorithms")
-        # breathe_projects_source = file_crawler.run(officialSrc+"/simulation/environment")
-        # breathe_projects_source = file_crawler.run(officialSrc+"/moduleTemplates")
-        # breathe_projects_source = file_crawler.run(officialSrc+"/simulation/vizard")
-        # breathe_projects_source = file_crawler.run(officialSrc+"/architecture")
-        breathe_projects_source = file_crawler.run("../../examples")
-        # breathe_projects_source = file_crawler.run("../../supportData")
-        # breathe_projects_source = file_crawler.run("../../externalTools")
+        doxygen_projects_source = file_crawler.run(officialSrc)
+        # doxygen_projects_source = file_crawler.run(officialSrc+"/fswAlgorithms")
+        # doxygen_projects_source = file_crawler.run(officialSrc+"/simulation/environment")
+        # doxygen_projects_source = file_crawler.run(officialSrc+"/moduleTemplates")
+        # doxygen_projects_source = file_crawler.run(officialSrc+"/simulation/vizard")
+        # doxygen_projects_source = file_crawler.run(officialSrc+"/architecture")
+        doxygen_projects_source = file_crawler.run("../../examples")
+        # doxygen_projects_source = file_crawler.run("../../supportData")
+        # doxygen_projects_source = file_crawler.run("../../externalTools")
 
         for generated_root_name in ("Documentation", "examples"):
             sync_counts = sync_generated_tree(
@@ -883,14 +885,19 @@ if rebuild:
             )
 
     with open("breathe.data", 'wb') as f:
-        pickle.dump(breathe_projects_source, f)
+        pickle.dump(doxygen_projects_source, f)
 else:
     if os.path.exists('breathe.data'):
         with open('breathe.data', 'rb') as f:
-            breathe_projects_source = pickle.load(f)
+            doxygen_projects_source = pickle.load(f)
     else:
-        breathe_projects_source = {}
-    #breathe_projects_source = pickle.load('breathe.data')
+        doxygen_projects_source = {}
+    #doxygen_projects_source = pickle.load('breathe.data')
+
+bsk_doxygen_projects_source = doxygen_projects_source
+# The cache extension generates XML after Sphinx applies configuration overrides.
+# Leave Breathe's automatic generation disabled to avoid a second Doxygen run.
+breathe_projects_source = {}
     #fileCrawler.run("../../../Basilisk/src/")
 
 #TODO: Pickle the breathe_project_source and load that back in

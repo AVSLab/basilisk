@@ -20,6 +20,14 @@ runs:
         else
           pip install -r requirements_doc.txt
         fi
+    - name: Test documentation build integration
+      shell: bash
+      env:
+        MPLBACKEND: agg
+      working-directory: src
+      run: |
+        pip install pytest-error-for-skips
+        pytest tests/test_doxygen_cache.py -m docsIntegration --error-for-skips --timeout=300 -v
     - name: Generate doc artifacts
       shell: bash
       env:
