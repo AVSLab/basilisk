@@ -59,8 +59,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../Support.html">Support</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="bskReleaseNotes.html">Basilisk Release Notes</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basilisk Known Issues</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#version-release-july-7-2026">Version 2.12.0b0
- (July 7, 2026)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-release">Version 2.12.0b0
+</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-11-0-july-7-2026">Version 2.11.0 (July 7, 2026)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-10-0-april-2-2026">Version 2.10.0 (April 2, 2026)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#version-2-9-0">Version 2.9.0</a></li>
@@ -151,9 +151,9 @@
 <p class="admonition-title">Caution</p>
 <p>The use of <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code> is deprecated.  Use <code class="docutils literal notranslate"><span class="pre">messaging</span></code> instead.</p>
 </div>
-<section id="version-release-july-7-2026">
+<section id="version-release">
 <h2>Version 2.12.0b0
- (July 7, 2026)<a class="headerlink" href="#version-release-july-7-2026" title="Link to this heading"></a></h2>
+<a class="headerlink" href="#version-release" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
 configuration overrides, and regenerate a project’s XML after an interrupted cache update.
@@ -169,6 +169,15 @@ documentation commands bypass reuse, including in aliases and with preprocessing
 Projects using <code class="docutils literal notranslate"><span class="pre">CITE_BIB_FILES</span></code> also bypass reuse so bibliography edits cannot leave stale citations.
 Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
 pages after header edits. Older saved Sphinx environments are reread once to restore those records.</p></li>
+<li><p>GitHub issue 1538: PyPI changed its download logging on August 24, 2026, to exclude
+metadata requests. The <a class="reference internal" href="Developer/usageMetrics.html#usagemetrics"><span class="std std-ref">Usage Metrics</span></a> collector filters identifiable
+non-distribution files, but older source records without filenames cannot be
+classified reliably. Historical download trends remain only partially comparable
+across this upstream change.</p></li>
+<li><p>GitHub issue 1538: Interrupted HTTP response reads could stop usage-metrics
+collection before saving data from the healthy source. The collector now retries
+these failures and, if retries are exhausted, saves available observations while
+marking the failed source’s retained data as stale.</p></li>
 <li><p>GitHub issue 1459: <code class="docutils literal notranslate"><span class="pre">RetentionPolicy.addVariableLog()</span></code> still called the removed
 <code class="docutils literal notranslate"><span class="pre">SimBaseClass.AddVariableForLogging()</span></code> and <code class="docutils literal notranslate"><span class="pre">GetLogVariableData()</span></code> methods, causing every
 Monte Carlo variable-retention request to fail with <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>. Variable retention now

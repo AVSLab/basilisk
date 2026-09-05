@@ -81,6 +81,7 @@
 <li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
 <li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="performanceBenchmarks.html">Optional Performance Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usageMetrics.html">Usage Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bskReleaseGuide.html">BSK Release Guide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bskSdkReleaseGuide.html">BSK-SDK Release Guide</a></li>
@@ -336,7 +337,13 @@ are then automatially created and included in the project.</p>
 <section id="python-exceptions">
 <h2>Python Exceptions<a class="headerlink" href="#python-exceptions" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Variables are to be lower camelCase. This is done to maintain consistency across the C/C++ and Python code bases which are interfaced via SWIG.</p></li>
+<li><p>General-purpose Python implementation and tooling names are to follow
+PEP 8. This includes using <code class="docutils literal notranslate"><span class="pre">under_scored</span></code> names for functions, methods,
+local variables, and parameters.</p></li>
+<li><p>Public BSK module attributes, message variables, mathematical quantities,
+and names shared across C/C++ and Python interfaces are to retain the
+established Basilisk naming conventions. This includes lower <code class="docutils literal notranslate"><span class="pre">camelCase</span></code>
+where applicable and the frame and attitude notation described above.</p></li>
 <li><p>Inline comments are accepted so long as they are kept brief.</p></li>
 <li><p>Binary operator spaces will be adhered to as specified in PEP 8, however, not for math symbols operations. E.g. no spaces are included around *, /, +, -, etc</p></li>
 </ul>

@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage Metrics &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=af0513e8" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Adding Support Data Files" href="addSupportData.html" />
+    <link rel="prev" title="Optional Performance Benchmarks" href="performanceBenchmarks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Basilisk
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../Developer.html">Developer Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="CodingGuidlines.html">Coding Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Debugging.html">Accessing the Debugger for C/C++ Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deprecatingCode.html">Deprecating code in Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingNewBskModule.html">Making a New C/C++ Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="addSphinxDoc.html">Using Sphinx to Document Basilisk Modules and Folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="createHtmlDocumentation.html">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskModuleCheckoutList.html">Basilisk Module Checkout List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="UnderstandingBasilisk.html">Basilisk Architecture Support Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="performanceBenchmarks.html">Optional Performance Benchmarks</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Usage Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#usage-plot">Usage Plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#collected-metrics">Collected Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#source-failures-and-freshness">Source Failures and Freshness</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#github-configuration">GitHub Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-the-data">Retrieving the Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#interpretation-limits">Interpretation Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="addSupportData.html">Adding Support Data Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskReleaseGuide.html">BSK Release Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskSdkReleaseGuide.html">BSK-SDK Release Guide</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../Developer.html">Developer Information</a></li>
+      <li class="breadcrumb-item active">Usage Metrics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/Developer/usageMetrics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage-metrics">
+<span id="usagemetrics"></span><h1>Usage Metrics<a class="headerlink" href="#usage-metrics" title="Link to this heading"></a></h1>
+<p>Basilisk collects daily PyPI and GitHub usage metrics with the
+<code class="docutils literal notranslate"><span class="pre">Collect</span> <span class="pre">Usage</span> <span class="pre">Metrics</span></code> GitHub Actions workflow. The workflow writes durable
+history to the orphan <code class="docutils literal notranslate"><span class="pre">usage-metrics</span></code> branch so routine snapshots do not add
+commits to <code class="docutils literal notranslate"><span class="pre">develop</span></code> or trigger the normal build workflow.</p>
+<section id="usage-plot">
+<h2>Usage Plot<a class="headerlink" href="#usage-plot" title="Link to this heading"></a></h2>
+<p>The metrics workflow regenerates the following plot after every successful
+collection. The documentation references the image on the <code class="docutils literal notranslate"><span class="pre">usage-metrics</span></code>
+branch, so readers see the latest published data without waiting for another
+documentation build. The plotted lines show seven-day trailing means; exact
+daily values remain available in <code class="docutils literal notranslate"><span class="pre">metrics.csv</span></code>.</p>
+<p>A plotted mean requires seven consecutive observed UTC dates. Explicit zero
+counts are included, but missing dates are unknown and break the series until
+another complete window is available. In particular, ClickPy’s lack of records
+for a date does not establish zero downloads: it may reflect an ingestion gap.
+The latest reported day’s count may still be partial.</p>
+<a class="reference external image-reference" href="https://github.com/AVSLab/basilisk/tree/usage-metrics"><img alt="Daily Basilisk PyPI download and GitHub clone activity" src="https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/usage.svg" style="width: 100%;" />
+</a>
+</section>
+<section id="collected-metrics">
+<h2>Collected Metrics<a class="headerlink" href="#collected-metrics" title="Link to this heading"></a></h2>
+<p>The branch contains the following generated files:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">metrics.csv</span></code></dt><dd><p>One row per UTC date. It contains PyPI download events, downloads made by
+<code class="docutils literal notranslate"><span class="pre">pip</span></code>, GitHub clone events and daily unique cloners, and snapshots of the
+current fork and release-asset download counts.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">summary.json</span></code></dt><dd><p>Machine-readable current totals, source coverage dates, and the latest
+successfully retrieved GitHub clone window. Schema version 2 also records
+each source’s status, last attempt, last successful collection, and error.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">README.md</span></code></dt><dd><p>A human-readable summary and the interpretation caveats for each metric.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">usage.svg</span></code></dt><dd><p>A light- and dark-theme plot of the seven-day trailing means for PyPI
+downloads and GitHub clone activity.</p>
+</dd>
+</dl>
+<p>PyPI history is read from the public PyPI data replicated by
+<a class="reference external" href="https://clickpy.clickhouse.com/">ClickPy</a>. The non-mirror count excludes
+<code class="docutils literal notranslate"><span class="pre">bandersnatch</span></code>, <code class="docutils literal notranslate"><span class="pre">z3c.pypimirror</span></code>, <code class="docutils literal notranslate"><span class="pre">Artifactory</span></code>, and <code class="docutils literal notranslate"><span class="pre">devpi</span></code>, matching
+the <a class="reference external" href="https://pypistats.org/faqs">PyPI Stats known-mirror list</a>. The separate
+<code class="docutils literal notranslate"><span class="pre">pip</span></code> count selects records whose installer is identified as <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<p>Both PyPI counts exclude records with a known filename that does not end in
+<code class="docutils literal notranslate"><span class="pre">.whl</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>, or <code class="docutils literal notranslate"><span class="pre">.zip</span></code>. This removes identifiable metadata sidecars
+and signatures. Older records without filenames are retained because they
+cannot be reliably classified. A successful collection refreshes returned
+historical dates with this filter; totals can decrease after the first refresh.</p>
+<p>Missing CSV values are blank rather than zero. If a source has never been
+collected successfully, its unavailable summary counts are JSON <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+</section>
+<section id="source-failures-and-freshness">
+<h2>Source Failures and Freshness<a class="headerlink" href="#source-failures-and-freshness" title="Link to this heading"></a></h2>
+<p>The collector retrieves PyPI and GitHub data independently. When one source
+fails, it publishes the available observations and retains the other source’s
+earlier data. It does not copy old fork or release counts into a new daily
+snapshot. The last successful GitHub API window is retained as a whole, including
+its unique-cloner count; it is never reconstructed by adding daily unique counts.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">summary.json</span></code>, <code class="docutils literal notranslate"><span class="pre">collection_status</span></code> is <code class="docutils literal notranslate"><span class="pre">complete</span></code> or <code class="docutils literal notranslate"><span class="pre">partial</span></code>.
+Each entry under <code class="docutils literal notranslate"><span class="pre">sources</span></code> contains <code class="docutils literal notranslate"><span class="pre">status</span></code> (<code class="docutils literal notranslate"><span class="pre">ok</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code>),
+<code class="docutils literal notranslate"><span class="pre">last_attempt_at</span></code>, <code class="docutils literal notranslate"><span class="pre">last_success_at</span></code>, and <code class="docutils literal notranslate"><span class="pre">error</span></code>. The README and plot also
+show source freshness. <code class="docutils literal notranslate"><span class="pre">generated_at</span></code> is the artifact generation time, not
+the freshness of every source. Even a successful API request may return delayed
+data, so check the source coverage dates as well.</p>
+<p>After publishing a partial collection, the workflow reports a failed run so
+maintainers can investigate. If both sources fail, it leaves published artifacts
+unchanged and fails without publishing. A remote lookup, fetch, or history
+restore failure also stops publication. Only a successful remote lookup that
+confirms the metrics branch is absent permits an initial collection.</p>
+<p>The workflow restores both <code class="docutils literal notranslate"><span class="pre">metrics.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">summary.json</span></code>. Version 1
+summaries are accepted and upgraded; if PyPI is unavailable during that upgrade,
+<code class="docutils literal notranslate"><span class="pre">pypi.counting_policy</span></code> remains <code class="docutils literal notranslate"><span class="pre">legacy_unfiltered</span></code> until a successful refresh.
+Normal filtered collections use <code class="docutils literal notranslate"><span class="pre">distribution_files_or_unknown_filename</span></code>.</p>
+</section>
+<section id="github-configuration">
+<h2>GitHub Configuration<a class="headerlink" href="#github-configuration" title="Link to this heading"></a></h2>
+<p>GitHub exposes clone traffic only to repository collaborators and retains only
+the latest 14 days. The workflow reads the existing <code class="docutils literal notranslate"><span class="pre">BOT_ACCESS_TOKEN</span></code>
+Actions secret. That token must be either:</p>
+<ul class="simple">
+<li><p>a fine-grained token with read-only repository Administration permission; or</p></li>
+<li><p>a classic token with sufficient access to read the repository traffic API.</p></li>
+</ul>
+<p>See the <a class="reference external" href="https://docs.github.com/en/rest/metrics/traffic">GitHub repository traffic API</a> for the current permission
+requirements. The token is used only for API reads. The workflow’s scoped
+<code class="docutils literal notranslate"><span class="pre">GITHUB_TOKEN</span></code> publishes the generated files, so repository Actions settings
+must permit workflows to write repository contents.</p>
+<p>After the workflow reaches the default branch, run it once manually to seed the
+<code class="docutils literal notranslate"><span class="pre">usage-metrics</span></code> branch. The daily schedule then merges GitHub’s overlapping
+14-day windows, which preserves clone counts beyond GitHub’s retention period.</p>
+</section>
+<section id="retrieving-the-data">
+<h2>Retrieving the Data<a class="headerlink" href="#retrieving-the-data" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">usage-metrics</span></code> branch becomes available after the first successful
+workflow run. Because the Basilisk repository is public, anyone can read the
+generated data; no GitHub token or repository membership is required.</p>
+<p>The branch and its rendered summary can be viewed at
+<a class="reference external" href="https://github.com/AVSLab/basilisk/tree/usage-metrics">github.com/AVSLab/basilisk/tree/usage-metrics</a>. The individual data
+files can be downloaded directly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>--fail<span class="w"> </span>--location<span class="w"> </span>--remote-name<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/metrics.csv
+curl<span class="w"> </span>--fail<span class="w"> </span>--location<span class="w"> </span>--remote-name<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/summary.json
+curl<span class="w"> </span>--fail<span class="w"> </span>--location<span class="w"> </span>--remote-name<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/usage.svg
+</pre></div>
+</div>
+<p>To inspect or copy the files without switching the current checkout away from
+its source branch, fetch the metrics branch as a remote-tracking branch:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>usage-metrics:refs/remotes/origin/usage-metrics
+git<span class="w"> </span>show<span class="w"> </span>origin/usage-metrics:metrics.csv
+git<span class="w"> </span>show<span class="w"> </span>origin/usage-metrics:summary.json
+</pre></div>
+</div>
+<p>To obtain the generated files together with the complete daily commit history,
+clone only the orphan branch into a separate directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>usage-metrics<span class="w"> </span>--single-branch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://github.com/AVSLab/basilisk.git<span class="w"> </span>basilisk-usage-metrics
+</pre></div>
+</div>
+</section>
+<section id="interpretation-limits">
+<h2>Interpretation Limits<a class="headerlink" href="#interpretation-limits" title="Link to this heading"></a></h2>
+<p>PyPI supplies file-download events, not successful installations or unique
+users. Repeated installs, continuous integration, caches, mirrors, and other
+installers affect the counts.</p>
+<p>PyPI changed its download logging on August 24, 2026, to exclude metadata
+requests, leaving older source records unchanged. Although the collector removes
+identifiable non-distribution files, older entries without filenames may still
+include these requests. Historical totals and trends are therefore not fully
+comparable across this change. See <a class="reference external" href="https://blog.pypi.org/posts/2026-08-31-download-counts/">PyPI’s explanation of the counting change</a>.</p>
+<p>GitHub’s window-level unique-cloner count must not be added across windows or
+dates because the same user can occur more than once. The fork count represents
+currently existing forks, not every fork ever created. Release-asset downloads
+include only files explicitly uploaded to a release; GitHub does not publish a
+download count for automatically generated source ZIP and tar archives.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="performanceBenchmarks.html" class="btn btn-neutral float-left" title="Optional Performance Benchmarks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="addSupportData.html" class="btn btn-neutral float-right" title="Adding Support Data Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
