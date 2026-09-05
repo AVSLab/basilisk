@@ -223,3 +223,74 @@ fn replacing_a_reader_with_default_restores_its_subscription() {
         assert_eq!(module.config().value, 17);
     }
 }
+
+#[test]
+/// Init cannot turn readers saved from a destroyed instance into valid subscriptions.
+fn init_rejects_retained_scalar_and_array_readers_before_exposing_a_handle() {
+    for slot in 0..4 {
+        for failure in 0..3 {
+            let sources = [Source::new(11), Source::new(22), Source::new(33)];
+            let mut first = Module::new();
+            // SAFETY: Sources outlive the first instance's subscriptions and calls.
+            unsafe {
+                sources[0].subscribe(&mut first.config().dataInMsg);
+                sources[1].subscribe(&mut first.config().dataInMsgs[0]);
+                sources[2].subscribe(&mut first.config().dataInMsgs[1]);
+            }
+            first.config().action = 7;
+            assert!(first
+                .call(false)
+                .unwrap_err()
+                .1
+                .contains("subscription has been restored"));
+            drop(first);
+            drop(sources);
+
+            set_init_behavior(slot, failure);
+            let before = read_count();
+            let mut handle = std::ptr::null_mut();
+            // SAFETY: The output slot is valid. Module callbacks use only safe
+            // Rust; the mock message never dereferences released source memory.
+            let creation = result(unsafe { Create_bsk_input_port_tests(&mut handle) });
+            let exposed_handle = !handle.is_null();
+            if exposed_handle {
+                // Avoid leaking an incorrectly accepted instance if this regresses.
+                result(unsafe { Destroy_bsk_input_port_tests(handle) }).unwrap();
+            }
+            let error = creation.expect_err("init must not accept a retained input reader");
+            assert!(
+                !exposed_handle,
+                "failed construction must leave a null handle"
+            );
+            assert_eq!(read_count(), before, "init must never enter the raw reader");
+            assert_eq!(
+                dropped_input_links(),
+                Some([false; 3]),
+                "restore every scalar/array slot before dropping a rejected instance"
+            );
+            match failure {
+                0 => {
+                    assert_eq!(error.0, BskRustErrorKind::Expected);
+                    assert!(error.1.contains("subscription has been restored"));
+                }
+                1 => {
+                    assert_eq!(error.0, BskRustErrorKind::Expected);
+                    assert_eq!(error.1, "intentional init error");
+                }
+                2 => {
+                    assert_eq!(error.0, BskRustErrorKind::Panic);
+                    assert!(error.1.contains("intentional init panic"));
+                }
+                _ => unreachable!(),
+            }
+
+            // Rejection must not poison future instances or change normal
+            // caller-owned subscriptions, which are established after init.
+            let source = Source::new(47);
+            let mut fresh = Module::new();
+            unsafe { source.subscribe(&mut fresh.config().dataInMsg) };
+            fresh.call(true).unwrap();
+            assert_eq!(fresh.config().automaticValue, 47);
+        }
+    }
+}

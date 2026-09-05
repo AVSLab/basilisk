@@ -1158,7 +1158,8 @@ pub unsafe trait Msg: Sized + Copy + 'static {
     /// # Safety
     ///
     /// The pointers and linkage flag must come from a valid subscription for
-    /// this exact port and message type, with its source still kept alive.
+    /// this exact port and message type: either its default empty subscription
+    /// or a subscription whose source is still kept alive.
     /// Implementations must only update the two subscription pointers and the
     /// port's own linkage flag; they must not read or write either pointee.
     #[doc(hidden)]
@@ -1229,7 +1230,8 @@ impl<T: Msg> MsgReader<T> {
     /// # Safety
     ///
     /// `expected` must have been captured from this exact configuration slot
-    /// before the current callback, and its source must still be kept alive.
+    /// before the current callback. It must describe either the default empty
+    /// subscription or a subscription whose source is still kept alive.
     #[doc(hidden)]
     pub unsafe fn __restore_binding(&mut self, expected: &BskInputPortBinding) -> BskResult<()> {
         if self.current_binding() != *expected {
@@ -1314,7 +1316,8 @@ pub struct BskInputPortBinding {
 /// Complete a callback after restoring its input subscriptions.
 ///
 /// The original error/panic takes precedence over a restoration diagnostic.
-/// Resuming a panic lets the outer FFI boundary report it and poison the module.
+/// Resuming a panic lets the outer FFI boundary report it and poison an existing
+/// instance, or discard an instance whose construction failed.
 #[doc(hidden)]
 pub fn __finish_input_callback<T>(
     outcome: std::thread::Result<BskResult<T>>,
@@ -1723,7 +1726,10 @@ pub trait BskModule {
     /// element-wise defaults; scalars, nested structs, ports, and private
     /// state use their ``Default`` implementations. Override this method to
     /// set non-default parameters or state values. Returning an error prevents
-    /// construction of the module's opaque instance.
+    /// construction of the module's opaque instance. Leave input ports empty:
+    /// subscriptions are established by the caller after construction. The
+    /// generated constructor restores and rejects input subscriptions changed
+    /// by this callback, including readers retained from another instance.
     fn init(&mut self, _state: &mut Self::State) -> BskResult<()> {
         Ok(())
     }

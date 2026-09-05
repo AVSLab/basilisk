@@ -644,10 +644,30 @@ fn expand_module_with_options(
                     output_bindings: ::core::option::Option::None,
                     poisoned_by: ::core::option::Option::None,
                 });
-                <#config_type as ::bsk_build::BskModule>::init(
+                // Capture the empty ports before user code can install a
+                // reader retained from another instance. The boxed slots stay
+                // at their final addresses throughout initialization.
+                #capture_input_bindings_function(
                     &mut instance.config,
-                    &mut instance.state,
-                )?;
+                    &mut instance.input_bindings,
+                );
+                let outcome = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                    <#config_type as ::bsk_build::BskModule>::init(
+                        &mut instance.config,
+                        &mut instance.state,
+                    )
+                }));
+                // SAFETY: These bindings belong to the same unmoved slots
+                // and contain only their original empty subscriptions.
+                // Restore before dropping a rejected instance, including
+                // when init returns an error or panics.
+                let restored = unsafe {
+                    #restore_input_bindings_function(
+                        &mut instance.config,
+                        &instance.input_bindings,
+                    )
+                };
+                ::bsk_build::__finish_input_callback(outcome, restored)?;
                 unsafe {
                     output_handle.write(
                         ::std::boxed::Box::into_raw(instance).cast::<#handle_type>(),
