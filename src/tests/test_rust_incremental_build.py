@@ -155,6 +155,11 @@ def test_rust_binding_changes_reach_consumers_in_one_build(tmp_path, generator):
     if generator and generator.startswith("Ninja"):
         configure.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
     _run(configure)
+    configured_generator = next(
+        line.partition("=")[2]
+        for line in (build / "CMakeCache.txt").read_text(encoding="utf-8").splitlines()
+        if line.startswith("CMAKE_GENERATOR:INTERNAL=")
+    )
 
     def nativeBuild():
         """Perform exactly one invocation of the native incremental build."""
@@ -214,8 +219,12 @@ def test_rust_binding_changes_reach_consumers_in_one_build(tmp_path, generator):
         assertNoWrapperRebuild()
 
     _run([CMAKE, "--build", str(build), "--config", "Release", "--target", "clean"])
-    assert not header.exists()
-    assert not interface.exists()
+    # Make and Ninja remove POST_BUILD byproducts during native clean; Visual
+    # Studio may retain them. Every generator must still rebuild correctly,
+    # and the explicit deletions above check missing-file recovery for all.
+    if configured_generator.startswith("Ninja") or "Makefiles" in configured_generator:
+        assert not header.exists()
+        assert not interface.exists()
     nativeBuild()
     assertCurrent()
     assertNoWrapperRebuild()
