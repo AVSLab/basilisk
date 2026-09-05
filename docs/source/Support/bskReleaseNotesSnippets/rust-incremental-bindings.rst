@@ -1,0 +1,1 @@
+- Fixed incremental Ninja builds so Rust binding changes reach the generated Python/C++ wrappers in a single build, while unchanged bindings avoid unnecessary wrapper regeneration. Added regression coverage for Ninja, Ninja Multi-Config, and the native Makefile or Visual Studio generator.
