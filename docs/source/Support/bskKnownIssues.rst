@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- Rust private module state now requires ``Send`` so the compiler rejects
+  thread-bound values before Basilisk hands an instance to a simulation worker.
+  This does not permit concurrent access to an individual module instance.
 - Rust input readers moved into module state could outlive their message source after
   the original Python port was unsubscribed. Explicit reads now require the current
   lifecycle context (``port.read(context)?``), and the generated lifecycle rejects
