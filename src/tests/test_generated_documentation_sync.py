@@ -85,3 +85,20 @@ def test_sync_generated_tree_creates_missing_destination(tmp_path):
 
     assert (destination_root / "index.rst").is_file()
     assert counts == {"added": 1, "updated": 0, "unchanged": 0, "removed": 0}
+
+
+def test_sync_generated_tree_can_preserve_stale_files(tmp_path):
+    """Verify dependency files can remain until their consumer purges them."""
+    staged_root = tmp_path / "staged"
+    destination_root = tmp_path / "destination"
+    _write_file(staged_root / "current.xml", "current\n")
+    _write_file(destination_root / "current.xml", "old\n")
+    _write_file(destination_root / "stale.xml", "stale\n")
+
+    counts = GENERATED_DOCUMENTATION.sync_generated_tree(
+        staged_root, destination_root, remove_stale=False
+    )
+
+    assert (destination_root / "current.xml").read_text(encoding="utf8") == "current\n"
+    assert (destination_root / "stale.xml").is_file()
+    assert counts == {"added": 0, "updated": 1, "unchanged": 0, "removed": 0}

@@ -24,15 +24,17 @@ def _tree_entries(root):
     return files, directories
 
 
-def sync_generated_tree(staged_directory, destination_directory):
+def sync_generated_tree(staged_directory, destination_directory, remove_stale=True):
     """Synchronize a staged generated tree into its live location.
 
     Files whose contents have not changed are left untouched so that Sphinx can
-    use their modification times for incremental builds. Files and directories
-    that are absent from the staged tree are removed from the destination.
+    use their modification times for incremental builds. By default, files and
+    directories that are absent from the staged tree are removed from the
+    destination.
 
     :param staged_directory: Complete newly generated documentation tree.
     :param destination_directory: Live documentation tree to update.
+    :param remove_stale: Whether to remove entries absent from the staged tree.
     :return: Counts of added, updated, unchanged, and removed files.
     """
     staged_path = Path(staged_directory)
@@ -74,11 +76,17 @@ def sync_generated_tree(staged_directory, destination_directory):
         if destination_entry.is_symlink():
             destination_entry.unlink()
             removed_files += 1
-        elif destination_entry.is_file() and relative_path not in staged_files:
+        elif destination_entry.is_file() and (
+            relative_path in staged_directories
+            or (remove_stale and relative_path not in staged_files)
+        ):
             destination_entry.unlink()
             removed_files += 1
-        elif destination_entry.is_dir() and relative_path not in staged_directories:
-            destination_entry.rmdir()
+        elif destination_entry.is_dir():
+            if relative_path in staged_files:
+                shutil.rmtree(destination_entry)
+            elif remove_stale and relative_path not in staged_directories:
+                destination_entry.rmdir()
 
     for relative_path in sorted(staged_directories):
         (destination_root / relative_path).mkdir(parents=True, exist_ok=True)
