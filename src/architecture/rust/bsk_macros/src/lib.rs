@@ -118,6 +118,10 @@ fn expand_module_with_options(
         "__bsk_validate_output_bindings_for_{}",
         config_type.to_string()
     );
+    let capture_input_bindings_function =
+        format_ident!("__bsk_capture_input_bindings_for_{config_type}");
+    let restore_input_bindings_function =
+        format_ident!("__bsk_restore_input_bindings_for_{config_type}");
     let assert_config_field_types_function = format_ident!(
         "__bsk_assert_config_field_types_for_{}",
         config_type.to_string()
@@ -142,6 +146,42 @@ fn expand_module_with_options(
         .collect();
 
     let input_names: Vec<&syn::Ident> = input_fields.iter().map(|field| &field.name).collect();
+    let capture_input_bindings = input_fields.iter().map(|field| {
+        let name = &field.name;
+        match &field.shape {
+            PortShape::Single => quote! {
+                bindings.push(config.#name.__capture_binding());
+            },
+            PortShape::Array(_) => quote! {
+                for port in &mut config.#name {
+                    bindings.push(port.__capture_binding());
+                }
+            },
+        }
+    });
+    let restore_input_bindings = input_fields.iter().map(|field| {
+        let name = &field.name;
+        let restore = quote! {
+            let binding = bindings.next().expect("generated input binding count matches ports");
+            // SAFETY: This is the original slot and subscription captured for
+            // the current call. The caller still keeps its source alive.
+            let result = unsafe { port.__restore_binding(binding) };
+            if first_error.is_none() {
+                first_error = result.err();
+            }
+        };
+        match &field.shape {
+            PortShape::Single => quote! {{
+                let port = &mut config.#name;
+                #restore
+            }},
+            PortShape::Array(_) => quote! {
+                for port in &mut config.#name {
+                    #restore
+                }
+            },
+        }
+    });
     let input_types: Vec<TokenStream2> = input_fields.iter().map(MessagePort::value_type).collect();
     let input_docs: Vec<TokenStream2> = input_fields
         .iter()
@@ -203,6 +243,7 @@ fn expand_module_with_options(
                         <#input_type as ::bsk_build::BskModuleInput<#message_type>>::read(
                             &mut (*config).#field_name,
                             #missing_message,
+                            &context,
                         )?
                 },
                 PortShape::Array(_) => quote! {
@@ -224,6 +265,7 @@ fn expand_module_with_options(
                                     ::bsk_build::BskModuleInput<#message_type>>::read(
                                         port,
                                         &missing_message,
+                                        &context,
                                     )?;
                         }
                         values
@@ -474,10 +516,36 @@ fn expand_module_with_options(
         struct #instance_type {
             config: #config_type,
             state: <#config_type as ::bsk_build::BskModule>::State,
+            input_bindings: ::std::vec::Vec<::bsk_build::BskInputPortBinding>,
             output_bindings: ::core::option::Option<
                 ::std::vec::Vec<::bsk_build::BskMessagePortBinding>
             >,
             poisoned_by: ::core::option::Option<&'static str>,
+        }
+
+        #[doc(hidden)]
+        fn #capture_input_bindings_function(
+            config: &mut #config_type,
+            bindings: &mut ::std::vec::Vec<::bsk_build::BskInputPortBinding>,
+        ) {
+            // Reuse the allocation; subscriptions can change between calls.
+            bindings.clear();
+            #(#capture_input_bindings)*
+        }
+
+        #[doc(hidden)]
+        unsafe fn #restore_input_bindings_function(
+            config: &mut #config_type,
+            bindings: &[::bsk_build::BskInputPortBinding],
+        ) -> ::bsk_build::BskResult<()> {
+            let mut bindings = bindings.iter();
+            let mut first_error = ::core::option::Option::None;
+            // Restore every slot, even when an earlier slot was changed.
+            #(#restore_input_bindings)*
+            match first_error {
+                Some(error) => Err(error),
+                None => Ok(()),
+            }
         }
 
         #[doc(hidden)]
@@ -564,6 +632,7 @@ fn expand_module_with_options(
                         #(#initialize_config_fields,)*
                     },
                     state: ::core::default::Default::default(),
+                    input_bindings: ::std::vec::Vec::new(),
                     output_bindings: ::core::option::Option::None,
                     poisoned_by: ::core::option::Option::None,
                 });
@@ -835,6 +904,7 @@ fn expand_module_with_options(
                     let #instance_type {
                         config,
                         state,
+                        input_bindings,
                         output_bindings,
                         ..
                     } = instance;
@@ -844,15 +914,27 @@ fn expand_module_with_options(
                             "cannot write a Basilisk output message before SelfInit initializes its port",
                         ))?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
-                    let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    #capture_input_bindings_function(config, input_bindings);
+                    // SAFETY: The C++ caller retains subscribed sources until
+                    // this call returns; cleanup below restores any mutations.
+                    let context = unsafe {
+                        ::bsk_build::BskContext::__from_raw(context)
+                            .__with_input_bindings(input_bindings)
+                    };
                     #(#validate_inputs)*
-                    let outputs: #outputs_type =
+                    let outcome = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
                         <#config_type as ::bsk_build::BskModule>::reset(
                             config,
                             state,
                             &context,
                             current_sim_nanos,
-                        )?;
+                        )
+                    }));
+                    let restored = unsafe {
+                        #restore_input_bindings_function(config, input_bindings)
+                    };
+                    let outputs: #outputs_type =
+                        ::bsk_build::__finish_input_callback(outcome, restored)?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
                     let mut output_bindings = output_binding_slice.iter();
                     #(#write_outputs)*
@@ -889,6 +971,7 @@ fn expand_module_with_options(
                     let #instance_type {
                         config,
                         state,
+                        input_bindings,
                         output_bindings,
                         ..
                     } = instance;
@@ -898,18 +981,30 @@ fn expand_module_with_options(
                             "cannot write a Basilisk output message before SelfInit initializes its port",
                         ))?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
-                    let context = unsafe { ::bsk_build::BskContext::__from_raw(context) };
+                    #capture_input_bindings_function(config, input_bindings);
+                    // SAFETY: As in Reset, inputs remain owned by the caller
+                    // throughout this call and cleanup restores changed slots.
+                    let context = unsafe {
+                        ::bsk_build::BskContext::__from_raw(context)
+                            .__with_input_bindings(input_bindings)
+                    };
                     let inputs: #inputs_type = #inputs_type {
                         #(#read_inputs,)*
                     };
-                    let outputs: #outputs_type =
+                    let outcome = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
                         <#config_type as ::bsk_build::BskModule>::update(
                             config,
                             state,
                             &context,
                             inputs,
                             current_sim_nanos,
-                        )?;
+                        )
+                    }));
+                    let restored = unsafe {
+                        #restore_input_bindings_function(config, input_bindings)
+                    };
+                    let outputs: #outputs_type =
+                        ::bsk_build::__finish_input_callback(outcome, restored)?;
                     #validate_output_bindings_function(config, output_binding_slice)?;
                     let mut output_bindings = output_binding_slice.iter();
                     #(#write_outputs)*

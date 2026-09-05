@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- Rust input readers moved into module state could outlive their message source after
+  the original Python port was unsubscribed. Explicit reads now require the current
+  lifecycle context (``port.read(context)?``), and the generated lifecycle rejects
+  moved readers and restores input subscriptions changed by Rust module code.
 - Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
   configuration overrides, and regenerate a project's XML after an interrupted cache update.
   Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen

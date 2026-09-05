@@ -1,0 +1,1 @@
+- Fixed a Rust input-reader lifetime hole: explicit reads now use ``port.read(context)?`` and reject moved or retained readers. The generated lifecycle restores input subscriptions changed by Rust module code, including on errors and panics. Normal generated ``inputs`` payload access is unchanged.

@@ -123,13 +123,13 @@ impl BskModule for MrpPDRustConfig {
     fn reset(
         &mut self,
         state: &mut Self::State,
-        _context: &BskContext<'_>,
+        context: &BskContext<'_>,
         _current_sim_nanos: u64,
     ) -> BskResult<Self::Outputs> {
         // Required ports are validated by the generated lifecycle before this
         // method runs. Values arriving through messages do not pass through a
         // configuration setter, so validate the inertia here before caching it.
-        let vehicle_config = self.vehConfigInMsg.read()?;
+        let vehicle_config = self.vehConfigInMsg.read(context)?;
         let inertia = Matrix3::from_row_slice(&vehicle_config.ISCPntB_B);
         validate_inertia(&inertia)?;
         state.inertia = inertia;
