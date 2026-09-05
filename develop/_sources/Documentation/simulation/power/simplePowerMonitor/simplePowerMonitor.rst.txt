@@ -45,6 +45,6 @@ For more information on how to set up and use this module, see the simple power 
 
 ----
 
-.. autodoxygenfile:: simplePowerMonitor.h
+.. doxygenfile:: simplePowerMonitor.h
    :project: simplePowerMonitor
 

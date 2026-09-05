@@ -35,6 +35,6 @@ To set the desired constant 3-2-1 Euler angel rates, set the module variable ``a
 
 ----
 
-.. autodoxygenfile:: eulerRotation.h
+.. doxygenfile:: eulerRotation.h
    :project: eulerRotation
 

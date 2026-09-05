@@ -3,6 +3,6 @@
 AntennaDefinitions
 ==================
 
-.. autodoxygenfile:: AntennaDefinitions.h
+.. doxygenfile:: AntennaDefinitions.h
    :project: _GeneralModuleFiles3
 

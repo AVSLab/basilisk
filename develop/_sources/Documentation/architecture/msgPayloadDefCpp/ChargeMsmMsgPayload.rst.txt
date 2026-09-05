@@ -3,6 +3,6 @@
 ChargeMsmMsgPayload
 ===================
 
-.. autodoxygenfile:: ChargeMsmMsgPayload.h
+.. doxygenfile:: ChargeMsmMsgPayload.h
    :project: msgPayloadDefCpp
 

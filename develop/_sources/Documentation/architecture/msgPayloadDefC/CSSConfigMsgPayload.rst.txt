@@ -3,6 +3,6 @@
 CSSConfigMsgPayload
 ===================
 
-.. autodoxygenfile:: CSSConfigMsgPayload.h
+.. doxygenfile:: CSSConfigMsgPayload.h
    :project: msgPayloadDefC
 

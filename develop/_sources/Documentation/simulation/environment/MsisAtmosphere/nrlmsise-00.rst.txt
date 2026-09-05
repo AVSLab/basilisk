@@ -3,6 +3,6 @@
 nrlmsise-00
 ===========
 
-.. autodoxygenfile:: nrlmsise-00.h
+.. doxygenfile:: nrlmsise-00.h
    :project: MsisAtmosphere
 

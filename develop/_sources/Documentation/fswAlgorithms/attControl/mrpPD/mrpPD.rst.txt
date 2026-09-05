@@ -54,6 +54,6 @@ The following parameters must be set for the module:
 
 ----
 
-.. autodoxygenfile:: mrpPD.h
+.. doxygenfile:: mrpPD.h
    :project: mrpPD
 

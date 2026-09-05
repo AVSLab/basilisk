@@ -62,6 +62,6 @@ messages in three different formats.
 
 ----
 
-.. autodoxygenfile:: spiceInterface.h
+.. doxygenfile:: spiceInterface.h
    :project: spiceInterface
 

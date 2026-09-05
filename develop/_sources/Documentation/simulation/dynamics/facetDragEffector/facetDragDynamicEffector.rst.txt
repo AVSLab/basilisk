@@ -81,6 +81,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: facetDragDynamicEffector.h
+.. doxygenfile:: facetDragDynamicEffector.h
    :project: facetDragEffector
 

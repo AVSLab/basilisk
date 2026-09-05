@@ -116,6 +116,6 @@ The module is configurable with the following parameters:
 
 ----
 
-.. autodoxygenfile:: thrusterPlatformReference.h
+.. doxygenfile:: thrusterPlatformReference.h
    :project: thrusterPlatformReference
 

@@ -210,6 +210,6 @@ The fault state and parameters for each axis can be set by the user through the 
 
 ----
 
-.. autodoxygenfile:: magnetometer.h
+.. doxygenfile:: magnetometer.h
    :project: magnetometer
 

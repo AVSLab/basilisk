@@ -3,6 +3,6 @@
 EpochMsgPayload
 ===============
 
-.. autodoxygenfile:: EpochMsgPayload.h
+.. doxygenfile:: EpochMsgPayload.h
    :project: msgPayloadDefC
 

@@ -144,6 +144,6 @@ References
 
 ----
 
-.. autodoxygenfile:: earthRadiationModel.h
+.. doxygenfile:: earthRadiationModel.h
    :project: earthRadiationModel
 

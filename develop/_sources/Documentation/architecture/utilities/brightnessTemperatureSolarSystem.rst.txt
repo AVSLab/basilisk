@@ -3,6 +3,6 @@
 brightnessTemperatureSolarSystem
 ================================
 
-.. autodoxygenfile:: brightnessTemperatureSolarSystem.hpp
+.. doxygenfile:: brightnessTemperatureSolarSystem.hpp
    :project: utilities
 

@@ -34,6 +34,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: thrFiringRemainder.h
+.. doxygenfile:: thrFiringRemainder.h
    :project: thrFiringRemainder
 

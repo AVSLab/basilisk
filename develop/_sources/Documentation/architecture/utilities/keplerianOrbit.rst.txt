@@ -3,6 +3,6 @@
 keplerianOrbit
 ==============
 
-.. autodoxygenfile:: keplerianOrbit.h
+.. doxygenfile:: keplerianOrbit.h
    :project: utilities
 

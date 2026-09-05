@@ -503,6 +503,6 @@ This section is to outline the steps needed to set up the prescribed rotational 
 
 ----
 
-.. autodoxygenfile:: prescribedRotation1DOF.h
+.. doxygenfile:: prescribedRotation1DOF.h
    :project: prescribedRotation1DOF
 

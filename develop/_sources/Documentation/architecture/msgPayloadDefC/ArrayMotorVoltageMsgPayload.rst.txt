@@ -3,6 +3,6 @@
 ArrayMotorVoltageMsgPayload
 ===========================
 
-.. autodoxygenfile:: ArrayMotorVoltageMsgPayload.h
+.. doxygenfile:: ArrayMotorVoltageMsgPayload.h
    :project: msgPayloadDefC
 

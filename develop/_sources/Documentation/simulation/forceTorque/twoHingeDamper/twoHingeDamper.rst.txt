@@ -81,6 +81,6 @@ belong to the same scene. The returned actuators remain owned by that scene.
 
 ----
 
-.. autodoxygenfile:: twoHingeDamper.h
+.. doxygenfile:: twoHingeDamper.h
    :project: twoHingeDamper
 

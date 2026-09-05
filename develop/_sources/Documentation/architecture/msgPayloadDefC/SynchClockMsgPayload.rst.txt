@@ -3,6 +3,6 @@
 SynchClockMsgPayload
 ====================
 
-.. autodoxygenfile:: SynchClockMsgPayload.h
+.. doxygenfile:: SynchClockMsgPayload.h
    :project: msgPayloadDefC
 

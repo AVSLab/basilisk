@@ -84,6 +84,6 @@ structure definition, while the description explains its use.
 
 ----
 
-.. autodoxygenfile:: planetEphemeris.h
+.. doxygenfile:: planetEphemeris.h
    :project: planetEphemeris
 

@@ -3,6 +3,6 @@
 DipoleRequestBodyMsgPayload
 ===========================
 
-.. autodoxygenfile:: DipoleRequestBodyMsgPayload.h
+.. doxygenfile:: DipoleRequestBodyMsgPayload.h
    :project: msgPayloadDefC
 

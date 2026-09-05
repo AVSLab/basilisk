@@ -215,6 +215,6 @@ The following steps are required to set up the ``facetedSRPEffector`` module in 
 
 ----
 
-.. autodoxygenfile:: facetedSRPEffector.h
+.. doxygenfile:: facetedSRPEffector.h
    :project: facetedSRPEffector
 

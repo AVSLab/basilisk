@@ -3,6 +3,6 @@
 DownlinkHandlingMsgPayload
 ==========================
 
-.. autodoxygenfile:: DownlinkHandlingMsgPayload.h
+.. doxygenfile:: DownlinkHandlingMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 AccPktDataMsgPayload
 ====================
 
-.. autodoxygenfile:: AccPktDataMsgPayload.h
+.. doxygenfile:: AccPktDataMsgPayload.h
    :project: msgPayloadDefC
 

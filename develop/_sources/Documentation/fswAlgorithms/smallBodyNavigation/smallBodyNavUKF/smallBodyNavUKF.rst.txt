@@ -209,6 +209,6 @@ The user must connect to each input message described in Table 1.
 
 ----
 
-.. autodoxygenfile:: smallBodyNavUKF.h
+.. doxygenfile:: smallBodyNavUKF.h
    :project: smallBodyNavUKF
 

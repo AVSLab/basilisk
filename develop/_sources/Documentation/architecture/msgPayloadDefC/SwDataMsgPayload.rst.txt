@@ -3,6 +3,6 @@
 SwDataMsgPayload
 ================
 
-.. autodoxygenfile:: SwDataMsgPayload.h
+.. doxygenfile:: SwDataMsgPayload.h
    :project: msgPayloadDefC
 

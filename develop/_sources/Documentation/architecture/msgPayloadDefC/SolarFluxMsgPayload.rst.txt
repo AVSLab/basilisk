@@ -3,6 +3,6 @@
 SolarFluxMsgPayload
 ===================
 
-.. autodoxygenfile:: SolarFluxMsgPayload.h
+.. doxygenfile:: SolarFluxMsgPayload.h
    :project: msgPayloadDefC
 

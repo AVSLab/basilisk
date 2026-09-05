@@ -104,6 +104,6 @@ The module is configurable with the following parameters:
 
 ----
 
-.. autodoxygenfile:: constrainedAttitudeManeuver.h
+.. doxygenfile:: constrainedAttitudeManeuver.h
    :project: constrainedAttitudeManeuver
 

@@ -3,6 +3,6 @@
 BSpline
 =======
 
-.. autodoxygenfile:: BSpline.h
+.. doxygenfile:: BSpline.h
    :project: utilities
 

@@ -3,6 +3,6 @@
 bsk_Print
 =========
 
-.. autodoxygenfile:: bsk_Print.h
+.. doxygenfile:: bsk_Print.h
    :project: utilities
 

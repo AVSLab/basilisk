@@ -313,6 +313,6 @@ Error Conditions and Mitigation
 
 ----
 
-.. autodoxygenfile:: spaceWeatherData.h
+.. doxygenfile:: spaceWeatherData.h
    :project: spaceWeatherData
 

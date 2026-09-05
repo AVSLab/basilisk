@@ -3,6 +3,6 @@
 svd
 ===
 
-.. autodoxygenfile:: svd.h
+.. doxygenfile:: svd.h
    :project: utilities
 

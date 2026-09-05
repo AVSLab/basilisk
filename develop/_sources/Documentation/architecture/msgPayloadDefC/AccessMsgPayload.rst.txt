@@ -3,6 +3,6 @@
 AccessMsgPayload
 ================
 
-.. autodoxygenfile:: AccessMsgPayload.h
+.. doxygenfile:: AccessMsgPayload.h
    :project: msgPayloadDefC
 

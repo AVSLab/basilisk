@@ -76,6 +76,6 @@ Both tests check agreement to tight numerical tolerance.
 
 ----
 
-.. autodoxygenfile:: cmdForceInertialToForceAtSite.h
+.. doxygenfile:: cmdForceInertialToForceAtSite.h
    :project: cmdForceInertialToForceAtSite
 

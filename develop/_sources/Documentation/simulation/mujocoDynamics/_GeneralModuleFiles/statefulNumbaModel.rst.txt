@@ -3,6 +3,6 @@
 statefulNumbaModel
 ==================
 
-.. autodoxygenfile:: statefulNumbaModel.h
+.. doxygenfile:: statefulNumbaModel.h
    :project: _GeneralModuleFiles6
 

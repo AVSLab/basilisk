@@ -3,6 +3,6 @@
 VizUserInputMsgPayload
 ======================
 
-.. autodoxygenfile:: VizUserInputMsgPayload.h
+.. doxygenfile:: VizUserInputMsgPayload.h
    :project: msgPayloadDefCpp
 

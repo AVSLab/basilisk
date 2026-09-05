@@ -104,6 +104,6 @@ The module is configurable with the following parameters:
 
 ----
 
-.. autodoxygenfile:: thrustCMEstimation.h
+.. doxygenfile:: thrustCMEstimation.h
    :project: thrustCMEstimation
 

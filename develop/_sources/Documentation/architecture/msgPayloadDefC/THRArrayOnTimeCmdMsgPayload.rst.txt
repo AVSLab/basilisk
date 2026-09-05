@@ -3,6 +3,6 @@
 THRArrayOnTimeCmdMsgPayload
 ===========================
 
-.. autodoxygenfile:: THRArrayOnTimeCmdMsgPayload.h
+.. doxygenfile:: THRArrayOnTimeCmdMsgPayload.h
    :project: msgPayloadDefC
 

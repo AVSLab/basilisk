@@ -64,6 +64,6 @@ This section is to outline the steps needed to set up the ``thrJointCompensation
 
 ----
 
-.. autodoxygenfile:: thrJointCompensation.h
+.. doxygenfile:: thrJointCompensation.h
    :project: thrJointCompensation
 

@@ -60,6 +60,6 @@ For ``targetDiffOeMean``, normalized semi major axis must be used.
 
 ----
 
-.. autodoxygenfile:: meanOEFeedback.h
+.. doxygenfile:: meanOEFeedback.h
    :project: meanOEFeedback
 

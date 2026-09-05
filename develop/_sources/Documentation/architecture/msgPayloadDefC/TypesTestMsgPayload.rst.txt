@@ -3,6 +3,6 @@
 TypesTestMsgPayload
 ===================
 
-.. autodoxygenfile:: TypesTestMsgPayload.h
+.. doxygenfile:: TypesTestMsgPayload.h
    :project: msgPayloadDefC
 

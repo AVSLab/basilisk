@@ -24,6 +24,6 @@ how to run it, as well as testing.
 
 ----
 
-.. autodoxygenfile:: svIntegratorRK2.h
+.. doxygenfile:: svIntegratorRK2.h
    :project: Integrators
 

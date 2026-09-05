@@ -3,6 +3,6 @@
 SCMassPropsMsgPayload
 =====================
 
-.. autodoxygenfile:: SCMassPropsMsgPayload.h
+.. doxygenfile:: SCMassPropsMsgPayload.h
    :project: msgPayloadDefC
 

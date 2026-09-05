@@ -55,6 +55,6 @@ The module is created in python using:
 
 ----
 
-.. autodoxygenfile:: simpleMassProps.h
+.. doxygenfile:: simpleMassProps.h
    :project: simpleMassProps
 

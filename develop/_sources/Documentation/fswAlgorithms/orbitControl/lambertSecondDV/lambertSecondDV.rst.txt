@@ -51,6 +51,6 @@ The input messages are then connected:
 
 ----
 
-.. autodoxygenfile:: lambertSecondDV.h
+.. doxygenfile:: lambertSecondDV.h
    :project: lambertSecondDV
 

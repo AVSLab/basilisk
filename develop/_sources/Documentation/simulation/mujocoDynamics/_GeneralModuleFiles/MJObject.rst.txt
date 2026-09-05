@@ -3,6 +3,6 @@
 MJObject
 ========
 
-.. autodoxygenfile:: MJObject.h
+.. doxygenfile:: MJObject.h
    :project: _GeneralModuleFiles6
 

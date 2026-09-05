@@ -3,6 +3,6 @@
 THRArmConfigMsgPayload
 ======================
 
-.. autodoxygenfile:: THRArmConfigMsgPayload.h
+.. doxygenfile:: THRArmConfigMsgPayload.h
    :project: msgPayloadDefCpp
 

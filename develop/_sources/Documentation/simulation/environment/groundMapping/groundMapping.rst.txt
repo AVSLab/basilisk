@@ -120,6 +120,6 @@ Finally, logs for every mapping point can be created as follows:
 
 ----
 
-.. autodoxygenfile:: groundMapping.h
+.. doxygenfile:: groundMapping.h
    :project: groundMapping
 

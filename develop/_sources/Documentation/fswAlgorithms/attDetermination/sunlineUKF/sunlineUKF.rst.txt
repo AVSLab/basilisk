@@ -33,6 +33,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: sunlineUKF.h
+.. doxygenfile:: sunlineUKF.h
    :project: sunlineUKF
 

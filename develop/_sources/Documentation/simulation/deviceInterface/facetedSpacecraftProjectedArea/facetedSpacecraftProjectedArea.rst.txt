@@ -176,6 +176,6 @@ The following steps are required to set up the ``facetedSpacecraftProjectedArea`
 
 ----
 
-.. autodoxygenfile:: facetedSpacecraftProjectedArea.h
+.. doxygenfile:: facetedSpacecraftProjectedArea.h
    :project: facetedSpacecraftProjectedArea
 

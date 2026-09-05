@@ -3,6 +3,6 @@
 ProjectedAreaMsgPayload
 =======================
 
-.. autodoxygenfile:: ProjectedAreaMsgPayload.h
+.. doxygenfile:: ProjectedAreaMsgPayload.h
    :project: msgPayloadDefC
 

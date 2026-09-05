@@ -3,6 +3,6 @@
 EphemerisMsgPayload
 ===================
 
-.. autodoxygenfile:: EphemerisMsgPayload.h
+.. doxygenfile:: EphemerisMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 PowerNodeUsageMsgPayload
 ========================
 
-.. autodoxygenfile:: PowerNodeUsageMsgPayload.h
+.. doxygenfile:: PowerNodeUsageMsgPayload.h
    :project: msgPayloadDefC
 

@@ -29,6 +29,6 @@ The only variable that must be set is the DCM from the platform frame P to the b
 
 ----
 
-.. autodoxygenfile:: imuComm.h
+.. doxygenfile:: imuComm.h
    :project: IMUSensorData
 

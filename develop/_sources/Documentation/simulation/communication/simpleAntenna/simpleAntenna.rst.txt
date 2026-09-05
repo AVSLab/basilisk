@@ -599,6 +599,6 @@ After running the simulation, the logged data can be accessed:
 
 ----
 
-.. autodoxygenfile:: simpleAntenna.h
+.. doxygenfile:: simpleAntenna.h
    :project: simpleAntenna
 

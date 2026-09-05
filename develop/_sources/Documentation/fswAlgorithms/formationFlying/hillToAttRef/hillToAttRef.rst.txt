@@ -86,6 +86,6 @@ In addition, this module is used in the example script :ref:`scenarioDragRendezv
 
 ----
 
-.. autodoxygenfile:: hillToAttRef.h
+.. doxygenfile:: hillToAttRef.h
    :project: hillToAttRef
 

@@ -96,6 +96,6 @@ This validates both the baseline additive behavior and the mean-anomaly-offset c
 
 ----
 
-.. autodoxygenfile:: orbElemOffset.h
+.. doxygenfile:: orbElemOffset.h
    :project: orbElemOffset
 

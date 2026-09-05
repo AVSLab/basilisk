@@ -54,6 +54,6 @@ saturation is disabled, within numerical tolerance.
 
 ----
 
-.. autodoxygenfile:: saturationSingleActuator.h
+.. doxygenfile:: saturationSingleActuator.h
    :project: saturationSingleActuator
 

@@ -57,6 +57,6 @@ A sample setup is done using:
 
 ----
 
-.. autodoxygenfile:: hingedBodyLinearProfiler.h
+.. doxygenfile:: hingedBodyLinearProfiler.h
    :project: hingedBodyLinearProfiler
 

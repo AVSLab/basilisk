@@ -3,6 +3,6 @@
 svStochasticIntegratorDRI1
 ==========================
 
-.. autodoxygenfile:: svStochasticIntegratorDRI1.h
+.. doxygenfile:: svStochasticIntegratorDRI1.h
    :project: Integrators
 

@@ -63,6 +63,6 @@ The only parameter that must be set is ``omega_RR0_R0`` representing the :math:`
 
 ----
 
-.. autodoxygenfile:: inertial3DSpin.h
+.. doxygenfile:: inertial3DSpin.h
    :project: inertial3DSpin
 

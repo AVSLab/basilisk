@@ -40,6 +40,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: simpleNav.h
+.. doxygenfile:: simpleNav.h
    :project: simpleNav
 

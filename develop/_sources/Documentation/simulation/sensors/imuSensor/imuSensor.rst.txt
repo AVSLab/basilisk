@@ -62,6 +62,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: imuSensor.h
+.. doxygenfile:: imuSensor.h
    :project: imuSensor
 

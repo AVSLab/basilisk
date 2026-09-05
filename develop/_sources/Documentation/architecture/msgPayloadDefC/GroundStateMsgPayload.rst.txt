@@ -3,6 +3,6 @@
 GroundStateMsgPayload
 =====================
 
-.. autodoxygenfile:: GroundStateMsgPayload.h
+.. doxygenfile:: GroundStateMsgPayload.h
    :project: msgPayloadDefC
 

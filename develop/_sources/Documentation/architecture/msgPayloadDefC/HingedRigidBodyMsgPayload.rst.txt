@@ -3,6 +3,6 @@
 HingedRigidBodyMsgPayload
 =========================
 
-.. autodoxygenfile:: HingedRigidBodyMsgPayload.h
+.. doxygenfile:: HingedRigidBodyMsgPayload.h
    :project: msgPayloadDefC
 

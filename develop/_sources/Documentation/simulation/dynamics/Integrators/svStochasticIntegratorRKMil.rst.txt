@@ -3,6 +3,6 @@
 svStochasticIntegratorRKMil
 ===========================
 
-.. autodoxygenfile:: svStochasticIntegratorRKMil.h
+.. doxygenfile:: svStochasticIntegratorRKMil.h
    :project: Integrators
 

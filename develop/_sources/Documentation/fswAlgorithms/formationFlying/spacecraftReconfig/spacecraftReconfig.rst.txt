@@ -70,6 +70,6 @@ For ``targetClassicOED``, normalized semi major axis must be used.
 
 ----
 
-.. autodoxygenfile:: spacecraftReconfig.h
+.. doxygenfile:: spacecraftReconfig.h
    :project: spacecraftReconfig
 

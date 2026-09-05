@@ -3,6 +3,6 @@
 SCEnergyMomentumMsgPayload
 ==========================
 
-.. autodoxygenfile:: SCEnergyMomentumMsgPayload.h
+.. doxygenfile:: SCEnergyMomentumMsgPayload.h
    :project: msgPayloadDefC
 

@@ -120,6 +120,6 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 
 ----
 
-.. autodoxygenfile:: spinningBodyOneDOFStateEffector.h
+.. doxygenfile:: spinningBodyOneDOFStateEffector.h
    :project: spinningBodiesOneDOF
 

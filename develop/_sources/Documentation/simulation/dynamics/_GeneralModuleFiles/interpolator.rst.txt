@@ -3,6 +3,6 @@
 interpolator
 ============
 
-.. autodoxygenfile:: interpolator.h
+.. doxygenfile:: interpolator.h
    :project: _GeneralModuleFiles4
 

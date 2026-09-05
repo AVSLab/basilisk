@@ -3,6 +3,6 @@
 MTBArrayConfigMsgPayload
 ========================
 
-.. autodoxygenfile:: MTBArrayConfigMsgPayload.h
+.. doxygenfile:: MTBArrayConfigMsgPayload.h
    :project: msgPayloadDefC
 

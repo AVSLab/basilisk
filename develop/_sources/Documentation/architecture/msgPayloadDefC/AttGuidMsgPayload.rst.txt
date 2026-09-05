@@ -3,6 +3,6 @@
 AttGuidMsgPayload
 =================
 
-.. autodoxygenfile:: AttGuidMsgPayload.h
+.. doxygenfile:: AttGuidMsgPayload.h
    :project: msgPayloadDefC
 

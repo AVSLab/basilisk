@@ -3,6 +3,6 @@
 linearAlgebra
 =============
 
-.. autodoxygenfile:: linearAlgebra.h
+.. doxygenfile:: linearAlgebra.h
    :project: utilities
 

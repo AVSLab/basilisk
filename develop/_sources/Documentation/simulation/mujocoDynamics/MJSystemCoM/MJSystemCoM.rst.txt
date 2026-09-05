@@ -64,6 +64,6 @@ This section is to outline the steps needed to setup the ``MJSystemCoM`` module 
 
 ----
 
-.. autodoxygenfile:: MJSystemCoM.h
+.. doxygenfile:: MJSystemCoM.h
    :project: MJSystemCoM
 

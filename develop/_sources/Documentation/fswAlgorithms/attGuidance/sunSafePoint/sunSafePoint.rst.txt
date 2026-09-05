@@ -31,6 +31,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: sunSafePoint.h
+.. doxygenfile:: sunSafePoint.h
    :project: sunSafePoint
 

@@ -3,6 +3,6 @@
 VehicleConfigMsgPayload
 =======================
 
-.. autodoxygenfile:: VehicleConfigMsgPayload.h
+.. doxygenfile:: VehicleConfigMsgPayload.h
    :project: msgPayloadDefC
 

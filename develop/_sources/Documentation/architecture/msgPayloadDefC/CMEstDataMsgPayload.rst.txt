@@ -3,6 +3,6 @@
 CMEstDataMsgPayload
 ===================
 
-.. autodoxygenfile:: CMEstDataMsgPayload.h
+.. doxygenfile:: CMEstDataMsgPayload.h
    :project: msgPayloadDefC
 

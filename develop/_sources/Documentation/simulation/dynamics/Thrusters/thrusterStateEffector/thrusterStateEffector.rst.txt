@@ -150,6 +150,6 @@ Assuming that the user has created a list of initial conditions called ``initial
 
 ----
 
-.. autodoxygenfile:: thrusterStateEffector.h
+.. doxygenfile:: thrusterStateEffector.h
    :project: thrusterStateEffector
 

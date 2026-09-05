@@ -3,6 +3,6 @@
 SunlineFilterMsgPayload
 =======================
 
-.. autodoxygenfile:: SunlineFilterMsgPayload.h
+.. doxygenfile:: SunlineFilterMsgPayload.h
    :project: msgPayloadDefC
 

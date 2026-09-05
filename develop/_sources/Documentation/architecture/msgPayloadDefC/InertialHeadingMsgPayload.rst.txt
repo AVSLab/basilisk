@@ -3,6 +3,6 @@
 InertialHeadingMsgPayload
 =========================
 
-.. autodoxygenfile:: InertialHeadingMsgPayload.h
+.. doxygenfile:: InertialHeadingMsgPayload.h
    :project: msgPayloadDefC
 

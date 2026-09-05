@@ -3,6 +3,6 @@
 vizStructures
 =============
 
-.. autodoxygenfile:: vizStructures.h
+.. doxygenfile:: vizStructures.h
    :project: _GeneralModuleFiles9
 

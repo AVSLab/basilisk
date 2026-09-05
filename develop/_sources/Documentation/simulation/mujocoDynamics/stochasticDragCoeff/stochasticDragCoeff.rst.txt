@@ -43,6 +43,6 @@ correlation time) for a constant nominal drag geometry input.
 
 ----
 
-.. autodoxygenfile:: stochasticDragCoeff.h
+.. doxygenfile:: stochasticDragCoeff.h
    :project: stochasticDragCoeff
 

@@ -26,6 +26,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: inertial3D.h
+.. doxygenfile:: inertial3D.h
    :project: inertial3D
 

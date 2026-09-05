@@ -40,6 +40,6 @@ If no walk bound or standard deviation is specified, then the voltage measuremen
 
 ----
 
-.. autodoxygenfile:: simpleVoltEstimator.h
+.. doxygenfile:: simpleVoltEstimator.h
    :project: simpleVoltEstimator
 

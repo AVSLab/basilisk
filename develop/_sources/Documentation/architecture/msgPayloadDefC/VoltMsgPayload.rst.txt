@@ -3,6 +3,6 @@
 VoltMsgPayload
 ==============
 
-.. autodoxygenfile:: VoltMsgPayload.h
+.. doxygenfile:: VoltMsgPayload.h
    :project: msgPayloadDefC
 

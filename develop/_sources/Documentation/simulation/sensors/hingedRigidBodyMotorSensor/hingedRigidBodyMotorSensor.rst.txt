@@ -74,6 +74,6 @@ Where ``newSeed`` is the unsigned integer value of the new RNG seed.
 
 ----
 
-.. autodoxygenfile:: hingedRigidBodyMotorSensor.h
+.. doxygenfile:: hingedRigidBodyMotorSensor.h
    :project: hingedRigidBodyMotorSensor
 

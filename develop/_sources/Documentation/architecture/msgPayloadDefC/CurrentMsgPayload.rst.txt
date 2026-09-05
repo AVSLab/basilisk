@@ -3,6 +3,6 @@
 CurrentMsgPayload
 =================
 
-.. autodoxygenfile:: CurrentMsgPayload.h
+.. doxygenfile:: CurrentMsgPayload.h
    :project: msgPayloadDefC
 

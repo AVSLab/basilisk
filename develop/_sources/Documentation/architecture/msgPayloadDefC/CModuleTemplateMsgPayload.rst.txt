@@ -3,6 +3,6 @@
 CModuleTemplateMsgPayload
 =========================
 
-.. autodoxygenfile:: CModuleTemplateMsgPayload.h
+.. doxygenfile:: CModuleTemplateMsgPayload.h
    :project: msgPayloadDefC
 

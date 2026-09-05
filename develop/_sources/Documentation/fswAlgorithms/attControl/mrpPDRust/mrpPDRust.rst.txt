@@ -153,7 +153,7 @@ Generated Module API
 
 This C-compatible interface is generated from the Rust module source.
 
-.. autodoxygenfile:: mrpPDRust.h
+.. doxygenfile:: mrpPDRust.h
    :project: BasiliskRustModules
    :sections: innerclass briefdescription detaileddescription public-attrib public-func
 

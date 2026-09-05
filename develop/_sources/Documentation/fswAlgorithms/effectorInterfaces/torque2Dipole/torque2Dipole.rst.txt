@@ -47,6 +47,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: torque2Dipole.h
+.. doxygenfile:: torque2Dipole.h
    :project: torque2Dipole
 

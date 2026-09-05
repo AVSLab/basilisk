@@ -3,6 +3,6 @@
 MassFlowRateMsgPayload
 ======================
 
-.. autodoxygenfile:: MassFlowRateMsgPayload.h
+.. doxygenfile:: MassFlowRateMsgPayload.h
    :project: msgPayloadDefC
 

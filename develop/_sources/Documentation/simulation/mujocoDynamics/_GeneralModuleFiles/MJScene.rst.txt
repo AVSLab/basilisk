@@ -3,6 +3,6 @@
 MJScene
 =======
 
-.. autodoxygenfile:: MJScene.h
+.. doxygenfile:: MJScene.h
    :project: _GeneralModuleFiles6
 

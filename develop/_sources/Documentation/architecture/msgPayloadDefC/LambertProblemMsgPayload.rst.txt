@@ -3,6 +3,6 @@
 LambertProblemMsgPayload
 ========================
 
-.. autodoxygenfile:: LambertProblemMsgPayload.h
+.. doxygenfile:: LambertProblemMsgPayload.h
    :project: msgPayloadDefC
 

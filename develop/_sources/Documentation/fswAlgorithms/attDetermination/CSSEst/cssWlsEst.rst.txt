@@ -29,6 +29,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: cssWlsEst.h
+.. doxygenfile:: cssWlsEst.h
    :project: CSSEst
 

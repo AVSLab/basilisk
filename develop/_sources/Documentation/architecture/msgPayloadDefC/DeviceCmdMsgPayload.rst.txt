@@ -3,6 +3,6 @@
 DeviceCmdMsgPayload
 ===================
 
-.. autodoxygenfile:: DeviceCmdMsgPayload.h
+.. doxygenfile:: DeviceCmdMsgPayload.h
    :project: msgPayloadDefC
 

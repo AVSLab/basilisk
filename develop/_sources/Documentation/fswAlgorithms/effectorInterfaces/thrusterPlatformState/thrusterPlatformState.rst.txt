@@ -69,6 +69,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: thrusterPlatformState.h
+.. doxygenfile:: thrusterPlatformState.h
    :project: thrusterPlatformState
 

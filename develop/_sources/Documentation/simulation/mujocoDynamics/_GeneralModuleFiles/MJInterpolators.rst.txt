@@ -3,6 +3,6 @@
 MJInterpolators
 ===============
 
-.. autodoxygenfile:: MJInterpolators.h
+.. doxygenfile:: MJInterpolators.h
    :project: _GeneralModuleFiles6
 

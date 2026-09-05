@@ -196,6 +196,63 @@ configured with <code class="docutils literal notranslate"><span class="pre">--m
 </pre></div>
 </div>
 <p>The final HTML documentation folder is stored in <code class="docutils literal notranslate"><span class="pre">docs/build/html</span></code>.</p>
+<p>After the first build, later <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> invocations preserve generated API
+source files whose contents have not changed. This allows Sphinx to reuse its
+saved environment and rebuild only outdated pages. Removed or renamed modules
+are still pruned from the generated documentation tree. Use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code>
+when a deliberately fresh build is required.</p>
+<p>Doxygen XML is cached separately for each C/C++ module in the selected build
+directory, beside the HTML output (by default, <code class="docutils literal notranslate"><span class="pre">docs/build/doxygen-cache</span></code>).
+A module is processed again only when its input
+files, transitively included local files, Doxygen configuration, or Doxygen
+version changes. Headers resolved from the including file’s directory or the
+Sphinx configuration directory (<code class="docutils literal notranslate"><span class="pre">docs/source</span></code>) are tracked transitively,
+including additions and removals. Includes in inactive conditional branches
+are also tracked conservatively, including headers when <code class="docutils literal notranslate"><span class="pre">SEARCH_INCLUDES=NO</span></code>.
+The updated XML is synchronized by content so API pages are not rebuilt when
+Doxygen produces identical output.</p>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> continues to use serial Sphinx processing by default. On macOS
+and Linux, parallel Sphinx processing can be requested explicitly with
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span> <span class="pre">SPHINXOPTS=&quot;-j</span> <span class="pre">2&quot;</span></code>. XML dependencies recorded by each worker are
+merged so later header edits refresh every affected API page. Doxygen projects
+are still generated sequentially. The first build after this dependency-tracking
+fix rereads the Sphinx pages once to replace older saved environments; valid
+Doxygen XML caches remain reusable.</p>
+<p>Sphinx command-line overrides for <code class="docutils literal notranslate"><span class="pre">breathe_doxygen_config_options</span></code> and
+<code class="docutils literal notranslate"><span class="pre">breathe_doxygen_aliases</span></code> are applied before XML generation and cache lookup.
+Configuration options retain their mapping insertion order: put <code class="docutils literal notranslate"><span class="pre">&#64;INCLUDE_PATH</span></code>
+before <code class="docutils literal notranslate"><span class="pre">&#64;INCLUDE</span></code>, and place overrides before or after an included configuration
+according to the intended precedence.
+Doxygen runs from the Sphinx configuration directory (<code class="docutils literal notranslate"><span class="pre">docs/source</span></code>), so
+relative paths in settings such as <code class="docutils literal notranslate"><span class="pre">INCLUDE_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">TAGFILES</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">INPUT_FILTER</span></code> are resolved from that directory. The cache extension controls
+<code class="docutils literal notranslate"><span class="pre">OUTPUT_DIRECTORY</span></code> and <code class="docutils literal notranslate"><span class="pre">XML_OUTPUT</span></code> to keep generated XML in its staging
+directory, regardless of overrides for these two settings.
+Projects using computed include filenames or external dependency settings
+(such as <code class="docutils literal notranslate"><span class="pre">INCLUDE_PATH</span></code>, input filters, <code class="docutils literal notranslate"><span class="pre">TAGFILES</span></code>, or bibliography inputs
+in <code class="docutils literal notranslate"><span class="pre">CITE_BIB_FILES</span></code>) are regenerated on each build because their dependencies
+cannot be safely resolved by the local include scanner.
+Configuration containing environment-variable references such
+as <code class="docutils literal notranslate"><span class="pre">$(VARIABLE)</span></code>, including references in aliases, also bypasses XML cache
+reuse so Doxygen evaluates the current environment on every build. File-inclusion
+documentation commands such as <code class="docutils literal notranslate"><span class="pre">&#64;include{doc}</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;snippet</span></code>, whether present
+in source text or alias definitions, also bypass reuse, even with
+<code class="docutils literal notranslate"><span class="pre">ENABLE_PREPROCESSING=NO</span></code>. Detection is conservative, so literal examples of
+these commands can also trigger regeneration. If publishing
+updated XML is interrupted, the next build regenerates that project’s cache,
+even if the source changes have been reverted.</p>
+<p>Documentation integration tests require Doxygen, Sphinx, and Breathe. Parallel
+read tests require a POSIX system; the alternate-build cleanup test also requires
+POSIX <code class="docutils literal notranslate"><span class="pre">make</span></code>.
+After installing the documentation requirements, run these tests from the
+repository root with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="n">src</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_doxygen_cache</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">m</span> <span class="n">docsIntegration</span>
+</pre></div>
+</div>
+<p>These tests also carry <code class="docutils literal notranslate"><span class="pre">ciSkip</span></code> so normal platform CI does not require the
+documentation tools. The docs job explicitly selects <code class="docutils literal notranslate"><span class="pre">docsIntegration</span></code> and
+rejects skipped tests. Dependency-free cache and synchronization tests remain
+in the normal platform test suite.</p>
 <p>The dynamics-engine comparison runtime tables are optional local benchmarks
 and are not generated by <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code>. To measure them with a clean,
 MuJoCo-enabled Release build, run:</p>
@@ -214,6 +271,16 @@ should not be treated as documentation-build results.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">clean</span>
 </pre></div>
 </div>
+<p>On Windows, use <code class="docutils literal notranslate"><span class="pre">make.bat</span> <span class="pre">clean</span></code> instead. Both commands remove the generated
+HTML, Sphinx environment, Doxygen XML cache, generated API source trees, and
+<code class="docutils literal notranslate"><span class="pre">breathe.data</span></code>. The next documentation build is a fully clean build.</p>
+<p>If you override <code class="docutils literal notranslate"><span class="pre">BUILDDIR</span></code> with the Makefile, use the same value when cleaning:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">html</span> <span class="n">BUILDDIR</span><span class="o">=</span><span class="n">build</span><span class="o">-</span><span class="n">preview</span>
+<span class="n">make</span> <span class="n">clean</span> <span class="n">BUILDDIR</span><span class="o">=</span><span class="n">build</span><span class="o">-</span><span class="n">preview</span>
+</pre></div>
+</div>
+<p>The XML cache then lives in <code class="docutils literal notranslate"><span class="pre">build-preview/doxygen-cache</span></code> and is removed with
+that build. Other build directories are left untouched.</p>
 </section>
 <section id="including-generated-rust-module-apis">
 <h2>Including Generated Rust Module APIs<a class="headerlink" href="#including-generated-rust-module-apis" title="Link to this heading"></a></h2>

@@ -12,6 +12,6 @@ dynamically if the timeInitialized factor is also reset dynamically.
 
 ----
 
-.. autodoxygenfile:: simSynch.h
+.. doxygenfile:: simSynch.h
    :project: simSynch
 

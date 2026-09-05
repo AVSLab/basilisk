@@ -3,6 +3,6 @@
 LinearTranslationRigidBodyMsgPayload
 ====================================
 
-.. autodoxygenfile:: LinearTranslationRigidBodyMsgPayload.h
+.. doxygenfile:: LinearTranslationRigidBodyMsgPayload.h
    :project: msgPayloadDefC
 

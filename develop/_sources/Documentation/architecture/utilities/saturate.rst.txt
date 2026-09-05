@@ -3,6 +3,6 @@
 saturate
 ========
 
-.. autodoxygenfile:: saturate.h
+.. doxygenfile:: saturate.h
    :project: utilities
 

@@ -37,6 +37,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: thrustRWDesat.h
+.. doxygenfile:: thrustRWDesat.h
    :project: thrustRWDesat
 

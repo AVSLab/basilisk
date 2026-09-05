@@ -33,6 +33,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: rwMotorTorque.h
+.. doxygenfile:: rwMotorTorque.h
    :project: rwMotorTorque
 

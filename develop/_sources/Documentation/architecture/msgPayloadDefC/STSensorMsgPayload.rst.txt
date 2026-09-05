@@ -3,6 +3,6 @@
 STSensorMsgPayload
 ==================
 
-.. autodoxygenfile:: STSensorMsgPayload.h
+.. doxygenfile:: STSensorMsgPayload.h
    :project: msgPayloadDefC
 

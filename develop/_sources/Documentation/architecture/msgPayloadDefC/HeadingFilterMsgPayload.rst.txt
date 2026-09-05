@@ -3,6 +3,6 @@
 HeadingFilterMsgPayload
 =======================
 
-.. autodoxygenfile:: HeadingFilterMsgPayload.h
+.. doxygenfile:: HeadingFilterMsgPayload.h
    :project: msgPayloadDefC
 

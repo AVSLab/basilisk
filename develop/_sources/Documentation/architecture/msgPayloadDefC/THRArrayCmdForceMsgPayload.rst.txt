@@ -3,6 +3,6 @@
 THRArrayCmdForceMsgPayload
 ==========================
 
-.. autodoxygenfile:: THRArrayCmdForceMsgPayload.h
+.. doxygenfile:: THRArrayCmdForceMsgPayload.h
    :project: msgPayloadDefC
 

@@ -31,6 +31,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: oeStateEphem.h
+.. doxygenfile:: oeStateEphem.h
    :project: oeStateEphem
 

@@ -3,6 +3,6 @@
 PrescribedTranslationMsgPayload
 ===============================
 
-.. autodoxygenfile:: PrescribedTranslationMsgPayload.h
+.. doxygenfile:: PrescribedTranslationMsgPayload.h
    :project: msgPayloadDefC
 

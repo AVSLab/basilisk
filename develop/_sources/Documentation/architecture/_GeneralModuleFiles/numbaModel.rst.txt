@@ -3,6 +3,6 @@
 numbaModel
 ==========
 
-.. autodoxygenfile:: numbaModel.h
+.. doxygenfile:: numbaModel.h
    :project: _GeneralModuleFiles0
 

@@ -59,6 +59,6 @@ The ``basePowerNeed`` parameter specifies the base power consumption in Watts wh
 
 ----
 
-.. autodoxygenfile:: antennaPower.h
+.. doxygenfile:: antennaPower.h
    :project: antennaPower
 

@@ -3,6 +3,6 @@
 VSCMGCmdMsgPayload
 ==================
 
-.. autodoxygenfile:: VSCMGCmdMsgPayload.h
+.. doxygenfile:: VSCMGCmdMsgPayload.h
    :project: msgPayloadDefC
 

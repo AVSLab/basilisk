@@ -9,6 +9,6 @@ Base clase for every StateVecIntegrator. For creating a new StateVecIntegrator, 
 
 ----
 
-.. autodoxygenfile:: stateVecIntegrator.h
+.. doxygenfile:: stateVecIntegrator.h
    :project: _GeneralModuleFiles4
 

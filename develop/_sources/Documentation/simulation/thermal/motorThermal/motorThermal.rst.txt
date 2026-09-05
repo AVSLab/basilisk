@@ -133,6 +133,6 @@ A sample setup is done using:
 
 ----
 
-.. autodoxygenfile:: motorThermal.h
+.. doxygenfile:: motorThermal.h
    :project: motorThermal
 

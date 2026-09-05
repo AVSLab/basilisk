@@ -3,6 +3,6 @@
 signalCondition
 ===============
 
-.. autodoxygenfile:: signalCondition.h
+.. doxygenfile:: signalCondition.h
    :project: utilities
 

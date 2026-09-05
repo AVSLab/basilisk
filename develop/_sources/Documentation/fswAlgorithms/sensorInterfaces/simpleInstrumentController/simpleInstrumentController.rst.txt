@@ -79,6 +79,6 @@ is negative or not set, the value is automatically capped to zero.
 
 ----
 
-.. autodoxygenfile:: simpleInstrumentController.h
+.. doxygenfile:: simpleInstrumentController.h
    :project: simpleInstrumentController
 

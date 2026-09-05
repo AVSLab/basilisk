@@ -51,6 +51,6 @@ Euler-Maruyama or an SRI method) must be used.
 
 ----
 
-.. autodoxygenfile:: igbmAtmDensity.h
+.. doxygenfile:: igbmAtmDensity.h
    :project: igbmAtmDensity
 

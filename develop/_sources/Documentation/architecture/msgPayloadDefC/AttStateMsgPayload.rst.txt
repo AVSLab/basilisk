@@ -3,6 +3,6 @@
 AttStateMsgPayload
 ==================
 
-.. autodoxygenfile:: AttStateMsgPayload.h
+.. doxygenfile:: AttStateMsgPayload.h
    :project: msgPayloadDefC
 

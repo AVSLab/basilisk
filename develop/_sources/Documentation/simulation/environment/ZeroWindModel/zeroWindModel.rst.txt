@@ -93,6 +93,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: zeroWindModel.h
+.. doxygenfile:: zeroWindModel.h
    :project: ZeroWindModel
 

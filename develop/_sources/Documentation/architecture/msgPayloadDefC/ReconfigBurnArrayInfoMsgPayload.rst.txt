@@ -3,6 +3,6 @@
 ReconfigBurnArrayInfoMsgPayload
 ===============================
 
-.. autodoxygenfile:: ReconfigBurnArrayInfoMsgPayload.h
+.. doxygenfile:: ReconfigBurnArrayInfoMsgPayload.h
    :project: msgPayloadDefC
 

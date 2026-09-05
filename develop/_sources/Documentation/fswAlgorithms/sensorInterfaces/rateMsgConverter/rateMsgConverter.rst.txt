@@ -25,6 +25,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: rateMsgConverter.h
+.. doxygenfile:: rateMsgConverter.h
    :project: rateMsgConverter
 

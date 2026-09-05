@@ -165,7 +165,7 @@ Generated Module API
 
 This C-compatible interface is generated from the Rust module source.
 
-.. autodoxygenfile:: rustModuleTemplate.h
+.. doxygenfile:: rustModuleTemplate.h
    :project: BasiliskRustModules
    :sections: innerclass briefdescription detaileddescription public-attrib public-func
 

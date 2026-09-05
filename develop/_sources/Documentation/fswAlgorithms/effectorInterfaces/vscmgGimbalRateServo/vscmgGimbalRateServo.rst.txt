@@ -118,6 +118,6 @@ This section is to outline the steps needed to setup the VSCMG gimbal rate servo
 
 ----
 
-.. autodoxygenfile:: vscmgGimbalRateServo.h
+.. doxygenfile:: vscmgGimbalRateServo.h
    :project: vscmgGimbalRateServo
 

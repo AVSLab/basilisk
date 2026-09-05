@@ -86,6 +86,6 @@ The names below are only special in that they are useful defaults and are actual
 
 ----
 
-.. autodoxygenfile:: solarFlux.h
+.. doxygenfile:: solarFlux.h
    :project: solarFlux
 

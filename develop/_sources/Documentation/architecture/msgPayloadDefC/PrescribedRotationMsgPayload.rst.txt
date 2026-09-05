@@ -3,6 +3,6 @@
 PrescribedRotationMsgPayload
 ============================
 
-.. autodoxygenfile:: PrescribedRotationMsgPayload.h
+.. doxygenfile:: PrescribedRotationMsgPayload.h
    :project: msgPayloadDefC
 

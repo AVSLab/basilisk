@@ -124,6 +124,6 @@ No further setup is needed for the cartesian method. If the user wants to use or
 
 ----
 
-.. autodoxygenfile:: formationBarycenter.h
+.. doxygenfile:: formationBarycenter.h
    :project: formationBarycenter
 

@@ -3,6 +3,6 @@
 ScSunlitFacetAreaMsgPayload
 ===========================
 
-.. autodoxygenfile:: ScSunlitFacetAreaMsgPayload.h
+.. doxygenfile:: ScSunlitFacetAreaMsgPayload.h
    :project: msgPayloadDefC
 

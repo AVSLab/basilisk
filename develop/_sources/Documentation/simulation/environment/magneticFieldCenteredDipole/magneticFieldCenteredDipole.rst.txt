@@ -17,6 +17,6 @@ used and general instructions.
 
 ----
 
-.. autodoxygenfile:: magneticFieldCenteredDipole.h
+.. doxygenfile:: magneticFieldCenteredDipole.h
    :project: magneticFieldCenteredDipole
 

@@ -3,6 +3,6 @@
 PowerStorageFaultMsgPayload
 ===========================
 
-.. autodoxygenfile:: PowerStorageFaultMsgPayload.h
+.. doxygenfile:: PowerStorageFaultMsgPayload.h
    :project: msgPayloadDefC
 

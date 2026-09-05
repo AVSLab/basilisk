@@ -25,6 +25,6 @@ The default ``absTol`` value is 1e-8, while the default ``relTol`` is 1e-4.
 
 ----
 
-.. autodoxygenfile:: svIntegratorRKF78.h
+.. doxygenfile:: svIntegratorRKF78.h
    :project: Integrators
 

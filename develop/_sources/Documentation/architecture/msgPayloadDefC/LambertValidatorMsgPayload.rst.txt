@@ -3,6 +3,6 @@
 LambertValidatorMsgPayload
 ==========================
 
-.. autodoxygenfile:: LambertValidatorMsgPayload.h
+.. doxygenfile:: LambertValidatorMsgPayload.h
    :project: msgPayloadDefC
 

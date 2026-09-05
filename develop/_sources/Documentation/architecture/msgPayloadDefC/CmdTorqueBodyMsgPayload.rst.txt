@@ -3,6 +3,6 @@
 CmdTorqueBodyMsgPayload
 =======================
 
-.. autodoxygenfile:: CmdTorqueBodyMsgPayload.h
+.. doxygenfile:: CmdTorqueBodyMsgPayload.h
    :project: msgPayloadDefC
 

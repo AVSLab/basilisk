@@ -45,6 +45,6 @@ User Guide
 
 ----
 
-.. autodoxygenfile:: dataNodeBase.h
+.. doxygenfile:: dataNodeBase.h
    :project: _GeneralModuleFiles7
 

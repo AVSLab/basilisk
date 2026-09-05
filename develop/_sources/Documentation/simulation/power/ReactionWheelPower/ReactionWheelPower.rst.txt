@@ -150,6 +150,6 @@ To account that breaking does not require any electrical power, then simply set
 
 ----
 
-.. autodoxygenfile:: ReactionWheelPower.h
+.. doxygenfile:: ReactionWheelPower.h
    :project: ReactionWheelPower
 

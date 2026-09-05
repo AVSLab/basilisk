@@ -79,6 +79,6 @@ and 9+ do not exist). In this module, the Kp index is specified with a string of
 
 ----
 
-.. autodoxygenfile:: dentonFluxModel.h
+.. doxygenfile:: dentonFluxModel.h
    :project: dentonFluxModel
 

@@ -57,6 +57,6 @@ Module Assumptions and Limitations
 
 ----
 
-.. autodoxygenfile:: forceAtSiteLTI.h
+.. doxygenfile:: forceAtSiteLTI.h
    :project: linearTimeInvariantSystem
 

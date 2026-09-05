@@ -3,6 +3,6 @@
 svStochasticIntegratorW2Ito1
 ============================
 
-.. autodoxygenfile:: svStochasticIntegratorW2Ito1.h
+.. doxygenfile:: svStochasticIntegratorW2Ito1.h
    :project: Integrators
 

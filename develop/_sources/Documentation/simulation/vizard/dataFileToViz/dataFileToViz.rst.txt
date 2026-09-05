@@ -137,6 +137,6 @@ Repeat the above steps for each wheel.
 
 ----
 
-.. autodoxygenfile:: dataFileToViz.h
+.. doxygenfile:: dataFileToViz.h
    :project: dataFileToViz
 

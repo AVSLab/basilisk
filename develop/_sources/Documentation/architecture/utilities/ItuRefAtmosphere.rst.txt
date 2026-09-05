@@ -3,6 +3,6 @@
 ItuRefAtmosphere
 ================
 
-.. autodoxygenfile:: ItuRefAtmosphere.h
+.. doxygenfile:: ItuRefAtmosphere.h
    :project: utilities
 

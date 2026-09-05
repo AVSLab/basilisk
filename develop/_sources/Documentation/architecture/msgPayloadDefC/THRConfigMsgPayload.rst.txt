@@ -3,6 +3,6 @@
 THRConfigMsgPayload
 ===================
 
-.. autodoxygenfile:: THRConfigMsgPayload.h
+.. doxygenfile:: THRConfigMsgPayload.h
    :project: msgPayloadDefC
 

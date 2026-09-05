@@ -3,6 +3,6 @@
 BodyHeadingMsgPayload
 =====================
 
-.. autodoxygenfile:: BodyHeadingMsgPayload.h
+.. doxygenfile:: BodyHeadingMsgPayload.h
    :project: msgPayloadDefC
 

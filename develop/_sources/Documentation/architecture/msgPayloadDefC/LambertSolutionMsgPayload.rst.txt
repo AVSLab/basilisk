@@ -3,6 +3,6 @@
 LambertSolutionMsgPayload
 =========================
 
-.. autodoxygenfile:: LambertSolutionMsgPayload.h
+.. doxygenfile:: LambertSolutionMsgPayload.h
    :project: msgPayloadDefC
 

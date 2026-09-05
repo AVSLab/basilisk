@@ -457,6 +457,6 @@ The atmospheric attenuation model is based on the following ITU-R recommendation
 
 ----
 
-.. autodoxygenfile:: linkBudget.h
+.. doxygenfile:: linkBudget.h
    :project: linkBudget
 

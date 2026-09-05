@@ -40,6 +40,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: rateServoFullNonlinear.h
+.. doxygenfile:: rateServoFullNonlinear.h
    :project: rateServoFullNonlinear
 

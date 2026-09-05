@@ -3,6 +3,6 @@
 THROperation
 ============
 
-.. autodoxygenfile:: THROperation.h
+.. doxygenfile:: THROperation.h
    :project: _GeneralModuleFiles4
 

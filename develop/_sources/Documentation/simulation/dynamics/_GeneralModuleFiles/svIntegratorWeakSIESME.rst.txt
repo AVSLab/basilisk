@@ -3,6 +3,6 @@
 svIntegratorWeakSIESME
 ======================
 
-.. autodoxygenfile:: svIntegratorWeakSIESME.h
+.. doxygenfile:: svIntegratorWeakSIESME.h
    :project: _GeneralModuleFiles4
 

@@ -3,6 +3,6 @@
 InertialFilterMsgPayload
 ========================
 
-.. autodoxygenfile:: InertialFilterMsgPayload.h
+.. doxygenfile:: InertialFilterMsgPayload.h
    :project: msgPayloadDefC
 

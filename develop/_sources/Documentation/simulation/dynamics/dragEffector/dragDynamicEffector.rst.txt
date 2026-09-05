@@ -95,6 +95,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: dragDynamicEffector.h
+.. doxygenfile:: dragDynamicEffector.h
    :project: dragEffector
 

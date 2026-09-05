@@ -147,6 +147,6 @@ This section is to outline the steps needed to setup a Spacecraft module in pyth
 
 ----
 
-.. autodoxygenfile:: spacecraft.h
+.. doxygenfile:: spacecraft.h
    :project: spacecraft
 

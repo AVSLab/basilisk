@@ -3,6 +3,6 @@
 TemperatureMsgPayload
 =====================
 
-.. autodoxygenfile:: TemperatureMsgPayload.h
+.. doxygenfile:: TemperatureMsgPayload.h
    :project: msgPayloadDefC
 

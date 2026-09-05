@@ -45,6 +45,6 @@ User Guide
 
 ----
 
-.. autodoxygenfile:: powerNodeBase.h
+.. doxygenfile:: powerNodeBase.h
    :project: _GeneralModuleFiles8
 

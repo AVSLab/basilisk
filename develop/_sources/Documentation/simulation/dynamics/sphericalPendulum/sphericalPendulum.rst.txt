@@ -21,6 +21,6 @@ This state effector does not have any input or output messages
 
 ----
 
-.. autodoxygenfile:: sphericalPendulum.h
+.. doxygenfile:: sphericalPendulum.h
    :project: sphericalPendulum
 

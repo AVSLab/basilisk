@@ -3,6 +3,6 @@
 OpNavLimbMsgPayload
 ===================
 
-.. autodoxygenfile:: OpNavLimbMsgPayload.h
+.. doxygenfile:: OpNavLimbMsgPayload.h
    :project: msgPayloadDefC
 

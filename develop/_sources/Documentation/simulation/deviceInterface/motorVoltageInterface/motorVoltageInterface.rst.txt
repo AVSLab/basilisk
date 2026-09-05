@@ -82,6 +82,6 @@ A sample setup is done using:
 
 ----
 
-.. autodoxygenfile:: motorVoltageInterface.h
+.. doxygenfile:: motorVoltageInterface.h
    :project: motorVoltageInterface
 

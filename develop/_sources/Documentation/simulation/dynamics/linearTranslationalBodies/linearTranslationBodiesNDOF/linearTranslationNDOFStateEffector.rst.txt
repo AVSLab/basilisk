@@ -165,6 +165,6 @@ Both this effector and the child are still added to the task in the usual way::
 
 ----
 
-.. autodoxygenfile:: linearTranslationNDOFStateEffector.h
+.. doxygenfile:: linearTranslationNDOFStateEffector.h
    :project: linearTranslationBodiesNDOF
 

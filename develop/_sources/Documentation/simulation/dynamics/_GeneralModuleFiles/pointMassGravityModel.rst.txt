@@ -3,6 +3,6 @@
 pointMassGravityModel
 =====================
 
-.. autodoxygenfile:: pointMassGravityModel.h
+.. doxygenfile:: pointMassGravityModel.h
    :project: _GeneralModuleFiles4
 

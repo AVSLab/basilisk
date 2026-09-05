@@ -3,6 +3,6 @@
 ElectronBeamMsgPayload
 ======================
 
-.. autodoxygenfile:: ElectronBeamMsgPayload.h
+.. doxygenfile:: ElectronBeamMsgPayload.h
    :project: msgPayloadDefC
 

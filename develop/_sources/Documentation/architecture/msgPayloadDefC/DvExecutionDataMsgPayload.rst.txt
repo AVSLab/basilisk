@@ -3,6 +3,6 @@
 DvExecutionDataMsgPayload
 =========================
 
-.. autodoxygenfile:: DvExecutionDataMsgPayload.h
+.. doxygenfile:: DvExecutionDataMsgPayload.h
    :project: msgPayloadDefC
 

@@ -37,6 +37,6 @@ Module Assumptions and Limitations
 
 ----
 
-.. autodoxygenfile:: meanRevertingNoiseStateEffector.h
+.. doxygenfile:: meanRevertingNoiseStateEffector.h
    :project: meanRevertingNoiseStateEffector
 

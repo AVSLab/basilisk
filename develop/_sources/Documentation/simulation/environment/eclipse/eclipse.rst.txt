@@ -226,6 +226,6 @@ where ``0`` indicates the first spacecraft illumination factor messages, etc.
 
 ----
 
-.. autodoxygenfile:: eclipse.h
+.. doxygenfile:: eclipse.h
    :project: eclipse
 

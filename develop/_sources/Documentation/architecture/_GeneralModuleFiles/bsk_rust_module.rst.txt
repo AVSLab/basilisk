@@ -3,7 +3,7 @@
 bsk_rust_module
 ===============
 
-.. autodoxygenfile:: bsk_rust_module.h
+.. doxygenfile:: bsk_rust_module.h
    :project: _GeneralModuleFiles0
    :sections: innerclass briefdescription detaileddescription public-attrib define
 

@@ -32,6 +32,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: sunlineEphem.h
+.. doxygenfile:: sunlineEphem.h
    :project: sunlineEphem
 

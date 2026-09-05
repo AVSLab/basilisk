@@ -43,6 +43,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: spacecraftSystem.h
+.. doxygenfile:: spacecraftSystem.h
    :project: spacecraftSystem
 

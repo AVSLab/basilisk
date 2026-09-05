@@ -78,6 +78,6 @@ path. The test validates empirical mean, variance, and estimated time constant a
 
 ----
 
-.. autodoxygenfile:: meanRevertingNoise.h
+.. doxygenfile:: meanRevertingNoise.h
    :project: _GeneralModuleFiles6
 

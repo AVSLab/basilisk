@@ -3,6 +3,6 @@
 svIntegratorStrongStochasticRungeKuttaSRI
 =========================================
 
-.. autodoxygenfile:: svIntegratorStrongStochasticRungeKuttaSRI.h
+.. doxygenfile:: svIntegratorStrongStochasticRungeKuttaSRI.h
    :project: _GeneralModuleFiles4
 

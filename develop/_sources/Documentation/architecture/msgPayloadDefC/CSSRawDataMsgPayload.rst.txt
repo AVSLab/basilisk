@@ -3,6 +3,6 @@
 CSSRawDataMsgPayload
 ====================
 
-.. autodoxygenfile:: CSSRawDataMsgPayload.h
+.. doxygenfile:: CSSRawDataMsgPayload.h
    :project: msgPayloadDefC
 

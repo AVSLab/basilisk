@@ -3,6 +3,6 @@
 ColorMsgPayload
 ===============
 
-.. autodoxygenfile:: ColorMsgPayload.h
+.. doxygenfile:: ColorMsgPayload.h
    :project: msgPayloadDefC
 

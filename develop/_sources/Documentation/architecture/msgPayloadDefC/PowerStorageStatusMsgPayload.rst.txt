@@ -3,6 +3,6 @@
 PowerStorageStatusMsgPayload
 ============================
 
-.. autodoxygenfile:: PowerStorageStatusMsgPayload.h
+.. doxygenfile:: PowerStorageStatusMsgPayload.h
    :project: msgPayloadDefC
 

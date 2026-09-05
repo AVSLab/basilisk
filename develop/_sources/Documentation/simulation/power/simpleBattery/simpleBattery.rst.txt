@@ -52,6 +52,6 @@ Users may configure the fault message to simulate a battery capacity fault that 
 
 ----
 
-.. autodoxygenfile:: simpleBattery.h
+.. doxygenfile:: simpleBattery.h
    :project: simpleBattery
 

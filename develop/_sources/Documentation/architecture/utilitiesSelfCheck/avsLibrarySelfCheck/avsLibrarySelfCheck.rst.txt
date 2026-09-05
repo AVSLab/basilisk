@@ -3,6 +3,6 @@
 avsLibrarySelfCheck
 ===================
 
-.. autodoxygenfile:: avsLibrarySelfCheck.h
+.. doxygenfile:: avsLibrarySelfCheck.h
    :project: avsLibrarySelfCheck
 

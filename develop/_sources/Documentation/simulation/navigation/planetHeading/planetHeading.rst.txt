@@ -80,6 +80,6 @@ The user can only instantiate this module and add it to a task.
 
 ----
 
-.. autodoxygenfile:: planetHeading.h
+.. doxygenfile:: planetHeading.h
    :project: planetHeading
 

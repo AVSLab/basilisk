@@ -141,6 +141,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: forceTorqueThrForceMapping.h
+.. doxygenfile:: forceTorqueThrForceMapping.h
    :project: forceTorqueThrForceMapping
 

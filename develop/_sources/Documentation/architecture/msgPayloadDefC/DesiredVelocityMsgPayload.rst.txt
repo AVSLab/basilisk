@@ -3,6 +3,6 @@
 DesiredVelocityMsgPayload
 =========================
 
-.. autodoxygenfile:: DesiredVelocityMsgPayload.h
+.. doxygenfile:: DesiredVelocityMsgPayload.h
    :project: msgPayloadDefC
 

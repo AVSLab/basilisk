@@ -84,6 +84,6 @@ In addition, this module is used in the example script :ref:`scenarioDragRendezv
 
 ----
 
-.. autodoxygenfile:: hillStateConverter.h
+.. doxygenfile:: hillStateConverter.h
    :project: hillStateConverter
 

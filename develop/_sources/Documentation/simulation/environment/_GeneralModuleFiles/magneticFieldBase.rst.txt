@@ -33,6 +33,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: magneticFieldBase.h
+.. doxygenfile:: magneticFieldBase.h
    :project: _GeneralModuleFiles5
 

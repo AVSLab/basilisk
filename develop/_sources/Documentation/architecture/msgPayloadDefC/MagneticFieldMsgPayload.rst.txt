@@ -3,6 +3,6 @@
 MagneticFieldMsgPayload
 =======================
 
-.. autodoxygenfile:: MagneticFieldMsgPayload.h
+.. doxygenfile:: MagneticFieldMsgPayload.h
    :project: msgPayloadDefC
 

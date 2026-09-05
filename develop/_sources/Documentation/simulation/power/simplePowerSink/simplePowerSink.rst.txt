@@ -27,6 +27,6 @@ This module inherits the user guide from the :ref:`PowerNodeBase` base class.
 
 ----
 
-.. autodoxygenfile:: simplePowerSink.h
+.. doxygenfile:: simplePowerSink.h
    :project: simplePowerSink
 

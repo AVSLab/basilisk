@@ -28,6 +28,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: dvGuidance.h
+.. doxygenfile:: dvGuidance.h
    :project: dvAttGuidance
 

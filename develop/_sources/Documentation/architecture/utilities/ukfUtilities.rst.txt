@@ -3,6 +3,6 @@
 ukfUtilities
 ============
 
-.. autodoxygenfile:: ukfUtilities.h
+.. doxygenfile:: ukfUtilities.h
    :project: utilities
 

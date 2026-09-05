@@ -3,6 +3,6 @@
 SCStatesMsgPayload
 ==================
 
-.. autodoxygenfile:: SCStatesMsgPayload.h
+.. doxygenfile:: SCStatesMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 reactionWheelSupport
 ====================
 
-.. autodoxygenfile:: reactionWheelSupport.h
+.. doxygenfile:: reactionWheelSupport.h
    :project: reactionWheels
 

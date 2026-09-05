@@ -25,6 +25,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: stComm.h
+.. doxygenfile:: stComm.h
    :project: STSensorData
 

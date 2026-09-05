@@ -3,6 +3,6 @@
 ephemerisUtilities
 ==================
 
-.. autodoxygenfile:: ephemerisUtilities.h
+.. doxygenfile:: ephemerisUtilities.h
    :project: _GeneralModuleFiles2
 

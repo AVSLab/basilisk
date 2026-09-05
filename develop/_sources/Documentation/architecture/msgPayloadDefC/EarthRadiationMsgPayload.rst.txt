@@ -3,6 +3,6 @@
 EarthRadiationMsgPayload
 ========================
 
-.. autodoxygenfile:: EarthRadiationMsgPayload.h
+.. doxygenfile:: EarthRadiationMsgPayload.h
    :project: msgPayloadDefC
 

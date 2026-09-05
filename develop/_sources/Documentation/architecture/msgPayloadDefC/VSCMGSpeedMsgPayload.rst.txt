@@ -3,6 +3,6 @@
 VSCMGSpeedMsgPayload
 ====================
 
-.. autodoxygenfile:: VSCMGSpeedMsgPayload.h
+.. doxygenfile:: VSCMGSpeedMsgPayload.h
    :project: msgPayloadDefC
 

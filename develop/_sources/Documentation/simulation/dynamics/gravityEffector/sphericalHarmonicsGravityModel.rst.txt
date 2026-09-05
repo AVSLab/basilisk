@@ -3,6 +3,6 @@
 :module-type:`C++` Module: sphericalHarmonicsGravityModel
 =========================================================
 
-.. autodoxygenfile:: sphericalHarmonicsGravityModel.h
+.. doxygenfile:: sphericalHarmonicsGravityModel.h
    :project: gravityEffector
 

@@ -146,6 +146,6 @@ Finally, the feedback gains are set:
 
 ----
 
-.. autodoxygenfile:: smallBodyWaypointFeedback.h
+.. doxygenfile:: smallBodyWaypointFeedback.h
    :project: smallBodyWaypointFeedback
 

@@ -69,6 +69,6 @@ The input messages are then connected:
 
 ----
 
-.. autodoxygenfile:: lambertSurfaceRelativeVelocity.h
+.. doxygenfile:: lambertSurfaceRelativeVelocity.h
    :project: lambertSurfaceRelativeVelocity
 

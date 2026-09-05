@@ -3,6 +3,6 @@
 haslamBackgroundRadiation
 =========================
 
-.. autodoxygenfile:: haslamBackgroundRadiation.h
+.. doxygenfile:: haslamBackgroundRadiation.h
    :project: utilities
 

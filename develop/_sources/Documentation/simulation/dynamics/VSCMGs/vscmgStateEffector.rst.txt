@@ -158,6 +158,6 @@ This section is to outline the steps needed to setup a VSCMG State Effector in P
 
 ----
 
-.. autodoxygenfile:: vscmgStateEffector.h
+.. doxygenfile:: vscmgStateEffector.h
    :project: VSCMGs
 

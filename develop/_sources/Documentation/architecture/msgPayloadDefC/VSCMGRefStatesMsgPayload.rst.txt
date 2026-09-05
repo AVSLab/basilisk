@@ -3,6 +3,6 @@
 VSCMGRefStatesMsgPayload
 ========================
 
-.. autodoxygenfile:: VSCMGRefStatesMsgPayload.h
+.. doxygenfile:: VSCMGRefStatesMsgPayload.h
    :project: msgPayloadDefC
 

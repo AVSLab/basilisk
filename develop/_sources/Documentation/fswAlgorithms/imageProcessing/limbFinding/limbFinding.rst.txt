@@ -30,6 +30,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: limbFinding.h
+.. doxygenfile:: limbFinding.h
    :project: limbFinding
 

@@ -3,6 +3,6 @@
 MJSpec
 ======
 
-.. autodoxygenfile:: MJSpec.h
+.. doxygenfile:: MJSpec.h
    :project: _GeneralModuleFiles6
 

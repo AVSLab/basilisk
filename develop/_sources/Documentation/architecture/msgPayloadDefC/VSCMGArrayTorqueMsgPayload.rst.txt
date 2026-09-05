@@ -3,6 +3,6 @@
 VSCMGArrayTorqueMsgPayload
 ==========================
 
-.. autodoxygenfile:: VSCMGArrayTorqueMsgPayload.h
+.. doxygenfile:: VSCMGArrayTorqueMsgPayload.h
    :project: msgPayloadDefC
 

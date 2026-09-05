@@ -3,6 +3,6 @@
 MJGeomInfo
 ==========
 
-.. autodoxygenfile:: MJGeomInfo.h
+.. doxygenfile:: MJGeomInfo.h
    :project: _GeneralModuleFiles6
 

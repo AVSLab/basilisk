@@ -3,6 +3,6 @@
 discretize
 ==========
 
-.. autodoxygenfile:: discretize.h
+.. doxygenfile:: discretize.h
    :project: utilities
 

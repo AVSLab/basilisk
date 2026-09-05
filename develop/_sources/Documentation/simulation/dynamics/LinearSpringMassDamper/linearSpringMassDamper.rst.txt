@@ -31,6 +31,6 @@ This state effector does not have any input or output messsages.
 
 ----
 
-.. autodoxygenfile:: linearSpringMassDamper.h
+.. doxygenfile:: linearSpringMassDamper.h
    :project: LinearSpringMassDamper
 

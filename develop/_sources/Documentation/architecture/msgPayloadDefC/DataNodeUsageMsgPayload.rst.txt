@@ -3,6 +3,6 @@
 DataNodeUsageMsgPayload
 =======================
 
-.. autodoxygenfile:: DataNodeUsageMsgPayload.h
+.. doxygenfile:: DataNodeUsageMsgPayload.h
    :project: msgPayloadDefC
 

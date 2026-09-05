@@ -104,6 +104,6 @@ References
 
 ----
 
-.. autodoxygenfile:: planetRadiationBase.h
+.. doxygenfile:: planetRadiationBase.h
    :project: _GeneralModuleFiles5
 

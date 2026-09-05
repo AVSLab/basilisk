@@ -315,6 +315,6 @@ The control update period :math:`\Delta t` is evaluated automatically.
 
 ----
 
-.. autodoxygenfile:: mrpSteering.h
+.. doxygenfile:: mrpSteering.h
    :project: mrpSteering
 

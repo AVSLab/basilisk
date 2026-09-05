@@ -3,6 +3,6 @@
 HillRelStateMsgPayload
 ======================
 
-.. autodoxygenfile:: HillRelStateMsgPayload.h
+.. doxygenfile:: HillRelStateMsgPayload.h
    :project: msgPayloadDefC
 

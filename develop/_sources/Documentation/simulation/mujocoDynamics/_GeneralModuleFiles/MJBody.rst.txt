@@ -3,6 +3,6 @@
 MJBody
 ======
 
-.. autodoxygenfile:: MJBody.h
+.. doxygenfile:: MJBody.h
    :project: _GeneralModuleFiles6
 

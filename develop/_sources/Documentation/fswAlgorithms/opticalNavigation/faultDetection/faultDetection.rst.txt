@@ -71,6 +71,6 @@ The sigmaFault parameter is the multiplier on the covariances that needs to be p
 
 ----
 
-.. autodoxygenfile:: faultDetection.h
+.. doxygenfile:: faultDetection.h
    :project: faultDetection
 

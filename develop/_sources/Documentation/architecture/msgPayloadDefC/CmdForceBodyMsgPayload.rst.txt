@@ -3,6 +3,6 @@
 CmdForceBodyMsgPayload
 ======================
 
-.. autodoxygenfile:: CmdForceBodyMsgPayload.h
+.. doxygenfile:: CmdForceBodyMsgPayload.h
    :project: msgPayloadDefC
 

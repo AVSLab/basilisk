@@ -3,6 +3,6 @@
 PrescribedMotionMsgPayload
 ==========================
 
-.. autodoxygenfile:: PrescribedMotionMsgPayload.h
+.. doxygenfile:: PrescribedMotionMsgPayload.h
    :project: msgPayloadDefC
 

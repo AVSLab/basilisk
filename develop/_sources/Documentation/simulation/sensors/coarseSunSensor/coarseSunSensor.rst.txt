@@ -131,6 +131,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: coarseSunSensor.h
+.. doxygenfile:: coarseSunSensor.h
    :project: coarseSunSensor
 

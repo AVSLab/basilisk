@@ -46,6 +46,6 @@ User Guide
 
 ----
 
-.. autodoxygenfile:: dataStorageUnitBase.h
+.. doxygenfile:: dataStorageUnitBase.h
    :project: _GeneralModuleFiles7
 

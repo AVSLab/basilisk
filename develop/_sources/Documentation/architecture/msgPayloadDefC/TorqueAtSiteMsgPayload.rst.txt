@@ -3,6 +3,6 @@
 TorqueAtSiteMsgPayload
 ======================
 
-.. autodoxygenfile:: TorqueAtSiteMsgPayload.h
+.. doxygenfile:: TorqueAtSiteMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 STAttMsgPayload
 ===============
 
-.. autodoxygenfile:: STAttMsgPayload.h
+.. doxygenfile:: STAttMsgPayload.h
    :project: msgPayloadDefC
 

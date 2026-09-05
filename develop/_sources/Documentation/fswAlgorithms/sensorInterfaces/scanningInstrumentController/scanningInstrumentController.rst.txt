@@ -56,6 +56,6 @@ may also be accomplished by writing out a :ref:`DeviceStatusMsgPayload` to the `
 
 ----
 
-.. autodoxygenfile:: scanningInstrumentController.h
+.. doxygenfile:: scanningInstrumentController.h
    :project: scanningInstrumentController
 

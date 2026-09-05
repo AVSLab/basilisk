@@ -25,6 +25,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: sunSafeACS.h
+.. doxygenfile:: sunSafeACS.h
    :project: errorConversion
 

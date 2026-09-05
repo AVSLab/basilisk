@@ -16,6 +16,6 @@ used and general instructions.
 
 ----
 
-.. autodoxygenfile:: exponentialAtmosphere.h
+.. doxygenfile:: exponentialAtmosphere.h
    :project: ExponentialAtmosphere
 

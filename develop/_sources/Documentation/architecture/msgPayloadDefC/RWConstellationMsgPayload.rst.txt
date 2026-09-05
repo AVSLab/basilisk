@@ -3,6 +3,6 @@
 RWConstellationMsgPayload
 =========================
 
-.. autodoxygenfile:: RWConstellationMsgPayload.h
+.. doxygenfile:: RWConstellationMsgPayload.h
    :project: msgPayloadDefC
 

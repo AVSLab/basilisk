@@ -3,6 +3,6 @@
 FuelTankMsgPayload
 ==================
 
-.. autodoxygenfile:: FuelTankMsgPayload.h
+.. doxygenfile:: FuelTankMsgPayload.h
    :project: msgPayloadDefC
 

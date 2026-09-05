@@ -168,6 +168,6 @@ acceleration, and step count are checked to converge to the reference values at 
 
 ----
 
-.. autodoxygenfile:: stepperMotor.h
+.. doxygenfile:: stepperMotor.h
    :project: stepperMotor
 

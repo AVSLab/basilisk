@@ -102,6 +102,6 @@ report their allocated component rates during the same mass-property assembly.
 
 ----
 
-.. autodoxygenfile:: fuelTank.h
+.. doxygenfile:: fuelTank.h
    :project: FuelTank
 

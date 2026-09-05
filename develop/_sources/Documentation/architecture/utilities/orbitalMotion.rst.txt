@@ -3,6 +3,6 @@
 orbitalMotion
 =============
 
-.. autodoxygenfile:: orbitalMotion.h
+.. doxygenfile:: orbitalMotion.h
    :project: utilities
 

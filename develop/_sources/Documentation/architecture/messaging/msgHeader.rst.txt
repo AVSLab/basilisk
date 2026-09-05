@@ -3,6 +3,6 @@
 msgHeader
 =========
 
-.. autodoxygenfile:: msgHeader.h
+.. doxygenfile:: msgHeader.h
    :project: messaging
 

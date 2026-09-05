@@ -3,6 +3,6 @@
 DeviceStatusMsgPayload
 ======================
 
-.. autodoxygenfile:: DeviceStatusMsgPayload.h
+.. doxygenfile:: DeviceStatusMsgPayload.h
    :project: msgPayloadDefC
 

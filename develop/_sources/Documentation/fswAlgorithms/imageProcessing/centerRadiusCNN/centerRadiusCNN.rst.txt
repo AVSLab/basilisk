@@ -43,6 +43,6 @@ The module is set easily using the path to the module and message names:
 
 ----
 
-.. autodoxygenfile:: centerRadiusCNN.h
+.. doxygenfile:: centerRadiusCNN.h
    :project: centerRadiusCNN
 

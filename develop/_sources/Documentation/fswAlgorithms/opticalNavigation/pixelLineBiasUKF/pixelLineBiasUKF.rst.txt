@@ -36,6 +36,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: pixelLineBiasUKF.h
+.. doxygenfile:: pixelLineBiasUKF.h
    :project: pixelLineBiasUKF
 

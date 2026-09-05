@@ -3,6 +3,6 @@
 payloadEqualityTraits
 =====================
 
-.. autodoxygenfile:: payloadEqualityTraits.h
+.. doxygenfile:: payloadEqualityTraits.h
    :project: messaging
 

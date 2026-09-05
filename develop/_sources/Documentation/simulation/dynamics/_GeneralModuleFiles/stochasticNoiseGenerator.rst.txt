@@ -3,6 +3,6 @@
 stochasticNoiseGenerator
 ========================
 
-.. autodoxygenfile:: stochasticNoiseGenerator.h
+.. doxygenfile:: stochasticNoiseGenerator.h
    :project: _GeneralModuleFiles4
 

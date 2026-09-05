@@ -60,6 +60,6 @@ This section is to outline the steps needed to setup the ``jointMotionCompensato
 
 ----
 
-.. autodoxygenfile:: jointMotionCompensator.h
+.. doxygenfile:: jointMotionCompensator.h
    :project: jointMotionCompensator
 

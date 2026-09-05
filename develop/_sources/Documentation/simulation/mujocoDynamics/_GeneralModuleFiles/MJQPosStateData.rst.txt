@@ -3,6 +3,6 @@
 MJQPosStateData
 ===============
 
-.. autodoxygenfile:: MJQPosStateData.h
+.. doxygenfile:: MJQPosStateData.h
    :project: _GeneralModuleFiles6
 

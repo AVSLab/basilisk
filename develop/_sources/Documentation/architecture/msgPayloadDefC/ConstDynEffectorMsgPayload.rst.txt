@@ -3,6 +3,6 @@
 ConstDynEffectorMsgPayload
 ==========================
 
-.. autodoxygenfile:: ConstDynEffectorMsgPayload.h
+.. doxygenfile:: ConstDynEffectorMsgPayload.h
    :project: msgPayloadDefC
 

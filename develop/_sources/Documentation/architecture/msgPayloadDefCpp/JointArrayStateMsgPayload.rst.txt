@@ -3,6 +3,6 @@
 JointArrayStateMsgPayload
 =========================
 
-.. autodoxygenfile:: JointArrayStateMsgPayload.h
+.. doxygenfile:: JointArrayStateMsgPayload.h
    :project: msgPayloadDefCpp
 

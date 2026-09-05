@@ -3,6 +3,6 @@
 SpicePlanetStateMsgPayload
 ==========================
 
-.. autodoxygenfile:: SpicePlanetStateMsgPayload.h
+.. doxygenfile:: SpicePlanetStateMsgPayload.h
    :project: msgPayloadDefC
 

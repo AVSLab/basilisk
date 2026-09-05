@@ -41,6 +41,6 @@ Altitude must be provided in meters, density in kg/m^3, and temperature in Kelvi
 
 ----
 
-.. autodoxygenfile:: tabularAtmosphere.h
+.. doxygenfile:: tabularAtmosphere.h
    :project: TabularAtmosphere
 

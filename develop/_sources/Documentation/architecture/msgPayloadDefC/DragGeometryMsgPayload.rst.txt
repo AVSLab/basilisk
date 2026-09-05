@@ -3,6 +3,6 @@
 DragGeometryMsgPayload
 ======================
 
-.. autodoxygenfile:: DragGeometryMsgPayload.h
+.. doxygenfile:: DragGeometryMsgPayload.h
    :project: msgPayloadDefC
 

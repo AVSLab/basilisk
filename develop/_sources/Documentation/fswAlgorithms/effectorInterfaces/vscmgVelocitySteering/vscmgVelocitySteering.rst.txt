@@ -136,6 +136,6 @@ This section is to outline the steps needed to setup the VSCMG velocity steering
 
 ----
 
-.. autodoxygenfile:: vscmgVelocitySteering.h
+.. doxygenfile:: vscmgVelocitySteering.h
    :project: vscmgVelocitySteering
 

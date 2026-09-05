@@ -3,6 +3,6 @@
 sys_process
 ===========
 
-.. autodoxygenfile:: sys_process.h
+.. doxygenfile:: sys_process.h
    :project: system_model
 

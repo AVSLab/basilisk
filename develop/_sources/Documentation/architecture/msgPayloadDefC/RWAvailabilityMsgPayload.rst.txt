@@ -3,6 +3,6 @@
 RWAvailabilityMsgPayload
 ========================
 
-.. autodoxygenfile:: RWAvailabilityMsgPayload.h
+.. doxygenfile:: RWAvailabilityMsgPayload.h
    :project: msgPayloadDefC
 

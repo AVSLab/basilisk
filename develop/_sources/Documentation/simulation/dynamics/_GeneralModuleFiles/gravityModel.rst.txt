@@ -3,6 +3,6 @@
 gravityModel
 ============
 
-.. autodoxygenfile:: gravityModel.h
+.. doxygenfile:: gravityModel.h
    :project: _GeneralModuleFiles4
 

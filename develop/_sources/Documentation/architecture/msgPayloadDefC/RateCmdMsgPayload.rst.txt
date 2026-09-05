@@ -3,6 +3,6 @@
 RateCmdMsgPayload
 =================
 
-.. autodoxygenfile:: RateCmdMsgPayload.h
+.. doxygenfile:: RateCmdMsgPayload.h
    :project: msgPayloadDefC
 

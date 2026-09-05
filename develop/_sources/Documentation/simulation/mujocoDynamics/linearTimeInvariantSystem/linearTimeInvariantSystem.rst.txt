@@ -53,6 +53,6 @@ Unit tests are in ``_UnitTest/test_linearTimeInvariantSystem.py`` and are skippe
 
 ----
 
-.. autodoxygenfile:: linearTimeInvariantSystem.h
+.. doxygenfile:: linearTimeInvariantSystem.h
    :project: linearTimeInvariantSystem
 

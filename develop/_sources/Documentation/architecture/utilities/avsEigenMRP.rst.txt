@@ -3,6 +3,6 @@
 avsEigenMRP
 ===========
 
-.. autodoxygenfile:: avsEigenMRP.h
+.. doxygenfile:: avsEigenMRP.h
    :project: utilities
 

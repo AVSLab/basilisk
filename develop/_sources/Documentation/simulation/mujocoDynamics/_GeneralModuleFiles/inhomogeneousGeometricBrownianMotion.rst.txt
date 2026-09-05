@@ -98,6 +98,6 @@ During state registration, the module:
 
 ----
 
-.. autodoxygenfile:: inhomogeneousGeometricBrownianMotion.h
+.. doxygenfile:: inhomogeneousGeometricBrownianMotion.h
    :project: _GeneralModuleFiles6
 

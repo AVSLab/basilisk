@@ -94,6 +94,6 @@ An integration-level test embeds the module in a MuJoCo-based orbital simulation
 
 ----
 
-.. autodoxygenfile:: cannonballDrag.h
+.. doxygenfile:: cannonballDrag.h
    :project: cannonballDrag
 

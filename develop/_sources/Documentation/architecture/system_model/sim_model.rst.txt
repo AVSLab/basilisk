@@ -3,6 +3,6 @@
 sim_model
 =========
 
-.. autodoxygenfile:: sim_model.h
+.. doxygenfile:: sim_model.h
    :project: system_model
 

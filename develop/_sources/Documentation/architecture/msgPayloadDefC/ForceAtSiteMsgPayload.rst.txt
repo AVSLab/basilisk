@@ -3,6 +3,6 @@
 ForceAtSiteMsgPayload
 =====================
 
-.. autodoxygenfile:: ForceAtSiteMsgPayload.h
+.. doxygenfile:: ForceAtSiteMsgPayload.h
    :project: msgPayloadDefC
 

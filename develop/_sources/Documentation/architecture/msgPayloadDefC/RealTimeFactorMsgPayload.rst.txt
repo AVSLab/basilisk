@@ -3,6 +3,6 @@
 RealTimeFactorMsgPayload
 ========================
 
-.. autodoxygenfile:: RealTimeFactorMsgPayload.h
+.. doxygenfile:: RealTimeFactorMsgPayload.h
    :project: msgPayloadDefC
 

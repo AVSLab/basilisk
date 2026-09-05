@@ -3,6 +3,6 @@
 CSSConfigLogMsgPayload
 ======================
 
-.. autodoxygenfile:: CSSConfigLogMsgPayload.h
+.. doxygenfile:: CSSConfigLogMsgPayload.h
    :project: msgPayloadDefCpp
 

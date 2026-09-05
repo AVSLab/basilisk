@@ -60,6 +60,6 @@ depend on velocity or attitude error should depend on angular velocity.
 
 ----
 
-.. autodoxygenfile:: planetNav.h
+.. doxygenfile:: planetNav.h
    :project: planetNav
 

@@ -3,6 +3,6 @@
 gauss_markov
 ============
 
-.. autodoxygenfile:: gauss_markov.h
+.. doxygenfile:: gauss_markov.h
    :project: utilities
 

@@ -49,6 +49,6 @@ This section is to outline the steps needed to setup the ``MJJointReactionForces
 
 ----
 
-.. autodoxygenfile:: MJJointReactionForces.h
+.. doxygenfile:: MJJointReactionForces.h
    :project: MJJointReactionForces
 

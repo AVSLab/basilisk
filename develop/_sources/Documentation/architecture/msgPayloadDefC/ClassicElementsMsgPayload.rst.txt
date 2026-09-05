@@ -3,6 +3,6 @@
 ClassicElementsMsgPayload
 =========================
 
-.. autodoxygenfile:: ClassicElementsMsgPayload.h
+.. doxygenfile:: ClassicElementsMsgPayload.h
    :project: msgPayloadDefC
 

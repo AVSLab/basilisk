@@ -3,6 +3,6 @@
 CSSArraySensorMsgPayload
 ========================
 
-.. autodoxygenfile:: CSSArraySensorMsgPayload.h
+.. doxygenfile:: CSSArraySensorMsgPayload.h
    :project: msgPayloadDefC
 

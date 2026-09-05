@@ -3,6 +3,6 @@
 bskSemaphore
 ============
 
-.. autodoxygenfile:: bskSemaphore.h
+.. doxygenfile:: bskSemaphore.h
    :project: utilities
 

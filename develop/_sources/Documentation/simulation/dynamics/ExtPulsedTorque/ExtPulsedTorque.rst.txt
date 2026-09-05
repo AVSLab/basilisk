@@ -21,6 +21,6 @@ This module has no input or output messages.  It is a pure dynamic effector.
 
 ----
 
-.. autodoxygenfile:: ExtPulsedTorque.h
+.. doxygenfile:: ExtPulsedTorque.h
    :project: ExtPulsedTorque
 

@@ -3,6 +3,6 @@
 TAMSensorMsgPayload
 ===================
 
-.. autodoxygenfile:: TAMSensorMsgPayload.h
+.. doxygenfile:: TAMSensorMsgPayload.h
    :project: msgPayloadDefC
 

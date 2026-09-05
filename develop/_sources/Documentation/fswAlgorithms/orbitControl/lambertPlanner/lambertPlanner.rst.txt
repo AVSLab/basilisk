@@ -80,6 +80,6 @@ The navigation translation message is then connected:
 
 ----
 
-.. autodoxygenfile:: lambertPlanner.h
+.. doxygenfile:: lambertPlanner.h
    :project: lambertPlanner
 

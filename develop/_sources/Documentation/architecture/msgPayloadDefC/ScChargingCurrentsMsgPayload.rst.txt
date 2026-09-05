@@ -3,6 +3,6 @@
 ScChargingCurrentsMsgPayload
 ============================
 
-.. autodoxygenfile:: ScChargingCurrentsMsgPayload.h
+.. doxygenfile:: ScChargingCurrentsMsgPayload.h
    :project: msgPayloadDefC
 

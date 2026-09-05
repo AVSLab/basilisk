@@ -3,6 +3,6 @@
 messagingBase
 =============
 
-.. autodoxygenfile:: messagingBase.h
+.. doxygenfile:: messagingBase.h
    :project: messaging
 

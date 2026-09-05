@@ -108,6 +108,6 @@ Additional file formats could be added to the function ``loadPolyFromFileToList(
 
 ----
 
-.. autodoxygenfile:: polyhedralGravityModel.h
+.. doxygenfile:: polyhedralGravityModel.h
    :project: gravityEffector
 

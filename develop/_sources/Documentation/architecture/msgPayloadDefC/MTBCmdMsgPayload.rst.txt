@@ -3,6 +3,6 @@
 MTBCmdMsgPayload
 ================
 
-.. autodoxygenfile:: MTBCmdMsgPayload.h
+.. doxygenfile:: MTBCmdMsgPayload.h
    :project: msgPayloadDefC
 

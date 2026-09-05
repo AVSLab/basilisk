@@ -139,6 +139,6 @@ This section is to outline the steps needed to setup a Spinning Body 2 DoF State
 
 ----
 
-.. autodoxygenfile:: spinningBodyTwoDOFStateEffector.h
+.. doxygenfile:: spinningBodyTwoDOFStateEffector.h
    :project: spinningBodiesTwoDOF
 

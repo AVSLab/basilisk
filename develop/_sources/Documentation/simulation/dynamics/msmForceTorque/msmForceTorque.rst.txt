@@ -68,6 +68,6 @@ where ``i`` is the number in which the spacecraft object was added.
 
 ----
 
-.. autodoxygenfile:: msmForceTorque.h
+.. doxygenfile:: msmForceTorque.h
    :project: msmForceTorque
 

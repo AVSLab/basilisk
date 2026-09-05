@@ -206,6 +206,6 @@ Spacecraft can be added to the model by calling:
 
 ----
 
-.. autodoxygenfile:: stripLocation.h
+.. doxygenfile:: stripLocation.h
    :project: stripLocation
 

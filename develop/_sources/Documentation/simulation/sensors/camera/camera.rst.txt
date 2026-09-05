@@ -160,6 +160,6 @@ type and 10 provides very high levels of errors (not bounding though)
 
 ----
 
-.. autodoxygenfile:: camera.h
+.. doxygenfile:: camera.h
    :project: camera
 

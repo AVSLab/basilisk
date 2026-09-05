@@ -3,6 +3,6 @@
 MJFwdKinematics
 ===============
 
-.. autodoxygenfile:: MJFwdKinematics.h
+.. doxygenfile:: MJFwdKinematics.h
    :project: _GeneralModuleFiles6
 

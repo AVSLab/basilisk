@@ -27,6 +27,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: simpleDeadband.h
+.. doxygenfile:: simpleDeadband.h
    :project: simpleDeadband
 

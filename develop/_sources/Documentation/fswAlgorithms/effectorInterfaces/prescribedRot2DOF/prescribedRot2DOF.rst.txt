@@ -189,6 +189,6 @@ The user is required to set the above configuration data parameters, as they are
 
 ----
 
-.. autodoxygenfile:: prescribedRot2DOF.h
+.. doxygenfile:: prescribedRot2DOF.h
    :project: prescribedRot2DOF
 

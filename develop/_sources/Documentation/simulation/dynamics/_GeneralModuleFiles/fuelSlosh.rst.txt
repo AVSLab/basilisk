@@ -3,6 +3,6 @@
 fuelSlosh
 =========
 
-.. autodoxygenfile:: fuelSlosh.h
+.. doxygenfile:: fuelSlosh.h
    :project: _GeneralModuleFiles4
 

@@ -35,6 +35,6 @@ The :ref:`MagneticFieldWMM` model is created using:
 
 ----
 
-.. autodoxygenfile:: magneticFieldWMM.h
+.. doxygenfile:: magneticFieldWMM.h
    :project: magneticFieldWMM
 

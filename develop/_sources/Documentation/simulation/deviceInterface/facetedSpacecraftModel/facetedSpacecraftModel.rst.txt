@@ -134,6 +134,6 @@ The following steps are required to set up the ``facetedSpacecraftModel`` module
 
 ----
 
-.. autodoxygenfile:: facetedSpacecraftModel.h
+.. doxygenfile:: facetedSpacecraftModel.h
    :project: facetedSpacecraftModel
 

@@ -59,6 +59,6 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
 
 ----
 
-.. autodoxygenfile:: msisAtmosphere.h
+.. doxygenfile:: msisAtmosphere.h
    :project: MsisAtmosphere
 

@@ -29,6 +29,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: attTrackingError.h
+.. doxygenfile:: attTrackingError.h
    :project: attTrackingError
 

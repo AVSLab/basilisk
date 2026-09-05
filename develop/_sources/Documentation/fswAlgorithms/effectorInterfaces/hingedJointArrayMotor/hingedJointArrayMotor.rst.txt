@@ -67,6 +67,6 @@ This section is to outline the steps needed to setup the ``hingedJointArrayMotor
 
 ----
 
-.. autodoxygenfile:: hingedJointArrayMotor.h
+.. doxygenfile:: hingedJointArrayMotor.h
    :project: hingedJointArrayMotor
 

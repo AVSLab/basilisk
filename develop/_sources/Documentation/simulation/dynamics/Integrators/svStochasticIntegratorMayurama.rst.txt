@@ -3,6 +3,6 @@
 svStochasticIntegratorMayurama
 ==============================
 
-.. autodoxygenfile:: svStochasticIntegratorMayurama.h
+.. doxygenfile:: svStochasticIntegratorMayurama.h
    :project: Integrators
 

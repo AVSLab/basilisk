@@ -310,6 +310,6 @@ must be set, discuss variables that might have default values if not specified b
 
 ----
 
-.. autodoxygenfile:: cModuleTemplate.h
+.. doxygenfile:: cModuleTemplate.h
    :project: cModuleTemplate
 

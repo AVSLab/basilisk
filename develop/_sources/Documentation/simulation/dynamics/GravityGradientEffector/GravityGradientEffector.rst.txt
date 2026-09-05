@@ -101,6 +101,6 @@ The output message is ``gravityGradientOutMsg``.
 
 ----
 
-.. autodoxygenfile:: GravityGradientEffector.h
+.. doxygenfile:: GravityGradientEffector.h
    :project: GravityGradientEffector
 

@@ -102,6 +102,6 @@ The input messages are then connected:
 
 ----
 
-.. autodoxygenfile:: lambertValidator.h
+.. doxygenfile:: lambertValidator.h
    :project: lambertValidator
 

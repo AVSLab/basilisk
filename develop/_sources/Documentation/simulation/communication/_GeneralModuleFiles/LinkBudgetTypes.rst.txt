@@ -3,6 +3,6 @@
 LinkBudgetTypes
 ===============
 
-.. autodoxygenfile:: LinkBudgetTypes.h
+.. doxygenfile:: LinkBudgetTypes.h
    :project: _GeneralModuleFiles3
 

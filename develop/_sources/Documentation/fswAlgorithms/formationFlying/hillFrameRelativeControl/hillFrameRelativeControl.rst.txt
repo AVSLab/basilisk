@@ -138,6 +138,6 @@ Configure gains, references and gravitational parameter:
 
 ----
 
-.. autodoxygenfile:: hillFrameRelativeControl.h
+.. doxygenfile:: hillFrameRelativeControl.h
    :project: hillFrameRelativeControl
 

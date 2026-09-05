@@ -3,6 +3,6 @@
 RWSpeedMsgPayload
 =================
 
-.. autodoxygenfile:: RWSpeedMsgPayload.h
+.. doxygenfile:: RWSpeedMsgPayload.h
    :project: msgPayloadDefC
 

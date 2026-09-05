@@ -52,6 +52,6 @@ Module Assumptions and Limitations
 
 ----
 
-.. autodoxygenfile:: singleActuatorLTI.h
+.. doxygenfile:: singleActuatorLTI.h
    :project: linearTimeInvariantSystem
 

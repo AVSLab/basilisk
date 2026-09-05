@@ -36,6 +36,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: extForceTorque.h
+.. doxygenfile:: extForceTorque.h
    :project: extForceTorque
 

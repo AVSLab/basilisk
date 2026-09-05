@@ -3,6 +3,6 @@
 RWConfigPayload
 ===============
 
-.. autodoxygenfile:: RWConfigPayload.h
+.. doxygenfile:: RWConfigPayload.h
    :project: _GeneralModuleFiles4
 

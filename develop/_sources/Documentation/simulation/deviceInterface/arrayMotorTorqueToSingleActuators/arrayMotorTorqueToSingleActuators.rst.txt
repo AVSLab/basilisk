@@ -53,6 +53,6 @@ corresponding input array element to within numerical tolerance.
 
 ----
 
-.. autodoxygenfile:: arrayMotorTorqueToSingleActuators.h
+.. doxygenfile:: arrayMotorTorqueToSingleActuators.h
    :project: arrayMotorTorqueToSingleActuators
 

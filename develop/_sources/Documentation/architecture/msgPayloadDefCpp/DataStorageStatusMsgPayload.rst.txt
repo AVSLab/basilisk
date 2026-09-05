@@ -3,6 +3,6 @@
 DataStorageStatusMsgPayload
 ===========================
 
-.. autodoxygenfile:: DataStorageStatusMsgPayload.h
+.. doxygenfile:: DataStorageStatusMsgPayload.h
    :project: msgPayloadDefCpp
 

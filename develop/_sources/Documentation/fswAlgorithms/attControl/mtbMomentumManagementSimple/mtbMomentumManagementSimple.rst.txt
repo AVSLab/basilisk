@@ -50,6 +50,6 @@ See the example script :ref:`scenarioMtbMomentumManagementSimple` for an illustr
 
 ----
 
-.. autodoxygenfile:: mtbMomentumManagementSimple.h
+.. doxygenfile:: mtbMomentumManagementSimple.h
    :project: mtbMomentumManagementSimple
 

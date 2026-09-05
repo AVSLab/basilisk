@@ -348,6 +348,6 @@ Basic setup example:
 
 ----
 
-.. autodoxygenfile:: downlinkHandling.h
+.. doxygenfile:: downlinkHandling.h
    :project: downlinkHandling
 

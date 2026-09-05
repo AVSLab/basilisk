@@ -118,6 +118,6 @@ This section is to outline the steps needed to setup a Spinning Body N DoF State
 
 ----
 
-.. autodoxygenfile:: spinningBodyNDOFStateEffector.h
+.. doxygenfile:: spinningBodyNDOFStateEffector.h
    :project: spinningBodiesNDOF
 

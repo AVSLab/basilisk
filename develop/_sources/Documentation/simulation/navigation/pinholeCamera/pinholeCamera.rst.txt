@@ -126,6 +126,6 @@ The ``processBatch(rBatch_BP_P, mrpBatch_BP, eBatch_SP_P, show_progress)`` metho
 
 ----
 
-.. autodoxygenfile:: pinholeCamera.h
+.. doxygenfile:: pinholeCamera.h
    :project: pinholeCamera
 

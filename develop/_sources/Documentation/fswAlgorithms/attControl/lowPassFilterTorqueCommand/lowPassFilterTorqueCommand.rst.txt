@@ -30,6 +30,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: lowPassFilterTorqueCommand.h
+.. doxygenfile:: lowPassFilterTorqueCommand.h
    :project: lowPassFilterTorqueCommand
 

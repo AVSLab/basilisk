@@ -3,6 +3,6 @@
 PIDController
 =============
 
-.. autodoxygenfile:: PIDController.h
+.. doxygenfile:: PIDController.h
    :project: _GeneralModuleFiles6
 

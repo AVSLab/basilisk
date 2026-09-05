@@ -3,6 +3,6 @@
 BodyToHubInfo
 =============
 
-.. autodoxygenfile:: BodyToHubInfo.h
+.. doxygenfile:: BodyToHubInfo.h
    :project: _GeneralModuleFiles4
 

@@ -33,6 +33,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: velocityPoint.h
+.. doxygenfile:: velocityPoint.h
    :project: velocityPoint
 

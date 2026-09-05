@@ -68,6 +68,6 @@ body frame and the corrected frame.
 
 ----
 
-.. autodoxygenfile:: attRefCorrection.h
+.. doxygenfile:: attRefCorrection.h
    :project: attRefCorrection
 

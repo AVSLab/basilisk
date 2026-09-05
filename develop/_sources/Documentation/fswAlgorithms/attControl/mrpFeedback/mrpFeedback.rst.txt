@@ -188,6 +188,6 @@ This control law is also asymptotically stable. The advantage when compared to :
 
 ----
 
-.. autodoxygenfile:: mrpFeedback.h
+.. doxygenfile:: mrpFeedback.h
    :project: mrpFeedback
 

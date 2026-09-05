@@ -3,6 +3,6 @@
 StepperMotorMsgPayload
 ======================
 
-.. autodoxygenfile:: StepperMotorMsgPayload.h
+.. doxygenfile:: StepperMotorMsgPayload.h
    :project: msgPayloadDefC
 

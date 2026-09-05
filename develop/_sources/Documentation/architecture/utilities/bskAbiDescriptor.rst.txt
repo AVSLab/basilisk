@@ -3,6 +3,6 @@
 bskAbiDescriptor
 ================
 
-.. autodoxygenfile:: bskAbiDescriptor.h
+.. doxygenfile:: bskAbiDescriptor.h
    :project: utilities
 

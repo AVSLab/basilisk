@@ -3,6 +3,6 @@
 svStochasticIntegratorEulerHeun
 ===============================
 
-.. autodoxygenfile:: svStochasticIntegratorEulerHeun.h
+.. doxygenfile:: svStochasticIntegratorEulerHeun.h
    :project: Integrators
 

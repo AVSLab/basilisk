@@ -27,6 +27,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: dvExecuteGuidance.h
+.. doxygenfile:: dvExecuteGuidance.h
    :project: dvExecuteGuidance
 

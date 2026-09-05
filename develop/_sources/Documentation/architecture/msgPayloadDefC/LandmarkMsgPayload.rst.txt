@@ -3,6 +3,6 @@
 LandmarkMsgPayload
 ==================
 
-.. autodoxygenfile:: LandmarkMsgPayload.h
+.. doxygenfile:: LandmarkMsgPayload.h
    :project: msgPayloadDefC
 

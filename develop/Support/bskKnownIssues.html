@@ -155,6 +155,20 @@
 <h2>Version 2.12.0b0
  (July 7, 2026)<a class="headerlink" href="#version-release-july-7-2026" title="Link to this heading"></a></h2>
 <ul class="simple">
+<li><p>Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
+configuration overrides, and regenerate a project’s XML after an interrupted cache update.
+Local headers remain tracked with <code class="docutils literal notranslate"><span class="pre">SEARCH_INCLUDES=NO</span></code>, and environment-dependent Doxygen
+configuration bypasses XML cache reuse to prevent stale output. XML caches now follow the
+selected build directory so cleaning an alternate <code class="docutils literal notranslate"><span class="pre">BUILDDIR</span></code> removes its cache as well.
+Relative Doxygen input settings are resolved from <code class="docutils literal notranslate"><span class="pre">docs/source</span></code>, not the temporary cache
+directory, preventing missing includes, tag files, or input filters during generation.
+Headers found through that working directory and their transitive includes are tracked for
+cache invalidation, including when those headers are added or removed.
+Configuration option order is preserved for included settings and overrides. File-inclusion
+documentation commands bypass reuse, including in aliases and with preprocessing disabled.
+Projects using <code class="docutils literal notranslate"><span class="pre">CITE_BIB_FILES</span></code> also bypass reuse so bibliography edits cannot leave stale citations.
+Parallel Sphinx builds now retain XML dependency records from all workers, preventing stale API
+pages after header edits. Older saved Sphinx environments are reread once to restore those records.</p></li>
 <li><p>GitHub issue 1459: <code class="docutils literal notranslate"><span class="pre">RetentionPolicy.addVariableLog()</span></code> still called the removed
 <code class="docutils literal notranslate"><span class="pre">SimBaseClass.AddVariableForLogging()</span></code> and <code class="docutils literal notranslate"><span class="pre">GetLogVariableData()</span></code> methods, causing every
 Monte Carlo variable-retention request to fail with <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>. Variable retention now

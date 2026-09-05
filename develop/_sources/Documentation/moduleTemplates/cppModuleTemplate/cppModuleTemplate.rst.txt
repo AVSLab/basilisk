@@ -30,6 +30,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: cppModuleTemplate.h
+.. doxygenfile:: cppModuleTemplate.h
    :project: cppModuleTemplate
 

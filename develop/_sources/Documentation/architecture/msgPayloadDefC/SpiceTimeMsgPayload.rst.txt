@@ -3,6 +3,6 @@
 SpiceTimeMsgPayload
 ===================
 
-.. autodoxygenfile:: SpiceTimeMsgPayload.h
+.. doxygenfile:: SpiceTimeMsgPayload.h
    :project: msgPayloadDefC
 

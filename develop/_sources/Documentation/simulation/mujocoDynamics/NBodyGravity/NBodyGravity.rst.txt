@@ -77,6 +77,6 @@ The module is verified in
 
 ----
 
-.. autodoxygenfile:: NBodyGravity.h
+.. doxygenfile:: NBodyGravity.h
    :project: NBodyGravity
 

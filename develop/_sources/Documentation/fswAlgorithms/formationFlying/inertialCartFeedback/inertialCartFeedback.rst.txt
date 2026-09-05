@@ -83,6 +83,6 @@ This section outlines the steps needed to set up the ``inertialCartFeedback`` mo
 
 ----
 
-.. autodoxygenfile:: inertialCartFeedback.h
+.. doxygenfile:: inertialCartFeedback.h
    :project: inertialCartFeedback
 

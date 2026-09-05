@@ -3,6 +3,6 @@
 stateVecStochasticIntegrator
 ============================
 
-.. autodoxygenfile:: stateVecStochasticIntegrator.h
+.. doxygenfile:: stateVecStochasticIntegrator.h
    :project: _GeneralModuleFiles4
 

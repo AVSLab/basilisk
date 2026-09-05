@@ -3,6 +3,6 @@
 simDefinitions
 ==============
 
-.. autodoxygenfile:: simDefinitions.h
+.. doxygenfile:: simDefinitions.h
    :project: utilities
 

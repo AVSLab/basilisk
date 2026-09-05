@@ -23,6 +23,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: rasterManager.h
+.. doxygenfile:: rasterManager.h
    :project: rasterManager
 

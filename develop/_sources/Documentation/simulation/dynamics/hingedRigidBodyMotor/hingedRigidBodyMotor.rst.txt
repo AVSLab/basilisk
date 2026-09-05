@@ -145,6 +145,6 @@ A sample setup is done using:
 
 ----
 
-.. autodoxygenfile:: hingedRigidBodyMotor.h
+.. doxygenfile:: hingedRigidBodyMotor.h
    :project: hingedRigidBodyMotor
 

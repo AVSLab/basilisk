@@ -105,6 +105,6 @@ match the reference ``meanOEFeedback`` force within tolerance.
 
 ----
 
-.. autodoxygenfile:: orbitalElementControl.h
+.. doxygenfile:: orbitalElementControl.h
    :project: linearTimeInvariantSystem
 

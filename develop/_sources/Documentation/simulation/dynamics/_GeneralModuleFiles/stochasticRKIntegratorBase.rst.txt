@@ -3,6 +3,6 @@
 stochasticRKIntegratorBase
 ==========================
 
-.. autodoxygenfile:: stochasticRKIntegratorBase.h
+.. doxygenfile:: stochasticRKIntegratorBase.h
    :project: _GeneralModuleFiles4
 

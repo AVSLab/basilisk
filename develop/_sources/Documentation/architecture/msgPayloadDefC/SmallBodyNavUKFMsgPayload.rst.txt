@@ -3,6 +3,6 @@
 SmallBodyNavUKFMsgPayload
 =========================
 
-.. autodoxygenfile:: SmallBodyNavUKFMsgPayload.h
+.. doxygenfile:: SmallBodyNavUKFMsgPayload.h
    :project: msgPayloadDefC
 

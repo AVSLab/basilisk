@@ -3,6 +3,6 @@
 CameraConfigMsgPayload
 ======================
 
-.. autodoxygenfile:: CameraConfigMsgPayload.h
+.. doxygenfile:: CameraConfigMsgPayload.h
    :project: msgPayloadDefC
 

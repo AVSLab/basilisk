@@ -3,6 +3,6 @@
 MJSceneStateMsgPayload
 ======================
 
-.. autodoxygenfile:: MJSceneStateMsgPayload.h
+.. doxygenfile:: MJSceneStateMsgPayload.h
    :project: msgPayloadDefCpp
 

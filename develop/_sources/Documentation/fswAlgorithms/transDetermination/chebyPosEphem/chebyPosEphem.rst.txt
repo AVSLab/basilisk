@@ -27,6 +27,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: chebyPosEphem.h
+.. doxygenfile:: chebyPosEphem.h
    :project: chebyPosEphem
 

@@ -33,6 +33,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: celestialTwoBodyPoint.h
+.. doxygenfile:: celestialTwoBodyPoint.h
    :project: celestialTwoBodyPoint
 

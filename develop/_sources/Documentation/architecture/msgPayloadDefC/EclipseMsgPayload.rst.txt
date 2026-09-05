@@ -3,6 +3,6 @@
 EclipseMsgPayload
 =================
 
-.. autodoxygenfile:: EclipseMsgPayload.h
+.. doxygenfile:: EclipseMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 extendedStateVector
 ===================
 
-.. autodoxygenfile:: extendedStateVector.h
+.. doxygenfile:: extendedStateVector.h
    :project: _GeneralModuleFiles4
 

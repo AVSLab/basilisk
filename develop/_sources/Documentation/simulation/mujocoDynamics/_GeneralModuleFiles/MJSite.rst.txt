@@ -3,6 +3,6 @@
 MJSite
 ======
 
-.. autodoxygenfile:: MJSite.h
+.. doxygenfile:: MJSite.h
    :project: _GeneralModuleFiles6
 

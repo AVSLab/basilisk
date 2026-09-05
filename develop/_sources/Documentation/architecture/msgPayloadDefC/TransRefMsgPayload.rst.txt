@@ -3,6 +3,6 @@
 TransRefMsgPayload
 ==================
 
-.. autodoxygenfile:: TransRefMsgPayload.h
+.. doxygenfile:: TransRefMsgPayload.h
    :project: msgPayloadDefC
 

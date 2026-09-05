@@ -136,6 +136,6 @@ The fault state is changed by the user to spiking, for example, by setting:
 
 ----
 
-.. autodoxygenfile:: tempMeasurement.h
+.. doxygenfile:: tempMeasurement.h
    :project: tempMeasurement
 

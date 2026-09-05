@@ -3,6 +3,6 @@
 geodeticConversion
 ==================
 
-.. autodoxygenfile:: geodeticConversion.h
+.. doxygenfile:: geodeticConversion.h
    :project: utilities
 

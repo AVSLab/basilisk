@@ -137,6 +137,6 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
 
 ----
 
-.. autodoxygenfile:: constraintDynamicEffector.h
+.. doxygenfile:: constraintDynamicEffector.h
    :project: constraintEffector
 

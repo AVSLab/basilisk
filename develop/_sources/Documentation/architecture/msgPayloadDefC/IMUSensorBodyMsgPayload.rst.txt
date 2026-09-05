@@ -3,6 +3,6 @@
 IMUSensorBodyMsgPayload
 =======================
 
-.. autodoxygenfile:: IMUSensorBodyMsgPayload.h
+.. doxygenfile:: IMUSensorBodyMsgPayload.h
    :project: msgPayloadDefC
 

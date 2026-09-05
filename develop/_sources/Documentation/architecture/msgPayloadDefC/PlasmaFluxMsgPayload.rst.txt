@@ -3,6 +3,6 @@
 PlasmaFluxMsgPayload
 ====================
 
-.. autodoxygenfile:: PlasmaFluxMsgPayload.h
+.. doxygenfile:: PlasmaFluxMsgPayload.h
    :project: msgPayloadDefC
 

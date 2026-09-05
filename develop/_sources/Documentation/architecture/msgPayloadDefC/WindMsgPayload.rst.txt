@@ -3,6 +3,6 @@
 WindMsgPayload
 ==============
 
-.. autodoxygenfile:: WindMsgPayload.h
+.. doxygenfile:: WindMsgPayload.h
    :project: msgPayloadDefC
 

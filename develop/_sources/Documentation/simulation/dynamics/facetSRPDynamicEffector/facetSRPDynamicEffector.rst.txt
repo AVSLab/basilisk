@@ -254,6 +254,6 @@ The following steps are required to set up the ``facetSRPDynamicEffector`` modul
 
 ----
 
-.. autodoxygenfile:: facetSRPDynamicEffector.h
+.. doxygenfile:: facetSRPDynamicEffector.h
    :project: facetSRPDynamicEffector
 

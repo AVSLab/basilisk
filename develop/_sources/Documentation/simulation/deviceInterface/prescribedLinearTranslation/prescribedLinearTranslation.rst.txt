@@ -473,6 +473,6 @@ This section is to outline the steps needed to setup the prescribed linear trans
 
 ----
 
-.. autodoxygenfile:: prescribedLinearTranslation.h
+.. doxygenfile:: prescribedLinearTranslation.h
    :project: prescribedLinearTranslation
 

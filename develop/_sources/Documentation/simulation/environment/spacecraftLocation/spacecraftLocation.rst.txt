@@ -169,6 +169,6 @@ The access output messages can be logged through::
 
 ----
 
-.. autodoxygenfile:: spacecraftLocation.h
+.. doxygenfile:: spacecraftLocation.h
    :project: spacecraftLocation
 

@@ -3,6 +3,6 @@
 TDBVehicleClockCorrelationMsgPayload
 ====================================
 
-.. autodoxygenfile:: TDBVehicleClockCorrelationMsgPayload.h
+.. doxygenfile:: TDBVehicleClockCorrelationMsgPayload.h
    :project: msgPayloadDefC
 

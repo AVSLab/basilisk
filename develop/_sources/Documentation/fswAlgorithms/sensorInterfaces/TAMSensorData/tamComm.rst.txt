@@ -32,6 +32,6 @@ In order to transform the ``tam_S`` vector of :ref:`TAMSensorMsgPayload` from se
 
 ----
 
-.. autodoxygenfile:: tamComm.h
+.. doxygenfile:: tamComm.h
    :project: TAMSensorData
 

@@ -3,6 +3,6 @@
 AntennaLogMsgPayload
 ====================
 
-.. autodoxygenfile:: AntennaLogMsgPayload.h
+.. doxygenfile:: AntennaLogMsgPayload.h
    :project: msgPayloadDefC
 

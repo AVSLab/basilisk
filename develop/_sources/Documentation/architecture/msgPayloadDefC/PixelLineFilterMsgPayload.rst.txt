@@ -3,6 +3,6 @@
 PixelLineFilterMsgPayload
 =========================
 
-.. autodoxygenfile:: PixelLineFilterMsgPayload.h
+.. doxygenfile:: PixelLineFilterMsgPayload.h
    :project: msgPayloadDefC
 

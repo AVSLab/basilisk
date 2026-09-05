@@ -34,6 +34,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: ephemerisConverter.h
+.. doxygenfile:: ephemerisConverter.h
    :project: ephemerisConverter
 

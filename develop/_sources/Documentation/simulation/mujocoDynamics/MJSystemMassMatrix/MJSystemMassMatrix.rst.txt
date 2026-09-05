@@ -52,6 +52,6 @@ This section is to outline the steps needed to setup the ``MJSystemMassMatrix`` 
 
 ----
 
-.. autodoxygenfile:: MJSystemMassMatrix.h
+.. doxygenfile:: MJSystemMassMatrix.h
    :project: MJSystemMassMatrix
 

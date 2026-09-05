@@ -3,6 +3,6 @@
 RWCmdMsgPayload
 ===============
 
-.. autodoxygenfile:: RWCmdMsgPayload.h
+.. doxygenfile:: RWCmdMsgPayload.h
    :project: msgPayloadDefC
 

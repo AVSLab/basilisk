@@ -3,6 +3,6 @@
 ArrayMotorTorqueMsgPayload
 ==========================
 
-.. autodoxygenfile:: ArrayMotorTorqueMsgPayload.h
+.. doxygenfile:: ArrayMotorTorqueMsgPayload.h
    :project: msgPayloadDefC
 

@@ -3,6 +3,6 @@
 THROutputMsgPayload
 ===================
 
-.. autodoxygenfile:: THROutputMsgPayload.h
+.. doxygenfile:: THROutputMsgPayload.h
    :project: msgPayloadDefCpp
 

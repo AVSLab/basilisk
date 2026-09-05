@@ -107,6 +107,6 @@ A sample setup is done using:
 
 ----
 
-.. autodoxygenfile:: encoder.h
+.. doxygenfile:: encoder.h
    :project: encoder
 

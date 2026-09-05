@@ -3,6 +3,6 @@
 AlbedoMsgPayload
 ================
 
-.. autodoxygenfile:: AlbedoMsgPayload.h
+.. doxygenfile:: AlbedoMsgPayload.h
    :project: msgPayloadDefC
 

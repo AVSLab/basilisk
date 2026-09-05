@@ -3,6 +3,6 @@
 AtmoPropsMsgPayload
 ===================
 
-.. autodoxygenfile:: AtmoPropsMsgPayload.h
+.. doxygenfile:: AtmoPropsMsgPayload.h
    :project: msgPayloadDefC
 

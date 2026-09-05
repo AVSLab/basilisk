@@ -3,6 +3,6 @@
 MJJointReactionsMsgPayload
 ==========================
 
-.. autodoxygenfile:: MJJointReactionsMsgPayload.h
+.. doxygenfile:: MJJointReactionsMsgPayload.h
    :project: msgPayloadDefCpp
 

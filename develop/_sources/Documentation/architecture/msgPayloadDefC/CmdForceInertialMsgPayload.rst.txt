@@ -3,6 +3,6 @@
 CmdForceInertialMsgPayload
 ==========================
 
-.. autodoxygenfile:: CmdForceInertialMsgPayload.h
+.. doxygenfile:: CmdForceInertialMsgPayload.h
    :project: msgPayloadDefC
 

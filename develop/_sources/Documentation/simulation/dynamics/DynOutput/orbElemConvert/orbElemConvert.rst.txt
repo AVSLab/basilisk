@@ -41,6 +41,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: orbElemConvert.h
+.. doxygenfile:: orbElemConvert.h
    :project: orbElemConvert
 

@@ -81,6 +81,6 @@ An effector using explicit equation-of-motion rate overrides must:
 
 ----
 
-.. autodoxygenfile:: stateEffector.h
+.. doxygenfile:: stateEffector.h
    :project: _GeneralModuleFiles4
 

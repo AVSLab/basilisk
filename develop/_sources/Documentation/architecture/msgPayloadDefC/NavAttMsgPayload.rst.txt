@@ -3,6 +3,6 @@
 NavAttMsgPayload
 ================
 
-.. autodoxygenfile:: NavAttMsgPayload.h
+.. doxygenfile:: NavAttMsgPayload.h
    :project: msgPayloadDefC
 

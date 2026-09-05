@@ -3,6 +3,6 @@
 astroConstants
 ==============
 
-.. autodoxygenfile:: astroConstants.h
+.. doxygenfile:: astroConstants.h
    :project: utilities
 

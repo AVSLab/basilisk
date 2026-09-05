@@ -3,6 +3,6 @@
 MJUtils
 =======
 
-.. autodoxygenfile:: MJUtils.h
+.. doxygenfile:: MJUtils.h
    :project: _GeneralModuleFiles6
 

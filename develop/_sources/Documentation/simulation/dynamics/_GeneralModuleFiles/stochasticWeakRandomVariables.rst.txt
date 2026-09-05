@@ -3,6 +3,6 @@
 stochasticWeakRandomVariables
 =============================
 
-.. autodoxygenfile:: stochasticWeakRandomVariables.h
+.. doxygenfile:: stochasticWeakRandomVariables.h
    :project: _GeneralModuleFiles4
 

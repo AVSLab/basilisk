@@ -215,6 +215,6 @@ The model can  be added to a task like other simModels.
 
 ----
 
-.. autodoxygenfile:: albedo.h
+.. doxygenfile:: albedo.h
    :project: albedo
 

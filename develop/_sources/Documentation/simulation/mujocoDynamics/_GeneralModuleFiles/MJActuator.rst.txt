@@ -3,6 +3,6 @@
 MJActuator
 ==========
 
-.. autodoxygenfile:: MJActuator.h
+.. doxygenfile:: MJActuator.h
    :project: _GeneralModuleFiles6
 

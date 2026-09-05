@@ -168,6 +168,6 @@ multiple state effectors to the prescribed motion effector.
 
 ----
 
-.. autodoxygenfile:: prescribedMotionStateEffector.h
+.. doxygenfile:: prescribedMotionStateEffector.h
    :project: prescribedMotion
 

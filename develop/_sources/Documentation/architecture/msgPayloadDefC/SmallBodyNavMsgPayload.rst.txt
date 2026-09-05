@@ -3,6 +3,6 @@
 SmallBodyNavMsgPayload
 ======================
 
-.. autodoxygenfile:: SmallBodyNavMsgPayload.h
+.. doxygenfile:: SmallBodyNavMsgPayload.h
    :project: msgPayloadDefC
 

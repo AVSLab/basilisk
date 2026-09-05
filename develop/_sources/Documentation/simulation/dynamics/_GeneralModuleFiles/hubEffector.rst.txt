@@ -30,6 +30,6 @@ its derivatives using contributions from :ref:`stateEffector` and :ref:`dynamicE
 
 ----
 
-.. autodoxygenfile:: hubEffector.h
+.. doxygenfile:: hubEffector.h
    :project: _GeneralModuleFiles4
 

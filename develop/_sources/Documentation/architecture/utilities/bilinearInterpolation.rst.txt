@@ -3,6 +3,6 @@
 bilinearInterpolation
 =====================
 
-.. autodoxygenfile:: bilinearInterpolation.hpp
+.. doxygenfile:: bilinearInterpolation.hpp
    :project: utilities
 

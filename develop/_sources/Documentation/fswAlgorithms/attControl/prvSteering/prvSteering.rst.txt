@@ -30,6 +30,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: prvSteering.h
+.. doxygenfile:: prvSteering.h
    :project: prvSteering
 

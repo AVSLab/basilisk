@@ -10,6 +10,6 @@ present in the model.
 
 ----
 
-.. autodoxygenfile:: dynParamManager.h
+.. doxygenfile:: dynParamManager.h
    :project: _GeneralModuleFiles4
 

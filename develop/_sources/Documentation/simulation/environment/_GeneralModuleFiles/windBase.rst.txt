@@ -72,6 +72,6 @@ The following table lists all the module input and output messages.
 
 ----
 
-.. autodoxygenfile:: windBase.h
+.. doxygenfile:: windBase.h
    :project: _GeneralModuleFiles5
 

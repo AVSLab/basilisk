@@ -3,6 +3,6 @@
 VSCMGConfigElementMsgPayload
 ============================
 
-.. autodoxygenfile:: VSCMGConfigElementMsgPayload.h
+.. doxygenfile:: VSCMGConfigElementMsgPayload.h
    :project: msgPayloadDefC
 

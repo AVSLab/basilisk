@@ -31,6 +31,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: radiationPressure.h
+.. doxygenfile:: radiationPressure.h
    :project: RadiationPressure
 

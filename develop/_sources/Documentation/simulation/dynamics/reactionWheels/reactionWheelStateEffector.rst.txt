@@ -66,6 +66,6 @@ These parameters can be accessed and modified using the following getter and set
 
 ----
 
-.. autodoxygenfile:: reactionWheelStateEffector.h
+.. doxygenfile:: reactionWheelStateEffector.h
    :project: reactionWheels
 

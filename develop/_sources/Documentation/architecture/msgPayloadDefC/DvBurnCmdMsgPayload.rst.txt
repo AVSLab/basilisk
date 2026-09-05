@@ -3,6 +3,6 @@
 DvBurnCmdMsgPayload
 ===================
 
-.. autodoxygenfile:: DvBurnCmdMsgPayload.h
+.. doxygenfile:: DvBurnCmdMsgPayload.h
    :project: msgPayloadDefC
 

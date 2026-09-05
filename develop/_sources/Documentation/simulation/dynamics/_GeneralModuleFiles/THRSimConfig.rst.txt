@@ -3,6 +3,6 @@
 THRSimConfig
 ============
 
-.. autodoxygenfile:: THRSimConfig.h
+.. doxygenfile:: THRSimConfig.h
    :project: _GeneralModuleFiles4
 

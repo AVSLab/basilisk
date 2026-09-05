@@ -43,6 +43,6 @@ density input.
 
 ----
 
-.. autodoxygenfile:: stochasticAtmDensity.h
+.. doxygenfile:: stochasticAtmDensity.h
    :project: stochasticAtmDensity
 

@@ -3,6 +3,6 @@
 AttRefMsgPayload
 ================
 
-.. autodoxygenfile:: AttRefMsgPayload.h
+.. doxygenfile:: AttRefMsgPayload.h
    :project: msgPayloadDefC
 

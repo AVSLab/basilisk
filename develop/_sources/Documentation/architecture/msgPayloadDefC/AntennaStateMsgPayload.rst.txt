@@ -3,6 +3,6 @@
 AntennaStateMsgPayload
 ======================
 
-.. autodoxygenfile:: AntennaStateMsgPayload.h
+.. doxygenfile:: AntennaStateMsgPayload.h
    :project: msgPayloadDefC
 

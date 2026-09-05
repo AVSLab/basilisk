@@ -3,6 +3,6 @@
 ScalarJointStateMsgPayload
 ==========================
 
-.. autodoxygenfile:: ScalarJointStateMsgPayload.h
+.. doxygenfile:: ScalarJointStateMsgPayload.h
    :project: msgPayloadDefC
 

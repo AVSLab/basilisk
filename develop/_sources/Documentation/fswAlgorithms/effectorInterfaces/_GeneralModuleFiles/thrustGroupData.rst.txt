@@ -3,6 +3,6 @@
 thrustGroupData
 ===============
 
-.. autodoxygenfile:: thrustGroupData.h
+.. doxygenfile:: thrustGroupData.h
    :project: _GeneralModuleFiles1
 

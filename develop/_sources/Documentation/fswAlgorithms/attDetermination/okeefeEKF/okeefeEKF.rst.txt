@@ -32,6 +32,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: okeefeEKF.h
+.. doxygenfile:: okeefeEKF.h
    :project: okeefeEKF
 

@@ -41,6 +41,6 @@ The module ``Reset()`` function zeros the output message to ensure safe manageme
 
 ----
 
-.. autodoxygenfile:: rwMotorVoltage.h
+.. doxygenfile:: rwMotorVoltage.h
    :project: rwMotorVoltage
 

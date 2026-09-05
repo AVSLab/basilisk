@@ -3,6 +3,6 @@
 GeomagnetismHeader
 ==================
 
-.. autodoxygenfile:: GeomagnetismHeader.h
+.. doxygenfile:: GeomagnetismHeader.h
    :project: magneticFieldWMM
 

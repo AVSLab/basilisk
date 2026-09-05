@@ -3,6 +3,6 @@
 RWConfigLogMsgPayload
 =====================
 
-.. autodoxygenfile:: RWConfigLogMsgPayload.h
+.. doxygenfile:: RWConfigLogMsgPayload.h
    :project: msgPayloadDefC
 

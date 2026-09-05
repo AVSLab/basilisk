@@ -57,6 +57,6 @@ single-joint arm with a linearly ramping desired position. The test checks that:
 
 ----
 
-.. autodoxygenfile:: JointPIDController.h
+.. doxygenfile:: JointPIDController.h
    :project: JointPIDController
 

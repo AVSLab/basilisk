@@ -77,6 +77,6 @@ discusses how to configure ``vizInterface`` for use with multiple satellites.
 
 ----
 
-.. autodoxygenfile:: vizInterface.h
+.. doxygenfile:: vizInterface.h
    :project: vizInterface
 

@@ -51,6 +51,6 @@ Also note that ``steeringMatrix`` is simply the psuedoinverse of the torque rod 
 
 ----
 
-.. autodoxygenfile:: dipoleMapping.h
+.. doxygenfile:: dipoleMapping.h
    :project: dipoleMapping
 

@@ -85,6 +85,6 @@ Python using Basilisk.
 
 ----
 
-.. autodoxygenfile:: jointArrayRefProfiler.h
+.. doxygenfile:: jointArrayRefProfiler.h
    :project: jointArrayRefProfiler
 

@@ -79,6 +79,6 @@ Module Assumptions and Limitations
 
 ----
 
-.. autodoxygenfile:: igbmNoiseStateEffector.h
+.. doxygenfile:: igbmNoiseStateEffector.h
    :project: igbmNoiseStateEffector
 

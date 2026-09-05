@@ -475,6 +475,6 @@ References
 
 ----
 
-.. autodoxygenfile:: spacecraftChargingEquilibrium.h
+.. doxygenfile:: spacecraftChargingEquilibrium.h
    :project: spacecraftChargingEquilibrium
 

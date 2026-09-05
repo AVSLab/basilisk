@@ -84,6 +84,6 @@ or obtained from another FSW module. The lambert problem input message is then c
 
 ----
 
-.. autodoxygenfile:: lambertSolver.h
+.. doxygenfile:: lambertSolver.h
    :project: lambertSolver
 

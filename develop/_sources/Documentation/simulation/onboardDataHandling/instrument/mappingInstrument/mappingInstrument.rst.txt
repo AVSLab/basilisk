@@ -63,6 +63,6 @@ Finally, logs for every mapping point can be created as follows. In this example
 
 ----
 
-.. autodoxygenfile:: mappingInstrument.h
+.. doxygenfile:: mappingInstrument.h
    :project: mappingInstrument
 

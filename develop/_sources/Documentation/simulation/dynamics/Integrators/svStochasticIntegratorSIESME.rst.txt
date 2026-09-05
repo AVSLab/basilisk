@@ -3,6 +3,6 @@
 svStochasticIntegratorSIESME
 ============================
 
-.. autodoxygenfile:: svStochasticIntegratorSIESME.h
+.. doxygenfile:: svStochasticIntegratorSIESME.h
    :project: Integrators
 

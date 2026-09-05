@@ -3,6 +3,6 @@
 GravityGradientMsgPayload
 =========================
 
-.. autodoxygenfile:: GravityGradientMsgPayload.h
+.. doxygenfile:: GravityGradientMsgPayload.h
    :project: msgPayloadDefC
 

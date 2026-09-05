@@ -10,6 +10,6 @@ momentum calculations. :ref:`dynamicObject` is what puts all of the pieces toget
 
 ----
 
-.. autodoxygenfile:: dynamicObject.h
+.. doxygenfile:: dynamicObject.h
    :project: _GeneralModuleFiles4
 

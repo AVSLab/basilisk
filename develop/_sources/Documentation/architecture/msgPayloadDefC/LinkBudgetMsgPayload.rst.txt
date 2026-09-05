@@ -3,6 +3,6 @@
 LinkBudgetMsgPayload
 ====================
 
-.. autodoxygenfile:: LinkBudgetMsgPayload.h
+.. doxygenfile:: LinkBudgetMsgPayload.h
    :project: msgPayloadDefC
 

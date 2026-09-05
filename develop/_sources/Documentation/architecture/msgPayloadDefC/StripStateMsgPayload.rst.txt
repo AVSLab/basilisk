@@ -3,6 +3,6 @@
 StripStateMsgPayload
 ====================
 
-.. autodoxygenfile:: StripStateMsgPayload.h
+.. doxygenfile:: StripStateMsgPayload.h
    :project: msgPayloadDefC
 

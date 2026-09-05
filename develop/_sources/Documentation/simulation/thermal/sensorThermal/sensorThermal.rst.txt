@@ -171,6 +171,6 @@ The relevant messages are then connected to the module:
 
 ----
 
-.. autodoxygenfile:: sensorThermal.h
+.. doxygenfile:: sensorThermal.h
    :project: sensorThermal
 

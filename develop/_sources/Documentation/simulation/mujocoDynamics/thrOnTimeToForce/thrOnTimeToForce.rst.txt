@@ -57,6 +57,6 @@ This section is to outline the steps needed to set up the ``thrOnTimeToForce`` m
 
 ----
 
-.. autodoxygenfile:: thrOnTimeToForce.h
+.. doxygenfile:: thrOnTimeToForce.h
    :project: thrOnTimeToForce
 

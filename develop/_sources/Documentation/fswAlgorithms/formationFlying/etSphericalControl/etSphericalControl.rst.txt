@@ -71,6 +71,6 @@ this would result in the control force being applied twice.
 
 ----
 
-.. autodoxygenfile:: etSphericalControl.h
+.. doxygenfile:: etSphericalControl.h
    :project: etSphericalControl
 

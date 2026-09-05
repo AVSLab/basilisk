@@ -28,6 +28,6 @@ description provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: ephemNavConverter.h
+.. doxygenfile:: ephemNavConverter.h
    :project: ephemNavConverter
 

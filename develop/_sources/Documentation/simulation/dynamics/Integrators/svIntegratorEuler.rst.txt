@@ -23,6 +23,6 @@ how to run it, as well as testing.
 
 ----
 
-.. autodoxygenfile:: svIntegratorEuler.h
+.. doxygenfile:: svIntegratorEuler.h
    :project: Integrators
 

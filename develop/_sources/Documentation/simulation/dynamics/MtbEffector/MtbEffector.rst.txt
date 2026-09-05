@@ -34,6 +34,6 @@ Note that the MTB input configuration message variable ``GtMatrix_B`` must be pr
 
 ----
 
-.. autodoxygenfile:: MtbEffector.h
+.. doxygenfile:: MtbEffector.h
    :project: MtbEffector
 

@@ -3,6 +3,6 @@
 svStochasticIntegratorSOSRA
 ===========================
 
-.. autodoxygenfile:: svStochasticIntegratorSOSRA.h
+.. doxygenfile:: svStochasticIntegratorSOSRA.h
    :project: Integrators
 

@@ -3,6 +3,6 @@
 ArrayEffectorLockMsgPayload
 ===========================
 
-.. autodoxygenfile:: ArrayEffectorLockMsgPayload.h
+.. doxygenfile:: ArrayEffectorLockMsgPayload.h
    :project: msgPayloadDefC
 

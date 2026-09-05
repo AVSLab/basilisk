@@ -3,6 +3,6 @@
 moduleIdGenerator
 =================
 
-.. autodoxygenfile:: moduleIdGenerator.h
+.. doxygenfile:: moduleIdGenerator.h
    :project: moduleIdGenerator
 

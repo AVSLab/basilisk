@@ -3,6 +3,6 @@
 SingleActuatorMsgPayload
 ========================
 
-.. autodoxygenfile:: SingleActuatorMsgPayload.h
+.. doxygenfile:: SingleActuatorMsgPayload.h
    :project: msgPayloadDefC
 

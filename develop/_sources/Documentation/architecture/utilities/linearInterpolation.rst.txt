@@ -3,6 +3,6 @@
 linearInterpolation
 ===================
 
-.. autodoxygenfile:: linearInterpolation.hpp
+.. doxygenfile:: linearInterpolation.hpp
    :project: utilities
 

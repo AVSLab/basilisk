@@ -3,6 +3,6 @@
 MJEquality
 ==========
 
-.. autodoxygenfile:: MJEquality.h
+.. doxygenfile:: MJEquality.h
    :project: _GeneralModuleFiles6
 

@@ -3,6 +3,6 @@
 MotorStepCommandMsgPayload
 ==========================
 
-.. autodoxygenfile:: MotorStepCommandMsgPayload.h
+.. doxygenfile:: MotorStepCommandMsgPayload.h
    :project: msgPayloadDefC
 

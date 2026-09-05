@@ -44,6 +44,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: autoCppModule.h
+.. doxygenfile:: autoCppModule.h
    :project: autoCppModule
 

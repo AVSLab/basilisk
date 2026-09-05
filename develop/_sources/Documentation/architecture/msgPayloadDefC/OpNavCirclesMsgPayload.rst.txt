@@ -3,6 +3,6 @@
 OpNavCirclesMsgPayload
 ======================
 
-.. autodoxygenfile:: OpNavCirclesMsgPayload.h
+.. doxygenfile:: OpNavCirclesMsgPayload.h
    :project: msgPayloadDefC
 

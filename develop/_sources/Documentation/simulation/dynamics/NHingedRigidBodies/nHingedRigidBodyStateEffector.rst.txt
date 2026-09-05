@@ -43,6 +43,6 @@ panel, ordered outward from the hub.
 
 ----
 
-.. autodoxygenfile:: nHingedRigidBodyStateEffector.h
+.. doxygenfile:: nHingedRigidBodyStateEffector.h
    :project: NHingedRigidBodies
 

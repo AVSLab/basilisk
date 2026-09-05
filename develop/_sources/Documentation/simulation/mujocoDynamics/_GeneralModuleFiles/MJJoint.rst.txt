@@ -3,6 +3,6 @@
 MJJoint
 =======
 
-.. autodoxygenfile:: MJJoint.h
+.. doxygenfile:: MJJoint.h
    :project: _GeneralModuleFiles6
 

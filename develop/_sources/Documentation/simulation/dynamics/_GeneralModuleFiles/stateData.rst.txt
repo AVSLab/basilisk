@@ -9,6 +9,6 @@ Object that is to be used by an integrator. It's basically an interface with onl
 
 ----
 
-.. autodoxygenfile:: stateData.h
+.. doxygenfile:: stateData.h
    :project: _GeneralModuleFiles4
 

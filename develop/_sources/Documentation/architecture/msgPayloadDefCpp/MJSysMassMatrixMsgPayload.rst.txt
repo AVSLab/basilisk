@@ -3,6 +3,6 @@
 MJSysMassMatrixMsgPayload
 =========================
 
-.. autodoxygenfile:: MJSysMassMatrixMsgPayload.h
+.. doxygenfile:: MJSysMassMatrixMsgPayload.h
    :project: msgPayloadDefCpp
 

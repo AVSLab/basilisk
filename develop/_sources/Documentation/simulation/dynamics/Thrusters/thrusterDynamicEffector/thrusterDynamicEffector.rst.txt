@@ -47,6 +47,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: thrusterDynamicEffector.h
+.. doxygenfile:: thrusterDynamicEffector.h
    :project: thrusterDynamicEffector
 

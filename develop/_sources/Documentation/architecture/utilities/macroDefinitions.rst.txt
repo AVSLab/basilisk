@@ -3,6 +3,6 @@
 macroDefinitions
 ================
 
-.. autodoxygenfile:: macroDefinitions.h
+.. doxygenfile:: macroDefinitions.h
    :project: utilities
 

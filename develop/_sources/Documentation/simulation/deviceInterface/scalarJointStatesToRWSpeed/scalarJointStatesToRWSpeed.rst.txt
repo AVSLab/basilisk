@@ -54,6 +54,6 @@ index to within numerical tolerance.
 
 ----
 
-.. autodoxygenfile:: scalarJointStatesToRWSpeed.h
+.. doxygenfile:: scalarJointStatesToRWSpeed.h
    :project: scalarJointStatesToRWSpeed
 

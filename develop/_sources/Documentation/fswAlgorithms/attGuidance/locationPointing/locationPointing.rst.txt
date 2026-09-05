@@ -223,6 +223,6 @@ set to zero.  It applies separately to the pointing rotation and the strip rotat
 
 ----
 
-.. autodoxygenfile:: locationPointing.h
+.. doxygenfile:: locationPointing.h
    :project: locationPointing
 

@@ -56,6 +56,6 @@ For more information on how to set up and use this module, see the simple power 
 
 ----
 
-.. autodoxygenfile:: simpleSolarPanel.h
+.. doxygenfile:: simpleSolarPanel.h
    :project: simpleSolarPanel
 

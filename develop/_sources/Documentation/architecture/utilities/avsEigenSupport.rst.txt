@@ -3,6 +3,6 @@
 avsEigenSupport
 ===============
 
-.. autodoxygenfile:: avsEigenSupport.h
+.. doxygenfile:: avsEigenSupport.h
    :project: utilities
 

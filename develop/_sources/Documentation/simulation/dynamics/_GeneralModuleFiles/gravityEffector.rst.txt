@@ -63,6 +63,6 @@ setting up gravity bodies.
 
 ----
 
-.. autodoxygenfile:: gravityEffector.h
+.. doxygenfile:: gravityEffector.h
    :project: _GeneralModuleFiles4
 

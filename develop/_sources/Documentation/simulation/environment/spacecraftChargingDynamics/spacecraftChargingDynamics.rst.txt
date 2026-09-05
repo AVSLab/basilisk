@@ -231,6 +231,6 @@ The following steps are required to set up the ``spacecraftChargingDynamics`` mo
 
 ----
 
-.. autodoxygenfile:: spacecraftChargingDynamics.h
+.. doxygenfile:: spacecraftChargingDynamics.h
    :project: spacecraftChargingDynamics
 

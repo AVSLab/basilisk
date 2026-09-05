@@ -3,6 +3,6 @@
 BoreAngleMsgPayload
 ===================
 
-.. autodoxygenfile:: BoreAngleMsgPayload.h
+.. doxygenfile:: BoreAngleMsgPayload.h
    :project: msgPayloadDefC
 

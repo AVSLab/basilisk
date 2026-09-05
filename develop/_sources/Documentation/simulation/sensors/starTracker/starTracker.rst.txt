@@ -58,6 +58,6 @@ provides information on what this message is used for.
 
 ----
 
-.. autodoxygenfile:: starTracker.h
+.. doxygenfile:: starTracker.h
    :project: starTracker
 

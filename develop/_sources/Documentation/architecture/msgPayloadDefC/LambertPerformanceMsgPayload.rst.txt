@@ -3,6 +3,6 @@
 LambertPerformanceMsgPayload
 ============================
 
-.. autodoxygenfile:: LambertPerformanceMsgPayload.h
+.. doxygenfile:: LambertPerformanceMsgPayload.h
    :project: msgPayloadDefC
 

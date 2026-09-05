@@ -205,6 +205,6 @@ supported for existing C code.
 
 ----
 
-.. autodoxygenfile:: bskLogging.h
+.. doxygenfile:: bskLogging.h
    :project: utilities
 

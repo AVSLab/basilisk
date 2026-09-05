@@ -3,6 +3,6 @@
 svIntegratorRungeKutta
 ======================
 
-.. autodoxygenfile:: svIntegratorRungeKutta.h
+.. doxygenfile:: svIntegratorRungeKutta.h
    :project: _GeneralModuleFiles4
 

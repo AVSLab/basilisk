@@ -3,6 +3,6 @@
 PyBatteryMsgPayload
 ===================
 
-.. autodoxygenfile:: PyBatteryMsgPayload.h
+.. doxygenfile:: PyBatteryMsgPayload.h
    :project: msgPayloadDefC
 

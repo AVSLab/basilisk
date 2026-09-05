@@ -3,6 +3,6 @@
 FacetElementMsgPayload
 ======================
 
-.. autodoxygenfile:: FacetElementMsgPayload.h
+.. doxygenfile:: FacetElementMsgPayload.h
    :project: msgPayloadDefC
 

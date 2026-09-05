@@ -3,6 +3,6 @@
 rigidBodyKinematics
 ===================
 
-.. autodoxygenfile:: rigidBodyKinematics.h
+.. doxygenfile:: rigidBodyKinematics.h
    :project: utilities
 
