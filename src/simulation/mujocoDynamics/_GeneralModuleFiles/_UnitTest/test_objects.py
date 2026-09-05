@@ -161,6 +161,73 @@ def test_unnamed_body_introspection(root_name):
     assert scene_reader.isWritten()
 
 
+# All RGBA values below are dimensionless, in the range [0, 1].
+@pytest.mark.parametrize(
+    "geom_attributes, material_rgba, expected_rgba",
+    [
+        pytest.param("", "1 0 0 0.25", [0.5, 0.5, 0.5, 1], id="no-material-default"),
+        pytest.param('rgba="0 0 1 0.5"', "1 0 0 0.25", [0, 0, 1, 0.5], id="no-material-explicit"),
+        pytest.param('material="paint"', "1 0 0 0.25", [1, 0, 0, 0.25], id="material-translucent"),
+        pytest.param('material="paint"', "1 0 0 0", [1, 0, 0, 0], id="material-transparent"),
+        pytest.param('material="paint"', "1 0 0 1", [1, 0, 0, 1], id="material-opaque"),
+        pytest.param(
+            'material="paint" rgba="0.5 0.5 0.5 1"', "1 0 0 0.25", [1, 0, 0, 0.25],
+            id="explicit-default-still-uses-material",
+        ),
+        pytest.param(
+            'material="paint" rgba="0 1 0 0.5"', "1 0 0 0.25", [0, 1, 0, 0.5],
+            id="geom-overrides-material",
+        ),
+        pytest.param(
+            'material="paint" rgba="0.5 0.5 0.5 0.125"', "1 0 0 0.25", [0.5, 0.5, 0.5, 0.125],
+            id="alpha-only-override",
+        ),
+        pytest.param(
+            'material="paint" class="tinted"', "1 0 0 0.25", [0, 0, 1, 0.75],
+            id="inherited-rgba-overrides-material",
+        ),
+        pytest.param('class="painted"', "1 0 0 0.25", [1, 0, 0, 0.25], id="inherited-material"),
+    ],
+)
+def test_geometry_rgba_matches_mujoco_material_precedence(
+    geom_attributes, material_rgba, expected_rgba
+):
+    """Export material color and alpha unless the geom has non-default RGBA.
+
+    MuJoCo treats explicit default gray like omitted RGBA, but a change to
+    any channel (including alpha alone) overrides all four material channels.
+    A second material ensures the export follows the geom's material index.
+    """
+    # MJCF geometry sizes are in [m]; RGBA values are dimensionless.
+    scene = mujoco.MJScene(f"""
+        <mujoco>
+          <default>
+            <default class="tinted"><geom rgba="0 0 1 0.75"/></default>
+            <default class="painted"><geom material="paint"/></default>
+          </default>
+          <asset>
+            <material name="unused" rgba="0 1 0 1"/>
+            <material name="paint" rgba="{material_rgba}"/>
+          </asset>
+          <worldbody>
+            <body name="hub">
+              <freejoint/>
+              <geom type="box" size="0.5 0.5 0.5" {geom_attributes}/>
+            </body>
+          </worldbody>
+        </mujoco>
+    """)
+    scene_reader = scene.stateOutMsg.addSubscriber()
+    geoms = scene.getGeomInfos()
+    assert len(geoms) == 1
+    assert list(geoms[0].rgba) == pytest.approx(expected_rgba)
+    assert not scene_reader.isWritten()
+
+    scene.Reset(0)  # [ns]
+    geoms = scene.getGeomInfos()
+    assert list(geoms[0].rgba) == pytest.approx(expected_rgba)
+
+
 if __name__ == "__main__":
     if True:
         test_loading()

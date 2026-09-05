@@ -135,6 +135,67 @@ def test_unnamed_bodies_visualize_before_initialization(tmp_path):
     assert all(reader.isWritten() for reader in output_readers)
 
 
+def test_material_rgba_reaches_vizard_primitives(tmp_path):
+    """Preserve material and overriding geom RGBA for base and additional shapes."""
+    # MJCF positions and sizes are in [m]; RGBA channels are dimensionless.
+    scene = mujoco.MJScene("""
+        <mujoco>
+          <asset>
+            <material name="redGlass" rgba="1 0 0 0.25"/>
+            <material name="invisibleYellow" rgba="1 1 0 0"/>
+          </asset>
+          <worldbody>
+            <body name="hub">
+              <freejoint/>
+              <geom type="box" size="0.5 0.5 0.5" material="redGlass"/>
+              <geom type="sphere" size="0.2" pos="0 0 1"
+                    material="redGlass" rgba="0 1 0 0.5"/>
+              <body name="panel" pos="0 0 2">
+                <joint type="hinge"/>
+                <geom type="box" size="0.5 0.1 0.5"
+                      material="redGlass" rgba="0 0 1 0.75"/>
+                <geom type="sphere" size="0.1" pos="1 0 0" material="invisibleYellow"/>
+              </body>
+            </body>
+          </worldbody>
+        </mujoco>
+    """)
+    simulation = SimulationBaseClass.SimBaseClass()
+    process = simulation.CreateNewProcess("process")
+    step_seconds = 0.1  # [s]
+    process.addTask(simulation.CreateNewTask("task", macros.sec2nano(step_seconds)))
+    simulation.AddModelToTask("task", scene)
+    visualization = vizSupport.enableUnityVisualization(
+        simulation, "task", scene, saveFile=str(tmp_path / "materials.bin")
+    )
+
+    # Vizard stores RGBA as integer channels in [0, 255], including alpha.
+    settings = visualization.settings
+    models = settings.customModelList
+    assert len(models) == 2
+    model_colors = {}
+    for index in range(len(models)):
+        model = models[index]
+        model_colors[tuple(model.simBodiesToModify)] = list(model.color)
+    assert model_colors == {("hub",): [255, 0, 0, 63], ("panel",): [0, 0, 255, 191]}
+
+    bodies = visualization.scData
+    expected_extra_colors = {"hub": [0, 255, 0, 127], "panel": [255, 255, 0, 0]}
+    for index in range(len(bodies)):
+        body = bodies[index]
+        shape_info = body.msmInfo
+        shapes = shape_info.msmList
+        assert len(shapes) == 1
+        shape = shapes[0]
+        assert list(shape.positiveColor) == expected_extra_colors[body.spacecraftName]
+        assert list(shape.negativeColor) == expected_extra_colors[body.spacecraftName]
+
+    # Exercise C++ serialization with translucent and fully transparent colors.
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(macros.sec2nano(step_seconds))
+    simulation.ExecuteSimulation()
+
+
 @pytest.mark.parametrize("second_uses_mujoco", [False, True], ids=["spacecraft", "mujoco"])
 def test_generated_geometry_lives_with_its_visualization(
     monkeypatch, tmp_path, second_uses_mujoco
