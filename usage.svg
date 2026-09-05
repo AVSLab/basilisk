@@ -44,7 +44,7 @@
         </style>
 <rect class="background" width="1000" height="760" />
 <text id="chart-title-text" class="chart-title" x="30" y="34">Basilisk usage</text>
-<text class="chart-title chart-subtitle" x="970" y="32" text-anchor="end">Updated 2026-09-05T14:17:42+00:00</text>
+<text class="chart-title chart-subtitle" x="970" y="32" text-anchor="end">Updated 2026-09-05T14:21:58+00:00</text>
 <text class="panel-title" x="90.0" y="66.0">Daily PyPI download events — 7-day trailing mean</text>
 <rect class="chart-frame" x="90.0" y="90.0" width="875.0" height="225.0" />
 <line class="grid-line" x1="90.0" y1="315.0" x2="965.0" y2="315.0" />
@@ -106,5 +106,5 @@
 <text class="legend-text" x="806.0" y="400.0">Unique cloners</text>
 <path class="data-line github-unique" d="M90.0,639.3 l0,0 L215.0,638.8 L340.0,638.3 L465.0,638.9 L590.0,637.8 L715.0,635.9 L840.0,635.6 L965.0,635.8" />
 <text class="axis-text" x="30" y="723">PyPI: known non-distribution files excluded after a successful refresh; older unnamed files remain.</text>
-<text class="axis-text" x="30" y="745">pypi: ok; last success 2026-09-05T14:17:42+00:00; github: ok; last success 2026-09-05T14:17:42+00:00</text>
+<text class="axis-text" x="30" y="745">pypi: ok; last success 2026-09-05T14:21:58+00:00; github: ok; last success 2026-09-05T14:21:58+00:00</text>
 </svg>

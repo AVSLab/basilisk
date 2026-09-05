@@ -1,12 +1,12 @@
 # Basilisk usage metrics
 
-Updated 2026-09-05T14:17:42+00:00.
+Updated 2026-09-05T14:21:58+00:00.
 Collection status: **complete**.
 
 | Source | Status | Last successful collection (UTC) | Latest error |
 |---|---|---|---|
-| pypi | ok | 2026-09-05T14:17:42+00:00 | none |
-| github | ok | 2026-09-05T14:17:42+00:00 | none |
+| pypi | ok | 2026-09-05T14:21:58+00:00 | none |
+| github | ok | 2026-09-05T14:21:58+00:00 | none |
 
 Failed sources retain their previous observations; they are not new daily snapshots.
 Collection time does not guarantee that the upstream dataset is current; see coverage dates.

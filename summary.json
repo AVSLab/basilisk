@@ -1,6 +1,6 @@
 {
   "collection_status": "complete",
-  "generated_at": "2026-09-05T14:17:42+00:00",
+  "generated_at": "2026-09-05T14:21:58+00:00",
   "github": {
     "current_clone_window": {
       "clones": 5020,
@@ -31,14 +31,14 @@
   "sources": {
     "github": {
       "error": null,
-      "last_attempt_at": "2026-09-05T14:17:42+00:00",
-      "last_success_at": "2026-09-05T14:17:42+00:00",
+      "last_attempt_at": "2026-09-05T14:21:58+00:00",
+      "last_success_at": "2026-09-05T14:21:58+00:00",
       "status": "ok"
     },
     "pypi": {
       "error": null,
-      "last_attempt_at": "2026-09-05T14:17:42+00:00",
-      "last_success_at": "2026-09-05T14:17:42+00:00",
+      "last_attempt_at": "2026-09-05T14:21:58+00:00",
+      "last_success_at": "2026-09-05T14:21:58+00:00",
       "status": "ok"
     }
   }
