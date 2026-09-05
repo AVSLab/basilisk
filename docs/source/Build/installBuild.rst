@@ -318,6 +318,8 @@ Once ``dist3`` has been configured, build ordinary source, header, module, and m
 The build system tracks module implementations, SWIG includes, generated C-message interfaces, Rust bindings, and
 the payload inventory. Adding, renaming, or deleting a ``*Payload.h`` file causes CMake to reconfigure automatically,
 regenerate the current message manifest, and remove generated artifacts belonging to payloads that no longer exist.
+Obsolete generated C-message interfaces are removed during configuration, before Rust reads them. This also covers
+moving a payload from the C message tree to the C++ message tree, including payloads supplied by an External folder.
 A clean build is not required for these changes. An unchanged build does not recompile native sources or regenerate
 SWIG wrappers.
 
