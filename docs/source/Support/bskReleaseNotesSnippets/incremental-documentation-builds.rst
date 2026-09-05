@@ -1,5 +1,6 @@
 - Preserved unchanged generated documentation sources and cached Doxygen XML by module so Sphinx can reuse them during incremental HTML builds.
 - Made XML cache reuse account for transitive local includes even with ``SEARCH_INCLUDES=NO``, honor Sphinx configuration overrides, bypass reuse for environment-dependent settings, and recover safely after interrupted cache updates.
+- Made ``make.bat clean`` remove all generated documentation artifacts, including the Doxygen cache, on Windows.
 - Kept XML caches inside the selected build directory so cleaning an alternate ``BUILDDIR`` also removes its cache.
 - Resolved relative Doxygen input settings from the Sphinx configuration directory and tracked headers found there for cache invalidation, while keeping XML output in cache staging directories.
 - Preserved Doxygen configuration option order and prevented stale XML when bibliography settings, documentation commands, or aliases reference external files, even with preprocessing disabled.

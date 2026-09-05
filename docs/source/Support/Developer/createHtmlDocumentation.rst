@@ -147,6 +147,10 @@ To clean out the sphinx generated documents and folder use::
 
     make clean
 
+On Windows, use ``make.bat clean`` instead. Both commands remove the generated
+HTML, Sphinx environment, Doxygen XML cache, generated API source trees, and
+``breathe.data``. The next documentation build is a fully clean build.
+
 If you override ``BUILDDIR`` with the Makefile, use the same value when cleaning::
 
     make html BUILDDIR=build-preview
