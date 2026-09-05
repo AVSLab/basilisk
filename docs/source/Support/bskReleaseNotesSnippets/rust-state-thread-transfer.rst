@@ -1,1 +1,0 @@
-- Rust module private state now requires ``Default + Send``, preventing thread-bound values from crossing Basilisk's caller/worker thread boundary. Ordinary owned numerical state needs no changes; this compile-time check adds no locks and does not permit concurrent calls on a module instance.
