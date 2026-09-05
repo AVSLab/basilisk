@@ -19,6 +19,8 @@
 
 #include "MJSpec.h"
 
+#include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstddef>
 #include <iterator>
@@ -271,6 +273,7 @@ std::vector<MJGeomInfo> MJSpec::getGeomInfos() const
 {
     std::vector<MJGeomInfo> geoms;
     auto m = this->model.get();
+    constexpr std::array<float, 4> defaultGeomRgba = {0.5f, 0.5f, 0.5f, 1.0f}; // [-]
 
     for (int i = 0; i < m->ngeom; i++) {
         int bodyId = m->geom_bodyid[i];
@@ -282,7 +285,14 @@ std::vector<MJGeomInfo> MJSpec::getGeomInfos() const
         std::copy_n(m->geom_size + i * 3, 3, std::begin(info.size));
         std::copy_n(m->geom_pos  + i * 3, 3, std::begin(info.pos));
         std::copy_n(m->geom_quat + i * 4, 4, std::begin(info.quat));
-        std::transform(m->geom_rgba + i * 4, m->geom_rgba + (i + 1) * 4, std::begin(info.rgba),
+        const float* rgba = m->geom_rgba + i * 4;
+        const int materialId = m->geom_matid[i];
+        // Match MuJoCo's renderer: non-default geom RGBA overrides the entire
+        // material color, including alpha. Explicit default gray does not.
+        if (materialId >= 0 && std::equal(defaultGeomRgba.begin(), defaultGeomRgba.end(), rgba)) {
+            rgba = m->mat_rgba + materialId * 4;
+        }
+        std::transform(rgba, rgba + 4, std::begin(info.rgba),
                        [](float v) { return static_cast<double>(v); });
     }
     return geoms;

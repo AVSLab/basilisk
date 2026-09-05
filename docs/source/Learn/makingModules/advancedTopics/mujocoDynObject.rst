@@ -35,6 +35,14 @@ Only the ``--mujoco True`` option is required.
 ``enableUnityVisualization`` call, just like any other Basilisk simulation. See :ref:`scenarioDeployPanels`
 for an example.
 
+The generated Vizard primitives preserve color and transparency from MuJoCo
+materials. As in MuJoCo, a geom's ``rgba`` overrides the material's entire RGBA
+value only when it differs from the default ``0.5 0.5 0.5 1``; this also applies
+to values inherited through XML defaults. The last channel is alpha: zero is
+fully transparent and one is opaque. This applies to both the first geom used
+as a body's model and its additional shapes. Textures and other material
+shading properties are not transferred.
+
 The Multi-body System
 ---------------------
 In this documentation, we define a "multi-body dynamical system" as a collection of interconnected rigid
