@@ -149,6 +149,50 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
 	max-width: 500px;
 }
 
+/* Local guide navigation is separate from the site tree and uses no JavaScript. */
+.rst-content .bsk-page-navigation {
+    margin: 0 0 1.5rem;
+    border: 1px solid var(--bsk-secondary-text);
+    border-radius: 4px;
+}
+
+.rst-content .bsk-page-navigation summary {
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    color: var(--bsk-content-link);
+    font-weight: 600;
+}
+
+.rst-content .bsk-page-navigation summary:hover {
+    color: var(--bsk-content-link-hover);
+}
+
+.rst-content .bsk-page-navigation summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.rst-content .bsk-page-navigation nav {
+    max-height: 24rem;
+    overflow-y: auto;
+    padding: 0 1rem 0.75rem;
+}
+
+.rst-content .bsk-page-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.rst-content .bsk-page-navigation li {
+    list-style: none;
+    margin: 0.3rem 0;
+}
+
+.rst-content .bsk-page-navigation .bsk-page-navigation-subsection {
+    margin-left: 1.25rem;
+}
+
 /* Keep auxiliary links beside the summary, not below the API listing. */
 .rst-content .sidebar.bsk-module-auxiliary {
     width: 15rem;

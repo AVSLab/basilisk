@@ -4,6 +4,7 @@ import filecmp
 import hashlib
 import shutil
 from pathlib import Path
+from urllib.parse import quote
 
 
 def refresh_navigation_pages(app, env):
@@ -29,9 +30,46 @@ def refresh_navigation_pages(app, env):
     return sorted(env.found_docs) if previous != fingerprint else []
 
 
+def add_page_navigation(app, pagename, templatename, context, doctree):
+    """Add a collapsible local contents list to long, authored HTML guides.
+
+    Keep generated module/API pages and examples out of this initial trial.
+    Use resolved section IDs, not guessed anchors or headings copied by hand.
+    """
+    if doctree is None or pagename.startswith(("Documentation/", "examples/")):
+        return
+    from docutils import nodes
+
+    entries = []
+    for section in doctree.findall(nodes.section):
+        depth = 1
+        parent = section.parent
+        while parent is not None:
+            if isinstance(parent, nodes.section):
+                depth += 1
+            parent = parent.parent
+        if depth not in (2, 3) or not section.get("ids"):
+            continue
+        title = next((child for child in section if isinstance(child, nodes.title)), None)
+        if title is not None:
+            entries.append({
+                "title": title.astext(),
+                "href": "#" + quote(section["ids"][0], safe=""),
+                "nested": depth == 3,
+            })
+    if sum(not entry["nested"] for entry in entries) < 4:
+        return
+    body = context.get("body", "")
+    if "</h1>" not in body:
+        return
+    navigation = app.builder.templates.render("on-this-page.html", {"entries": entries})
+    context["body"] = body.replace("</h1>", "</h1>" + navigation, 1)
+
+
 def setup(app):
     """Register incremental HTML navigation invalidation."""
     app.connect("env-updated", refresh_navigation_pages)
+    app.connect("html-page-context", add_page_navigation)
     return {"version": "1", "parallel_read_safe": True, "parallel_write_safe": True}
 
 
