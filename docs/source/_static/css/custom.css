@@ -1,24 +1,42 @@
-div.textblock a, div.textblock a:visited, p a, p a:visited,
-a, a:hover, a:visited,
-a.reference, a.internal, a.current {
-	color: #cfb87c;
+/* Basilisk overrides for sphinx_rtd_theme.
+ * Keep theme-matching selector specificity and cascade order when regrouping rules.
+ */
+:root {
+    color-scheme: light dark;
+    --bsk-brand-gold: #cfb87c;
+    --bsk-brand-gray: #565A5C;
+    --bsk-code-text: #E74C3C;
+    --bsk-code-literal: #cb7ccf;
 }
 
-a.icon-home, a.icon-home:visited {
-	color: #666;
+/* Base links and branding --------------------------------------------------- */
+div.textblock a, div.textblock a:visited, p a, p a:visited,
+a, a:hover, a:visited,
+a.reference,
+a.internal,
+a.current {
+    color: var(--bsk-brand-gold);
+}
+
+a.icon-home,
+a.icon-home:visited {
+    color: #666;
 }
 
 div.wy-menu > p.caption > span.caption-text {
-	color: white;
-	font-weight: bold;
+    color: white;
+    font-weight: bold;
 }
-a.el, a.el:visited {
-	color: #565A5C;
+a.el,
+a.el:visited {
+    color: var(--bsk-brand-gray);
 }
 
-.wy-side-nav-search>div.version {
-	color: #565A5C; # CU dark gray
+.wy-side-nav-search > div.version {
+    color: var(--bsk-brand-gray); /* CU dark gray */
 }
+
+/* Sidebar logo and search -------------------------------------------------- */
 
 /* Center the brand above a frosted search field; keep homepage artwork unchanged. */
 .wy-side-nav-search > a {
@@ -73,6 +91,8 @@ a.el, a.el:visited {
     }
 }
 
+/* Site navigation and content palette -------------------------------------- */
+
 /* Reduce menu whitespace by 25% at every depth, preserving text and indentation.
  * Override the theme's more-specific padding shorthands for expanded branches. */
 .wy-menu-vertical a {
@@ -101,6 +121,8 @@ a.el, a.el:visited {
     color: var(--bsk-secondary-text);
 }
 
+/* Search results ----------------------------------------------------------- */
+
 /* Compact search results without hiding excerpts or changing their ranking. */
 #search-results .search li {
     margin-bottom: 10px;
@@ -124,6 +146,8 @@ a.el, a.el:visited {
     color: var(--bsk-secondary-text);
 }
 
+/* Keyboard focus ----------------------------------------------------------- */
+
 /* Keyboard focus remains visible independently of link color and hover state. */
 .wy-nav-content a:focus-visible,
 .wy-nav-side a:focus-visible,
@@ -139,21 +163,26 @@ a.el, a.el:visited {
     outline-offset: -3px;
 }
 
-code span.pre, code {
-	color: #cb7ccf;
+/* Technical content: code, tables, figures, and equations ------------------- */
+
+/* Literal spans keep their accent; the surrounding code uses the theme's red. */
+code span.pre {
+    color: var(--bsk-code-literal);
 }
 
-th.head, .wy-nav-top  {
-	color: white;
-	background-color: #565A5C;
+th.head,
+.wy-nav-top {
+    color: white;
+    background-color: var(--bsk-brand-gray);
 }
 
 th.head p {
-	margin: 0px;
+    margin: 0;
 }
 
-tr td p, th.head p {
-	font-size: small;
+tr td p,
+th.head p {
+    font-size: small;
 }
 
 /* Keep comfortable line spacing without enlarging the theme's table text. */
@@ -177,7 +206,7 @@ html.writer-html5 .rst-content table.docutils :is(td, th) > p {
 }
 
 img.logo {
-	filter: drop-shadow(0px 0px 8px #fff);
+    filter: drop-shadow(0 0 8px #fff);
 }
 /* The theme wraps tables in this container for local horizontal scrolling. */
 .wy-table-responsive {
@@ -185,7 +214,8 @@ img.logo {
     overflow-x: auto;
 }
 
-.wy-table-responsive table td, .wy-table-responsive table th {
+.wy-table-responsive table td,
+.wy-table-responsive table th {
     white-space: normal;
 }
 
@@ -196,18 +226,26 @@ img.logo {
     float: right;
 }
 
-body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-      "Lucida Grande", "Segoe UI" !important;
-}
-
-:root {
-	color-scheme: light dark;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+.rst-content,
+.sidebar,
+.sidebar-title,
+p.caption {
+    /* Retain priority over the theme's heading fonts. */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+        "Lucida Grande", "Segoe UI" !important;
 }
 
 .sidebar {
-	max-width: 500px;
+    max-width: 500px;
 }
+
+/* In-page navigation and auxiliary links ----------------------------------- */
 
 /* Local guide navigation is separate from the site tree and uses no JavaScript. */
 .rst-content .bsk-page-navigation {
@@ -301,37 +339,46 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
     }
 }
 
-code, .rst-content tt, .rst-content code {
-	color: #E74C3C;
+/* Inline code, lists, and badges -------------------------------------------- */
+
+code,
+.rst-content tt,
+.rst-content code {
+    color: var(--bsk-code-text);
 }
 
-ul.simple li, aside.sidebar ul li {
-	all: revert;
+/* Reset only list spacing; retain other intentional theme and component styles. */
+ul.simple li,
+aside.sidebar ul li {
+    margin: revert;
+    line-height: revert;
 }
 
-ul.simple li p, aside.sidebar ul li p {
-	all: revert;
-	line-height: 24px;
-	font-size: 16px;
-	margin: 0px;
+ul.simple li p,
+aside.sidebar ul li p {
+    line-height: 24px;
+    font-size: 16px;
+    margin: 0;
 }
 
 ul.simple ul li {
-	list-style-type: circle;
-	margin-left: 1.5em;
+    list-style-type: circle;
+    margin-left: 1.5em;
 }
 
-ul.simple, aside.sidebar ul {
-	all: revert;
-	padding-left: 1.5em;
+ul.simple,
+aside.sidebar ul {
+    margin: revert;
+    line-height: revert;
+    padding-left: 1.5em;
 }
 
 figure {
-	text-align: center;
+    text-align: center;
 }
 
 .beta-label {
-    background-color: #cfb87c;
+    background-color: var(--bsk-brand-gold);
     color: #000;
     padding: 2px 5px;
     border-radius: 5px;
@@ -367,11 +414,18 @@ figure {
     color: #fff;
 }
 
+/* Dark mode ---------------------------------------------------------------- */
+
 @media (prefers-color-scheme: dark) {
+    :root {
+        --bsk-dark-surface: #222;
+        --bsk-dark-api-background: #2D4151;
+    }
+
     /* The idle field sits on the same gold header in both color modes. */
     .wy-side-nav-search input[type="text"]:focus {
         color: #f5f5f5;
-        background: #222;
+        background: var(--bsk-dark-surface);
         box-shadow: inset 0 1px 0 #ffffff26;
     }
 
@@ -386,134 +440,163 @@ figure {
     }
 
     .wy-nav-content {
-        --bsk-content-link: #CFB87C;
+        --bsk-content-link: var(--bsk-brand-gold);
         --bsk-content-link-hover: #F1DBA5;
         --bsk-secondary-text: #B3B3B3;
     }
 
-	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
-		background-color: black;
-		color:  #ccc;
-	}
+    .wy-nav-content,
+    .wy-body-for-nav,
+    .wy-nav-content-wrap,
+    math,
+    span[id*='MathJax-Span'] {
+        background-color: black;
+        color: #ccc;
+    }
 
-	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
-	{
-		background-color: rgb(45, 65, 81);
-	}
+    html.writer-html4 .rst-content dl:not(.docutils) > dt,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) > dt {
+        background-color: var(--bsk-dark-api-background);
+    }
 
-	html.writer-html4 .rst-content dl:not(.docutils) .descclassname, html.writer-html4 .rst-content dl:not(.docutils) .descname, html.writer-html4 .rst-content dl:not(.docutils) .sig-name, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descclassname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descname, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .sig-name
-	{
-		color: rgb(237, 240, 242);
-	}
+    html.writer-html4 .rst-content dl:not(.docutils) .descclassname,
+    html.writer-html4 .rst-content dl:not(.docutils) .descname,
+    html.writer-html4 .rst-content dl:not(.docutils) .sig-name,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descclassname,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .descname,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) .sig-name {
+        color: rgb(237, 240, 242);
+    }
 
-	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
-	{
-		background-color: #333;;
-	}
+    html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) > dt,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) > dt {
+        background-color: #333;
+        color: rgb(41, 128, 185);
+    }
 
-	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple) dl:not(.option-list):not(.field-list):not(.footnote):not(.citation):not(.glossary):not(.simple)>dt
-	{
-		color: rgb(41, 128, 185);
-	}
+    .highlight .go {
+        color: #ccc;
+    }
 
-	.highlight .go {
-		color:  #ccc;
-	}
+    img.logo {
+        filter: drop-shadow(0 0 8px #000);
+    }
 
-	img.logo {
-		filter: drop-shadow(0px 0px 8px #000);
-	}
+    .rst-content code {
+        background: #0004;
+    }
+    html.writer-html4 .rst-content dl:not(.docutils) > dt,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt,
+    .rst-content .note {
+        background: var(--bsk-dark-api-background);
+    }
 
-	.rst-content code {
-		background: #0004;
-	}
-	html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt, .rst-content .note {
-		background: #2D4151;
-	}
+    .rst-content .warning,
+    .rst-content .caution,
+    .rst-content .attention {
+        background: #51402F;
+    }
 
-	.rst-content .warning, .rst-content .caution, .rst-content .attention {
-		background: #51402F;
-	}
+    .rst-content .important,
+    .rst-content .hint,
+    .rst-content .tip {
+        background: #275145;
+    }
 
-	.rst-content .important, .rst-content .hint, .rst-content .tip {
-		background: #275145;
-	}
+    .rst-content .danger,
+    .rst-content .error {
+        background: #523A37;
+    }
 
-	.rst-content .danger, .rst-content .error {
-		background: #523A37;
-	}
+    /* Sidebar panels and buttons. */
+    .sidebar {
+        border-color: #666;
+    }
+    .rst-content .sidebar {
+        background: var(--bsk-dark-surface);
+    }
+    .rst-content .sidebar .sidebar-title {
+        background: #666;
+    }
 
-	/* sidebar formatting */
-	.sidebar {
-		border-color: #666;
-	}
-	.rst-content .sidebar {
-		background: #222;
-	}
-	.rst-content .sidebar .sidebar-title {
-		background: #666;
-	}
+    .btn-neutral,
+    .btn-neutral:hover,
+    .btn:visited {
+        background: #333 !important;
+        color: #ccc !important;
+    }
 
+    .highlight {
+        background: #4448;
+    }
 
-	.btn-neutral, .btn-neutral:hover, .btn:visited {
-		background: #333 !important;
-		color: #ccc !important;
-	}
+    .rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
+        background-color: var(--bsk-dark-surface);
+    }
 
-	.highlight {
-		background: #4448;
-	}
+    .rst-content pre.literal-block,
+    .rst-content div[class^='highlight'],
+    .rst-content code,
+    .rst-content table.docutils,
+    .wy-table thead th,
+    .rst-content table.docutils thead th,
+    .rst-content table.field-list thead th,
+    .wy-table-bordered-all td,
+    .rst-content table.docutils td {
+        border-color: gray;
+    }
 
-	.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
-		background-color: #222;
-	}
+    img[src$="svg"],
+    object.graphviz {
+        background-color: white;
+        filter: invert(100%) hue-rotate(180deg) saturate(200%);
+    }
 
-	.rst-content pre.literal-block, .rst-content div[class^='highlight'], .rst-content code, .rst-content table.docutils, .wy-table thead th, .rst-content table.docutils thead th, .rst-content table.field-list thead th, .wy-table-bordered-all td, .rst-content table.docutils td {
-		border-color: gray;
-	}
+    img[src$="jpg"],
+    img[src$="png"] {
+        border-radius: 5px;
+    }
 
-	img[src$="svg"], object.graphviz {
-		background-color: white;
-		filter: invert(100%) hue-rotate(180deg) saturate(200%);
-	}
+    .rst-content dl:not(.docutils) dt {
+        background-color: var(--bsk-dark-api-background);
+    }
 
-	img[src$="jpg"], img[src$="png"] {
-		border-radius: 5px;
-	}
+    .rst-content dl:not(.docutils) {
+        padding-top: 1em;
+    }
 
-	.rst-content dl:not(.docutils) dt {
-		background-color: #2D4151;
-	}
+    .rst-content dl:not(.docutils) code.descclassname,
+    .rst-content dl:not(.docutils) code.descname {
+        color: #ccc;
+    }
 
-	.rst-content dl:not(.docutils) {
-		padding-top: 1em;
-	}
+    html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list) > dt,
+    html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt,
+    .rst-content dl:not(.docutils) dl dt {
+        background-color: black;
+    }
 
-	.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) code.descname {
-		color:  #ccc;
-	}
+    .wy-table caption,
+    .rst-content table.docutils caption,
+    .rst-content table.field-list caption {
+        color: inherit;
+    }
 
-	html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list)>dt, .rst-content dl:not(.docutils) dl dt {
-		background-color: black;
-	}
+    span.vm,
+    span.nf,
+    span.nn {
+        color: #66f !important;
+    }
 
-	.wy-table caption, .rst-content table.docutils caption, .rst-content table.field-list caption {
-		color: inherit;
-	}
+    span.normal {
+        color: #333 !important;
+    }
 
-	span.vm, span.nf, span.nn {
-	    color:#66f !important;
-	}
+    td.linenos pre {
+        background: #ccc !important;
+    }
 
-	span.normal {
-		color: #333 !important;
-	}
-
-	td.linenos pre {
-	    background: #ccc !important;
-	}
-
-	.rst-content .highlighted {
-		background-color: #333;
-	}
+    .rst-content .highlighted {
+        background-color: #333;
+    }
 }
