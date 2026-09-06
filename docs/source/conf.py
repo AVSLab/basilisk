@@ -291,6 +291,9 @@ html_css_files = [
     'css/custom.css',
 ]
 
+# Included by Sphinx in language_data.js, before its standard search engine.
+html_search_scorer = str(Path(__file__).resolve().parent / '_static/js/search-scorer.js')
+
 html_js_files = [
     'js/sidebar.js',
 ]
