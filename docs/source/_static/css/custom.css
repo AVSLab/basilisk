@@ -43,6 +43,13 @@ a.el, a.el:visited {
     padding: 0;
 }
 
+/* Reduce menu whitespace by 25% at every depth, preserving text and indentation.
+ * Override the theme's more-specific padding shorthands for expanded branches. */
+.wy-menu-vertical a {
+    padding-top: calc(0.4045em * 0.75) !important;
+    padding-bottom: calc(0.4045em * 0.75) !important;
+}
+
 .wy-nav-content {
     --bsk-content-link: #765A16;
     --bsk-content-link-hover: #4F3B0C;
@@ -61,6 +68,29 @@ a.el, a.el:visited {
 }
 
 .wy-nav-content footer {
+    color: var(--bsk-secondary-text);
+}
+
+/* Compact search results without hiding excerpts or changing their ranking. */
+#search-results .search li {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+#search-results .search li:first-child {
+    padding-top: 10px;
+}
+
+#search-results .search li a {
+    font-size: 100%;
+    margin-bottom: 4px;
+}
+
+#search-results .context {
+    margin: 0;
+    line-height: 1.45;
     color: var(--bsk-secondary-text);
 }
 
