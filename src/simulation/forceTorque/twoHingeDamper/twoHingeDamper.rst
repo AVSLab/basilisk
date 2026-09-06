@@ -1,6 +1,3 @@
-twoHingeDamper
-==============
-
 Executive Summary
 -----------------
 
