@@ -1,8 +1,38 @@
-"""Utilities for synchronizing generated documentation sources."""
+"""Synchronize generated sources and refresh shared navigation when it changes."""
 
 import filecmp
+import hashlib
 import shutil
 from pathlib import Path
+
+
+def refresh_navigation_pages(app, env):
+    """Rewrite HTML pages when the shared navigation tree changes.
+
+    Sphinx normally rebuilds changed documents and their toctree ancestors,
+    but an unchanged sibling also embeds the global sidebar. Compare the
+    resolved local navigation trees, including titles and explicit link labels,
+    to catch changes without forcing source parsing or Doxygen regeneration.
+    The fingerprint is persisted with the Sphinx environment.
+    """
+    if app.builder.format != "html":
+        return []
+    digest = hashlib.sha256()
+    for docname, toc in sorted(env.tocs.items()):
+        digest.update(docname.encode("utf8"))
+        digest.update(b"\0")
+        digest.update(toc.pformat().encode("utf8"))
+        digest.update(b"\0")
+    fingerprint = digest.hexdigest()
+    previous = getattr(env, "bsk_navigation_fingerprint", None)
+    env.bsk_navigation_fingerprint = fingerprint
+    return sorted(env.found_docs) if previous != fingerprint else []
+
+
+def setup(app):
+    """Register incremental HTML navigation invalidation."""
+    app.connect("env-updated", refresh_navigation_pages)
+    return {"version": "1", "parallel_read_safe": True, "parallel_write_safe": True}
 
 
 def _tree_entries(root):

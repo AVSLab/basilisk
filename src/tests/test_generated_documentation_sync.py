@@ -3,6 +3,10 @@
 import importlib.util
 import os
 from pathlib import Path
+import subprocess
+import sys
+
+import pytest
 
 
 DOCUMENTATION_SYNC_PATH = (
@@ -102,3 +106,56 @@ def test_sync_generated_tree_can_preserve_stale_files(tmp_path):
     assert (destination_root / "current.xml").read_text(encoding="utf8") == "current\n"
     assert (destination_root / "stale.xml").is_file()
     assert counts == {"added": 0, "updated": 1, "unchanged": 0, "removed": 0}
+
+
+def test_incremental_build_refreshes_sibling_navigation(tmp_path):
+    """Update an unchanged sibling's sidebar when a module bypasses its folder."""
+    pytest.importorskip("sphinx")
+    source = tmp_path / "source"
+    output = tmp_path / "html"
+    cache = tmp_path / "doctrees"
+    _write_file(source / "conf.py", (
+        "import sys\n"
+        f"sys.path.insert(0, {str(DOCUMENTATION_SYNC_PATH.parent)!r})\n"
+        "extensions = ['generated_documentation']\n"
+        "master_doc = 'index'\n"
+        "html_theme = 'classic'\n"
+        "html_sidebars = {'**': ['globaltoc.html']}\n"
+    ))
+    _write_file(source / "index.rst", (
+        "Home\n====\n\n.. toctree::\n\n   folder\n   sibling\n"
+    ))
+    _write_file(source / "folder.rst", (
+        "Folder\n======\n\n.. toctree::\n\n   module\n"
+    ))
+    _write_file(source / "module.rst", "Module\n======\n\nModule content.\n")
+    _write_file(source / "sibling.rst", "Sibling\n=======\n\nUnchanged content.\n")
+    sibling_timestamp = (source / "sibling.rst").stat().st_mtime_ns
+
+    def build():
+        """Build incrementally using the same cached Sphinx environment."""
+        result = subprocess.run(
+            [sys.executable, "-m", "sphinx", "-b", "html", "-W", "-q",
+             "-d", str(cache), str(source), str(output)],
+            capture_output=True, text=True, check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        return (output / "sibling.html").read_text(encoding="utf8")
+
+    assert 'href="folder.html"' in build()
+    _write_file(source / "index.rst", (
+        "Home\n====\n\n.. toctree::\n\n   Direct module <module>\n   sibling\n"
+    ))
+    _write_file(source / "folder.rst", (
+        ":orphan:\n\nFolder\n======\n\n:doc:`Module documentation <module>`\n"
+    ))
+    html = build()
+    assert 'href="folder.html"' not in html
+    assert 'href="module.html"' in html
+    assert "Direct module" in html
+    assert (source / "sibling.rst").stat().st_mtime_ns == sibling_timestamp
+
+    # A subsequent no-change build must not rewrite the page again.
+    html_timestamp = (output / "sibling.html").stat().st_mtime_ns
+    build()
+    assert (output / "sibling.html").stat().st_mtime_ns == html_timestamp

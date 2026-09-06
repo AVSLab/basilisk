@@ -185,6 +185,7 @@ extensions = [
     'recommonmark',
     'breathe',
     'doxygen_cache',
+    'generated_documentation',
     'sphinx_copybutton',
     'bsk_module_io',
     'sphinxcontrib.youtube'
@@ -506,7 +507,7 @@ class fileCrawler():
         rel_path = self._sourceRelativePath(py_file)
         path_parts = rel_path.split("/")
 
-        if not rel_path.startswith(("fswAlgorithms/", "simulation/")):
+        if not self._isSupportedBskModulePath(rel_path):
             return False
         if any(folder in path_parts for folder in ("_UnitTest", "_Documentation", "_GeneralModuleFiles", "__pycache__")):
             return False
@@ -560,11 +561,138 @@ class fileCrawler():
             title = title_text
         return title + "\n" + "=" * len(title) + "\n\n"
 
-    def populateDocIndex(self, index_path, file_paths, dir_paths):
+    @staticmethod
+    def _navigationSortKey(name):
+        """Sort underscore-prefixed entries first, then alphabetically by label."""
+        return (not name.startswith("_"), name.casefold(), name)
+
+    def _documentedModuleNames(self, src_path):
+        """Find documented modules, including several sharing one directory."""
+        source = Path(src_path)
+        if not self._isSupportedBskModulePath(self._sourceRelativePath(source)):
+            return []
+        names = []
+        for document in sorted(source.glob("*.rst")):
+            name = document.stem
+            if name.startswith("_"):
+                continue
+            is_module = (
+                self.isBskCppOrCModule(str(source), name)
+                and self._hasMatchingModuleSource(str(source), name)
+            ) or (
+                (source / (name + ".py")).is_file()
+                and self.isBskPythonModule(str(source / (name + ".py")))
+            ) or (
+                name == source.name
+                and (source / "Cargo.toml").is_file()
+                and self.isBskRustModule(str(source / "Cargo.toml"))
+            )
+            if is_module:
+                names.append(name)
+        return names
+
+    def _directModuleName(self, src_path):
+        """Return the sole module to use as a folder's navigation destination.
+
+        Supported areas are ``fswAlgorithms``, ``simulation``, and
+        ``moduleTemplates``. Custom folder introductions and multiple module
+        pages retain their grouping pages. Helpers move into the module sidebar.
+        """
+        source = Path(src_path)
+        relative_path = self._sourceRelativePath(source)
+        if not self._isSupportedBskModulePath(relative_path):
+            return None
+        if any((source / filename).is_file() for filename in ("_default.rst", "_doc.rst")):
+            return None
+
+        documents = list(source.glob("*.rst"))
+        if len(documents) != 1:
+            return None
+        # Some legacy folders differ from the module name, e.g. CSSEst/cssWlsEst.
+        name = documents[0].stem
+        return name if name in self._documentedModuleNames(source) else None
+
+    def _moduleAuxiliaryPages(self, src_path):
+        """List generated helper pages and folders without duplicating modules."""
+        paths = self.grabRelevantFiles(str(Path(src_path)) + os.sep)
+        files, directories = self.seperateFilesAndDirs(paths)
+        module_names = self._documentedModuleNames(src_path)
+        entries = []
+        for directory in directories:
+            if self._isCargoSourceDirectory(directory, files) or self._isCargoTargetDirectory(directory, files):
+                continue
+            name = Path(directory).name
+            target = self._directModuleName(directory) or "index"
+            entries.append(("Unit tests" if name == "_UnitTest" else name, f"{name}/{target}"))
+        helper_names = sorted({
+            Path(filename).stem for filename in files
+            if Path(filename).name != "Cargo.toml"
+            and Path(filename).stem not in module_names
+        })
+        entries.extend((name, name) for name in helper_names)
+        return sorted(entries, key=lambda entry: self._navigationSortKey(
+            entry[1].split("/")[0] if entry[1].startswith("_") else entry[0]
+        ))
+
+    def _withModuleAuxiliaryNavigation(self, contents, src_path, module_name):
+        """Place auxiliary links beside the summary, after introductory notes."""
+        module_names = self._documentedModuleNames(src_path)
+        if module_name not in module_names:
+            return contents
+        entries = self._moduleAuxiliaryPages(src_path)
+        if not entries:
+            return contents
+        navigation = (
+            ".. sidebar:: Auxiliary Files\n"
+            "   :class: bsk-module-auxiliary\n\n"
+        )
+        if len(module_names) > 1:
+            navigation += "   Shared by the modules in this folder.\n\n"
+        navigation += "".join(
+            f"   * :doc:`{label} <{target}>`\n" for label, target in entries
+        ) + "\n"
+        if self._directModuleName(src_path) == module_name:
+            navigation += ".. toctree::\n   :hidden:\n   :maxdepth: 1\n\n"
+            navigation += "".join(
+                f"   {label} <{target}>\n" for label, target in entries
+            ) + "\n"
+        # Otherwise the grouping page owns the shared auxiliary pages; links
+        # from module pages must not give them multiple toctree parents.
+        lines = contents.splitlines(keepends=True)
+        for index, line in enumerate(lines[:-1]):
+            underline = lines[index + 1].strip()
+            if (
+                line.rstrip().casefold() == "executive summary"
+                and len(underline) >= len(line.rstrip())
+                and len(set(underline)) == 1
+                and underline[0] in "=-~^\"'`:+*#_"
+            ):
+                # Insert before the heading so the floated box aligns with it.
+                # Any leading note remains full-width above this section.
+                return "".join(lines[:index]) + navigation + "".join(lines[index:])
+        # Modules without a summary heading retain a top-of-page sidebar.
+        return navigation + contents
+
+    def populateDocIndex(self, index_path, file_paths, dir_paths, src_path):
 
         # get the folder name
         name = os.path.basename(os.path.normpath(index_path))
         lines = ""
+
+        direct_module = self._directModuleName(src_path)
+        if direct_module:
+            # Preserve old folder URLs and labels without a second toctree
+            # parent for the module or its tests.
+            lines = (
+                f":orphan:\n\n.. _Folder_{name}:\n\n"
+                f"{name}\n{'=' * len(name)}\n\n"
+                f":doc:`Module documentation <{direct_module}>`\n\n"
+            )
+            for label, target in self._moduleAuxiliaryPages(src_path):
+                lines += f":doc:`{label} <{target}>`\n\n"
+            if self.newFiles:
+                Path(index_path, "index.rst").write_text(lines, encoding="utf8")
+            return
 
         # if a _default.rst file exists in a folder, then use it to generate the index.rst file
         try:
@@ -600,8 +728,7 @@ class fileCrawler():
             except:
                 pass
 
-            # Add a linking point to all local files
-            lines += """\n\n.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files:\n\n"
+            # Separate module pages from any supporting source-file pages.
             calledNames = []
             rust_module_name = None
             for file_path in file_paths:
@@ -611,7 +738,6 @@ class fileCrawler():
                 candidate_name = os.path.basename(source_path)
                 if self.isBskRustModule(file_path):
                     rust_module_name = candidate_name
-                    lines += "   " + rust_module_name + "\n"
                     calledNames.append(rust_module_name)
                     break
             for file_path in sorted(file_paths):
@@ -620,14 +746,39 @@ class fileCrawler():
                     continue
                 fileName = fileName[:fileName.rfind('.')]
                 if not fileName in calledNames:
-                    lines += "   " + fileName + "\n"
                     calledNames.append(fileName)
 
+            module_names = self._documentedModuleNames(src_path)
+            for caption, entries in (
+                ("Modules", [name for name in calledNames if name in module_names]),
+                ("Files", [name for name in calledNames if name not in module_names]),
+            ):
+                if entries:
+                    lines += f"\n\n.. toctree::\n   :maxdepth: 1\n   :caption: {caption}:\n\n"
+                    for entry in sorted(entries, key=self._navigationSortKey):
+                        lines += f"   {entry} <{entry}>\n" if caption == "Modules" else f"   {entry}\n"
+
             # Add a linking point to all local directories
-            lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Directories:\n\n"
-            for dir_path in sorted(dir_paths):
+            directory_destinations = [
+                (directory, self._directModuleName(directory))
+                for directory in dir_paths
+            ]
+            directory_destinations.sort(key=lambda entry: self._navigationSortKey(
+                Path(entry[0]).name if Path(entry[0]).name.startswith("_")
+                else entry[1] or Path(entry[0]).name
+            ))
+            caption = "Modules" if directory_destinations and all(
+                module for _, module in directory_destinations
+            ) else "Directories"
+            lines += f".. toctree::\n   :maxdepth: 1\n   :caption: {caption}:\n\n"
+            for dir_path, module in directory_destinations:
                 dirName = os.path.basename(os.path.normpath(dir_path))
-                lines += "   " + dirName + "/index\n"
+                if module:
+                    lines += f"   {module} <{dirName}/{module}>\n"
+                elif dirName == "_UnitTest" and module_names:
+                    lines += "   Unit tests <_UnitTest/index>\n"
+                else:
+                    lines += "   " + dirName + "/index\n"
 
         if self.newFiles:
             with open(os.path.join(index_path, "index.rst"), "w") as f:
@@ -699,7 +850,9 @@ class fileCrawler():
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r', encoding="utf8") as docFile:
                         docContents = docFile.read()
-                    lines += docContents + "\n\n"
+                    lines += self._withModuleAuxiliaryNavigation(
+                        docContents, src_path, c_file_basename
+                    ) + "\n\n"
                     lines += "----\n\n"
 
                 # Populate the module's .rst
@@ -745,7 +898,9 @@ class fileCrawler():
                 if os.path.isfile(docFileName):
                     with open(docFileName, 'r', encoding="utf8") as docFile:
                         docContents = docFile.read()
-                    lines += docContents + "\n\n"
+                    lines += self._withModuleAuxiliaryNavigation(
+                        docContents, os.path.dirname(py_file), fileName
+                    ) + "\n\n"
                     lines += "----\n\n"
 
                 lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
@@ -766,7 +921,9 @@ class fileCrawler():
 
             doc_file_name = os.path.join(src_path, module_name + ".rst")
             with open(doc_file_name, 'r', encoding="utf8") as doc_file:
-                lines += doc_file.read() + "\n\n"
+                lines += self._withModuleAuxiliaryNavigation(
+                    doc_file.read(), src_path, module_name
+                ) + "\n\n"
 
             generated_header = self._generated_rust_header(module_name)
             if generated_header:
@@ -828,7 +985,7 @@ class fileCrawler():
         documentation_path_string = documentation_path.as_posix()
 
         # Populate the index.rst file of the local directory
-        self.populateDocIndex(documentation_path_string, file_paths, dir_paths)
+        self.populateDocIndex(documentation_path_string, file_paths, dir_paths, srcDir)
 
         # Generate the correct auto-doc function for C, C++, Python, and Rust modules
         sources = self.generateAutoDoc(documentation_path_string, file_paths)

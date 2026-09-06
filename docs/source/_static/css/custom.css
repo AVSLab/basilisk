@@ -149,6 +149,22 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
 	max-width: 500px;
 }
 
+/* Keep auxiliary links beside the summary, not below the API listing. */
+.rst-content .sidebar.bsk-module-auxiliary {
+    width: 15rem;
+    max-width: 35%;
+    margin: 0 0 1rem 1.5rem;
+}
+
+@media screen and (max-width: 600px) {
+    .rst-content .sidebar.bsk-module-auxiliary {
+        float: none;
+        width: auto;
+        max-width: none;
+        margin: 0 0 1rem;
+    }
+}
+
 code, .rst-content tt, .rst-content code {
 	color: #E74C3C;
 }
