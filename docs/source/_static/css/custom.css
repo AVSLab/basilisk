@@ -245,6 +245,11 @@ p.caption {
     max-width: 500px;
 }
 
+/* Keep the homepage publications box below the impact and value box. */
+.rst-content .sidebar.bsk-publications-sidebar {
+    clear: right;
+}
+
 /* In-page navigation and auxiliary links ----------------------------------- */
 
 /* Local guide navigation is separate from the site tree and uses no JavaScript. */
