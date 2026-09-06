@@ -239,6 +239,38 @@ body, h1, h2, h3, h4, h5, .rst-content, .sidebar, .sidebar-title, p.caption {
     }
 }
 
+/* Match the theme's mobile breakpoint; leave desktop content widths unchanged. */
+@media screen and (max-width: 768px) {
+    .rst-content {
+        overflow-wrap: anywhere;
+    }
+
+    /* Preserve table identifiers; the existing table wrapper provides scrolling. */
+    .rst-content :is(table.docutils, table.field-list, .wy-table) {
+        overflow-wrap: normal;
+    }
+
+    /* Keep full-sized equations readable through local horizontal scrolling. */
+    .rst-content div.math {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    /* The theme's table-like signatures can otherwise grow beyond the page. */
+    .rst-content dt.sig {
+        display: block !important;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    /* Stack labels and descriptions instead of the theme's oversized grid. */
+    html.writer-html5 .rst-content dl.field-list,
+    html.writer-html5 .rst-content dl.footnote,
+    html.writer-html5 .rst-content dl.citation {
+        display: block;
+    }
+}
+
 code, .rst-content tt, .rst-content code {
 	color: #E74C3C;
 }
