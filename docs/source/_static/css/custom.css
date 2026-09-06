@@ -2,7 +2,6 @@ div.textblock a, div.textblock a:visited, p a, p a:visited,
 a, a:hover, a:visited,
 a.reference, a.internal, a.current {
 	color: #cfb87c;
-	font-weight: bold;
 }
 
 a.icon-home, a.icon-home:visited {
@@ -21,8 +20,63 @@ a.el, a.el:visited {
 	color: #565A5C; # CU dark gray
 }
 
+/* Compact sidebar branding; the larger logo in the homepage body is unchanged. */
+.wy-side-nav-search > a.icon.icon-home {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.wy-side-nav-search > a.icon.icon-home::before {
+    content: none;
+}
+
+.wy-side-nav-search > a.icon.icon-home img.logo {
+    width: 96px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+
 .wy-nav-content {
+    --bsk-content-link: #765A16;
+    --bsk-content-link-hover: #4F3B0C;
+    --bsk-secondary-text: #626262;
+    background-color: #fff;
     max-width: none;
+}
+
+/* Limit the reading palette to page content; keep navigation and buttons unchanged. */
+.wy-nav-content a:not(.btn):not(.icon-home) {
+    color: var(--bsk-content-link);
+}
+
+.wy-nav-content a:not(.btn):not(.icon-home):hover {
+    color: var(--bsk-content-link-hover);
+}
+
+.wy-nav-content footer {
+    color: var(--bsk-secondary-text);
+}
+
+/* Keyboard focus remains visible independently of link color and hover state. */
+.wy-nav-content a:focus-visible,
+.wy-nav-side a:focus-visible,
+.wy-nav-top a:focus-visible,
+.wy-menu-vertical button.toctree-expand:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+/* Keep the focus outline inside the independently scrolling navigation panel. */
+.wy-nav-side a:focus-visible,
+.wy-menu-vertical button.toctree-expand:focus-visible {
+    outline-offset: -3px;
 }
 
 code span.pre, code {
@@ -42,10 +96,35 @@ tr td p, th.head p {
 	font-size: small;
 }
 
+/* Keep comfortable line spacing without enlarging the theme's table text. */
+.rst-content :is(table.docutils, table.field-list, .wy-table) {
+    line-height: 1.5;
+}
+
+.rst-content :is(table.docutils, table.field-list, .wy-table) :is(td, th),
+.rst-content :is(table.docutils, table.field-list, .wy-table) :is(td, th) p,
+html.writer-html5 .rst-content table.docutils :is(td, th) > p {
+    line-height: inherit;
+}
+
+/* Keep identifiers intact; descriptions can still wrap between words. */
+.rst-content :is(table.docutils, table.field-list, .wy-table) a {
+    overflow-wrap: normal;
+}
+
+.rst-content :is(table.docutils, table.field-list, .wy-table) :is(code, tt) {
+    white-space: nowrap;
+}
+
 img.logo {
 	filter: drop-shadow(0px 0px 8px #fff);
 }
-/* override table no-wrap */
+/* The theme wraps tables in this container for local horizontal scrolling. */
+.wy-table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
 .wy-table-responsive table td, .wy-table-responsive table th {
     white-space: normal;
 }
@@ -137,6 +216,12 @@ figure {
 }
 
 @media (prefers-color-scheme: dark) {
+    .wy-nav-content {
+        --bsk-content-link: #CFB87C;
+        --bsk-content-link-hover: #F1DBA5;
+        --bsk-secondary-text: #B3B3B3;
+    }
+
 	.wy-nav-content, .wy-body-for-nav, .wy-nav-content-wrap, math, span[id*='MathJax-Span'] {
 		background-color: black;
 		color:  #ccc;
