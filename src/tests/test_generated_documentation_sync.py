@@ -3,6 +3,7 @@
 import importlib.util
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -159,3 +160,56 @@ def test_incremental_build_refreshes_sibling_navigation(tmp_path):
     html_timestamp = (output / "sibling.html").stat().st_mtime_ns
     build()
     assert (output / "sibling.html").stat().st_mtime_ns == html_timestamp
+
+
+def test_local_contents_are_separate_from_site_navigation(tmp_path):
+    """Render local links only for long guides, with valid existing anchors."""
+    pytest.importorskip("sphinx")
+    pytest.importorskip("sphinx_rtd_theme")
+    source = tmp_path / "source"
+    output = tmp_path / "html"
+    templates = DOCUMENTATION_SYNC_PATH.parent.parent / "_templates"
+    _write_file(source / "conf.py", (
+        "import sys\n"
+        f"sys.path.insert(0, {str(DOCUMENTATION_SYNC_PATH.parent)!r})\n"
+        "extensions = ['generated_documentation']\n"
+        "master_doc = 'index'\n"
+        "html_theme = 'sphinx_rtd_theme'\n"
+        "html_theme_options = {'titles_only': True}\n"
+        f"templates_path = [{str(templates)!r}]\n"
+    ))
+    _write_file(source / "index.rst", (
+        "Home\n====\n\n.. toctree::\n\n   guide\n   short\n   Documentation/module\n"
+    ))
+    sections = "".join(
+        f"Section {index}\n---------\n\nText.\n\n" for index in range(4)
+    )
+    guide = "Guide\n=====\n\nIntroduction.\n\n" + sections + (
+        "Subsection & details\n~~~~~~~~~~~~~~~~~~~~\n\nDetails.\n"
+    )
+    _write_file(source / "guide.rst", guide)
+    _write_file(source / "Documentation/module.rst", guide)
+    _write_file(source / "short.rst", "Short\n=====\n\nOverview\n--------\n\nText.\n")
+    result = subprocess.run(
+        [sys.executable, "-m", "sphinx", "-b", "html", "-W", "-q",
+         str(source), str(output)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    html = (output / "guide.html").read_text(encoding="utf8")
+    assert '<details class="bsk-page-navigation">' in html
+    assert '<summary>On this page</summary>' in html
+    assert html.index("</h1>") < html.index('<details class="bsk-page-navigation">')
+    navigation = html.split('<nav aria-label="On this page">')[1].split("</nav>")[0]
+    assert "Subsection &amp; details" in navigation
+    anchors = re.findall(r'href="#([^"]+)"', navigation)
+    assert len(anchors) == 5
+    for anchor in anchors:
+        assert f'id="{anchor}"' in html
+    sidebar = html.split('aria-label="Navigation menu"')[1].split("</nav>")[0]
+    assert "Section 0" not in sidebar
+    assert "guide.html" in (output / "short.html").read_text(encoding="utf8")
+    for page in ("short", "Documentation/module"):
+        assert 'class="bsk-page-navigation"' not in (
+            output / (page + ".html")
+        ).read_text(encoding="utf8")
