@@ -208,6 +208,73 @@ html.writer-html5 .rst-content table.docutils :is(td, th) > p {
 img.logo {
     filter: drop-shadow(0 0 8px #fff);
 }
+
+/* Opt-in image enlargement ------------------------------------------------- */
+
+.bsk-enlarge a.image-reference {
+    display: inline-block;
+    max-width: 100%;
+    cursor: zoom-in;
+}
+
+/* Preserve the artwork's black background and colors in both site palettes. */
+dialog.bsk-image-viewer {
+    margin: auto;
+    padding: 12px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    color: #fff;
+    background: #000;
+    border: 1px solid #777;
+    border-radius: 8px;
+    box-shadow: 0 8px 40px #0008;
+}
+
+.bsk-image-viewer::backdrop {
+    background: rgb(0 0 0 / 75%);
+}
+
+.bsk-image-viewer-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+}
+
+.bsk-image-viewer button {
+    min-height: 44px;
+    padding: 6px 12px;
+    font: inherit;
+    color: #fff;
+    background: #222;
+    border: 1px solid #777;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bsk-image-viewer button:hover {
+    background: #444;
+}
+
+.bsk-image-viewer button:focus-visible {
+    outline: 2px solid var(--bsk-brand-gold);
+    outline-offset: 2px;
+}
+
+.bsk-image-viewer img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(100vh - 112px);
+    max-height: calc(100dvh - 112px);
+}
+
+html.bsk-image-viewer-open,
+html.bsk-image-viewer-open body {
+    overflow: hidden;
+}
+
 /* The theme wraps tables in this container for local horizontal scrolling. */
 .wy-table-responsive {
     max-width: 100%;
@@ -243,6 +310,15 @@ p.caption {
 
 .sidebar {
     max-width: 500px;
+}
+
+/* Compact homepage metadata without changing other sidebars or text sizes. */
+.rst-content .sidebar.bsk-info-sidebar > p:not(.sidebar-title) {
+    margin-bottom: 8px;
+}
+
+.rst-content .sidebar.bsk-info-sidebar > p:last-child {
+    margin-bottom: 0;
 }
 
 /* Keep the homepage publications box below the impact and value box. */
