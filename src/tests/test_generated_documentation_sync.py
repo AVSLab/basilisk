@@ -1,5 +1,6 @@
 """Tests for content-aware synchronization of generated documentation."""
 
+import ast
 import importlib.util
 import os
 from pathlib import Path
@@ -218,3 +219,43 @@ def test_local_contents_are_separate_from_site_navigation(tmp_path):
         assert 'class="bsk-page-navigation"' not in (
             output / (page + ".html")
         ).read_text(encoding="utf8")
+
+
+@pytest.mark.ciSkip
+@pytest.mark.docsIntegration
+@pytest.mark.parametrize("release, expected_badge", [("2.12.0b0", True), ("2.12.0", False)])
+def test_logo_badge_follows_documentation_release(tmp_path, release, expected_badge):
+    """Show the logo sticker on beta pages, but omit it from stable documentation."""
+    pytest.importorskip("sphinx")
+    pytest.importorskip("sphinx_rtd_theme")
+    docs = DOCUMENTATION_SYNC_PATH.parent.parent
+    conf = (docs / "conf.py").read_text(encoding="utf8")
+    context = next(node for node in ast.parse(conf).body
+                   if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == "html_context"
+                           for target in node.targets))
+    source = tmp_path / "source"
+    output = tmp_path / "html"
+    _write_file(source / "conf.py", (
+        "from packaging.version import Version\n"
+        f"release = {release!r}\n"
+        + ast.get_source_segment(conf, context) + "\n"
+        "html_theme = 'sphinx_rtd_theme'\n"
+        "html_theme_options = {'logo_only': True}\n"
+        f"html_logo = {str(docs / '_images/static/Basilisk-Logo.png')!r}\n"
+        f"templates_path = [{str(docs / '_templates')!r}]\n"
+    ))
+    _write_file(source / "index.rst", "Home\n====\n\n.. toctree::\n\n   guide\n")
+    _write_file(source / "guide.rst", "Guide\n=====\n\nA separate documentation page.\n")
+    result = subprocess.run(
+        [sys.executable, "-m", "sphinx", "-b", "html", "-W", "-q", str(source), str(output)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    for page in ("index", "guide", "search"):
+        html = (output / (page + ".html")).read_text(encoding="utf8")
+        assert html.count('class="beta-label bsk-logo-beta"') == int(expected_badge)
+        assert 'class="logo"' in html
+        assert 'role="search"' in html
+        if expected_badge:
+            assert 'aria-label="Beta documentation for the upcoming Basilisk release"' in html

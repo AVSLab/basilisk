@@ -38,6 +38,22 @@ a.el:visited {
 
 /* Sidebar logo and search -------------------------------------------------- */
 
+.wy-side-nav-search {
+    position: relative;
+}
+
+/* A prerelease sticker overlays the logo without changing the header height. */
+.wy-side-nav-search .bsk-logo-beta {
+    position: absolute;
+    top: 16px;
+    left: calc(50% + 44px);
+    transform: rotate(12deg);
+    border: 1px solid var(--bsk-brand-gray);
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+}
+
 /* Center the brand above a frosted search field; keep homepage artwork unchanged. */
 .wy-side-nav-search > a {
     display: block;
@@ -230,7 +246,8 @@ a.el:visited {
     vertical-align: top;
 }
 
-.rst-content .bsk-catalog-table a {
+/* Override the general table rule that keeps identifiers on one line. */
+.rst-content table.docutils.bsk-catalog-table a {
     overflow-wrap: anywhere;
 }
 
