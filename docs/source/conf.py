@@ -26,6 +26,7 @@ if os.path.isdir(benchmarkSourceRoot):
             sys.path.insert(0, dirPath)
 
 import numpy as np
+from packaging.version import Version
 
 from docutils import nodes
 from docutils.parsers.rst import roles
@@ -301,6 +302,9 @@ html_js_files = [
 ]
 
 html_logo = "./_images/static/Basilisk-Logo.png"
+html_context = {
+    'bsk_docs_prerelease': Version(release.strip()).is_prerelease,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
