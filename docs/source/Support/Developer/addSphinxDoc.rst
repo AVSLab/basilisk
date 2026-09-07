@@ -64,6 +64,17 @@ including during incremental builds. Do not edit the generated
 ``docs/source/Documentation/index.rst`` or the catalog's HTML output.
 
 
+Table Headings
+--------------
+
+Standard documentation tables with column headings automatically keep their
+headings visible while the reader scrolls through the table. No additional RST
+classes or containers are needed. For a ``list-table``, declare the heading rows
+with the usual ``:header-rows:`` option. Module I/O tables already supply headings.
+
+Tables that are too wide for the available space retain horizontal scrolling
+instead. Tables without column headings and API field lists are unchanged.
+
 Automatic Example Usage Links
 -----------------------------
 
