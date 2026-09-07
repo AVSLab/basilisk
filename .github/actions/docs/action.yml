@@ -30,6 +30,7 @@ runs:
         pytest tests/test_doxygen_cache.py \
           tests/test_documentation_search.py \
           tests/test_generated_documentation_sync.py \
+          tests/test_module_catalog.py \
           -m docsIntegration --error-for-skips --timeout=300 -v
     - name: Generate doc artifacts
       shell: bash

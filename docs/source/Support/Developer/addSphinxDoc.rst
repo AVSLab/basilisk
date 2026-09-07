@@ -37,6 +37,33 @@ message definitions, ``_GeneralModuleFiles`` support code and other support
 files use regular untagged titles.
 
 
+Automatic Module Catalog
+------------------------
+
+The :ref:`Documentation landing page <Folder_Documentation>` includes a
+searchable catalog of C, C++, Python, and Rust modules under
+``src/fswAlgorithms``, ``src/simulation``, and ``src/moduleTemplates``.
+Developers do not maintain a catalog entry or register their modules separately.
+The documentation build uses the same generated module titles and language
+labels described above; the category comes from the module's folder.
+
+The description is a short excerpt of the first paragraph in the module's
+``Executive Summary``. Keep that paragraph focused on what the module does.
+For older pages without this heading, the build uses the opening paragraph
+when available, or a link-only description. Unit tests, helper files, and
+architecture support pages are not listed as modules.
+
+The search field matches the module name, category, language, and full authored
+module guide, including the detailed description and user guide. Only the
+displayed excerpt is shortened. Generated API listings and auxiliary unit-test
+pages are excluded from this search; no manually maintained keywords are needed.
+
+After adding, removing, or editing a module, rebuild the documentation as
+described in :ref:`createHtmlDocumentation`. The catalog updates automatically,
+including during incremental builds. Do not edit the generated
+``docs/source/Documentation/index.rst`` or the catalog's HTML output.
+
+
 Documenting Module I/O Messages
 --------------------------------
 Module documentation can use the ``bsk-module-io`` directive to generate both a
