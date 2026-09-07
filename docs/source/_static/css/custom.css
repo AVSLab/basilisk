@@ -251,6 +251,10 @@ a.el:visited {
     overflow-wrap: anywhere;
 }
 
+.rst-content .bsk-module-examples a {
+    overflow-wrap: anywhere;
+}
+
 .bsk-catalog-table .module-type-label {
     display: inline-block;
     font-size: 90%;
@@ -504,6 +508,24 @@ p.caption {
     width: 15rem;
     max-width: 35%;
     margin: 0 0 1rem 1.5rem;
+    padding: 12px 24px;
+}
+
+/* Tighten heading/list gaps without changing fonts or other breakout boxes. */
+.rst-content .sidebar.bsk-module-auxiliary > .sidebar-title {
+    margin: -12px -24px 12px;
+}
+
+.rst-content .sidebar.bsk-module-auxiliary > p:not(.sidebar-title) {
+    margin-bottom: 6px;
+}
+
+.rst-content .sidebar.bsk-module-auxiliary > ul {
+    margin: 0 0 12px;
+}
+
+.rst-content .sidebar.bsk-module-auxiliary > :last-child {
+    margin-bottom: 0;
 }
 
 @media screen and (max-width: 600px) {

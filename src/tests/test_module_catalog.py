@@ -78,7 +78,8 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
         f"sys.path.insert(0, {str(docs / '_ext')!r})\n"
         + ast.get_source_segment(conf, role)
         + "\nroles.register_local_role('module-type', module_type_role)\n"
-        "extensions = ['module_catalog']\n"
+        "extensions = ['module_catalog', 'module_examples']\n"
+        f"bsk_example_source_root = {str(tmp_path / 'examples')!r}\n"
         f"html_static_path = [{str(docs / '_static')!r}]\n",
         encoding="utf8",
     )
@@ -131,6 +132,28 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
     module("Documentation/simulation/sensors/demo/_UnitTest/test_demo")
     module("Documentation/architecture/helper")
 
+    def scenario(name, script):
+        """Provide a documented scenario source without executing it in Sphinx."""
+        python_file = tmp_path / "examples" / (name + ".py")
+        python_file.parent.mkdir(parents=True, exist_ok=True)
+        python_file.write_text(script, encoding="utf8")
+        document = source / "examples" / (name + ".rst")
+        document.parent.mkdir(parents=True, exist_ok=True)
+        title = Path(name).name
+        document.write_text(f":orphan:\n\n{title}\n{'=' * len(title)}\n", encoding="utf8")
+
+    scenario("scenarioAlpha", (
+        "from Basilisk.fswAlgorithms import mrpPD\ncontroller = mrpPD.mrpPD()\n"
+        "from Basilisk.simulation import pythonModule\nmodule = pythonModule.PythonModule()\n"
+    ))
+    scenario("nested/scenarioBeta", (
+        "from Basilisk.moduleTemplates import rustTemplate\nmodule = rustTemplate.RustTemplate()\n"
+    ))
+    rust.write_text(rust.read_text(encoding="utf8").replace(
+        ".. sidebar:: Auxiliary Files\n   :class: bsk-module-auxiliary\n\n"
+        "   auxiliary_only_test_token\n\n", ""
+    ), encoding="utf8")
+
     def build():
         """Reuse the environment to exercise worker merging and stale-row cleanup."""
         result = subprocess.run(
@@ -165,12 +188,21 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
     assert 'js/module-catalog.js' in html
     assert 'js/module-catalog.js' not in (output / "index.html").read_text(encoding="utf8")
     landing_timestamp = landing.stat().st_mtime_ns
+    controller_html = output / "Documentation/fswAlgorithms/control/LegacyName/mrpPD.html"
+    assert 'class="bsk-module-examples' in controller_html.read_text(encoding="utf8")
+    assert '../../../../examples/scenarioAlpha.html' in controller_html.read_text(encoding="utf8")
+    rust_html = (output / "Documentation/moduleTemplates/rustTemplate/rustTemplate.html").read_text(encoding="utf8")
+    assert "Auxiliary Files" in rust_html and "scenarioBeta" in rust_html
+    python_html = output / "Documentation/simulation/navigation/pythonModule/pythonModule.html"
+    assert "scenarioAlpha" in python_html.read_text(encoding="utf8")
 
     controller.write_text(controller.read_text(encoding="utf8").replace(
         "Controls the *attitude*", "Updated control of the *attitude*"
     ).replace("conical **shadow**", "planetary **penumbra**"), encoding="utf8")
     rust.unlink()
     module("Documentation/simulation/dynamics/NewFolder/alpha", summary="Added automatically.")
+    scenario("scenarioAlpha", "# No longer uses these modules\n")
+    scenario("scenarioDelta", "from Basilisk.fswAlgorithms import mrpPD\nx = mrpPD.mrpPD()\n")
     parsed = CatalogRows(build())
     rows = parsed.rows
     assert rows[0][0] == "alpha" and rows[0][3] == "Added automatically."
@@ -179,3 +211,7 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
     controller_search = parsed.search_text[[row[0] for row in rows].index("mrpPD")]
     assert "planetary penumbra" in controller_search and "conical shadow" not in controller_search
     assert landing.stat().st_mtime_ns == landing_timestamp
+    assert "scenarioDelta" in controller_html.read_text(encoding="utf8")
+    assert "scenarioAlpha" not in controller_html.read_text(encoding="utf8")
+    # The module page must update even though only the example source changed.
+    assert 'class="bsk-module-examples' not in python_html.read_text(encoding="utf8")

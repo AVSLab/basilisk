@@ -64,6 +64,27 @@ including during incremental builds. Do not edit the generated
 ``docs/source/Documentation/index.rst`` or the catalog's HTML output.
 
 
+Automatic Example Usage Links
+-----------------------------
+
+The module's ``Auxiliary Files`` box can include up to three ``Example usage``
+links. These are generated from documented ``scenario*.py`` files under
+``examples/``; developers do not maintain a separate list. Top-level scenarios
+are selected first, then scenarios in subfolders, alphabetically by filename
+within each group.
+
+The build recognizes ordinary Basilisk imports and direct constructor calls,
+including import aliases. It does not run scenarios, match comments or keywords,
+or follow setup helpers in other files. Dynamic imports, factories, and
+ambiguous or reassigned aliases are not inferred. These links demonstrate usage;
+they are not a ranking of teaching quality or a complete list of simulations
+using the module. Authors can recommend a particular introductory scenario in
+the module's user guide.
+
+Rebuilding the documentation refreshes the links automatically when scenarios
+are added, removed, or edited.
+
+
 Documenting Module I/O Messages
 --------------------------------
 Module documentation can use the ``bsk-module-io`` directive to generate both a
