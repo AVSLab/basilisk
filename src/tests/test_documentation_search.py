@@ -108,6 +108,9 @@ def test_legacy_folder_name_does_not_block_module_boost():
     assert rank("radiationPressure", [entry(path, "C++ Module: radiationPressure")])[0][1] == 127
 
 
+# Tool-dependent checks run in docs CI after its dependencies are installed.
+@pytest.mark.ciSkip
+@pytest.mark.docsIntegration
 def test_sphinx_embeds_scorer_from_another_working_directory(tmp_path):
     """Verify the configured scorer path is portable and Sphinx packages it."""
     pytest.importorskip("sphinx")

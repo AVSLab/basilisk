@@ -109,6 +109,9 @@ def test_sync_generated_tree_can_preserve_stale_files(tmp_path):
     assert counts == {"added": 0, "updated": 1, "unchanged": 0, "removed": 0}
 
 
+# Tool-dependent checks run in docs CI after its dependencies are installed.
+@pytest.mark.ciSkip
+@pytest.mark.docsIntegration
 def test_incremental_build_refreshes_sibling_navigation(tmp_path):
     """Update an unchanged sibling's sidebar when a module bypasses its folder."""
     pytest.importorskip("sphinx")
@@ -162,6 +165,8 @@ def test_incremental_build_refreshes_sibling_navigation(tmp_path):
     assert (output / "sibling.html").stat().st_mtime_ns == html_timestamp
 
 
+@pytest.mark.ciSkip
+@pytest.mark.docsIntegration
 def test_local_contents_are_separate_from_site_navigation(tmp_path):
     """Render local links only for long guides, with valid existing anchors."""
     pytest.importorskip("sphinx")
