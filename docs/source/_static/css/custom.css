@@ -417,6 +417,27 @@ html.bsk-image-viewer-open body {
     white-space: normal;
 }
 
+/* Applied automatically only to headed tables that fit their available width.
+ * The theme's body overflow-x:hidden otherwise traps sticky headers in Safari.
+ */
+body.bsk-has-sticky-tables {
+    overflow-x: clip;
+}
+
+.rst-content .wy-table-responsive.bsk-sticky-table-wrap {
+    overflow: visible;
+}
+
+/* Keep multi-row headings together instead of overlapping individual cells. */
+.rst-content table.docutils.bsk-sticky-table > thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    color: white;
+    background: var(--bsk-brand-gray);
+    box-shadow: inset 0 -1px 0 var(--bsk-secondary-text);
+}
+
 .math {
     text-align: left;
 }
