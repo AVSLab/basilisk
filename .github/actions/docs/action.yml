@@ -27,7 +27,10 @@ runs:
       working-directory: src
       run: |
         pip install pytest-error-for-skips
-        pytest tests/test_doxygen_cache.py -m docsIntegration --error-for-skips --timeout=300 -v
+        pytest tests/test_doxygen_cache.py \
+          tests/test_documentation_search.py \
+          tests/test_generated_documentation_sync.py \
+          -m docsIntegration --error-for-skips --timeout=300 -v
     - name: Generate doc artifacts
       shell: bash
       env:
