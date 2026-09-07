@@ -188,6 +188,7 @@ extensions = [
     'doxygen_cache',
     'generated_documentation',
     'module_catalog',
+    'module_examples',
     'sphinx_copybutton',
     'bsk_module_io',
     'sphinxcontrib.youtube'
@@ -302,6 +303,7 @@ html_js_files = [
 ]
 
 html_logo = "./_images/static/Basilisk-Logo.png"
+bsk_example_source_root = str(Path(__file__).resolve().parents[2] / "examples")
 html_context = {
     'bsk_docs_prerelease': Version(release.strip()).is_prerelease,
 }
