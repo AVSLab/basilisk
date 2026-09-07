@@ -1,0 +1,1 @@
+- Improved BSK documentation readability and navigation with refined light and dark styling, a searchable module catalog, and easier access to module guides, tests, and example scenarios.
