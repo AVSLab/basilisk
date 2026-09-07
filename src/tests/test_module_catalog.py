@@ -78,7 +78,7 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
         f"sys.path.insert(0, {str(docs / '_ext')!r})\n"
         + ast.get_source_segment(conf, role)
         + "\nroles.register_local_role('module-type', module_type_role)\n"
-        "extensions = ['module_catalog', 'module_examples']\n"
+        "extensions = ['generated_documentation', 'module_catalog', 'module_examples']\n"
         f"bsk_example_source_root = {str(tmp_path / 'examples')!r}\n"
         f"html_static_path = [{str(docs / '_static')!r}]\n",
         encoding="utf8",
@@ -215,3 +215,30 @@ def test_catalog_tracks_modules_and_incremental_edits(tmp_path, jobs):
     assert "scenarioAlpha" not in controller_html.read_text(encoding="utf8")
     # The module page must update even though only the example source changed.
     assert 'class="bsk-module-examples' not in python_html.read_text(encoding="utf8")
+
+    # Edit only Python, leaving both the scenario RST and module RST untouched.
+    # The rescan must move the example link between otherwise unchanged pages.
+    controller_timestamp = controller.stat().st_mtime_ns
+    scenario_document = source / "examples/scenarioDelta.rst"
+    scenario_timestamp = scenario_document.stat().st_mtime_ns
+    scenario_source = tmp_path / "examples/scenarioDelta.py"
+    scenario_source.write_text(
+        "from Basilisk.simulation import pythonModule\nx = pythonModule.PythonModule()\n",
+        encoding="utf8",
+    )
+    build()
+    assert "scenarioDelta" not in controller_html.read_text(encoding="utf8")
+    assert "scenarioDelta" in python_html.read_text(encoding="utf8")
+    assert controller.stat().st_mtime_ns == controller_timestamp
+    assert scenario_document.stat().st_mtime_ns == scenario_timestamp
+
+    # Removing a scenario must also remove its auxiliary link on the next build.
+    scenario_source.unlink()
+    scenario_document.unlink()
+    build()
+    assert 'class="bsk-module-examples' not in python_html.read_text(encoding="utf8")
+
+    # A no-change build may render the catalog, but must reuse module pages.
+    timestamps = {page: page.stat().st_mtime_ns for page in (controller_html, python_html)}
+    build()
+    assert all(page.stat().st_mtime_ns == timestamp for page, timestamp in timestamps.items())
