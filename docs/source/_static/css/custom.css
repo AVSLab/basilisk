@@ -146,6 +146,116 @@ a.el:visited {
     color: var(--bsk-secondary-text);
 }
 
+/* Automatically generated module catalog ---------------------------------- */
+
+.bsk-module-catalog {
+    --bsk-catalog-input-background: #fff;
+}
+
+.bsk-module-catalog [hidden] {
+    display: none !important;
+}
+
+.bsk-catalog-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.bsk-catalog-controls label {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 10rem;
+    min-width: 0;
+    gap: 4px;
+    font-size: 0.9rem;
+    color: inherit;
+}
+
+.bsk-catalog-controls label.bsk-catalog-search {
+    flex: 2 1 14rem;
+}
+
+.bsk-catalog-controls :is(input, select),
+.bsk-module-catalog button {
+    min-height: 38px;
+    max-width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--bsk-secondary-text);
+    border-radius: 4px;
+    background: var(--bsk-catalog-input-background);
+    color: inherit;
+    font: inherit;
+}
+
+.bsk-catalog-controls :is(input, select) {
+    width: 100%;
+}
+
+.bsk-catalog-controls input::placeholder {
+    color: var(--bsk-secondary-text);
+    opacity: 1;
+}
+
+.bsk-module-catalog button {
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.bsk-module-catalog button:hover:not(:disabled) {
+    border-color: var(--bsk-content-link);
+    color: var(--bsk-content-link);
+}
+
+.bsk-module-catalog button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.bsk-module-catalog :is(input, select, button):focus-visible {
+    outline: 2px solid var(--bsk-content-link);
+    outline-offset: 2px;
+}
+
+.rst-content .bsk-catalog-table {
+    width: 100%;
+    min-width: 680px;
+    table-layout: fixed;
+}
+
+.rst-content table.docutils.bsk-catalog-table :is(td, th) {
+    padding: 8px 10px;
+    vertical-align: top;
+}
+
+.rst-content .bsk-catalog-table a {
+    overflow-wrap: anywhere;
+}
+
+.bsk-catalog-table .module-type-label {
+    display: inline-block;
+    font-size: 90%;
+    margin-right: 0;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+.bsk-catalog-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 12px 0 24px;
+}
+
+.bsk-catalog-count,
+.bsk-catalog-page {
+    color: var(--bsk-secondary-text);
+    font-size: 0.9rem;
+}
+
 /* Keyboard focus ----------------------------------------------------------- */
 
 /* Keyboard focus remains visible independently of link color and hover state. */
@@ -524,6 +634,10 @@ figure {
         --bsk-content-link: var(--bsk-brand-gold);
         --bsk-content-link-hover: #F1DBA5;
         --bsk-secondary-text: #B3B3B3;
+    }
+
+    .bsk-module-catalog {
+        --bsk-catalog-input-background: var(--bsk-dark-surface);
     }
 
     .wy-nav-content,

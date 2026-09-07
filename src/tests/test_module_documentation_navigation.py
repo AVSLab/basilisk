@@ -96,6 +96,12 @@ def test_module_navigation_parent(crawler, tmp_path, language, category):
     assert "test_demo_0" not in module and "test_demo_1" not in module
     assert "test_demo_0" in tests and "test_demo_1" in tests
     assert ".. _demo:" in module
+    boundary = ".. bsk-module-guide-end::"
+    assert module.count(boundary) == 1
+    assert module.index("Executive Summary") < module.index(boundary)
+    for directive in (".. doxygenfile::", ".. automodule::"):
+        if directive in module:
+            assert module.index(boundary) < module.index(directive)
     assert legacy.startswith(":orphan:\n")
     assert ".. _Folder_demo:" in legacy
     assert ":doc:`Module documentation <demo>`" in legacy
@@ -251,3 +257,16 @@ def test_grouped_module_and_auxiliary_sorting(crawler, tmp_path):
     assert [label for label, _ in crawler._moduleAuxiliaryPages(source)] == [
         "_helpers", "Unit tests", "Apple", "banana", "cherry", "zeta",
     ]
+
+
+def test_documentation_root_includes_catalog(crawler, tmp_path):
+    """Show the catalog while retaining a hidden toctree for sidebar navigation."""
+    make_module(tmp_path)
+    crawler.run(str(tmp_path / "src") + os.sep)
+    contents = (tmp_path / "docs/index.rst").read_text()
+    assert contents.count(".. bsk-module-catalog::") == 1
+    assert "Browse by Folder" not in contents
+    assert ".. toctree::\n   :maxdepth: 1\n   :hidden:\n" in contents
+    assert "fswAlgorithms/index" in contents
+    category = (tmp_path / "docs/fswAlgorithms/attControl/index.rst").read_text()
+    assert ".. bsk-module-catalog::" not in category

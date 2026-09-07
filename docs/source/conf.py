@@ -186,6 +186,7 @@ extensions = [
     'breathe',
     'doxygen_cache',
     'generated_documentation',
+    'module_catalog',
     'sphinx_copybutton',
     'bsk_module_io',
     'sphinxcontrib.youtube'
@@ -733,6 +734,16 @@ class fileCrawler():
                 pass
 
             # Separate module pages from any supporting source-file pages.
+            is_documentation_root = self._sourceRelativePath(src_path) == "."
+            if is_documentation_root:
+                lines += (
+                    "Module Catalog\n--------------\n\n"
+                    "Find simulation modules, flight software algorithms, and module "
+                    "templates. Select a module name to open its documentation. "
+                    "Some modules require optional build features; see the module "
+                    "guide for requirements.\n\n"
+                    ".. bsk-module-catalog::\n\n"
+                )
             calledNames = []
             rust_module_name = None
             for file_path in file_paths:
@@ -774,7 +785,13 @@ class fileCrawler():
             caption = "Modules" if directory_destinations and all(
                 module for _, module in directory_destinations
             ) else "Directories"
-            lines += f".. toctree::\n   :maxdepth: 1\n   :caption: {caption}:\n\n"
+            lines += ".. toctree::\n   :maxdepth: 1\n"
+            if is_documentation_root:
+                # Retain the sidebar hierarchy without duplicating it below the catalog.
+                lines += "   :hidden:\n"
+            else:
+                lines += f"   :caption: {caption}:\n"
+            lines += "\n"
             for dir_path, module in directory_destinations:
                 dirName = os.path.basename(os.path.normpath(dir_path))
                 if module:
@@ -859,6 +876,9 @@ class fileCrawler():
                     ) + "\n\n"
                     lines += "----\n\n"
 
+                # Separate the authored guide from generated API search content.
+                lines += ".. bsk-module-guide-end::\n\n"
+
                 # Populate the module's .rst
                 for module_file in module_files_temp:
                     if ".h" in module_file:
@@ -908,6 +928,7 @@ class fileCrawler():
                     lines += "----\n\n"
 
                 lines += """.. toctree::\n   :maxdepth: 1\n   :caption: """ + "Files" + ":\n\n"
+                lines += ".. bsk-module-guide-end::\n\n"
                 lines += """.. automodule:: """ + fileName + """\n   :members:\n   :show-inheritance:\n\n"""
                 if self.newFiles:
                     with open(path+"/"+fileName+".rst", "w") as f:
@@ -929,6 +950,7 @@ class fileCrawler():
                     doc_file.read(), src_path, module_name
                 ) + "\n\n"
 
+            lines += ".. bsk-module-guide-end::\n\n"
             generated_header = self._generated_rust_header(module_name)
             if generated_header:
                 # Breathe caches AutoDoxygen projects by source directory.
