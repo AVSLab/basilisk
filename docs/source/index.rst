@@ -17,15 +17,13 @@ Architecture
 ------------
 
 .. sidebar:: Basilisk Info
+    :class: bsk-info-sidebar
 
     .. image:: _images/static/Basilisk-Logo.png
        :align: center
-       :width: 300
+       :width: 150
 
-    **Description:** Basilisk is a fast, open source, spacecraft-centric mission simulation framework
-
-    **License:** `ISC Open Source
-    License  <https://en.wikipedia.org/wiki/ISC_license>`__
+    **License:** `ISC <https://en.wikipedia.org/wiki/ISC_license>`__
 
     **Platforms:** macOS, Linux and Windows
 
@@ -51,8 +49,11 @@ as well as sophisticated mission-specific vehicle simulations that
 include hardware-in-the-loop scenarios.
 
 
-.. image:: _images/static/bsk2-concept.svg
+.. figure:: _images/static/bsk-rl-vizard-rust.jpg
    :align: center
+   :width: 100%
+   :figclass: bsk-enlarge
+   :alt: Basilisk C, C++, Rust, and Python modules connected to Vizard and BSK-RL.
 
 A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner.
 
@@ -67,14 +68,6 @@ This software is being actively used for:
 - supporting hardware in the loop testing by simulating in realtime the spacecraft states
 - analysis of flight data and compare against expected behavior
 - supporting spacecraft AI based autonomy development
-
-Name/Logo Description
-----------------------
-
-The name Basilisk was chosen to reflect both the reptilian (Python)
-nature of the product-design as well as a nod to the speed requirements
-as the South American common basilisk runs so fast that it can even run
-across water.
 
 .. sidebar:: Basilisk Users and Customers
 

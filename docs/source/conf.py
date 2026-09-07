@@ -296,6 +296,7 @@ html_search_scorer = str(Path(__file__).resolve().parent / '_static/js/search-sc
 
 html_js_files = [
     'js/sidebar.js',
+    'js/image-viewer.js',
 ]
 
 html_logo = "./_images/static/Basilisk-Logo.png"
