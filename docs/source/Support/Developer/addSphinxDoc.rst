@@ -96,6 +96,34 @@ Rebuilding the documentation refreshes the links automatically when scenarios
 are added, removed, or edited.
 
 
+Incremental Builds
+------------------
+
+After editing documentation or adding modules or scenarios, run ``make html``
+from the ``docs/`` directory. A clean build is not needed for these changes.
+For new top-level scenarios, also add the usual entry in
+``examples/_default.rst`` so readers can find them in the example navigation.
+There is no separate catalog or example-usage registration step.
+
+Each normal build rescans the source folders and scenario code. Generated RST
+files are replaced only when their content changes, allowing Sphinx to reuse
+unchanged pages and cached Doxygen output. The catalog is refreshed from the
+collected module descriptions, and module pages are rewritten when their
+selected example links change, even if only the scenario's Python code changed.
+The rescan does not execute scenarios.
+
+Changes to navigation can require rewriting HTML across the site so that every
+page has the same sidebar. This does not require reparsing every source page or
+rerunning every Doxygen project. An ordinary content edit is more localized.
+
+Use a normal ``make html`` build to check these site-wide features; the
+single-page preview mode intentionally skips source-tree generation and does
+not represent the complete catalog or example selection. Use ``make clean``
+before a publication build when pages have been removed or renamed: stale
+generated RST is removed automatically, but Sphinx can leave old HTML files in
+the output directory.
+
+
 Documenting Module I/O Messages
 --------------------------------
 Module documentation can use the ``bsk-module-io`` directive to generate both a
