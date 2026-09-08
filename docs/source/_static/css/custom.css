@@ -340,6 +340,23 @@ img.logo {
     filter: drop-shadow(0 0 8px #fff);
 }
 
+/* Cap the homepage banner on wide windows; crop vertically without distortion. */
+.rst-content img.bsk-home-banner {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Left-align the compact concept diagram without floating surrounding text. */
+.rst-content .bsk-home-concept {
+    width: 100%;
+    max-width: 640px;
+    margin-inline: 0;
+    float: none;
+}
+
 /* Opt-in image enlargement ------------------------------------------------- */
 
 .bsk-enlarge a.image-reference {
@@ -464,6 +481,12 @@ p.caption {
     max-width: 500px;
 }
 
+/* Match the compact module boxes, keeping homepage panels in one right column. */
+.rst-content .sidebar.bsk-home-sidebar {
+    max-width: 15rem;
+    clear: right;
+}
+
 /* Compact homepage metadata without changing other sidebars or text sizes. */
 .rst-content .sidebar.bsk-info-sidebar > p:not(.sidebar-title) {
     margin-bottom: 8px;
@@ -550,6 +573,7 @@ p.caption {
 }
 
 @media screen and (max-width: 600px) {
+    .rst-content .sidebar.bsk-home-sidebar,
     .rst-content .sidebar.bsk-module-auxiliary {
         float: none;
         width: auto;
