@@ -19,6 +19,8 @@ set -euo pipefail
 metrics_directory="$1"
 metrics_branch="${2:-usage-metrics}"
 mkdir -p "${metrics_directory}"
+# A failed restore must never leave a previous run's publication authorization.
+rm -f "${metrics_directory}/.source-commit"
 
 # Only a successful lookup with no matching ref establishes a first run.
 # Network/authentication failures must stop publication of shortened history.
@@ -28,9 +30,15 @@ if [[ -z "${remote_ref}" ]]; then
         echo "Metrics branch disappeared after checkout; refusing to discard history." >&2
         exit 1
     fi
+    # An empty expected revision means publication may only create the branch.
+    printf '\n' > "${metrics_directory}/.source-commit"
     exit 0
 fi
 
-git fetch origin "${metrics_branch}:refs/remotes/origin/${metrics_branch}"
-git show "origin/${metrics_branch}:metrics.csv" > "${metrics_directory}/metrics.csv"
-git show "origin/${metrics_branch}:summary.json" > "${metrics_directory}/summary.json"
+# The branch is deliberately replaced with a parentless snapshot after each run.
+git fetch origin "+refs/heads/${metrics_branch}:refs/remotes/origin/${metrics_branch}"
+source_commit="$(git rev-parse "refs/remotes/origin/${metrics_branch}")"
+git show "${source_commit}:metrics.csv" > "${metrics_directory}/metrics.csv"
+git show "${source_commit}:summary.json" > "${metrics_directory}/summary.json"
+# Pin the exact snapshot used above, even if another process later fetches refs.
+printf '%s\n' "${source_commit}" > "${metrics_directory}/.source-commit"

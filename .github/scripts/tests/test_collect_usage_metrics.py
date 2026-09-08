@@ -528,8 +528,8 @@ class SourceFailureTest(unittest.TestCase):
 
 
 @unittest.skipUnless(os.name != "nt" and shutil.which("bash") and shutil.which("git"),
-                     "The workflow restore script runs on POSIX GitHub runners")
-class RestoreHistoryTest(unittest.TestCase):
+                     "The metrics branch scripts run on POSIX GitHub runners")
+class MetricsBranchTest(unittest.TestCase):
     def setUp(self):
         """Create an isolated bare remote and a checkout with fetched references."""
         temporary = tempfile.TemporaryDirectory()
@@ -555,23 +555,57 @@ class RestoreHistoryTest(unittest.TestCase):
         return subprocess.run(["git", *args], cwd=cwd or self.remote, env=self.env,
                               input=data, text=True, capture_output=True, check=True).stdout.strip()
 
-    def seed_branch(self, branch, files):
+    def seed_branch(self, branch, files, parent=None):
+        """Create a remote fixture snapshot or append to its legacy history."""
         entries = []
         for name, content in sorted(files.items()):
             blob = self.git("hash-object", "-w", "--stdin", data=content)
             entries.append(f"100644 blob {blob}\t{name}\n")
         tree = self.git("mktree", data="".join(entries))
-        commit = self.git("commit-tree", tree, "-m", "Fixture")
+        parents = ["-p", parent] if parent else []
+        commit = self.git("commit-tree", tree, *parents, "-m", "Fixture")
         self.git("update-ref", "refs/heads/" + branch, commit)
         return commit
 
     def restore(self, failed_command=None):
+        """Run the restore script, optionally injecting a Git command failure."""
+        return self.run_script(self.script, failed_command)
+
+    def publish(self, failed_command=None):
+        """Run the real publisher against the isolated local remote."""
+        return self.run_script(SCRIPT_PATH.with_name("publish_usage_metrics.sh"), failed_command)
+
+    def run_script(self, script, failed_command=None):
+        """Keep fault injection inside the fixture shell, not the user's Git."""
         fault = ""
         if failed_command:
             fault = f'git() {{ if [[ "$1" == {failed_command} ]]; then return 128; fi; command git "$@"; }}\n'
         return subprocess.run(["bash", "-c", fault + 'source "$1" "$2"', "restore",
-                               str(self.script), str(self.output)], cwd=self.checkout,
+                               str(script), str(self.output)], cwd=self.checkout,
                               env=self.env, text=True, capture_output=True)
+
+    def artifact_files(self, history="date,github_clones\n2026-09-01,12\n"):
+        """Provide complete artifacts with a historical observation to retain."""
+        return {"metrics.csv": history, "summary.json": '{"schema_version":2}\n',
+                "README.md": "Retained usage history\n", "usage.svg": "<svg/>\n", ".nojekyll": ""}
+
+    def write_artifacts(self, files):
+        """Simulate the collector's output without replacing restore metadata."""
+        self.output.mkdir(exist_ok=True)
+        for name, content in files.items():
+            (self.output / name).write_text(content, encoding="utf-8")
+
+    def assert_snapshot(self, files):
+        """Check that exactly one commit publishes all artifact bytes, and nothing else."""
+        revision = self.git("rev-parse", "refs/heads/usage-metrics")
+        self.assertEqual(self.git("rev-list", "--count", revision), "1")
+        self.assertEqual(self.git("show", "-s", "--format=%P", revision), "")
+        self.assertEqual(set(self.git("ls-tree", "--name-only", revision).splitlines()), set(files))
+        for name, content in files.items():
+            result = subprocess.run(["git", "show", f"{revision}:{name}"], cwd=self.remote,
+                                    env=self.env, capture_output=True, check=True)
+            self.assertEqual(result.stdout, content.encode("utf-8"))
+        return revision
 
     def test_first_run_requires_a_successful_remote_lookup(self):
         """A confirmed absent branch allows collection; a lookup failure does not."""
@@ -614,6 +648,126 @@ class RestoreHistoryTest(unittest.TestCase):
         self.git("fetch", "origin", cwd=self.checkout)
         self.git("update-ref", "-d", "refs/heads/usage-metrics")
         self.assertNotEqual(self.restore().returncode, 0)
+
+    def test_repeated_publication_keeps_one_commit_and_all_observations(self):
+        """Creating/replacing snapshots retains old dates and leaves the checkout intact."""
+        source_revision = self.git("rev-parse", "HEAD", cwd=self.checkout)
+        (self.checkout / "README.md").write_text("Unrelated staged source change\n", encoding="utf-8")
+        self.git("add", "README.md", cwd=self.checkout)
+        source_index = self.git("write-tree", cwd=self.checkout)
+        history = "date,github_clones\n2026-09-01,12\n"
+        previous = None
+        for observation in ("2026-09-02,20\n", "2026-09-03,30\n"):
+            result = self.restore()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            if previous:
+                self.assertEqual((self.output / "metrics.csv").read_text(), history)
+            history += observation
+            files = self.artifact_files(history)
+            self.write_artifacts(files)
+            result = self.publish()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            revision = self.assert_snapshot(files)
+            self.assertNotEqual(revision, previous)
+            previous = revision
+        self.assertEqual(self.git("rev-parse", "HEAD", cwd=self.checkout), source_revision)
+        self.assertEqual(self.git("write-tree", cwd=self.checkout), source_index)
+        self.assertEqual(self.git("rev-parse", "refs/heads/develop"), source_revision)
+        self.assertEqual((self.checkout / "README.md").read_text(), "Unrelated staged source change\n")
+
+    def test_existing_daily_history_collapses_even_if_artifacts_are_unchanged(self):
+        """Migration drops old commit ancestry, not any current artifact content."""
+        files = self.artifact_files()
+        previous = None
+        for _ in range(3):
+            previous = self.seed_branch("usage-metrics", files, parent=previous)
+        self.assertEqual(self.git("rev-list", "--count", previous), "3")
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(files)
+        result = self.publish()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assert_snapshot(files)
+
+    def test_unchanged_single_snapshot_needs_no_push(self):
+        """Unchanged files already published without parents retain their revision."""
+        files = self.artifact_files()
+        previous = self.seed_branch("usage-metrics", files)
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(files)
+        result = self.publish("push")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.assert_snapshot(files), previous)
+
+    def test_restore_accepts_rewritten_snapshot(self):
+        """A fetched reference from an older run can be refreshed after replacement."""
+        self.seed_branch("usage-metrics", self.artifact_files())
+        self.assertEqual(self.restore().returncode, 0)
+        files = self.artifact_files("date,github_clones\n2026-09-01,15\n")
+        current = self.seed_branch("usage-metrics", files)
+        result = self.restore()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.output / "metrics.csv").read_text(), files["metrics.csv"])
+        self.assertEqual((self.output / ".source-commit").read_text().strip(), current)
+
+    def test_concurrent_publication_is_not_overwritten_even_after_fetch(self):
+        """The push lease uses the restored revision, not a newly fetched reference."""
+        self.seed_branch("usage-metrics", self.artifact_files())
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(self.artifact_files("date,github_clones\n2026-09-01,20\n"))
+        newer_files = self.artifact_files("date,github_clones\n2026-09-01,50\n")
+        newer = self.seed_branch("usage-metrics", newer_files)
+        self.git("fetch", "--force", "origin", cwd=self.checkout)
+        self.assertNotEqual(self.publish().returncode, 0)
+        self.assertEqual(self.assert_snapshot(newer_files), newer)
+
+    def test_first_publication_cannot_overwrite_a_concurrently_created_branch(self):
+        """An empty lease creates an absent branch but refuses an existing one."""
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(self.artifact_files("date,github_clones\n2026-09-01,20\n"))
+        newer_files = self.artifact_files()
+        newer = self.seed_branch("usage-metrics", newer_files)
+        self.assertNotEqual(self.publish().returncode, 0)
+        self.assertEqual(self.assert_snapshot(newer_files), newer)
+
+    def test_failed_push_keeps_the_published_snapshot(self):
+        """A publication failure never deletes the branch or its existing artifacts."""
+        files = self.artifact_files()
+        previous = self.seed_branch("usage-metrics", files)
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(self.artifact_files("date,github_clones\n2026-09-01,20\n"))
+        self.assertNotEqual(self.publish("push").returncode, 0)
+        self.assertEqual(self.assert_snapshot(files), previous)
+
+    def test_publication_cannot_recreate_a_concurrently_deleted_branch(self):
+        """A lease for an existing snapshot refuses to recreate a deleted branch."""
+        self.seed_branch("usage-metrics", self.artifact_files())
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(self.artifact_files("date,github_clones\n2026-09-01,20\n"))
+        self.git("update-ref", "-d", "refs/heads/usage-metrics")
+        self.assertNotEqual(self.publish().returncode, 0)
+        self.assertEqual(self.git("ls-remote", "--heads", str(self.remote), "usage-metrics"), "")
+
+    def test_missing_artifacts_leave_the_published_snapshot_intact(self):
+        """The publisher refuses incomplete output before pushing anything."""
+        files = self.artifact_files()
+        previous = self.seed_branch("usage-metrics", files)
+        self.assertEqual(self.restore().returncode, 0)
+        for missing in ("metrics.csv", "summary.json", "README.md", "usage.svg"):
+            with self.subTest(missing=missing):
+                self.write_artifacts(files)
+                (self.output / missing).unlink()
+                self.assertNotEqual(self.publish().returncode, 0)
+                self.assertEqual(self.assert_snapshot(files), previous)
+
+    def test_failed_restore_cannot_reuse_a_previous_publication_lease(self):
+        """A failed second restore invalidates the first restore's authorization."""
+        files = self.artifact_files()
+        previous = self.seed_branch("usage-metrics", files)
+        self.assertEqual(self.restore().returncode, 0)
+        self.write_artifacts(files)
+        self.assertNotEqual(self.restore("fetch").returncode, 0)
+        self.assertNotEqual(self.publish().returncode, 0)
+        self.assertEqual(self.assert_snapshot(files), previous)
 
 
 if __name__ == "__main__":

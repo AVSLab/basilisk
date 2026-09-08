@@ -51,34 +51,14 @@ jobs:
           --package bsk
           --repository "${GITHUB_REPOSITORY}"
 
-      - name: Publish durable history
+      - name: Publish single history snapshot
         shell: bash
         run: |
           set -euo pipefail
-          metrics_directory="${RUNNER_TEMP}/usage-metrics-data"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          if git show-ref --verify --quiet "refs/remotes/origin/${METRICS_BRANCH}"; then
-            git switch --force-create "${METRICS_BRANCH}" "origin/${METRICS_BRANCH}"
-          else
-            git switch --orphan "${METRICS_BRANCH}"
-          fi
-
-          install -m 0644 "${metrics_directory}/metrics.csv" metrics.csv
-          install -m 0644 "${metrics_directory}/summary.json" summary.json
-          install -m 0644 "${metrics_directory}/README.md" README.md
-          install -m 0644 "${metrics_directory}/usage.svg" usage.svg
-          touch .nojekyll
-          git add -- .nojekyll README.md metrics.csv summary.json usage.svg
-
-          if git diff --cached --quiet; then
-            echo "Usage metrics did not change."
-            exit 0
-          fi
-
-          git commit -m "Update usage metrics"
-          git push origin "HEAD:${METRICS_BRANCH}"
+          bash .github/scripts/publish_usage_metrics.sh \
+            "${RUNNER_TEMP}/usage-metrics-data" "${METRICS_BRANCH}"
 
       # Publish available observations before reporting a partial failure so
       # a PyPI outage cannot prevent retention of GitHub's short-lived data.
