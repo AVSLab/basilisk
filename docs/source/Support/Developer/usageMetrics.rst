@@ -6,7 +6,9 @@ Usage Metrics
 Basilisk collects daily PyPI and GitHub usage metrics with the
 ``Collect Usage Metrics`` GitHub Actions workflow. The workflow writes durable
 history to the orphan ``usage-metrics`` branch so routine snapshots do not add
-commits to ``develop`` or trigger the normal build workflow.
+commits to ``develop`` or trigger the normal build workflow. This branch retains
+one snapshot commit containing the complete collected history, rather than
+accumulating a new Git commit for every daily update.
 
 Usage Plot
 ----------
@@ -92,6 +94,24 @@ summaries are accepted and upgraded; if PyPI is unavailable during that upgrade,
 ``pypi.counting_policy`` remains ``legacy_unfiltered`` until a successful refresh.
 Normal filtered collections use ``distribution_files_or_unknown_filename``.
 
+Snapshot Publication
+--------------------
+
+Each collection restores the current CSV and summary before merging new
+observations. Publication replaces the metrics branch with one parentless
+commit containing the updated files. All retained dates remain in
+``metrics.csv``; only the previous Git commit history is discarded. The first
+publication using this policy also collapses any existing daily commit chain.
+No separate history-cleanup schedule is needed.
+
+The workflow serializes metrics runs and uses an explicit
+``--force-with-lease`` tied to the exact revision restored for collection.
+If another writer changes or deletes the branch in the meantime, publication
+fails without overwriting that change. The branch is never deleted as a
+cleanup step, and a failed push leaves the published snapshot intact.
+Git-based rollback to earlier snapshots is not retained; download a separate
+copy of the artifacts when a backup is needed.
+
 GitHub Configuration
 --------------------
 
@@ -138,12 +158,14 @@ its source branch, fetch the metrics branch as a remote-tracking branch:
 
 .. code-block:: bash
 
-   git fetch origin usage-metrics:refs/remotes/origin/usage-metrics
+   git fetch origin +usage-metrics:refs/remotes/origin/usage-metrics
    git show origin/usage-metrics:metrics.csv
    git show origin/usage-metrics:summary.json
 
-To obtain the generated files together with the complete daily commit history,
-clone only the orphan branch into a separate directory:
+The leading ``+`` permits refreshing this deliberately rewritten remote-tracking
+branch without changing the current source checkout. To obtain the generated
+files together as a single snapshot, clone only the orphan branch into a
+separate directory:
 
 .. code-block:: bash
 
