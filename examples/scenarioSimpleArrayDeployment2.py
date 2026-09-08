@@ -40,8 +40,8 @@ def run(show_plots):
     widthHub = 2.0 # m
     depthHub = 2.0 # m
     IHub_11 = (1/12) * massHub * (lengthHub * lengthHub + depthHub * depthHub) # kg m^2
-    IHub_22 = (1/12) * massHub * (depthHub * depthHub + widthHub * widthHub) # kg m^2
-    IHub_33 = (1/12) * massHub * (lengthHub * lengthHub + widthHub * widthHub) # kg m^2
+    IHub_22 = (1/12) * massHub * (lengthHub * lengthHub + widthHub * widthHub) # kg m^2
+    IHub_33 = (1/12) * massHub * (depthHub * depthHub + widthHub * widthHub) # kg m^2
     scObject.hub.mHub = massHub
     scObject.hub.IHubPntBc_B = [[IHub_11, 0.0, 0.0],
                                 [0.0, IHub_22, 0.0],
@@ -68,13 +68,13 @@ def run(show_plots):
     # Create Solar Array Components
     numElements = 4
     massElement = 5.0 # [kg]
-    rot_hat_M = np.array([0.0, -1.0, 0.0])
+    rot_hat_M = np.array([0.0, 1.0, 0.0])
     lengthElement = 1.5
     widthElement = 0.75
     thicknessElement = 0.01
-    I_element_11 = (1/12) * massElement * (widthElement**2 + thicknessElement**2)
+    I_element_11 = (1/12) * massElement * (widthElement**2 + lengthElement**2)
     I_element_22 = (1/12) * massElement * (lengthElement**2 + thicknessElement**2)
-    I_element_33 = (1/12) * massElement * (lengthElement**2 + widthElement**2)
+    I_element_33 = (1/12) * massElement * (thicknessElement**2 + widthElement**2)
     IElement_PntPc_P = [[I_element_11, 0.0, 0.0],
                         [0.0, I_element_22, 0.0],
                         [0.0, 0.0, I_element_33]]
@@ -87,8 +87,8 @@ def run(show_plots):
     array1ThetaInit1 = 0.0 * macros.D2R
     array2ThetaInit1 = 0.0 * macros.D2R
     thetaDDotMax = 2.0 * macros.D2R
-    array1ThetaRef = 90 * macros.D2R
-    array2ThetaRef = -90 * macros.D2R
+    array1ThetaRef = -90 * macros.D2R
+    array2ThetaRef = 90 * macros.D2R
     r_PM1_M1Init1 = [0.0, 0.0, 0.0]  # [m]
     r_PM2_M2Init1 = [0.0, 0.0, 0.0]  # [m]
     prv_PM1Init1 = array1ThetaInit1 * rot_hat_M
@@ -110,8 +110,8 @@ def run(show_plots):
         array2ElementList[i].setIPntPc_P(IElement_PntPc_P)
         array1ElementList[i].setR_MB_B(r_M1B_B)
         array2ElementList[i].setR_MB_B(r_M2B_B)
-        array1ElementList[i].setR_PcP_P([lengthElement/2.0, 0.0, 0.0])
-        array2ElementList[i].setR_PcP_P([-lengthElement/2.0, 0.0, 0.0])
+        array1ElementList[i].setR_PcP_P([0.0, 0.0, -lengthElement/2.0])
+        array2ElementList[i].setR_PcP_P([0.0, 0.0, -lengthElement/2.0])
         array1ElementList[i].setR_PM_M(r_PM1_M1Init1)
         array2ElementList[i].setR_PM_M(r_PM2_M2Init1)
         array1ElementList[i].setRPrime_PM_M(np.array([0.0, 0.0, 0.0]))
@@ -145,18 +145,6 @@ def run(show_plots):
         array1ElementRefMsgList.append(messaging.HingedRigidBodyMsg().write(array1ElementMessageData))
         array2ElementRefMsgList.append(messaging.HingedRigidBodyMsg().write(array2ElementMessageData))
 
-    # Create translational message data
-    array1ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array2ElementTranslationMessageData = messaging.PrescribedTranslationMsgPayload()
-    array1ElementTranslationMessageData.r_PM_M = r_PM1_M1Init1  # [m]
-    array2ElementTranslationMessageData.r_PM_M = r_PM2_M2Init1  # [m]
-    array1ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array2ElementTranslationMessageData.rPrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s]
-    array1ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-    array2ElementTranslationMessageData.rPrimePrime_PM_M = np.array([0.0, 0.0, 0.0])  # [m/s^2]
-    array1ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array1ElementTranslationMessageData)
-    array2ElementTranslationMessage = messaging.PrescribedTranslationMsg().write(array2ElementTranslationMessageData)
-
     # Initialize the prescribed rotation 1DOF module
     array1MaxRotAccelList1 = []
     array2MaxRotAccelList2 = []
@@ -185,7 +173,6 @@ def run(show_plots):
         array1RotProfilerList[i].setThetaInit(array1ThetaInit1)
         array2RotProfilerList[i].setThetaInit(array2ThetaInit1)
 
-
         scSim.AddModelToTask(fswTaskName, array1RotProfilerList[i])
         scSim.AddModelToTask(fswTaskName, array2RotProfilerList[i])
         array1RotProfilerList[i].spinningBodyInMsg.subscribeTo(array1ElementRefMsgList[i])
@@ -194,7 +181,7 @@ def run(show_plots):
         array2ElementList[i].prescribedRotationInMsg.subscribeTo(array2RotProfilerList[i].prescribedRotationOutMsg)
 
     # Add Translational Information
-    trans_hat_M = np.array([0.0, 0.0, 1.0])
+    trans_hat_M = np.array([1.0, 0.0, 0.0])
     gap = 0.1                                   # space between each array
     targetRho = lengthElement + gap             # distance needed to travel per element
     accelMax = 4.0 * np.abs(targetRho - 0.0) / (translation_duration ** 2) # max acceleration based on translation_duration
@@ -206,7 +193,7 @@ def run(show_plots):
         array1TransProfilerList.append(prescribedLinearTranslation.PrescribedLinearTranslation())
         array2TransProfilerList.append(prescribedLinearTranslation.PrescribedLinearTranslation())
         array1TransProfilerList[i].setTransHat_M(trans_hat_M)
-        array2TransProfilerList[i].setTransHat_M(trans_hat_M)
+        array2TransProfilerList[i].setTransHat_M(-trans_hat_M)
         array1TransProfilerList[i].setTransAccelMax(accelMax)
         array2TransProfilerList[i].setTransAccelMax(accelMax)
         array1TransProfilerList[i].setTransPosInit(0.0)
@@ -236,15 +223,6 @@ def run(show_plots):
         scSim.AddModelToTask(fswTaskName, array1RotProfilerList[i])
         scSim.AddModelToTask(fswTaskName, array2RotProfilerList[i])
 
-    array1TransDataLogList = list()
-    array2TransDataLogList = list()
-    for i in range(numElements):
-        array1TransDataLogList.append(array1TransProfilerList[i].linearTranslationRigidBodyOutMsg.recorder(dataRecRate))
-        array2TransDataLogList.append(array2TransProfilerList[i].linearTranslationRigidBodyOutMsg.recorder(dataRecRate))
-        scSim.AddModelToTask(fswTaskName, array1TransDataLogList[i])
-        scSim.AddModelToTask(fswTaskName, array2TransDataLogList[i])
-
-
     if vizSupport.vizFound:
         scBodyList = [scObject]
         for i in range(numElements):
@@ -267,13 +245,13 @@ def run(show_plots):
                                          simBodiesToModify=["Array1Element" + str(i+1)],
                                          # Specifying relative model path is useful for sharing scenarios and resources:
                                          modelPath="CUBE",
-                                         scale=[lengthElement, widthElement, thicknessElement],
+                                         scale=[thicknessElement, widthElement, lengthElement],
                                          color=vizSupport.toRGBA255("blue"))
             vizSupport.createCustomModel(viz,
                                          simBodiesToModify=["Array2Element" + str(i+1)],
                                          # Specifying relative model path is useful for sharing scenarios and resources:
                                          modelPath="CUBE",
-                                         scale=[lengthElement, widthElement, thicknessElement],
+                                         scale=[thicknessElement, widthElement, lengthElement],
                                          color=vizSupport.toRGBA255("blue"))
 
     scSim.InitializeSimulation()
@@ -303,26 +281,6 @@ def run(show_plots):
         scSim.ConfigureStopTime(macros.sec2nano(currentTime))
         scSim.ExecuteSimulation()
         count += 1
-
-    timespan = array1TransDataLogList[0].times() * macros.NANO2SEC
-
-    # Plot Element Positions
-    plt.figure()
-    for i in range(numElements):
-        plt.plot(timespan, array1TransDataLogList[i].rho, label=f"Array1 Element {i+1}")
-        plt.xlabel("Time [s]")
-        plt.ylabel("rho [m]")
-        plt.title("Element Translation Position vs Time")
-        plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
-        plt.grid(True)
-    plt.figure()
-    for i in range(numElements):
-        plt.plot(timespan, array2TransDataLogList[i].rho, linestyle="--", label=f"Array2 Element {i+1}")
-        plt.xlabel("Time [s]")
-        plt.ylabel("rho [m]")
-        plt.title("Element Translation Position vs Time")
-        plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
-        plt.grid(True)
 
     if show_plots:
         plt.show()
