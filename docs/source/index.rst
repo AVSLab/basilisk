@@ -7,6 +7,7 @@ Welcome to Basilisk: an Astrodynamics Simulation Framework
 .. image:: _images/static/bannerImage.jpg
        :align: center
        :width: 100%
+       :class: bsk-home-banner
 
 .. tip::
 
@@ -17,7 +18,7 @@ Architecture
 ------------
 
 .. sidebar:: Basilisk Info
-    :class: bsk-info-sidebar
+    :class: bsk-info-sidebar bsk-home-sidebar
 
     .. image:: _images/static/Basilisk-Logo.png
        :align: center
@@ -50,12 +51,11 @@ include hardware-in-the-loop scenarios.
 
 
 .. figure:: _images/static/bsk-rl-vizard-rust.jpg
-   :align: center
    :width: 100%
-   :figclass: bsk-enlarge
+   :figclass: bsk-enlarge bsk-home-concept
    :alt: Basilisk C, C++, Rust, and Python modules connected to Vizard and BSK-RL.
 
-A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner.
+A companion Visualization program is called :ref:`Vizard <vizard>`.  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner. The second companion software is `BSK-RL <https://avslab.github.io/bsk_rl>`__ which is used to use Basilisk for reinforcement training.
 
 What is Basilisk Used For?
 --------------------------
@@ -70,6 +70,7 @@ This software is being actively used for:
 - supporting spacecraft AI based autonomy development
 
 .. sidebar:: Basilisk Users and Customers
+    :class: bsk-home-sidebar
 
     - Startup Space Companies
     - Academic Researcher Groups
@@ -122,6 +123,7 @@ several different (often competing) requirements.
    to support completely different simulations.
 
 .. sidebar:: Basilisk Impact and Value
+    :class: bsk-home-sidebar
 
     - Research repeatability and extensibility
     - Rapid development
@@ -131,7 +133,7 @@ several different (often competing) requirements.
     - Speed
 
 .. sidebar:: Related Publications
-   :class: bsk-publications-sidebar
+   :class: bsk-publications-sidebar bsk-home-sidebar
 
    Explore :doc:`journal and conference papers <relatedPublications>` about
    Basilisk's architecture, capabilities, and research applications.
