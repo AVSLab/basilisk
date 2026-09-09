@@ -486,6 +486,12 @@ def create_conan_build_command(
         command.extend(["--no-remote", "-c", f"{OFFLINE_CONAN_CONF}=True"])
     if platform_name != "nt":
         command.extend(["-s", "compiler.cstd=gnu17"])
+        # Avoid Apple's linker alignment warning from cfitsio's common symbols.
+        # Track the flag in its package ID so cached binaries are rebuilt once.
+        command.extend([
+            "-c", 'cfitsio/*:tools.build:cflags=["-fno-common"]',
+            "-c", 'cfitsio/*:tools.info.package_id:confs=["tools.build:cflags"]',
+        ])
     if arguments.generator:
         command.extend(["-o", "&:generator=" + str(arguments.generator)])
 
