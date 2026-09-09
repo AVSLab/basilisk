@@ -38,6 +38,7 @@ The following pages cover the primary tasks required to make a Basilisk module. 
    makingModules/numbaModules
    makingModules/makingModules-3
    makingModules/makingModules-4
+   makingModules/writingEffectors
    makingModules/makingDraftModule
    makingModules/makingModules-5
    makingModules/advancedTopics
