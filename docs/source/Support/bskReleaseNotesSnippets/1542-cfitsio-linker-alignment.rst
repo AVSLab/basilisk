@@ -1,0 +1,1 @@
+- Fixed a benign macOS linker alignment warning when building :ref:`simpleAntenna` by compiling cfitsio with ``-fno-common`` and tracking the flag in its Conan package ID.

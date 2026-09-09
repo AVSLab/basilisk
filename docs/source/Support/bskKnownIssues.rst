@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning
+  when linking :ref:`simpleAntenna`. The Python build script now builds cfitsio with
+  ``-fno-common`` on non-Windows platforms and includes the flag in its Conan package ID
+  so existing cached binaries are rebuilt. This is fixed in the current version.
 - Incremental documentation builds now track transitive local includes, honor Sphinx Doxygen
   configuration overrides, and regenerate a project's XML after an interrupted cache update.
   Local headers remain tracked with ``SEARCH_INCLUDES=NO``, and environment-dependent Doxygen
