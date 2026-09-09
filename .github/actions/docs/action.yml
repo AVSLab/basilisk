@@ -20,6 +20,11 @@ runs:
         else
           pip install -r requirements_doc.txt
         fi
+    - name: Install Node.js for documentation search tests
+      uses: actions/setup-node@v7
+      with:
+        node-version: '24'
+        package-manager-cache: false
     - name: Test documentation build integration
       shell: bash
       env:
@@ -32,6 +37,10 @@ runs:
           tests/test_generated_documentation_sync.py \
           tests/test_module_catalog.py \
           -m docsIntegration --error-for-skips --timeout=300 -v
+    - name: Test documentation search ranking
+      shell: bash
+      working-directory: src
+      run: pytest ../docs/tests/test_search_scorer.py --error-for-skips --timeout=300 -v
     - name: Generate doc artifacts
       shell: bash
       env:
