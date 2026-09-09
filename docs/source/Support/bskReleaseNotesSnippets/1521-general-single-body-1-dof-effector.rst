@@ -1,0 +1,2 @@
+- Added a new :ref:`generalSingleBodyStateEffector` which enables simulation of a general rigid component with up to six degrees of freedom.
+- Added an example scenario :ref:`scenarioGeneralSingleBodies` illustrating how to configure a general multi-body spacecraft simulation using the new :ref:`generalSingleBodyStateEffector` module.
