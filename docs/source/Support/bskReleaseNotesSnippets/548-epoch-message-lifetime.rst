@@ -1,0 +1,1 @@
+- Fixed unbounded epoch-message retention in ``simHelpers.timeStringToGregorianUTCMsg()`` and its deprecated ``unitTestSupport`` wrapper. Messages are now released when their callers, subscribers, and recorders no longer retain them, preventing memory growth during repeated SPICE interface setup.

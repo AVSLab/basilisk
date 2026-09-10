@@ -10,6 +10,11 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- ``simHelpers.timeStringToGregorianUTCMsg()`` retained every returned epoch message
+  for the lifetime of the process, causing memory growth during repeated simulation setup.
+  The obsolete registry has been removed. Messages now remain alive while callers,
+  subscribers, or recorders need them and can be garbage collected afterward.
+  This resolves the remaining epoch-message retention discussed in GitHub issue 548.
 - GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning
   when linking :ref:`simpleAntenna`. The Python build script now builds cfitsio with
   ``-fno-common`` on non-Windows platforms and includes the flag in its Conan package ID
