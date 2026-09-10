@@ -1,14 +1,49 @@
 Executive Summary
 -----------------
 
-Class that is used to implement an effector impacting a dynamic body
-that does not itself maintain a state or represent a changing component of
-the body (for example: gravity, thrusters, solar radiation pressure, etc.)
+This state effector models reaction wheels attached to a spacecraft hub, including wheel-speed states,
+motor torques, friction, and the resulting spacecraft coupling. It supports balanced wheels, simple
+jitter, and fully coupled jitter. The jitter models also maintain wheel-angle states.
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/reactionWheels/_Documentation/Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.pdf>`
 contains further information on this module's function,
 how to run it, as well as testing.
+
+
+Module Assumptions and Limitations
+----------------------------------
+
+The wheel model determines how mass properties are accounted for. A balanced wheel has constant
+mass properties, but these properties are not automatically added to the spacecraft by the balanced
+model. The same convention applies to the simple-jitter model.
+
+.. list-table:: Wheel mass-property accounting
+    :header-rows: 1
+    :widths: 20 40 40
+
+    * - ``RWModel``
+      - Effector contribution
+      - Required hub configuration
+    * - ``BalancedWheels``
+      - No mass, first mass moment, or constant inertia contribution.
+      - Include the wheel's constant mass properties in the hub.
+    * - ``JitterSimple``
+      - No mass, first mass moment, or constant inertia contribution. Imbalance is approximated
+        through applied forces and torques.
+      - Include the wheel's constant mass properties in the hub, as for balanced wheels.
+    * - ``JitterFullyCoupled``
+      - Adds the configured wheel mass, center-of-mass contribution, inertia, and their applicable
+        time derivatives, including imbalance effects.
+      - Exclude the mass properties already represented by this wheel effector from the hub.
+
+Setting a nonzero ``mass`` on a ``BalancedWheels`` or ``JitterSimple`` wheel does not increase the
+spacecraft mass. Likewise, setting ``rWB_B``, ``Jt``, or ``Jg`` does not add the wheel's constant
+center-of-mass or inertia contribution in these two models. The spin-axis inertia ``Js`` is still
+used in wheel acceleration, spacecraft rotational coupling, angular momentum, and energy; it must
+be configured even when the wheel's constant inertia is included in the hub.
+
+See :ref:`reactionWheelMassAccounting` for the hub inputs and model-switching guidance.
 
 
 Message Connection Descriptions
@@ -33,6 +68,64 @@ User Guide
 The reaction wheel state effector module provides functionality for simulating reaction wheels in a spacecraft.
 It includes safety mechanisms to prevent numerical instability that can occur with excessive wheel acceleration
 or when using unlimited torque with small spacecraft inertia.
+
+.. _reactionWheelMassAccounting:
+
+Configuring Hub and Wheel Mass Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For ``BalancedWheels`` and ``JitterSimple``, configure the hub to include the wheels as if they were
+locked relative to the body. The effector separately models their relative spin. Update all three
+hub inputs consistently:
+
+* ``hub.mHub``: combined mass of the rigid hub and the wheels accounted for in the hub, in kg.
+* ``hub.r_BcB_B``: location of that combined center of mass relative to body-frame origin
+  :math:`B`, expressed in body-frame components, in m.
+* ``hub.IHubPntBc_B``: combined inertia about that combined center of mass :math:`B_c`, expressed
+  in body-frame components, in kg m\ :sup:`2`. Include each wheel's full constant inertia,
+  including its spin-axis inertia, and the parallel-axis contributions from its location.
+
+For example, let :math:`m_0`, :math:`\mathbf r_0`, and :math:`I_0` describe the rigid hub before adding
+the wheels, with :math:`I_0` taken about its own center of mass. For each wheel to be included in
+the hub, let :math:`m_i`, :math:`\mathbf r_i`, and :math:`I_i` be its mass, nominal center-of-mass
+location, and constant inertia about its own center of mass. All position vectors are measured from
+:math:`B`, and all vectors and inertia tensors are expressed in body-frame components. Then set:
+
+.. math::
+
+    m_h = m_0 + \sum_i m_i, \qquad
+    \mathbf r_h = \frac{m_0\mathbf r_0 + \sum_i m_i\mathbf r_i}{m_h}
+
+.. math::
+
+    \begin{aligned}
+    I_h &= I_0 + m_0 P(\mathbf r_0 - \mathbf r_h)
+        + \sum_i \left[I_i + m_i P(\mathbf r_i - \mathbf r_h)\right], \\
+    P(\mathbf a) &= (\mathbf a^T\mathbf a)\mathbf 1_3 - \mathbf a\mathbf a^T
+    \end{aligned}
+
+Here :math:`\mathbf 1_3` is the identity matrix. Assign :math:`m_h`, :math:`\mathbf r_h`, and
+:math:`I_h` to ``mHub``, ``r_BcB_B``, and ``IHubPntBc_B``, respectively. Rotate wheel inertia tensors
+into the body frame before combining them. For an axisymmetric balanced wheel, the constant tensor
+about its center of mass is :math:`I_i = J_t\mathbf 1_3 + (J_s-J_t)\hat{\mathbf g}_s\hat{\mathbf g}_s^T`,
+where :math:`J_g=J_t` and :math:`\hat{\mathbf g}_s` is ``gsHat_B``. Other state effectors continue to
+contribute their own mass properties separately.
+
+For ``JitterFullyCoupled``, the effector performs the wheel mass-property accounting. Its wheel
+center of mass is ``rWB_B + d * w2Hat_B``, with ``d = U_s / mass``. It rotates the wheel inertia
+defined by ``Js``, ``Jt``, ``Jg``, and ``J13 = U_d`` into the body frame and includes the parallel-axis
+contribution about :math:`B`. Include only the remaining rigid structure in the hub; any stationary
+wheel housing not represented by the configured wheel mass properties still belongs in the hub.
+Check the selected factory's mass and inertia definitions when partitioning the hardware.
+
+.. warning::
+
+    Count each wheel's mass properties exactly once. If the hub inputs already describe the assembled
+    spacecraft with balanced or simple-jitter wheels, do not add those wheels again. When switching
+    to ``JitterFullyCoupled``, remove the mass properties represented by those wheels from the hub
+    and recompute its center of mass and inertia about that center. When switching back, include them
+    again. Changing ``RWModel`` does not adjust the hub inputs automatically. For mixed wheel models,
+    apply this convention to each wheel individually.
 
 Initialization and Reset
 ~~~~~~~~~~~~~~~~~~~~~~~~
