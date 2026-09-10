@@ -20,6 +20,9 @@
 
 #include "reactionWheelStateEffector.h"
 
+#include <algorithm>
+#include <cmath>
+
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
 	CallCounts = 0;
@@ -67,8 +70,44 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& states)
  */
 void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& rw)
 {
+    const bool simplifiedModel = rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple;
+    const bool contributesMass = rw.RWModel == JitterFullyCoupled
+                                 || (this->includeWheelMassProperties && simplifiedModel);
+    const double relativeTolerance = 1.0e-12;  // [-]
+    if (!std::isfinite(rw.Js) || rw.Js <= 0.0) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: all wheel models require finite, positive Js.");
+    }
+    if (contributesMass) {
+        if (!std::isfinite(rw.mass) || rw.mass <= 0.0
+            || !std::isfinite(rw.Jt) || rw.Jt <= 0.0 || !std::isfinite(rw.Jg) || rw.Jg <= 0.0) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: models contributing mass properties require "
+                                    "finite, positive wheel mass, Jt, and Jg.");
+        }
+        if (simplifiedModel && (std::abs(rw.Jt - rw.Jg) > relativeTolerance * std::max(rw.Jt, rw.Jg)
+                                || rw.Js > 2.0 * rw.Jt * (1.0 + relativeTolerance))) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: includeWheelMassProperties requires "
+                                    "axisymmetric wheel inertia with Jt = Jg and Js <= 2*Jt.");
+        }
+        if (!rw.rWB_B.allFinite() || !rw.gsHat_B.allFinite()
+            || std::abs(rw.gsHat_B.squaredNorm() - 1.0) > relativeTolerance) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: models contributing mass properties require "
+                                    "a finite wheel position and unit spin axis.");
+        }
+    }
     if (rw.RWModel == JitterFullyCoupled) {
+        if (!std::isfinite(rw.U_s) || !std::isfinite(rw.U_d)) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: fully coupled wheels require finite U_s and U_d.");
+        }
+        // With positive diagonal inertias, this condition makes the full tensor (J13 = U_d) positive definite.
+        // Compare square roots instead of inertia products to avoid overflow.
+        if (std::abs(rw.U_d) / std::sqrt(rw.Js) >= std::sqrt(rw.Jg)) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: fully coupled wheel inertia must be positive "
+                                    "definite, requiring U_d^2 < Js*Jg.");
+        }
         rw.d = rw.U_s / rw.mass;
+        if (!std::isfinite(rw.d)) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: fully coupled wheel offset U_s/mass must be finite.");
+        }
         rw.J13 = rw.U_d;
     }
 }
@@ -186,6 +225,17 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[mayb
 			rw.w3Hat_B = dcm_BW.col(2);
 			thetaCount++;
 		}
+        if (this->includeWheelMassProperties && (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple)) {
+            // The simplified models use the nominal, axisymmetric wheel geometry for constant mass properties.
+            rw.IRWPntWc_B = rw.Jt * Eigen::Matrix3d::Identity()
+                           + (rw.Js - rw.Jt) * rw.gsHat_B * rw.gsHat_B.transpose();
+            rw.rWcB_B = rw.rWB_B;
+            rw.rTildeWcB_B = eigenTilde(rw.rWcB_B);
+            this->effProps.mEff += rw.mass;
+            this->effProps.rEff_CB_B += rw.mass * rw.rWcB_B;
+            this->effProps.IEffPntB_B += rw.IRWPntWc_B
+                                       + rw.mass * rw.rTildeWcB_B * rw.rTildeWcB_B.transpose();
+        }
 	}
 
     // - Need to divide out the total mass of the reaction wheels from rCB_B and rPrimeCB_B
@@ -398,6 +448,13 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
 		if (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple) {
 			rotAngMomPntCContr_B += rw.Js*rw.gsHat_B*rw.Omega;
             rotEnergyContr += 1.0/2.0*rw.Js*rw.Omega*rw.Omega + rw.Js*rw.Omega*rw.gsHat_B.dot(omegaLoc_BN_B);
+            if (this->includeWheelMassProperties) {
+                const Eigen::Vector3d wheelVelocity_B = omegaLoc_BN_B.cross(rw.rWcB_B);
+                rotAngMomPntCContr_B += rw.IRWPntWc_B * omegaLoc_BN_B
+                                       + rw.mass * rw.rWcB_B.cross(wheelVelocity_B);
+                rotEnergyContr += 0.5 * omegaLoc_BN_B.dot(rw.IRWPntWc_B * omegaLoc_BN_B)
+                                  + 0.5 * rw.mass * wheelVelocity_B.squaredNorm();
+            }
 		} else if (rw.RWModel == JitterFullyCoupled) {
 			Eigen::Vector3d omega_WN_B = omegaLoc_BN_B + rw.Omega*rw.gsHat_B;
 			Eigen::Vector3d r_WcB_B = rw.rWcB_B;

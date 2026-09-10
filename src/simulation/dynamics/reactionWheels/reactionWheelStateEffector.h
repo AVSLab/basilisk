@@ -21,8 +21,15 @@
 #ifndef REACTIONWHEELSTATEEFFECTOR_H
 #define REACTIONWHEELSTATEEFFECTOR_H
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
@@ -64,6 +71,15 @@ public:
 	void ConfigureRWRequests(double CurrentTime);
 
 public:
+
+    /*! @brief Include constant mass properties for balanced and simple-jitter wheels.
+     * @note Defaults to false, preserving the convention that these properties are included in the hub.
+     * Set before simulation initialization and leave unchanged during a run. When true, exclude these
+     * wheel properties from the hub and provide positive mass and axisymmetric inertia (Jt = Jg).
+     * Fully coupled jitter wheels always contribute their own mass properties, regardless of this option.
+     */
+    bool includeWheelMassProperties = false;
+
 	std::vector<std::shared_ptr<RWConfigPayload>> ReactionWheelData;          //!< RW information
 
 	ReadFunctor<ArrayMotorTorqueMsgPayload> rwMotorCmdInMsg;    //!< RW motor torque array cmd input message
