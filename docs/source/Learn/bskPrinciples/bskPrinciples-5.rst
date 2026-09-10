@@ -79,6 +79,15 @@ stand-alone C or C++ message retains that source until the recorder is released.
 A recorder created from an embedded ``Msg_C`` source retains the C-module wrapper
 or config that owns the message storage.
 
+Python ``Message.read()`` and C++ reader calls such as ``module.dataInMsg()``
+return live payload views. Each view retains its source through a Python reference, so a
+Python-owned source remains alive even if the original message variable goes
+out of scope or the original reader unsubscribes, changes subscriptions, or is
+destroyed. The view continues to reflect writes to its original message. Its
+reference to that source is released when the view is garbage collected. If a
+message caches its own payload view, Python can collect the reference cycle once
+no external owners retain the message or view.
+
 For example, this helper does not need to return or otherwise retain ``inputMsg``:
 
 .. code-block:: python

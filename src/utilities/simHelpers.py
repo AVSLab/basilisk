@@ -101,8 +101,8 @@ def addTimeColumn(time, data):
 def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
     """Convert a SPICE time string to a Gregorian UTC epoch message.
 
-    The caller, subscribers, and recorders retain the returned message. It can
-    be garbage collected once none of these owners need it.
+    The caller, subscribers, recorders, and payload views retain the returned
+    message. It can be garbage collected once none of these owners need it.
     """
     # set the data path
     if "dataPath" in kwargs:

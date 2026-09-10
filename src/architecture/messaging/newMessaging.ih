@@ -41,7 +41,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // on a thread that does not hold the GIL and even during interpreter shutdown. Check that the
 // runtime can safely acquire the GIL before adjusting a reference count. The atexit callback
 // covers every supported Stable ABI level; Py_IsFinalizing() adds a direct check when exposed
-// by the active C API. This is the ONLY place Python refcounting touches messaging objects;
+// by the active C API. Python reference counting stays in this SWIG layer;
 // messaging.h stays Python-free.
 static std::atomic<bool> _bsk_python_shutting_down{false};
 static bool _bsk_python_runtime_is_usable() {
@@ -142,7 +142,29 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
                              &_bsk_readfunctor_acquire,
                              &_bsk_readfunctor_release);
         }
+        PyObject* _get_source_owner() {
+            // Called from Python; SWIG may release the GIL around this bridge.
+            PyGILState_STATE gstate = PyGILState_Ensure();
+            PyObject* source = static_cast<PyObject*>($self->getSourceHandle());
+            if (source == nullptr) {
+                source = Py_None;
+            }
+            Py_INCREF(source);
+            PyGILState_Release(gstate);
+            return source;
+        }
         %pythoncode %{
+            def __call__(self):
+                """Return a live payload view with an independent source reference."""
+                # Copy before reading so later subscription changes cannot release
+                # the source behind this view. Retain its owner on the payload in
+                # Python, where reference cycles can be collected, and let the
+                # temporary reader release its native reference when this returns.
+                reader = messageType ## Reader(self)
+                payload = reader._read_payload()
+                object.__setattr__(payload, "_bskPayloadOwner", reader._get_source_owner())
+                return payload
+
             def subscribeTo(self, source):
                 if type(source) == messageType:
                     self.__subscribe_to(source)
@@ -210,7 +232,7 @@ pprint.PrettyPrinter._dispatch[messageTypePayload.__repr__] = _pprint_ ## messag
             return self
 
         def read(self):
-            """Read the message payload."""
+            """Return a live payload view that retains this message."""
             readMsg = self.addSubscriber()
             return readMsg()
 

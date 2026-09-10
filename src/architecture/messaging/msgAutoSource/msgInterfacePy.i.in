@@ -37,6 +37,9 @@ from Basilisk.architecture.messaging.messagingSupport import *
 %ignore ReadFunctor::operator=(const ReadFunctor &);
 %ignore ReadFunctor::operator=(ReadFunctor &&);
 %ignore ReadFunctor::setSource;
+%ignore ReadFunctor::getSourceHandle;
+// Python __call__ retains the source of each returned payload view.
+%rename(_read_payload) ReadFunctor::operator();
 %ignore Message::Message(const Message &);
 %ignore Message::Message(Message &&);
 %ignore Message::operator=(const Message &);

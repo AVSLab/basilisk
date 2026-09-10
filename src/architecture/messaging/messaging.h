@@ -25,6 +25,8 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #include "architecture/utilities/bskLogging.h"
 #include <typeinfo>
 #include <stdlib.h>
+#include <stdint.h>
+#include <string>
 #include <utility>
 #include "architecture/messaging/payloadEqualityTraits.h"
 
@@ -297,6 +299,16 @@ public:
         this->sourceHandle = handle;
         this->acquireSource = acquire;
         this->releaseSource = release;
+    }
+
+    /**
+     * @brief Return the opaque source owner retained by this reader.
+     * @return Borrowed source handle, or nullptr if no owner is installed.
+     * @note The caller must retain the handle before releasing this reader or
+     *       changing its subscription. This accessor does not transfer ownership.
+     */
+    void* getSourceHandle() const {
+        return this->sourceHandle;
     }
 
     //! constructor
