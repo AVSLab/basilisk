@@ -90,10 +90,15 @@ class rwFactory(object):
 
         Notes
         -----
-        ``BalancedWheels`` is the default model. For this model and ``JitterSimple``, the wheel's
+        ``BalancedWheels`` is the default model. By default, for this model and ``JitterSimple``, the wheel's
         constant mass, center-of-mass contribution, and full constant inertia must already be
         included in the hub mass and inertia inputs. Setting the wheel's ``mass`` does not add it to the spacecraft
         mass in these modes. ``Js`` is still required for the wheel's spin dynamics.
+
+        To include these properties through the effector instead, set its
+        ``includeWheelMassProperties`` option to ``True`` before simulation initialization and
+        exclude the wheel properties from the hub. This requires positive wheel mass and
+        axisymmetric inertia (``Jt = Jg``).
 
         ``JitterFullyCoupled`` adds the configured wheel mass properties through the effector;
         exclude those same properties from the hub. See :ref:`reactionWheelMassAccounting` for
