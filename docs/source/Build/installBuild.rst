@@ -112,7 +112,7 @@ The script accepts the following options to customize this process.
     * - ``mujoco``
       - Boolean
       - False
-      - :beta:`Mujoco Support` Includes the `MuJoCo <https://mujoco.org>`_ dependencies
+      - Includes the `MuJoCo <https://mujoco.org>`_ dependencies
     * - ``rustModules``
       - Boolean
       - False
