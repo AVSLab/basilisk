@@ -99,7 +99,11 @@ def addTimeColumn(time, data):
 
 
 def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
-    """convert a general time/date string to a gregoarian UTC msg object"""
+    """Convert a SPICE time string to a Gregorian UTC epoch message.
+
+    The caller, subscribers, and recorders retain the returned message. It can
+    be garbage collected once none of these owners need it.
+    """
     # set the data path
     if "dataPath" in kwargs:
         dataPath = kwargs["dataPath"]
@@ -138,14 +142,7 @@ def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
             datetime_object.second + datetime_object.microsecond / 1e6
         )
 
-        epochMsg = messaging.EpochMsg().write(epochMsgStructure)
-
-        # Store the message in a global registry to prevent garbage collection
-        if not hasattr(timeStringToGregorianUTCMsg, "_msg_registry"):
-            timeStringToGregorianUTCMsg._msg_registry = []
-        timeStringToGregorianUTCMsg._msg_registry.append(epochMsg)
-
-        return epochMsg
+        return messaging.EpochMsg().write(epochMsgStructure)
 
     except Exception as e:
         print(f"Error processing date string '{ep1}': {str(e)}")
