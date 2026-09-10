@@ -21,6 +21,13 @@ Version |release|
   its original source through a Python reference until the payload is released.
   Reference cycles created by caching a payload view on its source message can
   also be garbage collected.
+- GitHub issue 571: Spinning-body lock and motor torque arrays index degrees of freedom
+  within one module. Separate module instances require separate messages for independent
+  commands; each OneDOF instance reads element ``[0]``. The documentation now explains
+  this mapping and corrects the lock-message examples. For
+  :ref:`spinningBodyNDOFStateEffector`, keep chains using either array input at or below
+  ``MAX_EFF_CNT`` (currently 36) bodies. The module still lacks a capacity check and can
+  read beyond the payload arrays with larger chains.
 - GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning
   when linking :ref:`simpleAntenna`. The Python build script now builds cfitsio with
   ``-fno-common`` on non-Windows platforms and includes the flag in its Conan package ID

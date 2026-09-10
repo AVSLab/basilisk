@@ -17,9 +17,9 @@ The following table lists all the module input and output messages.  The module 
     output spinningBodyOutMsgs HingedRigidBodyMsgPayload
         Output vector of messages containing the spinning body state angle and angle rate.
     input motorTorqueInMsg ArrayMotorTorqueMsgPayload
-        (Optional) Input message of the motor torque value.
+        (Optional) Motor torques for this module's two axes, read from ``motorTorque[0:2]``.
     input motorLockInMsg ArrayEffectorLockMsgPayload
-        (Optional) Input message for locking the axis.
+        (Optional) Lock commands for this module's two axes, read from ``effectorLockFlag[0:2]``.
     input spinningBodyRefInMsgs HingedRigidBodyMsgPayload
         (Optional) Input array of messages for prescribing the angles and angle rates.
     output spinningBodyConfigLogOutMsgs SCStatesMsgPayload
@@ -30,6 +30,21 @@ Detailed Module Description
 ---------------------------
 
 A 2 DoF spinning body has 4 states: ``theta1``, ``theta2``, ``theta1Dot`` and ``theta2Dot``.
+
+Command Array Indexing
+^^^^^^^^^^^^^^^^^^^^^^
+One lock message controls both degrees of freedom in this module.
+``effectorLockFlag[0]`` controls the first axis (``theta1``), and
+``effectorLockFlag[1]`` controls the second axis (``theta2``). Use ``0`` for a free axis
+and ``1`` for a locked axis. For example, ``[1, 0]`` locks the first axis and leaves
+the second free to rotate. Motor torque commands use the same ordering in
+``motorTorque[0]`` and ``motorTorque[1]``. Remaining array elements are ignored.
+
+These indexes identify degrees of freedom within a single module, independently of
+``effectorID`` and the order in which module instances are added to the spacecraft.
+Use separate lock and torque messages for module instances that need independent
+commands. Instances sharing a message receive the same pair of axis commands. See
+:ref:`spinningBodyOneDOFStateEffector` for an example of independent lock messages.
 
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
@@ -45,13 +60,13 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Spinning Body 2 DoF State Effector in Python using Basilisk.
 
-#. Import the spinningBody2DOFStateEffector class::
+#. Import the spinningBodyTwoDOFStateEffector class::
 
-    from Basilisk.simulation import spinningBody2DOFStateEffector
+    from Basilisk.simulation import spinningBodyTwoDOFStateEffector
 
 #. Create an instantiation of a Spinning body::
 
-    spinningBody = spinningBody2DOFStateEffector.SpinningBody2DOFStateEffector()
+    spinningBody = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
 
 #. Define all physical parameters for both spinning bodies. For example::
 
@@ -99,7 +114,7 @@ This section is to outline the steps needed to setup a Spinning Body 2 DoF State
 #. (Optional) Connect an axis-locking message (0 means the axis is free to rotate and 1 locks the axis)::
 
     lockArray = messaging.ArrayEffectorLockMsgPayload()
-    lockArray.motorTorque = [1, 0]
+    lockArray.effectorLockFlag = [1, 0]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
     spinningBody.motorLockInMsg.subscribeTo(lockMsg)
 
