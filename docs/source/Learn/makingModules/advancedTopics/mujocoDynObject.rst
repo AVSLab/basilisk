@@ -3,12 +3,6 @@
 Multi-body Dynamics with MuJoCo
 ===============================
 
-.. warning::
-
-    :beta:`Mujoco Support` The following feature is a work in progress! Extensive validation has not been performed.
-    Some features might be missing, and APIs are subject to change between releases.
-
-
 ``DynamicObject`` subclasses are Basilisk modules that require the integration of
 ordinate differential equations (ODEs) to propagate their internal state (see :ref:`bskPrinciples-9`).
 The :ref:`spacecraft` module is the most commonly used ``DynamicObject`` in Basilisk, and is ideal to
