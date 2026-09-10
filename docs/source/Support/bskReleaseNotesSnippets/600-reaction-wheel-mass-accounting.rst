@@ -1,1 +1,3 @@
 - Documented the existing hub and wheel mass-property accounting for all three :ref:`reactionWheelStateEffector` models, including center-of-mass and parallel-axis contributions and guidance for switching models without double-counting (issue 600).
+- Added the opt-in ``includeWheelMassProperties`` setting to :ref:`reactionWheelStateEffector` for automatic mass, center-of-mass, inertia, energy, and momentum accounting of balanced and simple-jitter wheels with axisymmetric inertia. The default preserves existing hub accounting (issue 600).
+- Added initialization checks for finite, positive spin inertia in every wheel model and for valid mass, transverse inertia, and imbalance inputs in fully coupled wheels, independently of the mass-accounting option.
