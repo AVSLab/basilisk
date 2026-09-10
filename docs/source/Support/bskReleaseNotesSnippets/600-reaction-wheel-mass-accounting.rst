@@ -1,0 +1,1 @@
+- Documented the existing hub and wheel mass-property accounting for all three :ref:`reactionWheelStateEffector` models, including center-of-mass and parallel-axis contributions and guidance for switching models without double-counting (issue 600).
