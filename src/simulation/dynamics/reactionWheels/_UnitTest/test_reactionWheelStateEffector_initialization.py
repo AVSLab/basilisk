@@ -48,7 +48,10 @@ def test_fully_coupled_wheel_initializes_without_task_scheduling():
     )
     wheel.mass = 2.0  # [kg]
     wheel.U_s = 0.6  # [kg*m]
-    wheel.U_d = 0.4  # [kg*m^2]
+    wheel.U_d = 0.004  # [kg*m^2]
+    # Increase the transverse moments above the thin-disk limit to allow physically realizable dynamic imbalance.
+    wheel.Jt = 0.6*wheel.Js  # [kg*m^2]
+    wheel.Jg = wheel.Jt
 
     wheel_effector = reactionWheelStateEffector.ReactionWheelStateEffector()
     wheel_factory.addToSpacecraft("reactionWheels", wheel_effector, spacecraft_model)
@@ -59,4 +62,4 @@ def test_fully_coupled_wheel_initializes_without_task_scheduling():
     sim.InitializeSimulation()
 
     assert wheel.d == pytest.approx(0.3)  # [m]
-    assert wheel.J13 == pytest.approx(0.4)  # [kg*m^2]
+    assert wheel.J13 == pytest.approx(0.004)  # [kg*m^2]
