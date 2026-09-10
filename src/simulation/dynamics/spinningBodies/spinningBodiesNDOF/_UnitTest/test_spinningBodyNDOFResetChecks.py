@@ -22,17 +22,21 @@
 #
 
 """
-Regression tests for issue #1534: state-effector configuration validation.
+Regression tests for issues #1534 and #571: state-effector configuration validation.
 
 When its spacecraft registers states, ``SpinningBodyNDOFStateEffector``
 validates that each attached body's ``dcm_S0P`` is a proper rotation and each
 ``ISPntSc_S`` is a symmetric, positive-definite inertia tensor. These tests
 break exactly one precondition at a time and assert initialization raises a
 ``BasiliskError``. (``sHat_S`` is validated by its own setter.)
+
+Command-array tests exercise the payload capacity during reset, spacecraft
+initialization, and input processing, including the last valid array entry.
 """
 
 import pytest
 
+from Basilisk.architecture import messaging
 from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import spacecraft, spinningBodyNDOFStateEffector
 from Basilisk.utilities import SimulationBaseClass, macros
@@ -166,6 +170,98 @@ def test_spinningBodyNDOF_rejectsEmptyChain(validationPath):
 
     with pytest.raises(BasiliskError, match="at least one spinning body"):
         unitTestSim.InitializeSimulation()
+
+
+def _command_bounds_simulation(body_count):
+    """Attach a valid chain without scheduling the effector's reset or update."""
+    sim = SimulationBaseClass.SimBaseClass()
+    process = sim.CreateNewProcess("testProcess")
+    time_step = macros.sec2nano(0.01)  # [ns]
+    process.addTask(sim.CreateNewTask("testTask", time_step))
+    sc = spacecraft.Spacecraft()
+    sc.hub.mHub = 750.0  # [kg]
+    sc.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg*m^2]
+    effector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+    for _ in range(body_count):
+        effector.addSpinningBody(_validBody())
+    sc.addStateEffector(effector)
+    sim.AddModelToTask("testTask", sc)
+    return sim, effector
+
+
+def _link_command_inputs(effector, inputs, written):
+    """Connect the requested command inputs and retain their message objects."""
+    messages = []
+    if inputs in ("lock", "both"):
+        message = messaging.ArrayEffectorLockMsg()
+        if written:
+            message.write(messaging.ArrayEffectorLockMsgPayload())
+        effector.motorLockInMsg.subscribeTo(message)
+        messages.append(message)
+    if inputs in ("torque", "both"):
+        message = messaging.ArrayMotorTorqueMsg()
+        if written:
+            message.write(messaging.ArrayMotorTorqueMsgPayload())
+        effector.motorTorqueInMsg.subscribeTo(message)
+        messages.append(message)
+    return messages
+
+
+@pytest.mark.parametrize("validation_path", ["reset", "attachment"])
+@pytest.mark.parametrize("extra_bodies", [0, 1])
+@pytest.mark.parametrize("inputs, written", [
+    ("none", False), ("lock", False), ("lock", True),
+    ("torque", False), ("torque", True), ("both", True),
+])
+def test_command_array_capacity_validation(validation_path, extra_bodies, inputs, written):
+    """Reject oversized chains only when an array input is linked, even if unwritten."""
+    sim, effector = _command_bounds_simulation(messaging.MAX_EFF_CNT + extra_bodies)
+    messages = _link_command_inputs(effector, inputs, written)
+    validate = (lambda: effector.Reset(0)) if validation_path == "reset" else sim.InitializeSimulation
+    if extra_bodies and messages:
+        with pytest.raises(BasiliskError, match="MAX_EFF_CNT"):
+            validate()
+    else:
+        validate()
+
+
+@pytest.mark.parametrize("inputs", ["lock", "torque"])
+@pytest.mark.parametrize("written", [False, True])
+def test_command_array_linked_after_initialization(inputs, written):
+    """Reject an oversized array subscription added after configuration validation."""
+    sim, effector = _command_bounds_simulation(messaging.MAX_EFF_CNT + 1)
+    sim.InitializeSimulation()
+    messages = _link_command_inputs(effector, inputs, written)
+    with pytest.raises(BasiliskError, match="MAX_EFF_CNT"):
+        effector.UpdateState(0)
+    assert len(messages) == 1
+
+
+@pytest.mark.parametrize("lock_last", [False, True])
+def test_command_array_last_entry(lock_last):
+    """The final valid torque and lock entries control the final body's motion."""
+    sim, effector = _command_bounds_simulation(messaging.MAX_EFF_CNT)
+    lock_payload = messaging.ArrayEffectorLockMsgPayload()
+    lock_payload.effectorLockFlag = [1] * (messaging.MAX_EFF_CNT - 1) + [int(lock_last)]
+    lock_message = messaging.ArrayEffectorLockMsg().write(lock_payload)
+    effector.motorLockInMsg.subscribeTo(lock_message)
+    torque_payload = messaging.ArrayMotorTorqueMsgPayload()
+    torque_payload.motorTorque = [0.0] * (messaging.MAX_EFF_CNT - 1) + [0.1]  # [Nm]
+    torque_message = messaging.ArrayMotorTorqueMsg().write(torque_payload)
+    effector.motorTorqueInMsg.subscribeTo(torque_message)
+    sim.AddModelToTask("testTask", effector)
+    recorder = effector.spinningBodyOutMsgs[-1].recorder()
+    sim.AddModelToTask("testTask", recorder)
+    sim.InitializeSimulation()
+    stop_time = macros.sec2nano(0.02)  # [ns]
+    sim.ConfigureStopTime(stop_time)
+    sim.ExecuteSimulation()
+    if lock_last:
+        assert recorder.theta[-1] == 0.0
+        assert recorder.thetaDot[-1] == 0.0
+    else:
+        assert recorder.theta[-1] > 0.0
+        assert recorder.thetaDot[-1] > 0.0
 
 
 if __name__ == "__main__":

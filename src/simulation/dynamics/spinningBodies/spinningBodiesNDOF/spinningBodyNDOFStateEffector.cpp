@@ -19,6 +19,7 @@
 
 #include "spinningBodyNDOFStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
 
@@ -59,6 +60,8 @@ void SpinningBodyNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]
 /*! Validate the user-supplied spinning-body chain configuration. */
 void SpinningBodyNDOFStateEffector::validateConfiguration()
 {
+    this->validateCommandCapacity();
+
     if (this->spinningBodyVec.empty()) {
         bskLogger.bskError("spinningBodyNDOFStateEffector: at least one spinning body is required.");
         return;
@@ -76,6 +79,17 @@ void SpinningBodyNDOFStateEffector::validateConfiguration()
         if (body->mass > 0.0 && !eigenIsValidInertiaMatrix(body->ISPntSc_S)) {
             bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's ISPntSc_S is not a valid inertia tensor. It may not have been set properly by the user.");
         }
+    }
+}
+
+/*! @brief Reject body chains that exceed the capacity of a linked command array. */
+void SpinningBodyNDOFStateEffector::validateCommandCapacity()
+{
+    if (this->spinningBodyVec.size() > MAX_EFF_CNT
+        && (this->motorLockInMsg.isLinked() || this->motorTorqueInMsg.isLinked())) {
+        bskLogger.bskError("spinningBodyNDOFStateEffector: number of degrees of freedom (%zu) exceeds "
+                           "MAX_EFF_CNT (%d) with a linked motorLockInMsg or motorTorqueInMsg.",
+                           this->spinningBodyVec.size(), MAX_EFF_CNT);
     }
 }
 
@@ -148,6 +162,9 @@ std::shared_ptr<SpinningBody> SpinningBodyNDOFStateEffector::getSpinningBody(uin
 
 void SpinningBodyNDOFStateEffector::readInputMessages()
 {
+    // Recheck capacity in case an array input was linked after initialization.
+    this->validateCommandCapacity();
+
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {
         ArrayMotorTorqueMsgPayload incomingCmdBuffer;
         incomingCmdBuffer = this->motorTorqueInMsg();

@@ -21,7 +21,13 @@
 #define SPINNING_BODY_N_DOF_STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -178,6 +184,7 @@ public:
 
 private:
     void validateConfiguration();
+    void validateCommandCapacity();
     static uint64_t effectorID;
 
     int numberOfDegreesOfFreedom = 0;

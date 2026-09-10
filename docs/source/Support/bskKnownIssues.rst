@@ -25,9 +25,10 @@ Version |release|
   within one module. Separate module instances require separate messages for independent
   commands; each OneDOF instance reads element ``[0]``. The documentation now explains
   this mapping and corrects the lock-message examples. For
-  :ref:`spinningBodyNDOFStateEffector`, keep chains using either array input at or below
-  ``MAX_EFF_CNT`` (currently 36) bodies. The module still lacks a capacity check and can
-  read beyond the payload arrays with larger chains.
+  :ref:`spinningBodyNDOFStateEffector`, chains with more than ``MAX_EFF_CNT`` (currently
+  36) bodies could read beyond a linked lock or motor torque payload. Initialization,
+  reset, and input processing now reject these configurations with ``BasiliskError``.
+  Larger chains remain supported when neither array input is linked.
 - GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning
   when linking :ref:`simpleAntenna`. The Python build script now builds cfitsio with
   ``-fno-common`` on non-Windows platforms and includes the flag in its Conan package ID
