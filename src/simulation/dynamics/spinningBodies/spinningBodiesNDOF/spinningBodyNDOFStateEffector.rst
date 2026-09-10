@@ -48,8 +48,10 @@ example of independent lock messages.
 
 The lock and motor torque payload arrays each contain ``MAX_EFF_CNT`` entries
 (currently 36). When using either input message, limit the chain to that many degrees
-of freedom. Configuration validation does not currently enforce this limit; a larger
-chain can read beyond the command array when processing a written message.
+of freedom. Spacecraft initialization and ``Reset()`` raise a ``BasiliskError`` if
+either input is linked and the chain exceeds this limit, even if the message has not
+been written. Input processing repeats the check to catch messages connected after
+initialization. Larger chains are allowed when neither array input is linked.
 
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
