@@ -14,11 +14,11 @@ how to run it, as well as testing.
 Module Assumptions and Limitations
 ----------------------------------
 
-The wheel model determines how mass properties are accounted for. A balanced wheel has constant
-mass properties, but these properties are not automatically added to the spacecraft by the balanced
-model. The same convention applies to the simple-jitter model.
+The wheel model and ``includeWheelMassProperties`` option determine how mass properties are accounted
+for. The option defaults to ``False`` to preserve existing simulations: balanced and simple-jitter
+wheels then require their constant mass properties to be included in the hub.
 
-.. list-table:: Wheel mass-property accounting
+.. list-table:: Default wheel mass-property accounting (``includeWheelMassProperties = False``)
     :header-rows: 1
     :widths: 20 40 40
 
@@ -37,11 +37,15 @@ model. The same convention applies to the simple-jitter model.
         time derivatives, including imbalance effects.
       - Exclude the mass properties already represented by this wheel effector from the hub.
 
-Setting a nonzero ``mass`` on a ``BalancedWheels`` or ``JitterSimple`` wheel does not increase the
+With the default option, setting a nonzero ``mass`` on a ``BalancedWheels`` or ``JitterSimple`` wheel does not increase the
 spacecraft mass. Likewise, setting ``rWB_B``, ``Jt``, or ``Jg`` does not add the wheel's constant
 center-of-mass or inertia contribution in these two models. The spin-axis inertia ``Js`` is still
 used in wheel acceleration, spacecraft rotational coupling, angular momentum, and energy; it must
 be configured even when the wheel's constant inertia is included in the hub.
+
+With ``includeWheelMassProperties = True``, balanced and simple-jitter wheels instead contribute
+their nominal mass, center-of-mass offset, and axisymmetric inertia through the effector. The option
+does not change the accounting for fully coupled wheels, which always contribute their own properties.
 
 See :ref:`reactionWheelMassAccounting` for the hub inputs and model-switching guidance.
 
@@ -74,7 +78,7 @@ or when using unlimited torque with small spacecraft inertia.
 Configuring Hub and Wheel Mass Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For ``BalancedWheels`` and ``JitterSimple``, configure the hub to include the wheels as if they were
+By default, for ``BalancedWheels`` and ``JitterSimple``, configure the hub to include the wheels as if they were
 locked relative to the body. The effector separately models their relative spin. Update all three
 hub inputs consistently:
 
@@ -120,12 +124,80 @@ Check the selected factory's mass and inertia definitions when partitioning the 
 
 .. warning::
 
-    Count each wheel's mass properties exactly once. If the hub inputs already describe the assembled
+    Count each wheel's mass properties exactly once. With the default option, if the hub inputs already describe the assembled
     spacecraft with balanced or simple-jitter wheels, do not add those wheels again. When switching
     to ``JitterFullyCoupled``, remove the mass properties represented by those wheels from the hub
     and recompute its center of mass and inertia about that center. When switching back, include them
     again. Changing ``RWModel`` does not adjust the hub inputs automatically. For mixed wheel models,
     apply this convention to each wheel individually.
+
+Automatic Inclusion of Wheel Mass Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To let the effector account for the constant properties of its balanced and simple-jitter wheels,
+set the option before ``InitializeSimulation()``:
+
+.. code-block:: python
+
+    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwStateEffector.includeWheelMassProperties = True
+    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+
+Configure ``scObject.hub`` with only the remaining rigid structure, excluding the mass properties
+represented by these wheels. The option applies to all balanced and simple-jitter wheels in this
+effector. For mixed wheel models, fully coupled wheels still contribute exactly once. Leave the
+option unchanged during a simulation run.
+
+For each balanced or simple-jitter wheel, the effector uses ``mass``, ``rWB_B``, ``gsHat_B``, ``Js``,
+and ``Jt`` to compute the nominal mass properties. Its constant inertia is the axisymmetric tensor
+given above, shifted from ``rWB_B`` to :math:`B` using the parallel-axis theorem. The effector also
+includes the corresponding rigid-body kinetic energy and angular momentum, in addition to the
+existing relative-spin terms. The derivatives of these constant mass properties are zero.
+
+This option requires finite, positive ``mass``, ``Js``, ``Jt``, and ``Jg``, with ``Jt = Jg`` and
+``Js <= 2*Jt`` for a physically valid axisymmetric inertia. The inertia comparisons allow a relative
+tolerance of :math:`10^{-12}`. ``rWB_B`` must be finite, and ``gsHat_B`` must be a finite unit vector
+(squared norm within :math:`10^{-12}` of unity). Invalid configurations raise ``BSK_ERROR`` during
+state registration or ``Reset()``. The axisymmetry restriction applies to balanced and simple-jitter
+wheels when the option is enabled.
+
+The option does not turn a simplified wheel model into a fully coupled imbalance model. Balanced
+wheels continue to ignore imbalance parameters; simple-jitter wheels retain their existing applied
+imbalance forces and torques, while their mass properties use nominal centered geometry. Use
+``JitterFullyCoupled`` when the moving center of mass and coupled imbalance dynamics are needed.
+
+When enabling the option on an existing simulation, remove the wheels' constant mass properties from
+the hub and recompute its center of mass and inertia about that center. When disabling it, add the
+balanced and simple-jitter wheel properties back into the hub. With the option enabled, switching
+between balanced wheels and fully coupled wheels with zero imbalance and axisymmetric inertia does
+not require repartitioning the hub mass properties.
+
+Configuration Validation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Every wheel model requires finite, positive ``Js``, since it is used in the spin dynamics regardless
+of the mass-accounting option. Balanced and simple-jitter wheels with the default option do not
+require ``mass``, ``Jt``, or ``Jg`` to be populated: those constant properties are accounted for in
+the hub instead.
+
+``JitterFullyCoupled`` always requires finite, positive ``mass``, ``Jt``, and ``Jg``, as well as the
+finite position and unit spin axis described above. Its ``U_s`` and ``U_d`` must be finite, the derived
+offset ``U_s / mass`` must remain finite, and the full rotor inertia tensor with ``J13 = U_d`` must
+be positive definite. With positive diagonal moments, this last check requires ``U_d**2 < Js*Jg``.
+These checks apply even when ``includeWheelMassProperties`` is ``False``, and occur before the
+derived wheel configuration is used. They run during state registration and ``Reset()``.
+
+Validation
+~~~~~~~~~~
+
+``test_reactionWheelMassProperties.py`` compares the enabled option with zero-imbalance,
+axisymmetric fully coupled wheels and with the default model using manually combined hub properties.
+It checks spacecraft mass, center of mass, inertia, translational and attitude histories, wheel
+speeds, energy, and angular momentum for balanced, simple-jitter, and mixed configurations. The
+tests use offset wheels and a nonzero hub center of mass. Free-motion cases verify energy and
+momentum conservation; motor-driven cases verify momentum conservation and matching energy histories.
+Additional cases check unchanged default accounting, invalid simplified and fully coupled
+configuration handling, and spin-inertia validation across all models.
 
 Initialization and Reset
 ~~~~~~~~~~~~~~~~~~~~~~~~
