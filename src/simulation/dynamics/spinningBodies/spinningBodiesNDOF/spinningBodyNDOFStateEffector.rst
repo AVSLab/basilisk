@@ -17,9 +17,9 @@ The following table lists all the module input and output messages.  The module 
     output spinningBodyOutMsgs HingedRigidBodyMsgPayload
         Output vector of messages containing the spinning body state angle and angle rate.
     input motorTorqueInMsg ArrayMotorTorqueMsgPayload
-        (Optional) Input message of the motor torque value.
+        (Optional) Motor torques for the axes in the order bodies were added with ``addSpinningBody()``.
     input motorLockInMsg ArrayEffectorLockMsgPayload
-        (Optional) Input message for locking the axis.
+        (Optional) Lock commands for the axes in the order bodies were added with ``addSpinningBody()``.
     output spinningBodyConfigLogOutMsgs SCStatesMsgPayload
         Output vector of messages containing the spinning body inertial position and attitude states.
 
@@ -28,6 +28,28 @@ Detailed Module Description
 ---------------------------
 
 An N-DoF spinning body has 2N states: ``theta``, ``thetaDot`` for each degree of freedom.
+
+Command Array Indexing
+^^^^^^^^^^^^^^^^^^^^^^
+One lock message controls the degrees of freedom within this module. Element
+``effectorLockFlag[i]`` controls the axis of the body added by the ``i``-th call to
+``addSpinningBody()``, counting from zero. Use ``0`` for a free axis and ``1`` for a
+locked axis. For a three-body chain, ``[1, 0, 1]`` locks the first and third axes and
+leaves the second free to rotate. Motor torque commands use the same ordering in
+``motorTorque[i]``. Set one entry for every body in the chain.
+
+These indexes identify degrees of freedom within a single module, independently of
+``effectorID`` and the order in which module instances are added to the spacecraft.
+Connect the messages to ``spinningBodyEffector``, which owns the chain, rather than to
+an individual ``SpinningBody``. Use separate lock and torque messages for module
+instances that need independent commands. Instances sharing a message read the same
+array starting at element ``[0]``. See :ref:`spinningBodyOneDOFStateEffector` for an
+example of independent lock messages.
+
+The lock and motor torque payload arrays each contain ``MAX_EFF_CNT`` entries
+(currently 36). When using either input message, limit the chain to that many degrees
+of freedom. Configuration validation does not currently enforce this limit; a larger
+chain can read beyond the command array when processing a written message.
 
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
@@ -79,22 +101,22 @@ This section is to outline the steps needed to setup a Spinning Body N DoF State
 
 #. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
 
-    spinningBodyEffector.setNameOfThetaState = "spinningBodyTheta"
-    spinningBodyEffector.setNameOfThetaDotState = "spinningBodyThetaDot"
+    spinningBodyEffector.setNameOfThetaState("spinningBodyTheta")
+    spinningBodyEffector.setNameOfThetaDotState("spinningBodyThetaDot")
 
-#. (Optional) Connect a command torque message::
+#. (Optional) Connect a command torque message. This example commands the single body added above::
 
     cmdArray = messaging.ArrayMotorTorqueMsgPayload()
     cmdArray.motorTorque = [cmdTorque]  # [Nm]
     cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
-    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
+    spinningBodyEffector.motorTorqueInMsg.subscribeTo(cmdMsg)
 
-#. (Optional) Connect an axis-locking message (0 means the axis is free to rotate and 1 locks the axis)::
+#. (Optional) Connect an axis-locking message. This example locks the single body added above::
 
     lockArray = messaging.ArrayEffectorLockMsgPayload()
-    lockArray.motorTorque = [1]
+    lockArray.effectorLockFlag = [1]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
-    spinningBody.motorLockInMsg.subscribeTo(lockMsg)
+    spinningBodyEffector.motorLockInMsg.subscribeTo(lockMsg)
 
 #. The angular states of the body are created using an output vector of messages ``spinningBodyOutMsgs``.
 
@@ -102,13 +124,13 @@ This section is to outline the steps needed to setup a Spinning Body N DoF State
 
 #. Add the effector to your spacecraft::
 
-    scObject.addStateEffector(spinningBody)
+    scObject.addStateEffector(spinningBodyEffector)
 
    See :ref:`spacecraft` documentation on how to set up a spacecraft object.
 
 #. Add the module to the task list::
 
-    unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+    unitTestSim.AddModelToTask(unitTaskName, spinningBodyEffector)
 
 Initialization and Reset
 ------------------------

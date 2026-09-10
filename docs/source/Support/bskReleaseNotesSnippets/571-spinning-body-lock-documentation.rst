@@ -1,0 +1,1 @@
+- Clarified lock and motor torque array indexing within spinning-body modules, documented independent lock messages for separate instances and the current NDOF command-array capacity limit, and corrected the OneDOF, TwoDOF, and NDOF setup examples.

@@ -15,9 +15,9 @@ The following table lists all the module input and output messages.  The module 
     output spinningBodyOutMsg HingedRigidBodyMsgPayload
         Output message containing the spinning body state angle and angle rate.
     input motorTorqueInMsg ArrayMotorTorqueMsgPayload
-        (Optional) Input message of the motor torque value.
+        (Optional) Motor torque for this module's axis, read from ``motorTorque[0]``.
     input motorLockInMsg ArrayEffectorLockMsgPayload
-        (Optional) Input message for locking the axis.
+        (Optional) Lock command for this module's axis, read from ``effectorLockFlag[0]``.
     input spinningBodyRefInMsg HingedRigidBodyMsgPayload
         (Optional) Input message for prescribing the angle and angle rate.
     output spinningBodyConfigLogOutMsg SCStatesMsgPayload
@@ -28,6 +28,20 @@ Detailed Module Description
 ---------------------------
 
 A 1 DoF spinning body has 2 states: ``theta`` and ``thetaDot``. The angle and angle rate can change due to the interaction with the hub, but also because of applied torques (control, spring and damper). The angle remains fixed and the angle rate is set to zero when the axis is locked.
+
+Command Array Indexing
+^^^^^^^^^^^^^^^^^^^^^^
+Each module instance reads only element ``[0]`` of its lock and motor torque messages.
+For the spinning-body modules, array elements correspond to degrees of freedom within
+one module; they are not selected by ``effectorID`` or by the order in which module
+instances are added to the spacecraft. The shared message payloads use arrays sized by
+``MAX_EFF_CNT``, but that capacity does not assign an element to each module instance.
+
+Use a separate ``ArrayEffectorLockMsg`` for each OneDOF instance that needs independent
+locking. If two instances subscribe to the same message, both read
+``effectorLockFlag[0]``: ``[1, 0]`` locks both, and ``[0, 1]`` leaves both free to rotate.
+The same rule applies to independent motor torque commands using
+``ArrayMotorTorqueMsg``. Use ``0`` for a free axis and ``1`` for a locked axis.
 
 Mathematical Modeling
 ^^^^^^^^^^^^^^^^^^^^^
@@ -86,7 +100,7 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. (Optional) Connect an axis-locking message (0 means the axis is free to rotate and 1 locks the axis)::
 
     lockArray = messaging.ArrayEffectorLockMsgPayload()
-    lockArray.motorTorque = [1]
+    lockArray.effectorLockFlag = [1]
     lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
     spinningBody.motorLockInMsg.subscribeTo(lockMsg)
 
@@ -111,6 +125,27 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+
+Locking Multiple Module Instances
+----------------------------------
+For two configured OneDOF instances named ``solar_array1`` and ``solar_array2``, the
+following example locks the first axis and leaves the second free to rotate::
+
+    from Basilisk.architecture import messaging
+
+    lock_payload1 = messaging.ArrayEffectorLockMsgPayload()
+    lock_payload1.effectorLockFlag = [1]
+    lock_msg1 = messaging.ArrayEffectorLockMsg().write(lock_payload1)
+    solar_array1.motorLockInMsg.subscribeTo(lock_msg1)
+
+    lock_payload2 = messaging.ArrayEffectorLockMsgPayload()
+    lock_payload2.effectorLockFlag = [0]
+    lock_msg2 = messaging.ArrayEffectorLockMsg().write(lock_payload2)
+    solar_array2.motorLockInMsg.subscribeTo(lock_msg2)
+
+Keep both message objects available for the simulation. To change a lock command,
+update its payload and write it to the corresponding message again. Add both effectors
+to the spacecraft and to a simulation task as shown above so they process the commands.
 
 Initialization and Reset
 ------------------------
