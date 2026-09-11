@@ -39,6 +39,15 @@ if NINJA and os.name != "nt":
     GENERATORS.append("Ninja")
 
 
+def _run(command):
+    """Run a fixture command and expose its full diagnostics on failure.
+
+    :param command: Executable and command-line arguments.
+    """
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
 @pytest.mark.parametrize("change", ["delete", "rename", "move_to_cpp"])
 @pytest.mark.parametrize("generator", GENERATORS)
@@ -83,10 +92,12 @@ add_subdirectory("{source.as_posix()}/architecture/messaging/cMsgCInterface" c-m
             command.extend(["-G", generator])
         if generator == "Ninja":
             command.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
-        subprocess.run(
-            command,
-            check=True, capture_output=True, text=True,
-        )
+        if sys.platform == "darwin" and not os.environ.get("SDKROOT"):
+            # Resolve the SDK through the selected developer tools, as the main
+            # build does. The compiler's implicit SDK may point to another CLT
+            # installation after an update. Preserve an explicit SDKROOT.
+            command.append("-DCMAKE_OSX_SYSROOT=macosx")
+        _run(command)
 
     configure()
     interfaces = build / "autoSource/cMsgCInterface"
@@ -111,10 +122,7 @@ add_subdirectory("{source.as_posix()}/architecture/messaging/cMsgCInterface" c-m
 
     # A normal native build must discover the inventory change and clean up
     # during regeneration, without an explicit configure or Python-wrapper build.
-    subprocess.run(
-        [CMAKE, "--build", str(build)],
-        check=True, capture_output=True, text=True,
-    )
+    _run([CMAKE, "--build", str(build)])
     assert not (interfaces / "RemovedMsg_C.h").exists()
     assert not (interfaces / "RemovedMsg_C.cpp").exists()
     if change == "rename":
