@@ -57,12 +57,26 @@ void RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->validateConfiguration();
 }
 
-/*! Validate that the required Sun ephemeris input is connected. */
+/*! Validate the required Sun input and dimensions of the selected lookup model. */
 void RadiationPressure::validateConfiguration()
 {
     if(!this->sunEphmInMsg.isLinked())
     {
         bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
+    }
+    if (this->srpModel == SRP_FACETED_CPU_MODEL) {
+        this->validateLookupDimensions();
+    }
+}
+
+/*! @brief Validate lookup dimensions before selecting or indexing a table entry. */
+void RadiationPressure::validateLookupDimensions()
+{
+    if (this->lookupSHat_B.empty()
+        || this->lookupForce_B.size() != this->lookupSHat_B.size()
+        || this->lookupTorque_B.size() != this->lookupSHat_B.size()) {
+        this->bskLogger.bskError("RadiationPressure: lookupSHat_B, lookupForce_B, and lookupTorque_B "
+                                "must have the same nonzero number of entries for the faceted CPU model.");
     }
 }
 
@@ -190,6 +204,7 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
  */
 void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 {
+    this->validateLookupDimensions();
     double tmpDotProduct = 0;
     double currentDotProduct = 0;
     size_t currentIdx = 0;

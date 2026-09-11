@@ -141,3 +141,28 @@ Assuming that the user has created a list of initial conditions called ``initial
 .. code-block:: python
 
     thrustersStateEffector.kappaInit = messaging.DoubleVector(initialConditions)
+
+Initialization and Reset
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+``kappaInit`` must contain exactly one finite thrust factor per thruster, with each value in the closed interval
+``[0, 1]``. ``addThruster()`` appends a zero initial value automatically. If replacing the vector, supply all
+entries, including zeros for initially inactive thrusters. State registration and ``Reset()`` validate the vector
+before accessing its entries; invalid dimensions or values raise ``BasiliskError``.
+
+A linked ``cmdsInMsg`` supports at most `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__ thrusters.
+State registration, ``Reset()``, and command reading enforce this limit, including an input connected after initialization. Larger sets remain
+supported with the input unlinked; input reading supplies zero commands without indexing the fixed-size payload.
+Direct calls to ``ConfigureThrustRequests()`` may supply partial ``NewThrustCmds`` vectors, but the vector
+cannot exceed the thruster count.
+
+State registration sizes the command storage and initializes the integrated thrust factors from ``kappaInit``.
+``Reset()`` repeats validation, zeros command storage and the total mass-flow output, and leaves the integrated
+thrust-factor states unchanged. Add the effector to a task to process commands and publish thruster outputs.
+
+Add all thrusters before ``InitializeSimulation()`` registers their states. After registration, ``addThruster()``
+raises ``BasiliskError`` without adding a device. Changes to the length of the public ``thrusterData`` vector are
+also rejected before reset, command processing, output publication, or dynamics access, even when the effector
+is absent from the task. ``Reset()`` does not resize registered states; use a new effector and simulation when
+changing the number of thrusters. Calling ``Reset()`` before state registration does not freeze the count.

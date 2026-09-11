@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "thrusterStateEffector.h"
+#include <cmath>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -74,6 +75,7 @@ ThrusterStateEffector::~ThrusterStateEffector()
  */
 void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
+    this->validateConfiguration();
     // Clear out any currently firing thrusters and re-init cmd array
     this->NewThrustCmds.clear();
     this->NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
@@ -84,12 +86,40 @@ void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     return;
 }
 
-/*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
+/*! @brief Validate configuration dimensions before initialization or command processing. */
+void ThrusterStateEffector::validateConfiguration()
+{
+    this->validateRegisteredCount();
+    if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
+        this->bskLogger.bskError("ThrusterStateEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.",
+                                MAX_EFF_CNT);
+    }
+    if (this->kappaInit.size() != this->thrusterData.size()) {
+        this->bskLogger.bskError("ThrusterStateEffector: kappaInit must contain one entry per thruster.");
+    }
+    for (double kappa : this->kappaInit) {
+        if (!std::isfinite(kappa) || kappa < 0.0 || kappa > 1.0) {
+            this->bskLogger.bskError("ThrusterStateEffector: kappaInit entries must be finite and between 0 and 1.");
+        }
+    }
+}
 
+/*! @brief Reject device-count changes without relying on a live parent state pointer. */
+void ThrusterStateEffector::validateRegisteredCount()
+{
+    if (this->registeredThrusterCount && this->thrusterData.size() != *this->registeredThrusterCount) {
+        this->bskLogger.bskError("ThrusterStateEffector: thruster count cannot change after state registration. "
+                                "Configure all thrusters before InitializeSimulation().");
+    }
+}
+
+/*! @brief Read the incoming command message and populate the thruster command vector.
+ * @return Whether a new command is available, or zero commands were supplied for an unlinked input.
  */
 bool ThrusterStateEffector::ReadInputs()
 {
+    this->validateConfiguration();
+    this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     // Initialize local variables
     uint64_t i;
     bool dataGood;
@@ -109,6 +139,8 @@ bool ThrusterStateEffector::ReadInputs()
     } else {
         this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
         this->prevCommandTime = 0.0;
+        this->NewThrustCmds.assign(this->thrusterData.size(), 0.0);  // [s]
+        return true;
     }
 
     // Set the NewThrustCmds vector.  Using the data() method for raw speed
@@ -129,6 +161,7 @@ bool ThrusterStateEffector::ReadInputs()
  */
 void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
+    this->validateRegisteredCount();
     size_t idx = 0;
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
@@ -161,6 +194,10 @@ void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  */
 void ThrusterStateEffector::ConfigureThrustRequests()
 {
+    this->validateRegisteredCount();
+    if (this->NewThrustCmds.size() > this->thrusterData.size()) {
+        this->bskLogger.bskError("ThrusterStateEffector: NewThrustCmds must not exceed the thruster count.");
+    }
     std::vector<double>::iterator CmdIt;
     size_t THIter = 0;
     //! - Iterate through the list of thruster commands that we read in.
@@ -195,6 +232,7 @@ void ThrusterStateEffector::ConfigureThrustRequests()
  */
 void ThrusterStateEffector::UpdateThrusterProperties()
 {
+    this->validateRegisteredCount();
     // Save hub variables
     Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
     Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
@@ -241,9 +279,14 @@ void ThrusterStateEffector::UpdateThrusterProperties()
 /*! @brief Add a thruster.
  *
  * @param[in] newThruster Thruster configuration to add.
+ * @note Thrusters can only be added before state registration.
  */
 void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
 {
+    if (this->registeredThrusterCount) {
+        this->bskLogger.bskError("ThrusterStateEffector: cannot add thrusters after state registration. "
+                                "Configure all thrusters before InitializeSimulation().");
+    }
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
@@ -271,9 +314,14 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
  *
  * @param[in] newThruster Thruster configuration to add.
  * @param[in] bodyStateMsg State message for the body carrying the thruster.
+ * @note Thrusters can only be added before state registration.
  */
 void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
+    if (this->registeredThrusterCount) {
+        this->bskLogger.bskError("ThrusterStateEffector: cannot add thrusters after state registration. "
+                                "Configure all thrusters before InitializeSimulation().");
+    }
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
@@ -314,20 +362,18 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
  */
 void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
+    this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     // - Register the states associated with thruster - kappa
     this->kappaState = states.registerState((uint32_t) this->thrusterData.size(), 1, this->nameOfKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (Eigen::Index i = 0; i < kappaInitMatrix.rows(); i++) {
         const size_t thrusterIndex = static_cast<size_t>(i);
-        // Make sure that the thruster state is between 0 and 1
-        if (this->kappaInit[thrusterIndex] < 0.0 || this->kappaInit[thrusterIndex] > 1.0) {
-            bskLogger.bskError("thrusterStateEffector: the initial condition for the thrust factor must be between 0 and 1. Setting it to 0.");
-            this->kappaInit[thrusterIndex] = 0.0;
-        }
         kappaInitMatrix(i, 0) = this->kappaInit[thrusterIndex];
     }
     this->kappaState->setState(kappaInitMatrix);
+    this->registeredThrusterCount = this->thrusterData.size();
 
     return;
 }
@@ -341,6 +387,7 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
  */
 void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N [[maybe_unused]], Eigen::Vector3d omegaDot_BN_B [[maybe_unused]], Eigen::MRPd sigma_BN [[maybe_unused]])
 {
+    this->validateRegisteredCount();
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;
     THROperation* ops;
@@ -379,6 +426,7 @@ void ThrusterStateEffector::computeDerivatives(double integTime, Eigen::Vector3d
  */
 void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
+    this->validateRegisteredCount();
     // Save omega_BN_B
     Eigen::Vector3d omegaLocal_BN_B = omega_BN_B;
 
@@ -481,6 +529,7 @@ void ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]
  * @param[in] integTime [s] Current integration time.
  */
 void ThrusterStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]]) {
+    this->validateRegisteredCount();
 
     std::vector<std::shared_ptr<THRSimConfig>>::iterator itp;
     std::shared_ptr<THRSimConfig> it;

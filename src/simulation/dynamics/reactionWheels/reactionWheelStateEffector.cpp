@@ -73,6 +73,45 @@ void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& r
     }
 }
 
+/*! @brief Reject wheel arrays that cannot fit the command and speed payloads. */
+void ReactionWheelStateEffector::validateDimensions()
+{
+    this->validateRegisteredLayout();
+    if (this->ReactionWheelData.size() > MAX_EFF_CNT) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: the wheel count must not exceed MAX_EFF_CNT (%d).",
+                                MAX_EFF_CNT);
+    }
+}
+
+/*! @brief Reject state-layout changes without relying on live parent state pointers. */
+void ReactionWheelStateEffector::validateRegisteredLayout()
+{
+    if (!this->registeredWheelLayout) {
+        return;
+    }
+    const auto& layout = *this->registeredWheelLayout;
+    if (this->ReactionWheelData.size() != layout.size()) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: wheel count cannot change after state registration. "
+                                "Configure all wheels before InitializeSimulation().");
+    }
+    std::size_t jitterCount = 0;
+    for (std::size_t i = 0; i < layout.size(); ++i) {
+        const auto& rw = this->ReactionWheelData[i];
+        if (!rw) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: a registered wheel configuration cannot be null.");
+        }
+        const bool usesJitterState = rw->RWModel == JitterSimple || rw->RWModel == JitterFullyCoupled;
+        if (usesJitterState != layout[i]) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: wheel jitter-state allocation cannot change "
+                                    "after state registration. Configure wheel models before InitializeSimulation().");
+        }
+        jitterCount += usesJitterState;
+    }
+    if (this->numRW != layout.size() || this->numRWJitter != jitterCount) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: numRW and numRWJitter must match the registered state layout.");
+    }
+}
+
 /*! @brief Initialize the wheel configuration and register the effector dynamics states.
  *
  * For fully coupled jitter wheels, this method derives the center-of-mass offset and off-diagonal inertia from the
@@ -83,16 +122,21 @@ void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& r
  */
 void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateDimensions();
+    this->NewRWCmds.resize(this->ReactionWheelData.size(), RWCmdMsgPayload{});
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
+    std::vector<bool> wheelLayout;
+    wheelLayout.reserve(this->ReactionWheelData.size());
 
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         this->initializeWheelConfiguration(rw);
+        wheelLayout.push_back(rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled);
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
@@ -112,6 +156,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
     }
+    this->registeredWheelLayout = wheelLayout;
 }
 
 /*! @brief Update the effector mass properties.
@@ -120,6 +165,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
  */
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
+    this->validateRegisteredLayout();
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
     this->effProps.rEff_CB_B.setZero();
@@ -205,6 +251,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[mayb
  */
 void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
 {
+    this->validateRegisteredLayout();
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
 	double omegas;
@@ -314,6 +361,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
  */
 void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
+    this->validateRegisteredLayout();
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
@@ -385,6 +433,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unu
 void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
                                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
+    this->validateRegisteredLayout();
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
@@ -409,12 +458,17 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
     }
 }
 
-/*! add a RW data object to the reactionWheelStateEffector
+/*! @brief Add a reaction-wheel configuration and its output message.
  *
  * @param[in] NewRW Reaction-wheel configuration to add.
+ * @note Wheels can only be added before state registration.
  */
 void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
 {
+    if (this->registeredWheelLayout) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: cannot add wheels after state registration. "
+                                "Configure all wheels before InitializeSimulation().");
+    }
     /* store the RW information */
     this->ReactionWheelData.push_back(NewRW);
 
@@ -434,6 +488,7 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
  */
 void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
+    this->validateDimensions();
     RWCmdMsgPayload RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
 
@@ -463,6 +518,7 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]]
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
+    this->validateRegisteredLayout();
     const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
     const Eigen::MatrixXd* thetaVector = this->numRWJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
     int thetaCount=0;
@@ -503,6 +559,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  */
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
+    this->validateDimensions();
     const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
     const Eigen::MatrixXd* thetaVector = this->numRWJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
     int thetaCount = 0;
@@ -528,6 +585,8 @@ void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNano
  */
 void ReactionWheelStateEffector::ReadInputs()
 {
+    this->validateDimensions();
+    this->NewRWCmds.resize(this->ReactionWheelData.size(), RWCmdMsgPayload{});
 
 	//! read the incoming command array, or zero if not connected
     if (this->rwMotorCmdInMsg.isLinked()) {
@@ -554,6 +613,10 @@ void ReactionWheelStateEffector::ReadInputs()
  */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_unused]])
 {
+    this->validateRegisteredLayout();
+    if (this->NewRWCmds.size() > this->ReactionWheelData.size()) {
+        this->bskLogger.bskError("ReactionWheelStateEffector: NewRWCmds must not exceed the wheel count.");
+    }
     for (std::size_t i = 0; i < NewRWCmds.size(); ++i)
 	{
         auto& cmd = NewRWCmds[i];

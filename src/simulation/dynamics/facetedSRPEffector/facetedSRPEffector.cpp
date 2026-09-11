@@ -30,8 +30,13 @@ void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
     this->initializeFacetData();
 }
 
-/*! Validate that every required input message is connected. */
+/*! Validate the facet vector dimensions and required input-message connections. */
 void FacetedSRPEffector::validateConfiguration() {
+    if (this->facetElementBodyInMsgs.size() != this->numFacets
+        || this->facetProjectedAreaInMsgs.size() != this->numFacets) {
+        this->bskLogger.bskError("FacetedSRPEffector: facetElementBodyInMsgs and facetProjectedAreaInMsgs "
+                                "must each contain numFacets entries.");
+    }
     // Check Sun state input message is linked
     if (!this->sunStateInMsg.isLinked()) {
         this->bskLogger.bskError("FacetedSRPEffector.sunStateInMsg was not linked.");
@@ -92,6 +97,7 @@ void FacetedSRPEffector::linkInStates(DynParamManager& states) {
  @param timeStep [s] Simulation time step
 */
 void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]]) {
+    this->validateConfiguration();
 
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();

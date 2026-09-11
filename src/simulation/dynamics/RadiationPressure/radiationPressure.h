@@ -21,6 +21,8 @@
 #define RADIATION_PRESSURE_H
 
 #include <vector>
+#include <cstdint>
+#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -63,6 +65,7 @@ public:
 
 private:
     void validateConfiguration();
+    void validateLookupDimensions();  //!< Validate the three lookup table lengths
     void computeCannonballModel(Eigen::Vector3d rSunB_N);
     void computeLookupModel(Eigen::Vector3d rSunB_B);
 

@@ -13,6 +13,14 @@ Version |release|
 - GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
   or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
   repository root, while relative external-module paths remain relative to the caller's directory.
+- GitHub issue 469: Invalid effector dimensions could reach native array and vector accesses. Magnetic torque bar
+  counts, thruster initial-state vectors, faceted SRP input vectors, and radiation-pressure lookup table lengths now
+  receive validation before use. Reaction-wheel arrays and linked thruster command arrays also enforce their payload
+  capacity. Invalid configurations raise ``BasiliskError`` from attachment, ``Reset()``, or runtime consumption as
+  appropriate. Thruster sets larger than the command payload remain supported when that input is unlinked.
+  State thrusters and reaction wheels also reject device-count changes after state registration. Reaction wheels
+  preserve each wheel's jitter-angle state allocation. These checks protect dynamics accesses even for effectors
+  that are not scheduled as task modules; ``Reset()`` does not resize their registered states.
 - Rust-enabled macOS builds could mix the selected Xcode SDK with a newer Command Line Tools SDK,
   causing linker errors such as ``unknown architecture`` in system ``.tbd`` files. The Rust integration
   now removes Corrosion's hard-coded Command Line Tools library directory and uses CMake's selected SDK.
@@ -40,8 +48,9 @@ Version |release|
   within one module. Separate module instances require separate messages for independent
   commands; each OneDOF instance reads element ``[0]``. The documentation now explains
   this mapping and corrects the lock-message examples. For
-  :ref:`spinningBodyNDOFStateEffector`, chains with more than ``MAX_EFF_CNT`` (currently
-  36) bodies could read beyond a linked lock or motor torque payload. Initialization,
+  :ref:`spinningBodyNDOFStateEffector`, chains with more than `MAX_EFF_CNT
+  <https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__
+  bodies could read beyond a linked lock or motor torque payload. Initialization,
   reset, and input processing now reject these configurations with ``BasiliskError``.
   Larger chains remain supported when neither array input is linked.
 - GitHub issue 1542: macOS builds could emit a benign ``__common`` section alignment warning

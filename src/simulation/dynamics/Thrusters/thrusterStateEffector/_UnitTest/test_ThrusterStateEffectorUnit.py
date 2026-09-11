@@ -236,7 +236,7 @@ def unitThrusters(testFixture, show_plots, thrustNumber, initialConditions, dura
             thrusterSet.addThruster(thruster2)
 
     # Set the initial conditions
-    thrusterSet.kappaInit = messaging.DoubleVector([initialConditions])
+    thrusterSet.kappaInit = messaging.DoubleVector([initialConditions] + [0.0] * (thrustNumber - 1))  # [-]
 
     # Attach thrusters and add the effector to the spacecraft
     scObject.addStateEffector(thrusterSet)

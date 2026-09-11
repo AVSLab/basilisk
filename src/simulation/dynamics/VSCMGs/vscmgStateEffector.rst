@@ -34,8 +34,10 @@ configuration and derives the mass totals, mass fractions, reference axes, combi
 imbalance parameters before registering the integrated states. This works even when the effector is not added
 to a simulation task. See :ref:`effectorInitialization` for the general initialization contract.
 
-Configure at most ``MAX_EFF_CNT`` devices (currently 36) before initializing the simulation. Larger arrays
-raise ``BasiliskError`` during configuration validation because the command and speed messages have fixed capacity.
+Configure at most `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__ devices before
+initializing the simulation. Larger arrays raise ``BasiliskError`` during configuration validation because the
+command and speed messages have fixed capacity.
 
 The initial axes ``gsHat0_B``, ``gtHat0_B``, and ``ggHat_B`` must be finite and nonzero. Each is normalized,
 then the resulting frame is checked for orthogonality and right-handedness. Parallel axes or a left-handed frame
