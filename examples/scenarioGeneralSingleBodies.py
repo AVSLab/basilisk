@@ -79,8 +79,6 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 filename = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 
-matplotlib.rc('xtick', labelsize=14)
-matplotlib.rc('ytick', labelsize=14)
 
 def run(show_plots):
     """
@@ -95,7 +93,7 @@ def run(show_plots):
     sc_sim = SimulationBaseClass.SimBaseClass()
     sim_process_name = "simProcess"
     sim_process = sc_sim.CreateNewProcess(sim_process_name)
-    dyn_time_step_sec = 0.01  # [s]
+    dyn_time_step_sec = 0.05  # [s]
     fsw_time_step_sec = 0.1  # [s]
     data_rec_time_step_sec = 0.1  # [s]
     dyn_task_name = "dynTask"
@@ -381,9 +379,9 @@ def run(show_plots):
     plt.plot(timespan, panel_1_theta[0], label=r'$\theta_1$', color="teal")
     plt.plot(timespan, panel_2_theta[0], label=r'$\theta_2$', color="darkviolet")
     plt.title(r'Solar Panel Angles')
-    plt.ylabel('(deg)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc="center", prop={"size": 14})
+    plt.ylabel('(deg)')
+    plt.xlabel('Time (s)')
+    plt.legend(loc="center")
     plt.grid(True)
     plt_name = filename + "_1"
     figure_list[plt_name] = plt.figure(1)
@@ -393,9 +391,9 @@ def run(show_plots):
     plt.plot(timespan, panel_1_theta_dot[0], label=r'$\dot{\theta}_1$', color="teal")
     plt.plot(timespan, panel_2_theta_dot[0], label=r'$\dot{\theta}_2$', color="darkviolet")
     plt.title(r'Solar Panel Angle Rates')
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc="center right", prop={"size": 14})
+    plt.ylabel('(deg/s)')
+    plt.xlabel('Time (s)')
+    plt.legend(loc="center right")
     plt.grid(True)
     plt_name = filename + "_2"
     figure_list[plt_name] = plt.figure(2)
@@ -404,18 +402,18 @@ def run(show_plots):
     fig3, ax1 = plt.subplots()
     ax1.plot(timespan, payload_theta[0], label=r"$\theta$", color="teal")
     ax1.tick_params(axis="y", labelcolor="teal")
-    ax1.set_xlabel("Time (s)", fontsize=14)
-    ax1.set_ylabel("(deg)", color="teal", fontsize=14)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("(deg)", color="teal")
     ax2 = ax1.twinx()
     ax2.plot(timespan, payload_rho, label=r'$\rho$', color="darkviolet")
-    ax2.set_ylabel("(m)", color="darkviolet", fontsize=14)
+    ax2.set_ylabel("(m)", color="darkviolet")
     ax2.tick_params(axis="y", labelcolor="darkviolet")
     handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
     handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
     handles = handles_ax1 + handles_ax2
     labels = labels_ax1 + labels_ax2
     plt.title("Payload Displacements")
-    plt.legend(handles=handles, labels=labels, loc="center left", prop={"size": 14})
+    plt.legend(handles=handles, labels=labels, loc="center left")
     plt.grid(True)
     plt_name = filename + "_3"
     figure_list[plt_name] = plt.figure(3)
@@ -423,18 +421,18 @@ def run(show_plots):
     fig4, ax1 = plt.subplots()
     ax1.plot(timespan, payload_theta_dot[0], label=r"$\dot{\theta}$", color="teal")
     ax1.tick_params(axis="y", labelcolor="teal")
-    ax1.set_xlabel("Time (s)", fontsize=14)
-    ax1.set_ylabel("(deg/s)", color="teal", fontsize=14)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("(deg/s)", color="teal")
     ax2 = ax1.twinx()
     ax2.plot(timespan, payload_rho_dot, label=r'$\dot{\rho}$', color="darkviolet")
-    ax2.set_ylabel("(m/s)", color="darkviolet", fontsize=14)
+    ax2.set_ylabel("(m/s)", color="darkviolet")
     ax2.tick_params(axis="y", labelcolor="darkviolet")
     handles_ax1, labels_ax1 = ax1.get_legend_handles_labels()
     handles_ax2, labels_ax2 = ax2.get_legend_handles_labels()
     handles = handles_ax1 + handles_ax2
     labels = labels_ax1 + labels_ax2
     plt.title("Payload Rates")
-    plt.legend(handles=handles, labels=labels, loc="center left", prop={"size": 14})
+    plt.legend(handles=handles, labels=labels, loc="center left")
     plt.grid(True)
     plt_name = filename + "_4"
     figure_list[plt_name] = plt.figure(4)
@@ -446,9 +444,9 @@ def run(show_plots):
     plt.plot(timespan, sigma_BN[:, 1], label=r'$\sigma_2$', color="darkviolet")
     plt.plot(timespan, sigma_BN[:, 2], label=r'$\sigma_3$', color="blue")
     plt.title(r'Hub Inertial Attitude $\sigma_{\mathcal{B}/\mathcal{N}}$')
-    plt.ylabel('', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc="center left", prop={"size": 14})
+    plt.ylabel('')
+    plt.xlabel('Time (s)')
+    plt.legend(loc="center left")
     plt.grid(True)
     plt_name = filename + "_5"
     figure_list[plt_name] = plt.figure(5)
@@ -460,9 +458,9 @@ def run(show_plots):
     plt.plot(timespan, omega_BN_B[:, 1], label=r'$\omega_2$', color="darkviolet")
     plt.plot(timespan, omega_BN_B[:, 2], label=r'$\omega_3$', color="blue")
     plt.title(r'Hub Inertial Angular Velocity ${}^\mathcal{B} \omega_{\mathcal{B}/\mathcal{N}}$')
-    plt.ylabel('(deg/s)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc="center left", prop={"size": 14})
+    plt.ylabel('(deg/s)')
+    plt.xlabel('Time (s)')
+    plt.legend(loc="center left")
     plt.grid(True)
     plt_name = filename + "_6"
     figure_list[plt_name] = plt.figure(6)
@@ -474,9 +472,9 @@ def run(show_plots):
     plt.plot(timespan, r_BN_N[:, 1], label=r'$r_2$', color="darkviolet")
     plt.plot(timespan, r_BN_N[:, 2], label=r'$r_3$', color="blue")
     plt.title(r'Hub Inertial Position ${}^\mathcal{N} r_{B/N}$')
-    plt.ylabel('(m)', fontsize=14)
-    plt.xlabel('Time (s)', fontsize=14)
-    plt.legend(loc="lower left", prop={"size": 14})
+    plt.ylabel('(m)')
+    plt.xlabel('Time (s)')
+    plt.legend(loc="lower left")
     plt.grid(True)
     plt_name = filename + "_7"
     figure_list[plt_name] = plt.figure(7)
