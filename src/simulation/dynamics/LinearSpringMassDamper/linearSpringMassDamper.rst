@@ -12,13 +12,17 @@ how to run it, as well as testing.
 
 Message Connection Descriptions
 -------------------------------
-This state effector does not have any input or output messsages.
+This state effector does not have any input or output messages.
 
 
+Initialization and Reset
+------------------------
+``massInit`` must be finite and non-negative. Zero initial mass and depletion to zero during
+integration remain supported. The initial-mass check runs before state registration during
+spacecraft initialization, including when the effector is attached without being added to a
+task. Invalid input raises ``BasiliskError``.
 
-
-
-
-
-
-
+``Reset()`` repeats this configuration check without accessing parent states or changing
+integrated displacement, velocity, or mass. In particular, it does not restore depleted mass
+from ``massInit``. Initial values are applied during state registration.
+See :ref:`effectorInitialization`.

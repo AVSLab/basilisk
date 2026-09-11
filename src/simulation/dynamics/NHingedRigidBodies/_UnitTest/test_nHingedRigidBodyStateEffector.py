@@ -222,7 +222,7 @@ def test_nHingedRigidBodyDynamicEffectorSegmentBounds(segment, shouldRaise):
     ('UnequalMass', "same mass and the same hinge"),
     ('UnequalDistance', "same mass and the same hinge"),
     ('NoPanels', "at least one hinged panel"),
-    ('MasslessPanels', "panel mass must be greater than 0"),
+    ('MasslessPanels', "panel mass must be finite and greater than 0"),
     ('UnequalInertia', None),
 ])
 def test_nHingedRigidBodyPanelValidation(chain, expectedError):

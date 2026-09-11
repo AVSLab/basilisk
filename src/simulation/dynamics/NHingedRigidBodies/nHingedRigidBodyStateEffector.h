@@ -24,6 +24,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
@@ -133,6 +134,7 @@ public:
     double HeaviFunc(double cond); //!< Heaviside function used for matrix contributions
     void writeOutputStateMessages(uint64_t CurrentClock) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
+    void Reset(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override; //!< Method for registering the HRB states
     void registerProperties(DynParamManager& states) override; //!< Method for registering the panel properties
     void addDynamicEffector(DynamicEffector* newDynamicEffector, int segment) override; //!< Attach an effector
@@ -153,7 +155,7 @@ public:
                             Eigen::MRPd sigma_BN) override; //!< Method for computing the effector derivatives
 
 private:
-    void checkPanelUniformity();       //!< Method for rejecting a panel chain the EOMs cannot represent
+    void validateConfiguration();      //!< Validate panel masses, uniformity, and the configured hinge-frame DCM
     void computePanelInertialStates(); //!< Method for computing the panel states relative to the inertial frame
 };
 

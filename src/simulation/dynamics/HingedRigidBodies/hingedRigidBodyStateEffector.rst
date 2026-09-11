@@ -26,6 +26,18 @@ provides information on what this message is used for.
         Output message containing the panel inertial position and attitude states.
 
 
+Initialization and Reset
+------------------------
+``mass`` must be finite and non-negative. A zero-mass body remains supported when its
+configured rotational inertia permits nonsingular hinge dynamics. ``dcm_HB`` must be a
+finite, orthogonal, right-handed rotation matrix; scaled axes and reflections are rejected.
+
+These checks run before state registration during spacecraft initialization, including when
+the effector is attached without being added to a task. ``Reset()`` performs the same checks
+without accessing parent states or changing integrated hinge states, motor commands, or
+reference values. Invalid configurations raise ``BasiliskError``. See :ref:`effectorInitialization`.
+
+
 Detailed Module Description
 ---------------------------
 

@@ -21,6 +21,10 @@
 #define HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -129,6 +133,7 @@ private:
 public:
     HingedRigidBodyStateEffector();  //!< Constructor
     ~HingedRigidBodyStateEffector();  //!< Destructor
+    void Reset(uint64_t CurrentSimNanos) override;
     void writeOutputStateMessages(uint64_t CurrentClock) override;
 	void UpdateState(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& statesIn) override;  //!< Method for registering the HRB states
@@ -143,6 +148,7 @@ public:
     void prependSpacecraftNameToStates() override; //!< class method
 
 private:
+    void validateConfiguration(); //!< Validate mass and the configured hinge-frame DCM
     void computePanelInertialStates();
 };
 

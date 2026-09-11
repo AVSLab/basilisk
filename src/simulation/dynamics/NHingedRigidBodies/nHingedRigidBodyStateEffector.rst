@@ -36,6 +36,20 @@ panel, ordered outward from the hub.
         panel frame S.
 
 
+Initialization and Reset
+------------------------
+The chain must contain at least one panel. Each panel's ``mass`` must be finite and strictly
+positive, and the combined panel mass must remain finite. The uniformity requirements above
+apply to both ``mass`` and ``d``, and each ``d`` must be finite. ``dcm_HB`` must be a finite,
+orthogonal, right-handed rotation matrix; scaled axes and reflections are rejected.
+
+These checks run before state registration during spacecraft initialization, including when
+the effector is attached without being added to a task. ``Reset()`` performs the same checks
+without accessing parent states or changing integrated panel states. It does not rebuild the
+registered state layout. Invalid configurations raise ``BasiliskError``.
+See :ref:`effectorInitialization`.
+
+
 Hosting a Dynamic Effector
 --------------------------
 This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible

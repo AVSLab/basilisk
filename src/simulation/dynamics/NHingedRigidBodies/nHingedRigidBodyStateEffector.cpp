@@ -155,9 +155,9 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
     return;
 }
 
-/*! This method checks that the panel chain is one the equations of motion can represent */
+/*! @brief Validate panel masses, uniformity, and the fixed hinge orientation before state registration. */
 void
-NHingedRigidBodyStateEffector::checkPanelUniformity()
+NHingedRigidBodyStateEffector::validateConfiguration()
 {
     if (this->PanelVec.empty()) {
         this->bskLogger.bskError("NHingedRigidBodyStateEffector: at least one hinged panel is required.");
@@ -168,10 +168,15 @@ NHingedRigidBodyStateEffector::checkPanelUniformity()
     const double relativeTolerance = 1e-9; // [-]
     const double mass = this->PanelVec.front().mass;
     const double d = this->PanelVec.front().d;
+    double totalPanelMass = 0.0; // [kg]
     std::vector<HingedPanel>::iterator PanelIt;
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
-        if (PanelIt->mass <= 0.0) {
-            this->bskLogger.bskError("NHingedRigidBodyStateEffector: every panel mass must be greater than 0.");
+        if (!std::isfinite(PanelIt->mass) || PanelIt->mass <= 0.0) {
+            this->bskLogger.bskError("NHingedRigidBodyStateEffector: every panel mass must be finite and greater than 0.");
+        }
+        totalPanelMass += PanelIt->mass;
+        if (!std::isfinite(PanelIt->d)) {
+            this->bskLogger.bskError("NHingedRigidBodyStateEffector: every panel distance d must be finite.");
         }
         if (std::abs(PanelIt->mass - mass) > relativeTolerance * std::abs(mass) ||
             std::abs(PanelIt->d - d) > relativeTolerance * std::abs(d)) {
@@ -181,6 +186,21 @@ NHingedRigidBodyStateEffector::checkPanelUniformity()
                                      "spinningBodyNDOFStateEffector instead.");
         }
     }
+    if (!std::isfinite(totalPanelMass)) {
+        this->bskLogger.bskError("NHingedRigidBodyStateEffector: total panel mass must be finite.");
+    }
+    if (!this->dcm_HB.allFinite() || !eigenIsRotationMatrix(this->dcm_HB)) {
+        this->bskLogger.bskError("NHingedRigidBodyStateEffector: dcm_HB must be a finite, orthogonal, "
+                                "right-handed rotation matrix.");
+    }
+}
+
+/*! @brief Validate configuration without changing integrated states.
+ * @param CurrentSimNanos [ns] Current simulation time.
+ */
+void NHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager
@@ -189,7 +209,7 @@ NHingedRigidBodyStateEffector::checkPanelUniformity()
  */
 void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
-    this->checkPanelUniformity();
+    this->validateConfiguration();
 
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);

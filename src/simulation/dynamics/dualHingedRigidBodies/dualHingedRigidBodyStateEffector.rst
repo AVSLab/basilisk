@@ -22,6 +22,20 @@ provides information on what this message is used for.
         vector of output messages containing the panel 1 and 2 inertial position and attitude states.
 
 
+Initialization and Reset
+------------------------
+``mass1`` and ``mass2`` must each be finite and non-negative. Their sum must be finite and
+strictly positive because the model divides by the combined mass when computing the center
+of mass. Either panel may have zero mass if the configured inertias permit nonsingular hinge
+dynamics. ``dcm_H1B`` must be a finite, orthogonal, right-handed rotation matrix; scaled axes
+and reflections are rejected.
+
+These checks run before state registration during spacecraft initialization, including when
+the effector is attached without being added to a task. ``Reset()`` performs the same checks
+without accessing parent states or changing integrated hinge states or motor commands.
+Invalid configurations raise ``BasiliskError``. See :ref:`effectorInitialization`.
+
+
 Detailed Module Description
 ---------------------------
 

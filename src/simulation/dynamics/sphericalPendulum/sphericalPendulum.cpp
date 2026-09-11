@@ -20,6 +20,7 @@
 #include "sphericalPendulum.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <math.h>
+#include <cmath>
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
@@ -60,6 +61,26 @@ SphericalPendulum::SphericalPendulum()
 
 uint64_t SphericalPendulum::effectorID = 1;
 
+/*! @brief Validate initial mass and damping, retaining zero mass and semidefinite damping. */
+void SphericalPendulum::validateConfiguration()
+{
+    if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
+        this->bskLogger.bskError("SphericalPendulum: massInit must be finite and non-negative.");
+    }
+    if (!eigenIsPositiveSemidefiniteMatrix(this->D)) {
+        this->bskLogger.bskError("sphericalPendulum: D must be symmetric positive semidefinite. It may not have been set "
+                                "properly by the user.");
+    }
+}
+
+/*! @brief Validate configuration without restoring depleted mass or changing integrated states.
+ * @param CurrentSimNanos [ns] Current simulation time.
+ */
+void SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
 /*! This is the destructor, nothing to report here */
 SphericalPendulum::~SphericalPendulum()
 {
@@ -84,10 +105,7 @@ void SphericalPendulum::linkInStates(DynParamManager& states)
  */
 void SphericalPendulum::registerStates(DynParamManager& states)
 {
-    if (!eigenIsPositiveSemidefiniteMatrix(this->D)) {
-        bskLogger.bskError("sphericalPendulum: D must be symmetric positive semidefinite. It may not have been set "
-                           "properly by the user.");
-    }
+    this->validateConfiguration();
 
 	    // - Register phi, theta, phiDot and thetaDot
 	this->phiState = states.registerState(1, 1, nameOfPhiState);

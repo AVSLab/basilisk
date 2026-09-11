@@ -21,6 +21,11 @@
 #ifndef SPHERICAL_PENDULUM_H
 #define SPHERICAL_PENDULUM_H
 
+#include <cstdint>
+#include <string>
+#include <Eigen/Dense>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -36,7 +41,7 @@ public:
     Eigen::Matrix3d D;                    //!< [N*s/m] symmetric positive-semidefinite damping matrix in P0 components
     double phiDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double thetaDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
-    double massInit;               //!< [m] Initial value for spherical pendulum pendulum mass
+    double massInit;               //!< [kg] Initial value for spherical pendulum mass
     std::string nameOfPhiState;    //!< [-] Identifier for the phi state data container
     std::string nameOfThetaState;    //!< [-] Identifier for the theta state data container
     std::string nameOfPhiDotState; //!< [-] Identifier for the phiDot state data container
@@ -50,6 +55,7 @@ public:
 		BSKLogger bskLogger;                      //!< BSK Logging
 
 private:
+    void validateConfiguration(); //!< Validate initial mass and damping without changing the current states
     double phiInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
     double thetaInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
     double phi;					//!< [rad] spherical pendulum displacement in P0 frame
@@ -85,6 +91,7 @@ private:
 public:
 	SphericalPendulum();           //!< Constructor
 	~SphericalPendulum();          //!< Destructor
+    void Reset(uint64_t CurrentSimNanos) override;
 	void registerStates(DynParamManager& states);  //!< Method for FSP to register its states
 	void linkInStates(DynParamManager& states);  //!< Method for FSP to get access of other states
 	void updateEffectorMassProps(double integTime);  //!< Method for FSP to add its contributions to mass props

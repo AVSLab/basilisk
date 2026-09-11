@@ -20,6 +20,13 @@
 #ifndef PRESCRIBED_MOTION_STATE_EFFECTOR_H
 #define PRESCRIBED_MOTION_STATE_EFFECTOR_H
 
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -89,6 +96,7 @@ public:
     Message<SCStatesMsgPayload> prescribedMotionConfigLogOutMsg;                  //!< Output config log message for the effector's states
 
 private:
+    void validateMass(double candidateMass); //!< Reject invalid mass without changing configuration or states
     double currentSimTimeSec;                           //!< [s] Current simulation time, updated at the dynamics frequency
     double mass;                                        //!< [kg] Effector mass
     Eigen::Matrix3d IPntPc_P;                           //!< [kg-m^2] Inertia of the effector about its center of mass in P frame components

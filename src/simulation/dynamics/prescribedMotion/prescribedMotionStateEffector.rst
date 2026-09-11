@@ -46,6 +46,18 @@ provides information on what this message is used for.
         Output message containing the effector's inertial position and attitude states.
 
 
+Initialization and Reset
+------------------------
+``setMass()`` requires a finite, non-negative mass. Invalid input raises ``BasiliskError``
+before replacing the previous mass. Zero mass remains supported for a massless prescribed
+reference frame.
+
+Mass is also validated before state registration during spacecraft initialization and from
+``Reset()``. Thus validation does not depend on adding the effector to a task. ``Reset()``
+does not restore initial states or clear prescribed motion values, and it does not access
+parent states. See :ref:`effectorInitialization`.
+
+
 Module Overview
 ---------------
 
