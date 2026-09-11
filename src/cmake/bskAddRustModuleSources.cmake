@@ -275,6 +275,21 @@ function(bsk_add_rust_module_sources)
       "${_rust_link_target}")
   endif()
 
+  if(APPLE)
+    # Corrosion 0.6.1 adds the Command Line Tools SDK even when CMake uses
+    # Xcode or an explicitly selected SDK. A newer CLT SDK can be unreadable
+    # by the selected linker. Let CMake's sysroot select system libraries,
+    # while preserving any other library search directories on the target.
+    get_target_property(_rust_link_directories "${_rust_link_target}"
+                        INTERFACE_LINK_DIRECTORIES)
+    if(_rust_link_directories)
+      list(REMOVE_ITEM _rust_link_directories
+           "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib")
+      set_property(TARGET "${_rust_link_target}" PROPERTY
+                   INTERFACE_LINK_DIRECTORIES "${_rust_link_directories}")
+    endif()
+  endif()
+
   # CMake's Makefile generators can leave GNU Make jobserver descriptors in
   # MAKEFLAGS even though those descriptors are closed before Corrosion starts
   # Cargo. Do not pass that stale jobserver state into Cargo; Cargo will select

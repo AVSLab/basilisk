@@ -1,0 +1,1 @@
+- Fixed Rust-enabled macOS builds mixing Xcode and Command Line Tools SDKs by removing Corrosion's hard-coded SDK library search path and respecting CMake's selected SDK.

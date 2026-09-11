@@ -14,7 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Check Rust binding dependencies without downloading or compiling Rust crates."""
+"""Check Rust build integration without downloading or compiling Rust crates."""
 
 import os
 import shutil
@@ -44,6 +44,9 @@ if NINJA:
 # extension import, C++ compiler, or network access is needed by these tests.
 PROJECT = r"""cmake_minimum_required(VERSION 3.26)
 project(rustBindingsIncremental NONE)
+if(DEFINED FIXTURE_APPLE)
+  set(APPLE "${FIXTURE_APPLE}")
+endif()
 include("@HELPER@")
 file(APPEND "${CMAKE_BINARY_DIR}/configure-runs.txt" "configure\n")
 
@@ -56,6 +59,10 @@ function(corrosion_import_crate)
   cmake_parse_arguments(IMPORT "LOCKED" "IMPORTED_CRATES;MANIFEST_PATH" "CRATES;CRATE_TYPES" ${ARGN})
   add_library(fixture INTERFACE)
   add_library(fixture-static STATIC IMPORTED)
+  if(DEFINED FIXTURE_LINK_DIRECTORIES)
+    set_property(TARGET fixture-static PROPERTY
+                 INTERFACE_LINK_DIRECTORIES "${FIXTURE_LINK_DIRECTORIES}")
+  endif()
   add_custom_target(_cargo-build_fixture
     COMMAND "${CMAKE_COMMAND}" -E env "$<TARGET_PROPERTY:fixture,FIXTURE_ENV>"
       "${CMAKE_COMMAND}" "-DSOURCE=${CMAKE_SOURCE_DIR}" "-DBINARY=${CMAKE_BINARY_DIR}"
@@ -74,6 +81,8 @@ endfunction()
 bsk_add_rust_module_sources(
   TARGET fixture MANIFEST "${CMAKE_SOURCE_DIR}/Cargo.toml"
   OUT_HEADER_VAR header OUT_INTERFACE_VAR interface OUT_BUILD_TARGET_VAR bindings)
+file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/link-directories.txt"
+     CONTENT "$<TARGET_PROPERTY:fixture-static,INTERFACE_LINK_DIRECTORIES>")
 
 # Model SWIG followed by its compiled consumer. Both use ordinary file-level
 # dependencies as well as the ordering target supplied by the real helper.
@@ -124,6 +133,42 @@ def _run(command):
     """
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.skipif(CMAKE is None, reason="CMake is required")
+@pytest.mark.parametrize("apple,include_clt", [(True, True), (True, False), (False, True)])
+def test_rust_link_directories_respect_sdk_selection(tmp_path, apple, include_clt):
+    """Remove Corrosion's forced CLT SDK only on Apple platforms, preserving other paths.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param apple: Whether to exercise the Apple target-platform branch.
+    :param include_clt: Whether Corrosion supplies its hard-coded SDK directory.
+    """
+    project = tmp_path / "project with spaces"
+    build = tmp_path / "build with spaces"
+    project.mkdir()
+    helper = REPOSITORY_ROOT / "src/cmake/bskAddRustModuleSources.cmake"
+    (project / "CMakeLists.txt").write_text(
+        PROJECT.replace("@HELPER@", helper.as_posix()), encoding="utf-8"
+    )
+    (project / "Cargo.toml").write_text("# Stubbed Cargo metadata.\n", encoding="utf-8")
+    clt_path = "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
+    custom_path = (tmp_path / "custom libraries").as_posix()
+    sdk_path = (tmp_path / "selected SDK/usr/lib").as_posix()
+    directories = [custom_path, sdk_path]
+    if include_clt:
+        directories.insert(1, clt_path)
+    configure = [
+        CMAKE, "-S", str(project), "-B", str(build),
+        f"-DFIXTURE_APPLE={'ON' if apple else 'OFF'}",
+        f"-DFIXTURE_LINK_DIRECTORIES={';'.join(directories)}",
+    ]
+    if NINJA:
+        configure.extend(["-G", "Ninja", f"-DCMAKE_MAKE_PROGRAM={NINJA}"])
+    _run(configure)
+    actual = (build / "link-directories.txt").read_text(encoding="utf-8").split(";")
+    expected = [path for path in directories if not (apple and path == clt_path)]
+    assert actual == expected
 
 
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")

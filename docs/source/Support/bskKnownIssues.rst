@@ -13,6 +13,10 @@ Version |release|
 - GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
   or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
   repository root, while relative external-module paths remain relative to the caller's directory.
+- Rust-enabled macOS builds could mix the selected Xcode SDK with a newer Command Line Tools SDK,
+  causing linker errors such as ``unknown architecture`` in system ``.tbd`` files. The Rust integration
+  now removes Corrosion's hard-coded Command Line Tools library directory and uses CMake's selected SDK.
+  Reconfiguring an existing build applies the fix without requiring a clean rebuild.
 - :ref:`vscmgStateEffector` initialized derived inertias, masses, reference axes, and imbalance parameters only
   from its scheduled ``Reset()``. An attached-only effector could therefore use uninitialized dynamics parameters.
   State registration now performs the same configuration initialization and validation. Zero-mass balanced and
