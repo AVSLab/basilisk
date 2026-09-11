@@ -13,6 +13,14 @@ Version |release|
 - GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
   or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
   repository root, while relative external-module paths remain relative to the caller's directory.
+- :ref:`vscmgStateEffector` initialized derived inertias, masses, reference axes, and imbalance parameters only
+  from its scheduled ``Reset()``. An attached-only effector could therefore use uninitialized dynamics parameters.
+  State registration now performs the same configuration initialization and validation. Zero-mass balanced and
+  simple jitter devices retain support and no longer compute undefined mass fractions.
+  Validation also rejects device arrays that exceed message capacity and non-finite motor settings or commands.
+  Coupled dynamics now report invalid divisors through ``BasiliskError`` instead of producing non-finite
+  derivatives. Gimbal friction smoothing now uses the gimbal ratio independently of the wheel ratio.
+  Mixed balanced/jitter arrays now index the compact wheel-angle state correctly when publishing configuration messages.
 - ``simHelpers.timeStringToGregorianUTCMsg()`` retained every returned epoch message
   for the lifetime of the process, causing memory growth during repeated simulation setup.
   The obsolete registry has been removed. Messages now remain alive while callers,

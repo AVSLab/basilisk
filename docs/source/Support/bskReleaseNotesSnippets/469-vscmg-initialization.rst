@@ -1,0 +1,3 @@
+- :ref:`vscmgStateEffector` now validates and initializes its configuration through spacecraft attachment as well as ``Reset()``, including axes, frame consistency, mass constraints, basic inertias, message capacity, and finite motor settings; zero-mass balanced and simple jitter devices retain finite mass fractions.
+- :ref:`vscmgStateEffector` now rejects invalid coupled dynamics divisors and non-finite torque commands, guards linear friction divisors, and uses the gimbal's own smoothing ratio for gimbal friction.
+- Fixed wheel-angle output indexing in :ref:`vscmgStateEffector` arrays that mix balanced and jitter models.

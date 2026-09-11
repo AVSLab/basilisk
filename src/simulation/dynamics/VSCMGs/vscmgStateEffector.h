@@ -21,7 +21,12 @@
 #ifndef VSCMGSTATEEFFECTOR_H
 #define VSCMGSTATEEFFECTOR_H
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
@@ -69,17 +74,19 @@ public:
     std::vector<Message<VSCMGConfigMsgPayload>*> vscmgOutMsgs;   //!< [-] vector of VSCMG output messages
 
     std::vector<VSCMGCmdMsgPayload> newVSCMGCmds; 	//!< [-] Incoming torque commands
-	VSCMGSpeedMsgPayload outputStates; 				//!< [-] Output data from the VSCMGs
+	VSCMGSpeedMsgPayload outputStates{}; 			//!< [-] Output data from the VSCMGs
     std::string nameOfVSCMGOmegasState;         //!< [-] identifier for the Omegas state data container
     std::string nameOfVSCMGThetasState;         //!< [-] identifier for the Thetas state data container
 	std::string nameOfVSCMGGammasState;         //!< [-] identifier for the Gammas state data container
 	std::string nameOfVSCMGGammaDotsState;      //!< [-] identifier for the GammaDots state data container
-	int numVSCMG;                               //!< [-] number of VSCMGs
-	int numVSCMGJitter;                         //!< [-] number of VSCMGs with jitter
+	int numVSCMG = 0;                           //!< [-] number of VSCMGs
+	int numVSCMGJitter = 0;                     //!< [-] number of VSCMGs with jitter
   BSKLogger bskLogger;                      //!< [-] BSK Logging
 
 private:
-    VSCMGArrayTorqueMsgPayload incomingCmdBuffer; 	//!< [-] One-time allocation for savings
+    /** @brief Validate and derive configuration without requiring linked states or clearing commands. */
+    void initializeConfiguration();
+    VSCMGArrayTorqueMsgPayload incomingCmdBuffer{}; //!< [-] One-time allocation for savings
 	uint64_t prevCommandTime;                  	//!< [-] Time for previous valid thruster firing
 
 	StateData *hubOmega;                        //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components
