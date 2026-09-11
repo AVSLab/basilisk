@@ -46,8 +46,9 @@ instances that need independent commands. Instances sharing a message read the s
 array starting at element ``[0]``. See :ref:`spinningBodyOneDOFStateEffector` for an
 example of independent lock messages.
 
-The lock and motor torque payload arrays each contain ``MAX_EFF_CNT`` entries
-(currently 36). When using either input message, limit the chain to that many degrees
+The lock and motor torque payload arrays each contain `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__ entries.
+When using either input message, limit the chain to that many degrees
 of freedom. Spacecraft initialization and ``Reset()`` raise a ``BasiliskError`` if
 either input is linked and the chain exceeds this limit, even if the message has not
 been written. Input processing repeats the check to catch messages connected after

@@ -37,6 +37,11 @@
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "architecture/utilities/avsEigenMRP.h"
 
 
 
@@ -83,6 +88,7 @@ public:
     BSKLogger bskLogger;                      //!< BSK Logging
 
 private:
+    void validateConfiguration();  //!< Validate dimensions before accessing thruster data or commands
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< Message buffer for thruster data
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< One-time allocation for savings
 

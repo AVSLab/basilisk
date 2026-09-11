@@ -45,6 +45,22 @@ dynamics configuration even when the reaction wheel state effector is not added 
 The ``Reset()`` method refreshes these derived configuration values, initializes every wheel's command entry to zero,
 reports a warning when a Stribeck coefficient is zero, and clears the wheel-speed output buffer.
 
+The wheel count cannot exceed `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__, because the effector
+publishes a fixed-size wheel-speed array even when its motor-command input is unlinked. State registration, ``Reset()``, command
+reading, and wheel-speed publication reject excessive counts with ``BasiliskError`` before accessing the arrays.
+Command storage is also sized during state registration and input reading, so it does not depend on a scheduled
+``Reset()``. Direct calls to ``ConfigureRWRequests()`` may supply partial ``NewRWCmds`` vectors, but the vector
+cannot exceed the wheel count.
+
+Configure all wheels and their models before ``InitializeSimulation()`` registers their states. After registration,
+``addReactionWheel()`` raises ``BasiliskError`` without adding a device. The wheel count and the allocation of a
+jitter-angle state to each wheel must remain unchanged. Changes through ``ReactionWheelData`` are rejected before
+reset, command processing, output publication, or dynamics access, even when the effector is absent from the task.
+The derived ``numRW`` and ``numRWJitter`` counts must not be edited. ``Reset()`` preserves the registered states;
+use a new effector and simulation when changing the state layout. Calling ``Reset()`` before state registration
+does not freeze the layout.
+
 Threshold Parameters
 ~~~~~~~~~~~~~~~~~~~~
 

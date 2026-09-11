@@ -23,6 +23,19 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 
+namespace {
+/*! @brief Reject counts that cannot fit the magnetic torque bar payload arrays.
+ * @param config Magnetic torque bar configuration payload.
+ * @param logger Logger used to report invalid counts.
+ */
+void validateMtbCount(const MTBArrayConfigMsgPayload& config, BSKLogger& logger)
+{
+    if (config.numMTB < 0 || config.numMTB > MAX_EFF_CNT) {
+        logger.bskError("MtbEffector: numMTB must be between 0 and MAX_EFF_CNT (%d).", MAX_EFF_CNT);
+    }
+}
+}
+
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -53,7 +66,7 @@ void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     return;
 }
 
-/*! Validate that all required input messages are connected. */
+/*! Validate required input connections and the count in an already-written configuration. */
 void MtbEffector::validateConfiguration()
 {
     /*
@@ -67,6 +80,9 @@ void MtbEffector::validateConfiguration()
     }
     if (!this->mtbParamsInMsg.isLinked()) {
         bskLogger.bskError("MtbEffector.mtbParamsInMsg was not linked.");
+    }
+    if (this->mtbParamsInMsg.isWritten()) {
+        validateMtbCount(this->mtbParamsInMsg(), this->bskLogger);
     }
 }
 
@@ -124,6 +140,7 @@ void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double t
     this->mtbCmdInMsgBuffer = this->mtbCmdInMsg();
     this->magInMsgBuffer = this->magInMsg();
     this->mtbConfigParams = this->mtbParamsInMsg();
+    validateMtbCount(this->mtbConfigParams, this->bskLogger);
 
     /*
      * Zero out the external torque in the body frame.

@@ -28,8 +28,14 @@ Initialization and Reset
 When the spacecraft links this effector to the hub states, initialization verifies that ``sunEphmInMsg`` is
 connected.  This validation occurs even if only the spacecraft is added to a task.
 
+When the faceted CPU lookup model is selected, ``lookupSHat_B``, ``lookupForce_B``, and ``lookupTorque_B`` must
+contain the same nonzero number of entries. Populate all three tables before initialization or ``Reset()``.
+The check also runs before each lookup evaluation, so incomplete table edits or a model change after initialization
+raise ``BasiliskError`` before any table entry is accessed. The cannonball model does not use these tables and
+does not require them to be populated.
+
 Attachment-time validation does not replace task scheduling for this effector.  Add it to a task so that
 ``UpdateState()`` refreshes the cached Sun ephemeris and optional eclipse data used during force evaluation.
 
-When the effector is scheduled, its ``Reset()`` repeats the required-message check.
+When the effector is scheduled, its ``Reset()`` repeats the configuration checks.
 ``Reset()`` does not clear the cached ephemeris, illumination, force, or torque data.

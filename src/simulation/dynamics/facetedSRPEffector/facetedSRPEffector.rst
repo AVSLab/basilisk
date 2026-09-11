@@ -214,6 +214,12 @@ every configured facet geometry and projected-area input are connected.  It also
 internal per-facet caches from ``numFacets``.  These operations therefore occur even if only the spacecraft is
 added to a task.
 
+Both public input vectors, ``facetElementBodyInMsgs`` and ``facetProjectedAreaInMsgs``, must contain exactly
+``numFacets`` entries. Use ``setNumFacets()`` to size both vectors and then connect their messages. Attachment,
+``Reset()``, and force evaluation check both lengths before accessing any entry and raise ``BasiliskError``
+on a mismatch. If the facet count changes, reconnect the inputs and call ``Reset()`` before evaluating forces
+so that the internal caches are resized as well. An empty facet set is supported.
+
 Force and torque evaluation is driven entirely by the spacecraft dynamics, and the effector reads its input
 messages during that evaluation.  Scheduling the effector separately is therefore not required for force and
 torque computation.

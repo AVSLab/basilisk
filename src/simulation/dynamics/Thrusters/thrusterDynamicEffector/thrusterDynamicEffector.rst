@@ -40,6 +40,21 @@ provides information on what this message is used for.
   The dynamic behaviour of this module is governed by the variables inside :ref:`THRTimePair`, which determine the on and off-ramp characteristics. The default behaviour is to not have on and off-ramps active. The ``cutoffFrequency`` variable inside :ref:`THRSimConfig` has no impact on this module and is instead supposed to be used to determine the dynamic behaviour within :ref:`thrusterStateEffector`.
 
 
+Initialization and Reset
+------------------------
+
+A linked ``cmdsInMsg`` supports at most `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__ thrusters.
+Attachment to the hub or a parent state effector, ``Reset()``, and command reading validate this limit and raise ``BasiliskError`` before
+accessing the fixed-size payload. Connecting an input after initialization is checked on the next command read.
+Larger sets remain supported with the input unlinked; input reading supplies zero commands for all thrusters.
+
+Both attachment paths size the command storage without clearing existing entries. ``Reset()`` repeats the count
+check, zeros the command storage and total mass-flow output, and preserves the individual thrusters' operating
+data. Direct calls to ``ConfigureThrustRequests()`` may supply partial ``NewThrustCmds`` vectors, but the vector
+cannot exceed the thruster count. Schedule
+the effector to read commands and publish thruster outputs.
+
 Attaching to a State Effector
 -----------------------------
 This effector supports the branching described in :ref:`bskPrinciples-11`, so its load can be

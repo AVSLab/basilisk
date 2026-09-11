@@ -32,6 +32,12 @@ When the spacecraft links this effector to the hub attitude state, initializatio
 ``magInMsg``, and ``mtbParamsInMsg`` are connected.  This validation occurs even if only the spacecraft is added
 to a task.
 
+The configuration message's ``numMTB`` must lie between zero and `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__, inclusive.
+An already-written configuration is checked during attachment and ``Reset()``. Torque evaluation checks every
+configuration it consumes before transposing the alignment matrix or indexing the dipole arrays. Invalid counts
+raise ``BasiliskError``; a zero-bar configuration produces zero torque.
+
 Torque evaluation is driven by the spacecraft dynamics and reads the input messages directly.  Add the effector
 to a task when ``mtbOutMsg`` must be updated, because the effector publishes that message from ``UpdateState()``.
 

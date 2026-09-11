@@ -36,6 +36,13 @@
 #include "architecture/utilities/bskLogging.h"
 #include <Eigen/Dense>
 #include <vector>
+#include <cstdint>
+#include <memory>
+#include <cstddef>
+#include <optional>
+#include <string>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "architecture/utilities/avsEigenMRP.h"
 
 
 
@@ -86,6 +93,9 @@ public:
     double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
 
 private:
+    void validateConfiguration();  //!< Validate dimensions before accessing thruster data or commands
+    void validateRegisteredCount();  //!< Reject changes to the number of registered thrust-factor states
+    std::optional<std::size_t> registeredThrusterCount;  //!< Thruster count after successful state registration
     std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< Message buffer for thruster data
 
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< One-time allocation for savings

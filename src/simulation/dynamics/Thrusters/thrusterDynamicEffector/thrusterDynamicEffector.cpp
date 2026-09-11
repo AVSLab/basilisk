@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "thrusterDynamicEffector.h"
+#include <cmath>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -61,6 +62,7 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector()
  */
 void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
+    this->validateConfiguration();
     //! Clear out any currently firing thrusters and re-init cmd array
     NewThrustCmds.clear();
     NewThrustCmds.insert(this->NewThrustCmds.begin(), this->thrusterData.size(), 0.0);
@@ -102,12 +104,22 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 }
 
 
-/*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
+/*! @brief Validate configuration dimensions before initialization or command processing. */
+void ThrusterDynamicEffector::validateConfiguration()
+{
+    if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
+        this->bskLogger.bskError("ThrusterDynamicEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.",
+                                MAX_EFF_CNT);
+    }
+}
 
+/*! @brief Read the incoming command message and populate the thruster command vector.
+ * @return Whether a new command is available, or zero commands were supplied for an unlinked input.
  */
 bool ThrusterDynamicEffector::ReadInputs()
 {
+    this->validateConfiguration();
+    this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     uint64_t i;
     bool dataGood;
 
@@ -124,6 +136,8 @@ bool ThrusterDynamicEffector::ReadInputs()
     } else {
         this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
         this->prevCommandTime = 0;
+        this->NewThrustCmds.assign(this->thrusterData.size(), 0.0);  // [s]
+        return true;
     }
 
     // Set the NewThrustCmds vector.  Using the data() method for raw speed
@@ -147,6 +161,9 @@ bool ThrusterDynamicEffector::ReadInputs()
  */
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
+    if (this->NewThrustCmds.size() > this->thrusterData.size()) {
+        this->bskLogger.bskError("ThrusterDynamicEffector: NewThrustCmds must not exceed the thruster count.");
+    }
     std::vector<double>::iterator CmdIt;
     size_t THIter = 0;
     // Iterate through the list of thruster commands that we read in.
@@ -241,6 +258,8 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
  @param states The states to link
  */
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
+    this->validateConfiguration();
+    this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
 
@@ -259,6 +278,8 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  @param properties The parameter manager to collect from
  */
 void ThrusterDynamicEffector::linkInProperties(DynParamManager& properties){
+    this->validateConfiguration();
+    this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
     this->inertialAngVelocityProperty = properties.getPropertyReference(this->propName_inertialAngVelocity);
     this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);

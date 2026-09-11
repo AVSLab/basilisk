@@ -26,6 +26,13 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
+#include <vector>
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -79,6 +86,9 @@ public:
     BSKLogger bskLogger;                                        //!< BSK Logging
 
 private:
+    void validateDimensions();  //!< Validate the wheel count against command and speed message capacities
+    void validateRegisteredLayout();  //!< Reject changes to the registered speed and angle state layout
+    std::optional<std::vector<bool>> registeredWheelLayout;  //!< Per-wheel jitter-state allocation after registration
     void initializeWheelConfiguration(RWConfigPayload& rw);
 
     ArrayMotorTorqueMsgPayload incomingCmdBuffer = {};          //!< One-time allocation for savings
