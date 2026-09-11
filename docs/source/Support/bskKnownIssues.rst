@@ -10,6 +10,13 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 469: Hinged-body, prescribed-motion, and slosh effectors accepted invalid masses, and
+  hinged-body effectors accepted invalid hinge-frame rotation matrices. These configurations now raise
+  ``BasiliskError`` before state registration and from ``Reset()``, including for attached-only effectors.
+  Prescribed-motion mass setters reject invalid input before replacing the prior value. Supported zero-mass
+  configurations and depleted slosh states are preserved; dual-hinged bodies require a positive finite
+  combined mass, and N-hinged chains require finite positive panel masses. Spherical-pendulum damping
+  validation now also runs from ``Reset()``. See the individual module documentation for the mass bounds.
 - GitHub issue 469: :ref:`extForceTorque` could read uninitialized command buffers when an input was linked
   and dynamics ran before the effector's scheduled ``Reset()`` or ``UpdateState()``. All three command buffers
   now start at zero, including for effectors attached to a hub or appendage without task scheduling. Static

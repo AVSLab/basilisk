@@ -25,6 +25,10 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/bskLogging.h"
@@ -168,6 +172,7 @@ private:
         }
     };
 
+    void validateConfiguration(); //!< Validate panel masses and the configured hinge-frame DCM
 };
 
 

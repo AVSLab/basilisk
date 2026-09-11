@@ -21,6 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include <string>
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values. */
 PrescribedMotionStateEffector::PrescribedMotionStateEffector()
@@ -78,12 +79,22 @@ PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
 {
 }
 
-/*! This method is used to reset the module.
-
- @param currentClock [ns] Time the method is called
-*/
+/*! @brief Validate mass without changing prescribed motion or integrated states.
+ * @param currentClock [ns] Current simulation time.
+ */
 void PrescribedMotionStateEffector::Reset(uint64_t currentClock [[maybe_unused]])
 {
+    this->validateMass(this->mass);
+}
+
+/*! @brief Validate mass, retaining support for a massless prescribed frame.
+ * @param candidateMass [kg] Mass value to validate before assignment or initialization.
+ */
+void PrescribedMotionStateEffector::validateMass(double candidateMass)
+{
+    if (!std::isfinite(candidateMass) || candidateMass < 0.0) {
+        this->bskLogger.bskError("PrescribedMotionStateEffector: mass must be finite and non-negative.");
+    }
 }
 
 /*! This method takes the computed states and outputs them to the messaging system.
@@ -152,6 +163,7 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 */
 void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 {
+    this->validateMass(this->mass);
     this->sigma_PMState = statesIn.registerState(3, 1, this->nameOfsigma_PMState);
     this->sigma_PMState->setState(this->sigma_PM.coeffs());
 
@@ -592,10 +604,14 @@ void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffe
     newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
 }
 
-/*! Setter method for the effector mass.
- @param mass [kg] Effector mass
+/*! @brief Set the effector mass after validating it, preserving the previous value on failure.
+ @param mass [kg] Finite, non-negative effector mass; zero is supported.
 */
-void PrescribedMotionStateEffector::setMass(const double mass) { this->mass = mass; }
+void PrescribedMotionStateEffector::setMass(const double mass)
+{
+    this->validateMass(mass);
+    this->mass = mass;
+}
 
 /*! Setter method for IPntPc_P.
  @param IPntPc_P [kg-m^2] Effector's inertia matrix about its center of mass point Pc expressed in P frame components

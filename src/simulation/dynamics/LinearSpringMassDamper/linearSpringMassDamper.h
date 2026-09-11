@@ -21,6 +21,11 @@
 #ifndef LINEAR_SPRING_MASS_DAMPER_H
 #define LINEAR_SPRING_MASS_DAMPER_H
 
+#include <cstdint>
+#include <string>
+#include <Eigen/Dense>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -36,7 +41,7 @@ public:
     double c;                      //!< [N-s/m] linear damping term for spring mass damper
     double rhoInit;                //!< [m] Initial value for spring mass damper particle offset
     double rhoDotInit;             //!< [m/s] Initial value for spring mass damper particle offset derivative
-    double massInit;               //!< [m] Initial value for spring mass damper particle mass
+    double massInit;               //!< [kg] Initial value for spring mass damper particle mass
     std::string nameOfRhoState;    //!< [-] Identifier for the rho state data container
     std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 	std::string nameOfMassState;      //!< [-] Identifier for the mass state data container
@@ -46,6 +51,7 @@ public:
 	BSKLogger bskLogger;                      //!< BSK Logging
 
 private:
+    void validateConfiguration(); //!< Validate the initial particle mass without changing its current state
     double cRho;                   //!< Term needed for back-sub method
     double rho;                    //!< [m] spring mass damper displacement from equilibrium
     double rhoDot;                 //!< [m/s] time derivative of displacement from equilibrium
@@ -66,6 +72,7 @@ private:
 public:
 	LinearSpringMassDamper();           //!< Constructor
 	~LinearSpringMassDamper();          //!< Destructor
+    void Reset(uint64_t CurrentSimNanos) override;
 	void registerStates(DynParamManager& states);  //!< Method for SMD to register its states
 	void linkInStates(DynParamManager& states);  //!< Method for SMD to get access of other states
     void retrieveMassValue(double integTime);

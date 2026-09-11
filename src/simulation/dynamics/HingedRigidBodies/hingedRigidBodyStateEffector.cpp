@@ -20,6 +20,7 @@
 #include "hingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <string>
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
@@ -57,6 +58,26 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 }
 
 uint64_t HingedRigidBodyStateEffector::effectorID = 1;
+
+/*! @brief Validate mass and the fixed hinge orientation without accessing parent states. */
+void HingedRigidBodyStateEffector::validateConfiguration()
+{
+    if (!std::isfinite(this->mass) || this->mass < 0.0) {
+        this->bskLogger.bskError("HingedRigidBodyStateEffector: mass must be finite and non-negative.");
+    }
+    if (!this->dcm_HB.allFinite() || !eigenIsRotationMatrix(this->dcm_HB)) {
+        this->bskLogger.bskError("HingedRigidBodyStateEffector: dcm_HB must be a finite, orthogonal, "
+                                "right-handed rotation matrix.");
+    }
+}
+
+/*! @brief Validate configuration without changing integrated states or commands.
+ * @param CurrentSimNanos [ns] Current simulation time.
+ */
+void HingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
 
 /*! This is the destructor, nothing to report here */
 HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
@@ -143,6 +164,7 @@ void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynami
  */
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
+    this->validateConfiguration();
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->thetaState = statesIn.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);

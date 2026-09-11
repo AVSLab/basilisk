@@ -19,6 +19,7 @@
 
 #include "linearSpringMassDamper.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 LinearSpringMassDamper::LinearSpringMassDamper()
@@ -49,6 +50,22 @@ LinearSpringMassDamper::LinearSpringMassDamper()
 
 uint64_t LinearSpringMassDamper::effectorID = 1;
 
+/*! @brief Validate the initial particle mass, retaining the supported empty-particle case. */
+void LinearSpringMassDamper::validateConfiguration()
+{
+    if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
+        this->bskLogger.bskError("LinearSpringMassDamper: massInit must be finite and non-negative.");
+    }
+}
+
+/*! @brief Validate configuration without restoring depleted mass or changing integrated states.
+ * @param CurrentSimNanos [ns] Current simulation time.
+ */
+void LinearSpringMassDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
 /*! This is the destructor, nothing to report here */
 LinearSpringMassDamper::~LinearSpringMassDamper()
 {
@@ -77,6 +94,7 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
  */
 void LinearSpringMassDamper::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
     // - Register rho and rhoDot
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);

@@ -21,6 +21,7 @@
 #include "dualHingedRigidBodyStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <string>
+#include <cmath>
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 {
@@ -96,14 +97,33 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 }
 
 
-/*! This method is used to reset the module.
+/*! @brief Validate configuration without changing integrated states or commands.
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void DualHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
+    this->validateConfiguration();
+}
 
-    return;
+/*! @brief Validate panel masses and the fixed hinge orientation before state registration. */
+void DualHingedRigidBodyStateEffector::validateConfiguration()
+{
+    if (!std::isfinite(this->mass1) || this->mass1 < 0.0) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: mass1 must be finite and non-negative.");
+    }
+    if (!std::isfinite(this->mass2) || this->mass2 < 0.0) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: mass2 must be finite and non-negative.");
+    }
+    // Center-of-mass expressions divide by this total; finite operands can also overflow.
+    const double totalMass = this->mass1 + this->mass2; // [kg]
+    if (!std::isfinite(totalMass) || totalMass <= 0.0) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: mass1 + mass2 must be finite and greater than zero.");
+    }
+    if (!this->dcm_H1B.allFinite() || !eigenIsRotationMatrix(this->dcm_H1B)) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: dcm_H1B must be a finite, orthogonal, "
+                                "right-handed rotation matrix.");
+    }
 }
 
 void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
@@ -140,6 +160,7 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
  */
 void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
+    this->validateConfiguration();
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->theta1State = statesIn.registerState(1, 1, this->nameOfTheta1State);
     this->theta1DotState = statesIn.registerState(1, 1, this->nameOfTheta1DotState);
