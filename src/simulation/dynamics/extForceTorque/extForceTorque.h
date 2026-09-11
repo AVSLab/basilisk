@@ -20,9 +20,12 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
+#include <cstdint>
+#include <Eigen/Core>
 #include "architecture/messaging/messaging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 
 #include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
@@ -32,7 +35,7 @@
 
 
 
-/*! @brief external force and torque dynamic efector class */
+/*! @brief External force and torque dynamic effector. */
 class ExtForceTorque final: public SysModel, public DynamicEffector{
 public:
     ExtForceTorque();
@@ -46,9 +49,9 @@ public:
     void computeForceTorque(double integTime, double timeStep);
 
 private:
-    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer;            //!< One-time allocation for savings
-    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer;  //!< One-time allocation for savings
-    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer;          //!< One-time allocation for savings
+    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer{};          //!< Cached torque command; zero until input processing
+    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer{}; //!< Cached inertial force command; zero until input processing
+    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer{};        //!< Cached body force command; zero until input processing
 
 
 public:

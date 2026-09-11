@@ -1,10 +1,8 @@
 Executive Summary
 -----------------
 
-Class used to provide a direct external force and torque on body. This class is used to simulate an external for or torque acting on the body.
-For example, this module can be used to simulate the external disturbance due to
-outgasing or a thruster, or be used to directly apply requested control forces or
-torques.
+This module applies external forces and torque to a body. It can represent disturbances due to outgassing or
+thrusters, or directly apply requested control forces and torque.
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/extForceTorque/_Documentation/Basilisk-extForceTorque-20161103.pdf>`
@@ -22,11 +20,32 @@ provides information on what this message is used for.
     :caption: Module I/O Messages
 
     input cmdTorqueInMsg CmdTorqueBodyMsgPayload
-        commanded torque input msg.
+        Optional body-frame torque command; defaults to zero until sampled.
     input cmdForceBodyInMsg CmdForceBodyMsgPayload
-        commanded force input msg in B frame.
+        Optional body-frame force command; defaults to zero until sampled.
     input cmdForceInertialInMsg CmdForceInertialMsgPayload
-        commanded force input msg in N frame.
+        Optional inertial-frame force command; defaults to zero until sampled.
+
+
+Initialization, Commands, and Reset
+------------------------------------
+
+The configured ``extForce_N``, ``extForce_B``, and ``extTorquePntB_B`` vectors default to zero. All three cached
+message commands also start at zero when the effector is constructed, so force evaluation is safe before
+``Reset()`` or ``UpdateState()`` runs. This applies both to hub attachment and to attachment to a state effector.
+See :ref:`effectorInitialization` for the general initialization contract.
+
+Attachment alone is sufficient to apply configured static forces and torque. Add the effector to a task to
+sample message commands through ``UpdateState()``. For commands to be available to a spacecraft update, schedule
+the command producer first, then this effector, then the spacecraft. Force evaluation adds each linked input's
+cached command to its corresponding configured vector; it does not read messages. A command written before
+initialization therefore contributes zero until the first input-processing call. Between calls, the cached
+command is held constant even if the input message changes. An unlinked input contributes zero.
+
+``Reset()`` clears the three cached commands and leaves the configured static force and torque vectors unchanged.
+Repeated resets are safe and do not modify the parent's integrated states. The next force evaluation uses the
+cleared buffers; the next ``UpdateState()`` samples the linked messages again. Reset does not clear or consume
+the input messages themselves.
 
 
 Attaching to a State Effector
@@ -42,5 +61,5 @@ interpreted in the parent segment's frame and the torque is applied about that s
 origin. An inertial frame force is unaffected by the choice of parent. The ``segment`` argument is
 omitted for a parent with a single degree of freedom.
 
-Both the parent and the child are still added to the task in the usual way, the same as when the
-child is attached to the hub.
+The spacecraft drives the parent state effector and its attached loads. Schedule this child effector when it
+needs to sample message commands, using the same ordering described above for hub attachment.

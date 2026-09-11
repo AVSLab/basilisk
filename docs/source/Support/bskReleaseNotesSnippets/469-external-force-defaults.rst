@@ -1,0 +1,1 @@
+- Initialize all :ref:`extForceTorque` command buffers to zero at construction so attached effectors can safely evaluate loads before scheduled reset or input processing. Document static-load, command-sampling, and repeated-reset behavior for hub and appendage attachment.
