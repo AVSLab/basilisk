@@ -914,7 +914,7 @@ if __name__ == "__main__":
     print(shlex.join(buildCmd))
     buildEnvironment = create_conan_build_environment(args.offline)
     try:
-        subprocess.run(buildCmd, check=True, env=buildEnvironment)
+        subprocess.run(buildCmd, check=True, env=buildEnvironment, cwd=REPOSITORY_ROOT)
     except subprocess.CalledProcessError as error:
         if args.offline:
             print(
