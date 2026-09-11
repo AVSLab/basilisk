@@ -27,6 +27,13 @@ Basilisk root directory, this is done simply using::
 
     python3 conanfile.py
 
+You can also invoke the script from another directory using its absolute or relative path::
+
+    python3 /path/to/basilisk/conanfile.py
+
+The build is created in the repository's ``dist3`` folder. Relative ``--pathToExternalModules`` paths
+are resolved from the directory where you invoke the script.
+
 This one-line step will use ``conan`` to:
 
 - pull and compile any resource dependencies such a protobuffer, etc.
