@@ -2,7 +2,7 @@
 Executive Summary
 -----------------
 
-This dynamic effector class implements a variable speed control moment gyroscope or VSCMG device.
+This state effector class implements a variable speed control moment gyroscope or VSCMG device.
 
 The module
 :download:`PDF Description </../../src/simulation/dynamics/VSCMGs/_Documentation/Basilisk-VSCMGSTATEEFFECTOR-20180718.pdf>`
@@ -20,11 +20,58 @@ provides information on what this message is used for.
     :caption: Module I/O Messages
 
     input cmdsInMsg VSCMGArrayTorqueMsgPayload
-        motor torque command input message.
+        Motor torque command input message; must be linked and written when the effector is scheduled.
     output speedOutMsg VSCMGSpeedMsgPayload
         VSCMG speed output message.
     output vscmgOutMsgs VSCMGConfigMsgPayload
         vector of VSCMG output messages.
+
+Initialization and Reset
+------------------------
+
+Attach the effector with ``spacecraft.addStateEffector()``. Spacecraft initialization validates the device
+configuration and derives the mass totals, mass fractions, reference axes, combined inertias, and model-dependent
+imbalance parameters before registering the integrated states. This works even when the effector is not added
+to a simulation task. See :ref:`effectorInitialization` for the general initialization contract.
+
+Configure at most ``MAX_EFF_CNT`` devices (currently 36) before initializing the simulation. Larger arrays
+raise ``BasiliskError`` during configuration validation because the command and speed messages have fixed capacity.
+
+The initial axes ``gsHat0_B``, ``gtHat0_B``, and ``ggHat_B`` must be finite and nonzero. Each is normalized,
+then the resulting frame is checked for orthogonality and right-handedness. Parallel axes or a left-handed frame
+raise ``BasiliskError``. The wheel and gimbal masses must be finite and nonnegative. Fully coupled jitter also
+requires ``massW > 0`` because the center-of-mass offset is derived as ``U_s / massW``. Balanced and simple
+jitter models continue to support zero wheel and gimbal mass; when their total mass is zero, the unused mass
+fractions are set to zero.
+
+The model selector, initial angles and rates, diagonal inertias, and location must be valid and finite. Diagonal
+inertias must be nonnegative. Balanced and simple jitter require positive ``IW1`` and ``IW3 + IG3``, which
+appear as divisors in their equations. Jitter imbalance parameters must be finite; the fully coupled model also
+checks its off-diagonal gimbal inertias and additional geometry for finite values. Its spin inertia divisor
+``eOmega = IW1 + massW*d*d`` is checked during configuration initialization. The coupled equations also check
+``egamma``, ``eOmega``, and ``1 - cOmega*cgamma`` immediately before division on every dynamics evaluation,
+including spacecraft initialization. Zero or non-finite divisors, and divisors whose reciprocal overflows,
+raise ``BasiliskError``. These checks do not certify physical validity of the full inertia tensors or guarantee
+numerical accuracy near a singular configuration.
+
+Configured motor torques, friction magnitudes, torque limits, speed limits, and friction smoothing ratios must
+be finite. Negative limits and smoothing ratios retain their documented disabling behavior. When linear friction
+is enabled, the corresponding speed limit multiplied by its smoothing ratio must be finite and positive;
+the scheduled motor processing checks this before division. Wheel and gimbal friction use their respective
+smoothing ratios. Non-finite incoming torque commands raise ``BasiliskError`` before motor processing;
+non-finite computed motor torques are rejected before they are applied to the dynamics.
+
+Add the effector to a task when command processing and the speed/configuration output messages are needed.
+Its scheduled ``UpdateState()`` requires a linked and written ``cmdsInMsg``. An attached-only effector uses the
+configured ``u_s_current`` and ``u_g_current`` torques without reading new commands or applying the scheduled
+friction and saturation logic; use zero initial torques for an uncommanded device.
+
+``Reset()`` repeats configuration validation and derivation, clears the pending command and speed output buffers,
+and leaves integrated states and currently applied motor torques unchanged. The next scheduled ``UpdateState()``
+reads commands and computes the applied torques. State registration initializes the wheel/gimbal rates and gimbal
+angle from their configured values and initializes integrated wheel jitter angles to zero. The shared configuration
+helper is safe to call before or after spacecraft initialization and does not accumulate changes when both lifecycle
+paths run.
 
 User Guide
 -----------
@@ -32,16 +79,16 @@ This section is to outline the steps needed to setup a VSCMG State Effector in P
 
 #. Import the vscmgStateEffector class::
 
-    from basilisk.simulation import vscmgStateEffector
+    from Basilisk.simulation import vscmgStateEffector
 
 #. create a default VSCMG function::
 
     def defaultVSCMG():
       VSCMG = messaging.VSCMGConfigMsgPayload()
       VSCMG.rGB_B = [[0.],[0.],[0.]]
-      VSCMG.gsHat0_B = [[0.],[0.],[0.]]
-      VSCMG.gtHat0_B = [[0.],[0.],[0.]]
-      VSCMG.ggHat_B = [[0.],[0.],[0.]]
+      VSCMG.gsHat0_B = [[1.],[0.],[0.]]  # [-]
+      VSCMG.gtHat0_B = [[0.],[1.],[0.]]  # [-]
+      VSCMG.ggHat_B = [[0.],[0.],[1.]]  # [-]
       VSCMG.u_s_max = -1
       VSCMG.u_s_min = -1
       VSCMG.u_s_f = 0.

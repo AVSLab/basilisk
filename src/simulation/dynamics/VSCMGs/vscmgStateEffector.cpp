@@ -21,6 +21,23 @@
 #include "vscmgStateEffector.h"
 #include <iostream>
 #include <cmath>
+#include <iterator>
+
+namespace {
+/*! @brief Reject divisors that would produce an undefined or non-finite reciprocal.
+ * @param value Divisor used in the coupled equations of motion.
+ * @param logger Logger used to report invalid dynamics parameters.
+ * @param index Index of the configured VSCMG device.
+ * @param name Name of the divisor for the error message.
+ */
+void requireFiniteNonzeroDivisor(double value, BSKLogger& logger, size_t index, const char* name)
+{
+    if (!std::isfinite(value) || value == 0.0 || !std::isfinite(1.0/value)) {
+        logger.bskError("vscmgStateEffector: device %zu %s must be finite and nonzero with a finite reciprocal.",
+                        index, name);
+    }
+}
+}
 
 VSCMGStateEffector::VSCMGStateEffector()
 {
@@ -69,6 +86,9 @@ void VSCMGStateEffector::linkInStates(DynParamManager& states)
  */
 void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
+    this->initializeConfiguration();
+    this->newVSCMGCmds.resize(this->VSCMGData.size(), VSCMGCmdMsgPayload{});
+
     //! - Find number of VSCMGs and number of VSCMGs with jitter
     this->numVSCMGJitter = 0;
     this->numVSCMG = 0;
@@ -337,6 +357,7 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], 
 			}
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 
+            const size_t index = static_cast<size_t>(std::distance(VSCMGData.begin(), it));
             gravityTorquePntW_B = it->d*it->w2Hat_B.cross(it->massW*g_B);
 			gravityTorquePntG_B = it->rGcG_B.cross(it->massG*g_B);
 			it->gravityTorqueWheel_s = it->gsHat_B.dot(gravityTorquePntW_B);
@@ -368,6 +389,7 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], 
 			Eigen::Matrix3d Q = it->massG*it->rhoW*rTildeGcVc_B - it->massW*it->rhoG*rTildeWcVc_B + it->massG*rTildeVcG_B;
 
 			it->egamma = it->ggHat_B.dot(it->IGPntGc_B*it->ggHat_B+it->IWPntWc_B*it->ggHat_B+P*(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B)+Q*it->ggHat_B.cross(it->rGcG_B));
+            requireFiniteNonzeroDivisor(it->egamma, this->bskLogger, index, "egamma");
 			it->agamma = 1.0/it->egamma*it->massV*rVcG_B.cross(it->ggHat_B);
 			it->bgamma = -1.0/it->egamma*(IVPntVc_B*it->ggHat_B-it->massV*rVcB_B.cross(rVcG_B.cross(it->ggHat_B)));
 			it->cgamma = -1.0/it->egamma*(it->ggHat_B.dot(it->IWPntWc_B*it->gsHat_B) + it->d*it->ggHat_B.dot(P*it->w3Hat_B));
@@ -378,6 +400,7 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], 
 							+ 1.0/it->egamma*(it->u_g_current + it->gravityTorqueGimbal_g);
 
 			it->eOmega = it->IW1 + it->massW*dSquared;
+            requireFiniteNonzeroDivisor(it->eOmega, this->bskLogger, index, "eOmega");
 			it->aOmega = -1.0/it->eOmega*it->massW*it->d*it->w3Hat_B;
 			it->bOmega = -1.0/it->eOmega*(it->IWPntWc_B*it->gsHat_B - it->massW*it->d*it->rWcB_B.cross(it->w2Hat_B.cross(it->gsHat_B)));
 			it->cOmega = -1.0/it->eOmega*(it->IW13*cos(it->theta)-it->massW*it->d*it->l*sin(it->theta));
@@ -386,9 +409,11 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]], 
 										  + it->massW*it->d*it->gsHat_B.dot(it->w2Hat_B.cross(2.0*omegaLoc_BN_B.cross(it->rPrimeWcB_B)+omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(it->rWcB_B)))))
 										  + (1.0/it->eOmega)*(it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current + it->gravityTorqueWheel_s);
 
-			it->p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
-			it->q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
-			it->s = (it->dOmega+it->cOmega*it->dgamma)/(1.0-it->cOmega*it->cgamma);
+            const double couplingDenominator = 1.0-it->cOmega*it->cgamma; // [-]
+            requireFiniteNonzeroDivisor(couplingDenominator, this->bskLogger, index, "1 - cOmega*cgamma");
+			it->p = (it->aOmega+it->cOmega*it->agamma)/couplingDenominator;
+			it->q = (it->bOmega+it->cOmega*it->bgamma)/couplingDenominator;
+			it->s = (it->dOmega+it->cOmega*it->dgamma)/couplingDenominator;
 
 			ur = it->massG*it->ggHat_B.cross(it->rGcG_B) - it->massW*it->d*cos(it->theta)*it->gsHat_B + it->massW*it->l*it->gtHat_B;
 			vr = it->massW*it->d*it->w3Hat_B;
@@ -517,39 +542,143 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_u
 }
 
 
-/*! Reset the module to its original configuration values.
+/*! @brief Refresh configuration and clear pending command and speed output buffers.
+ *
+ * Integrated states and currently applied motor torques are unchanged. The next scheduled update
+ * reads commands and computes the applied torques. Configuration initialization also runs during
+ * state registration, so attachment alone is sufficient to initialize the dynamics.
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
 void VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    VSCMGCmdMsgPayload VSCMGCmdInitializer;
-    VSCMGCmdInitializer.u_s_cmd = 0.0;
-    VSCMGCmdInitializer.u_g_cmd = 0.0;
+    this->initializeConfiguration();
+    this->newVSCMGCmds.assign(this->VSCMGData.size(), VSCMGCmdMsgPayload{});
+    this->incomingCmdBuffer = this->cmdsInMsg.zeroMsgPayload;
+    this->outputStates = this->speedOutMsg.zeroMsgPayload;
+}
 
-    //! - Clear out any currently firing VSCMGs and re-init cmd array
-    this->newVSCMGCmds.clear();
-    this->newVSCMGCmds.insert(this->newVSCMGCmds.begin(), this->VSCMGData.size(), VSCMGCmdInitializer );
-
+/*! @brief Validate configured inputs and recompute derived dynamics parameters.
+ *
+ * This method can run before the parent registers any states, and repeated calls do not clear
+ * commands or rewind integrated states. Balanced and simple jitter models permit massless devices;
+ * their unused mass fractions are set to zero rather than dividing by zero.
+ */
+void VSCMGStateEffector::initializeConfiguration()
+{
+    if (this->VSCMGData.size() > MAX_EFF_CNT) {
+        this->bskLogger.bskError("vscmgStateEffector: device count %zu exceeds MAX_EFF_CNT (%d).",
+                                this->VSCMGData.size(), MAX_EFF_CNT);
+    }
     std::vector<VSCMGConfigMsgPayload>::iterator it;
     for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
     {
+        const size_t index = static_cast<size_t>(std::distance(VSCMGData.begin(), it));
+        const auto requireFinite = [this, index](double value, const char* name) {
+            if (!std::isfinite(value)) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu %s must be finite.", index, name);
+            }
+        };
+        const auto normalizeAxis = [this, index](Eigen::Vector3d& axis, const char* name) {
+            if (!axis.allFinite() || axis.cwiseAbs().maxCoeff() == 0.0) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu %s must be finite and nonzero.", index, name);
+            }
+            // Scale first to avoid overflowing or underflowing the norm for finite nonzero inputs.
+            axis /= axis.cwiseAbs().maxCoeff();
+            axis.normalize();
+        };
+
+        if (it->VSCMGModel != vscmgBalancedWheels && it->VSCMGModel != vscmgJitterSimple
+            && it->VSCMGModel != vscmgJitterFullyCoupled) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu has an invalid VSCMGModel.", index);
+        }
+        requireFinite(it->massW, "massW");
+        requireFinite(it->massG, "massG");
+        if (it->massW < 0.0 || it->massG < 0.0) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu massW and massG must be nonnegative.", index);
+        }
+        if (it->VSCMGModel == vscmgJitterFullyCoupled && it->massW == 0.0) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu massW must be positive for fully coupled jitter.", index);
+        }
+        normalizeAxis(it->gsHat0_B, "gsHat0_B");
+        normalizeAxis(it->gtHat0_B, "gtHat0_B");
+        normalizeAxis(it->ggHat_B, "ggHat_B");
+        Eigen::Matrix3d initialFrame;
+        initialFrame.col(0) = it->gsHat0_B;
+        initialFrame.col(1) = it->gtHat0_B;
+        initialFrame.col(2) = it->ggHat_B;
+        if (!eigenIsRotationMatrix(initialFrame)) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu gsHat0_B, gtHat0_B and ggHat_B must form an orthogonal, right-handed frame.", index);
+        }
+        requireFinite(it->Omega, "Omega");
+        requireFinite(it->theta, "theta");
+        requireFinite(it->gamma, "gamma");
+        requireFinite(it->gammaDot, "gammaDot");
+        requireFinite(it->u_s_current, "u_s_current");
+        requireFinite(it->u_g_current, "u_g_current");
+        requireFinite(it->u_s_f, "u_s_f");
+        requireFinite(it->u_g_f, "u_g_f");
+        requireFinite(it->u_s_max, "u_s_max");
+        requireFinite(it->u_g_max, "u_g_max");
+        requireFinite(it->u_s_min, "u_s_min");
+        requireFinite(it->u_g_min, "u_g_min");
+        requireFinite(it->Omega_max, "Omega_max");
+        requireFinite(it->gammaDot_max, "gammaDot_max");
+        requireFinite(it->wheelLinearFrictionRatio, "wheelLinearFrictionRatio");
+        requireFinite(it->gimbalLinearFrictionRatio, "gimbalLinearFrictionRatio");
+        requireFinite(it->IW1, "IW1");
+        requireFinite(it->IW2, "IW2");
+        requireFinite(it->IW3, "IW3");
+        requireFinite(it->IG1, "IG1");
+        requireFinite(it->IG2, "IG2");
+        requireFinite(it->IG3, "IG3");
+        if (it->IW1 < 0.0 || it->IW2 < 0.0 || it->IW3 < 0.0
+            || it->IG1 < 0.0 || it->IG2 < 0.0 || it->IG3 < 0.0) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu wheel and gimbal diagonal inertias must be nonnegative.", index);
+        }
+        if (!it->rGB_B.allFinite()) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu rGB_B must be finite.", index);
+        }
+        if (it->VSCMGModel != vscmgBalancedWheels) {
+            requireFinite(it->U_s, "U_s");
+            requireFinite(it->U_d, "U_d");
+        }
+        if (it->VSCMGModel == vscmgJitterFullyCoupled) {
+            requireFinite(it->IG12, "IG12");
+            requireFinite(it->IG13, "IG13");
+            requireFinite(it->IG23, "IG23");
+            requireFinite(it->l, "l");
+            requireFinite(it->L, "L");
+            if (!it->rGcG_G.allFinite()) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu rGcG_G must be finite.", index);
+            }
+        }
+
         it->w2Hat0_B = it->gtHat0_B;
         it->w3Hat0_B = it->ggHat_B;
 
         //! Define CoM offset d and off-diagonal inertia IW13 if using fully coupled model
         if (it->VSCMGModel == vscmgJitterFullyCoupled) {
             it->d = it->U_s/it->massW; //!< determine CoM offset from static imbalance parameter
+            requireFinite(it->d, "derived d");
             it->IW13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
+            it->eOmega = it->IW1 + it->massW*(it->d*it->d);
+            requireFiniteNonzeroDivisor(it->eOmega, this->bskLogger, index, "eOmega");
         }
         if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
             it->IV1 = it->IW1 + it->IG1;
             it->IV2 = it->IW2 + it->IG2;
             it->IV3 = it->IW3 + it->IG3;
-            it->IG12 = 0.;
-            it->IG13 = 0.;
-            it->IG23 = 0.;
-            it->IW13 = 0.;
+            requireFinite(it->IV1, "derived IV1");
+            requireFinite(it->IV2, "derived IV2");
+            requireFinite(it->IV3, "derived IV3");
+            if (it->IW1 == 0.0 || it->IV3 == 0.0) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu IW1 and IW3 + IG3 must be positive for balanced and simple jitter models.", index);
+            }
+            it->IG12 = 0.; // [kg*m^2]
+            it->IG13 = 0.; // [kg*m^2]
+            it->IG23 = 0.; // [kg*m^2]
+            it->IW13 = 0.; // [kg*m^2]
         }
 
         Eigen::Matrix3d dcm_GG0 = eigenM3(it->gamma);
@@ -561,10 +690,16 @@ void VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         it->gsHat_B = dcm_BG.col(0);
         it->gtHat_B = dcm_BG.col(1);
 
-        it->rGcG_B = dcm_BG * it->rGcG_G;
+        if (it->VSCMGModel == vscmgJitterFullyCoupled) {
+            it->rGcG_B = dcm_BG * it->rGcG_G;
+        }
         it->massV = it->massG + it->massW;
-        it->rhoG = it->massG/it->massV;
-        it->rhoW = it->massW/it->massV;
+        requireFinite(it->massV, "derived massV");
+        if (it->VSCMGModel == vscmgJitterFullyCoupled) {
+            requireFiniteNonzeroDivisor(it->massV, this->bskLogger, index, "massV");
+        }
+        it->rhoG = it->massV > 0.0 ? it->massG/it->massV : 0.0; // [-]
+        it->rhoW = it->massV > 0.0 ? it->massW/it->massV : 0.0; // [-]
     }
 }
 
@@ -581,15 +716,16 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
     const Eigen::MatrixXd& gammasVector = this->gammasState->getStateReference();
     const Eigen::MatrixXd& gammaDotsVector = this->gammaDotsState->getStateReference();
     const Eigen::MatrixXd* thetaVector = this->numVSCMGJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    Eigen::Index thetaIndex = 0;
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
         const size_t vscmgPosition = static_cast<size_t>(std::distance(VSCMGData.begin(), it));
         const Eigen::Index vscmgIndex = static_cast<Eigen::Index>(vscmgPosition);
         tmpVSCMG = this->vscmgOutMsgs[0]->zeroMsgPayload;
-        if (numVSCMGJitter > 0) {
-            double thetaCurrent = (*thetaVector)(vscmgIndex, 0);
-            it->theta = thetaCurrent;
+        if (it->VSCMGModel == vscmgJitterSimple || it->VSCMGModel == vscmgJitterFullyCoupled) {
+            it->theta = (*thetaVector)(thetaIndex, 0);
+            thetaIndex++;
         }
         double omegaCurrent = omegasVector(vscmgIndex, 0);
         it->Omega = omegaCurrent;
@@ -688,6 +824,9 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
 	// loop through commands
 	for(CmdIt=this->newVSCMGCmds.begin(); CmdIt!=this->newVSCMGCmds.end(); CmdIt++)
 	{
+        if (!std::isfinite(CmdIt->u_s_cmd) || !std::isfinite(CmdIt->u_g_cmd)) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu u_s_cmd and u_g_cmd must be finite.", it);
+        }
 		// wheel torque saturation
 		// set u_s_max to less than zero to disable saturation
 		if (this->VSCMGData[it].u_s_max > 0.0) {
@@ -732,10 +871,10 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
 		//! set wheelLinearFrictionRatio to less than zero to disable linear friction
 		//! set u_s_f to zero to disable all friction
 		if (this->VSCMGData[it].wheelLinearFrictionRatio > 0.0) {
-            if (this->VSCMGData[it].Omega_max < 0.0) {
-                bskLogger.bskError("VSCMGStateEffector: Omega_max must be set to a positive value to use wheelLinearFrictionRatio.");
-            }
 			omegaCritical = this->VSCMGData[it].Omega_max * this->VSCMGData[it].wheelLinearFrictionRatio;
+            if (!std::isfinite(omegaCritical) || omegaCritical <= 0.0) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu Omega_max * wheelLinearFrictionRatio must be finite and positive when linear friction is enabled.", it);
+            }
 		} else {
 			omegaCritical = 0.0;
 		}
@@ -755,7 +894,10 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
 		//! set gimbalLinearFrictionRatio to less than zero to disable linear friction
 		//! set u_g_f to zero to disable friction
 		if (this->VSCMGData[it].gimbalLinearFrictionRatio > 0.0) {
-			gammaDotCritical = this->VSCMGData[it].gammaDot_max * this->VSCMGData[it].wheelLinearFrictionRatio;
+            gammaDotCritical = this->VSCMGData[it].gammaDot_max * this->VSCMGData[it].gimbalLinearFrictionRatio;
+            if (!std::isfinite(gammaDotCritical) || gammaDotCritical <= 0.0) {
+                this->bskLogger.bskError("vscmgStateEffector: device %zu gammaDot_max * gimbalLinearFrictionRatio must be finite and positive when linear friction is enabled.", it);
+            }
 		} else {
 			gammaDotCritical = 0.0;
 		}
@@ -771,6 +913,9 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
 			}
 		}
 
+        if (!std::isfinite(u_s) || !std::isfinite(u_g)) {
+            this->bskLogger.bskError("vscmgStateEffector: device %zu motor processing produced a non-finite applied torque.", it);
+        }
 		this->VSCMGData[it].u_s_current = u_s; // save actual torque for wheel motor
 		this->VSCMGData[it].u_g_current = u_g; // save actual torque for wheel motor
 
