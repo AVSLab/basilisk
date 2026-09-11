@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 469: :ref:`extForceTorque` could read uninitialized command buffers when an input was linked
+  and dynamics ran before the effector's scheduled ``Reset()`` or ``UpdateState()``. All three command buffers
+  now start at zero, including for effectors attached to a hub or appendage without task scheduling. Static
+  loads remain available immediately; message commands are sampled by ``UpdateState()``.
 - GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
   or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
   repository root, while relative external-module paths remain relative to the caller's directory.

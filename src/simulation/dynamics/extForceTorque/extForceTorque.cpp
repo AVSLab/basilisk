@@ -44,9 +44,10 @@ ExtForceTorque::~ExtForceTorque()
 }
 
 
-/*! This method is used to reset the module.
+/*! @brief Clear cached message commands without changing configured static forces or torque.
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
+ * @note Repeated calls leave the command buffers at zero. Linked commands are sampled again by UpdateState().
  */
 void ExtForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
