@@ -10,6 +10,9 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 515: Running ``conanfile.py`` from outside the repository could fail to find the Conan recipe
+  or select a different recipe in the caller's directory. The build subprocess now runs from the Basilisk
+  repository root, while relative external-module paths remain relative to the caller's directory.
 - ``simHelpers.timeStringToGregorianUTCMsg()`` retained every returned epoch message
   for the lifetime of the process, causing memory growth during repeated simulation setup.
   The obsolete registry has been removed. Messages now remain alive while callers,

@@ -1,0 +1,1 @@
+- Fixed invoking ``conanfile.py`` from outside the Basilisk repository so Conan selects the correct recipe and builds in the repository's ``dist3`` folder.
