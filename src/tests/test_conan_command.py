@@ -20,7 +20,12 @@
 import argparse
 import importlib
 import importlib.util
+import os
 from pathlib import Path
+import runpy
+import shutil
+import sys
+from unittest.mock import Mock
 
 import pytest
 
@@ -91,6 +96,59 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
     assert "&:clean=True" in options
     assert "&:rustModules=True" in options
     assert "&:buildTesting=True" in options
+
+
+@pytest.mark.parametrize("script_path_kind", ["absolute", "relative"])
+def test_script_builds_repository_from_another_directory(
+        conanfile_module, tmp_path, monkeypatch, script_path_kind,
+):
+    """Resolve the recipe at dispatch while keeping external paths relative to the caller."""
+    repo_root = Path(__file__).resolve().parents[2]
+    if script_path_kind == "relative":
+        # Keep both ends of the relative path on the same Windows drive.
+        source_root = repo_root
+        repo_root = tmp_path / "repository with spaces"
+        for resource in (
+                "conanfile.py",
+                "docs/source/bskVersion.txt",
+                "src/utilities/makeDraftModule.py",
+        ):
+            destination = repo_root / resource
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_root / resource, destination)
+    caller_directory = tmp_path / "caller directory"
+    caller_directory.mkdir()
+    external_modules = caller_directory / "external modules"
+    external_modules.mkdir()
+    # A different recipe in the caller's directory must not be selected.
+    (caller_directory / "conanfile.py").write_text("raise RuntimeError('wrong recipe')\n")
+    monkeypatch.chdir(caller_directory)
+    script_path = repo_root / "conanfile.py"
+    if script_path_kind == "relative":
+        script_path = os.path.relpath(script_path, caller_directory)
+    monkeypatch.setattr(sys, "argv", [
+        str(script_path), "--offline", "--pathToExternalModules", "external modules",
+    ])
+    monkeypatch.setattr(sys, "path", sys.path.copy())
+    monkeypatch.setattr(conanfile_module.subprocess, "check_output", Mock(return_value=b""))
+    generator = conanfile_module.makeDraftModule.moduleGenerator
+    monkeypatch.setattr(generator, "createCppModule", Mock())
+    monkeypatch.setattr(generator, "createCModule", Mock())
+    build_process = Mock()
+    monkeypatch.setattr(conanfile_module.subprocess, "run", build_process)
+
+    runpy.run_path(str(script_path), run_name="__main__")
+
+    build_process.assert_called_once()
+    command = build_process.call_args.args[0]
+    subprocess_options = build_process.call_args.kwargs
+    build_directory = Path(subprocess_options.get("cwd", Path.cwd()))
+    recipe_directory = (build_directory / command[4]).resolve()
+    assert recipe_directory == repo_root.resolve()
+    assert f"&:pathToExternalModules={external_modules}" in option_values(command, "-o")
+    assert subprocess_options["check"] is True
+    assert subprocess_options["env"]["CARGO_NET_OFFLINE"] == "true"
+    assert Path.cwd() == caller_directory
 
 
 def test_offline_command_uses_only_cached_binary_packages(conanfile_module):
