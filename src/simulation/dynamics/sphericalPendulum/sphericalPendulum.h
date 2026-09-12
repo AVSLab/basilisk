@@ -92,15 +92,15 @@ public:
 	SphericalPendulum();           //!< Constructor
 	~SphericalPendulum();          //!< Destructor
     void Reset(uint64_t CurrentSimNanos) override;
-	void registerStates(DynParamManager& states);  //!< Method for FSP to register its states
-	void linkInStates(DynParamManager& states);  //!< Method for FSP to get access of other states
-	void updateEffectorMassProps(double integTime);  //!< Method for FSP to add its contributions to mass props
-    void modifyStates(double integTime); //!< Method to force states modification during integration
-    void retrieveMassValue(double integTime);
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions
+	void registerStates(DynParamManager& states) override;  //!< Method for FSP to register its states
+	void linkInStates(DynParamManager& states) override;  //!< Method for FSP to get access of other states
+	void updateEffectorMassProps(double integTime) override;  //!< Method for FSP to add its contributions to mass props
+    void modifyStates(double integTime) override; //!< Method to force states modification during integration
+    void retrieveMassValue(double integTime) override;
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< Back-sub contributions
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< Method for each stateEffector to calculate derivatives
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< Method for each stateEffector to calculate derivatives
 };
 
 
