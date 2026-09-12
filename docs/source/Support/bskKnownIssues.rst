@@ -10,6 +10,12 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
+  They now reject non-finite operands and non-finite or negative tolerances. The new
+  ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` assertions
+  apply these checks and provide comparison diagnostics. Relative comparisons use the
+  first operand as the reference; a zero reference requires exact equality. The legacy
+  ``v3IsEqual`` and ``v3IsEqualRel`` utility functions retain their existing behavior.
 - GitHub issue 469: :ref:`ExtPulsedTorque` advanced its pulse on every dynamics evaluation, so
   intermediate integrator stages changed the pulse duration. It now evaluates the waveform from
   simulation time using the explicit ``pulseInterval`` in seconds. Set this interval to the desired
