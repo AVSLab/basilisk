@@ -21,6 +21,9 @@
 #ifndef CONSTRAINT_DYNAMIC_EFFECTOR_H
 #define CONSTRAINT_DYNAMIC_EFFECTOR_H
 
+#include <cstdint>
+#include <string>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -126,7 +129,7 @@ public:
 
 private:
     void validateConfiguration();  //!< Validate the user-supplied gain configuration
-    void initializeGains();  //!< Populate unspecified individual gains from alpha and beta
+    void initializeGains();  //!< Refresh derived gains while preserving explicit individual gains
 
     // Counters and flags
     int scInitCounter = 0; //!< counter to kill simulation if more than two spacecraft initialized
@@ -144,12 +147,16 @@ private:
     Eigen::Matrix3d dcm_B2B1Init = Eigen::Matrix3d::Identity(); //!< attitude constraint violation
 
     // Gains for PD controller
-    double alpha = 0.0; //!< Baumgarte stabilization gain tuning variable
-    double beta = 0.0; //!< Baumgarte stabilization gain tuning variable
-    double k_d = 0.0; //!< direction constraint proportional gain
-    double c_d = 0.0; //!< direction constraint derivative gain
-    double k_a = 0.0; //!< attitude constraint proportional gain
-    double c_a = 0.0; //!< attitude constraint derivative gain
+    double alpha = 0.0; //!< [-] Numerical tuning parameter whose square sets proportional gains in SI units
+    double beta = 0.0; //!< [-] Numerical tuning parameter doubled to set derivative gains in SI units
+    double k_d = 0.0; //!< [N/m] direction constraint proportional gain
+    double c_d = 0.0; //!< [N*s/m] direction constraint derivative gain
+    double k_a = 0.0; //!< [N*m] attitude constraint proportional gain multiplying dimensionless MRP error
+    double c_a = 0.0; //!< [N*m*s] attitude constraint derivative gain multiplying the MRP error rate
+    bool k_dExplicit = false; //!< Whether setK_d supplied the direction proportional gain
+    bool c_dExplicit = false; //!< Whether setC_d supplied the direction derivative gain
+    bool k_aExplicit = false; //!< Whether setK_a supplied the attitude proportional gain
+    bool c_aExplicit = false; //!< Whether setC_a supplied the attitude derivative gain
     double a = 0.0; //!< coefficient in numerical low pass filter
     double b = 0.0; //!< coefficient in numerical low pass filter
     double c = 0.0; //!< coefficient in numerical low pass filter

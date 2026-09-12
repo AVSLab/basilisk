@@ -14,6 +14,9 @@ Version |release|
   intermediate integrator stages changed the pulse duration. It now evaluates the waveform from
   simulation time using the explicit ``pulseInterval`` in seconds. Set this interval to the desired
   duration of one pulse count when updating existing configurations. Resets preserve the time-zero phase.
+- GitHub issue 469: :ref:`constraintDynamicEffector` kept derived gains unchanged after retuning
+  and resetting. It now refreshes those gains from ``alpha`` and ``beta`` while preserving individual
+  gains configured through their setters. Invalid setters and derived-gain overflow preserve the prior gains.
 - GitHub issue 469: Range-only configuration checks accepted non-finite values in spinning-body,
   translation, hub, and stochastic effectors. The affected validators now reject non-finite scalar,
   vector, and matrix inputs, including in point-mass spacecraft initialization. Point-mass mode retains
