@@ -20,7 +20,10 @@
 #ifndef HUB_EFFECTOR_H
 #define HUB_EFFECTOR_H
 
+#include <cstdint>
+#include <string>
 #include <Eigen/Dense>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/utilities/avsEigenMRP.h"
@@ -63,7 +66,12 @@ public:
     void modifyStates(double integTime); //!< Method to switch MRPs
     void prependSpacecraftNameToStates(); //!< class method
     void matchGravitytoVelocityState(Eigen::Vector3d v_CN_N); //!< method to set the gravity velocity to base velocity
-    void validateConfiguration();        //!< Verify the user-set hub mass and inertia are physically valid
+    /**
+     * @brief Validate finite hub configuration before initializing dynamics.
+     * @param pointMassTranslationalOnly Whether to require a zero center offset and skip inertia realizability checks.
+     * @note Both modes require positive finite mass and finite initial states and inertia entries.
+     */
+    void validateConfiguration(bool pointMassTranslationalOnly = false);
 
 private:
     Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components

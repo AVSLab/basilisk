@@ -18,6 +18,7 @@
  */
 
 #include "hubEffector.h"
+#include <cmath>
 #include "architecture/utilities/avsEigenSupport.h"
 
 /*! This is the constructor, setting variables to default values */
@@ -57,17 +58,34 @@ HubEffector::~HubEffector()
     return;
 }
 
-/*! This method verifies the user-supplied hub properties are physically valid. The hub mass
- must be strictly positive and the hub inertia tensor must be physically realizable
- (see eigenIsValidInertiaMatrix).
- It is intended to be called by the owning spacecraft at reset time, before the dynamics
- are initialized. */
-void HubEffector::validateConfiguration()
+/*! @brief Validate the configured hub properties before the owning spacecraft initializes dynamics. */
+void HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
 {
-    if (this->mHub <= 0.0) {
-        bskLogger.bskError("hubEffector: mHub must be greater than 0. It may not have been set properly by the user.");
+    if (!std::isfinite(this->mHub) || this->mHub <= 0.0) {
+        bskLogger.bskError("hubEffector: mHub must be greater than 0 and finite.");
     }
-    if (!eigenIsValidInertiaMatrix(this->IHubPntBc_B)) {
+    if (!this->r_BcB_B.allFinite()) {
+        bskLogger.bskError("hubEffector: r_BcB_B must contain only finite values.");
+    }
+    if (pointMassTranslationalOnly && (this->r_BcB_B.array() != 0.0).any()) {
+        bskLogger.bskError("hubEffector: pointMassTranslationalOnly requires r_BcB_B to be zero.");
+    }
+    if (!this->r_CN_NInit.allFinite()) {
+        bskLogger.bskError("hubEffector: r_CN_NInit must contain only finite values.");
+    }
+    if (!this->v_CN_NInit.allFinite()) {
+        bskLogger.bskError("hubEffector: v_CN_NInit must contain only finite values.");
+    }
+    if (!this->sigma_BNInit.allFinite()) {
+        bskLogger.bskError("hubEffector: sigma_BNInit must contain only finite values.");
+    }
+    if (!this->omega_BN_BInit.allFinite()) {
+        bskLogger.bskError("hubEffector: omega_BN_BInit must contain only finite values.");
+    }
+    if (!this->IHubPntBc_B.allFinite()) {
+        bskLogger.bskError("hubEffector: IHubPntBc_B must contain only finite values.");
+    }
+    if (!pointMassTranslationalOnly && !eigenIsValidInertiaMatrix(this->IHubPntBc_B)) {
         bskLogger.bskError("hubEffector: IHubPntBc_B is not a valid inertia tensor. It may not have been set properly by the user.");
     }
 }

@@ -18,6 +18,7 @@
  */
 
 #include "linearTranslationOneDOFStateEffector.h"
+#include <cmath>
 #include "architecture/utilities/avsEigenSupport.h"
 
 LinearTranslationOneDOFStateEffector::LinearTranslationOneDOFStateEffector()
@@ -54,6 +55,26 @@ void LinearTranslationOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_u
 /*! This method runs every configuration check. Spacecraft initialization always reaches it through
  registerStates(), whereas Reset() runs only when the effector is also added to a task */
 void LinearTranslationOneDOFStateEffector::validateConfiguration() {
+    const auto requireFinite = [this](double value, const char* name) {
+        if (!std::isfinite(value)) {
+            this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: %s must be finite.", name);
+        }
+    };
+    requireFinite(this->mass, "mass");
+    requireFinite(this->k, "k");
+    requireFinite(this->c, "c");
+    requireFinite(this->rhoInit, "rhoInit");
+    requireFinite(this->rhoDotInit, "rhoDotInit");
+    if (!this->fHat_B.allFinite()) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: fHat_B must contain only finite values.");
+    }
+    if (!this->r_FcF_F.allFinite()) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: r_FcF_F must contain only finite values.");
+    }
+    if (!this->r_F0B_B.allFinite()) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: r_F0B_B must contain only finite values.");
+    }
+
     if (!eigenIsRotationMatrix(this->dcm_FB)) {
         this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: dcm_FB is not a valid rotation "
                                  "matrix; it must be orthogonal and right-handed. It may not have been "
@@ -72,10 +93,10 @@ void LinearTranslationOneDOFStateEffector::validateConfiguration() {
  * @param[in] mass [kg] Mass value.
  */
 void LinearTranslationOneDOFStateEffector::setMass(double mass) {
-    if (mass > 0.0)
+    if (std::isfinite(mass) && mass > 0.0)
         this->mass = mass;
     else {
-        this->bskLogger.bskError("Mass must be greater than 0.");
+        this->bskLogger.bskError("Mass must be greater than 0 and finite.");
     }
 }
 
@@ -84,11 +105,11 @@ void LinearTranslationOneDOFStateEffector::setMass(double mass) {
  * @param[in] fHat_B Translation direction expressed in body-frame components.
  */
 void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
-    if (fHat_B.norm() > 0.01) {
-        this->fHat_B = fHat_B.normalized();
+    if (fHat_B.allFinite() && fHat_B.stableNorm() > 0.01) {
+        this->fHat_B = (fHat_B / fHat_B.cwiseAbs().maxCoeff()).normalized();
     }
     else {
-        this->bskLogger.bskError("Norm of fHat must be greater than 0.");
+        this->bskLogger.bskError("Norm of fHat must exceed 0.01 and all components must be finite.");
     }
 }
 
@@ -97,10 +118,10 @@ void LinearTranslationOneDOFStateEffector::setFHat_B(Eigen::Vector3d fHat_B) {
  * @param[in] k [N/m] Translational spring coefficient.
  */
 void LinearTranslationOneDOFStateEffector::setK(double k) {
-    if (k >= 0.0)
+    if (std::isfinite(k) && k >= 0.0)
         this->k = k;
     else {
-        this->bskLogger.bskError("k must be greater than or equal to 0.");
+        this->bskLogger.bskError("k must be greater than or equal to 0 and finite.");
     }
 }
 
@@ -109,10 +130,10 @@ void LinearTranslationOneDOFStateEffector::setK(double k) {
  * @param[in] c [N*s/m] Translational damping coefficient.
  */
 void LinearTranslationOneDOFStateEffector::setC(double c) {
-    if (c >= 0.0)
+    if (std::isfinite(c) && c >= 0.0)
         this->c = c;
     else {
-        this->bskLogger.bskError("c must be greater than or equal to 0.");
+        this->bskLogger.bskError("c must be greater than or equal to 0 and finite.");
     }
 }
 
@@ -152,6 +173,7 @@ void LinearTranslationOneDOFStateEffector::linkInPrescribedMotionProperties(DynP
  */
 void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
 {
+    this->validateConfiguration();
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);
     rhoInitMatrix(0,0) = this->rhoInit;
@@ -163,7 +185,6 @@ void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& state
     this->rhoDotState->setState(rhoDotInitMatrix);
 
     registerProperties(states);
-    this->validateConfiguration();
 }
 
 /*! This method attaches a dynamicEffector

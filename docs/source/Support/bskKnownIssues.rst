@@ -10,6 +10,14 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 469: Range-only configuration checks accepted non-finite values in spinning-body,
+  translation, hub, and stochastic effectors. The affected validators now reject non-finite scalar,
+  vector, and matrix inputs, including in point-mass spacecraft initialization. Point-mass mode retains
+  support for finite zero or singular inertia and checks its zero center offset component by component.
+  Axis normalization preserves very large finite directions; translation
+  validation runs before state registration. Stochastic setters preserve prior values on rejection,
+  their coefficient calculations avoid intermediate overflow, and non-finite drift or diffusion
+  raises ``BasiliskError`` before being stored.
 - GitHub issue 469: Hinged-body, prescribed-motion, and slosh effectors accepted invalid masses, and
   hinged-body effectors accepted invalid hinge-frame rotation matrices. These configurations now raise
   ``BasiliskError`` before state registration and from ``Reset()``, including for attached-only effectors.

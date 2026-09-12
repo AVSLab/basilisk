@@ -21,6 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
@@ -82,21 +83,55 @@ void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
     this->validateConfiguration();
 }
 
-/*! Validate and normalize the user-supplied spinning-body configuration. */
+/*! @brief Validate finite configuration values and normalize the configured spin axes. */
 void SpinningBodyTwoDOFStateEffector::validateConfiguration()
 {
-    // Normalize both sHat vectors
-    if (this->s1Hat_S1.norm() > 0.01) {
-        this->s1Hat_S1.normalize();
+    const auto requireFinite = [this](double value, const char* name) {
+        if (!std::isfinite(value)) {
+            this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: %s must be finite.", name);
+        }
+    };
+    requireFinite(this->mass1, "mass1");
+    requireFinite(this->mass2, "mass2");
+    requireFinite(this->k1, "k1");
+    requireFinite(this->k2, "k2");
+    requireFinite(this->c1, "c1");
+    requireFinite(this->c2, "c2");
+    requireFinite(this->theta1Init, "theta1Init");
+    requireFinite(this->theta1DotInit, "theta1DotInit");
+    requireFinite(this->theta2Init, "theta2Init");
+    requireFinite(this->theta2DotInit, "theta2DotInit");
+    if (!this->s1Hat_S1.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: s1Hat_S1 must contain only finite values.");
     }
-    else {
+    if (!this->s2Hat_S2.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: s2Hat_S2 must contain only finite values.");
+    }
+    if (!this->r_S1B_B.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: r_S1B_B must contain only finite values.");
+    }
+    if (!this->r_S2S1_S1.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: r_S2S1_S1 must contain only finite values.");
+    }
+    if (!this->r_Sc1S1_S1.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: r_Sc1S1_S1 must contain only finite values.");
+    }
+    if (!this->r_Sc2S2_S2.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: r_Sc2S2_S2 must contain only finite values.");
+    }
+    if (!this->IS1PntSc1_S1.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: IS1PntSc1_S1 must contain only finite values.");
+    }
+    if (!this->IS2PntSc2_S2.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyTwoDOFStateEffector: IS2PntSc2_S2 must contain only finite values.");
+    }
+
+    // Retain the existing minimum spin-axis magnitudes.
+    if (this->s1Hat_S1.stableNorm() <= 0.01) {
         bskLogger.bskError("Norm of s1Hat must be greater than 0. s1Hat may not have been set by the user.");
     }
 
-    if (this->s2Hat_S2.norm() > 0.01) {
-        this->s2Hat_S2.normalize();
-    }
-    else {
+    if (this->s2Hat_S2.stableNorm() <= 0.01) {
         bskLogger.bskError("Norm of s2Hat must be greater than 0. s2Hat may not have been set by the user.");
     }
 
@@ -115,6 +150,10 @@ void SpinningBodyTwoDOFStateEffector::validateConfiguration()
     if (this->mass2 < 0.0) {
         bskLogger.bskError("spinningBodyTwoDOFStateEffector: mass2 must be greater than or equal to 0. It may not have been set properly by the user.");
     }
+    const double totalMass = this->mass1 + this->mass2; // [kg]
+    if (!std::isfinite(totalMass)) {
+        bskLogger.bskError("spinningBodyTwoDOFStateEffector: combined mass must be finite.");
+    }
 
     // Verify the inertia tensors are physically realizable (see eigenIsValidInertiaMatrix).
     // A massless body legitimately carries a zero inertia tensor, so only check when its mass > 0.
@@ -124,6 +163,10 @@ void SpinningBodyTwoDOFStateEffector::validateConfiguration()
     if (this->mass2 > 0.0 && !eigenIsValidInertiaMatrix(this->IS2PntSc2_S2)) {
         bskLogger.bskError("spinningBodyTwoDOFStateEffector: IS2PntSc2_S2 is not a valid inertia tensor. It may not have been set properly by the user.");
     }
+    // Scale internally to avoid overflowing the squared norm of finite axes.
+    this->s1Hat_S1 = (this->s1Hat_S1 / this->s1Hat_S1.cwiseAbs().maxCoeff()).normalized();
+    this->s2Hat_S2 = (this->s2Hat_S2 / this->s2Hat_S2.cwiseAbs().maxCoeff()).normalized();
+
 }
 
 

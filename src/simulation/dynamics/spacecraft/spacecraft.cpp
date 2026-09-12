@@ -59,18 +59,9 @@ Spacecraft::~Spacecraft()
 void Spacecraft::Reset(uint64_t CurrentSimNanos)
 {
     // - Verify the user-supplied hub configuration before the dynamics are initialized
-    if (this->pointMassTranslationalOnly) {
-        if (this->hub.mHub <= 0.0) {
-            bskLogger.bskError("spacecraft: pointMassTranslationalOnly requires mHub to be greater than 0.");
-        }
-        if (!this->states.empty()) {
-            bskLogger.bskError("spacecraft: pointMassTranslationalOnly does not support attached state effectors.");
-        }
-        if (this->hub.r_BcB_B.norm() > 0.0) {
-            bskLogger.bskError("spacecraft: pointMassTranslationalOnly requires r_BcB_B to be zero.");
-        }
-    } else {
-        this->hub.validateConfiguration();
+    this->hub.validateConfiguration(this->pointMassTranslationalOnly);
+    if (this->pointMassTranslationalOnly && !this->states.empty()) {
+        bskLogger.bskError("spacecraft: pointMassTranslationalOnly does not support attached state effectors.");
     }
 
     this->gravField.Reset(CurrentSimNanos);

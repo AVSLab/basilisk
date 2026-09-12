@@ -2,3 +2,19 @@
 This class is an instantiation of the stateEffector abstract class and is for the hub of the s/c. The hub
 has 4 states: ``r_BN_N``, ``rDot_BN_N``, ``sigma_BN`` and ``omega_BN_B``. The hub utilizes the Backsubstitution Method for calculating
 its derivatives using contributions from :ref:`stateEffector` and :ref:`dynamicEffector`.
+
+
+Configuration Validation
+------------------------
+The owning spacecraft validates the hub before initializing dynamics. ``mHub`` must be finite
+and strictly positive. The center-of-mass offset ``r_BcB_B`` and initial position, velocity,
+MRP attitude, and angular velocity (``r_CN_NInit``, ``v_CN_NInit``, ``sigma_BNInit``, and
+``omega_BN_BInit``) must contain only finite values. Inertia entries must also be finite.
+Invalid configuration raises ``BasiliskError`` before state registration.
+
+These finite-value checks apply to both full spacecraft dynamics and
+``pointMassTranslationalOnly`` mode. Point-mass mode requires an exactly zero center offset
+and permits finite zero or singular inertia tensors because rotational dynamics are omitted.
+The full dynamics mode additionally requires a physically realizable inertia tensor.
+Initial attitude, angular velocity, and inertia still require finite values in point-mass mode
+because force transformations or output messages use them, including without attached effectors.

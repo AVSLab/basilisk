@@ -19,6 +19,7 @@
 #include "igbmNoiseStateEffector.h"
 
 #include <cmath>
+#include <algorithm>
 
 uint64_t IgbmNoiseStateEffector::effectorID = 1;
 
@@ -37,24 +38,24 @@ IgbmNoiseStateEffector::IgbmNoiseStateEffector()
 
 void IgbmNoiseStateEffector::setMean(double mean)
 {
-    if (mean <= 0.0) {
-        this->bskLogger.bskError("IgbmNoiseStateEffector::setMean requires mean > 0.");
+    if (!std::isfinite(mean) || mean <= 0.0) {
+        this->bskLogger.bskError("IgbmNoiseStateEffector::setMean requires finite mean > 0.");
     }
     this->mean = mean;
 }
 
 void IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
-    if (sigmaStationary < 0.0) {
-        this->bskLogger.bskError("IgbmNoiseStateEffector::setStationaryStd requires sigmaStationary >= 0.");
+    if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
+        this->bskLogger.bskError("IgbmNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
     }
     this->sigmaStationary = sigmaStationary;
 }
 
 void IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
 {
-    if (timeConstant <= 0.0) {
-        this->bskLogger.bskError("IgbmNoiseStateEffector::setTimeConstant requires timeConstant > 0.");
+    if (!std::isfinite(timeConstant) || timeConstant <= 0.0) {
+        this->bskLogger.bskError("IgbmNoiseStateEffector::setTimeConstant requires finite timeConstant > 0.");
     }
     this->timeConstant = timeConstant;
 }
@@ -73,8 +74,8 @@ void IgbmNoiseStateEffector::setStateValue(double val)
     // initial factor 1 + delta, so reject an initial condition that is zero or below.
     // (This guards the initial condition; the pure-math process is integrated as written,
     // so a consumer needing positivity clamps the derived quantity downstream.)
-    if (val <= -1.0) {
-        this->bskLogger.bskError("IgbmNoiseStateEffector::setStateValue requires the correction > -1 "
+    if (!std::isfinite(val) || val <= -1.0) {
+        this->bskLogger.bskError("IgbmNoiseStateEffector::setStateValue requires a finite correction > -1 "
                                  "(the initial factor 1 + delta must be positive).");
     }
     this->stateInit = val;
@@ -118,15 +119,21 @@ void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]
 
     Eigen::MatrixXd derivative(1, 1);
     derivative(0, 0) = (this->mean - factor) / this->timeConstant;
-    this->state->setDerivative(derivative);
 
     // SDE volatility derived from the stationary-form parameters:
     // sigma^2 = (2/tau) sigma_st^2 / (mu^2 + sigma_st^2)
-    const double sigma = std::sqrt(
-        (2.0 / this->timeConstant) * this->sigmaStationary * this->sigmaStationary /
-        (this->mean * this->mean + this->sigmaStationary * this->sigmaStationary));
+    // Scale before taking squares so finite stationary parameters cannot overflow their ratio.
+    const double scale = std::max(this->mean, this->sigmaStationary);
+    const double scaledMean = this->mean / scale;
+    const double scaledStd = this->sigmaStationary / scale;
+    const double sigma = (std::sqrt(2.0) / std::sqrt(this->timeConstant))
+                         * (scaledStd / std::hypot(scaledMean, scaledStd));
 
     Eigen::MatrixXd diffusion(1, 1);
     diffusion(0, 0) = sigma * factor;
+    if (!derivative.allFinite() || !diffusion.allFinite()) {
+        this->bskLogger.bskError("IgbmNoiseStateEffector: state and parameters produce non-finite drift or diffusion.");
+    }
+    this->state->setDerivative(derivative);
     this->state->setDiffusion(diffusion, 0);
 }

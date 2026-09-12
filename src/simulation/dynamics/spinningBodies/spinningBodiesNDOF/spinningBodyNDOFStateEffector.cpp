@@ -22,6 +22,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
+#include <cmath>
 
 SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
 {
@@ -71,7 +72,32 @@ void SpinningBodyNDOFStateEffector::validateConfiguration()
         bskLogger.bskError("The mass of the last element must be greater than 0.");
 
     // Verify each spinning body's configuration is physically consistent
+    double totalMass = 0.0; // [kg]
     for (const auto& body : this->spinningBodyVec) {
+        const auto requireFinite = [this](double value, const char* name) {
+            if (!std::isfinite(value)) {
+                this->bskLogger.bskError("SpinningBodyNDOFStateEffector: %s must be finite.", name);
+            }
+        };
+        requireFinite(body->mass, "mass");
+        totalMass += body->mass;
+        requireFinite(body->k, "k");
+        requireFinite(body->c, "c");
+        requireFinite(body->thetaInit, "thetaInit");
+        requireFinite(body->thetaDotInit, "thetaDotInit");
+        if (!body->sHat_S.allFinite()) {
+            this->bskLogger.bskError("SpinningBodyNDOFStateEffector: sHat_S must contain only finite values.");
+        }
+        if (!body->r_SP_P.allFinite()) {
+            this->bskLogger.bskError("SpinningBodyNDOFStateEffector: r_SP_P must contain only finite values.");
+        }
+        if (!body->r_ScS_S.allFinite()) {
+            this->bskLogger.bskError("SpinningBodyNDOFStateEffector: r_ScS_S must contain only finite values.");
+        }
+        if (!body->ISPntSc_S.allFinite()) {
+            this->bskLogger.bskError("SpinningBodyNDOFStateEffector: ISPntSc_S must contain only finite values.");
+        }
+
         if (!eigenIsRotationMatrix(body->dcm_S0P)) {
             bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's dcm_S0P is not a valid rotation matrix; it must be orthogonal and right-handed. It may not have been set properly by the user.");
         }
@@ -79,6 +105,9 @@ void SpinningBodyNDOFStateEffector::validateConfiguration()
         if (body->mass > 0.0 && !eigenIsValidInertiaMatrix(body->ISPntSc_S)) {
             bskLogger.bskError("spinningBodyNDOFStateEffector: a spinning body's ISPntSc_S is not a valid inertia tensor. It may not have been set properly by the user.");
         }
+    }
+    if (!std::isfinite(totalMass)) {
+        bskLogger.bskError("spinningBodyNDOFStateEffector: combined mass must be finite.");
     }
 }
 
@@ -94,35 +123,35 @@ void SpinningBodyNDOFStateEffector::validateCommandCapacity()
 }
 
 void SpinningBody::setMass(double mass) {
-    if (mass >= 0.0)
+    if (std::isfinite(mass) && mass >= 0.0)
         this->mass = mass;
     else {
-        bskLogger.bskError("Mass must be greater than or equal to 0.");
+        bskLogger.bskError("Mass must be greater than or equal to 0 and finite.");
     }
 }
 
 void SpinningBody::setSHat_S(Eigen::Vector3d sHat_S) {
-    if (sHat_S.norm() > 0.01) {
-        this->sHat_S = sHat_S.normalized();
+    if (sHat_S.allFinite() && sHat_S.stableNorm() > 0.01) {
+        this->sHat_S = (sHat_S / sHat_S.cwiseAbs().maxCoeff()).normalized();
     }
     else {
-        bskLogger.bskError("Norm of sHat must be greater than 0.");
+        bskLogger.bskError("Norm of sHat must exceed 0.01 and all components must be finite.");
     }
 }
 
 void SpinningBody::setK(double k) {
-    if (k >= 0.0)
+    if (std::isfinite(k) && k >= 0.0)
         this->k = k;
     else {
-        bskLogger.bskError("k must be greater than or equal to 0.");
+        bskLogger.bskError("k must be greater than or equal to 0 and finite.");
     }
 }
 
 void SpinningBody::setC(double c) {
-    if (c >= 0.0)
+    if (std::isfinite(c) && c >= 0.0)
         this->c = c;
     else {
-        bskLogger.bskError("c must be greater than or equal to 0.");
+        bskLogger.bskError("c must be greater than or equal to 0 and finite.");
     }
 }
 

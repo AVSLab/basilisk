@@ -171,3 +171,18 @@ This effector then makes its inertial position, velocity, attitude, and angular 
 in place of the hub's, and the child reads whichever of the four its model needs. Any geometry given
 to the child is expressed in that spinning body's frame rather than the hub body frame. Both this
 effector and the child are still added to the task in the usual way.
+
+
+Finite Configuration Values
+---------------------------
+All configured masses, spring and damping coefficients, initial angles and angular rates,
+position offsets, and inertia entries must be finite. This requirement also applies to inertia
+entries on massless bodies; the existing rules for inertia realizability remain unchanged.
+The frame rotation checks reject non-finite DCMs as well as improper rotations.
+
+Spin axes must contain only finite components and have a norm strictly greater than ``0.01``.
+Normalization scales the components before computing their norm, so very large finite axes
+retain the correct direction. Repeated resets preserve integrated states and commands.
+
+These checks run before state registration and from ``Reset()``. A failed configuration check
+raises ``BasiliskError`` before normalizing the spin axis or registering effector states.
