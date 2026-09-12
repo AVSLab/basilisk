@@ -21,8 +21,14 @@
 #define STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <cstdint>
+#include <memory>
+#include <string>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
+#ifndef SWIG
+#include "effectorName.h"
+#endif
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
@@ -150,6 +156,27 @@ public:
 
 public:
     StateEffector();                       //!< Constructor
+#ifndef SWIG
+    /** @brief Copy effector data while assigning a fresh naming identity.
+     * @param other Effector to copy.
+     */
+    StateEffector(const StateEffector& other) = default;
+    /** @brief Copy effector data and renew the destination's naming identity.
+     * @param other Effector to copy.
+     * @return This effector.
+     */
+    StateEffector& operator=(const StateEffector& other) = default;
+    /** @brief Transfer effector data and its naming ownership.
+     * @param other Effector to move from.
+     * @note Derived classes that support moving must also move this base.
+     */
+    StateEffector(StateEffector&& other) = default;
+    /** @brief Transfer effector data and its naming ownership during assignment.
+     * @param other Effector to move from.
+     * @return This effector.
+     */
+    StateEffector& operator=(StateEffector&& other) = default;
+#endif
     virtual ~StateEffector();              //!< Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< Method for stateEffector to give mass contributions
     virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions
@@ -168,7 +195,51 @@ public:
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
 
+#ifndef SWIG
+    /** @brief Collect this effector's name group for a later manager-wide resolution pass.
+     * @param manager Dynamics manager that will own the states and properties.
+     * @note Legacy is a no-op. ManagerLocal requires an override of
+     * describeEffectorNames(). The caller must visit all nested effectors too.
+     * Repeating this call on the same manager with unchanged requests preserves identity.
+     * Copying both the manager and its effectors preserves their declarations;
+     * copying an effector into the same manager requires a new declaration.
+     * If the previous manager was destroyed, collection can bind to a replacement.
+     */
+    void collectEffectorNames(DynParamManager& manager);
+
+    /** @brief Cancel this effector's pending request before retrying preparation.
+     * @param manager Dynamics manager used to collect this effector's names.
+     * @note Cancel before moving a pending effector away from a live manager. Resolved
+     * requests cannot be cancelled. Calling without an owned request is a no-op.
+     */
+    void cancelEffectorNames(DynParamManager& manager);
+#endif
+
 protected:
+#ifndef SWIG
+    /** @brief Describe names using explicit override metadata from the derived effector.
+     * @return Complete name group; the default empty family denotes an unsupported effector.
+     * @note External effectors opt in by overriding this method, collecting before
+     * resolution, and using the resolved names before registering or binding data.
+     * Existing public name attributes and setters remain the derived class's responsibility.
+     */
+    virtual EffectorNameGroup describeEffectorNames() const { return {}; }
+
+    /** @brief Read a prepared name for assignment to a derived effector's public name field.
+     * @param manager Dynamics manager used for collection and resolution.
+     * @param key Local key supplied by describeEffectorNames().
+     * @return Final manager-local name.
+     */
+    const std::string& getResolvedEffectorName(const DynParamManager& manager, const std::string& key) const;
+
+    /** @brief Retrieve this effector's request for ownership-aware registration.
+     * @return Current handle to pass to registerEffectorState() or createEffectorProperty().
+     * @note Calling before collection, on an uncollected copy, or after the manager
+     * lifetime ends raises BasiliskError. Recollect before registering data in a copied manager.
+     */
+    const EffectorNameRequest& getEffectorNameRequest() const;
+#endif
+
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
     std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
     std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
@@ -198,6 +269,14 @@ protected:
     Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!< sigma_PB prescribed MRP attitude relative to hub
     Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
     Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
+
+private:
+#ifndef SWIG
+    EffectorNameRequest effectorNameRequest; //!< Immutable request retained across repeated preparation.
+    EffectorNameIdentity effectorNameIdentity; //!< Distinguishes copies without relying on memory addresses.
+    std::weak_ptr<const EffectorNameIdentity::Token> effectorNameRequestOwner; //!< Identity used at collection.
+    std::weak_ptr<const EffectorNameIdentity::Token> effectorNameManager; //!< Manager lifetime used at collection.
+#endif
 };
 
 

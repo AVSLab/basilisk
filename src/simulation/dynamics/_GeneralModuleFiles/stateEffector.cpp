@@ -49,6 +49,62 @@ StateEffector::~StateEffector()
     return;
 }
 
+void StateEffector::collectEffectorNames(DynParamManager& manager)
+{
+    if (manager.getEffectorNamingPolicy() == EffectorNamingPolicy::Legacy) {
+        return;
+    }
+    const auto group = this->describeEffectorNames();
+    if (group.family.empty()) {
+        this->bskLogger.bskError("StateEffector: manager-local naming requires describeEffectorNames() support. "
+                                "Migrate this effector or use legacy naming.");
+    }
+    const auto& owner = this->effectorNameIdentity.getToken();
+    const auto& managerIdentity = manager.effectorNameIdentity.getToken();
+    const auto previousManager = this->effectorNameManager.lock();
+    const bool ownsRequest = this->effectorNameRequestOwner.lock() == owner;
+    if (ownsRequest && previousManager && previousManager != managerIdentity) {
+        throw BasiliskError("StateEffector: cancel the pending request before moving to another live manager.");
+    }
+    auto previous = this->effectorNameRequest;
+    // A stale handle in the same manager remains an error. A copy or an effector
+    // whose manager has died can instead start in a manager with no matching slot.
+    if (!(ownsRequest && previousManager == managerIdentity) && !manager.hasEffectorNameRequest(previous)) {
+        previous.reset();
+    }
+    this->effectorNameRequest = manager.requestEffectorNamesForOwner(group, previous, owner);
+    this->effectorNameRequestOwner = owner;
+    this->effectorNameManager = managerIdentity;
+}
+
+const std::string& StateEffector::getResolvedEffectorName(const DynParamManager& manager, const std::string& key) const
+{
+    return manager.getEffectorName(this->getEffectorNameRequest(), key);
+}
+
+void StateEffector::cancelEffectorNames(DynParamManager& manager)
+{
+    if (this->effectorNameRequestOwner.lock() != this->effectorNameIdentity.getToken() || !this->effectorNameRequest) {
+        return;
+    }
+    if (this->effectorNameManager.lock() != manager.effectorNameIdentity.getToken()) {
+        throw BasiliskError("StateEffector: cancel names through the manager used for collection.");
+    }
+    manager.cancelEffectorNames(this->effectorNameRequest);
+    this->effectorNameRequest.reset();
+    this->effectorNameRequestOwner.reset();
+    this->effectorNameManager.reset();
+}
+
+const EffectorNameRequest& StateEffector::getEffectorNameRequest() const
+{
+    if (this->effectorNameRequestOwner.lock() != this->effectorNameIdentity.getToken() ||
+        this->effectorNameManager.expired()) {
+        throw BasiliskError("StateEffector: collect this effector's names before retrieving them.");
+    }
+    return this->effectorNameRequest;
+}
+
 /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject. This
  allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
 void StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])

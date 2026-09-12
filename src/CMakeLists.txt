@@ -1101,4 +1101,5 @@ add_subdirectory("${CMAKE_SOURCE_DIR}/../benchmarks" "${CMAKE_BINARY_DIR}/benchm
 # Native test targets
 if(BUILD_TESTING)
   add_subdirectory("architecture/utilities/tests")
+  add_subdirectory("simulation/dynamics/stateArchitecture/_UnitTest")
 endif()
