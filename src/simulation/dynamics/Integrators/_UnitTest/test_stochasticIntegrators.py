@@ -23,10 +23,15 @@ variance for the Ornstein-Uhlenbeck process. The higher-order weak Runge-Kutta m
 (W2Ito1, W2Ito2, and the Roessler families) are verified separately by exact numerical
 equivalence to committed reference trajectories (test_stochasticIntegratorsJulia.py and
 test_stochasticIntegratorsPaper.py).
+
+The Example 1 Monte Carlo validation runs in routine CI with its statistical
+assertion enabled. It uses reproducible, distinct trajectory seeds and has no
+automatic retries.
 """
 from __future__ import annotations
 
 from typing import Callable, List, Literal, get_args, Any
+import sys
 import tqdm
 import itertools
 
@@ -243,7 +248,8 @@ class Example1System:
         y1, y2 = x
         return np.array([
             1/4*y1,
-            (1 - 2*np.sqrt(2)/8)/4*y2
+            # Coefficient [1/sqrt(s)] in Eq. (36), https://arxiv.org/abs/1303.5103.
+            (1 - 2*np.sqrt(2))/4*y2
         ])
 
     def g2(self, t: float, x: npt.NDArray[np.float64]):
@@ -718,26 +724,93 @@ def test_validateOu(
         rtol = 0
     )
 
-# when running in pytest, we use skipAssert=True, because the test
-# keeps failing for low tf and we can't afford a high tf at CI testing time
-@pytest.mark.flaky(reruns=6)
+
+def test_example1_second_moment_equations():
+    """Verify the moment equations underlying Example 1's analytic reference.
+
+    Ito's formula gives the instantaneous rates of the squared components.
+    These must satisfy the closed moment equations whose solution, from unit
+    initial conditions, is used by the Monte Carlo validation below.
+    """
+    system = Example1System()
+    reference_time = 0.0  # [s]
+    first_decay = 1.0  # [1/s]
+    second_decay = 2.5  # [1/s]
+    coupling = 0.01  # [1/s]
+    for state in (np.array([1., 0.]), np.array([0., 1.]), np.array([1., 1.])):
+        rates = 2*state*system.f(reference_time, state) + sum(
+            diffusion(reference_time, state)**2 for diffusion in system.g
+        )
+        expected = np.array([
+            -first_decay*state[0]**2,
+            coupling*state[0]**2 - second_decay*state[1]**2,
+        ])
+        np.testing.assert_allclose(rates, expected, rtol=1e-14, atol=1e-14)
+
+
+def _example1_euler_second_moment(system, dt, step_count):
+    r"""Compute the exact Euler-Maruyama second moment for the linear Example 1 SDE.
+
+    For drift :math:`Ax`, diffusion columns :math:`B_k x`, and independent
+    Wiener increments, :math:`M_n = E[x_n x_n^T]` satisfies
+
+    .. math::
+
+        M_{n+1} = (I+hA) M_n (I+hA)^T + h\sum_k B_k M_n B_k^T.
+
+    This deterministic recurrence uses no sampled paths or Basilisk integrator.
+
+    :param system: The constant-coefficient linear Example 1 system.
+    :param dt: Euler-Maruyama step size in seconds.
+    :param step_count: Number of steps to propagate.
+    :return: The exact discrete second moment of the second state component.
+    """
+    basis = np.eye(system.x0.size)
+    reference_time = 0.0  # [s]; Example 1's coefficients are time independent
+    drift = np.column_stack([system.f(reference_time, vector) for vector in basis])
+    diffusions = [
+        np.column_stack([diffusion(reference_time, vector) for vector in basis])
+        for diffusion in system.g
+    ]
+    transition = basis + dt*drift
+    moment = np.outer(system.x0, system.x0)
+    for _ in range(step_count):
+        moment = (
+            transition @ moment @ transition.T
+            + dt*sum(diffusion @ moment @ diffusion.T for diffusion in diffusions)
+        )
+    return moment[1, 1]
+
+
 @pytest.mark.parametrize("method", METHODS)
-def test_validateExample1(method: Method, tf: float = 0.1, skipAssert: bool = True):
-    """
-    Validate the weak accuracy of the integrators for Example 1 from Tang & Xiao (2017).
-    Compares the empirical variance of the final state to the analytical value using
-    multiple Monte Carlo batches.
+def test_validateExample1(method: Method):
+    """Check Example 1's empirical second moment with known discretization bias.
 
-    Args:
-        method: Integration method.
+    Run 1,000 trajectories in ten batches over the five-second interval used
+    by the manual validation. Distinct fixed seeds make the result repeatable;
+    the statistical assertion is always enabled and failures are not retried.
+
+    Correct the error against the continuous analytic solution by the exact
+    Euler-Maruyama discretization bias. The remaining sampling error must be
+    within two estimated standard errors of the grand mean. The estimator
+    returns the variance between batch means, so divide it by the number of
+    batches before taking its square root.
+
+    :param method: Integration method.
     """
 
-    dt = 2.**-3
+    dt = 2.**-3  # [s]
+    tf = 5.0  # [s], an exact multiple of dt
+    trajectory_seeds = itertools.count()
+    batch_count = 10
+    trajectories_per_batch = 100
 
     system = Example1System()
 
     def basiliskTrajectory():
-        scSim, stateModel, integratorObject, stateLogger = getBasiliskSim(method, dt, system.x0, system.f, system.g, None)
+        scSim, stateModel, integratorObject, stateLogger = getBasiliskSim(
+            method, dt, system.x0, system.f, system.g, next(trajectory_seeds)
+        )
         scSim.ConfigureStopTime( macros.sec2nano(tf) )
         scSim.ExecuteSimulation()
 
@@ -750,31 +823,27 @@ def test_validateExample1(method: Method, tf: float = 0.1, skipAssert: bool = Tr
         return arr[1]**2
 
     estimateGOnTrajectory = 149/150*np.exp(-5/2*tf) +1/150*np.exp(-tf)
+    discrete_moment = _example1_euler_second_moment(system, dt, round(tf/dt))
+    expected_bias = discrete_moment - estimateGOnTrajectory
 
     err, varErr = estimateErrorAndEmpiricalVariance(
         basiliskTrajectory,
         G,
         estimateGOnTrajectory,
-        M1 = 10,
-        M2 = 100
+        M1=batch_count,
+        M2=trajectories_per_batch,
     )
-    twoSigma = 2*np.sqrt(varErr)
+    standard_error = np.sqrt(varErr/batch_count)
 
-    print(method, "variance error", err, "+-", twoSigma)
+    print(method, "second-moment error", err, "expected discretization bias", expected_bias,
+          "sampling standard error", standard_error)
 
-    if not skipAssert:
-        # We expect the error to be zero, but we allow some tolerance
-        # given that the error is estimated with a certain variance
-        np.testing.assert_allclose(
-            err,
-            0,
-            atol = twoSigma,
-            rtol = 0
-        )
+    assert np.isfinite(err) and np.isfinite(standard_error) and standard_error > 0
+    np.testing.assert_allclose(
+        err, expected_bias, atol=2*standard_error, rtol=0,
+        err_msg="Example 1 sampling error exceeds two standard errors after correcting discretization bias",
+    )
+
 
 if __name__ == "__main__":
-    pytest.main([__file__])
-
-    # run this test with a higher tf, enough to pass
-    for method in METHODS:
-        test_validateExample1(method, tf=5, skipAssert=False)
+    sys.exit(pytest.main([__file__, *sys.argv[1:]]))
