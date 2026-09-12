@@ -10,6 +10,12 @@ add_executable(test_orbitalMotion test_orbitalMotion.cpp)
 target_link_libraries(test_orbitalMotion GTest::gtest_main)
 target_link_libraries(test_orbitalMotion ArchitectureUtilities)
 
+add_executable(test_unitTestComparators
+    test_unitTestComparators.cpp
+    test_unitTestComparatorsHeader.cpp
+    test_unitTestComparators_c.c)
+target_link_libraries(test_unitTestComparators GTest::gtest_main)
+
 add_executable(test_saturate test_saturate.cpp)
 target_link_libraries(test_saturate GTest::gtest_main)
 target_link_libraries(test_saturate ArchitectureUtilities)
@@ -45,6 +51,7 @@ endif()
 gtest_discover_tests(test_discretize)
 gtest_discover_tests(test_gaussMarkov)
 gtest_discover_tests(test_orbitalMotion)
+gtest_discover_tests(test_unitTestComparators)
 gtest_discover_tests(test_saturate)
 gtest_discover_tests(test_geodeticConversion)
 gtest_discover_tests(test_avsEigenMRP)
