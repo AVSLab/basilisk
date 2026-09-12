@@ -11,6 +11,7 @@ _UnitTest
 
    referenceSDE
    stochasticIntegratorHarness
+   test_integratorConvergence
    test_Integrators
    test_stochasticIntegrators
    test_stochasticIntegratorsJulia

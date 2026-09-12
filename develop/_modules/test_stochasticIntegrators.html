@@ -138,10 +138,15 @@
 <span class="sd">(W2Ito1, W2Ito2, and the Roessler families) are verified separately by exact numerical</span>
 <span class="sd">equivalence to committed reference trajectories (test_stochasticIntegratorsJulia.py and</span>
 <span class="sd">test_stochasticIntegratorsPaper.py).</span>
+
+<span class="sd">The Example 1 Monte Carlo validation runs in routine CI with its statistical</span>
+<span class="sd">assertion enabled. It replays a fixed ensemble of NumPy-generated Wiener</span>
+<span class="sd">increments, independent of the C++ standard library, and has no automatic retries.</span>
 <span class="sd">"""</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tqdm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 
@@ -401,7 +406,8 @@
         <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">x</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">y1</span><span class="p">,</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">y2</span>
+            <span class="c1"># Coefficient [1/sqrt(s)] in Eq. (36), https://arxiv.org/abs/1303.5103.</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="n">y2</span>
         <span class="p">])</span></div>
 
 
@@ -905,30 +911,114 @@
     <span class="p">)</span></div>
 
 
-<span class="c1"># when running in pytest, we use skipAssert=True, because the test</span>
-<span class="c1"># keeps failing for low tf and we can't afford a high tf at CI testing time</span>
+
+<div class="viewcode-block" id="test_example1_second_moment_equations">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_example1_second_moment_equations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_example1_second_moment_equations</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Verify the moment equations underlying Example 1's analytic reference.</span>
+
+<span class="sd">    Ito's formula gives the instantaneous rates of the squared components.</span>
+<span class="sd">    These must satisfy the closed moment equations whose solution, from unit</span>
+<span class="sd">    initial conditions, is used by the Monte Carlo validation below.</span>
+<span class="sd">    """</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">Example1System</span><span class="p">()</span>
+    <span class="n">reference_time</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [s]</span>
+    <span class="n">first_decay</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [1/s]</span>
+    <span class="n">second_decay</span> <span class="o">=</span> <span class="mf">2.5</span>  <span class="c1"># [1/s]</span>
+    <span class="n">coupling</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [1/s]</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])):</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">state</span><span class="o">*</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">reference_time</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">diffusion</span><span class="p">(</span><span class="n">reference_time</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">diffusion</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span>
+        <span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="o">-</span><span class="n">first_decay</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">coupling</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">second_decay</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_example1_euler_second_moment</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">step_count</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Compute the exact Euler-Maruyama second moment for the linear Example 1 SDE.</span>
+
+<span class="sd">    For drift :math:`Ax`, diffusion columns :math:`B_k x`, and independent</span>
+<span class="sd">    Wiener increments, :math:`M_n = E[x_n x_n^T]` satisfies</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{n+1} = (I+hA) M_n (I+hA)^T + h\sum_k B_k M_n B_k^T.</span>
+
+<span class="sd">    This deterministic recurrence uses no sampled paths or Basilisk integrator.</span>
+
+<span class="sd">    :param system: The constant-coefficient linear Example 1 system.</span>
+<span class="sd">    :param dt: Euler-Maruyama step size in seconds.</span>
+<span class="sd">    :param step_count: Number of steps to propagate.</span>
+<span class="sd">    :return: The exact discrete second moment of the second state component.</span>
+<span class="sd">    """</span>
+    <span class="n">basis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">reference_time</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [s]; Example 1's coefficients are time independent</span>
+    <span class="n">drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">reference_time</span><span class="p">,</span> <span class="n">vector</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">basis</span><span class="p">])</span>
+    <span class="n">diffusions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">diffusion</span><span class="p">(</span><span class="n">reference_time</span><span class="p">,</span> <span class="n">vector</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">basis</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">diffusion</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span>
+    <span class="p">]</span>
+    <span class="n">transition</span> <span class="o">=</span> <span class="n">basis</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">drift</span>
+    <span class="n">moment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">step_count</span><span class="p">):</span>
+        <span class="n">moment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">transition</span> <span class="o">@</span> <span class="n">moment</span> <span class="o">@</span> <span class="n">transition</span><span class="o">.</span><span class="n">T</span>
+            <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">diffusion</span> <span class="o">@</span> <span class="n">moment</span> <span class="o">@</span> <span class="n">diffusion</span><span class="o">.</span><span class="n">T</span> <span class="k">for</span> <span class="n">diffusion</span> <span class="ow">in</span> <span class="n">diffusions</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">moment</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+
 <div class="viewcode-block" id="test_validateExample1">
 <a class="viewcode-back" href="../Documentation/simulation/dynamics/Integrators/_UnitTest/test_stochasticIntegrators.html#test_stochasticIntegrators.test_validateExample1">[docs]</a>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">flaky</span><span class="p">(</span><span class="n">reruns</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="n">METHODS</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_validateExample1</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">,</span> <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">skipAssert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Validate the weak accuracy of the integrators for Example 1 from Tang &amp; Xiao (2017).</span>
-<span class="sd">    Compares the empirical variance of the final state to the analytical value using</span>
-<span class="sd">    multiple Monte Carlo batches.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_validateExample1</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check Example 1's empirical second moment with known discretization bias.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        method: Integration method.</span>
+<span class="sd">    Run 1,000 trajectories in ten batches over the five-second interval used</span>
+<span class="sd">    by the manual validation. Prescribed Wiener increments from NumPy's frozen</span>
+<span class="sd">    ``RandomState`` algorithm make the ensemble repeatable across C++ standard</span>
+<span class="sd">    libraries, up to floating-point roundoff. The assertion is always enabled</span>
+<span class="sd">    and failures are not retried.</span>
+
+<span class="sd">    Correct the error against the continuous analytic solution by the exact</span>
+<span class="sd">    Euler-Maruyama discretization bias. The remaining sampling error must be</span>
+<span class="sd">    within two estimated standard errors of the grand mean. The estimator</span>
+<span class="sd">    returns the variance between batch means, so divide it by the number of</span>
+<span class="sd">    batches before taking its square root. This bound is a regression criterion</span>
+<span class="sd">    for this fixed ensemble, not a confidence guarantee for newly drawn samples.</span>
+
+<span class="sd">    :param method: Integration method.</span>
 <span class="sd">    """</span>
 
-    <span class="n">dt</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">**-</span><span class="mi">3</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">**-</span><span class="mi">3</span>  <span class="c1"># [s]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [s], an exact multiple of dt</span>
+    <span class="n">step_count</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">tf</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+    <span class="n">trajectory_seeds</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">batch_count</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">trajectories_per_batch</span> <span class="o">=</span> <span class="mi">100</span>
 
     <span class="n">system</span> <span class="o">=</span> <span class="n">Example1System</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">basiliskTrajectory</span><span class="p">():</span>
-        <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="p">,</span> <span class="n">stateModel</span><span class="p">,</span> <span class="n">integratorObject</span><span class="p">,</span> <span class="n">stateLogger</span> <span class="o">=</span> <span class="n">getBasiliskSim</span><span class="p">(</span>
+            <span class="n">method</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="c1"># RandomState deliberately preserves NumPy's legacy stream across</span>
+        <span class="c1"># versions. C++ std::normal_distribution does not preserve it across</span>
+        <span class="c1"># standard libraries. Keep seeds 0..999 and the draw shape fixed.</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">trajectory_seeds</span><span class="p">))</span>
+        <span class="n">increments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">*</span><span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="n">step_count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">g</span><span class="p">)))</span>  <span class="c1"># [sqrt(s)]</span>
+        <span class="n">prescribed</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">PrescribedGaussianNoiseGenerator</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">increment</span> <span class="ow">in</span> <span class="n">increments</span><span class="p">:</span>
+            <span class="n">prescribed</span><span class="o">.</span><span class="n">pushStep</span><span class="p">(</span><span class="n">increment</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">integratorObject</span><span class="o">.</span><span class="n">setNoiseGenerator</span><span class="p">(</span><span class="n">prescribed</span><span class="p">)</span>
         <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="p">)</span>
         <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">prescribed</span><span class="o">.</span><span class="n">remaining</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"The simulation did not consume all prescribed increments."</span>
 
         <span class="n">xBasilisk</span> <span class="o">=</span> <span class="n">stateLogger</span><span class="o">.</span><span class="n">x</span>
 
@@ -939,35 +1029,31 @@
         <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="n">estimateGOnTrajectory</span> <span class="o">=</span> <span class="mi">149</span><span class="o">/</span><span class="mi">150</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">tf</span><span class="p">)</span> <span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">150</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">tf</span><span class="p">)</span>
+    <span class="n">discrete_moment</span> <span class="o">=</span> <span class="n">_example1_euler_second_moment</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">step_count</span><span class="p">)</span>
+    <span class="n">expected_bias</span> <span class="o">=</span> <span class="n">discrete_moment</span> <span class="o">-</span> <span class="n">estimateGOnTrajectory</span>
 
     <span class="n">err</span><span class="p">,</span> <span class="n">varErr</span> <span class="o">=</span> <span class="n">estimateErrorAndEmpiricalVariance</span><span class="p">(</span>
         <span class="n">basiliskTrajectory</span><span class="p">,</span>
         <span class="n">G</span><span class="p">,</span>
         <span class="n">estimateGOnTrajectory</span><span class="p">,</span>
-        <span class="n">M1</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="n">M2</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">M1</span><span class="o">=</span><span class="n">batch_count</span><span class="p">,</span>
+        <span class="n">M2</span><span class="o">=</span><span class="n">trajectories_per_batch</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">twoSigma</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">varErr</span><span class="p">)</span>
+    <span class="n">standard_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">varErr</span><span class="o">/</span><span class="n">batch_count</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">"variance error"</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">"+-"</span><span class="p">,</span> <span class="n">twoSigma</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">"second-moment error"</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">"expected discretization bias"</span><span class="p">,</span> <span class="n">expected_bias</span><span class="p">,</span>
+          <span class="s2">"sampling standard error"</span><span class="p">,</span> <span class="n">standard_error</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">skipAssert</span><span class="p">:</span>
-        <span class="c1"># We expect the error to be zero, but we allow some tolerance</span>
-        <span class="c1"># given that the error is estimated with a certain variance</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
-            <span class="n">err</span><span class="p">,</span>
-            <span class="mi">0</span><span class="p">,</span>
-            <span class="n">atol</span> <span class="o">=</span> <span class="n">twoSigma</span><span class="p">,</span>
-            <span class="n">rtol</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="p">)</span></div>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">standard_error</span><span class="p">)</span> <span class="ow">and</span> <span class="n">standard_error</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">err</span><span class="p">,</span> <span class="n">expected_bias</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">standard_error</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">err_msg</span><span class="o">=</span><span class="s2">"Example 1 sampling error exceeds two standard errors after correcting discretization bias"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
-
-    <span class="c1"># run this test with a higher tf, enough to pass</span>
-    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">METHODS</span><span class="p">:</span>
-        <span class="n">test_validateExample1</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">tf</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">skipAssert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]))</span>
 </pre></div>
 
            </div>
