@@ -239,6 +239,11 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
  for the simulation */
 void Spacecraft::initializeDynamics()
 {
+    // Collect every declaration before registration can freeze the naming policy.
+    for (auto* effector : this->states) {
+        effector->collectEffectorNames(this->dynManager);
+    }
+
     // - Spacecraft initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
     Eigen::MatrixXd initMDot_SC(1,1);
@@ -279,11 +284,20 @@ void Spacecraft::initializeDynamics()
         this->hub.registerStates(this->dynManager);
     }
 
+    // Fixed hub and gravity names participate in collision detection.
+    this->dynManager.resolveEffectorNames();
+
     // - Loop through stateEffectors to register their states
     std::vector<StateEffector*>::iterator stateIt;
     for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
     {
         (*stateIt)->registerStates(this->dynManager);
+    }
+
+    if (this->dynManager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal) {
+        for (auto* effector : this->states) {
+            effector->bindAttachedDynamicEffectors(this->dynManager);
+        }
     }
 
     // - Link in states for the Spacecraft, gravity and the hub

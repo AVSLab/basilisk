@@ -196,6 +196,12 @@ public:
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
 
 #ifndef SWIG
+    /** @brief Bind attached dynamic effectors after all declared states and properties exist.
+     * @param manager Dynamics manager containing the resolved and registered names.
+     * @note Used by the manager-local preparation path. The default has no attachments.
+     */
+    virtual void bindAttachedDynamicEffectors(DynParamManager& manager);
+
     /** @brief Collect this effector's name group for a later manager-wide resolution pass.
      * @param manager Dynamics manager that will own the states and properties.
      * @note Legacy is a no-op. ManagerLocal requires an override of

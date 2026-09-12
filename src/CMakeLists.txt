@@ -331,6 +331,8 @@ function(find_package_targets PKG_DIR ALL_TARGET_LIST)
   # Direct Cargo commands can generate SWIG interfaces below a crate's
   # target/ directory. Those are build products, not source modules.
   list(FILTER SWIG_TARGETS EXCLUDE REGEX "(^|/)target(/|$)")
+  # Test-only bridges are configured by their own BUILD_TESTING targets.
+  list(FILTER SWIG_TARGETS EXCLUDE REGEX "(^|/)_UnitTest(/|$)")
   set(${ALL_TARGET_LIST}
       ${SWIG_TARGETS}
       PARENT_SCOPE)

@@ -52,6 +52,21 @@ void DynamicEffector::linkInProperties(DynParamManager& properties [[maybe_unuse
     }
 }
 
+void DynamicEffector::setAttachedBodyPropertyNames(const StateEffector& parent [[maybe_unused]],
+                                                  const AttachedBodyPropertyNames& names)
+{
+    this->setPropName_inertialPosition(names.position);
+    this->setPropName_inertialVelocity(names.velocity);
+    this->setPropName_inertialAttitude(names.attitude);
+    this->setPropName_inertialAngVelocity(names.angularVelocity);
+}
+
+void DynamicEffector::linkInAttachedBodyProperties(const StateEffector& parent [[maybe_unused]],
+                                                 DynParamManager& manager)
+{
+    this->linkInProperties(manager);
+}
+
 void DynamicEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable

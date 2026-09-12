@@ -249,6 +249,26 @@ void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) 
     }
 }
 
+void ConstraintDynamicEffector::setAttachedBodyPropertyNames(const StateEffector& parent,
+                                                            const AttachedBodyPropertyNames& names)
+{
+    auto found = this->attachedBodyNameIndices.find(&parent);
+    if (found == this->attachedBodyNameIndices.end()) {
+        const std::array<std::size_t, 4> indices{this->propName_inertialPosition.size(),
+                                               this->propName_inertialVelocity.size(),
+                                               this->propName_inertialAttitude.size(),
+                                               this->propName_inertialAngVelocity.size()};
+        DynamicEffector::setAttachedBodyPropertyNames(parent, names);
+        this->attachedBodyNameIndices.emplace(&parent, indices);
+    } else {
+        const auto& indices = found->second;
+        this->propName_inertialPosition.at(indices[0]) = names.position;
+        this->propName_inertialVelocity.at(indices[1]) = names.velocity;
+        this->propName_inertialAttitude.at(indices[2]) = names.attitude;
+        this->propName_inertialAngVelocity.at(indices[3]) = names.angularVelocity;
+    }
+}
+
 /*! @brief Add an inertial-velocity property name.
  *
  * @param[in] value Inertial-velocity property name to add.
@@ -399,6 +419,43 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
         properties.getPropertyReference(this->propName_inertialVelocity[propertyPosition]));
 
     this->scInitCounter++;
+}
+
+void ConstraintDynamicEffector::linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager)
+{
+    const auto bound = this->attachedBodyPropertyIndices.find(&parent);
+    if (bound == this->attachedBodyPropertyIndices.end() && this->scInitCounter > 1) {
+        this->bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
+    }
+    this->validateConfiguration();
+    this->initializeGains();
+
+    const auto& indices = this->attachedBodyNameIndices.at(&parent);
+    // Resolve all four pointers before publishing another bound parent.
+    auto* position = manager.getPropertyReference(this->propName_inertialPosition.at(indices[0]));
+    auto* velocity = manager.getPropertyReference(this->propName_inertialVelocity.at(indices[1]));
+    auto* attitude = manager.getPropertyReference(this->propName_inertialAttitude.at(indices[2]));
+    auto* angularVelocity = manager.getPropertyReference(this->propName_inertialAngVelocity.at(indices[3]));
+
+    if (bound != this->attachedBodyPropertyIndices.end()) {
+        const auto index = bound->second;
+        this->inertialPositionProperty.at(index) = position;
+        this->inertialVelocityProperty.at(index) = velocity;
+        this->inertialAttitudeProperty.at(index) = attitude;
+        this->inertialAngVelocityProperty.at(index) = angularVelocity;
+        return;
+    }
+
+    auto& parentInfo = this->scInitCounter == 0 ? this->parent1 : this->parent2;
+    parentInfo.parentType = "effector";
+    parentInfo.idx = static_cast<int>(this->inertialPositionProperty.size());
+    this->attachedBodyPropertyIndices.emplace(&parent, this->inertialPositionProperty.size());
+    this->effectorCounter = 1;
+    this->inertialPositionProperty.push_back(position);
+    this->inertialVelocityProperty.push_back(velocity);
+    this->inertialAttitudeProperty.push_back(attitude);
+    this->inertialAngVelocityProperty.push_back(angularVelocity);
+    ++this->scInitCounter;
 }
 
 /*! This method computes the forces on torques on each spacecraft body.

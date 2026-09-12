@@ -58,6 +58,7 @@ def test_preparation_api_remains_cpp_only():
     assert not hasattr(manager, "cancelEffectorNames")
     assert not hasattr(panel, "collectEffectorNames")
     assert not hasattr(panel, "cancelEffectorNames")
+    assert not hasattr(panel, "bindAttachedDynamicEffectors")
 
 
 if __name__ == "__main__":

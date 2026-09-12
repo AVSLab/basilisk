@@ -426,6 +426,9 @@ void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
  for the simulation */
 void SpacecraftSystem::initializeDynamics()
 {
+    if (this->dynManager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal) {
+        this->bskLogger.bskError("SpacecraftSystem: manager-local effector naming is supported only by Spacecraft.");
+    }
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);

@@ -171,6 +171,10 @@ void StateEffector::registerProperties(DynParamManager& states [[maybe_unused]])
     return;
 }
 
+void StateEffector::bindAttachedDynamicEffectors(DynParamManager& manager [[maybe_unused]])
+{
+}
+
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
 void StateEffector::addDynamicEffector(DynamicEffector * newDynamicEffector [[maybe_unused]], int segment [[maybe_unused]])
 {

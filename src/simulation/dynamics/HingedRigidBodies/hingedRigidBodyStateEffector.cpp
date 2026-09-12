@@ -59,6 +59,113 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 
 uint64_t HingedRigidBodyStateEffector::effectorID = 1;
 
+void HingedRigidBodyStateEffector::setNameOfThetaState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaState, this->customThetaState, value);
+}
+
+void HingedRigidBodyStateEffector::setNameOfThetaDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaDotState, this->customThetaDotState, value);
+}
+
+void HingedRigidBodyStateEffector::setNameOfInertialPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty, this->customInertialPositionProperty, value);
+}
+
+void HingedRigidBodyStateEffector::setNameOfInertialVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty, this->customInertialVelocityProperty, value);
+}
+
+void HingedRigidBodyStateEffector::setNameOfInertialAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty, this->customInertialAttitudeProperty, value);
+}
+
+void HingedRigidBodyStateEffector::setNameOfInertialAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAngVelocityProperty, this->customInertialAngVelocityProperty, value);
+}
+
+void HingedRigidBodyStateEffector::setCustomName(std::string& currentName,
+                                                std::optional<std::string>& customName,
+                                                const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("HingedRigidBodyStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup HingedRigidBodyStateEffector::describeEffectorNames() const
+{
+    return {"hingedRigidBody",
+            {
+                {"theta", EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "hingedRigidBodyTheta", "", this->customThetaState},
+                {"thetaDot", EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "hingedRigidBodyThetaDot", "", this->customThetaDotState},
+                {"position", EffectorNameKind::Property,
+                 "hingedRigidBodyInertialPosition", "", this->customInertialPositionProperty},
+                {"velocity", EffectorNameKind::Property,
+                 "hingedRigidBodyInertialVelocity", "", this->customInertialVelocityProperty},
+                {"attitude", EffectorNameKind::Property,
+                 "hingedRigidBodyInertialAttitude", "", this->customInertialAttitudeProperty},
+                {"angularVelocity", EffectorNameKind::Property,
+                 "hingedRigidBodyInertialAngVelocity", "", this->customInertialAngVelocityProperty}
+            }};
+}
+
+void HingedRigidBodyStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfThetaState = this->getResolvedEffectorName(manager, "theta");
+    this->nameOfThetaDotState = this->getResolvedEffectorName(manager, "thetaDot");
+    this->nameOfInertialPositionProperty = this->getResolvedEffectorName(manager, "position");
+    this->nameOfInertialVelocityProperty = this->getResolvedEffectorName(manager, "velocity");
+    this->nameOfInertialAttitudeProperty = this->getResolvedEffectorName(manager, "attitude");
+    this->nameOfInertialAngVelocityProperty = this->getResolvedEffectorName(manager, "angularVelocity");
+    this->effectorNamesResolved = true;
+}
+
+void HingedRigidBodyStateEffector::assignStateParamNames(DynamicEffector* effector)
+{
+    effector->setAttachedBodyPropertyNames(*this,
+                                         {this->nameOfInertialPositionProperty,
+                                          this->nameOfInertialVelocityProperty,
+                                          this->nameOfInertialAttitudeProperty,
+                                          this->nameOfInertialAngVelocityProperty});
+}
+
+void HingedRigidBodyStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    const bool managerLocal = manager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(manager);
+        // Fail before touching a child if this manager has not registered the panel properties.
+        manager.getPropertyReference(this->nameOfInertialPositionProperty);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty);
+    }
+    for (auto* effector : this->dynEffectors) {
+        if (managerLocal) {
+            this->assignStateParamNames(effector);
+            effector->linkInAttachedBodyProperties(*this, manager);
+        } else {
+            // Preserve the existing attachment-time name snapshots and parent ordering.
+            effector->linkInProperties(manager);
+        }
+    }
+}
+
 /*! @brief Validate mass and the fixed hinge orientation without accessing parent states. */
 void HingedRigidBodyStateEffector::validateConfiguration()
 {
@@ -118,6 +225,9 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
 void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 {
+    if (this->effectorNamesResolved) {
+        this->bskLogger.bskError("HingedRigidBodyStateEffector: resolved names already include their owner prefix.");
+    }
     this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
     this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
 
@@ -153,7 +263,7 @@ void HingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDynami
         bskLogger.bskError("Specifying attachment to a non-existent hinged rigid body linkage because this is 1DOF.");
     }
 
-    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+    this->assignStateParamNames(newDynamicEffector);
 
     this->dynEffectors.push_back(newDynamicEffector);
 }
@@ -166,11 +276,19 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->thetaState = statesIn.registerState(1, 1, this->nameOfThetaState);
+    const bool managerLocal = statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(statesIn);
+    }
+    this->thetaState = managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "theta")
+        : statesIn.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = statesIn.registerState(1, 1, this->nameOfThetaDotState);
+    this->thetaDotState = managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "thetaDot")
+        : statesIn.registerState(1, 1, this->nameOfThetaDotState);
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
@@ -180,24 +298,29 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
     return;
 }
 
-/*! This method registers the HRB inertial properties with the dynamic parameter manager and links
- them into dependent dynamic effectors
+/*! This method registers the HRB inertial properties with the dynamic parameter manager.
+ * Legacy preparation also binds dependent dynamic effectors here.
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
 void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    if (states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal) {
+        this->applyResolvedNames(states);
+        const auto& request = this->getEffectorNameRequest();
+        this->r_HN_N = states.createEffectorProperty(request, "position", stateInit);
+        this->v_HN_N = states.createEffectorProperty(request, "velocity", stateInit);
+        this->sigma_SN = states.createEffectorProperty(request, "attitude", stateInit);
+        this->omega_SN_S = states.createEffectorProperty(request, "angularVelocity", stateInit);
+        return;
+    }
     this->r_HN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
     this->v_HN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
     this->sigma_SN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
     this->omega_SN_S = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
 
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInProperties(states);
-    }
+    this->bindAttachedDynamicEffectors(states);
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
