@@ -126,3 +126,19 @@ This effector then makes its inertial position, velocity, attitude, and angular 
 in place of the hub's, and the child reads whichever of the four its model needs. Any geometry given
 to the child is expressed in that translating body's frame rather than the hub body frame. Both this
 effector and the child are still added to the task in the usual way.
+
+
+Initialization and Finite-Value Validation
+------------------------------------------
+Configured masses, spring and damping coefficients, initial displacements and rates, position
+offsets, inertia entries, and frame matrices must be finite. Existing mass bounds, inertia
+requirements, and rotation-matrix checks still apply.
+
+Axis setters require finite components and a norm strictly greater than ``0.01``. They scale
+the components before normalization to preserve the direction of very large finite vectors.
+Mass, spring, damping, and axis setters reject invalid input before changing the prior setting.
+
+Configuration validation runs before state or property registration, even when the effector
+is attached without task scheduling. ``Reset()`` repeats validation without restoring initial
+integrated states or clearing commands. Invalid values raise ``BasiliskError``.
+See :ref:`effectorInitialization`.

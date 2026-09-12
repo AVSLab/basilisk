@@ -21,6 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 LinearTranslationNDOFStateEffector::LinearTranslationNDOFStateEffector()
@@ -51,35 +52,35 @@ LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector()
 }
 
 void TranslatingBody::setMass(double mass) {
-    if (mass >= 0.0)
+    if (std::isfinite(mass) && mass >= 0.0)
         this->mass = mass;
     else {
-        this->bskLogger.bskError("Mass must be greater than or equal to 0.");
+        this->bskLogger.bskError("Mass must be greater than or equal to 0 and finite.");
     }
 }
 
 void TranslatingBody::setFHat_P(Eigen::Vector3d fHat_P) {
-    if (fHat_P.norm() > 0.01) {
-        this->fHat_P = fHat_P.normalized();
+    if (fHat_P.allFinite() && fHat_P.stableNorm() > 0.01) {
+        this->fHat_P = (fHat_P / fHat_P.cwiseAbs().maxCoeff()).normalized();
     }
     else {
-        this->bskLogger.bskError("Norm of fHat must be greater than 0.");
+        this->bskLogger.bskError("Norm of fHat must exceed 0.01 and all components must be finite.");
     }
 }
 
 void TranslatingBody::setK(double k) {
-    if (k >= 0.0)
+    if (std::isfinite(k) && k >= 0.0)
         this->k = k;
     else {
-        this->bskLogger.bskError("k must be greater than or equal to 0.");
+        this->bskLogger.bskError("k must be greater than or equal to 0 and finite.");
     }
 }
 
 void TranslatingBody::setC(double c) {
-    if (c >= 0.0)
+    if (std::isfinite(c) && c >= 0.0)
         this->c = c;
     else {
-        this->bskLogger.bskError("c must be greater than or equal to 0.");
+        this->bskLogger.bskError("c must be greater than or equal to 0 and finite.");
     }
 }
 
@@ -224,8 +225,9 @@ void
 LinearTranslationNDOFStateEffector::validateConfiguration()
 {
     for (auto& translatingBody : this->translatingBodyVec) {
-        if (translatingBody->fHat_P.norm() > 0.0) {
-            translatingBody->fHat_P.normalize();
+        if (translatingBody->fHat_P.allFinite() && translatingBody->fHat_P.stableNorm() > 0.0) {
+            translatingBody->fHat_P = (translatingBody->fHat_P /
+                                      translatingBody->fHat_P.cwiseAbs().maxCoeff()).normalized();
         }
         else {
             bskLogger.bskError("Norm of fHat must be greater than 0. fHat may not have been set by the user.");
@@ -246,6 +248,25 @@ LinearTranslationNDOFStateEffector::checkBodyConfiguration()
     }
 
     for (const auto& translatingBody : this->translatingBodyVec) {
+        const auto requireFinite = [this](double value, const char* name) {
+            if (!std::isfinite(value)) {
+                this->bskLogger.bskError("LinearTranslationNDOFStateEffector: %s must be finite.", name);
+            }
+        };
+        requireFinite(translatingBody->mass, "mass");
+        requireFinite(translatingBody->k, "k");
+        requireFinite(translatingBody->c, "c");
+        requireFinite(translatingBody->rhoInit, "rhoInit");
+        requireFinite(translatingBody->rhoDotInit, "rhoDotInit");
+        if (!translatingBody->r_FcF_F.allFinite()) {
+            bskLogger.bskError("LinearTranslationNDOFStateEffector: r_FcF_F must contain only finite values.");
+        }
+        if (!translatingBody->r_F0P_P.allFinite()) {
+            bskLogger.bskError("LinearTranslationNDOFStateEffector: r_F0P_P must contain only finite values.");
+        }
+        if (!translatingBody->IPntFc_F.allFinite()) {
+            bskLogger.bskError("LinearTranslationNDOFStateEffector: IPntFc_F must contain only finite values.");
+        }
         if (!eigenIsRotationMatrix(translatingBody->dcm_FP)) {
             bskLogger.bskError(
               "LinearTranslationNDOFStateEffector: a translating body's dcm_FP is not a valid rotation matrix; it must "
@@ -273,6 +294,9 @@ LinearTranslationNDOFStateEffector::checkJointMassMatrix()
 
     Eigen::MatrixXd MRho = Eigen::MatrixXd::Zero(this->N, this->N);
     this->computeMRho(MRho);
+    if (!MRho.allFinite()) {
+        bskLogger.bskError("LinearTranslationNDOFStateEffector: joint mass matrix must be finite.");
+    }
     if (Eigen::FullPivLU<Eigen::MatrixXd>(MRho).rank() < this->N) {
         bskLogger.bskError("LinearTranslationNDOFStateEffector: the translating body masses and axes leave the joint "
                            "mass matrix singular because at least one nonzero combination of joint rates leaves every "
@@ -286,6 +310,7 @@ LinearTranslationNDOFStateEffector::checkJointMassMatrix()
  */
 void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
+    this->validateConfiguration();
     // Register the rho states
     this->rhoState = statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoState);
     this->rhoDotState = statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoDotState);
@@ -301,7 +326,6 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesI
     this->rhoDotState->setState(RhoDotInitMatrix);
 
     this->registerProperties(statesIn);
-    this->validateConfiguration();
 }
 
 /*! This method attaches a dynamicEffector to one of the translating bodies

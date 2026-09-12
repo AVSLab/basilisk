@@ -19,6 +19,12 @@
 #ifndef IGBM_NOISE_STATE_EFFECTOR_H
 #define IGBM_NOISE_STATE_EFFECTOR_H
 
+#include <cstdint>
+#include <string>
+#include <Eigen/Dense>
+#include "architecture/utilities/avsEigenMRP.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -85,7 +91,7 @@ public:
      * @brief Set the mean level @f$\mu@f$ of the multiplicative factor @f$(1+\delta)@f$.
      * @param mean Mean level @f$\mu@f$ [-].
      *
-     * Values less than or equal to zero are rejected.
+     * Non-finite values and values less than or equal to zero are rejected without changing the previous setting.
      */
     void setMean(double mean);
 
@@ -96,7 +102,7 @@ public:
      * @brief Set the stationary standard deviation of the factor.
      * @param sigmaStationary Stationary standard deviation, @f$\sigma_{\mathrm{st}}@f$ [-].
      *
-     * Values smaller than zero are rejected.
+     * Non-finite values and values smaller than zero are rejected without changing the previous setting.
      */
     void setStationaryStd(double sigmaStationary);
 
@@ -107,7 +113,7 @@ public:
      * @brief Set the IGBM time constant.
      * @param timeConstant Time constant @f$\tau@f$ [s].
      *
-     * Values less than or equal to zero are rejected.
+     * Non-finite values and values less than or equal to zero are rejected without changing the previous setting.
      */
     void setTimeConstant(double timeConstant);
 
@@ -131,6 +137,7 @@ public:
      *        initial condition; it does not guarantee the numerically-integrated factor
      *        stays positive at every later step.
      *
+     * Non-finite values are rejected before changing either the initial or registered state.
      * This updates the configured initial value and also updates the registered
      * state immediately if registration has already occurred.
      */

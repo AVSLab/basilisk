@@ -14,7 +14,11 @@ the hub.
 The optional ``pointMassTranslationalOnly`` flag can be set to ``True`` to model the hub as a point mass and only
 integrate the translational position and velocity states. This mode is intended for dynamics comparisons or simple
 point-mass propagation where the rotational hub states and post-integration attitude bookkeeping are unnecessary.
-When enabled, the hub mass ``mHub`` must be positive and the hub center offset ``r_BcB_B`` must be zero.
+When enabled, the hub mass ``mHub`` must be finite and positive, and every component of the hub center
+offset ``r_BcB_B`` must be exactly zero. Initial position, velocity, attitude, angular velocity, and inertia
+entries must be finite. These checks run before state registration. Finite zero or singular inertia tensors
+are supported in this mode because rotational dynamics are omitted; inertia is still published in the
+mass-properties output message. Invalid configuration raises ``BasiliskError``.
 State effectors are not supported because they add internal generalized coordinates and mass-property coupling.
 Dynamic effectors may still be attached. Their translational force outputs are included in the point-mass acceleration,
 but torque outputs are ignored because there is no rotational equation of motion. If a dynamic effector requires hub

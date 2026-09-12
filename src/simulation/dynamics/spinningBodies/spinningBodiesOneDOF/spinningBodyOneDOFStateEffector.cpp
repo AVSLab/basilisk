@@ -21,6 +21,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
+#include <cmath>
 
 /*! This is the constructor, setting variables to default values */
 SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
@@ -69,14 +70,34 @@ void SpinningBodyOneDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused
     this->validateConfiguration();
 }
 
-/*! Validate and normalize the user-supplied spinning-body configuration. */
+/*! @brief Validate finite configuration values and normalize the configured spin axes. */
 void SpinningBodyOneDOFStateEffector::validateConfiguration()
 {
-    // Normalize the sHat vector
-    if (this->sHat_S.norm() > 0.01) {
-        this->sHat_S.normalize();
+    const auto requireFinite = [this](double value, const char* name) {
+        if (!std::isfinite(value)) {
+            this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: %s must be finite.", name);
+        }
+    };
+    requireFinite(this->mass, "mass");
+    requireFinite(this->k, "k");
+    requireFinite(this->c, "c");
+    requireFinite(this->thetaInit, "thetaInit");
+    requireFinite(this->thetaDotInit, "thetaDotInit");
+    if (!this->sHat_S.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: sHat_S must contain only finite values.");
     }
-    else {
+    if (!this->r_SB_B.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: r_SB_B must contain only finite values.");
+    }
+    if (!this->r_ScS_S.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: r_ScS_S must contain only finite values.");
+    }
+    if (!this->IPntSc_S.allFinite()) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: IPntSc_S must contain only finite values.");
+    }
+
+    // Retain the existing minimum spin-axis magnitude.
+    if (this->sHat_S.stableNorm() <= 0.01) {
         bskLogger.bskError("Norm of sHat must be greater than 0. sHat may not have been set by the user.");
     }
 
@@ -95,6 +116,9 @@ void SpinningBodyOneDOFStateEffector::validateConfiguration()
     if (this->mass > 0.0 && !eigenIsValidInertiaMatrix(this->IPntSc_S)) {
         bskLogger.bskError("spinningBodyOneDOFStateEffector: IPntSc_S is not a valid inertia tensor. It may not have been set properly by the user.");
     }
+    // Scale internally to avoid overflowing the squared norm of finite axes.
+    this->sHat_S = (this->sHat_S / this->sHat_S.cwiseAbs().maxCoeff()).normalized();
+
 }
 
 

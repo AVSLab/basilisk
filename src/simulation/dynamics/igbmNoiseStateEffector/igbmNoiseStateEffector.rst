@@ -70,3 +70,22 @@ Module Assumptions and Limitations
 - ``setMean(m)`` requires :math:`\mu > 0`; ``setTimeConstant(t)`` requires
   :math:`\tau > 0`; ``setStationaryStd(s)`` requires :math:`\sigma_{st} \ge 0`;
   ``setStateValue`` requires an initial factor :math:`1+\delta > 0`.
+
+
+Configuration Validation
+------------------------
+Numeric setters reject NaN and positive or negative infinity before modifying either the
+configured value or an already registered state. ``setTimeConstant()`` requires a finite,
+strictly positive time constant, and ``setStationaryStd()`` requires a finite, non-negative
+standard deviation. ``setStateValue()`` requires a finite value.
+
+``setMean()`` additionally requires a strictly positive finite mean, and ``setStateValue()``
+requires a correction greater than ``-1``. These bounds apply to configured values; the
+integrated correction is not clamped by this module.
+
+Valid defaults and private configuration members make attachment safe without task scheduling.
+The inherited ``Reset()`` leaves the configured parameters and integrated state unchanged.
+
+The drift and diffusion calculations avoid intermediate overflow when taking square roots or
+forming stationary-parameter ratios. If the resulting drift or diffusion is non-finite, the
+module raises ``BasiliskError`` before storing either result.
