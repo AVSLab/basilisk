@@ -1,0 +1,1 @@
+- ExtPulsedTorque now evaluates its pulse sequence from simulation time using the new pulseInterval parameter in seconds, independent of integrator evaluations and task scheduling. Set pulseInterval to the desired duration of one count in existing configurations. Add safe defaults and configuration validation; repeated resets preserve the phase anchored at time zero.

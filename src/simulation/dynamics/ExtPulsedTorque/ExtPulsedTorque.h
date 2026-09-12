@@ -20,7 +20,10 @@
 #ifndef EXT_PULSED_TORQUE_H
 #define EXT_PULSED_TORQUE_H
 
+#include <cstdint>
+#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/utilities/bskLogging.h"
 
@@ -29,21 +32,23 @@
 class ExtPulsedTorque final: public SysModel, public DynamicEffector{
 public:
     ExtPulsedTorque();
-    ~ExtPulsedTorque();
+    ~ExtPulsedTorque() override;
 
-    void UpdateState(uint64_t CurrentSimNanos);
-    void linkInStates(DynParamManager& statesIn);
+    void Reset(uint64_t CurrentSimNanos) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
+    void linkInStates(DynParamManager& statesIn) override;
     void writeOutputMessages(uint64_t currentClock);
     void readInputMessages();
-    void computeForceTorque(double integTime, double timeStep);
+    void computeForceTorque(double integTime, double timeStep) override;
 
 private:
-    int    c;                                   //!< number of time steps for pulse
+    void validateConfiguration(); //!< Validate the torque, pulse counts, and interval duration
 
 public:
-    Eigen::Vector3d pulsedTorqueExternalPntB_B; //!< pulsed torque vector about point B, in B frame components
-    int countOnPulse;                           //!< number of integration time steps to simulate a pulse
-    int countOff;                               //!< number of integration time steps to have no pulses
+    Eigen::Vector3d pulsedTorqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [N*m] pulsed torque about B in B components
+    int countOnPulse = 0; //!< Number of pulse intervals for each positive and negative pulse; zero disables the torque
+    int countOff = 0; //!< Number of pulse intervals with no torque between pulse pairs
+    double pulseInterval = 1.0; //!< [s] Duration of one pulse-count interval, independent of the integrator step
     BSKLogger bskLogger;                      //!< BSK Logging
 
 };
