@@ -259,6 +259,12 @@
 <h2>Version 2.12.0b0
 <a class="headerlink" href="#version-release" title="Link to this heading"></a></h2>
 <ul class="simple">
+<li><p>GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
+They now reject non-finite operands and non-finite or negative tolerances. The new
+<code class="docutils literal notranslate"><span class="pre">EXPECT_NEAR_REL</span></code>, <code class="docutils literal notranslate"><span class="pre">EXPECT_VECTOR3_NEAR</span></code>, and <code class="docutils literal notranslate"><span class="pre">EXPECT_VECTOR3_NEAR_REL</span></code> assertions
+apply these checks and provide comparison diagnostics. Relative comparisons use the
+first operand as the reference; a zero reference requires exact equality. The legacy
+<code class="docutils literal notranslate"><span class="pre">v3IsEqual</span></code> and <code class="docutils literal notranslate"><span class="pre">v3IsEqualRel</span></code> utility functions retain their existing behavior.</p></li>
 <li><p>GitHub issue 469: <a class="reference internal" href="../Documentation/simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.html#extpulsedtorque"><span class="std std-ref">C++ Module: ExtPulsedTorque</span></a> advanced its pulse on every dynamics evaluation, so
 intermediate integrator stages changed the pulse duration. It now evaluates the waveform from
 simulation time using the explicit <code class="docutils literal notranslate"><span class="pre">pulseInterval</span></code> in seconds. Set this interval to the desired
