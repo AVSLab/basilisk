@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="-20.09091 40 204.0909 78.5" width="204.0909" height="78.5">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="523" cap-height="721" ascent="966.9952" descent="-212.99744" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Light"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 9 8" markerWidth="9" markerHeight="8" color="black">
+      <g>
+        <path d="M 3.5 0 L -2.1 -2.1 L 0 0 L 0 0 L -2.1 2.1 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.11.4 
+    <dc:date>2019-11-03 15:44:24 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-dasharray="none" stroke="none" fill="none" stroke-opacity="1" fill-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_7">
+        <rect x="84.5" y="90" width="99" height="28" fill="#c0ffc0"/>
+        <rect x="84.5" y="90" width="99" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(89.5 98.36947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="3.298" y="9">cTemplateModule()</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <path d="M 102.5 40.5 L 165.5 40.5 C 171.02285 40.5 175.5 44.97715 175.5 50.5 L 175.5 58.5 C 175.5 64.02285 171.02285 68.5 165.5 68.5 L 102.5 68.5 C 96.97715 68.5 92.5 64.02285 92.5 58.5 L 92.5 50.5 C 92.5 44.97715 96.97715 40.5 102.5 40.5 Z" fill="#c0ffff"/>
+        <path d="M 102.5 40.5 L 165.5 40.5 C 171.02285 40.5 175.5 44.97715 175.5 50.5 L 175.5 58.5 C 175.5 64.02285 171.02285 68.5 165.5 68.5 L 102.5 68.5 C 96.97715 68.5 92.5 64.02285 92.5 58.5 L 92.5 50.5 C 92.5 44.97715 96.97715 40.5 102.5 40.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(97.5 48.86947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="5.9135" y="9">Simulation Task</tspan>
+        </text>
+      </g>
+      <g id="Line_3">
+        <line x1="134" y1="68.5" x2="134" y2="84.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_8">
+        <rect x="-19.5" y="69.85" width="25" height="9.299998" fill="#c0ffc0"/>
+        <rect x="-19.5" y="69.85" width="25" height="9.299998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_9">
+        <text transform="translate(14.5 68.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="0" y="9">SIM module</tspan>
+        </text>
+      </g>
+      <g id="Line_12">
+        <line x1="-19.5" y1="88.75" x2=".1" y2="88.75" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_14">
+        <text transform="translate(14.5 82.34091)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="0" y="9">MPI Path</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <rect x="-19.59091" y="56.12273" width="25" height="9.299998" fill="#c0ffff"/>
+        <rect x="-19.59091" y="56.12273" width="25" height="9.299998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_16">
+        <text transform="translate(14.5 54.77273)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" fill="black" x="0" y="9">Python Task</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

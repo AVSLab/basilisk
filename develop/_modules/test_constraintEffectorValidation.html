@@ -1,0 +1,359 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_constraintEffectorValidation &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_constraintEffectorValidation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_constraintEffectorValidation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">constraintDynamicEffector</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">spinningBodyOneDOFStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_simulationWithConstraint</span><span class="p">(</span><span class="n">attachToBranch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a spacecraft-only simulation with a constraint attached to a hub or branch."""</span>
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+    <span class="n">timeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">timeStep</span><span class="p">))</span>
+
+    <span class="n">spacecraftObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">spacecraftObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">spacecraftObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]]</span>  <span class="c1"># [kg m^2]</span>
+    <span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">spinningBody</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">attachToBranch</span><span class="p">:</span>
+        <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">spinningBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyOneDOFStateEffector</span><span class="p">()</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">sHat_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">dcm_S0B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">IPntSc_S</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                 <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [kg m^2]</span>
+        <span class="n">spinningBody</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+        <span class="n">spacecraftObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">spinningBody</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">spacecraftObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">spacecraftObject</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">spacecraftObject</span><span class="p">,</span> <span class="n">constraintEffector</span><span class="p">,</span> <span class="n">spinningBody</span>
+
+
+<div class="viewcode-block" id="test_constraintEffector_validation">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_constraintEffector_validation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"attachToBranch"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"branch"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"validationPath"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"attachment"</span><span class="p">,</span> <span class="s2">"reset"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"missingParameter"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Alpha"</span><span class="p">,</span> <span class="s2">"Beta"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_constraintEffector_validation</span><span class="p">(</span><span class="n">attachToBranch</span><span class="p">,</span> <span class="n">validationPath</span><span class="p">,</span> <span class="n">missingParameter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Hub, branch, and direct Reset paths must reject missing tuning parameters."""</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">spacecraftObject</span><span class="p">,</span> <span class="n">constraintEffector</span><span class="p">,</span> <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">_simulationWithConstraint</span><span class="p">(</span>
+        <span class="n">attachToBranch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">missingParameter</span> <span class="o">==</span> <span class="s2">"Beta"</span><span class="p">:</span>
+        <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">missingParameter</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">validationPath</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+            <span class="n">constraintEffector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_constraintEffector_gainInitialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_constraintEffector_gainInitialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"attachToBranch"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"branch"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"initializationPath"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"attachment"</span><span class="p">,</span> <span class="s2">"reset"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_constraintEffector_gainInitialization</span><span class="p">(</span><span class="n">attachToBranch</span><span class="p">,</span> <span class="n">initializationPath</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Hub, branch, and direct Reset paths must derive unspecified individual gains."""</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">spacecraftObject</span><span class="p">,</span> <span class="n">constraintEffector</span><span class="p">,</span> <span class="n">spinningBody</span> <span class="o">=</span> <span class="n">_simulationWithConstraint</span><span class="p">(</span>
+        <span class="n">attachToBranch</span><span class="p">)</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">constraintEffector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+
+    <span class="k">if</span> <span class="n">initializationPath</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+        <span class="n">constraintEffector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">constraintEffector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">9.0</span><span class="p">)</span>  <span class="c1"># [N/m]</span>
+    <span class="k">assert</span> <span class="n">constraintEffector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N*s/m]</span>
+    <span class="k">assert</span> <span class="n">constraintEffector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">9.0</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+    <span class="k">assert</span> <span class="n">constraintEffector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N*m*s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_retuning_refreshes_only_derived_gains">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_retuning_refreshes_only_derived_gains">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"branch"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"explicit_mask"</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"override_time"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"before"</span><span class="p">,</span> <span class="s2">"after"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_retuning_refreshes_only_derived_gains</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">explicit_mask</span><span class="p">,</span> <span class="n">override_time</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Explicit gains remain fixed even when their values match the original derived gains."""</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">_simulationWithConstraint</span><span class="p">(</span><span class="n">path</span> <span class="o">==</span> <span class="s2">"branch"</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"K_d"</span><span class="p">,</span> <span class="s2">"C_d"</span><span class="p">,</span> <span class="s2">"K_a"</span><span class="p">,</span> <span class="s2">"C_a"</span><span class="p">]</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="n">retuned</span> <span class="o">=</span> <span class="p">[</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_overrides</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">"""Set each selected gain to the value it would otherwise derive."""</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">explicit_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">index</span><span class="p">):</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"set"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)(</span><span class="n">initial</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">override_time</span> <span class="o">==</span> <span class="s2">"before"</span><span class="p">:</span>
+        <span class="n">set_overrides</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">override_time</span> <span class="o">==</span> <span class="s2">"after"</span><span class="p">:</span>
+        <span class="n">set_overrides</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">7.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># [s]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="n">initial</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">if</span> <span class="n">explicit_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">index</span><span class="p">)</span> <span class="k">else</span> <span class="n">retuned</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"get"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)()</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_gain_setters_preserve_derived_status">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_invalid_gain_setters_preserve_derived_status">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Alpha"</span><span class="p">,</span> <span class="s2">"Beta"</span><span class="p">,</span> <span class="s2">"K_d"</span><span class="p">,</span> <span class="s2">"C_d"</span><span class="p">,</span> <span class="s2">"K_a"</span><span class="p">,</span> <span class="s2">"C_a"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"bad"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># K_d: [N/m], C_d: [N*s/m], K_a: [N*m], C_a: [N*m*s], Alpha/Beta: [-]</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_gain_setters_preserve_derived_status</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">bad</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Rejected setters must not change a value or turn a derived gain into an explicit one."""</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"get"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"set"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)(</span><span class="n">bad</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"get"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)()</span> <span class="o">==</span> <span class="n">prior</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">7.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">effector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()]</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+
+<div class="viewcode-block" id="test_derived_gain_overflow_preserves_prior_gains">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_derived_gain_overflow_preserves_prior_gains">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"branch"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Alpha"</span><span class="p">,</span> <span class="s2">"Beta"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_derived_gain_overflow_preserves_prior_gains</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Overflow while retuning must fail before any active gain is replaced."""</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">_simulationWithConstraint</span><span class="p">(</span><span class="n">path</span> <span class="o">==</span> <span class="s2">"branch"</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"set"</span> <span class="o">+</span> <span class="n">field</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>  <span class="c1"># [-] Numerical alpha/beta tuning parameter</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"finite derived gains"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">effector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()]</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+
+<div class="viewcode-block" id="test_partial_explicit_gains_preserve_zero_unspecified_gains">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_partial_explicit_gains_preserve_zero_unspecified_gains">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_partial_explicit_gains_preserve_zero_unspecified_gains</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""An existing partial explicit setup may intentionally leave other gains at zero."""</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setK_d</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [N/m]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">effector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()]</span> <span class="o">==</span> <span class="n">expected</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="mf">7.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">effector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()]</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+
+<div class="viewcode-block" id="test_fully_explicit_gains_do_not_derive_unused_tuning_parameters">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/constraintEffector/_UnitTest/test_constraintEffectorValidation.html#test_constraintEffectorValidation.test_fully_explicit_gains_do_not_derive_unused_tuning_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_fully_explicit_gains_do_not_derive_unused_tuning_parameters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Unused tuning parameters need not be squared or doubled when every gain is explicit."""</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setBeta</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setK_d</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [N/m]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setC_d</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># [N*s/m]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setK_a</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">setC_a</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span>  <span class="c1"># [N*m*s]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]</span>  <span class="c1"># [N/m], [N*s/m], [N*m], [N*m*s]</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">effector</span><span class="o">.</span><span class="n">getK_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_d</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getK_a</span><span class="p">(),</span> <span class="n">effector</span><span class="o">.</span><span class="n">getC_a</span><span class="p">()]</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

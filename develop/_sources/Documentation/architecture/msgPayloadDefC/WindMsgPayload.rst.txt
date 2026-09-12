@@ -1,0 +1,10 @@
+.. _WindMsgPayload:
+
+WindMsgPayload
+==============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: WindMsgPayload.h
+   :project: msgPayloadDefC
+

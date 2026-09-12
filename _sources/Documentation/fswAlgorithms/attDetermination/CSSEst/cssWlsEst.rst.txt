@@ -1,0 +1,34 @@
+.. _cssWlsEst:
+
+:module-type:`C` Module: cssWlsEst
+==================================
+
+Executive Summary
+-----------------
+A weighted least-squares minimum-norm algorithm is used to estimate the body-relative sun heading using a cluster of coarse sun sensors.  Using two successive sun heading evaluation the module also computes the inertial angular velocity vector.  As rotations about the sun-heading vector are not observable, this angular velocity vector only contains body rates orthogonal to this sun heading vector.  More information on can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/attDetermination/CSSEst/_Documentation/Basilisk-cssWlsEst-20180429.pdf>`
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: cssWlsEst
+    :caption: Module I/O Messages
+
+    input cssDataInMsg CSSArraySensorMsgPayload
+        name of the CSS sensor input message
+    input cssConfigInMsg CSSConfigMsgPayload
+        name of the CSS configuration input message
+    output navStateOutMsg NavAttMsgPayload
+        name of the navigation output message containing the estimated states
+    output cssWLSFiltResOutMsg SunlineFilterMsgPayload
+        name of the CSS filter state data out message
+
+
+----
+
+.. autodoxygenfile:: cssWlsEst.h
+   :project: CSSEst
+

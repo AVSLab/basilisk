@@ -1,0 +1,10 @@
+.. _CameraImageMsgPayload:
+
+CameraImageMsgPayload
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CameraImageMsgPayload.h
+   :project: msgPayloadDefC
+

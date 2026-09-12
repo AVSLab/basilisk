@@ -1,0 +1,20 @@
+.. _Folder_attControl:
+
+attControl
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   lowPassFilterTorqueCommand <lowPassFilterTorqueCommand/lowPassFilterTorqueCommand>
+   mrpFeedback <mrpFeedback/mrpFeedback>
+   mrpPD <mrpPD/mrpPD>
+   mrpPDRust <mrpPDRust/mrpPDRust>
+   mrpSteering <mrpSteering/mrpSteering>
+   mtbFeedforward <mtbFeedforward/mtbFeedforward>
+   mtbMomentumManagement <mtbMomentumManagement/mtbMomentumManagement>
+   mtbMomentumManagementSimple <mtbMomentumManagementSimple/mtbMomentumManagementSimple>
+   prvSteering <prvSteering/prvSteering>
+   rateServoFullNonlinear <rateServoFullNonlinear/rateServoFullNonlinear>
+   thrMomentumManagement <thrMomentumManagement/thrMomentumManagement>

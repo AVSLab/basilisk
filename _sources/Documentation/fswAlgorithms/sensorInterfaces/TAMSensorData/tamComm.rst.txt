@@ -1,0 +1,37 @@
+.. _tamComm:
+
+:module-type:`C` Module: tamComm
+================================
+
+Executive Summary
+-----------------
+This module reads in a message of type :ref:`TAMSensorBodyMsgPayload`, outputs the magnetometer measurement vector in vehicle's body coordinates ``tam_B`` to the output message ``tamOutMsg``.
+
+Module Assumptions and Limitations
+----------------------------------
+No assumptions are made.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: tamComm
+    :caption: Module I/O Messages
+
+    input tamInMsg TAMSensorMsgPayload
+        TAM sensor interface input message
+    output tamOutMsg TAMSensorBodyMsgPayload
+        TAM sensor interface output message
+
+User Guide
+----------
+In order to transform the ``tam_S`` vector of :ref:`TAMSensorMsgPayload` from sensor to body frame, ``dcm_BS`` should be defined.
+
+
+----
+
+.. autodoxygenfile:: tamComm.h
+   :project: TAMSensorData
+

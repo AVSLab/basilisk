@@ -1,0 +1,32 @@
+.. _simpleDeadband:
+
+:module-type:`C` Module: simpleDeadband
+=======================================
+
+Executive Summary
+-----------------
+
+
+This method applies a two-level deadbanding logic (according to the current average simple compared with the set threshold)
+and decides whether control should be switched ON/OFF or not.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: simpleDeadband
+    :caption: Module I/O Messages
+
+    output attGuidOutMsg AttGuidMsgPayload
+        attitude guidance output message
+    input guidInMsg AttGuidMsgPayload
+        incoming attitude guidance message
+
+
+----
+
+.. autodoxygenfile:: simpleDeadband.h
+   :project: simpleDeadband
+

@@ -1,0 +1,13 @@
+.. _test_spinningBodyOneDOFResetChecks:
+
+test_spinningBodyOneDOFResetChecks
+==================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_spinningBodyOneDOFResetChecks
+   :members:
+   :show-inheritance:
+

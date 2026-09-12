@@ -1,0 +1,10 @@
+.. _MJActuator:
+
+MJActuator
+==========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJActuator.h
+   :project: _GeneralModuleFiles6
+

@@ -1,0 +1,13 @@
+.. _test_linearTranslationOneDOFStateEffector:
+
+test_linearTranslationOneDOFStateEffector
+=========================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_linearTranslationOneDOFStateEffector
+   :members:
+   :show-inheritance:
+

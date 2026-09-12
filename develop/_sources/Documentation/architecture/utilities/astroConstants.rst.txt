@@ -1,0 +1,10 @@
+.. _astroConstants:
+
+astroConstants
+==============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: astroConstants.h
+   :project: utilities
+

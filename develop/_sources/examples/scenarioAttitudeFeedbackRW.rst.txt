@@ -1,0 +1,15 @@
+.. _scenarioAttitudeFeedbackRW:
+
+scenarioAttitudeFeedbackRW
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioAttitudeFeedbackRW
+   :members:
+   :show-inheritance:
+

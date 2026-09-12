@@ -1,0 +1,10 @@
+.. _OpNavMsgPayload:
+
+OpNavMsgPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: OpNavMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,15 @@
+.. _generate_w2ito_reference:
+
+generate_w2ito_reference
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: generate_w2ito_reference
+   :members:
+   :show-inheritance:
+

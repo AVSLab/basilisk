@@ -1,0 +1,10 @@
+.. _RWArrayConfigMsgPayload:
+
+RWArrayConfigMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWArrayConfigMsgPayload.h
+   :project: msgPayloadDefC
+

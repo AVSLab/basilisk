@@ -1,0 +1,10 @@
+.. _fswDefinitions:
+
+fswDefinitions
+==============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: fswDefinitions.h
+   :project: fswUtilities
+

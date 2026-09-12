@@ -1,0 +1,82 @@
+.. _NBodyGravity:
+
+:module-type:`C++` Module: NBodyGravity
+=======================================
+
+Executive Summary
+-----------------
+The ``NBodyGravity`` module computes gravitational forces on one or more targets due to one or more gravity sources
+and applies those forces in a MuJoCo simulation. It supports arbitrary gravity models and
+can be tied to MuJoCo sites or bodies for direct force application.
+
+Message Interfaces
+------------------
+Messages are registered per source and per target via ``addGravitySource`` and ``addGravityTarget``.
+
+.. bsk-module-io:: NBodyGravity
+
+   input source.stateInMsg SpicePlanetStateMsgPayload
+      Inertial position and velocity of the gravity source (e.g., from SPICE). One per registered source.
+
+   input target.massPropertiesInMsg SCMassPropsMsgPayload
+      Mass properties of the gravity target. One per registered target.
+
+   input target.centerOfMassStateInMsg SCStatesMsgPayload
+      Inertial state (position, velocity, attitude) of the target's center of mass. One per registered target.
+
+   output target.massFixedForceOutMsg ForceAtSiteMsgPayload
+      Output gravitational force expressed in the site frame. One per registered target.
+
+Module Description
+------------------
+For each gravity target, the module accumulates the gravitational acceleration from all sources:
+
+.. math::
+
+   \mathbf{a} = \sum_k \mathbf{a}_k(\mathbf{r})
+
+where :math:`\mathbf{a}_k` is the acceleration from source :math:`k` evaluated at the target's position
+:math:`\mathbf{r}` in the inertial frame. The resulting force is
+
+.. math::
+
+   \mathbf{F} = m\,\mathbf{a}
+
+and is published as a ``ForceAtSiteMsgPayload`` in the site frame.
+
+If one source is designated as the central body, the central-body acceleration is subtracted from all other
+targets (third-body perturbation formulation).
+
+Multiple gravity sources and targets can be registered. Each source provides its own ``GravityModel`` (e.g.,
+point-mass or spherical harmonics) and its inertial state via ``stateInMsg``. Each target provides mass properties
+and center-of-mass state via ``massPropertiesInMsg`` and ``centerOfMassStateInMsg``.
+
+Detailed Behavior
+-----------------
+At each update step, the module performs the following operations for each target:
+
+1. Reads the target mass and center-of-mass state.
+2. For each gravity source, reads its inertial state and evaluates the gravity model.
+3. Sums accelerations from all sources (applying the third-body formulation if a central body is defined).
+4. Multiplies by target mass to obtain force.
+5. Writes the result to ``target.massFixedForceOutMsg``.
+
+During ``Reset()``, the module validates that all source and target input messages are linked and that at most one
+central body is defined.
+
+Module Assumptions and Limitations
+----------------------------------
+- The module computes forces at the target center of mass; torques due to gravity gradient are not modeled.
+- Sources and targets are processed in insertion order (alphabetical by name in the internal map).
+
+Verification and Testing
+------------------------
+The module is verified in
+``src/simulation/mujocoDynamics/NBodyGravity/_UnitTest/test_gravity.py``.
+
+
+----
+
+.. autodoxygenfile:: NBodyGravity.h
+   :project: NBodyGravity
+

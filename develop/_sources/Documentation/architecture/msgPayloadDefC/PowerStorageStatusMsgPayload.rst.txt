@@ -1,0 +1,10 @@
+.. _PowerStorageStatusMsgPayload:
+
+PowerStorageStatusMsgPayload
+============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PowerStorageStatusMsgPayload.h
+   :project: msgPayloadDefC
+

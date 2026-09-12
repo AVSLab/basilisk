@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_spiceInterface:
+
+spiceInterface
+==============
+
+:doc:`Module documentation <spiceInterface>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

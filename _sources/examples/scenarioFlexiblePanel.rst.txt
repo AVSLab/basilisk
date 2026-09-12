@@ -1,0 +1,13 @@
+.. _scenarioFlexiblePanel:
+
+scenarioFlexiblePanel
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioFlexiblePanel
+   :members:
+   :show-inheritance:
+

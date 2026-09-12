@@ -1,0 +1,10 @@
+.. _NavAttMsgPayload:
+
+NavAttMsgPayload
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: NavAttMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,15 @@
+.. _test_rustConfigArrays:
+
+test_rustConfigArrays
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_rustConfigArrays
+   :members:
+   :show-inheritance:
+

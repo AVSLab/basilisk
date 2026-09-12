@@ -1,0 +1,10 @@
+.. _ScChargingCurrentsMsgPayload:
+
+ScChargingCurrentsMsgPayload
+============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ScChargingCurrentsMsgPayload.h
+   :project: msgPayloadDefC
+

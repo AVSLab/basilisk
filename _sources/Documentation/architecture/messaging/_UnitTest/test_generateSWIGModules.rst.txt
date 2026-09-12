@@ -1,0 +1,13 @@
+.. _test_generateSWIGModules:
+
+test_generateSWIGModules
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_generateSWIGModules
+   :members:
+   :show-inheritance:
+

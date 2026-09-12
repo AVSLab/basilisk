@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_constrainedAttitudeManeuver:
+
+constrainedAttitudeManeuver
+===========================
+
+:doc:`Module documentation <constrainedAttitudeManeuver>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

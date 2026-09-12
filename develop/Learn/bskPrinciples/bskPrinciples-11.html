@@ -1,0 +1,313 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced: Effector Module Branching &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Advanced: Stochastic Integration" href="bskPrinciples-12.html" />
+    <link rel="prev" title="Advanced: Handling BasiliskError in Simulations" href="bskPrinciples-10.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-0.html">What is Basilisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-1.html">Basilisk Process and Task Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2.html">Adding Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2a.html">Execution of Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-2b.html">Seeing the Order of Process, Task and Module Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-3.html">Connecting Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-4.html">Recording Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5.html">Creating Stand-Alone Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-5a.html">Visualizing Message Connections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6.html">Setting and Recording Module Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-6a.html">Importing External Data Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-7.html">Advanced: Redirecting Module Output to Stand-Alone Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-8.html">Advanced: Enabling and Disabling Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-9.html">Advanced: Using <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-10.html">Advanced: Handling <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> in Simulations</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Advanced: Effector Module Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bskPrinciples-12.html">Advanced: Stochastic Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+      <li class="breadcrumb-item active">Advanced: Effector Module Branching</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/bskPrinciples/bskPrinciples-11.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-effector-module-branching">
+<span id="bskprinciples-11"></span><h1>Advanced: Effector Module Branching<a class="headerlink" href="#advanced-effector-module-branching" title="Link to this heading"></a></h1>
+<p>Module branching in Basilisk enables the attachment of compatible dynamic effectors on state
+effectors as an alternative to attaching them directly to the hub. For example, a gimbaled thruster
+can be modeled as a <code class="docutils literal notranslate"><span class="pre">thrusterDynamicEffector</span></code> attached to a <code class="docutils literal notranslate"><span class="pre">spinningBodyTwoDOFStateEffector</span></code>,
+or a robotic docking arm can be modeled as a <code class="docutils literal notranslate"><span class="pre">constraintDynamicEffector</span></code> attached to a 7-DOF
+revolute <code class="docutils literal notranslate"><span class="pre">spinningBodyNDOFStateEffector</span></code>. Multiple dynamic effectors can be attached to a state
+effector as well, for example applying both drag and SRP to a solar panel.</p>
+<p>Further details on how to set up new state effectors and dynamic effector modules for branching can
+be found in <a class="reference internal" href="../makingModules/advancedTopics/effectorBranching.html#effectorbranching"><span class="std std-ref">Enabling Branching of Basilisk Effectors</span></a>. Integrated testing of effector branching is elaborated on in
+<a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/_UnitTestDynamics/test_effectorBranching_integrated.html#test-effectorbranching-integrated"><span class="std std-ref">test_effectorBranching_integrated</span></a>.</p>
+<section id="allowable-configurations">
+<h2>Allowable Configurations<a class="headerlink" href="#allowable-configurations" title="Link to this heading"></a></h2>
+<p>Branching pairs a state effector acting as a parent with a dynamic effector acting as a child. The
+two sides are supported independently, so any parent listed below accepts any child listed below,
+and a parent accepts more than one child at a time.</p>
+<section id="state-effectors-supported-as-parents">
+<h3>State Effectors Supported as Parents<a class="headerlink" href="#state-effectors-supported-as-parents" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">C++ Module: spinningBodyTwoDOFStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.html#lineartranslationonedofstateeffector"><span class="std std-ref">C++ Module: linearTranslationOneDOFStateEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a></p></li>
+</ul>
+<p>A parent with more than one degree of freedom additionally takes the segment its child attaches to,
+counting outward from the hub starting at 1.</p>
+<p><a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">C++ Module: prescribedMotionStateEffector</span></a> is not in this list because it hosts state effectors rather
+than dynamic effectors, through the separate mechanism described under
+<a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionbranching"><span class="std std-ref">Branching Capability</span></a> on its own page.</p>
+</section>
+<section id="dynamic-effectors-supported-as-children">
+<h3>Dynamic Effectors Supported as Children<a class="headerlink" href="#dynamic-effectors-supported-as-children" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/extForceTorque/extForceTorque.html#extforcetorque"><span class="std std-ref">C++ Module: extForceTorque</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">C++ Module: thrusterDynamicEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">C++ Module: constraintDynamicEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/facetDragEffector/facetDragDynamicEffector.html#facetdragdynamiceffector"><span class="std std-ref">C++ Module: facetDragDynamicEffector</span></a></p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a></p></li>
+</ul>
+<p>A parent makes its inertial position, velocity, attitude, and angular velocity available in place
+of the hub’s, and a child reads whichever of the four its model needs. Any geometry the user gives
+the child is then expressed relative to the parent’s frame rather than the hub body frame.</p>
+</section>
+<section id="effectors-not-supported-for-branching">
+<h3>Effectors Not Supported for Branching<a class="headerlink" href="#effectors-not-supported-for-branching" title="Link to this heading"></a></h3>
+<p>Every other effector attaches to the hub only.</p>
+<p>A state effector cannot act as a child of the branching described here. <code class="docutils literal notranslate"><span class="pre">addDynamicEffector</span></code>
+accepts a dynamic effector, and a state effector contributes Backsubstitution matrices rather than a
+force and a torque, so the two do not interchange. This covers the spinning bodies, the translating
+bodies, the hinged rigid bodies, <a class="reference internal" href="../../Documentation/simulation/dynamics/LinearSpringMassDamper/linearSpringMassDamper.html#linearspringmassdamper"><span class="std std-ref">C++ Module: linearSpringMassDamper</span></a>, <a class="reference internal" href="../../Documentation/simulation/dynamics/sphericalPendulum/sphericalPendulum.html#sphericalpendulum"><span class="std std-ref">C++ Module: sphericalPendulum</span></a>,
+<a class="reference internal" href="../../Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">C++ Module: reactionWheelStateEffector</span></a>, <a class="reference internal" href="../../Documentation/simulation/dynamics/VSCMGs/vscmgStateEffector.html#vscmgstateeffector"><span class="std std-ref">C++ Module: vscmgStateEffector</span></a>, <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a>, and
+<a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a>. The exception is <a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">C++ Module: prescribedMotionStateEffector</span></a>, which hosts a subset of
+these as children through the mechanism described under <a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionbranching"><span class="std std-ref">Branching Capability</span></a>.</p>
+<p>The cannonball models, <a class="reference internal" href="../../Documentation/simulation/dynamics/dragEffector/dragDynamicEffector.html#dragdynamiceffector"><span class="std std-ref">C++ Module: dragDynamicEffector</span></a> and the cannonball option of
+<a class="reference internal" href="../../Documentation/simulation/dynamics/RadiationPressure/radiationPressure.html#radiationpressure"><span class="std std-ref">C++ Module: radiationPressure</span></a>, lump the whole vehicle into one sphere whose load acts on the hub, so they
+describe no component a segment could carry, and neither implements the child side.</p>
+<p><a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/gravityEffector.html#gravityeffector"><span class="std std-ref">C++ Module: gravityEffector</span></a> is not a dynamic effector. It is a member of <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> whose field
+reaches the equations of motion as the gravitational acceleration handed to every state effector, so
+each branched body already carries its own weight. The vehicle level gravity gradient torque is
+covered separately by <a class="reference internal" href="../../Documentation/simulation/dynamics/GravityGradientEffector/GravityGradientEffector.html#gravitygradienteffector"><span class="std std-ref">C++ Module: GravityGradientEffector</span></a>, which reads the spacecraft inertia tensor
+about point B and therefore already tracks the configuration of every attached body.</p>
+<p><a class="reference internal" href="../../Documentation/simulation/dynamics/MtbEffector/MtbEffector.html#mtbeffector"><span class="std std-ref">C++ Module: MtbEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.html#extpulsedtorque"><span class="std std-ref">C++ Module: ExtPulsedTorque</span></a> are branchable in principle and are listed here only
+because no use case has called for them.</p>
+<p><a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> are the two worth revisiting if a mission calls for
+them, though either would first need the child side mechanism that a state effector does not have
+today.</p>
+</section>
+</section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h2>
+<p>Attaching a dynamic effector on a state effector is performed the same way as attaching a dynamic
+effector to the hub, but instead called with the state effector. Given a setup as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+<span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+<span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+
+<span class="n">stateEff</span> <span class="o">=</span> <span class="n">spinningBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyOneDOFStateEffector</span><span class="p">()</span>
+<span class="n">dynEff</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+
+<span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">stateEff</span><span class="p">)</span>
+
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, effectors are attached to the hub using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">)</span>
+<span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Dynamic effectors can instead be attached to a state effector as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or in the case of a multi-degree-of-freedom parent effector, additionally specify which segment to
+attach the dynamic effector to as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stateEff</span> <span class="o">=</span> <span class="n">spinningBodyTwoDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyTwoDOFStateEffector</span><span class="p">()</span>
+<span class="n">segment</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">dynEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Where segment is the integer number of the segment to be attached to, with 1 being the segment
+attached to the hub, increasing outward from the hub. For example, spinningBodyOneDOFStateEffector
+will always attach to segment 1, attaching to the second to last segment of a 7DOF robotic arm would
+be segment 6. Note that in either case the dynamic effector is still added to the sim task.</p>
+<p>However, some effectors use alternative methods for adding to a spacecraft. For example, the
+attachment of a <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">C++ Module: thrusterDynamicEffector</span></a> set using the <a class="reference internal" href="../../Documentation/utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thrusterSet</span> <span class="o">=</span> <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">()</span>
+<span class="n">thFactory</span> <span class="o">=</span> <span class="n">simIncludeThruster</span><span class="o">.</span><span class="n">thrusterFactory</span><span class="p">()</span>
+<span class="n">thFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">'MOOG_Monarc_22_6'</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraft</span><span class="p">(</span><span class="n">thrModelTag</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Would instead be attached using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thFactory</span><span class="o">.</span><span class="n">addToSpacecraftSubcomponent</span><span class="p">(</span><span class="n">thrModelTag</span><span class="p">,</span> <span class="n">thrusterSet</span><span class="p">,</span> <span class="n">stateEff</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additionally, the <a class="reference internal" href="../../Documentation/simulation/dynamics/constraintEffector/constraintDynamicEffector.html#constraintdynamiceffector"><span class="std std-ref">C++ Module: constraintDynamicEffector</span></a> requires attachment to two parents. It works with
+either a hub attached to the state effector of another vehicle, or the attachment of two different
+state effectors to one another.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scObject2</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+<span class="n">constraintEffector</span> <span class="o">=</span> <span class="n">constraintDynamicEffector</span><span class="o">.</span><span class="n">ConstraintDynamicEffector</span><span class="p">()</span>
+
+<span class="n">stateEff</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+<span class="n">scObject2</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">constraintEffector</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="bskPrinciples-10.html" class="btn btn-neutral float-left" title="Advanced: Handling BasiliskError in Simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bskPrinciples-12.html" class="btn btn-neutral float-right" title="Advanced: Stochastic Integration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

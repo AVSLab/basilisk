@@ -1,0 +1,10 @@
+.. _extendedStateVector:
+
+extendedStateVector
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: extendedStateVector.h
+   :project: _GeneralModuleFiles4
+

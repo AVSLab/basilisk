@@ -1,0 +1,418 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Related Publications &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=3cd7d658"></script>
+      <script src="_static/js/sidebar.js?v=b4248121"></script>
+      <script src="_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Related Publications</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/relatedPublications.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="related-publications">
+<span id="relatedpublications"></span><h1>Related Publications<a class="headerlink" href="#related-publications" title="Link to this heading"></a></h1>
+<p>These selected papers describe Basilisk’s architecture, modeling capabilities,
+and applications, including Vizard visualization and BSK-RL spacecraft autonomy.
+The selection includes research using these tools and dynamics formulations that
+underpin Basilisk models, such as the backsubstitution method.
+Papers are grouped by publication year, with the newest years first in each section.
+Conference and journal versions are listed separately when both are included.</p>
+<p>This is not an exhaustive bibliography of research using Basilisk. Additional
+publications are available in Hanspeter Schaub’s
+<a class="reference external" href="https://hanspeterschaub.info/journals.html">journal paper list</a> and
+<a class="reference external" href="https://hanspeterschaub.info/conferences.html">conference paper list</a>.</p>
+<section id="journal-papers">
+<h2>Journal Papers<a class="headerlink" href="#journal-papers" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>S. Buchner, J. Wood, G. Schauss, B. Bateman, H. Schaub, and A. Hayman.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Buchner2026.pdf">Benefits of Virtual Reality and 3D Visualizations for Remote Satellite Supervisory Control</a>.
+<em>Virtual Reality</em>, Vol. 30, 2026, Article 8.</p></li>
+<li><p>L. Quevedo Mantovani and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/QuevedoMantovani2026a.pdf">Improving Robustness of Autonomous Earth-Observing Spacecraft Using Training Environment Enhancements</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 23, No. 3, March 2026, pp. 293–304.</p></li>
+<li><p>R. Calaon, C. Allard, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Calaon2023d.pdf">Momentum Management of a Spacecraft Equipped with a Dual-Gimbaled Electric Thruster and Rotating Solar Arrays</a>.
+<em>The Journal of the Astronautical Sciences</em>, Vol. 73, 2026, Article 47.</p></li>
+<li><p>S. L. Buchner, J. Wood, G. Schauss, B. C. Bateman, H. Schaub, and A. P. A. Hayman.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Buchner2026a.pdf">Train Like You’re There: Use of Immersive Visualizations While Training to Operate a Satellite Improves Outcomes in Operations</a>.
+<em>International Journal of Human-Computer Studies</em>, Vol. 216, 2026, Article 103895.</p></li>
+<li><p>L. Kiner, H. Schaub, and C. Allard.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Kiner2025c.pdf">Spacecraft Backsubstitution Dynamics with General Multibody Prescribed Subcomponents</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 22, No. 8, August 2025, pp. 703–715.</p></li>
+<li><p>S. L. Buchner, A. Rindfuss, J. Wood, H. Schaub, and A. P. Hayman.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Buchner2025.pdf">Impacts of 3D Visualizations and Virtual Reality in Display Designs for Remote Monitoring of Satellite Operations</a>.
+<em>Frontiers in Virtual Reality</em>, Vol. 6, February 2025, Article 1487281.</p></li>
+<li><p>M. A. Stephenson, L. Quevedo Mantovani, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Stephenson2025d.pdf">Learning Policies for Autonomous Earth-Observing Satellite Scheduling over Semi-Markov Decision Processes</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 22, No. 9, September 2025.</p></li>
+<li><p>M. A. Stephenson and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Stephenson2025c.pdf">Optimal Agile Satellite Target Scheduling with Learned Dynamics</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 62, No. 3, May–June 2025, pp. 793–804.</p></li>
+<li><p>J. Vaz Carneiro, C. Allard, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/VazCarneiro2024c.pdf">General Dynamics for Single- and Dual-Axis Rotating Rigid Spacecraft Components</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 61, No. 4, July–August 2024, pp. 1099–1113.</p></li>
+<li><p>J. Vaz Carneiro and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/VazCarneiro2024a.pdf">Scalable Architecture for Rapid Setup and Execution of Multi-Satellite Simulations</a>.
+<em>Advances in Space Research</em>, Vol. 73, No. 11, June 2024, pp. 5416–5425.</p></li>
+<li><p>A. Herrmann and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Herrmann2024a.pdf">Autonomous Small Body Science Operations Using Reinforcement Learning</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 21, No. 10, October 2024, pp. 865–884.</p></li>
+<li><p>A. Herrmann, M. A. Stephenson, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Herrmann2024.pdf">Single-Agent Reinforcement Learning for Scalable Earth-Observing Satellite Constellation Operations</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 61, No. 1, January–February 2024, pp. 114–132.</p></li>
+<li><p>W. Retagne, J. Dauer, and G. Waxenegger-Wilfing.
+<a class="reference external" href="https://elib.dlr.de/208122/">Adaptive Satellite Attitude Control for Varying Masses Using Deep Reinforcement Learning</a>.
+<em>Frontiers in Robotics and AI</em>, Vol. 11, 2024, Article 1402846.</p></li>
+<li><p>A. Herrmann and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Herrmann2023b.pdf">Reinforcement Learning for the Agile Earth-Observing Satellite Scheduling Problem</a>.
+<em>IEEE Transactions on Aerospace and Electronic Systems</em>, Vol. 59, No. 5, October 2023, pp. 5235–5247.</p></li>
+<li><p>R. Calaon, H. Schaub, and M. A. Trowbridge.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Calaon2023.pdf">Basilisk-Based Benchmark Analysis of Different Constrained Attitude Dynamics Planners</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 20, No. 2, February 2023, pp. 60–69.</p></li>
+<li><p>A. Herrmann and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Herrmann2023.pdf">A Comparative Analysis of Reinforcement Learning Algorithms for Earth-Observing Satellite Scheduling</a>.
+<em>Frontiers in Space Technologies</em>, 2023, Article 1263489.</p></li>
+<li><p>J. C. Sanchez and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Sanchez2023a.pdf">Simultaneous Navigation and Mascon Gravity Estimation Around Small Bodies</a>.
+<em>Acta Astronautica</em>, Vol. 213, December 2023, pp. 725–740.</p></li>
+<li><p>A. Harris, T. Valade, T. Teil, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Harris2022a.pdf">Generation of Spacecraft Operations Procedures Using Deep Reinforcement Learning</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 59, No. 2, March–April 2022, pp. 611–626.</p></li>
+<li><p>T. Teil, H. Schaub, and D. Kubitschek.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Teil2021.pdf">Centroid and Apparent Diameter Optical Navigation on Mars Orbit</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 58, No. 4, July–August 2021, pp. 1107–1119.</p></li>
+<li><p>M. Cols Margenet, P. Kenneally, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/ColsMargenet2021a.pdf">Distributed Simulation of Heterogeneous Mission Subsystems Through the Black Lion Framework</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 18, No. 9, September 2021, pp. 596–604.</p></li>
+<li><p>M. Cols Margenet, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/ColsMargenet2021.pdf">Flight Software Development, Migration, and Testing in Desktop and Embedded Environments</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 18, No. 4, April 2021, pp. 157–174.</p></li>
+<li><p>P. Kenneally, H. Schaub, and S. Tanygin.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Kenneally2021.pdf">Open GL–Open CL Solar Radiation Pressure Modeling with Time-Varying Spacecraft Geometries</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 18, No. 5, May 2021, pp. 307–321.</p></li>
+<li><p>T. Teil, S. Bateman, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Teil2020c.pdf">Closed-Loop Software Architecture for Spacecraft Optical Navigation and Control Development</a>.
+<em>The Journal of the Astronautical Sciences</em>, Vol. 67, December 2020, pp. 1575–1599.</p></li>
+<li><p>P. W. Kenneally, S. Piggott, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Kenneally2020a.pdf">Basilisk: A Flexible, Scalable and Modular Astrodynamics Simulation Framework</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 17, No. 9, September 2020, pp. 496–507.</p></li>
+<li><p>T. Teil, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Teil2020b.pdf">Removing Rate Unobservability in Sun-Heading Filters Without Rate Gyroscopes</a>.
+<em>Journal of Spacecraft and Rockets</em>, Vol. 57, No. 5, September–October 2020, pp. 918–929.</p></li>
+<li><p>C. Allard, M. Diaz Ramos, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Allard2019.pdf">Computational Performance of Complex Spacecraft Simulations Using Back-Substitution</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 16, No. 10, October 2019, pp. 427–436.</p></li>
+<li><p>C. Allard, M. Diaz Ramos, H. Schaub, P. Kenneally, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Allard2018g.pdf">Modular Software Architecture for Fully Coupled Spacecraft Simulations</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 15, No. 12, December 2018, pp. 670–683.</p></li>
+<li><p>M. Cols-Margenet, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/ColsMargenet2018b.pdf">Modular Attitude Guidance: Generating Rotational Reference Motions for Distinct Mission Profiles</a>.
+<em>Journal of Aerospace Information Systems</em>, Vol. 15, No. 6, June 2018, pp. 335–352.</p></li>
+<li><p>P. Panicucci, C. Allard, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Panicucci2018a.pdf">Spacecraft Dynamics Employing a General Multi-tank and Multi-thruster Mass Depletion Formulation</a>.
+<em>The Journal of the Astronautical Sciences</em>, Vol. 65, 2018, pp. 423–447.</p></li>
+<li><p>H. Schaub and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/PapersPrivate/Schaub2018.pdf">Speed-Constrained Three-Axes Attitude Control Using Kinematic Steering</a>.
+<em>Acta Astronautica</em>, Vol. 147, June 2018, pp. 1–8.</p></li>
+</ol>
+</section>
+<section id="conference-papers">
+<h2>Conference Papers<a class="headerlink" href="#conference-papers" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>J. Garcia-Bonilla and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/GarciaBonilla2026.pdf">Modeling Stochastic Process Uncertainties in Spacecraft Dynamics: A New Capability in the Basilisk Framework</a>.
+IEEE Aerospace Conference, Big Sky, Montana, March 7–14, 2026.</p></li>
+<li><p>T. Gill, G. Furlich, and N. Ahmed.
+<a class="reference external" href="https://digitalcommons.usu.edu/smallsat/2026/all2026/140/">Multi-Phase Guidance and Control for Small Satellite Docking via Deep Reinforcement Learning</a>.
+Small Satellite Conference, Salt Lake City, Utah, 2026. Paper SSC26-P1-48.</p></li>
+<li><p>L. Kiner and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kiner2026a.pdf">Spacecraft Backsubstitution Dynamics for Generalized Rigid Body Component Motion</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Whistler, Canada, July 26–30, 2026. Paper AAS 26-796.</p></li>
+<li><p>L. Kiner and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kiner2026.pdf">Generalized Backsubstitution Dynamics for Branching of Free Rigid Bodies Attached to Prescribed Components</a>.
+AAS Rocky Mountain Guidance, Navigation and Control Conference, Breckenridge, Colorado, January 31–February 4, 2026. Paper AAS 26-113.</p></li>
+<li><p>J. Garcia-Bonilla, W. Schwend, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/GarciaBonilla2026a.pdf">Simulation of Generally Articulated Spacecraft for GN&amp;C Algorithm Design and Validation</a>.
+AAS Rocky Mountain Guidance, Navigation and Control Conference, Breckenridge, Colorado, January 31–February 4, 2026. Paper AAS 26-078.</p></li>
+<li><p>Y. Nagano and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Nagano2026.pdf">Autonomous Task Scheduling for Earth-Observing Satellites Tracking Moving Targets with Low Maneuverability</a>.
+AIAA SciTech Forum, Orlando, Florida, January 12–16, 2026.</p></li>
+<li><p>M. Stephenson and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Stephenson2026.pdf">Autonomous Tip-and-Cue Earth-Observing Constellation Tasking with Reinforcement Learning</a>.
+IEEE Aerospace Conference, Big Sky, Montana, March 7–14, 2026.</p></li>
+<li><p>J. Garcia-Bonilla and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/GarciaBonilla2025.pdf">A Message-Passing Simulation Framework for Generally Articulated Spacecraft Dynamics</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Boston, Massachusetts, August 10–14, 2025.</p></li>
+<li><p>C. Whitney and J. Melville.
+<a class="reference external" href="https://arxiv.org/abs/2507.22198">Toward Trusted Onboard AI: Advancing Small Satellite Operations using Reinforcement Learning</a>.
+39th Annual Small Satellite Conference, 2025. Paper SSC25-P1-05; public preprint on arXiv.</p></li>
+<li><p>E. Coleman.
+<a class="reference external" href="https://www.modsimworld.org/papers/2025/MODSIM_2025_paper_48.pdf">Enhancing Spacecraft Trajectory Optimization Using LSTM-Augmented Reinforcement Learning</a>.
+MODSIM World, 2025.</p></li>
+<li><p>L. Kiner and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kiner2025b.pdf">Backsubstitution Method for Prescribed Motion Actuators with Attached Dynamic Sub-Components</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Boston, Massachusetts, August 10–14, 2025. Paper AAS 25-790.</p></li>
+<li><p>A. Morell and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Morell2025.pdf">Expanded Backsubstitution Dynamics Modeling for Branched Force and Torque Based Spacecraft Components</a>.
+AAS/AIAA Space Flight Mechanics Meeting, Kauai, Hawaii, January 19–23, 2025. Paper AAS 25-185.</p></li>
+<li><p>J. Vaz Carneiro and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/VazCarneiro2025.pdf">Spacecraft Dynamics with the Backsubstitution Method: Survey and Capabilities</a>.
+AAS/AIAA Space Flight Mechanics Meeting, Kauai, Hawaii, January 19–23, 2025. Paper AAS 25-232.</p></li>
+<li><p>M. Stephenson, D. Huterer Prats, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Stephenson2025a.pdf">Autonomous Satellite Inspection in Low Earth Orbit with Optimization-Based Safety Guarantees</a>.
+International Workshop on Planning and Scheduling for Space, Toulouse, France, April 28–30, 2025.</p></li>
+<li><p>A. Cheval and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Cheval2025b.pdf">Autonomous Strip Imaging Task Scheduling in Super-Agile Satellites Using Reinforcement Learning</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Boston, Massachusetts, August 10–14, 2025.</p></li>
+<li><p>M. Mercurio, C. W. T. Roscoe, and J. J. Westphal.
+A Multi-Mission Flight Software Architecture for Autonomous Rendezvous,
+Proximity Operations, and Docking.
+47th Annual AAS Guidance and Control Conference, Breckenridge, Colorado,
+January 31–February 5, 2025. Paper AAS 25-094.
+<a class="reference external" href="https://aas-rocky-mountain-section.org/wp-content/uploads/2025/01/47th_AAS_GNC_Conf_Program-2025_revA.pdf">Conference program</a>
+(bibliographic entry; not the full paper).</p></li>
+<li><p>M. A. Stephenson and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Stephenson2024c.pdf">BSK-RL: Modular, High-Fidelity Reinforcement Learning Environments for Spacecraft Tasking</a>.
+75th International Astronautical Congress, Milan, Italy, October 14–18, 2024. Paper IAC-24-D1.2.4.</p></li>
+<li><p>A. Morell and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Morell2024a.pdf">Back-Substitution Based Spacecraft Dynamics Modeling with Selective Configuration Space Branching</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Broomfield, Colorado, August 11–15, 2024. Paper AAS 24-361.</p></li>
+<li><p>A. Morell, J. Vaz Carneiro, L. Kiner, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Morell2024.pdf">Multi-Arm Post-Docking Spacecraft Dynamics Using Penalty Methods</a>.
+AIAA SciTech Forum, Orlando, Florida, January 8–12, 2024.</p></li>
+<li><p>L. Kiner, C. Allard, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kiner2024.pdf">Prescribed Motion Dynamics for Spacecraft Solar Array Deployment</a>.
+AAS Rocky Mountain Guidance, Navigation and Control Conference, Breckenridge, Colorado, February 2–7, 2024. Paper AAS 24-123.</p></li>
+<li><p>R. Reed, H. Schaub, and M. Lahijanian.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Reed2024.pdf">Shielded Deep Reinforcement Learning for Complex Spacecraft Tasking</a>.
+American Control Conference, Toronto, Canada, July 8–12, 2024.</p></li>
+<li><p>J. Vaz Carneiro, A. Morell, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/VazCarneiro2023b.pdf">Post-Docking Spacecraft Dynamics Using Modular Baumgarte Stabilization</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Big Sky, Montana, August 13–17, 2023. Paper AAS 23-148.</p></li>
+<li><p>G. Bascom, L. Kiner, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Bascom2023.pdf">Spacecraft Dynamics Analysis Using Point-Mass Model of Human Motion</a>.
+AAS/AIAA Space Flight Mechanics Meeting, Austin, Texas, January 15–19, 2023. Paper AAS 23-163.</p></li>
+<li><p>R. Calaon, M. A. Trowbridge, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Calaon2022.pdf">A Basilisk-Based Benchmark Analysis of Different Constrained Attitude Dynamics Planners</a>.
+AIAA SciTech Forum, San Diego, California, January 3–7, 2022.</p></li>
+<li><p>G. Bascom and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Bascom2022.pdf">Modular Dynamic Modeling of Hinged Solar Panel Deployments</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Charlotte, North Carolina, August 7–10, 2022. Paper AAS 22-725.</p></li>
+<li><p>J. Vaz Carneiro, H. Schaub, M. Lahijanian, K. Borozdin, and K. Lang.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Carneiro2022.pdf">Machine Learning for Reaction Wheel Fault Detection Using Simulated Telemetry Data</a>.
+AIAA SciTech Forum, San Diego, California, January 3–7, 2022.</p></li>
+<li><p>S. J. K. Carnahan and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Carnahan2020a.pdf">A New Messaging System for Basilisk</a>.
+AAS Guidance, Navigation and Control Conference, Breckenridge, Colorado, January 30–February 5, 2020.</p></li>
+<li><p>M. Cols Margenet, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2020.pdf">Avionics Hardware Modeling and Embedded Flight Software Testing in an Emulated Flat-Sat</a>.
+AAS Guidance, Navigation and Control Conference, Breckenridge, Colorado, January 30–February 5, 2020.</p></li>
+<li><p>S. J. K. Carnahan and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Carnahan2020.pdf">Simultaneous and Distinct Visible and Thermal Radiation Pressure Dynamics</a>.
+AAS Guidance, Navigation and Control Conference, Breckenridge, Colorado, January 30–February 5, 2020.</p></li>
+<li><p>S. Van Overeem and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Overeem2019.pdf">Small Satellite Formation Flying Application Using the Basilisk Astrodynamics Software Architecture</a>.
+International Workshop on Satellite Constellations and Formation Flying, Glasgow, Scotland, July 2019.</p></li>
+<li><p>M. Cols Margenet, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2019a.pdf">An End-to-End FSW Development Approach Using MicroPython and the Basilisk Software Testbed</a>.
+DASIA (Data Systems in Aerospace), Torremolinos, Spain, June 4–6, 2019.</p></li>
+<li><p>S. J. K. Carnahan, H. Schaub, and B. Lane.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Carnahan2019.pdf">Impact of Internal Heating on Spacecraft Thermal Signature</a>.
+AAS/AIAA Space Flight Mechanics Meeting, Maui, Hawaii, January 13–17, 2019.</p></li>
+<li><p>C. Allard, S. Piggott, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Allard2018b.pdf">Impulsive Thruster Based Attitude Stability Analysis of Spacecraft with Flexible Solar Arrays</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>P. Kenneally and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kenneally2018a.pdf">Fast Spacecraft Solar Radiation Pressure Modeling By Ray-Tracing On Graphic Processing Unit</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>M. Cols Margenet, P. Kenneally and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2018.pdf">Software Simulator for Heterogeneous Spacecraft and Mission Components</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>J. Wood, M. Cols Margenet, P. Kenneally, H. Schaub and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Wood2018.pdf">Flexible Basilisk Astrodynamics Visualization Software Using the Unity Rendering Engine</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>T. Teil, H. Schaub and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Teil2018.pdf">Comparing Coarse Sun Sensor Based Sequential Sun-Heading Filters</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>C. Allard, M. Diaz Ramos, P. Kenneally, H. Schaub and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Allard2018.pdf">Modular Software Architecture for Fully-Coupled Spacecraft Simulations</a>.
+AAS Guidance and Control Conference, Breckenridge, CO, February 2–7, 2018.</p></li>
+<li><p>P. Cappuccio, C. Allard, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Cappuccio2018.pdf">Fully-Coupled Spherical Modular Pendulum Model to Simulate Spacecraft Propellant Slosh</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Snowbird, Utah, August 19–23, 2018. Paper AAS 18-224.</p></li>
+<li><p>J. Alcorn, C. Allard and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Alcorn2017.pdf">Fully-Coupled Dynamical Jitter Modeling Of Variable-Speed Control Moment Gyroscopes</a>.
+AAS/AIAA Astrodynamics Specialist Conference, Stevenson, WA, August 20–24, 2017.</p></li>
+<li><p>M. Cols Margenet, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2017.pdf">Modular Platform for Hardware-in-the-Loop Testing of Autonomous Flight Algorithms</a>.
+International Symposium on Space Flight Dynamics, Himegin Hall, Matsuyama-Ehime, Japan, June 3–9, 2017.</p></li>
+<li><p>P. Panicucci, C. Allard and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/AAS-17-011.pdf">Spacecraft Dynamics Employing a General Multi-tank and Multi-thruster Mass Depletion Formulation</a>.
+AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2–8, 2017.</p></li>
+<li><p>P. Kenneally and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/AAS-17-127.pdf">Modeling Of Solar Radiation Pressure and Self-Shadowing Using Graphics Processing Unit</a>.
+AAS Guidance, Navigation and Control Conference, Breckenridge, Feb. 2–8, 2017.</p></li>
+<li><p>M. Cols Margenet, A. Harris, and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2017a.pdf">Software Architecture for Deep-Space Navigation Filter Development</a>.
+68th International Astronautical Congress, Adelaide, Australia, September 25–29, 2017. Paper IAC-17,C1,IP,22,x38512.</p></li>
+<li><p>S. Piggott, J. Alcorn, M. Cols Margenet, P. Kenneally and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Piggott2016FSWConference.pdf">Flight Software Development Through Python</a>.
+2016 Workshop on Spacecraft Flight Software, JPL, California, Dec. 13–15 2016.</p></li>
+<li><p>J. Alcorn, H. Schaub, S. Piggott and D. Kubitschek.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Alcorn2016b.pdf">Simulating Attitude Actuation Options Using the Basilisk Astrodynamics Software Architecture</a>.
+67th International Astronautical Congress, Guadalajara, Mexico, September 26–30, 2016.</p></li>
+<li><p>C. Allard, M. Diaz Ramos and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Allard2016a.pdf">Spacecraft Dynamics Integrating Hinged Solar Panels and Lumped-Mass Fuel Slosh Model</a>.
+AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12–15, 2016.</p></li>
+<li><p>J. Alcorn, C. Allard and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Alcorn2016a.pdf">Fully-Coupled Dynamical Modeling of a Rigid Spacecraft with Imbalanced Reaction Wheels</a>.
+AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12–15, 2016.</p></li>
+<li><p>M. Cols Margenet, H. Schaub and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/ColsMargenet2016.pdf">Modular Attitude Guidance Development using the Basilisk Software Framework</a>.
+AIAA/AAS Astrodynamics Specialist Conference, Long Beach, California, September 12–15, 2016.</p></li>
+<li><p>P. Kenneally and H. Schaub.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Kenneally2016.pdf">High Geometric Fidelity Modeling Of Solar Radiation Pressure Using Graphics Processing Unit</a>.
+AAS Spaceflight Mechanics Meeting, Napa Valley, California, February 14–18, 2016. Paper No. 16-500.</p></li>
+<li><p>C. Allard, H. Schaub, and S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Allard2016.pdf">General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing</a>.
+AAS GN&amp;C Conference, Breckenridge, Colorado, February 5–10, 2016.</p></li>
+<li><p>J. Alcorn, H. Schaub, S. Piggott.
+<a class="reference external" href="https://hanspeterschaub.info/Papers/Alcorn2016.pdf">Attitude Control Performance Analysis Using Discretized Thruster With Residual Tracking</a>.
+AAS GN&amp;C Conference, Breckenridge, Colorado, February 5–10, 2016.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

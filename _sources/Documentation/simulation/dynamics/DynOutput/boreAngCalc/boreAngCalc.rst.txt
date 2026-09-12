@@ -1,0 +1,33 @@
+.. _boreAngCalc:
+
+:module-type:`C++` Module: boreAngCalc
+======================================
+
+
+Executive Summary
+-----------------
+
+A class to perform a range of boresight related calculations. The module :download:`PDF Description </../../src/simulation/dynamics/DynOutput/boreAngCalc/_Documentation/Basilisk-BOREANGLECALC-20170722.pdf>` contains further information on this module's function, how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: boreAngCalc
+    :caption: Module I/O Messages
+
+    input scStateInMsg SCStatesMsgPayload
+        spacecraft state input message
+    input celBodyInMsg SpicePlanetStateMsgPayload
+        (optional) celestial body state msg at which we pointing at
+    output angOutMsg BoreAngleMsgPayload
+        bore sight output message
+
+
+----
+
+.. autodoxygenfile:: boreAngCalc.h
+   :project: boreAngCalc
+

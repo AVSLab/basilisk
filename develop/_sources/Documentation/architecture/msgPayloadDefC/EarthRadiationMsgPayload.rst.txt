@@ -1,0 +1,10 @@
+.. _EarthRadiationMsgPayload:
+
+EarthRadiationMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: EarthRadiationMsgPayload.h
+   :project: msgPayloadDefC
+

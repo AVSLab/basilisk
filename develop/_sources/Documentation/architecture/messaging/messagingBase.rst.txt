@@ -1,0 +1,10 @@
+.. _messagingBase:
+
+messagingBase
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: messagingBase.h
+   :project: messaging
+

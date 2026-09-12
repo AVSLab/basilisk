@@ -1,0 +1,10 @@
+.. _macroDefinitions:
+
+macroDefinitions
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: macroDefinitions.h
+   :project: utilities
+

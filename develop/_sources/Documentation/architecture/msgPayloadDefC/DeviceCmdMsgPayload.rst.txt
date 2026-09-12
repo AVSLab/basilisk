@@ -1,0 +1,10 @@
+.. _DeviceCmdMsgPayload:
+
+DeviceCmdMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DeviceCmdMsgPayload.h
+   :project: msgPayloadDefC
+

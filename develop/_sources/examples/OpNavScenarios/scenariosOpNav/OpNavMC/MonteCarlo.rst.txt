@@ -1,0 +1,15 @@
+.. _MonteCarlo:
+
+MonteCarlo
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: MonteCarlo
+   :members:
+   :show-inheritance:
+

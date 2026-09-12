@@ -1,0 +1,113 @@
+.. _reactionWheelStateEffector:
+
+:module-type:`C++` Module: reactionWheelStateEffector
+=====================================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+   * :doc:`reactionWheelSupport <reactionWheelSupport>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+   reactionWheelSupport <reactionWheelSupport>
+
+Executive Summary
+-----------------
+
+Class that is used to implement an effector impacting a dynamic body
+that does not itself maintain a state or represent a changing component of
+the body (for example: gravity, thrusters, solar radiation pressure, etc.)
+
+The module
+:download:`PDF Description </../../src/simulation/dynamics/reactionWheels/_Documentation/Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg connection is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: reactionWheelStateEffector
+    :caption: Module I/O Messages
+
+    input rwMotorCmdInMsg ArrayMotorTorqueMsgPayload
+        (optional) RW motor torque array cmd input message.  If not connected the motor torques are set to zero.
+    output rwSpeedOutMsg RWSpeedMsgPayload
+        RW speed array output message.
+    output rwOutMsgs RWConfigLogMsgPayload
+        vector of RW log output messages.
+
+User Guide
+-----------
+
+The reaction wheel state effector module provides functionality for simulating reaction wheels in a spacecraft.
+It includes safety mechanisms to prevent numerical instability that can occur with excessive wheel acceleration
+or when using unlimited torque with small spacecraft inertia.
+
+Initialization and Reset
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When the attached spacecraft registers the effector states, the module initializes the wheel-speed and applicable
+wheel-angle states. For each fully coupled jitter wheel, it also derives the center-of-mass offset ``d`` from
+``U_s / mass`` and sets the off-diagonal inertia ``J13`` to ``U_d``. This mandatory attachment path initializes the
+dynamics configuration even when the reaction wheel state effector is not added to a simulation task.
+
+The ``Reset()`` method refreshes these derived configuration values, initializes every wheel's command entry to zero,
+reports a warning when a Stribeck coefficient is zero, and clears the wheel-speed output buffer.
+
+The wheel count cannot exceed `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__, because the effector
+publishes a fixed-size wheel-speed array even when its motor-command input is unlinked. State registration, ``Reset()``, command
+reading, and wheel-speed publication reject excessive counts with ``BasiliskError`` before accessing the arrays.
+Command storage is also sized during state registration and input reading, so it does not depend on a scheduled
+``Reset()``. Direct calls to ``ConfigureRWRequests()`` may supply partial ``NewRWCmds`` vectors, but the vector
+cannot exceed the wheel count.
+
+Configure all wheels and their models before ``InitializeSimulation()`` registers their states. After registration,
+``addReactionWheel()`` raises ``BasiliskError`` without adding a device. The wheel count and the allocation of a
+jitter-angle state to each wheel must remain unchanged. Changes through ``ReactionWheelData`` are rejected before
+reset, command processing, output publication, or dynamics access, even when the effector is absent from the task.
+The derived ``numRW`` and ``numRWJitter`` counts must not be edited. ``Reset()`` preserves the registered states;
+use a new effector and simulation when changing the state layout. Calling ``Reset()`` before state registration
+does not freeze the layout.
+
+Threshold Parameters
+~~~~~~~~~~~~~~~~~~~~
+
+The module includes two configurable threshold parameters:
+
+* ``maxWheelAcceleration``: Maximum allowed wheel acceleration to prevent numerical instability. Default value is 1.0e6 rad/s^2.
+* ``largeTorqueThreshold``: Threshold for warning about large torque with unlimited torque setting. Default value is 10.0 Nm.
+
+These parameters can be accessed and modified using the following getter and setter methods:
+
+.. code-block:: python
+
+    # Get the current maximum wheel acceleration threshold
+    current_max_accel = reactionWheelStateEffector.getMaxWheelAcceleration()
+
+    # Set a new maximum wheel acceleration threshold
+    reactionWheelStateEffector.setMaxWheelAcceleration(2.0e6)  # rad/s^2
+
+    # Get the current large torque threshold
+    current_torque_threshold = reactionWheelStateEffector.getLargeTorqueThreshold()
+
+    # Set a new large torque threshold
+    reactionWheelStateEffector.setLargeTorqueThreshold(15.0)  # Nm
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: reactionWheelStateEffector.h
+   :project: reactionWheels
+

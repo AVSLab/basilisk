@@ -1,0 +1,17 @@
+.. _GeneralModuleFilescommunication:
+
+_GeneralModuleFiles
+===================
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+   AntennaDefinitions
+   LinkBudgetTypes
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+

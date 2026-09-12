@@ -1,0 +1,15 @@
+.. _quadMapSupport:
+
+quadMapSupport
+==============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: quadMapSupport
+   :members:
+   :show-inheritance:
+

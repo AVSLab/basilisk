@@ -1,0 +1,8 @@
+.. _reactionWheelSupport:
+
+reactionWheelSupport
+====================
+
+.. autodoxygenfile:: reactionWheelSupport.h
+   :project: reactionWheels
+

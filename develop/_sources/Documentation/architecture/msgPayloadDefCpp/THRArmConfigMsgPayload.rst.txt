@@ -1,0 +1,10 @@
+.. _THRArmConfigMsgPayload:
+
+THRArmConfigMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRArmConfigMsgPayload.h
+   :project: msgPayloadDefCpp
+

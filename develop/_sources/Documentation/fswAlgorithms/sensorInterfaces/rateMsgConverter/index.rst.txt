@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_rateMsgConverter:
+
+rateMsgConverter
+================
+
+:doc:`Module documentation <rateMsgConverter>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

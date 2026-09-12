@@ -1,0 +1,42 @@
+.. _Folder_dynamics:
+
+dynamics
+========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+
+   _GeneralModuleFiles/index
+   constraintDynamicEffector <constraintEffector/constraintDynamicEffector>
+   dragDynamicEffector <dragEffector/dragDynamicEffector>
+   dualHingedRigidBodyStateEffector <dualHingedRigidBodies/dualHingedRigidBodyStateEffector>
+   DynOutput/index
+   extForceTorque <extForceTorque/extForceTorque>
+   ExtPulsedTorque <ExtPulsedTorque/ExtPulsedTorque>
+   facetDragDynamicEffector <facetDragEffector/facetDragDynamicEffector>
+   facetedSRPEffector <facetedSRPEffector/facetedSRPEffector>
+   facetSRPDynamicEffector <facetSRPDynamicEffector/facetSRPDynamicEffector>
+   fuelTank <FuelTank/fuelTank>
+   GravityGradientEffector <GravityGradientEffector/GravityGradientEffector>
+   hingedRigidBodyMotor <hingedRigidBodyMotor/hingedRigidBodyMotor>
+   hingedRigidBodyStateEffector <HingedRigidBodies/hingedRigidBodyStateEffector>
+   igbmNoiseStateEffector <igbmNoiseStateEffector/igbmNoiseStateEffector>
+   Integrators/index
+   linearSpringMassDamper <LinearSpringMassDamper/linearSpringMassDamper>
+   linearTranslationalBodies/index
+   meanRevertingNoiseStateEffector <meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector>
+   msmForceTorque <msmForceTorque/msmForceTorque>
+   MtbEffector <MtbEffector/MtbEffector>
+   nHingedRigidBodyStateEffector <NHingedRigidBodies/nHingedRigidBodyStateEffector>
+   polyhedralGravityModel <gravityEffector/polyhedralGravityModel>
+   prescribedMotionStateEffector <prescribedMotion/prescribedMotionStateEffector>
+   radiationPressure <RadiationPressure/radiationPressure>
+   reactionWheelStateEffector <reactionWheels/reactionWheelStateEffector>
+   spacecraft <spacecraft/spacecraft>
+   spacecraftSystem <spacecraftSystem/spacecraftSystem>
+   sphericalPendulum <sphericalPendulum/sphericalPendulum>
+   spinningBodies/index
+   stateArchitecture/index
+   Thrusters/index
+   vscmgStateEffector <VSCMGs/vscmgStateEffector>

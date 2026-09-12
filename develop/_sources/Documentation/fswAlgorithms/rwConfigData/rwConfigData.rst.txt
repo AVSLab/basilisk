@@ -1,0 +1,10 @@
+.. _rwConfigData:
+
+:module-type:`C` Module: rwConfigData
+=====================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: rwConfigData.h
+   :project: rwConfigData
+

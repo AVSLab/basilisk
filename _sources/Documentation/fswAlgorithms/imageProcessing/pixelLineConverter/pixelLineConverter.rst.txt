@@ -1,0 +1,41 @@
+.. _pixelLineConverter:
+
+:module-type:`C` Module: pixelLineConverter
+===========================================
+
+Executive Summary
+-----------------
+
+Converter that takes a image processing message and camera information and outputs a relative position to the object.
+
+The module
+:download:`PDF Description </../../src/fswAlgorithms/imageProcessing/pixelLineConverter/_Documentation/Basilisk-pixelLineConverter-20190524.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. _ModuleIO_pixelLineConverter:
+
+.. bsk-module-io:: pixelLineConverter
+    :caption: Module I/O Messages
+
+    output opNavOutMsg OpNavMsgPayload
+        optical navigation output message
+    input cameraConfigInMsg CameraConfigMsgPayload
+        camera config input message
+    input attInMsg NavAttMsgPayload
+        attitude input message
+    input circlesInMsg OpNavCirclesMsgPayload
+        circles input message
+
+
+----
+
+.. autodoxygenfile:: pixelLineConverter.h
+   :project: pixelLineConverter
+

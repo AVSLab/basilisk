@@ -1,0 +1,10 @@
+.. _MJJointReactionsMsgPayload:
+
+MJJointReactionsMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJJointReactionsMsgPayload.h
+   :project: msgPayloadDefCpp
+

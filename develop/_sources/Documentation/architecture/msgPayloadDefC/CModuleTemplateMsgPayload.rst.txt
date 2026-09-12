@@ -1,0 +1,10 @@
+.. _CModuleTemplateMsgPayload:
+
+CModuleTemplateMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CModuleTemplateMsgPayload.h
+   :project: msgPayloadDefC
+

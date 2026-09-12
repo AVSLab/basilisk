@@ -1,0 +1,10 @@
+.. _VoltMsgPayload:
+
+VoltMsgPayload
+==============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VoltMsgPayload.h
+   :project: msgPayloadDefC
+

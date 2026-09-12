@@ -1,0 +1,10 @@
+.. _CSSUnitConfigMsgPayload:
+
+CSSUnitConfigMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CSSUnitConfigMsgPayload.h
+   :project: msgPayloadDefC
+

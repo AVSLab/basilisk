@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_solarArrayReference:
+
+solarArrayReference
+===================
+
+:doc:`Module documentation <solarArrayReference>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

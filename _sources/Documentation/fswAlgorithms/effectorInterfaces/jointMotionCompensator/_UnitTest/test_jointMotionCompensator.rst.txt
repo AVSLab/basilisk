@@ -1,0 +1,13 @@
+.. _test_jointMotionCompensator:
+
+test_jointMotionCompensator
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_jointMotionCompensator
+   :members:
+   :show-inheritance:
+

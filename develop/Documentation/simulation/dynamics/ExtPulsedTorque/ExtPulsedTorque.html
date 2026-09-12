@@ -1,0 +1,411 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: ExtPulsedTorque &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="test_extForceTorqueIntegrated" href="../extForceTorque/_UnitTest/test_extForceTorqueIntegrated.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraftSystem/spacecraftSystem.html">spacecraftSystem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: ExtPulsedTorque</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-extpulsedtorque">
+<span id="extpulsedtorque"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: ExtPulsedTorque<a class="headerlink" href="#c-module-extpulsedtorque" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTest/index.html"><span class="doc">Unit tests</span></a></p></li>
+</ul>
+</aside>
+<div class="toctree-wrapper compound">
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#dynamiceffector"><span class="std std-ref">C++ Module: dynamicEffector</span></a> Class used to provide a direct pulsed external torque on body
+The module
+<a class="reference download internal" download="" href="../../../../_downloads/bdb25e164626ccf960ab045815f40772/Basilisk-extPulsedTorque-20170324.pdf"><code class="xref download docutils literal notranslate"><span class="pre">PDF</span> <span class="pre">Description</span></code></a>
+contains further information on this module’s function,
+how to run it, as well as testing.
+The current timing and reset semantics are specified below.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>This module has no input or output messages.  It is a pure dynamic effector.</p>
+</section>
+<section id="pulse-timing">
+<h2>Pulse Timing<a class="headerlink" href="#pulse-timing" title="Link to this heading"></a></h2>
+<p>The sequence is anchored at simulation time zero and consists of a positive pulse, a negative
+pulse of equal duration, and an optional off period. <code class="docutils literal notranslate"><span class="pre">pulseInterval</span></code> specifies the duration of
+one count in seconds and defaults to one second. Each positive or negative pulse lasts
+<code class="docutils literal notranslate"><span class="pre">countOnPulse</span> <span class="pre">*</span> <span class="pre">pulseInterval</span></code> seconds. The following off period lasts
+<code class="docutils literal notranslate"><span class="pre">countOff</span> <span class="pre">*</span> <span class="pre">pulseInterval</span></code> seconds, after which the sequence repeats.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pulse</span> <span class="o">=</span> <span class="n">ExtPulsedTorque</span><span class="o">.</span><span class="n">ExtPulsedTorque</span><span class="p">()</span>
+<span class="n">pulse</span><span class="o">.</span><span class="n">pulsedTorqueExternalPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+<span class="n">pulse</span><span class="o">.</span><span class="n">countOnPulse</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">pulse</span><span class="o">.</span><span class="n">countOff</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">pulse</span><span class="o">.</span><span class="n">pulseInterval</span> <span class="o">=</span> <span class="mf">0.125</span>  <span class="c1"># [s]</span>
+</pre></div>
+</div>
+<p>This configuration applies positive torque for <span class="math notranslate nohighlight">\(0 \leq t &lt; 0.25\)</span> seconds, negative torque
+for <span class="math notranslate nohighlight">\(0.25 \leq t &lt; 0.5\)</span> seconds, and zero torque for <span class="math notranslate nohighlight">\(0.5 \leq t &lt; 0.875\)</span> seconds.
+At each transition, evaluation selects the segment beginning at that time. Times within
+floating-point roundoff of a transition also select the new segment, so decimal intervals
+such as <code class="docutils literal notranslate"><span class="pre">0.1</span></code> seconds do not delay a boundary by one evaluation.
+The roundoff window uses the evaluation time and the relevant transition time; a long future
+off period does not enlarge the window around the initial pulse transitions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">computeForceTorque()</span></code> uses its integration time in seconds. Its <code class="docutils literal notranslate"><span class="pre">timeStep</span></code> argument does
+not set the pulse interval. Repeated evaluations, intermediate integrator stages, and evaluations
+at earlier times return the torque for the supplied time without advancing internal pulse state.
+Choose an integration step and error tolerance that resolve the pulse transitions; the torque
+is discontinuous at those transitions.</p>
+<p>Existing configurations that express pulse counts in units of a nominal integration step should
+set <code class="docutils literal notranslate"><span class="pre">pulseInterval</span></code> to that step duration in seconds. This replaces the historical behavior
+that advanced the sequence on every dynamics evaluation, including intermediate integrator stages.</p>
+</section>
+<section id="initialization-and-reset">
+<h2>Initialization and Reset<a class="headerlink" href="#initialization-and-reset" title="Link to this heading"></a></h2>
+<p>The torque and both counts default to zero, so an unconfigured effector applies no load.
+<code class="docutils literal notranslate"><span class="pre">countOnPulse</span></code> and <code class="docutils literal notranslate"><span class="pre">countOff</span></code> must be non-negative; a zero <code class="docutils literal notranslate"><span class="pre">countOnPulse</span></code> disables the torque.
+Torque components and <code class="docutils literal notranslate"><span class="pre">pulseInterval</span></code> must be finite, the interval must be strictly positive,
+and the combined cycle duration must remain finite. Invalid configuration raises <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>.</p>
+<p>Validation runs during spacecraft attachment through <code class="docutils literal notranslate"><span class="pre">linkInStates()</span></code>, from <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>, and
+before every dynamics evaluation. The effector therefore works without task scheduling.
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> preserves the phase anchored at simulation time zero and leaves the last output
+unchanged until the next dynamics evaluation. <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> does not advance the pulse.
+Changing pulse parameters selects the corresponding waveform with the same time-zero origin.
+See <a class="reference internal" href="../../../../Learn/makingModules/writingEffectors.html#effectorinitialization"><span class="std std-ref">Initialization and Configuration Validation</span></a>.</p>
+<hr class="docutils" />
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv415ExtPulsedTorque">
+<span id="_CPPv315ExtPulsedTorque"></span><span id="_CPPv215ExtPulsedTorque"></span><span id="ExtPulsedTorque"></span><span class="target" id="class_ext_pulsed_torque"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ExtPulsedTorque</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../../../architecture/_GeneralModuleFiles/sys_model.html#_CPPv48SysModel" title="SysModel"><span class="n"><span class="pre">SysModel</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="../_GeneralModuleFiles/dynamicEffector.html#_CPPv415DynamicEffector" title="DynamicEffector"><span class="n"><span class="pre">DynamicEffector</span></span></a><a class="headerlink" href="#_CPPv415ExtPulsedTorque" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;ExtPulsedTorque.h&gt;</em></div>
+<p>external pulsed torque module class </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque15ExtPulsedTorqueEv">
+<span id="_CPPv3N15ExtPulsedTorque15ExtPulsedTorqueEv"></span><span id="_CPPv2N15ExtPulsedTorque15ExtPulsedTorqueEv"></span><span id="ExtPulsedTorque::ExtPulsedTorque"></span><span class="target" id="class_ext_pulsed_torque_1aea1d60a06874c346ac4c71dfff5cf007"></span><span class="sig-name descname"><span class="n"><span class="pre">ExtPulsedTorque</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque15ExtPulsedTorqueEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This is the constructor. It sets some default initializers that can be overridden by the user. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorqueD0Ev">
+<span id="_CPPv3N15ExtPulsedTorqueD0Ev"></span><span id="_CPPv2N15ExtPulsedTorqueD0Ev"></span><span id="ExtPulsedTorque::~ExtPulsedTorque"></span><span class="target" id="class_ext_pulsed_torque_1ada5006210fd96e4a22a5659f5da9c7c9"></span><span class="sig-name descname"><span class="n"><span class="pre">~ExtPulsedTorque</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorqueD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>The destructor. Nothing of note is performed here </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque5ResetE8uint64_t">
+<span id="_CPPv3N15ExtPulsedTorque5ResetE8uint64_t"></span><span id="_CPPv2N15ExtPulsedTorque5ResetE8uint64_t"></span><span id="ExtPulsedTorque::Reset__uint64_t"></span><span class="target" id="class_ext_pulsed_torque_1a5f39cec6be8831f55ffa0f1bc35f3dce"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque5ResetE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Validate pulse configuration without changing its phase relative to simulation time. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – [ns] Scheduler reset time; it does not shift the pulse sequence. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque11UpdateStateE8uint64_t">
+<span id="_CPPv3N15ExtPulsedTorque11UpdateStateE8uint64_t"></span><span id="_CPPv2N15ExtPulsedTorque11UpdateStateE8uint64_t"></span><span id="ExtPulsedTorque::UpdateState__uint64_t"></span><span class="target" id="class_ext_pulsed_torque_1acff49bec1a7a8ce0c14f8f12fe2fd189"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">CurrentSimNanos</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque11UpdateStateE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Module update method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CurrentSimNanos</strong> – <strong>[in]</strong> [ns] Current simulation time. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque12linkInStatesER15DynParamManager">
+<span id="_CPPv3N15ExtPulsedTorque12linkInStatesER15DynParamManager"></span><span id="_CPPv2N15ExtPulsedTorque12linkInStatesER15DynParamManager"></span><span id="ExtPulsedTorque::linkInStates__DynParamManagerR"></span><span class="target" id="class_ext_pulsed_torque_1acd81234508f59b2b09465d119c8be76c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">linkInStates</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../_GeneralModuleFiles/dynParamManager.html#_CPPv415DynParamManager" title="DynParamManager"><span class="n"><span class="pre">DynParamManager</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">statesIn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque12linkInStatesER15DynParamManager" title="Link to this definition"></a><br /></dt>
+<dd><p>link the states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>statesIn</strong> – <strong>[in]</strong> Dynamic parameter manager containing the required states. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque19writeOutputMessagesE8uint64_t">
+<span id="_CPPv3N15ExtPulsedTorque19writeOutputMessagesE8uint64_t"></span><span id="_CPPv2N15ExtPulsedTorque19writeOutputMessagesE8uint64_t"></span><span id="ExtPulsedTorque::writeOutputMessages__uint64_t"></span><span class="target" id="class_ext_pulsed_torque_1aff6ccc09c3ec2317f643c54a80599373"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">writeOutputMessages</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">currentClock</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque19writeOutputMessagesE8uint64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This module does not write any output messages. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>currentClock</strong> – The current time used for time-stamping the message </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque17readInputMessagesEv">
+<span id="_CPPv3N15ExtPulsedTorque17readInputMessagesEv"></span><span id="_CPPv2N15ExtPulsedTorque17readInputMessagesEv"></span><span id="ExtPulsedTorque::readInputMessages"></span><span class="target" id="class_ext_pulsed_torque_1ad6b93d6433bd8d1f3847e9cceb1f3d2d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">readInputMessages</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque17readInputMessagesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to read the incoming message and set the associated buffer structure. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque18computeForceTorqueEdd">
+<span id="_CPPv3N15ExtPulsedTorque18computeForceTorqueEdd"></span><span id="_CPPv2N15ExtPulsedTorque18computeForceTorqueEdd"></span><span id="ExtPulsedTorque::computeForceTorque__double.double"></span><span class="target" id="class_ext_pulsed_torque_1adb5b4d9edb535e245b6167dac9de4447"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeForceTorque</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">integTime</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">timeStep</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque18computeForceTorqueEdd" title="Link to this definition"></a><br /></dt>
+<dd><p>This method is used to compute the RHS forces and torques. Note: the module can set any of these three vectors, or a subset. Regarding the external force, the matrix representations in the body (B) and inertial (N) frame components are treated as 2 separate vectors. Only set both if you mean to, as both vectors will be included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>integTime</strong> – <strong>[in]</strong> [s] Current integration time. </p></li>
+<li><p><strong>timeStep</strong> – <strong>[in]</strong> [s] Integration time step; unused because pulse timing uses pulseInterval. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque26pulsedTorqueExternalPntB_BE">
+<span id="_CPPv3N15ExtPulsedTorque26pulsedTorqueExternalPntB_BE"></span><span id="_CPPv2N15ExtPulsedTorque26pulsedTorqueExternalPntB_BE"></span><span id="ExtPulsedTorque::pulsedTorqueExternalPntB_B__Eigen::Vector3d"></span><span class="target" id="class_ext_pulsed_torque_1add8a3204e5706cc17c4261810581276a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pulsedTorqueExternalPntB_B</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Vector3d</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Zero</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque26pulsedTorqueExternalPntB_BE" title="Link to this definition"></a><br /></dt>
+<dd><p>[N*m] pulsed torque about B in B components </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque12countOnPulseE">
+<span id="_CPPv3N15ExtPulsedTorque12countOnPulseE"></span><span id="_CPPv2N15ExtPulsedTorque12countOnPulseE"></span><span id="ExtPulsedTorque::countOnPulse__i"></span><span class="target" id="class_ext_pulsed_torque_1ac1eb21738fe744c6da065d6e14172cac"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">countOnPulse</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque12countOnPulseE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of pulse intervals for each positive and negative pulse; zero disables the torque. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque8countOffE">
+<span id="_CPPv3N15ExtPulsedTorque8countOffE"></span><span id="_CPPv2N15ExtPulsedTorque8countOffE"></span><span id="ExtPulsedTorque::countOff__i"></span><span class="target" id="class_ext_pulsed_torque_1a38bf929d6cdb8c18a4a81143680a50d4"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">countOff</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque8countOffE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of pulse intervals with no torque between pulse pairs. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque13pulseIntervalE">
+<span id="_CPPv3N15ExtPulsedTorque13pulseIntervalE"></span><span id="_CPPv2N15ExtPulsedTorque13pulseIntervalE"></span><span id="ExtPulsedTorque::pulseInterval__double"></span><span class="target" id="class_ext_pulsed_torque_1abc8c24b8fe27ef65de1d7797e336afae"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pulseInterval</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.0</span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque13pulseIntervalE" title="Link to this definition"></a><br /></dt>
+<dd><p>[s] Duration of one pulse-count interval, independent of the integrator step </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque9bskLoggerE">
+<span id="_CPPv3N15ExtPulsedTorque9bskLoggerE"></span><span id="_CPPv2N15ExtPulsedTorque9bskLoggerE"></span><span id="ExtPulsedTorque::bskLogger__BSKLogger"></span><span class="target" id="class_ext_pulsed_torque_1aadb01a064c8f114c7fb161b805ba3f2c"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N15ExtPulsedTorque21validateConfigurationEv">
+<span id="_CPPv3N15ExtPulsedTorque21validateConfigurationEv"></span><span id="_CPPv2N15ExtPulsedTorque21validateConfigurationEv"></span><span id="ExtPulsedTorque::validateConfiguration"></span><span class="target" id="class_ext_pulsed_torque_1ae4d42996404c385354445dcb518ed450"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateConfiguration</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ExtPulsedTorque21validateConfigurationEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Validate the torque, pulse counts, and interval duration. </p>
+<p>Validate pulse parameters before attachment, reset, or torque evaluation. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../extForceTorque/_UnitTest/test_extForceTorqueIntegrated.html" class="btn btn-neutral float-left" title="test_extForceTorqueIntegrated" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

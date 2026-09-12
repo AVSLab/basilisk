@@ -1,0 +1,10 @@
+.. _EpochMsgPayload:
+
+EpochMsgPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: EpochMsgPayload.h
+   :project: msgPayloadDefC
+

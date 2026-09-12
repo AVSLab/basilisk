@@ -1,0 +1,10 @@
+.. _GravityGradientMsgPayload:
+
+GravityGradientMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: GravityGradientMsgPayload.h
+   :project: msgPayloadDefC
+

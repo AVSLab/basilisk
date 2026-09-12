@@ -1,0 +1,36 @@
+.. _thrMomentumManagement:
+
+:module-type:`C` Module: thrMomentumManagement
+==============================================
+
+Executive Summary
+-----------------
+
+This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped.
+
+A separate thruster firing logic module called thrMomentumDumping will later on compute the thruster on cycling. The module
+:download:`PDF Description </../../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf>`
+contains further information on this module's function, how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: thrMomentumManagement
+    :caption: Module I/O Messages
+
+    output deltaHOutMsg CmdTorqueBodyMsgPayload
+        Output message with the requested inertial angular momentum change
+    input rwSpeedsInMsg RWSpeedMsgPayload
+        Reaction wheel speed input message
+    input rwConfigDataInMsg RWArrayConfigMsgPayload
+        Name of the RWA configuration message
+
+
+----
+
+.. autodoxygenfile:: thrMomentumManagement.h
+   :project: thrMomentumManagement
+

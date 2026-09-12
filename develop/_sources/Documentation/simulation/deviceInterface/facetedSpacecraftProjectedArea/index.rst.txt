@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_facetedSpacecraftProjectedArea:
+
+facetedSpacecraftProjectedArea
+==============================
+
+:doc:`Module documentation <facetedSpacecraftProjectedArea>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,10 @@
+.. _CMEstDataMsgPayload:
+
+CMEstDataMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CMEstDataMsgPayload.h
+   :project: msgPayloadDefC
+

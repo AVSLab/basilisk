@@ -1,0 +1,13 @@
+.. _test_jointThrAllocation:
+
+test_jointThrAllocation
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_jointThrAllocation
+   :members:
+   :show-inheritance:
+

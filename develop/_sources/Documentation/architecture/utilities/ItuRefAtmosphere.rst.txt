@@ -1,0 +1,10 @@
+.. _ItuRefAtmosphere:
+
+ItuRefAtmosphere
+================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ItuRefAtmosphere.h
+   :project: utilities
+

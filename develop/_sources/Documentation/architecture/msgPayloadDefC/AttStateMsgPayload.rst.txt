@@ -1,0 +1,10 @@
+.. _AttStateMsgPayload:
+
+AttStateMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AttStateMsgPayload.h
+   :project: msgPayloadDefC
+

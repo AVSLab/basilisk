@@ -1,0 +1,15 @@
+.. _fswSetupThrusters:
+
+fswSetupThrusters
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: fswSetupThrusters
+   :members:
+   :show-inheritance:
+

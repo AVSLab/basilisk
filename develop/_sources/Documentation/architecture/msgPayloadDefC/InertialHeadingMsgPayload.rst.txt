@@ -1,0 +1,10 @@
+.. _InertialHeadingMsgPayload:
+
+InertialHeadingMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: InertialHeadingMsgPayload.h
+   :project: msgPayloadDefC
+

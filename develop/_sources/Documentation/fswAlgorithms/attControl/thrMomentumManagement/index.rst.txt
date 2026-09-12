@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrMomentumManagement:
+
+thrMomentumManagement
+=====================
+
+:doc:`Module documentation <thrMomentumManagement>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

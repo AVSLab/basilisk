@@ -1,0 +1,10 @@
+.. _VSCMGCmdMsgPayload:
+
+VSCMGCmdMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VSCMGCmdMsgPayload.h
+   :project: msgPayloadDefC
+

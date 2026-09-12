@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_jointThrAllocation:
+
+jointThrAllocation
+==================
+
+:doc:`Module documentation <jointThrAllocation>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,10 @@
+.. _haslamBackgroundRadiation:
+
+haslamBackgroundRadiation
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: haslamBackgroundRadiation.h
+   :project: utilities
+

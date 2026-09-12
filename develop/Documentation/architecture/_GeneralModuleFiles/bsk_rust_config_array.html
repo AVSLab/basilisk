@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bsk_rust_config_array &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="bsk_rust_module" href="bsk_rust_module.html" />
+    <link rel="prev" title="_GeneralModuleFiles" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">architecture</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">bsk_rust_config_array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="bsk_rust_module.html">bsk_rust_module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="numbaModel.html">numbaModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model.html">sys_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="sys_model_task.html">sys_model_task</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../messaging/index.html">messaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefC/index.html">msgPayloadDefC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../msgPayloadDefCpp/index.html">msgPayloadDefCpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModel/index.html">numbaModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rust/index.html">rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../system_model/index.html">system_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilities/index.html">utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utilitiesSelfCheck/index.html">utilitiesSelfCheck</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">architecture</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active">bsk_rust_config_array</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/architecture/_GeneralModuleFiles/bsk_rust_config_array.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bsk-rust-config-array">
+<span id="id1"></span><h1>bsk_rust_config_array<a class="headerlink" href="#bsk-rust-config-array" title="Link to this heading"></a></h1>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I00E21bskRustGetConfigArrayNSt6vectorI5ValueEEPK7WrapperNSt6size_tENSt6size_tE">
+<span id="_CPPv3I00E21bskRustGetConfigArrayPK7WrapperNSt6size_tENSt6size_tE"></span><span id="_CPPv2I00E21bskRustGetConfigArrayPK7WrapperNSt6size_tENSt6size_tE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Value</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Wrapper</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bsk__rust__config__array_8h_1a2d9821d03d3ee131779e4352274fe5a9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00E21bskRustGetConfigArrayNSt6vectorI5ValueEEPK7WrapperNSt6size_tENSt6size_tE" title="bskRustGetConfigArray::Value"><span class="n"><span class="pre">Value</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskRustGetConfigArray</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00E21bskRustGetConfigArrayNSt6vectorI5ValueEEPK7WrapperNSt6size_tENSt6size_tE" title="bskRustGetConfigArray::Wrapper"><span class="n"><span class="pre">Wrapper</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">wrapper</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fieldIndex</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I00E21bskRustGetConfigArrayNSt6vectorI5ValueEEPK7WrapperNSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy a flat Rust configuration array through its guarded accessor. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>std::vector&lt;bool&gt; packs its elements and cannot supply bool* storage. C++ type resolution selects this path for every Boolean alias, too. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Value</strong> – C++ element type, including aliases of bool. </p></li>
+<li><p><strong>Wrapper</strong> – Generated Rust module wrapper type. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>wrapper</strong> – Wrapper providing __bskGetConfigField(). </p></li>
+<li><p><strong>fieldIndex</strong> – Index of the Rust configuration field. </p></li>
+<li><p><strong>length</strong> – Number of elements across all array dimensions. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Copied elements for conversion to a Python sequence. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I00E21bskRustSetConfigArrayvP7WrapperNSt6size_tERKNSt6vectorI5ValueEE">
+<span id="_CPPv3I00E21bskRustSetConfigArrayP7WrapperNSt6size_tERKNSt6vectorI5ValueEE"></span><span id="_CPPv2I00E21bskRustSetConfigArrayP7WrapperNSt6size_tERKNSt6vectorI5ValueEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Value</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Wrapper</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bsk__rust__config__array_8h_1a93a532f91303e98b2a3eaad4934d1e99"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bskRustSetConfigArray</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I00E21bskRustSetConfigArrayvP7WrapperNSt6size_tERKNSt6vectorI5ValueEE" title="bskRustSetConfigArray::Wrapper"><span class="n"><span class="pre">Wrapper</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">wrapper</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fieldIndex</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00E21bskRustSetConfigArrayvP7WrapperNSt6size_tERKNSt6vectorI5ValueEE" title="bskRustSetConfigArray::Value"><span class="n"><span class="pre">Value</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I00E21bskRustSetConfigArrayvP7WrapperNSt6size_tERKNSt6vectorI5ValueEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy a flat Python array into a guarded Rust configuration setter. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Boolean elements use real bool storage, not vector&lt;bool&gt; packed bits. Rust still validates the complete proposed value before storing it. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Value</strong> – C++ element type, including aliases of bool. </p></li>
+<li><p><strong>Wrapper</strong> – Generated Rust module wrapper type. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>wrapper</strong> – Wrapper providing __bskSetConfigField(). </p></li>
+<li><p><strong>fieldIndex</strong> – Index of the Rust configuration field. </p></li>
+<li><p><strong>value</strong> – Converted elements; the generated caller checks the array length. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="_GeneralModuleFiles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bsk_rust_module.html" class="btn btn-neutral float-right" title="bsk_rust_module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

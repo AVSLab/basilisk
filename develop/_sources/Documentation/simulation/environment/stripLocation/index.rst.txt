@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_stripLocation:
+
+stripLocation
+=============
+
+:doc:`Module documentation <stripLocation>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

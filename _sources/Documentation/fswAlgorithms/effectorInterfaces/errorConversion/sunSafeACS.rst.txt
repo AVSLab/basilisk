@@ -1,0 +1,30 @@
+.. _sunSafeACS:
+
+:module-type:`C` Module: sunSafeACS
+===================================
+
+Executive Summary
+-----------------
+
+This method takes the estimated body-observed sun vector and computes the current attitude/attitude rate errors to pass on to control.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: sunSafeACS
+    :caption: Module I/O Messages
+
+    input cmdTorqueBodyInMsg CmdTorqueBodyMsgPayload
+        Commanded body torque input message
+    output thrOnTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        Thruster on-time output message
+
+
+----
+
+.. autodoxygenfile:: sunSafeACS.h
+   :project: errorConversion
+

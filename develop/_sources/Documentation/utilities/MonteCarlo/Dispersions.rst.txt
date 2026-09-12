@@ -1,0 +1,15 @@
+.. _Dispersions:
+
+Dispersions
+===========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: Dispersions
+   :members:
+   :show-inheritance:
+

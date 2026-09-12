@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_mtbMomentumManagementSimple:
+
+mtbMomentumManagementSimple
+===========================
+
+:doc:`Module documentation <mtbMomentumManagementSimple>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

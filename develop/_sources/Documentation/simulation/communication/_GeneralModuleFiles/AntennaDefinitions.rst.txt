@@ -1,0 +1,10 @@
+.. _AntennaDefinitions:
+
+AntennaDefinitions
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AntennaDefinitions.h
+   :project: _GeneralModuleFiles3
+

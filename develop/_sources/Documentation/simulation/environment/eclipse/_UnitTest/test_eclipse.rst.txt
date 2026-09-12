@@ -1,0 +1,15 @@
+.. _test_eclipse:
+
+test_eclipse
+============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_eclipse
+   :members:
+   :show-inheritance:
+

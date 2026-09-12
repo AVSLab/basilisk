@@ -1,0 +1,10 @@
+.. _ArrayMotorTorqueMsgPayload:
+
+ArrayMotorTorqueMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ArrayMotorTorqueMsgPayload.h
+   :project: msgPayloadDefC
+

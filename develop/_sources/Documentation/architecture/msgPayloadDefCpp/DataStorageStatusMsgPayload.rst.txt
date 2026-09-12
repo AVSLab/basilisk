@@ -1,0 +1,10 @@
+.. _DataStorageStatusMsgPayload:
+
+DataStorageStatusMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DataStorageStatusMsgPayload.h
+   :project: msgPayloadDefCpp
+

@@ -1,0 +1,72 @@
+.. _thrFiringRound:
+
+:module-type:`Python` Module: thrFiringRound
+============================================
+
+Executive Summary
+-----------------
+
+This module converts thruster force commands into thruster on-time commands.
+Each positive force command is normalized by the configured maximum thrust,
+scaled by the control period, clipped to the control period, rounded to the
+nearest configured on-time resolution, and checked to make sure it is longer
+than the minimum fire time.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list the module input and output messages.
+
+.. bsk-module-io:: ThrFiringRound
+    :caption: Module I/O Messages
+
+    input thrForceInMsg THRArrayCmdForceMsgPayload
+        Input thruster force command message.
+
+    output thrOnTimeOutMsg THRArrayOnTimeCmdMsgPayload
+        Output thruster on-time command message.
+
+
+Module Assumptions and Limitations
+----------------------------------
+Negative force commands are treated as zero-force requests because the on-time
+logic is one-sided.  The number of thrusters can be set directly with
+``setNumThrusters``.  If it is not set, the module uses the length of the
+configured maximum-thrust vector, or the length of the input force command when
+the maximum thrust is scalar.
+
+
+User Guide
+----------
+The module is imported through the standard flight-software package:
+
+.. code-block:: python
+
+    from Basilisk.fswAlgorithms import thrFiringRound
+
+    rounder = thrFiringRound.ThrFiringRound()
+    rounder.ModelTag = "thrFiringRound"
+
+The control period, on-time resolution, minimum thruster on-time,
+number of thrusters, and maximum thruster force are configured
+with setter methods:
+
+.. code-block:: python
+
+    rounder.setControlPeriodSec(10.0)
+    rounder.setOnTimeResolutionSec(0.1)
+    rounder.setThrMinFireTime(0.15)
+    rounder.setNumThrusters(2)
+    rounder.setThrForceMax([2.5, 2.5])
+
+
+----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: thrFiringRound
+   :members:
+   :show-inheritance:
+

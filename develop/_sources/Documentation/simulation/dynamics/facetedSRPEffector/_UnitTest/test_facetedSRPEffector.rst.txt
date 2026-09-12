@@ -1,0 +1,15 @@
+.. _test_facetedSRPEffector:
+
+test_facetedSRPEffector
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_facetedSRPEffector
+   :members:
+   :show-inheritance:
+

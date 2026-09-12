@@ -1,0 +1,15 @@
+.. _dataFetcher:
+
+dataFetcher
+===========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: dataFetcher
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _THRTimePair:
+
+THRTimePair
+===========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRTimePair.h
+   :project: _GeneralModuleFiles4
+

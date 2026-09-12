@@ -1,0 +1,10 @@
+.. _MJEquality:
+
+MJEquality
+==========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJEquality.h
+   :project: _GeneralModuleFiles6
+

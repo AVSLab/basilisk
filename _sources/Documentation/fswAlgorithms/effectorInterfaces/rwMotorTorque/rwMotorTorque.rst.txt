@@ -1,0 +1,38 @@
+.. _rwMotorTorque:
+
+:module-type:`C` Module: rwMotorTorque
+======================================
+
+Executive Summary
+-----------------
+
+This module maps a desired torque to control the spacecraft, and maps it to the available wheels using a minimum norm inverse fit.
+
+The optional wheel availability message is used to include or exclude particular reaction wheels from the torque solution.  The desired control torque can be mapped onto particular orthogonal control axes to implement a partial solution for the overall attitude control torque.  More information can be found in the
+:download:`PDF Description </../../src/fswAlgorithms/effectorInterfaces/rwMotorTorque/_Documentation/Basilisk-rwMotorTorque-20190320.pdf>`.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: rwMotorTorque
+    :caption: Module I/O Messages
+
+    output rwMotorTorqueOutMsg ArrayMotorTorqueMsgPayload
+        RW motor torque output message
+    input vehControlInMsg CmdTorqueBodyMsgPayload
+        commanded vehicle control torque input message
+    input rwParamsInMsg RWArrayConfigMsgPayload
+        RW array configuration input message
+    input rwAvailInMsg RWAvailabilityMsgPayload
+        (optional) RW device availability message
+
+
+----
+
+.. autodoxygenfile:: rwMotorTorque.h
+   :project: rwMotorTorque
+

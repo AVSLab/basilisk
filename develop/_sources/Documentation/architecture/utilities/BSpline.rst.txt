@@ -1,0 +1,10 @@
+.. _BSpline:
+
+BSpline
+=======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: BSpline.h
+   :project: utilities
+

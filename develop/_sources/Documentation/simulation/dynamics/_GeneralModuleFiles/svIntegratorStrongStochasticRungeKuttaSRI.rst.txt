@@ -1,0 +1,10 @@
+.. _svIntegratorStrongStochasticRungeKuttaSRI:
+
+svIntegratorStrongStochasticRungeKuttaSRI
+=========================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svIntegratorStrongStochasticRungeKuttaSRI.h
+   :project: _GeneralModuleFiles4
+

@@ -1,0 +1,15 @@
+.. _scenarioCompareRwPanels:
+
+scenarioCompareRwPanels
+=======================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioCompareRwPanels
+   :members:
+   :show-inheritance:
+

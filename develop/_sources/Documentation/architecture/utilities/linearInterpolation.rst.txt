@@ -1,0 +1,10 @@
+.. _linearInterpolation:
+
+linearInterpolation
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: linearInterpolation.hpp
+   :project: utilities
+

@@ -1,0 +1,10 @@
+.. _bsk_rust_config_array:
+
+bsk_rust_config_array
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: bsk_rust_config_array.h
+   :project: _GeneralModuleFiles0
+

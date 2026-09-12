@@ -1,0 +1,15 @@
+.. _test_hillFrameRelativeControl:
+
+test_hillFrameRelativeControl
+=============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_hillFrameRelativeControl
+   :members:
+   :show-inheritance:
+

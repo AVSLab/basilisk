@@ -1,0 +1,7 @@
+.. _GeomagnetismLibrary:
+
+GeomagnetismLibrary
+===================
+
+.. bsk-module-guide-end::
+

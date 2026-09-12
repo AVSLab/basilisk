@@ -1,0 +1,15 @@
+.. _test_facetedSpacecraftProjectedArea:
+
+test_facetedSpacecraftProjectedArea
+===================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_facetedSpacecraftProjectedArea
+   :members:
+   :show-inheritance:
+

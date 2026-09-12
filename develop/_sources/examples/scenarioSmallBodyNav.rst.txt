@@ -1,0 +1,15 @@
+.. _scenarioSmallBodyNav:
+
+scenarioSmallBodyNav
+====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioSmallBodyNav
+   :members:
+   :show-inheritance:
+

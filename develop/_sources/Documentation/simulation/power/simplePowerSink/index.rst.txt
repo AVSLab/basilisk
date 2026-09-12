@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_simplePowerSink:
+
+simplePowerSink
+===============
+
+:doc:`Module documentation <simplePowerSink>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

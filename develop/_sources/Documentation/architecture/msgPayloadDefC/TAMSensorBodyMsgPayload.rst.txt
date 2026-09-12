@@ -1,0 +1,10 @@
+.. _TAMSensorBodyMsgPayload:
+
+TAMSensorBodyMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TAMSensorBodyMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _MJGeomInfo:
+
+MJGeomInfo
+==========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJGeomInfo.h
+   :project: _GeneralModuleFiles6
+

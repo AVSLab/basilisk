@@ -1,0 +1,10 @@
+.. _THRArrayCmdForceMsgPayload:
+
+THRArrayCmdForceMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRArrayCmdForceMsgPayload.h
+   :project: msgPayloadDefC
+

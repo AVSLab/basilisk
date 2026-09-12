@@ -1,0 +1,13 @@
+.. _test_mass_update:
+
+test_mass_update
+================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_mass_update
+   :members:
+   :show-inheritance:
+

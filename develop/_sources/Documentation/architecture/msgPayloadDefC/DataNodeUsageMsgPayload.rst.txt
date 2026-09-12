@@ -1,0 +1,10 @@
+.. _DataNodeUsageMsgPayload:
+
+DataNodeUsageMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DataNodeUsageMsgPayload.h
+   :project: msgPayloadDefC
+

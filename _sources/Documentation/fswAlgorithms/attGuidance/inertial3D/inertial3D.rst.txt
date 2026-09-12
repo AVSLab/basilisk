@@ -1,0 +1,31 @@
+.. _inertial3D:
+
+:module-type:`C` Module: inertial3D
+===================================
+
+Executive Summary
+-----------------
+
+This attitude guidance module create a reference attitude message that points in fixed inertial direction. The module
+:download:`PDF Description </../../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/Basilisk-Inertial3D-2016-01-15.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: inertial3D
+    :caption: Module I/O Messages
+
+    output attRefOutMsg AttRefMsgPayload
+        attitude reference output message
+
+
+----
+
+.. autodoxygenfile:: inertial3D.h
+   :project: inertial3D
+

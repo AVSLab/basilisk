@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_extForceTorqueInitialization &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_extForceTorqueInitialization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_extForceTorqueInitialization</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Verify safe external-load defaults and command sampling through both attachment paths."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">extForceTorque</span><span class="p">,</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">spinningBodyOneDOFStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="n">STATIC_FORCE_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>  <span class="c1"># [N]</span>
+<span class="n">STATIC_FORCE_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">])</span>  <span class="c1"># [N]</span>
+<span class="n">STATIC_TORQUE_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>  <span class="c1"># [N*m]</span>
+<span class="n">COMMAND_FORCE_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>  <span class="c1"># [N]</span>
+<span class="n">COMMAND_FORCE_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">])</span>  <span class="c1"># [N]</span>
+<span class="n">COMMAND_TORQUE_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>  <span class="c1"># [N*m]</span>
+
+
+<div class="viewcode-block" id="make_effector">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.make_effector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_effector</span><span class="p">(</span><span class="n">written</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configure static loads and connect all command inputs, optionally writing nonzero commands."""</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">extForce_N</span> <span class="o">=</span> <span class="n">STATIC_FORCE_N</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">extForce_B</span> <span class="o">=</span> <span class="n">STATIC_FORCE_B</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">extTorquePntB_B</span> <span class="o">=</span> <span class="n">STATIC_TORQUE_B</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceInertialMsg</span><span class="p">(),</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceBodyMsg</span><span class="p">(),</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsg</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">cmdForceInertialInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">cmdForceBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">written</span><span class="p">:</span>
+        <span class="n">write_commands</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">effector</span><span class="p">,</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="write_commands">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.write_commands">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_commands</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Write scaled force and torque commands without sampling them in the effector."""</span>
+    <span class="n">force_n</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceInertialMsgPayload</span><span class="p">()</span>
+    <span class="n">force_n</span><span class="o">.</span><span class="n">forceRequestInertial</span> <span class="o">=</span> <span class="n">COMMAND_FORCE_N</span> <span class="o">*</span> <span class="n">scale</span>  <span class="c1"># [N]</span>
+    <span class="n">force_b</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdForceBodyMsgPayload</span><span class="p">()</span>
+    <span class="n">force_b</span><span class="o">.</span><span class="n">forceRequestBody</span> <span class="o">=</span> <span class="n">COMMAND_FORCE_B</span> <span class="o">*</span> <span class="n">scale</span>  <span class="c1"># [N]</span>
+    <span class="n">torque_b</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CmdTorqueBodyMsgPayload</span><span class="p">()</span>
+    <span class="n">torque_b</span><span class="o">.</span><span class="n">torqueRequestBody</span> <span class="o">=</span> <span class="n">COMMAND_TORQUE_B</span> <span class="o">*</span> <span class="n">scale</span>  <span class="c1"># [N*m]</span>
+    <span class="k">for</span> <span class="n">message</span><span class="p">,</span> <span class="n">payload</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="p">(</span><span class="n">force_n</span><span class="p">,</span> <span class="n">force_b</span><span class="p">,</span> <span class="n">torque_b</span><span class="p">)):</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_loads">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.check_loads">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="n">command_scale</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compare reported loads with the independent sum of static and sampled commands."""</span>
+    <span class="k">for</span> <span class="n">actual</span><span class="p">,</span> <span class="n">configured</span><span class="p">,</span> <span class="n">commanded</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">forceExternal_N</span><span class="p">,</span> <span class="n">STATIC_FORCE_N</span><span class="p">,</span> <span class="n">COMMAND_FORCE_N</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">forceExternal_B</span><span class="p">,</span> <span class="n">STATIC_FORCE_B</span><span class="p">,</span> <span class="n">COMMAND_FORCE_B</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">torqueExternalPntB_B</span><span class="p">,</span> <span class="n">STATIC_TORQUE_B</span><span class="p">,</span> <span class="n">COMMAND_TORQUE_B</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">configured</span> <span class="o">+</span> <span class="n">command_scale</span> <span class="o">*</span> <span class="n">commanded</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="attach">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.attach">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">attach</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Attach to the hub or an appendage, retaining ownership of the native parent objects."""</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)))</span>  <span class="c1"># [ns]</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">if</span> <span class="n">branch</span><span class="p">:</span>
+        <span class="n">appendage</span> <span class="o">=</span> <span class="n">spinningBodyOneDOFStateEffector</span><span class="o">.</span><span class="n">SpinningBodyOneDOFStateEffector</span><span class="p">()</span>
+        <span class="n">appendage</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+        <span class="n">appendage</span><span class="o">.</span><span class="n">IPntSc_S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="n">appendage</span><span class="o">.</span><span class="n">sHat_S</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+        <span class="n">appendage</span><span class="o">.</span><span class="n">dcm_S0B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+        <span class="n">appendage</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">appendage</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">_ext_force_appendage</span> <span class="o">=</span> <span class="n">appendage</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">priority</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="p">,</span> <span class="n">parent</span></div>
+
+
+
+<div class="viewcode-block" id="test_command_defaults_and_scheduling">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.test_command_defaults_and_scheduling">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"branch"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"appendage"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"priority"</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"unscheduled"</span><span class="p">,</span> <span class="s2">"after_parent"</span><span class="p">,</span> <span class="s2">"before_parent"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"written"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"unwritten"</span><span class="p">,</span> <span class="s2">"written"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_command_defaults_and_scheduling</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="n">written</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Apply only static loads until commands are sampled, regardless of attachment or Reset order."""</span>
+    <span class="n">effector</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">make_effector</span><span class="p">(</span><span class="n">written</span><span class="p">)</span>
+    <span class="c1"># Check construction before either attachment or a scheduled Reset can clear the buffers.</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">attach</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.02</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">written</span> <span class="ow">and</span> <span class="n">priority</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_cached_commands_and_repeated_reset">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/extForceTorque/_UnitTest/test_extForceTorqueInitialization.html#test_extForceTorqueInitialization.test_cached_commands_and_repeated_reset">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"branch"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"hub"</span><span class="p">,</span> <span class="s2">"appendage"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_cached_commands_and_repeated_reset</span><span class="p">(</span><span class="n">branch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preserve sampled commands through attachment, hold them between reads, and clear them on Reset."""</span>
+    <span class="n">effector</span><span class="p">,</span> <span class="n">messages</span> <span class="o">=</span> <span class="n">make_effector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sim</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">attach</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">write_commands</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="n">position</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">nameOfHubPosition</span><span class="p">)</span>
+    <span class="n">position</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]])</span>  <span class="c1"># [m]</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+        <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">getState</span><span class="p">(),</span> <span class="n">before</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">computeForceTorque</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">check_loads</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

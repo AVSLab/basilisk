@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_scanningInstrumentController:
+
+scanningInstrumentController
+============================
+
+:doc:`Module documentation <scanningInstrumentController>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

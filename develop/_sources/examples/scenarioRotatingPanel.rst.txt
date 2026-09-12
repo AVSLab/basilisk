@@ -1,0 +1,15 @@
+.. _scenarioRotatingPanel:
+
+scenarioRotatingPanel
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioRotatingPanel
+   :members:
+   :show-inheritance:
+

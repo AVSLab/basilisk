@@ -1,0 +1,18 @@
+.. _Folder_formationFlying:
+
+formationFlying
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   etSphericalControl <etSphericalControl/etSphericalControl>
+   formationBarycenter <formationBarycenter/formationBarycenter>
+   hillFrameRelativeControl <hillFrameRelativeControl/hillFrameRelativeControl>
+   hillStateConverter <hillStateConverter/hillStateConverter>
+   hillToAttRef <hillToAttRef/hillToAttRef>
+   inertialCartFeedback <inertialCartFeedback/inertialCartFeedback>
+   meanOEFeedback <meanOEFeedback/meanOEFeedback>
+   spacecraftPointing <spacecraftPointing/spacecraftPointing>
+   spacecraftReconfig <spacecraftReconfig/spacecraftReconfig>

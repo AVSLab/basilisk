@@ -1,0 +1,46 @@
+.. _orbElemConvert:
+
+:module-type:`C++` Module: orbElemConvert
+=========================================
+
+
+Executive Summary
+-----------------
+
+An orbital element/cartesian position and velocity converter.
+The module :download:`PDF Description </../../src/simulation/dynamics/DynOutput/boreAngCalc/_Documentation/Basilisk-BOREANGLECALC-20170722.pdf>` contains further information on this module's function, how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the
+user from python.  The msg type contains a link to the message structure definition, while the description
+provides information on what this message is used for.
+
+.. bsk-module-io:: orbElemConvert
+    :caption: Module I/O Messages
+
+    input scStateInMsg SCStatesMsgPayload
+        Spacecraft state input message
+    input spiceStateInMsg SpicePlanetStateMsgPayload
+        Spice state input message
+    input elemInMsg ClassicElementsMsgPayload
+        classical orbit elements input message
+    output scStateOutMsg SCStatesMsgPayload
+        Spacecraft state output message
+    output spiceStateOutMsg SpicePlanetStateMsgPayload
+        Spice state output message
+    output elemOutMsg ClassicElementsMsgPayload
+        classical orbit elements output message
+
+
+.. warning::
+
+    Only one of the input messages can be connected at the same time.  However, you can have
+    1 or more output message connected simultaneously.
+
+
+----
+
+.. autodoxygenfile:: orbElemConvert.h
+   :project: orbElemConvert
+

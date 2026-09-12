@@ -1,0 +1,15 @@
+.. _test_dragEffectorValidation:
+
+test_dragEffectorValidation
+===========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_dragEffectorValidation
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,35 @@
+.. _Folder_effectorInterfaces:
+
+effectorInterfaces
+==================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+
+   _GeneralModuleFiles/index
+   dipoleMapping <dipoleMapping/dipoleMapping>
+   errorConversion/index
+   forceTorqueThrForceMapping <forceTorqueThrForceMapping/forceTorqueThrForceMapping>
+   hingedJointArrayMotor <hingedJointArrayMotor/hingedJointArrayMotor>
+   hingedRigidBodyPIDMotor <hingedRigidBodyPIDMotor/hingedRigidBodyPIDMotor>
+   jointMotionCompensator <jointMotionCompensator/jointMotionCompensator>
+   jointThrAllocation <jointThrAllocation/jointThrAllocation>
+   prescribedRot2DOF <prescribedRot2DOF/prescribedRot2DOF>
+   rwMotorTorque <rwMotorTorque/rwMotorTorque>
+   rwMotorVoltage <rwMotorVoltage/rwMotorVoltage>
+   rwNullSpace <rwNullSpace/rwNullSpace>
+   solarArrayReference <solarArrayReference/solarArrayReference>
+   thrFiringRemainder <thrFiringRemainder/thrFiringRemainder>
+   thrFiringRound <thrFiringRound/thrFiringRound>
+   thrFiringSchmitt <thrFiringSchmitt/thrFiringSchmitt>
+   thrForceMapping <thrForceMapping/thrForceMapping>
+   thrJointCompensation <thrJointCompensation/thrJointCompensation>
+   thrMomentumDumping <thrMomentumDumping/thrMomentumDumping>
+   thrusterPlatformReference <thrusterPlatformReference/thrusterPlatformReference>
+   thrusterPlatformState <thrusterPlatformState/thrusterPlatformState>
+   thrustRWDesat <thrustRWDesat/thrustRWDesat>
+   torque2Dipole <torque2Dipole/torque2Dipole>
+   torqueScheduler <torqueScheduler/torqueScheduler>
+   vscmgGimbalRateServo <vscmgGimbalRateServo/vscmgGimbalRateServo>
+   vscmgVelocitySteering <vscmgVelocitySteering/vscmgVelocitySteering>
