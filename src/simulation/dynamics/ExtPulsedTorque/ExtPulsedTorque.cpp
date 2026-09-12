@@ -17,14 +17,14 @@
 
  */
 #include "simulation/dynamics/ExtPulsedTorque/ExtPulsedTorque.h"
-#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overridden by the user.*/
 ExtPulsedTorque::ExtPulsedTorque()
 {
-    this->c = 0;
-
     CallCounts = 0;
     return;
 }
@@ -42,7 +42,34 @@ ExtPulsedTorque::~ExtPulsedTorque()
  */
 void ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
-    return;
+    this->validateConfiguration();
+}
+
+
+/*! @brief Validate pulse configuration without changing its phase relative to simulation time.
+ * @param CurrentSimNanos [ns] Scheduler reset time; it does not shift the pulse sequence.
+ */
+void ExtPulsedTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+{
+    this->validateConfiguration();
+}
+
+/*! @brief Validate pulse parameters before attachment, reset, or torque evaluation. */
+void ExtPulsedTorque::validateConfiguration()
+{
+    if (!this->pulsedTorqueExternalPntB_B.allFinite()) {
+        this->bskLogger.bskError("ExtPulsedTorque: pulsedTorqueExternalPntB_B must contain only finite values.");
+    }
+    if (this->countOnPulse < 0 || this->countOff < 0) {
+        this->bskLogger.bskError("ExtPulsedTorque: countOnPulse and countOff must be non-negative.");
+    }
+    if (!std::isfinite(this->pulseInterval) || this->pulseInterval <= 0.0) {
+        this->bskLogger.bskError("ExtPulsedTorque: pulseInterval must be finite and greater than zero.");
+    }
+    const double countPeriod = 2.0 * static_cast<double>(this->countOnPulse) + this->countOff;
+    if (!std::isfinite(countPeriod * this->pulseInterval)) {
+        this->bskLogger.bskError("ExtPulsedTorque: pulse counts and pulseInterval must produce a finite cycle duration.");
+    }
 }
 
 
@@ -70,27 +97,46 @@ void ExtPulsedTorque::readInputMessages()
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  *
  * @param[in] integTime [s] Current integration time.
- * @param[in] timeStep [s] Integration time step.
+ * @param[in] timeStep [s] Integration time step; unused because pulse timing uses pulseInterval.
  */
-void ExtPulsedTorque::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
 {
-    /* zero the output vector */
-    this->torqueExternalPntB_B.fill(0.0);
-
-    /* check if the pulse sequence must restart */
-    if (this->c >= this->countOnPulse*2 + this->countOff) {
-        this->c = 0;
+    this->validateConfiguration();
+    if (!std::isfinite(integTime) || integTime < 0.0) {
+        this->bskLogger.bskError("ExtPulsedTorque: integTime must be finite and non-negative, in seconds.");
     }
 
-    if (this->c < this->countOnPulse) {
-        this->torqueExternalPntB_B += this->pulsedTorqueExternalPntB_B;
-    } else if (this->c < this->countOnPulse*2) {
-        this->torqueExternalPntB_B -= this->pulsedTorqueExternalPntB_B;
+    this->forceExternal_N.setZero();
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
+    if (this->countOnPulse == 0) {
+        return;
     }
-    this->c++;
 
-
-    return;
+    const double onDuration = static_cast<double>(this->countOnPulse) * this->pulseInterval; // [s]
+    const double countPeriod = 2.0 * static_cast<double>(this->countOnPulse) + this->countOff;
+    const double cycleDuration = countPeriod * this->pulseInterval; // [s]
+    double phase = std::fmod(integTime, cycleDuration); // [s]
+    // Roundoff in decimal intervals can place a transition just inside the preceding segment.
+    // Scale each tolerance to its own transition and the evaluation time, so a long future off
+    // period cannot advance the initial pulse edges. Bound it to keep adjacent windows separate.
+    const auto isNearTransition = [this, integTime, phase](double transition) {
+        const double tolerance = std::min(0.25 * this->pulseInterval,
+            4.0 * std::numeric_limits<double>::epsilon() * std::max(integTime, transition)); // [s]
+        return std::abs(phase - transition) <= tolerance;
+    };
+    if (isNearTransition(cycleDuration)) {
+        phase = 0.0; // [s]
+    } else if (isNearTransition(onDuration)) {
+        phase = onDuration;
+    } else if (isNearTransition(2.0 * onDuration)) {
+        phase = 2.0 * onDuration; // [s]
+    }
+    if (phase < onDuration) {
+        this->torqueExternalPntB_B = this->pulsedTorqueExternalPntB_B;
+    } else if (phase < 2.0 * onDuration) {
+        this->torqueExternalPntB_B = -this->pulsedTorqueExternalPntB_B;
+    }
 }
 
 /*! Module update method

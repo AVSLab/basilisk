@@ -10,6 +10,10 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 469: :ref:`ExtPulsedTorque` advanced its pulse on every dynamics evaluation, so
+  intermediate integrator stages changed the pulse duration. It now evaluates the waveform from
+  simulation time using the explicit ``pulseInterval`` in seconds. Set this interval to the desired
+  duration of one pulse count when updating existing configurations. Resets preserve the time-zero phase.
 - GitHub issue 469: Range-only configuration checks accepted non-finite values in spinning-body,
   translation, hub, and stochastic effectors. The affected validators now reject non-finite scalar,
   vector, and matrix inputs, including in point-mass spacecraft initialization. Point-mass mode retains
