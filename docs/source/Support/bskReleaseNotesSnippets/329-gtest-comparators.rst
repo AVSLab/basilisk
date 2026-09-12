@@ -1,0 +1,1 @@
+- Added ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` GoogleTest assertions with operand diagnostics, explicit zero-reference behavior, and rejection of non-finite values and invalid tolerances. Shared scalar test comparators now reject invalid inputs as well.
