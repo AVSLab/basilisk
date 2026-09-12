@@ -25,8 +25,8 @@ equivalence to committed reference trajectories (test_stochasticIntegratorsJulia
 test_stochasticIntegratorsPaper.py).
 
 The Example 1 Monte Carlo validation runs in routine CI with its statistical
-assertion enabled. It uses reproducible, distinct trajectory seeds and has no
-automatic retries.
+assertion enabled. It replays a fixed ensemble of NumPy-generated Wiener
+increments, independent of the C++ standard library, and has no automatic retries.
 """
 from __future__ import annotations
 
@@ -787,20 +787,24 @@ def test_validateExample1(method: Method):
     """Check Example 1's empirical second moment with known discretization bias.
 
     Run 1,000 trajectories in ten batches over the five-second interval used
-    by the manual validation. Distinct fixed seeds make the result repeatable;
-    the statistical assertion is always enabled and failures are not retried.
+    by the manual validation. Prescribed Wiener increments from NumPy's frozen
+    ``RandomState`` algorithm make the ensemble repeatable across C++ standard
+    libraries, up to floating-point roundoff. The assertion is always enabled
+    and failures are not retried.
 
     Correct the error against the continuous analytic solution by the exact
     Euler-Maruyama discretization bias. The remaining sampling error must be
     within two estimated standard errors of the grand mean. The estimator
     returns the variance between batch means, so divide it by the number of
-    batches before taking its square root.
+    batches before taking its square root. This bound is a regression criterion
+    for this fixed ensemble, not a confidence guarantee for newly drawn samples.
 
     :param method: Integration method.
     """
 
     dt = 2.**-3  # [s]
     tf = 5.0  # [s], an exact multiple of dt
+    step_count = round(tf/dt)
     trajectory_seeds = itertools.count()
     batch_count = 10
     trajectories_per_batch = 100
@@ -809,10 +813,20 @@ def test_validateExample1(method: Method):
 
     def basiliskTrajectory():
         scSim, stateModel, integratorObject, stateLogger = getBasiliskSim(
-            method, dt, system.x0, system.f, system.g, next(trajectory_seeds)
+            method, dt, system.x0, system.f, system.g, None
         )
+        # RandomState deliberately preserves NumPy's legacy stream across
+        # versions. C++ std::normal_distribution does not preserve it across
+        # standard libraries. Keep seeds 0..999 and the draw shape fixed.
+        rng = np.random.RandomState(next(trajectory_seeds))
+        increments = np.sqrt(dt)*rng.standard_normal((step_count, len(system.g)))  # [sqrt(s)]
+        prescribed = svIntegrators.PrescribedGaussianNoiseGenerator()
+        for increment in increments:
+            prescribed.pushStep(increment.tolist())
+        integratorObject.setNoiseGenerator(prescribed)
         scSim.ConfigureStopTime( macros.sec2nano(tf) )
         scSim.ExecuteSimulation()
+        assert prescribed.remaining() == 0, "The simulation did not consume all prescribed increments."
 
         xBasilisk = stateLogger.x
 
@@ -823,7 +837,7 @@ def test_validateExample1(method: Method):
         return arr[1]**2
 
     estimateGOnTrajectory = 149/150*np.exp(-5/2*tf) +1/150*np.exp(-tf)
-    discrete_moment = _example1_euler_second_moment(system, dt, round(tf/dt))
+    discrete_moment = _example1_euler_second_moment(system, dt, step_count)
     expected_bias = discrete_moment - estimateGOnTrajectory
 
     err, varErr = estimateErrorAndEmpiricalVariance(
