@@ -49,8 +49,8 @@ void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! Validate that either the tuning parameters or individual gains were configured. */
 void ConstraintDynamicEffector::validateConfiguration()
 {
-    // check if any individual gains are not specified
-    bool gainset = this->k_d != 0 || this->c_d != 0 || this->k_a != 0 || this->c_a != 0;
+    // Preserve support for partial explicit configurations, including zero unspecified gains.
+    const bool gainset = this->k_dExplicit || this->c_dExplicit || this->k_aExplicit || this->c_aExplicit;
     if (this->alpha <= 0 && !gainset) {
         bskLogger.bskError("Alpha must be set to a positive nonzero value prior to initialization");
     }
@@ -59,22 +59,20 @@ void ConstraintDynamicEffector::validateConfiguration()
     }
 }
 
-/*! Populate unspecified individual gains from the configured tuning parameters. */
+/*! @brief Recompute derived gains without replacing explicitly configured individual gains. */
 void ConstraintDynamicEffector::initializeGains()
 {
-    // if individual k's or c's are already set, don't use alpha & beta
-    if (this->k_d == 0) {
-        this->k_d = pow(this->alpha,2);
+    const double k_d = this->k_dExplicit ? this->k_d : this->alpha * this->alpha; // [N/m]
+    const double c_d = this->c_dExplicit ? this->c_d : 2.0 * this->beta; // [N*s/m]
+    const double k_a = this->k_aExplicit ? this->k_a : this->alpha * this->alpha; // [N*m]
+    const double c_a = this->c_aExplicit ? this->c_a : 2.0 * this->beta; // [N*m*s]
+    if (!std::isfinite(k_d) || !std::isfinite(c_d) || !std::isfinite(k_a) || !std::isfinite(c_a)) {
+        bskLogger.bskError("ConstraintDynamicEffector: alpha and beta must produce finite derived gains.");
     }
-    if (this->c_d == 0) {
-        this->c_d = 2*this->beta;
-    }
-    if (this->k_a == 0) {
-        this->k_a = pow(this->alpha,2);
-    }
-    if (this->c_a == 0) {
-        this->c_a = 2*this->beta;
-    }
+    this->k_d = k_d;
+    this->c_d = c_d;
+    this->k_a = k_a;
+    this->c_a = c_a;
 }
 
 /*! @brief Set the initial separation between connection points.
@@ -111,73 +109,83 @@ void ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init) {
 
 /*! @brief Set the proportional Baumgarte tuning parameter.
  *
- * @param[in] alpha [1/s] Proportional Baumgarte tuning parameter.
+ * @param[in] alpha [-] Numerical proportional Baumgarte tuning parameter.
+ * @note Its square supplies the numerical SI values of derived k_d [N/m] and k_a [N*m].
  */
 void ConstraintDynamicEffector::setAlpha(double alpha) {
-    if (alpha > 0.0)
+    if (std::isfinite(alpha) && alpha > 0.0)
         this->alpha = alpha;
     else {
-        bskLogger.bskError("Proportional gain tuning variable alpha must be greater than 0.");
+        bskLogger.bskError("Proportional gain tuning variable alpha must be finite and greater than 0.");
     }
 }
 
 /*! @brief Set the derivative Baumgarte tuning parameter.
  *
- * @param[in] beta [1/s] Derivative Baumgarte tuning parameter.
+ * @param[in] beta [-] Numerical derivative Baumgarte tuning parameter.
+ * @note Twice its value supplies the numerical SI values of derived c_d [N*s/m] and c_a [N*m*s].
  */
 void ConstraintDynamicEffector::setBeta(double beta) {
-    if (beta > 0.0)
+    if (std::isfinite(beta) && beta > 0.0)
         this->beta = beta;
     else {
-        bskLogger.bskError("Derivative gain tuning parameter beta must be greater than 0.");
+        bskLogger.bskError("Derivative gain tuning parameter beta must be finite and greater than 0.");
     }
 }
 
 /*! @brief Set the direction-constraint proportional gain.
  *
- * @param[in] k_d [1/s^2] Direction-constraint proportional gain.
+ * @param[in] k_d [N/m] Direction-constraint proportional gain.
  */
 void ConstraintDynamicEffector::setK_d(double k_d) {
-    if (k_d > 0.0)
+    if (std::isfinite(k_d) && k_d > 0.0) {
         this->k_d = k_d;
+        this->k_dExplicit = true;
+    }
     else {
-        bskLogger.bskError("Direction constraint proportional gain k_d must be greater than 0.");
+        bskLogger.bskError("Direction constraint proportional gain k_d must be finite and greater than 0.");
     }
 }
 
 /*! @brief Set the direction-constraint derivative gain.
  *
- * @param[in] c_d [1/s] Direction-constraint derivative gain.
+ * @param[in] c_d [N*s/m] Direction-constraint derivative gain.
  */
 void ConstraintDynamicEffector::setC_d(double c_d) {
-    if (c_d > 0.0)
+    if (std::isfinite(c_d) && c_d > 0.0) {
         this->c_d = c_d;
+        this->c_dExplicit = true;
+    }
     else {
-        bskLogger.bskError("Direction constraint derivative gain c_d must be greater than 0.");
+        bskLogger.bskError("Direction constraint derivative gain c_d must be finite and greater than 0.");
     }
 }
 
 /*! @brief Set the attitude-constraint proportional gain.
  *
- * @param[in] k_a [1/s^2] Attitude-constraint proportional gain.
+ * @param[in] k_a [N*m] Attitude-constraint proportional gain multiplying dimensionless MRP error.
  */
 void ConstraintDynamicEffector::setK_a(double k_a) {
-    if (k_a > 0.0)
+    if (std::isfinite(k_a) && k_a > 0.0) {
         this->k_a = k_a;
+        this->k_aExplicit = true;
+    }
     else {
-        bskLogger.bskError("Attitude constraint proportional gain k_a must be greater than 0.");
+        bskLogger.bskError("Attitude constraint proportional gain k_a must be finite and greater than 0.");
     }
 }
 
 /*! @brief Set the attitude-constraint derivative gain.
  *
- * @param[in] c_a [1/s] Attitude-constraint derivative gain.
+ * @param[in] c_a [N*m*s] Attitude-constraint derivative gain multiplying the MRP error rate.
  */
 void ConstraintDynamicEffector::setC_a(double c_a) {
-    if (c_a > 0.0)
+    if (std::isfinite(c_a) && c_a > 0.0) {
         this->c_a = c_a;
+        this->c_aExplicit = true;
+    }
     else {
-        bskLogger.bskError("Attitude constraint derivative gain c_a must be greater than 0.");
+        bskLogger.bskError("Attitude constraint derivative gain c_a must be finite and greater than 0.");
     }
 }
 

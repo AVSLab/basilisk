@@ -69,7 +69,7 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
     constraintEffector.setAlpha(1E2)
     constraintEffector.setBeta(1e3)
 
-#. (Optional) Define exact gains for the direction and attitude constraints separately. These are internally set based on alpha and beta during attachment initialization or reset, but can be overridden in this way::
+#. (Optional) Define exact gains for the direction and attitude constraints separately. These explicit gains are preserved during attachment initialization and reset; gains without an explicit override are derived from alpha and beta::
 
     constraintEffector.setK_d(alpha**2)
     constraintEffector.setC_d(2*beta)
@@ -143,12 +143,51 @@ This section outlines the steps needed to setup a Constraint Dynamic Effector in
 
 #. The constraintEffector output message records the raw and filtered constraint forces and torques acting on the two spacecraft using the variable ``constraintElements``.
 
+Gain Units
+----------
+The direction gains multiply position error and its rate to produce force. The attitude gains
+multiply the dimensionless MRP error and its rate to produce torque. Their SI units are:
+
+.. list-table:: Constraint gain units
+    :header-rows: 1
+
+    * - Gain
+      - Units
+    * - ``k_d``
+      - N/m
+    * - ``c_d``
+      - N s/m
+    * - ``k_a``
+      - N m
+    * - ``c_a``
+      - N m s
+
+``alpha`` and ``beta`` are dimensionless numerical tuning parameters. Squaring ``alpha`` or
+doubling ``beta`` supplies the numerical value of each derived gain in its respective SI units.
+For example, ``alpha = 3`` gives ``k_d = 9`` N/m and ``k_a = 9`` N m, while ``beta = 2`` gives
+``c_d = 4`` N s/m and ``c_a = 4`` N m s. Use the individual gain setters to choose the direction
+and attitude stiffness or damping independently.
+
+
 Initialization and Reset
 ------------------------
-The effector can be attached to spacecraft hubs or to state-effector branches.  Both attachment paths require
-positive ``alpha`` and ``beta`` tuning parameters when all individual gains remain at zero.  During the same
-initialization, each zero-valued individual gain is derived from ``alpha`` and ``beta``.  This setup occurs while
-the parent states or properties are linked, so it does not depend on separately scheduling the effector.
+The effector can be attached to spacecraft hubs or to state-effector branches. Both attachment paths
+require positive ``alpha`` and ``beta`` tuning parameters when no individual gain has been explicitly set.
+Each gain without an explicit override is derived as ``k_d = k_a = alpha**2`` or ``c_d = c_a = 2*beta``.
+This setup occurs while the parent states or properties are linked, so it does not depend on separately
+scheduling the effector.
+
+The effector records which individual gain setters have been called. Changing ``alpha`` or ``beta``
+and then calling ``Reset()`` refreshes every derived gain while preserving explicit overrides, even
+when an override equals a previously derived value. Individual gain setters take effect immediately;
+tuning-parameter setters affect the derived gains at the next reset or attachment initialization.
+Repeated resets with unchanged inputs produce the same gains.
+
+All gain and tuning-parameter setters require finite, strictly positive values and reject invalid
+inputs without replacing the prior value or changing whether a gain is explicit. Derived gains must
+also remain finite; overflow raises ``BasiliskError`` before any derived gain is replaced. Existing
+partial explicit configurations remain supported: unset tuning parameters retain their zero defaults,
+which can leave the corresponding unspecified gains at zero.
 
 Constraint force and torque evaluation is driven by the parent dynamics.  Add the effector to a task to process
 its optional status input and to update its filtered-force and filtered-torque output message.
