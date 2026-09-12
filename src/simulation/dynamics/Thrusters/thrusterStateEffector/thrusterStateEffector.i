@@ -32,6 +32,11 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+
+%attribute(ThrusterStateEffector, std::string, nameOfKappaState,
+           getNameOfKappaState, setNameOfKappaState);
+
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 

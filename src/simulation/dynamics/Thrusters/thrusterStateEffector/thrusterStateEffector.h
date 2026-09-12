@@ -22,6 +22,9 @@
 #define THRUSTER_STATE_EFFECTOR_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
 #include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
@@ -52,16 +55,16 @@ class ThrusterStateEffector final: public StateEffector, public SysModel {
 public:
     ThrusterStateEffector();
     ~ThrusterStateEffector();
-    void Reset(uint64_t CurrentSimNanos);
+    void Reset(uint64_t CurrentSimNanos) override;
     bool ReadInputs();
-    void writeOutputStateMessages(uint64_t CurrentClock);
-    void registerStates(DynParamManager& states);  //!< Method for the effector to register its states
-    void linkInStates(DynParamManager& states);  //!< Method for the effector to get access of other states
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< Method for each stateEffector to calculate derivatives
-    void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);
-    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Method to pass the forces and torques onto the hub
-    void updateEffectorMassProps(double integTime);
-    void UpdateState(uint64_t CurrentSimNanos);
+    void writeOutputStateMessages(uint64_t CurrentClock) override;
+    void registerStates(DynParamManager& states) override;  //!< Method for the effector to register its states
+    void linkInStates(DynParamManager& states) override;  //!< Method for the effector to get access of other states
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< Method for each stateEffector to calculate derivatives
+    void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) override;
+    void updateContributions(double integTime, BackSubMatrices& backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< Method to pass the forces and torques onto the hub
+    void updateEffectorMassProps(double integTime) override;
+    void UpdateState(uint64_t CurrentSimNanos) override;
 
 
     void addThruster(std::shared_ptr<THRSimConfig> newThruster); //!< Add a new thruster to the thruster set
@@ -78,7 +81,6 @@ public:
 
     // State information
     std::vector<double> kappaInit;                //!< [] Vector of initial thruster states
-    std::string nameOfKappaState;    //!< Identifier for the kappa state data container
 
     // State structures
 	StateData *hubSigma;        //!< pointer to hub attitude states
@@ -92,7 +94,31 @@ public:
     // Mass flow rate
     double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
 
+    /** @brief Set the explicit kappa state name; Python retains nameOfKappaState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfKappaState(const std::string& value);
+    /** @brief Get the current kappa state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfKappaState() const { return this->nameOfKappaState; }
+
 private:
+    std::string nameOfKappaState; //!< Current kappa state name.
+    std::optional<std::string> customKappaState; //!< Explicit override, independent of automatic names.
+    bool effectorNamesResolved = false; //!< Prevent changes to registered manager-local names.
+    /** @brief Record an explicit name assignment, enforcing resolved-name immutability.
+     * @param currentName Currently visible name to update.
+     * @param customName Metadata identifying an explicit override.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the prepared names before registering effector states.
+     * @param manager Dynamics manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
     void validateConfiguration();  //!< Validate dimensions before accessing thruster data or commands
     void validateRegisteredCount();  //!< Reject changes to the number of registered thrust-factor states
     std::optional<std::size_t> registeredThrusterCount;  //!< Thruster count after successful state registration
@@ -106,6 +132,13 @@ private:
 
     double prevCommandTime;                       //!< [s] Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
+#ifndef SWIG
+protected:
+    /** @brief Declare the state names allocated together for this effector.
+     * @return Group with a shared automatic index and independently tracked custom names.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 

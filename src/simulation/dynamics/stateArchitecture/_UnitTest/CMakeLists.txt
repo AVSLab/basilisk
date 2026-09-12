@@ -2,8 +2,15 @@
 # This file is distributed under the ISC License in LICENSE.
 
 add_executable(test_effectorNames test_effectorNames.cpp test_hingedEffectorNames.cpp
+  test_simpleEffectorNames.cpp
   ../../HingedRigidBodies/hingedRigidBodyStateEffector.cpp
-  ../../spacecraft/spacecraft.cpp)
+  ../../spacecraft/spacecraft.cpp
+  ../../LinearSpringMassDamper/linearSpringMassDamper.cpp
+  ../../sphericalPendulum/sphericalPendulum.cpp
+  ../../FuelTank/fuelTank.cpp
+  ../../Thrusters/thrusterStateEffector/thrusterStateEffector.cpp
+  ../../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.cpp
+  ../../igbmNoiseStateEffector/igbmNoiseStateEffector.cpp)
 target_link_libraries(test_effectorNames PRIVATE GTest::gtest_main dynamicsLib Eigen3::Eigen3)
 
 # Keep the executable beside its package DLLs for both discovery and execution on Windows.
@@ -36,11 +43,13 @@ foreach(config DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
     LIBRARY_OUTPUT_DIRECTORY_${config} "${CMAKE_CURRENT_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_${config} "${CMAKE_CURRENT_BINARY_DIR}")
 endforeach()
-add_test(NAME hingedEffectorNamingPython
+add_test(NAME effectorNamingPython
   COMMAND "${Python3_EXECUTABLE}" -m pytest -q
-  "${CMAKE_CURRENT_SOURCE_DIR}/test_hingedEffectorNaming.py")
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_hingedEffectorNaming.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_simpleEffectorNaming.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingCompatibility.py")
 cmake_path(CONVERT "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}"
   TO_NATIVE_PATH_LIST naming_test_pythonpath)
 string(REPLACE ";" "\\;" naming_test_pythonpath "${naming_test_pythonpath}")
-set_tests_properties(hingedEffectorNamingPython PROPERTIES
+set_tests_properties(effectorNamingPython PROPERTIES
   ENVIRONMENT "PYTHONPATH=${naming_test_pythonpath};MPLBACKEND=Agg;BSK_REQUIRE_NAMING_TEST_SUPPORT=1")

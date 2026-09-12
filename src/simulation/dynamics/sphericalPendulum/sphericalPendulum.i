@@ -33,6 +33,19 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+
+%attribute(SphericalPendulum, std::string, nameOfPhiState,
+           getNameOfPhiState, setNameOfPhiState);
+%attribute(SphericalPendulum, std::string, nameOfThetaState,
+           getNameOfThetaState, setNameOfThetaState);
+%attribute(SphericalPendulum, std::string, nameOfPhiDotState,
+           getNameOfPhiDotState, setNameOfPhiDotState);
+%attribute(SphericalPendulum, std::string, nameOfThetaDotState,
+           getNameOfThetaDotState, setNameOfThetaDotState);
+%attribute(SphericalPendulum, std::string, nameOfMassState,
+           getNameOfMassState, setNameOfMassState);
+
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 

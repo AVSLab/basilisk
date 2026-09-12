@@ -31,6 +31,14 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
+%include "attribute.i"
+
+%attribute(FuelTank, std::string, nameOfMassState,
+           getNameOfMassState, setNameOfMassState);
+// Keep the established Python methods as well as the deprecated attribute.
+%rename(getNameOfMassState) FuelTank::getNameOfMassState() const;
+%rename(setNameOfMassState) FuelTank::setNameOfMassState;
+
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 %include "swig_deprecated.i"

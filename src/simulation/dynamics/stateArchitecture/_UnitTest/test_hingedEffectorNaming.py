@@ -4,8 +4,6 @@
 """Exercise hinged-panel naming through complete Python simulation lifetimes."""
 
 import gc
-import importlib.util
-import os
 import weakref
 from dataclasses import dataclass
 
@@ -41,27 +39,6 @@ AUTO_PREFIXES = (
     "hingedRigidBodyInertialAttitude",
     "hingedRigidBodyInertialAngVelocity",
 )
-
-
-@pytest.fixture
-def naming_support():
-    """Load the opt-in bridge from the CMake test directory, outside the package."""
-    spec = importlib.util.find_spec("effectorNamingTestSupport")
-    if spec is None:
-        if os.environ.get("BSK_REQUIRE_NAMING_TEST_SUPPORT"):
-            pytest.fail("Build the effectorNamingTestSupport target before running this CTest.")
-        pytest.skip("Run hingedEffectorNamingPython through CTest to test the gated policy.")
-    import effectorNamingTestSupport
-
-    return effectorNamingTestSupport
-
-
-@pytest.fixture(params=[False, True], ids=["legacy", "manager-local"])
-def manager_local(request):
-    """Keep legacy cases runnable even when the internal test bridge is not built."""
-    if request.param:
-        request.getfixturevalue("naming_support")
-    return request.param
 
 
 @dataclass

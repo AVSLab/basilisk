@@ -19,12 +19,10 @@
 from datetime import date
 import warnings
 
-import conftest
 
-
-def test_show_plots_cutoff_notice():
+def test_show_plots_cutoff_notice(show_plots_removal_date):
     """Emit a visible reminder after the cutoff date without failing tests."""
-    if date.today() <= conftest.SHOW_PLOTS_REMOVAL_DATE:
+    if date.today() <= show_plots_removal_date:
         return
 
     warnings.warn(

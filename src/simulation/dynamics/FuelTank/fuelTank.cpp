@@ -34,25 +34,47 @@ FuelTank::FuelTank() {
     this->r_TcB_B.setZero();
 
     this->effectorID++;
-    this->setNameOfMassState("fuelTankMass" + std::to_string(this->effectorID));
+    this->nameOfMassState = "fuelTankMass" + std::to_string(this->effectorID);
+}
+
+void FuelTank::setNameOfMassState(const std::string& value)
+{
+    this->setCustomName(this->nameOfMassState, this->customMassState, value);
+}
+
+void FuelTank::setCustomName(std::string& currentName,
+                             std::optional<std::string>& customName,
+                             const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("FuelTank: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup FuelTank::describeEffectorNames() const
+{
+    return {"fuelTank",
+            {
+                {"mass", EffectorNameKind::State, "fuelTankMass", "", this->customMassState}
+            }};
+}
+
+void FuelTank::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfMassState = this->getResolvedEffectorName(manager, "mass");
+    this->effectorNamesResolved = true;
 }
 
 uint64_t FuelTank::effectorID = 1;
 
 FuelTank::~FuelTank() {
-}
-
-/*! optionally set the name of the mass state to be used by the state manager
- *
- * @param[in] nameOfMassState Name assigned to the tank mass state.
- */
-void FuelTank::setNameOfMassState(const std::string &nameOfMassState) {
-    this->nameOfMassState = nameOfMassState;
-}
-
-/*! get the name of the mass state used by the state manager */
-std::string FuelTank::getNameOfMassState() const {
-    return this->nameOfMassState;
 }
 
 /*! set fuel tank orientation relative to the hub frame
@@ -159,6 +181,11 @@ void FuelTank::linkInStates(DynParamManager &states) {
  * @param[in,out] states Dynamic parameter manager used to register the tank mass state.
  */
 void FuelTank::registerStates(DynParamManager &states) {
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     for (auto* fuelSloshParticle: this->fuelSloshParticles) {
         if (fuelSloshParticle->hasRegisteredStates) {
             this->bskLogger.bskLog(
@@ -168,7 +195,9 @@ void FuelTank::registerStates(DynParamManager &states) {
     }
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
-    this->massState = states.registerState(1, 1, this->getNameOfMassState());
+    this->massState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+        : states.registerState(1, 1, this->nameOfMassState);
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
     this->emptyTankWarningPrinted = false;

@@ -48,6 +48,55 @@ LinearSpringMassDamper::LinearSpringMassDamper()
 	return;
 }
 
+void LinearSpringMassDamper::setNameOfRhoState(const std::string& value)
+{
+    this->setCustomName(this->nameOfRhoState, this->customRhoState, value);
+}
+
+void LinearSpringMassDamper::setNameOfRhoDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfRhoDotState, this->customRhoDotState, value);
+}
+
+void LinearSpringMassDamper::setNameOfMassState(const std::string& value)
+{
+    this->setCustomName(this->nameOfMassState, this->customMassState, value);
+}
+
+void LinearSpringMassDamper::setCustomName(std::string& currentName,
+                                           std::optional<std::string>& customName,
+                                           const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("LinearSpringMassDamper: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup LinearSpringMassDamper::describeEffectorNames() const
+{
+    return {"linearSpringMassDamper",
+            {
+                {"rho", EffectorNameKind::State, "linearSpringMassDamperRho", "", this->customRhoState},
+                {"rhoDot", EffectorNameKind::State, "linearSpringMassDamperRhoDot", "", this->customRhoDotState},
+                {"mass", EffectorNameKind::State, "linearSpringMassDamperMass", "", this->customMassState}
+            }};
+}
+
+void LinearSpringMassDamper::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfRhoState = this->getResolvedEffectorName(manager, "rho");
+    this->nameOfRhoDotState = this->getResolvedEffectorName(manager, "rhoDot");
+    this->nameOfMassState = this->getResolvedEffectorName(manager, "mass");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t LinearSpringMassDamper::effectorID = 1;
 
 /*! @brief Validate the initial particle mass, retaining the supported empty-particle case. */
@@ -95,18 +144,29 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
 void LinearSpringMassDamper::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     // - Register rho and rhoDot
-	this->rhoState = states.registerState(1, 1, nameOfRhoState);
+    this->rhoState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rho")
+        : states.registerState(1, 1, this->nameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);
     rhoInitMatrix(0,0) = this->rhoInit;
     this->rhoState->setState(rhoInitMatrix);
-	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
+    this->rhoDotState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rhoDot")
+        : states.registerState(1, 1, this->nameOfRhoDotState);
     Eigen::MatrixXd rhoDotInitMatrix(1,1);
     rhoDotInitMatrix(0,0) = this->rhoDotInit;
     this->rhoDotState->setState(rhoDotInitMatrix);
 
 	// - Register mass
-	this->massState = states.registerState(1, 1, nameOfMassState);
+    this->massState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+        : states.registerState(1, 1, this->nameOfMassState);
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
     this->massState->setState(massInitMatrix);

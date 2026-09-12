@@ -120,6 +120,12 @@ def show_plots(request):
     return request.config.getoption("--show_plots")
 
 
+@pytest.fixture(scope="session")
+def show_plots_removal_date():
+    """Provide the cutoff without relying on an ambiguous ``conftest`` import."""
+    return SHOW_PLOTS_REMOVAL_DATE
+
+
 def _apply_basilisk_plot_defaults():
     mpl.rcParams.update({
         "figure.facecolor": "white",

@@ -26,8 +26,18 @@
 #include "simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include "simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.h"
 
+#include <optional>
+#include <cstdint>
+#include <string>
+#include <Eigen/Dense>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "architecture/utilities/bskLogging.h"
 #include <math.h>
 #include <memory>
 #include <vector>
@@ -274,13 +284,37 @@ public:
     ReadFunctor<MassFlowRateMsgPayload> fuelLeakRateInMsg; //!< (optional) fuel leak mass flow rate input message
     Message<FuelTankMsgPayload> fuelTankOutMsg{};       //!< fuel tank output message name
     FuelTankMsgPayload fuelTankMassPropMsg{};           //!< instance of messaging system message struct
-    std::string nameOfMassState{};                      //!< Legacy public mass state name; Python users should use accessors
+
     Eigen::Matrix3d dcm_TB;                             //!< Legacy public DCM from body frame to tank frame
     Eigen::Vector3d r_TB_B;                             //!< [m] Legacy public tank position in B frame; Python users should use accessors
     bool updateOnly = true;                             //!< Legacy public update-only flag; Python users should use accessors
     double fuelLeakRate{};                              //!< [kg/s] Legacy public leak rate; Python users should use accessors
 
+    /** @brief Set the explicit mass state name; Python retains nameOfMassState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfMassState(const std::string& value);
+    /** @brief Get the current mass state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfMassState() const { return this->nameOfMassState; }
+
 private:
+    std::string nameOfMassState; //!< Current mass state name.
+    std::optional<std::string> customMassState; //!< Explicit override, independent of automatic names.
+    bool effectorNamesResolved = false; //!< Prevent changes to registered manager-local names.
+    /** @brief Record an explicit name assignment, enforcing resolved-name immutability.
+     * @param currentName Currently visible name to update.
+     * @param customName Metadata identifying an explicit override.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the prepared names before registering effector states.
+     * @param manager Dynamics manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
     StateData *omegaState{};                            //!< state data for omega_BN of the hub
     StateData *massState{};                             //!< state data for mass state
     double fuelConsumption{};                           //!< [kg/s] rate of fuel being consumed
@@ -310,8 +344,6 @@ public:
     void registerStates(DynParamManager &states) override;      //!< Register mass state with state manager
     void linkInStates(DynParamManager &states) override;        //!< Give the tank access to other states
     void updateEffectorMassProps(double integTime) override;    //!< Add contribution mass props from the tank
-    void setNameOfMassState(const std::string &nameOfMassState); //!< Setter for fuel tank mass state name
-    std::string getNameOfMassState() const;              //!< Getter for fuel tank mass state name
     void addThrusterSet(ThrusterDynamicEffector *dynEff);       //!< Add DynamicEffector thruster
     void addThrusterSet(ThrusterStateEffector *stateEff);       //!< Add StateEffector thruster
     void updateContributions(double integTime,
@@ -327,6 +359,13 @@ public:
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Calculate stateEffector's derivatives
+#ifndef SWIG
+protected:
+    /** @brief Declare the state names allocated together for this effector.
+     * @return Group with a shared automatic index and independently tracked custom names.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 

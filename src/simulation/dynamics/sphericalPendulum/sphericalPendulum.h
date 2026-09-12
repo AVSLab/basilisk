@@ -21,12 +21,16 @@
 #ifndef SPHERICAL_PENDULUM_H
 #define SPHERICAL_PENDULUM_H
 
+#include <optional>
 #include <cstdint>
 #include <string>
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
@@ -42,11 +46,7 @@ public:
     double phiDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double thetaDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double massInit;               //!< [kg] Initial value for spherical pendulum mass
-    std::string nameOfPhiState;    //!< [-] Identifier for the phi state data container
-    std::string nameOfThetaState;    //!< [-] Identifier for the theta state data container
-    std::string nameOfPhiDotState; //!< [-] Identifier for the phiDot state data container
-    std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
-	std::string nameOfMassState;   //!< [-] Identifier for the mass state data container
+
 	Eigen::Vector3d d;        //!< [m] position vector from B point to tank center , T, in body frame
 	StateData *massState = nullptr;		   //!< state data for the pendulums mass
     Eigen::Vector3d pHat_01;      //!< first vector of the P0 frame in B frame components
@@ -54,7 +54,75 @@ public:
     Eigen::Vector3d pHat_03;        //!< third vector of the P0 frame in B frame components
 		BSKLogger bskLogger;                      //!< BSK Logging
 
+    /** @brief Set the explicit phi state name; Python retains nameOfPhiState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPhiState(const std::string& value);
+    /** @brief Get the current phi state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfPhiState() const { return this->nameOfPhiState; }
+    /** @brief Set the explicit theta state name; Python retains nameOfThetaState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaState(const std::string& value);
+    /** @brief Get the current theta state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfThetaState() const { return this->nameOfThetaState; }
+    /** @brief Set the explicit phiDot state name; Python retains nameOfPhiDotState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPhiDotState(const std::string& value);
+    /** @brief Get the current phiDot state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfPhiDotState() const { return this->nameOfPhiDotState; }
+    /** @brief Set the explicit thetaDot state name; Python retains nameOfThetaDotState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaDotState(const std::string& value);
+    /** @brief Get the current thetaDot state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfThetaDotState() const { return this->nameOfThetaDotState; }
+    /** @brief Set the explicit mass state name; Python retains nameOfMassState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfMassState(const std::string& value);
+    /** @brief Get the current mass state name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfMassState() const { return this->nameOfMassState; }
+
 private:
+    std::string nameOfPhiState; //!< Current phi state name.
+    std::optional<std::string> customPhiState; //!< Explicit override, independent of automatic names.
+    std::string nameOfThetaState; //!< Current theta state name.
+    std::optional<std::string> customThetaState; //!< Explicit override, independent of automatic names.
+    std::string nameOfPhiDotState; //!< Current phiDot state name.
+    std::optional<std::string> customPhiDotState; //!< Explicit override, independent of automatic names.
+    std::string nameOfThetaDotState; //!< Current thetaDot state name.
+    std::optional<std::string> customThetaDotState; //!< Explicit override, independent of automatic names.
+    std::string nameOfMassState; //!< Current mass state name.
+    std::optional<std::string> customMassState; //!< Explicit override, independent of automatic names.
+    bool effectorNamesResolved = false; //!< Prevent changes to registered manager-local names.
+    /** @brief Record an explicit name assignment, enforcing resolved-name immutability.
+     * @param currentName Currently visible name to update.
+     * @param customName Metadata identifying an explicit override.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the prepared names before registering effector states.
+     * @param manager Dynamics manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
     void validateConfiguration(); //!< Validate initial mass and damping without changing the current states
     double phiInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
     double thetaInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
@@ -101,6 +169,13 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< Method for each stateEffector to calculate derivatives
+#ifndef SWIG
+protected:
+    /** @brief Declare the state names allocated together for this effector.
+     * @return Group with a shared automatic index and independently tracked custom names.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 

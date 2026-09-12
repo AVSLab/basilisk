@@ -59,6 +59,69 @@ SphericalPendulum::SphericalPendulum()
 	return;
 }
 
+void SphericalPendulum::setNameOfPhiState(const std::string& value)
+{
+    this->setCustomName(this->nameOfPhiState, this->customPhiState, value);
+}
+
+void SphericalPendulum::setNameOfThetaState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaState, this->customThetaState, value);
+}
+
+void SphericalPendulum::setNameOfPhiDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfPhiDotState, this->customPhiDotState, value);
+}
+
+void SphericalPendulum::setNameOfThetaDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaDotState, this->customThetaDotState, value);
+}
+
+void SphericalPendulum::setNameOfMassState(const std::string& value)
+{
+    this->setCustomName(this->nameOfMassState, this->customMassState, value);
+}
+
+void SphericalPendulum::setCustomName(std::string& currentName,
+                                      std::optional<std::string>& customName,
+                                      const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("SphericalPendulum: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup SphericalPendulum::describeEffectorNames() const
+{
+    return {"sphericalPendulum",
+            {
+                {"phi", EffectorNameKind::State, "sphericalPendulumPhi", "", this->customPhiState},
+                {"theta", EffectorNameKind::State, "sphericalPendulumTheta", "", this->customThetaState},
+                {"phiDot", EffectorNameKind::State, "sphericalPendulumPhiDot", "", this->customPhiDotState},
+                {"thetaDot", EffectorNameKind::State, "sphericalPendulumThetaDot", "", this->customThetaDotState},
+                {"mass", EffectorNameKind::State, "sphericalPendulumMass", "", this->customMassState}
+            }};
+}
+
+void SphericalPendulum::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfPhiState = this->getResolvedEffectorName(manager, "phi");
+    this->nameOfThetaState = this->getResolvedEffectorName(manager, "theta");
+    this->nameOfPhiDotState = this->getResolvedEffectorName(manager, "phiDot");
+    this->nameOfThetaDotState = this->getResolvedEffectorName(manager, "thetaDot");
+    this->nameOfMassState = this->getResolvedEffectorName(manager, "mass");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t SphericalPendulum::effectorID = 1;
 
 /*! @brief Validate initial mass and damping, retaining zero mass and semidefinite damping. */
@@ -106,30 +169,44 @@ void SphericalPendulum::linkInStates(DynParamManager& states)
 void SphericalPendulum::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
 
 	    // - Register phi, theta, phiDot and thetaDot
-	this->phiState = states.registerState(1, 1, nameOfPhiState);
+    this->phiState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phi")
+        : states.registerState(1, 1, this->nameOfPhiState);
     Eigen::MatrixXd phiInitMatrix(1,1);
     phiInitMatrix(0,0) = this->phiInit;
     this->phiState->setState(phiInitMatrix);
 
-    this->thetaState = states.registerState(1, 1, nameOfThetaState);
+    this->thetaState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "theta")
+        : states.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
 
-	this->phiDotState = states.registerState(1, 1, nameOfPhiDotState);
+    this->phiDotState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phiDot")
+        : states.registerState(1, 1, this->nameOfPhiDotState);
     Eigen::MatrixXd phiDotInitMatrix(1,1);
     phiDotInitMatrix(0,0) = this->phiDotInit;
     this->phiDotState->setState(phiDotInitMatrix);
 
-	this->thetaDotState = states.registerState(1, 1, nameOfThetaDotState);
+    this->thetaDotState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "thetaDot")
+        : states.registerState(1, 1, this->nameOfThetaDotState);
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
 	// - Register m
-	this->massState = states.registerState(1, 1, nameOfMassState);
+    this->massState = managerLocal
+        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+        : states.registerState(1, 1, this->nameOfMassState);
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
     this->massState->setState(massInitMatrix);
