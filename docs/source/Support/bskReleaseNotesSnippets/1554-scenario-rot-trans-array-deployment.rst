@@ -1,0 +1,1 @@
+- Added prescribed rotation and translation solar array deployment sequence :ref:`scenarioRotTransArrayDeployment` to examples, with unequal deployment rates and heavier panel elements to show the spacecraft hub's response.
