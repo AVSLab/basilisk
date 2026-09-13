@@ -327,6 +327,7 @@ Prescribed Motion Spacecraft Dynamics Simulations
 
    Prescribed Helical Screw Motion <scenarioPrescribedScrewMotion>
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
+   Prescribed Motion with Rotating and Translating Solar Array Deployment <scenarioRotTransArrayDeployment>
    Prescribed Motion with Translating Effector Branching <scenarioPrescribedMotionWithTranslationBranching>
    Prescribed Motion with Rotating Effector Branching <scenarioPrescribedMotionWithRotationBranching>
 
