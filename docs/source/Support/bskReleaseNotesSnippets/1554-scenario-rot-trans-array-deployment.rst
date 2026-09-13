@@ -1,0 +1,1 @@
+- Added rotation and translation solar array deployment sequence :ref:`scenarioRotTransArrayDeployment` to examples.
