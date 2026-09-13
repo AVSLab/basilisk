@@ -21,7 +21,11 @@
 #define PRESCRIBED_MOTION_STATE_EFFECTOR_H
 
 #include <cstdint>
+#include <optional>
 #include <string>
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include <vector>
 #include <Eigen/Dense>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
@@ -40,6 +44,143 @@
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector final: public StateEffector, public SysModel {
 public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfsigma_PMState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfsigma_PMState() const { return this->nameOfsigma_PMState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty() const { return this->nameOfInertialPositionProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty() const { return this->nameOfInertialVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty() const { return this->nameOfInertialAttitudeProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty() const { return this->nameOfInertialAngVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedPositionProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedPositionProperty() const { return this->nameOfPrescribedPositionProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedVelocityProperty() const { return this->nameOfPrescribedVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedAccelerationProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedAccelerationProperty() const { return this->nameOfPrescribedAccelerationProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedAttitudeProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedAttitudeProperty() const { return this->nameOfPrescribedAttitudeProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedAngVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedAngVelocityProperty() const { return this->nameOfPrescribedAngVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfPrescribedAngAccelerationProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfPrescribedAngAccelerationProperty() const { return this->nameOfPrescribedAngAccelerationProperty; }
+
+private:
+    std::string nameOfsigma_PMState; //!< Current state or property name.
+    std::optional<std::string> customNameOfsigma_PMState; //!< Explicit override.
+    std::string nameOfInertialPositionProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty; //!< Explicit override.
+    std::string nameOfPrescribedPositionProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedPositionProperty; //!< Explicit override.
+    std::string nameOfPrescribedVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedVelocityProperty; //!< Explicit override.
+    std::string nameOfPrescribedAccelerationProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedAccelerationProperty; //!< Explicit override.
+    std::string nameOfPrescribedAttitudeProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedAttitudeProperty; //!< Explicit override.
+    std::string nameOfPrescribedAngVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedAngVelocityProperty; //!< Explicit override.
+    std::string nameOfPrescribedAngAccelerationProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfPrescribedAngAccelerationProperty; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the manager's resolved names before registering data.
+     * @param manager Manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
+public:
+
     PrescribedMotionStateEffector();
     ~PrescribedMotionStateEffector();
     void setMass(const double mass);    //!< Setter method for the effector mass
@@ -111,7 +252,6 @@ private:
     Eigen::Vector3d omega_PM_P;                         //!< [rad/s] Angular velocity of frame P relative to frame M in P frame components
     Eigen::Vector3d omegaPrime_PM_P;                    //!< [rad/s^2] B frame time derivative of omega_PM_P in P frame components
     Eigen::MRPd sigma_PM;                               //!< MRP attitude of frame P relative to frame M
-    std::string nameOfsigma_PMState;                    //!< Identifier for the sigma_PM state data container
 
     static uint64_t effectorID;                                         //!< ID number of this panel
 
@@ -179,18 +319,6 @@ private:
     Eigen::MatrixXd* omega_PB_P;                        //!< [rad/s] Angular velocity of frame P relative to frame B in P frame components
     Eigen::MatrixXd* omegaPrime_PB_P;                   //!< [rad/s] B frame time derivative of omega_PB_P in P frame components
 
-    std::string nameOfPrescribedPositionProperty;         //!< Identifier for prescribed position r_PB_B
-    std::string nameOfPrescribedVelocityProperty;         //!< Identifier for prescribed velocity rPrime_PB_B
-    std::string nameOfPrescribedAccelerationProperty;     //!< Identifier for prescribed acceleration rPrimePrime_PB_B
-    std::string nameOfPrescribedAttitudeProperty;         //!< Identifier for prescribed attitude sigma_PB
-    std::string nameOfPrescribedAngVelocityProperty;      //!< Identifier for prescribed angular velocity omega_PB_P
-    std::string nameOfPrescribedAngAccelerationProperty;  //!< Identifier for prescribed angular acceleration omegaPrime_PB_P
-
-    std::string nameOfInertialPositionProperty;           //!< Identifier for prescribed motion inertial position r_PN_N
-    std::string nameOfInertialVelocityProperty;           //!< Identifier for prescribed motion inertial velocity property v_PN_N
-    std::string nameOfInertialAttitudeProperty;           //!< Identifier for the prescribed motion inertial attitude property sigma_PN
-    std::string nameOfInertialAngVelocityProperty;        //!< Identifier for the prescribed motion inertial angular velocity property omega_PN_P
-
     template <typename Type>
     /** Assign the state engine parameter names to attached effectors*/
     void assignStateParamNames(Type effector) {
@@ -204,6 +332,22 @@ private:
         effector->setPropName_prescribedAngVelocity(this->nameOfPrescribedAngVelocityProperty);
         effector->setPropName_prescribedAngAcceleration(this->nameOfPrescribedAngAccelerationProperty);
     };
+#ifndef SWIG
+public:
+    /** @brief Bind dependent effectors after all body properties are registered.
+     * @param manager Manager containing the resolved states and properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+protected:
+    /** @brief Declare the names sharing this effector's automatic index.
+     * @return State and property declarations, including every body.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+    /** @brief Visit the state effectors attached to this prescribed body.
+     * @return Children in attachment order.
+     */
+    std::vector<StateEffector*> getNestedStateEffectors() const override { return this->stateEffectors; }
+#endif
 };
 
 #endif /* PRESCRIBED_MOTION_STATE_EFFECTOR_H */

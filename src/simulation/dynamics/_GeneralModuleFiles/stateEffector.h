@@ -23,6 +23,8 @@
 #include <Eigen/Dense>
 #include <cstdint>
 #include <memory>
+#include <set>
+#include <vector>
 #include <string>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
@@ -205,7 +207,7 @@ public:
     /** @brief Collect this effector's name group for a later manager-wide resolution pass.
      * @param manager Dynamics manager that will own the states and properties.
      * @note Legacy is a no-op. ManagerLocal requires an override of
-     * describeEffectorNames(). The caller must visit all nested effectors too.
+     * describeEffectorNames(). Nested effectors are visited in attachment order.
      * Repeating this call on the same manager with unchanged requests preserves identity.
      * Copying both the manager and its effectors preserves their declarations;
      * copying an effector into the same manager requires a new declaration.
@@ -213,10 +215,19 @@ public:
      */
     void collectEffectorNames(DynParamManager& manager);
 
-    /** @brief Cancel this effector's pending request before retrying preparation.
+    /** @brief Collect all attachment trees while rejecting shared children and cycles.
+     * @param manager Dynamics manager that will own the states and properties.
+     * @param roots Top-level effectors in registration order.
+     * @note Legacy is a no-op. Each effector may occur only once in the combined trees.
+     */
+    static void collectEffectorNames(DynParamManager& manager, const std::vector<StateEffector*>& roots);
+
+    /** @brief Cancel the pending requests owned by this effector and its collected children.
      * @param manager Dynamics manager used to collect this effector's names.
      * @note Cancel before moving a pending effector away from a live manager. Resolved
-     * requests cannot be cancelled. Calling without an owned request is a no-op.
+     * requests cannot be cancelled. All requests are validated before any are cancelled.
+     * Calling without an owned request is a no-op, including on an uncollected copy.
+     * Repeated or cyclic attachments left by failed collection are visited only once.
      */
     void cancelEffectorNames(DynParamManager& manager);
 #endif
@@ -230,6 +241,11 @@ protected:
      * Existing public name attributes and setters remain the derived class's responsibility.
      */
     virtual EffectorNameGroup describeEffectorNames() const { return {}; }
+
+    /** @brief Enumerate nested state effectors for name collection.
+     * @return Children in registration order; the default has no children.
+     */
+    virtual std::vector<StateEffector*> getNestedStateEffectors() const { return {}; }
 
     /** @brief Read a prepared name for assignment to a derived effector's public name field.
      * @param manager Dynamics manager used for collection and resolution.
@@ -279,6 +295,11 @@ protected:
 private:
 #ifndef SWIG
     EffectorNameRequest effectorNameRequest; //!< Immutable request retained across repeated preparation.
+    /** @brief Collect a tree while rejecting cycles and repeated children.
+     * @param manager Manager that will own all names in the tree.
+     * @param visited Effectors already encountered in this traversal.
+     */
+    void collectEffectorNames(DynParamManager& manager, std::set<const StateEffector*>& visited);
     EffectorNameIdentity effectorNameIdentity; //!< Distinguishes copies without relying on memory addresses.
     std::weak_ptr<const EffectorNameIdentity::Token> effectorNameRequestOwner; //!< Identity used at collection.
     std::weak_ptr<const EffectorNameIdentity::Token> effectorNameManager; //!< Manager lifetime used at collection.

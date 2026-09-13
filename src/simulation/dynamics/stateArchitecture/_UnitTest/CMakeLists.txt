@@ -2,7 +2,7 @@
 # This file is distributed under the ISC License in LICENSE.
 
 add_executable(test_effectorNames test_effectorNames.cpp test_hingedEffectorNames.cpp
-  test_simpleEffectorNames.cpp
+  test_simpleEffectorNames.cpp test_multibodyEffectorNames.cpp
   ../../HingedRigidBodies/hingedRigidBodyStateEffector.cpp
   ../../spacecraft/spacecraft.cpp
   ../../LinearSpringMassDamper/linearSpringMassDamper.cpp
@@ -10,7 +10,17 @@ add_executable(test_effectorNames test_effectorNames.cpp test_hingedEffectorName
   ../../FuelTank/fuelTank.cpp
   ../../Thrusters/thrusterStateEffector/thrusterStateEffector.cpp
   ../../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.cpp
-  ../../igbmNoiseStateEffector/igbmNoiseStateEffector.cpp)
+  ../../igbmNoiseStateEffector/igbmNoiseStateEffector.cpp
+  ../../prescribedMotion/prescribedMotionStateEffector.cpp
+  ../../spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.cpp
+  ../../spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.cpp
+  ../../spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.cpp
+  ../../linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.cpp
+  ../../linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.cpp
+  ../../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.cpp
+  ../../NHingedRigidBodies/nHingedRigidBodyStateEffector.cpp
+  ../../constraintEffector/constraintDynamicEffector.cpp
+)
 target_link_libraries(test_effectorNames PRIVATE GTest::gtest_main dynamicsLib Eigen3::Eigen3)
 
 # Keep the executable beside its package DLLs for both discovery and execution on Windows.
@@ -47,6 +57,7 @@ add_test(NAME effectorNamingPython
   COMMAND "${Python3_EXECUTABLE}" -m pytest -q
   "${CMAKE_CURRENT_SOURCE_DIR}/test_hingedEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_simpleEffectorNaming.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_multibodyEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingCompatibility.py")
 cmake_path(CONVERT "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}"
   TO_NATIVE_PATH_LIST naming_test_pythonpath)

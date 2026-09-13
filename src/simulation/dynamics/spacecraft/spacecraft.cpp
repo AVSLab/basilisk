@@ -240,9 +240,7 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
 void Spacecraft::initializeDynamics()
 {
     // Collect every declaration before registration can freeze the naming policy.
-    for (auto* effector : this->states) {
-        effector->collectEffectorNames(this->dynManager);
-    }
+    StateEffector::collectEffectorNames(this->dynManager, this->states);
 
     // - Spacecraft initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);

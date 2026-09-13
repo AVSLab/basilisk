@@ -54,6 +54,109 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     SpinningBodyOneDOFStateEffector::effectorID++;
 }
 
+void
+SpinningBodyOneDOFStateEffector::setNameOfThetaState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaState, this->customNameOfThetaState, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setNameOfThetaDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaDotState, this->customNameOfThetaDotState, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setNameOfInertialPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty, this->customNameOfInertialPositionProperty, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setNameOfInertialVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty, this->customNameOfInertialVelocityProperty, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setNameOfInertialAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty, this->customNameOfInertialAttitudeProperty, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setNameOfInertialAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAngVelocityProperty, this->customNameOfInertialAngVelocityProperty, value);
+}
+
+void
+SpinningBodyOneDOFStateEffector::setCustomName(std::string& currentName,
+                                               std::optional<std::string>& customName,
+                                               const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+SpinningBodyOneDOFStateEffector::describeEffectorNames() const
+{
+    return { "spinningBodyOneDOF",
+             {
+               { "nameOfThetaState",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "spinningBodyTheta",
+                 "",
+                 this->customNameOfThetaState },
+               { "nameOfThetaDotState",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "spinningBodyThetaDot",
+                 "",
+                 this->customNameOfThetaDotState },
+               { "nameOfInertialPositionProperty",
+                 EffectorNameKind::Property,
+                 "spinningBodyInertialPosition",
+                 "",
+                 this->customNameOfInertialPositionProperty },
+               { "nameOfInertialVelocityProperty",
+                 EffectorNameKind::Property,
+                 "spinningBodyInertialVelocity",
+                 "",
+                 this->customNameOfInertialVelocityProperty },
+               { "nameOfInertialAttitudeProperty",
+                 EffectorNameKind::Property,
+                 "spinningBodyInertialAttitude",
+                 "",
+                 this->customNameOfInertialAttitudeProperty },
+               { "nameOfInertialAngVelocityProperty",
+                 EffectorNameKind::Property,
+                 "spinningBodyInertialAngVelocity",
+                 "",
+                 this->customNameOfInertialAngVelocityProperty },
+             } };
+}
+
+void
+SpinningBodyOneDOFStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfThetaState = this->getResolvedEffectorName(manager, "nameOfThetaState");
+    this->nameOfThetaDotState = this->getResolvedEffectorName(manager, "nameOfThetaDotState");
+    this->nameOfInertialPositionProperty = this->getResolvedEffectorName(manager, "nameOfInertialPositionProperty");
+    this->nameOfInertialVelocityProperty = this->getResolvedEffectorName(manager, "nameOfInertialVelocityProperty");
+    this->nameOfInertialAttitudeProperty = this->getResolvedEffectorName(manager, "nameOfInertialAttitudeProperty");
+    this->nameOfInertialAngVelocityProperty =
+      this->getResolvedEffectorName(manager, "nameOfInertialAngVelocityProperty");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t SpinningBodyOneDOFStateEffector::effectorID = 1;
 
 /*! This is the destructor, nothing to report here */
@@ -156,6 +259,10 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
 /*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
 void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
 {
+    if (this->effectorNamesResolved) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: resolved names already include their owner prefix.");
+    }
+
     this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
     this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
 }
@@ -197,14 +304,23 @@ void SpinningBodyOneDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
+    const bool managerLocal = statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(statesIn);
+    }
+
     // Register the theta state
-    this->thetaState = statesIn.registerState(1, 1, this->nameOfThetaState);
+    this->thetaState = managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfThetaState")
+        : statesIn.registerState(1, 1, this->nameOfThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
 
     // Register the thetaDot state
-    this->thetaDotState = statesIn.registerState(1, 1, this->nameOfThetaDotState);
+    this->thetaDotState = managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfThetaDotState")
+        : statesIn.registerState(1, 1, this->nameOfThetaDotState);
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
@@ -221,7 +337,7 @@ void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDyn
         bskLogger.bskError("Specifying attachment to a non-existent spinning bodies linkage.");
     }
 
-    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+    this->assignStateParamNames(newDynamicEffector, segment);
 
     this->dynEffectors.push_back(newDynamicEffector);
 }
@@ -233,16 +349,27 @@ void SpinningBodyOneDOFStateEffector::addDynamicEffector(DynamicEffector *newDyn
  */
 void SpinningBodyOneDOFStateEffector::registerProperties(DynParamManager& states)
 {
-    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    this->r_SN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
-    this->v_SN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
-    this->sigma_SN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
-    this->omega_SN_S = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
 
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInProperties(states);
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_SN_N = managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty", stateInit)
+        : states.createProperty(this->nameOfInertialPositionProperty, stateInit);
+    this->v_SN_N = managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty", stateInit)
+        : states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
+    this->sigma_SN = managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty", stateInit)
+        : states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
+    this->omega_SN_S = managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty", stateInit)
+        : states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+
+    if (!managerLocal) {
+        this->bindAttachedDynamicEffectors(states);
     }
 }
 
@@ -595,4 +722,39 @@ void SpinningBodyOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->writeOutputStateMessages(CurrentSimNanos);
+}
+
+void
+SpinningBodyOneDOFStateEffector::assignStateParamNames(DynamicEffector* effector, int segment)
+{
+    if (segment != 1) {
+        this->bskLogger.bskError("SpinningBodyOneDOFStateEffector: invalid attachment segment.");
+    }
+    effector->setAttachedBodyPropertyNames(*this,
+                                           { this->nameOfInertialPositionProperty,
+                                             this->nameOfInertialVelocityProperty,
+                                             this->nameOfInertialAttitudeProperty,
+                                             this->nameOfInertialAngVelocityProperty },
+                                           segment);
+}
+
+void
+SpinningBodyOneDOFStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    const bool managerLocal = manager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(manager);
+        manager.getPropertyReference(this->nameOfInertialPositionProperty);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty);
+    }
+    for (auto* effector : this->dynEffectors) {
+        if (managerLocal) {
+            this->assignStateParamNames(effector, 1);
+            effector->linkInAttachedBodyProperties(*this, manager, 1);
+        } else {
+            effector->linkInProperties(manager);
+        }
+    }
 }

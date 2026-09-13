@@ -51,8 +51,31 @@ StateEffector::~StateEffector()
 
 void StateEffector::collectEffectorNames(DynParamManager& manager)
 {
+    std::set<const StateEffector*> visited;
+    this->collectEffectorNames(manager, visited);
+}
+
+void StateEffector::collectEffectorNames(DynParamManager& manager, const std::vector<StateEffector*>& roots)
+{
     if (manager.getEffectorNamingPolicy() == EffectorNamingPolicy::Legacy) {
         return;
+    }
+    std::set<const StateEffector*> visited;
+    for (auto* root : roots) {
+        if (root == nullptr) {
+            throw BasiliskError("StateEffector: null state-effector attachment.");
+        }
+        root->collectEffectorNames(manager, visited);
+    }
+}
+
+void StateEffector::collectEffectorNames(DynParamManager& manager, std::set<const StateEffector*>& visited)
+{
+    if (manager.getEffectorNamingPolicy() == EffectorNamingPolicy::Legacy) {
+        return;
+    }
+    if (!visited.insert(this).second) {
+        throw BasiliskError("StateEffector: cyclic or repeated nested state-effector attachment.");
     }
     const auto group = this->describeEffectorNames();
     if (group.family.empty()) {
@@ -75,6 +98,12 @@ void StateEffector::collectEffectorNames(DynParamManager& manager)
     this->effectorNameRequest = manager.requestEffectorNamesForOwner(group, previous, owner);
     this->effectorNameRequestOwner = owner;
     this->effectorNameManager = managerIdentity;
+    for (auto* child : this->getNestedStateEffectors()) {
+        if (child == nullptr) {
+            throw BasiliskError("StateEffector: null nested state-effector attachment.");
+        }
+        child->collectEffectorNames(manager, visited);
+    }
 }
 
 const std::string& StateEffector::getResolvedEffectorName(const DynParamManager& manager, const std::string& key) const
@@ -84,16 +113,41 @@ const std::string& StateEffector::getResolvedEffectorName(const DynParamManager&
 
 void StateEffector::cancelEffectorNames(DynParamManager& manager)
 {
-    if (this->effectorNameRequestOwner.lock() != this->effectorNameIdentity.getToken() || !this->effectorNameRequest) {
-        return;
+    std::vector<StateEffector*> pending{this};
+    std::vector<StateEffector*> collected;
+    std::set<StateEffector*> visited;
+    // Validate every owned request before cancelling any part of the tree.
+    while (!pending.empty()) {
+        auto* effector = pending.back();
+        pending.pop_back();
+        // Failed collection can leave a cyclic or repeated attachment with a pending request.
+        if (effector == nullptr || !visited.insert(effector).second) {
+            continue;
+        }
+        if (effector->effectorNameRequestOwner.lock() != effector->effectorNameIdentity.getToken() ||
+            !effector->effectorNameRequest) {
+            // In particular, an uncollected copy must not cancel its source's children.
+            continue;
+        }
+        if (effector->effectorNameManager.lock() != manager.effectorNameIdentity.getToken()) {
+            throw BasiliskError("StateEffector: cancel names through the manager used for collection.");
+        }
+        if (!manager.hasEffectorNameRequest(effector->effectorNameRequest)) {
+            throw BasiliskError("StateEffector: name request no longer belongs to this dynamics manager.");
+        }
+        if (manager.effectorNamesResolved) {
+            throw BasiliskError("StateEffector: a resolved name request cannot be cancelled.");
+        }
+        collected.push_back(effector);
+        const auto children = effector->getNestedStateEffectors();
+        pending.insert(pending.end(), children.begin(), children.end());
     }
-    if (this->effectorNameManager.lock() != manager.effectorNameIdentity.getToken()) {
-        throw BasiliskError("StateEffector: cancel names through the manager used for collection.");
+    for (auto* effector : collected) {
+        manager.cancelEffectorNames(effector->effectorNameRequest);
+        effector->effectorNameRequest.reset();
+        effector->effectorNameRequestOwner.reset();
+        effector->effectorNameManager.reset();
     }
-    manager.cancelEffectorNames(this->effectorNameRequest);
-    this->effectorNameRequest.reset();
-    this->effectorNameRequestOwner.reset();
-    this->effectorNameManager.reset();
 }
 
 const EffectorNameRequest& StateEffector::getEffectorNameRequest() const

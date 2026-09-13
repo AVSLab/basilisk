@@ -40,6 +40,139 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     return;
 }
 
+void
+NHingedRigidBodyStateEffector::setNameOfThetaState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaState, this->customNameOfThetaState, value);
+}
+
+void
+NHingedRigidBodyStateEffector::setNameOfThetaDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfThetaDotState, this->customNameOfThetaDotState, value);
+}
+
+void
+NHingedRigidBodyStateEffector::setCustomName(std::string& currentName,
+                                             std::optional<std::string>& customName,
+                                             const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("NHingedRigidBodyStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+void
+HingedPanel::setNameOfInertialPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty, this->customNameOfInertialPositionProperty, value);
+}
+
+void
+HingedPanel::setNameOfInertialVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty, this->customNameOfInertialVelocityProperty, value);
+}
+
+void
+HingedPanel::setNameOfInertialAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty, this->customNameOfInertialAttitudeProperty, value);
+}
+
+void
+HingedPanel::setNameOfInertialAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAngVelocityProperty, this->customNameOfInertialAngVelocityProperty, value);
+}
+
+void
+HingedPanel::setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("HingedPanel: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+NHingedRigidBodyStateEffector::describeEffectorNames() const
+{
+    EffectorNameGroup group{
+        "nHingedRigidBody",
+        {
+          { "nameOfThetaState", EffectorNameKind::State, "nHingedRigidBody", "Theta", this->customNameOfThetaState },
+          { "nameOfThetaDotState",
+            EffectorNameKind::State,
+            "nHingedRigidBody",
+            "ThetaDot",
+            this->customNameOfThetaDotState },
+        }
+    };
+    for (std::size_t index = 0; index < this->PanelVec.size(); ++index) {
+        const auto& body = this->PanelVec[index];
+        const std::string suffix = "_" + std::to_string(index + 1);
+        group.names.push_back({ "position" + suffix,
+                                EffectorNameKind::Property,
+                                "nHingedRigidBodyInertialPosition",
+                                suffix,
+                                body.customNameOfInertialPositionProperty });
+        group.names.push_back({ "velocity" + suffix,
+                                EffectorNameKind::Property,
+                                "nHingedRigidBodyInertialVelocity",
+                                suffix,
+                                body.customNameOfInertialVelocityProperty });
+        group.names.push_back({ "attitude" + suffix,
+                                EffectorNameKind::Property,
+                                "nHingedRigidBodyInertialAttitude",
+                                suffix,
+                                body.customNameOfInertialAttitudeProperty });
+        group.names.push_back({ "angularVelocity" + suffix,
+                                EffectorNameKind::Property,
+                                "nHingedRigidBodyInertialAngVelocity",
+                                suffix,
+                                body.customNameOfInertialAngVelocityProperty });
+    }
+    return group;
+}
+
+void
+NHingedRigidBodyStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    const auto& request = this->getEffectorNameRequest();
+    for (const auto& entry : this->PanelVec) {
+        const auto& body = entry;
+        const auto owner = body.namingOwner.lock();
+        if (owner && owner != request) {
+            this->bskLogger.bskError(
+              "NHingedRigidBodyStateEffector: a body cannot belong to multiple live naming groups.");
+        }
+    }
+    this->nameOfThetaState = this->getResolvedEffectorName(manager, "nameOfThetaState");
+    this->nameOfThetaDotState = this->getResolvedEffectorName(manager, "nameOfThetaDotState");
+    for (std::size_t index = 0; index < this->PanelVec.size(); ++index) {
+        auto& body = this->PanelVec[index];
+        const std::string suffix = "_" + std::to_string(index + 1);
+        body.nameOfInertialPositionProperty = this->getResolvedEffectorName(manager, "position" + suffix);
+        body.nameOfInertialVelocityProperty = this->getResolvedEffectorName(manager, "velocity" + suffix);
+        body.nameOfInertialAttitudeProperty = this->getResolvedEffectorName(manager, "attitude" + suffix);
+        body.nameOfInertialAngVelocityProperty = this->getResolvedEffectorName(manager, "angularVelocity" + suffix);
+        body.namingOwner = request;
+        body.effectorNamesResolved = true;
+    }
+    this->effectorNamesResolved = true;
+}
+
 uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
 
 /*! This is the destructor, releasing the per panel output messages */
@@ -60,6 +193,10 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 void
 NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 {
+    if (this->effectorNamesResolved) {
+        this->bskLogger.bskError("NHingedRigidBodyStateEffector: bodies cannot change after name registration.");
+    }
+
     this->PanelVec.push_back(NewPanel);
     this->nHingedRigidBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
     this->nHingedRigidBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
@@ -211,6 +348,11 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
+    const bool managerLocal = statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(statesIn);
+    }
+
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     Eigen::MatrixXd thetaInitMatrix(this->PanelVec.size(),1);
     Eigen::MatrixXd thetaDotInitMatrix(this->PanelVec.size(),1);
@@ -224,9 +366,13 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
         this->totalMass += PanelIt->mass;
         it += 1;
     }
-    this->thetaState = statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
+    this->thetaState = managerLocal
+        ? statesIn.registerEffectorState((uint32_t) this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaState")
+        : statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
+    this->thetaDotState = managerLocal
+        ? statesIn.registerEffectorState((uint32_t) this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaDotState")
+        : statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
 
     registerProperties(statesIn);
@@ -246,7 +392,7 @@ NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEff
     }
 
     HingedPanel& panel = this->PanelVec[(size_t)(segment - 1)];
-    panel.assignStateParamNames<DynamicEffector*>(newDynamicEffector);
+    newDynamicEffector->setAttachedBodyPropertyNames(*this, {panel.nameOfInertialPositionProperty, panel.nameOfInertialVelocityProperty, panel.nameOfInertialAttitudeProperty, panel.nameOfInertialAngVelocityProperty}, segment);
     panel.dynEffectors.push_back(newDynamicEffector);
     this->hasAttachedEffectors = true;
 }
@@ -259,21 +405,32 @@ NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEff
 void
 NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
-    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    std::vector<HingedPanel>::iterator PanelIt;
-    for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
-        PanelIt->r_HN_N = states.createProperty(PanelIt->nameOfInertialPositionProperty, stateInit);
-        PanelIt->v_HN_N = states.createProperty(PanelIt->nameOfInertialVelocityProperty, stateInit);
-        PanelIt->sigma_SN = states.createProperty(PanelIt->nameOfInertialAttitudeProperty, stateInit);
-        PanelIt->omega_SN_S = states.createProperty(PanelIt->nameOfInertialAngVelocityProperty, stateInit);
-
-        std::vector<DynamicEffector*>::iterator dynIt;
-        for (dynIt = PanelIt->dynEffectors.begin(); dynIt != PanelIt->dynEffectors.end(); dynIt++) {
-            (*dynIt)->linkInProperties(states);
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+    const Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    for (std::size_t index = 0; index < this->PanelVec.size(); ++index) {
+        auto& body = this->PanelVec[index];
+        const std::string suffix = "_" + std::to_string(index + 1);
+        body.r_HN_N = managerLocal
+            ? states.createEffectorProperty(this->getEffectorNameRequest(), "position" + suffix, stateInit)
+            : states.createProperty(body.nameOfInertialPositionProperty, stateInit);
+        body.v_HN_N = managerLocal
+            ? states.createEffectorProperty(this->getEffectorNameRequest(), "velocity" + suffix, stateInit)
+            : states.createProperty(body.nameOfInertialVelocityProperty, stateInit);
+        body.sigma_SN = managerLocal
+            ? states.createEffectorProperty(this->getEffectorNameRequest(), "attitude" + suffix, stateInit)
+            : states.createProperty(body.nameOfInertialAttitudeProperty, stateInit);
+        body.omega_SN_S = managerLocal
+            ? states.createEffectorProperty(this->getEffectorNameRequest(), "angularVelocity" + suffix, stateInit)
+            : states.createProperty(body.nameOfInertialAngVelocityProperty, stateInit);
+        if (!managerLocal) {
+            for (auto* effector : body.dynEffectors) {
+                effector->linkInProperties(states);
+            }
         }
     }
-
-    return;
 }
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
@@ -749,4 +906,29 @@ void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputStateMessages(CurrentSimNanos);
 
     return;
+}
+
+void
+NHingedRigidBodyStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    if (manager.getEffectorNamingPolicy() != EffectorNamingPolicy::ManagerLocal) {
+        return;
+    }
+    this->applyResolvedNames(manager);
+    for (std::size_t index = 0; index < this->PanelVec.size(); ++index) {
+        const auto& body = this->PanelVec[index];
+        manager.getPropertyReference(body.nameOfInertialPositionProperty);
+        manager.getPropertyReference(body.nameOfInertialVelocityProperty);
+        manager.getPropertyReference(body.nameOfInertialAttitudeProperty);
+        manager.getPropertyReference(body.nameOfInertialAngVelocityProperty);
+        for (auto* effector : body.dynEffectors) {
+            effector->setAttachedBodyPropertyNames(*this,
+                                                   { body.nameOfInertialPositionProperty,
+                                                     body.nameOfInertialVelocityProperty,
+                                                     body.nameOfInertialAttitudeProperty,
+                                                     body.nameOfInertialAngVelocityProperty },
+                                                   static_cast<int>(index + 1));
+            effector->linkInAttachedBodyProperties(*this, manager, static_cast<int>(index + 1));
+        }
+    }
 }

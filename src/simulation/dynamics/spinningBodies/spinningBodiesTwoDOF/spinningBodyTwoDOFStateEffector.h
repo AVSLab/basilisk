@@ -38,6 +38,155 @@
 /*! @brief spinning body state effector class */
 class SpinningBodyTwoDOFStateEffector final: public StateEffector, public SysModel {
 public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfTheta1State(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfTheta1State() const { return this->nameOfTheta1State; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfTheta1DotState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfTheta1DotState() const { return this->nameOfTheta1DotState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfTheta2State(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfTheta2State() const { return this->nameOfTheta2State; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfTheta2DotState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfTheta2DotState() const { return this->nameOfTheta2DotState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty1(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty1() const { return this->nameOfInertialPositionProperty1; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty1(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty1() const { return this->nameOfInertialVelocityProperty1; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty1(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty1() const { return this->nameOfInertialAttitudeProperty1; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty1(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty1() const { return this->nameOfInertialAngVelocityProperty1; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty2(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty2() const { return this->nameOfInertialPositionProperty2; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty2(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty2() const { return this->nameOfInertialVelocityProperty2; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty2(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty2() const { return this->nameOfInertialAttitudeProperty2; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty2(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty2() const { return this->nameOfInertialAngVelocityProperty2; }
+
+private:
+    std::vector<int> dynEffectorSegments; //!< Body index for each dynamic attachment.
+    std::string nameOfTheta1State; //!< Current state or property name.
+    std::optional<std::string> customNameOfTheta1State; //!< Explicit override.
+    std::string nameOfTheta1DotState; //!< Current state or property name.
+    std::optional<std::string> customNameOfTheta1DotState; //!< Explicit override.
+    std::string nameOfTheta2State; //!< Current state or property name.
+    std::optional<std::string> customNameOfTheta2State; //!< Explicit override.
+    std::string nameOfTheta2DotState; //!< Current state or property name.
+    std::optional<std::string> customNameOfTheta2DotState; //!< Explicit override.
+    std::string nameOfInertialPositionProperty1; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty1; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty1; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty1; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty1; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty1; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty1; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty1; //!< Explicit override.
+    std::string nameOfInertialPositionProperty2; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty2; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty2; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty2; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty2; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty2; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty2; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty2; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the manager's resolved names before registering data.
+     * @param manager Manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
+public:
+
     double mass1 = 0.0;                 //!< [kg] mass of lower spinning body (can be 0)
     double mass2 = 1.0;                 //!< [kg] mass of upper spinning body
     double k1 = 0.0;                    //!< [N-m/rad] torsional spring constant for first rotation axis
@@ -48,18 +197,6 @@ public:
     double theta1DotInit = 0.0;         //!< [rad/s] initial first axis angle rate
     double theta2Init = 0.0;            //!< [rad] initial second axis angle
     double theta2DotInit = 0.0;         //!< [rad/s] initial second axis angle rate
-    std::string nameOfTheta1State;      //!< identifier for the theta1 state data container
-    std::string nameOfTheta1DotState;   //!< identifier for the thetaDot1 state data container
-    std::string nameOfTheta2State;      //!< identifier for the theta2 state data container
-    std::string nameOfTheta2DotState;   //!< identifier for the thetaDot2 state data container
-    std::string nameOfInertialPositionProperty1;      //!< identifier for the lower spinning body inertial position property
-    std::string nameOfInertialVelocityProperty1;      //!< identifier for the lower spinning body inertial velocity property
-    std::string nameOfInertialAttitudeProperty1;      //!< identifier for the lower spinning body inertial attitude property
-    std::string nameOfInertialAngVelocityProperty1;   //!< identifier for the lower spinning body inertial angular velocity property
-    std::string nameOfInertialPositionProperty2;      //!< identifier for the upper spinning body inertial position property
-    std::string nameOfInertialVelocityProperty2;      //!< identifier for the upper spinning body inertial velocity property
-    std::string nameOfInertialAttitudeProperty2;      //!< identifier for the upper spinning body inertial attitude property
-    std::string nameOfInertialAngVelocityProperty2;   //!< identifier for the upper spinning body inertial angular velocity property
     Eigen::Vector3d r_S1B_B{0.0,0.0,0.0};            //!< [m] vector pointing from body frame B origin to lower spinning frame S1 origin in B frame components
     Eigen::Vector3d r_S2S1_S1{0.0,0.0,0.0};          //!< [m] vector pointing from lower spinning frame S1 origin to upper spinning frame S2 origin in S1 frame components
     Eigen::Vector3d r_Sc1S1_S1{0.0,0.0,0.0};         //!< [m] vector pointing from lower spinning frame S1 origin to point Sc1 (center of mass of the lower spinner) in S1 frame components
@@ -121,22 +258,12 @@ private:
     double theta2DotRef = 0.0;      //!< [rad] spinning body reference angle rate
     double mass = 1.0;              //!< [kg] mass of the spinner system
 
-    template <typename Type>
-    /** Assign the state engine parameter names */
-    void assignStateParamNames(Type effector, int segment) {
-        if (segment == 1) {
-            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty1);
-            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty1);
-            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty1);
-            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty1);
-        }
-        else if (segment == 2) {
-            effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty2);
-            effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty2);
-            effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty2);
-            effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty2);
-        }
-    };
+    /** @brief Assign the selected body's property names to an attached effector.
+     * @param effector Dynamic effector receiving the names.
+     * @param segment One-based body index.
+     */
+    void assignStateParamNames(DynamicEffector* effector, int segment);
+
 
     // Terms needed for Backsubstitution
     Eigen::Matrix<double, 2, 3> ATheta;     //!< rDDot_BN term for Backsubstitution
@@ -214,6 +341,18 @@ private:
 
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
+#ifndef SWIG
+public:
+    /** @brief Bind dependent effectors after all body properties are registered.
+     * @param manager Manager containing the resolved states and properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+protected:
+    /** @brief Declare the names sharing this effector's automatic index.
+     * @return State and property declarations, including every body.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 #endif /* SPINNING_BODY_TWO_DOF_STATE_EFFECTOR_H */

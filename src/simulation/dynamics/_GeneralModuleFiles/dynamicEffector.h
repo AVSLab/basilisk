@@ -50,16 +50,18 @@ public:
 #ifndef SWIG
     /** @brief Assign or refresh property names for one attached parent.
      * @param parent State effector supplying the properties.
+     * @param segment One-based body index within the parent effector.
      * @param names Current names, replaced by resolved names during preparation.
      * @note Effectors with multiple parents must override this method to update the
      * original attachment instead of appending another parent when called again.
      */
-    virtual void setAttachedBodyPropertyNames(const StateEffector& parent, const AttachedBodyPropertyNames& names);
+    virtual void setAttachedBodyPropertyNames(const StateEffector& parent, const AttachedBodyPropertyNames& names, int segment = 1);
     /** @brief Bind the registered properties of one attached parent.
      * @param parent State effector identifying the attachment.
+     * @param segment One-based body index within the parent effector.
      * @param manager Dynamics manager containing that parent's properties.
      */
-    virtual void linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager);
+    virtual void linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager, int segment = 1);
 #endif
 
 public:

@@ -29,16 +29,80 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
 #include <cstdint>
+#include <memory>
+#include <optional>
 #include <string>
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include <vector>
 
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 
-/*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
- the N_hingedRigidBodyStateEffector class. */
+/** @brief Panel configuration and dynamics data, with tracked property-name overrides. */
 struct HingedPanel {
+public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty() const { return this->nameOfInertialPositionProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty() const { return this->nameOfInertialVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty() const { return this->nameOfInertialAttitudeProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty() const { return this->nameOfInertialAngVelocityProperty; }
+
+private:
+    friend class NHingedRigidBodyStateEffector;
+    std::string nameOfInertialPositionProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    std::weak_ptr<const EffectorNameGroup> namingOwner; //!< Manager-owned name group using this body.
+    BSKLogger bskLogger; //!< Reports invalid name changes.
+
+public:
+
     double mass = 1.0;               //!< [kg] mass of hinged panel
     double d = 1.0;                  //!< [m] distance from hinge point to hinged rigid body center of mass
     double k = 1.0;                  //!< [N-m/rad] torsional spring constant of hinge
@@ -65,11 +129,6 @@ struct HingedPanel {
 
     Eigen::Vector3d r_ScN_N;    //!< [m] position vector of the panel CoM S relative to the inertial frame
     Eigen::Vector3d v_ScN_N;    //!< [m/s] inertial velocity vector of S relative to the inertial frame
-
-    std::string nameOfInertialPositionProperty;    //!< identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;    //!< identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;    //!< identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty; //!< identifier for the inertial angular velocity property
 
     Eigen::MatrixXd* r_HN_N = nullptr;     //!< [m] position vector of the panel hinge H relative to the inertial frame
     Eigen::MatrixXd* v_HN_N = nullptr;     //!< [m/s] inertial velocity vector of H relative to the inertial frame
@@ -98,8 +157,44 @@ struct HingedPanel {
 /*! @brief NHingedRigidBodyStateEffector class */
 class NHingedRigidBodyStateEffector final : public StateEffector, public SysModel {
 public:
-    std::string nameOfThetaState;    //!< Identifier for the theta state data container
-    std::string nameOfThetaDotState; //!< Identifier for the thetaDot state data container
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfThetaState() const { return this->nameOfThetaState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaDotState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfThetaDotState() const { return this->nameOfThetaDotState; }
+
+private:
+    std::string nameOfThetaState; //!< Current state or property name.
+    std::optional<std::string> customNameOfThetaState; //!< Explicit override.
+    std::string nameOfThetaDotState; //!< Current state or property name.
+    std::optional<std::string> customNameOfThetaDotState; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the manager's resolved names before registering data.
+     * @param manager Manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
+public:
+
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to the first Hinge location
     Eigen::Matrix3d rTilde_HB_B;     //!< Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_HB;          //!< DCM from body frame to hinge frame
@@ -157,6 +252,18 @@ public:
 private:
     void validateConfiguration();      //!< Validate panel masses, uniformity, and the configured hinge-frame DCM
     void computePanelInertialStates(); //!< Method for computing the panel states relative to the inertial frame
+#ifndef SWIG
+public:
+    /** @brief Bind dependent effectors after all body properties are registered.
+     * @param manager Manager containing the resolved states and properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+protected:
+    /** @brief Declare the names sharing this effector's automatic index.
+     * @return State and property declarations, including every body.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 

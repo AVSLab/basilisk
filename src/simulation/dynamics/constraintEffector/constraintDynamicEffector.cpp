@@ -250,16 +250,16 @@ void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value) 
 }
 
 void ConstraintDynamicEffector::setAttachedBodyPropertyNames(const StateEffector& parent,
-                                                            const AttachedBodyPropertyNames& names)
+                                                            const AttachedBodyPropertyNames& names, int segment)
 {
-    auto found = this->attachedBodyNameIndices.find(&parent);
+    auto found = this->attachedBodyNameIndices.find({&parent, segment});
     if (found == this->attachedBodyNameIndices.end()) {
         const std::array<std::size_t, 4> indices{this->propName_inertialPosition.size(),
                                                this->propName_inertialVelocity.size(),
                                                this->propName_inertialAttitude.size(),
                                                this->propName_inertialAngVelocity.size()};
-        DynamicEffector::setAttachedBodyPropertyNames(parent, names);
-        this->attachedBodyNameIndices.emplace(&parent, indices);
+        DynamicEffector::setAttachedBodyPropertyNames(parent, names, segment);
+        this->attachedBodyNameIndices.emplace(std::make_pair(&parent, segment), indices);
     } else {
         const auto& indices = found->second;
         this->propName_inertialPosition.at(indices[0]) = names.position;
@@ -421,16 +421,16 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties){
     this->scInitCounter++;
 }
 
-void ConstraintDynamicEffector::linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager)
+void ConstraintDynamicEffector::linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager, int segment)
 {
-    const auto bound = this->attachedBodyPropertyIndices.find(&parent);
+    const auto bound = this->attachedBodyPropertyIndices.find({&parent, segment});
     if (bound == this->attachedBodyPropertyIndices.end() && this->scInitCounter > 1) {
         this->bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
     }
     this->validateConfiguration();
     this->initializeGains();
 
-    const auto& indices = this->attachedBodyNameIndices.at(&parent);
+    const auto& indices = this->attachedBodyNameIndices.at({&parent, segment});
     // Resolve all four pointers before publishing another bound parent.
     auto* position = manager.getPropertyReference(this->propName_inertialPosition.at(indices[0]));
     auto* velocity = manager.getPropertyReference(this->propName_inertialVelocity.at(indices[1]));
@@ -449,7 +449,7 @@ void ConstraintDynamicEffector::linkInAttachedBodyProperties(const StateEffector
     auto& parentInfo = this->scInitCounter == 0 ? this->parent1 : this->parent2;
     parentInfo.parentType = "effector";
     parentInfo.idx = static_cast<int>(this->inertialPositionProperty.size());
-    this->attachedBodyPropertyIndices.emplace(&parent, this->inertialPositionProperty.size());
+    this->attachedBodyPropertyIndices.emplace(std::make_pair(&parent, segment), this->inertialPositionProperty.size());
     this->effectorCounter = 1;
     this->inertialPositionProperty.push_back(position);
     this->inertialVelocityProperty.push_back(velocity);

@@ -32,6 +32,20 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfTheta1State, getNameOfTheta1State, setNameOfTheta1State);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfTheta1DotState, getNameOfTheta1DotState, setNameOfTheta1DotState);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfTheta2State, getNameOfTheta2State, setNameOfTheta2State);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfTheta2DotState, getNameOfTheta2DotState, setNameOfTheta2DotState);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialPositionProperty1, getNameOfInertialPositionProperty1, setNameOfInertialPositionProperty1);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialVelocityProperty1, getNameOfInertialVelocityProperty1, setNameOfInertialVelocityProperty1);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialAttitudeProperty1, getNameOfInertialAttitudeProperty1, setNameOfInertialAttitudeProperty1);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialAngVelocityProperty1, getNameOfInertialAngVelocityProperty1, setNameOfInertialAngVelocityProperty1);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialPositionProperty2, getNameOfInertialPositionProperty2, setNameOfInertialPositionProperty2);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialVelocityProperty2, getNameOfInertialVelocityProperty2, setNameOfInertialVelocityProperty2);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialAttitudeProperty2, getNameOfInertialAttitudeProperty2, setNameOfInertialAttitudeProperty2);
+%attribute(SpinningBodyTwoDOFStateEffector, std::string, nameOfInertialAngVelocityProperty2, getNameOfInertialAngVelocityProperty2, setNameOfInertialAngVelocityProperty2);
+
 %include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"

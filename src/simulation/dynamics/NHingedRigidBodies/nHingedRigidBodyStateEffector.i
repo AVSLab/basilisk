@@ -33,6 +33,14 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 %include "std_string.i"
+%include "attribute.i"
+%attribute(NHingedRigidBodyStateEffector, std::string, nameOfThetaState, getNameOfThetaState, setNameOfThetaState);
+%attribute(NHingedRigidBodyStateEffector, std::string, nameOfThetaDotState, getNameOfThetaDotState, setNameOfThetaDotState);
+%attribute(HingedPanel, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(HingedPanel, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(HingedPanel, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(HingedPanel, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+
 %include "std_vector.i"
 %include "stdint.i"
 

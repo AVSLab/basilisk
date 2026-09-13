@@ -29,6 +29,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace {
 
@@ -59,6 +60,7 @@ class NamingEffector : public LegacyEffector
 {
   public:
     EffectorNameGroup names = panelNames();
+    std::vector<StateEffector*> children;
     StateData* registeredState = nullptr;
     Eigen::MatrixXd* registeredProperty = nullptr;
     using StateEffector::getEffectorNameRequest;
@@ -73,6 +75,7 @@ class NamingEffector : public LegacyEffector
 
   protected:
     EffectorNameGroup describeEffectorNames() const override { return this->names; }
+    std::vector<StateEffector*> getNestedStateEffectors() const override { return this->children; }
 };
 
 class EffectorNames : public testing::Test
@@ -537,6 +540,37 @@ TEST_F(EffectorNames, failedCancellationDoesNotDetachTheEffector)
     EXPECT_THROW(effector.cancelEffectorNames(this->manager), BasiliskError);
     EXPECT_EQ(effector.getEffectorNameRequest(), request);
     EXPECT_EQ(effector.getResolvedEffectorName(this->manager, "theta"), "hingedRigidBodyTheta1");
+}
+
+TEST_F(EffectorNames, uncollectedParentCopyCannotCancelSourceChildren)
+{
+    NamingEffector parent;
+    NamingEffector child;
+    parent.children = {&child};
+    parent.collectEffectorNames(this->manager);
+    const auto parentRequest = parent.getEffectorNameRequest();
+    const auto childRequest = child.getEffectorNameRequest();
+    NamingEffector copy = parent;
+    EXPECT_NO_THROW(copy.cancelEffectorNames(this->manager));
+    this->manager.resolveEffectorNames();
+    EXPECT_EQ(this->manager.getEffectorName(parentRequest, "theta"), "hingedRigidBodyTheta1");
+    EXPECT_EQ(this->manager.getEffectorName(childRequest, "theta"), "hingedRigidBodyTheta2");
+}
+
+TEST_F(EffectorNames, staleChildRequestPreventsPartialTreeCancellation)
+{
+    NamingEffector parent;
+    NamingEffector staleChild;
+    NamingEffector validChild;
+    parent.children = {&staleChild, &validChild};
+    parent.collectEffectorNames(this->manager);
+    const auto parentRequest = parent.getEffectorNameRequest();
+    const auto validRequest = validChild.getEffectorNameRequest();
+    this->manager.cancelEffectorNames(staleChild.getEffectorNameRequest());
+    EXPECT_THROW(parent.cancelEffectorNames(this->manager), BasiliskError);
+    this->manager.resolveEffectorNames();
+    EXPECT_EQ(this->manager.getEffectorName(parentRequest, "theta"), "hingedRigidBodyTheta1");
+    EXPECT_EQ(this->manager.getEffectorName(validRequest, "theta"), "hingedRigidBodyTheta2");
 }
 
 TEST_F(EffectorNames, pendingEditsDoNotMutateManagerCopies)
