@@ -35,6 +35,57 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
 }
 
+void
+ReactionWheelStateEffector::setNameOfReactionWheelOmegasState(const std::string& value)
+{
+    this->setCustomName(this->nameOfReactionWheelOmegasState, this->customNameOfReactionWheelOmegasState, value);
+}
+
+void
+ReactionWheelStateEffector::setNameOfReactionWheelThetasState(const std::string& value)
+{
+    this->setCustomName(this->nameOfReactionWheelThetasState, this->customNameOfReactionWheelThetasState, value);
+}
+
+void
+ReactionWheelStateEffector::setCustomName(std::string& currentName,
+                                          std::optional<std::string>& customName,
+                                          const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+ReactionWheelStateEffector::describeEffectorNames() const
+{
+    return { "reactionWheel",
+             { { "nameOfReactionWheelOmegasState",
+                 EffectorNameKind::State,
+                 "reactionWheelOmegas",
+                 "",
+                 this->customNameOfReactionWheelOmegasState },
+               { "nameOfReactionWheelThetasState",
+                 EffectorNameKind::State,
+                 "reactionWheelThetas",
+                 "",
+                 this->customNameOfReactionWheelThetasState } } };
+}
+
+void
+ReactionWheelStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfReactionWheelOmegasState = this->getResolvedEffectorName(manager, "nameOfReactionWheelOmegasState");
+    this->nameOfReactionWheelThetasState = this->getResolvedEffectorName(manager, "nameOfReactionWheelThetasState");
+    this->effectorNamesResolved = true;
+}
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
@@ -123,6 +174,11 @@ void ReactionWheelStateEffector::validateRegisteredLayout()
 void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 {
     this->validateDimensions();
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     this->NewRWCmds.resize(this->ReactionWheelData.size(), RWCmdMsgPayload{});
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
@@ -144,11 +200,18 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         this->numRW++;
     }
 
-	this->OmegasState = states.registerState((uint32_t) this->numRW, 1, this->nameOfReactionWheelOmegasState);
+    this->OmegasState =
+      managerLocal ? states.registerEffectorState(
+                       static_cast<uint32_t>(this->numRW), 1, this->getEffectorNameRequest(), "nameOfReactionWheelOmegasState")
+                   : states.registerState(static_cast<uint32_t>(this->numRW), 1, this->nameOfReactionWheelOmegasState);
 
-	if (numRWJitter > 0) {
-		this->thetasState = states.registerState((uint32_t) this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
-	}
+    if (numRWJitter > 0) {
+        this->thetasState =
+          managerLocal
+            ? states.registerEffectorState(
+                static_cast<uint32_t>(this->numRWJitter), 1, this->getEffectorNameRequest(), "nameOfReactionWheelThetasState")
+            : states.registerState(static_cast<uint32_t>(this->numRWJitter), 1, this->nameOfReactionWheelThetasState);
+    }
 
     this->OmegasState->setState(omegasForInit);
     if (this->numRWJitter > 0) {

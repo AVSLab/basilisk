@@ -58,6 +58,71 @@ VSCMGStateEffector::VSCMGStateEffector()
     return;
 }
 
+void
+VSCMGStateEffector::setNameOfVSCMGOmegasState(const std::string& value)
+{
+    this->setCustomName(this->nameOfVSCMGOmegasState, this->customNameOfVSCMGOmegasState, value);
+}
+
+void
+VSCMGStateEffector::setNameOfVSCMGThetasState(const std::string& value)
+{
+    this->setCustomName(this->nameOfVSCMGThetasState, this->customNameOfVSCMGThetasState, value);
+}
+
+void
+VSCMGStateEffector::setNameOfVSCMGGammasState(const std::string& value)
+{
+    this->setCustomName(this->nameOfVSCMGGammasState, this->customNameOfVSCMGGammasState, value);
+}
+
+void
+VSCMGStateEffector::setNameOfVSCMGGammaDotsState(const std::string& value)
+{
+    this->setCustomName(this->nameOfVSCMGGammaDotsState, this->customNameOfVSCMGGammaDotsState, value);
+}
+
+void
+VSCMGStateEffector::setCustomName(std::string& currentName,
+                                  std::optional<std::string>& customName,
+                                  const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("VSCMGStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+VSCMGStateEffector::describeEffectorNames() const
+{
+    return {
+        "vscmg",
+        { { "nameOfVSCMGOmegasState", EffectorNameKind::State, "VSCMGOmegas", "", this->customNameOfVSCMGOmegasState },
+          { "nameOfVSCMGThetasState", EffectorNameKind::State, "VSCMGThetas", "", this->customNameOfVSCMGThetasState },
+          { "nameOfVSCMGGammasState", EffectorNameKind::State, "VSCMGGammas", "", this->customNameOfVSCMGGammasState },
+          { "nameOfVSCMGGammaDotsState",
+            EffectorNameKind::State,
+            "VSCMGGammaDots",
+            "",
+            this->customNameOfVSCMGGammaDotsState } }
+    };
+}
+
+void
+VSCMGStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfVSCMGOmegasState = this->getResolvedEffectorName(manager, "nameOfVSCMGOmegasState");
+    this->nameOfVSCMGThetasState = this->getResolvedEffectorName(manager, "nameOfVSCMGThetasState");
+    this->nameOfVSCMGGammasState = this->getResolvedEffectorName(manager, "nameOfVSCMGGammasState");
+    this->nameOfVSCMGGammaDotsState = this->getResolvedEffectorName(manager, "nameOfVSCMGGammaDotsState");
+    this->effectorNamesResolved = true;
+}
 
 VSCMGStateEffector::~VSCMGStateEffector()
 {
@@ -87,6 +152,11 @@ void VSCMGStateEffector::linkInStates(DynParamManager& states)
 void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
     this->initializeConfiguration();
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     this->newVSCMGCmds.resize(this->VSCMGData.size(), VSCMGCmdMsgPayload{});
 
     //! - Find number of VSCMGs and number of VSCMGs with jitter
@@ -110,16 +180,34 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
         vscmgIndex++;
     }
 
-	this->OmegasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGOmegasState);
-	this->gammasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammasState);
-	this->gammaDotsState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
+    this->OmegasState =
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGOmegasState")
+        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGOmegasState);
+    this->gammasState =
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGGammasState")
+        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammasState);
+    this->gammaDotsState =
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGGammaDotsState")
+        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
 
     this->OmegasState->setState(omegasForInit);
 	this->gammasState->setState(gammasForInit);
 	this->gammaDotsState->setState(gammaDotsForInit);
 
 	if (numVSCMGJitter > 0) {
-		this->thetasState = states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
+        this->thetasState =
+          managerLocal
+            ? states.registerEffectorState(static_cast<uint32_t>(this->numVSCMGJitter),
+                                           1,
+                                           this->getEffectorNameRequest(),
+                                           "nameOfVSCMGThetasState")
+            : states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
         Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);

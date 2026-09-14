@@ -29,6 +29,16 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
+%include "attribute.i"
+%attribute(VSCMGStateEffector, std::string, nameOfVSCMGOmegasState,
+           getNameOfVSCMGOmegasState, setNameOfVSCMGOmegasState);
+%attribute(VSCMGStateEffector, std::string, nameOfVSCMGThetasState,
+           getNameOfVSCMGThetasState, setNameOfVSCMGThetasState);
+%attribute(VSCMGStateEffector, std::string, nameOfVSCMGGammasState,
+           getNameOfVSCMGGammasState, setNameOfVSCMGGammasState);
+%attribute(VSCMGStateEffector, std::string, nameOfVSCMGGammaDotsState,
+           getNameOfVSCMGGammaDotsState, setNameOfVSCMGGammaDotsState);
+
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
