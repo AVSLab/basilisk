@@ -98,10 +98,10 @@ def plotOrbitalMotion(timeAxis: np.ndarray, posData: np.ndarray, velData: np.nda
     for idx in range(0, len(posData)):
         rVec = np.array(posData[idx]).flatten()
         vVec = np.array(velData[idx]).flatten()
-        
+
         oeData = orbitalMotion.rv2elem(mu, rVec, vVec)
         rData.append(oeData.rmag / 1000.)
-        
+
     plt.plot(timeAxis * macros.NANO2MIN, rData, color='#aa0000')
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
@@ -125,17 +125,17 @@ def plotAngDisp(timeAxis: np.ndarray, panel1thetaLog: np.ndarray, panel2thetaLog
 
     return fig
 
-# makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
-# - hubMass: mass of the s/c hub
-# - busIDiag: Tuple list representing diagonal of inertia matrix I (assuming symmetric)
+
 def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float] = (900.0, 800.0, 600.0)):
-    
+    """ makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
+         - hubMass: mass of the s/c hub
+         - busIDiag: Tuple list representing diagonal of inertia matrix I (assuming symmetric)"""
     ixx, iyy, izz = busIDiag
-    
+
     return f"""
     <mujoco model = "busWith2Panels">
         <compiler angle = "radian" meshdir = ""/>
-        
+
         <default>
             <default class = "panel_geom">
                 <geom type = "box" size = "1 1 0.01"
@@ -146,7 +146,7 @@ def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float]
         <worldbody>
             <body name = "hub" pos = "0 0 0">
                 <freejoint name = "busFree"/>
-                
+
                 <inertial pos = "0 0 0" mass = "{hubMass}" diaginertia = "{ixx} {iyy} {izz}"/>
                 <geom name = "hubVisual" type = "box" size = "1 1 1" rgba = "1 1 1 1"/>
 
@@ -167,9 +167,10 @@ def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float]
         </worldbody>
     </mujoco>
     """
-    
+
 
 def run(showPlots: bool = False):
+    """Build and run the MJScene hinged rigid body simulation."""
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
@@ -205,7 +206,7 @@ def run(showPlots: bool = False):
 
     # -------------------------------------------------------------------------
     # 3) Adding damping/stiffness to panel hinges
-    # ------------------------------------------------------------------------- 
+    # -------------------------------------------------------------------------
     # Damping/stiffness values initizalized
     k = 1000.0
     c = 0.0
@@ -216,7 +217,7 @@ def run(showPlots: bool = False):
         actuator = scene.addJointSingleActuator(f"{jointName}Actuator", jointName)
         joint = body.getScalarJoint(jointName)
 
-        # Custom spring damper sys model application (see associated function), computes 
+        # Custom spring damper sys model application (see associated function), computes
         # restoring force based on torsional damping/stiffness coefficients
         sd = JointSpringDamper(k = k, c = c, thetaRef = 0.0)
         sd.ModelTag = f"{jointName}SpringDamper"
@@ -225,7 +226,7 @@ def run(showPlots: bool = False):
         actuator.actuatorInMsg.subscribeTo(sd.actuatorOutMsg) # apply computed torque to actuator
 
         scene.AddModelToDynamicsTask(sd)
-        springDampers.append(sd) 
+        springDampers.append(sd)
 
     # -------------------------------------------------------------------------
     # 4) Add gravity and set up orbital elements
@@ -261,7 +262,7 @@ def run(showPlots: bool = False):
     # -------------------------------------------------------------------------
     # Setting simulation time
     n = np.sqrt(muEarth / oe.a / oe.a / oe.a) # mean motion [rad/s]
-    P = 2. * np.pi / n # orbital period [s] 
+    P = 2. * np.pi / n # orbital period [s]
     simulationTimeFactor = 0.01
     simulationTime = macros.sec2nano(simulationTimeFactor * P)
 
@@ -269,7 +270,7 @@ def run(showPlots: bool = False):
     burnStart = simulationTime
     burnEnd = simulationTime + T2
 
-    # Correctly applies external forcing to site. This custom sys model is required to transform 
+    # Correctly applies external forcing to site. This custom sys model is required to transform
     # the provided inertial force to a force at site needed for thurst actuator
     forceConverter = InertialForceToSiteActuator()
     forceConverter.scStateInMsg.subscribeTo(busBody.getCenterOfMass().stateOutMsg)
@@ -338,12 +339,12 @@ def run(showPlots: bool = False):
     return figureList
 
 
-# -------------------------------------------------------------------------
-# InertialForceToSiteActuator: custom sys model to convert fixed inertial-frame
-#   thrust force into body-frame force at specified site
-# -------------------------------------------------------------------------
 class InertialForceToSiteActuator(sysModel.SysModel):
+    """ InertialForceToSiteActuator: custom sys model to convert fixed inertial-frame
+        thrust force into body-frame force at specified site"""
+
     def __init__(self):
+        """Initialize"""
         super().__init__()
         self.force_N = np.zeros(3) # desired thrust force (inertial)
         self.burnStartNanos = 0
@@ -373,16 +374,17 @@ class InertialForceToSiteActuator(sysModel.SysModel):
         # NOTE: frames S and B in this scenario are identical, thus force_S = force_B
         self.forceOutMsg.write(messaging.ForceAtSiteMsgPayload(force_S = force_B), self.moduleID, CurrentSimNanos)
 
-# -------------------------------------------------------------------------
-# JointSpringDamper: custom sys model to incorporate torsional spring effects
-#   torque for a hinge joint in MuJoCo
-#   INPUTS:
-#       - k : stiffness coefficient
-#       - c : damping coefficient
-#       - thetaRef : reference angle to equilibrium
-# -------------------------------------------------------------------------
+
 class JointSpringDamper(sysModel.SysModel):
+    """ JointSpringDamper: custom sys model to incorporate torsional spring effects
+        torque for a hinge joint in MuJoCo
+        INPUTS:
+        - k : stiffness coefficient
+        - c : damping coefficient
+        - thetaRef : reference angle to equilibrium"""
+
     def __init__(self, k: float, c: float, thetaRef: float):
+        """Initialize"""
         super().__init__()
         self.k = k # stiffness [Nm / rad]
         self.c = c # damping [Nms / rad]

@@ -21,7 +21,7 @@ It's recommended to review the following scenario(s) first (and any
 recommended scenario(s) that they may have):
 
 #. ``examples/scenarioMomentumDumping.py``
-#. ``examples/mujoco/scenarioAttitudeFeedbackRW.py``
+#. ``examples/mujoco/scenarioAttitudeFeedbackRWMuJoCo.py``
 
 This script demonstrates how to run a reaction wheel momentum dumping
 scenario, stranslated from the classic Basilisk ``scenarioMomentumDumping.py``
@@ -239,19 +239,20 @@ def plot_thrForce(timeDataFSW, dataThr, numTh):
     return fig
 
 
-# addRWsXML: supporter function for XML constructor function to generate RW bodies within
-#   hub body, generalized for any number of RWs
-#   INPUTS:
-#       - rwPos: list of [x, y, z] positions, one per wheel
-#       - rwAxes: list of [x, y, z] unit spin-axis vectors, one per wheel
-#       - rwFactory: simIncludeRW.rwFactory instance used to create the RW config objects
-#       - maxMomentum: maximum momentum spec [Nms]
-#       - baseIndent: initial num of indents (tabs) necessary for proper XML formatting
-def addRWsXML(rwPos: list, 
+
+def addRWsXML(rwPos: list,
               rwAxes: list,
-              rwFactory: simIncludeRW, 
+              rwFactory: simIncludeRW,
               maxMomentum: float = 100.,
               baseIndent: int = 3):
+    """ addRWsXML: supporter function for XML constructor function to generate RW bodies within
+        hub body, generalized for any number of RWs
+        INPUTS:
+        - rwPos: list of [x, y, z] positions, one per wheel
+        - rwAxes: list of [x, y, z] unit spin-axis vectors, one per wheel
+        - rwFactory: simIncludeRW.rwFactory instance used to create the RW config objects
+        - maxMomentum: maximum momentum spec [Nms]
+        - baseIndent: initial num of indents (tabs) necessary for proper XML formatting"""
 
     numRW = len(rwPos)
     pad = "\t" * baseIndent
@@ -281,19 +282,19 @@ f"""{pad}<body name = "rw{n}Spin" pos = "{pos[0]} {pos[1]} {pos[2]}" zaxis = "{r
     return "\n".join(rwTags), "\n".join(actTags), RWs
 
 
-# addThrustersXML: supporter function for XML constructor function to generate thruster sites
-#   and force actuators on the hub body, generalized for any number of thrusters
-#   INPUTS:
-#       - thrustLocs: list of [x, y, z] thruster mounting positions
-#       - thrustDirs: list of [x, y, z] unit thrust-direction vectors, one per thruster
-#       - thrFactory: simIncludeThruster.thrusterFactory instance used to create the thruster config objects
-#       - maxThrust: maximum thrust force spec [N]
-#       - baseIndent: initial number of indents (tabs) necessary for proper XML formatting
-def addThrustersXML(thrustLocs: list, 
+def addThrustersXML(thrustLocs: list,
                     thrustDirs: list,
                     thrFactory: simIncludeThruster,
                     maxThrust: float = 5.0,
                     baseIndent: int = 2):
+    """ addThrustersXML: supporter function for XML constructor function to generate thruster sites
+        and force actuators on the hub body, generalized for any number of thrusters
+        INPUTS:
+        - thrustLocs: list of [x, y, z] thruster mounting positions
+        - thrustDirs: list of [x, y, z] unit thrust-direction vectors, one per thruster
+        - thrFactory: simIncludeThruster.thrusterFactory instance used to create the thruster config objects
+        - maxThrust: maximum thrust force spec [N]
+        - baseIndent: initial number of indents (tabs) necessary for proper XML formatting"""
 
     numTHRs = len(thrustLocs)
     pad = "\t" * baseIndent
@@ -312,17 +313,17 @@ def addThrustersXML(thrustLocs: list,
         # Site marks thruster location/orientation on hub, motor applies force along site z-axis
         thrustTags.append(f'{pad}\t<site name = "thrusterSite{n}" pos = "{pos[0]} {pos[1]} {pos[2]}" zaxis = "{dirVec[0]} {dirVec[1]} {dirVec[2]}"/>')
         actTags.append(f'{pad}<motor name = "thruster{n}" site = "thrusterSite{n}" gear = "0 0 1 0 0 0" ctrlrange = "0 5"/>')
-    
+
     return "\n".join(thrustTags), "\n".join(actTags), THRs
 
 
-# makeMjXmlString: MuJoCo string constructor, creates MJ model of the hub carrying 4 RWs and
-#   8 ACS thrusters, hub properties specified in function
 def makeMjXmlString():
+    """ makeMjXmlString: MuJoCo string constructor, creates MJ model of the hub carrying 4 RWs and
+        8 ACS thrusters, hub properties specified in function"""
     # Hub mass properties
     hubMass = 2500.0
     hubIxx, hubIyy, hubIzz = 1700.0, 1700.0, 1800.0
- 
+
     # All 4 RWs mounted at same offset point, canted along 4 different spin axes
     c = 2**-0.5
     rwPos = [[0.0, 0.0, 1.28]] * 4
@@ -338,17 +339,17 @@ def makeMjXmlString():
         [ 1,  0,  0], [-1,  0,  0], [ 0,  1,  0], [ 0, -1,  0],
         [-1,  0,  0], [ 1,  0,  0], [ 0, -1,  0], [ 0,  1,  0],
     ])
- 
+
     rwFactory = simIncludeRW.rwFactory()
     thrFactory = simIncludeThruster.thrusterFactory()
 
     # Generating RW and thruster XML chains
     rwBodies, rwActs, RWs = addRWsXML(rwPos, rwAxes, rwFactory)
     thrSites, thrActs, THRs = addThrustersXML(thrustLocs, thrustDirs, thrFactory)
- 
+
     xml = f"""<mujoco model = "busWithRWsAndThrusters">
     <compiler angle = "radian" meshdir = ""/>
- 
+
     <worldbody>
         <body name = "hub" pos = "0 0 0">
             <freejoint name = "busFree"/>
@@ -374,6 +375,7 @@ def makeMjXmlString():
 
 
 def run(showPlots: bool = False):
+    """Build and run the MJScene momentum dumping simulation."""
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
@@ -504,10 +506,10 @@ def run(showPlots: bool = False):
     thrDump.ModelTag = "thrDump"
     sim.AddModelToTask(fswTaskName, thrDump)
     thrDump.maxCounterValue = 100 # Number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
-    thrDump.thrMinFireTime = 0.02       
+    thrDump.thrMinFireTime = 0.02
 
     # FSW-facing config messages describing all 4 wheels / 8 thrusters
-    fswRwParamMsg = rwFactory.getConfigMessage()   
+    fswRwParamMsg = rwFactory.getConfigMessage()
     fswThrParamMsg = thrFactory.getConfigMessage()
 
     # -------------------------------------------------------------------------
@@ -560,7 +562,7 @@ def run(showPlots: bool = False):
     thrDesatControl.rwConfigDataInMsg.subscribeTo(fswRwParamMsg)
     thrForceMappingObj.thrConfigInMsg.subscribeTo(fswThrParamMsg)
     thrForceMappingObj.cmdTorqueInMsg.subscribeTo(thrDesatControl.deltaHOutMsg)
-    thrDump.thrusterConfInMsg.subscribeTo(fswThrParamMsg)   
+    thrDump.thrusterConfInMsg.subscribeTo(fswThrParamMsg)
     thrDump.deltaHInMsg.subscribeTo(thrDesatControl.deltaHOutMsg)
     thrDump.thrusterImpulseInMsg.subscribeTo(thrForceMappingObj.thrForceCmdOutMsg)
 
@@ -617,7 +619,7 @@ def run(showPlots: bool = False):
     initialOmegas = [4000., 2000., 3500., 0.]
     for i in range(numRWs):
         omega_radps = initialOmegas[i] * macros.RPM
-        RWJoints[i].setVelocity(omega_radps) 
+        RWJoints[i].setVelocity(omega_radps)
 
     # Run first 10s before resetting thrDesatControl, since it cannot dump momentum at t = 0
     sim.ConfigureStopTime(macros.sec2nano(10.0))
@@ -667,14 +669,14 @@ def run(showPlots: bool = False):
     return figureList
 
 
-# -------------------------------------------------------------------------
-# RWTorqueDistributor: custom sys model to fan a single array motor-torque message out into
-#   one single-actuator message per reaction wheel
-#   INPUTS:
-#       - numRW: number of reaction wheels to distribute torque commands to
-# -------------------------------------------------------------------------
 class RWTorqueDistributor(sysModel.SysModel):
+    """ RWTorqueDistributor: custom sys model to fan a single array motor-torque message out into
+        one single-actuator message per reaction wheel
+        INPUTS:
+            - numRW: number of reaction wheels to distribute torque commands to"""
+
     def __init__(self, numRW):
+        """Initialize"""
         super().__init__()
         self.ModelTag = "rwTorqueDistributor"
         self.numRW = numRW
@@ -691,14 +693,14 @@ class RWTorqueDistributor(sysModel.SysModel):
                 self.torqueOutMsgs[i].write(out, CurrentSimNanos, self.moduleID)
 
 
-# -------------------------------------------------------------------------
-# RWSpeedCombiner: custom sys model to combine per-joint MuJoCo wheel speeds into a single
-#   RWSpeedMsg expected by the FSW momentum-management chain
-#   INPUTS:
-#       - joints: list of MuJoCo scalar joints, one per reaction wheel
-# -------------------------------------------------------------------------
 class RWSpeedCombiner(sysModel.SysModel):
+    """ RWSpeedCombiner: custom sys model to combine per-joint MuJoCo wheel speeds into a single
+        RWSpeedMsg expected by the FSW momentum-management chain
+        INPUTS:
+            - joints: list of MuJoCo scalar joints, one per reaction wheel"""
+
     def __init__(self, joints):
+        """Initialize"""
         super().__init__()
         self.ModelTag = "rwSpeedCombiner"
         self.joints = joints

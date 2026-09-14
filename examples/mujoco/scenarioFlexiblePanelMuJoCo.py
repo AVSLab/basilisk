@@ -22,7 +22,7 @@ recommended scenario(s) that they may have):
 
 #. ``examples/scenarioFlexiblePanel.py``
 #. ``examples/mujoco/scenarioHingedRigidBody.py``
-#. ``examples/mujoco/scenarioAttitudeFeedbackRW.py``
+#. ``examples/mujoco/scenarioAttitudeFeedbackRWMuJoCo.py``
 
 This script demonstrates how to model a flexible, multi-segment solar panel
 using MuJoCo dynamics via :ref:`MJScene<MJScene>` instead of the traditional
@@ -198,8 +198,8 @@ def plotAttitudeErrorRate(timeAxis: np.ndarray, omega_BR_B: np.ndarray) -> plt.F
     return fig
 
 
-# Specifies geometry of hub and flexible panel, minor calcs for sub-panel geometry as well
 class geometryClass:
+    """Specifies geometry of hub and flexible panel, minor calcs for sub-panel geometry as well"""
     massHub = 1000
     lengthHub = 3
     widthHub = 3
@@ -210,6 +210,7 @@ class geometryClass:
     massPanel = 100.0
 
     def __init__(self, numberOfSegments):
+        """Initialize"""
         self.numberOfSegments = numberOfSegments
         self.massSubPanel = self.massPanel / self.numberOfSegments
         self.lengthSubPanel = self.lengthPanel / self.numberOfSegments
@@ -217,12 +218,13 @@ class geometryClass:
         self.thicknessSubPanel = self.thicknessPanel
 
 
-# panelChainGen: supporter function for XML constructor function to generate sub-panel bodies
-#   that make up the flexible panel.
-#   INPUTS:
-#       - scGeometry: geometryClass instance
-#       - baseIndent: scalar value defining initial number of indents (tabs) necessary for proper XML formatting
 def panelChainGen(scGeometry: geometryClass, baseIndent: int):
+    """ panelChainGen: supporter function for XML constructor function to generate sub-panel bodies
+        that make up the flexible panel.
+        INPUTS:
+        - scGeometry: geometryClass instance
+        - baseIndent: scalar value defining initial number of indents (tabs) necessary for proper XML formatting"""
+
     openTags = []
     closeTags = []
 
@@ -244,7 +246,7 @@ def panelChainGen(scGeometry: geometryClass, baseIndent: int):
         # Inertia matrix diagonal values for each sub-panel
         ixx = round(scGeometry.massSubPanel / 12 * (scGeometry.lengthSubPanel**2 + scGeometry.thicknessSubPanel**2), 6)
         iyy = round(scGeometry.massSubPanel / 12 * (scGeometry.widthSubPanel**2 + scGeometry.thicknessSubPanel**2), 6)
-        izz = round(scGeometry.massSubPanel / 12 * (scGeometry.widthSubPanel**2 + scGeometry.lengthSubPanel**2), 6)    
+        izz = round(scGeometry.massSubPanel / 12 * (scGeometry.widthSubPanel**2 + scGeometry.lengthSubPanel**2), 6)
 
         # XML string defining sub-panel body from previously calculated values
         openTags.append(
@@ -260,10 +262,10 @@ f"""{pad}<body name = "subPanel{n}" pos = "{bendingPos}">
     return "\n".join(openTags) + "\n" + "\n".join(reversed(closeTags))
 
 
-
-# makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
-# - scGeometry: geometryClass instance, provides all necessary measurements
 def makeMjXmlString(scGeometry: geometryClass):
+    """ makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
+        - scGeometry: geometryClass instance, provides all necessary measurements"""
+
     # Inertia matrix diagonal values for hub
     ixx = scGeometry.massHub / 12 * (scGeometry.lengthHub**2 + scGeometry.heightHub**2)
     iyy = scGeometry.massHub / 12 * (scGeometry.widthHub**2 + scGeometry.heightHub**2)
@@ -271,7 +273,7 @@ def makeMjXmlString(scGeometry: geometryClass):
 
     # Generating panel chain
     panelChain = panelChainGen(scGeometry, baseIndent = 3)
-    
+
     return f"""<mujoco model = "busWithFlexiblePanel">
     <compiler angle = "radian" meshdir = ""/>
     <default>
@@ -291,9 +293,10 @@ def makeMjXmlString(scGeometry: geometryClass):
         </body>
     </worldbody>
 </mujoco>"""
-    
+
 
 def run(showPlots: bool = False):
+    """Build and run the MJScene flexible panel simulation."""
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
@@ -335,7 +338,7 @@ def run(showPlots: bool = False):
     # -------------------------------------------------------------------------
     # 3) Adding damping/stiffness to subpanels (bend & twist)
     # -------------------------------------------------------------------------
-    # Initializing stiffness/damping coefficients of bending/twisting DOFs 
+    # Initializing stiffness/damping coefficients of bending/twisting DOFs
     kBend, cBend = 10.0, 8.0
     kTwist, cTwist = 1.0, 0.8
 
@@ -347,7 +350,7 @@ def run(showPlots: bool = False):
                 actuator = scene.addJointSingleActuator(f"{jointName}Actuator", jointName)
                 joint = subPanels[i].getScalarJoint(jointName)
 
-                # Custom spring damper sys model application (see associated function), computes 
+                # Custom spring damper sys model application (see associated function), computes
                 # restoring force based on torsional damping/stiffness coefficients
                 sd = JointSpringDamper(k = k, c = c, thetaRef = 0.0)
                 sd.ModelTag = f"{jointName}SpringDamper"
@@ -356,7 +359,7 @@ def run(showPlots: bool = False):
                 actuator.actuatorInMsg.subscribeTo(sd.actuatorOutMsg) # apply computed torque to specified actuator
 
                 scene.AddModelToDynamicsTask(sd)
-                springDampers.append(sd) 
+                springDampers.append(sd)
 
     # *** JointSpringDamper function identical to that in scenarioHingedRigidBodyMuJoCo.py ***
 
@@ -525,16 +528,16 @@ def run(showPlots: bool = False):
     return
 
 
-# -------------------------------------------------------------------------
-# JointSpringDamper: custom sys model to incorporate torsional spring effects
-#   torque for a hinge joint in MuJoCo
-#   INPUTS:
-#       - k : stiffness coefficient
-#       - c : damping coefficient
-#       - thetaRef : reference angle to equilibrium
-# -------------------------------------------------------------------------
 class JointSpringDamper(sysModel.SysModel):
+    """ JointSpringDamper: custom sys model to incorporate torsional spring effects
+        torque for a hinge joint in MuJoCo
+        INPUTS:
+        - k : stiffness coefficient
+        - c : damping coefficient
+        - thetaRef : reference angle to equilibrium"""
+
     def __init__(self, k: float, c: float, thetaRef: float):
+        """Initialize"""
         super().__init__()
         self.k = k # stiffness [Nm / rad]
         self.c = c # damping [Nms / rad]
@@ -557,17 +560,18 @@ class JointSpringDamper(sysModel.SysModel):
         self.actuatorOutMsg.write(payload, self.moduleID, CurrentSimNanos)
 
 
-# -------------------------------------------------------------------------
-# CmdTorqueToSiteActuator: custom sys model to relay commanded body-frame torque
-#   to TorqueAtSite message for actuator to consume
-# -------------------------------------------------------------------------
 class CmdTorqueToSiteActuator(sysModel.SysModel):
+    """ CmdTorqueToSiteActuator: custom sys model to relay commanded body-frame torque
+        to TorqueAtSite message for actuator to consume"""
+
     def __init__(self):
+        """Initialize"""
         super().__init__()
         self.cmdTorqueInMsg = messaging.CmdTorqueBodyMsgReader() # FSW command torque
         self.torqueOutMsg = messaging.TorqueAtSiteMsg() # torque expressed at site
 
     def UpdateState(self, CurrentSimNanos):
+        """Convert message type at each simulation step"""
         cmd = self.cmdTorqueInMsg()
         # Site frame == body frame
         payload = messaging.TorqueAtSiteMsgPayload(torque_S = cmd.torqueRequestBody)
