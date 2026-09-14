@@ -31,8 +31,9 @@ sys.path.append(path + "/../../examples")
 import scenarioStochasticDragSpacecraft
 
 
+@pytest.mark.parametrize("manager_local", [False, True], ids=["legacy", "manager-local"])
 @pytest.mark.scenarioTest
-def test_scenarioStochasticDragSpacecraft(show_plots):
+def test_scenarioStochasticDragSpacecraft(show_plots, manager_local):
     """This function is called by the py.test environment."""
 
     testFailCount = 0
@@ -42,11 +43,13 @@ def test_scenarioStochasticDragSpacecraft(show_plots):
         # Run in both the default (Ornstein-Uhlenbeck) and the IGBM density-noise modes,
         # so both sets of documentation figures are generated.
         for kwargs in ({}, {"useIgbm": True}):
-            figureList = scenarioStochasticDragSpacecraft.run(False, **kwargs)
+            figureList = scenarioStochasticDragSpacecraft.run(
+                False, rngSeed=42, useManagerLocalEffectorNames=manager_local, **kwargs)
 
             # save the figures to the Doxygen scenario images folder
             for pltName, plt in list(figureList.items()):
-                simHelpers.saveScenarioFigure(pltName, plt, path)
+                if not manager_local:
+                    simHelpers.saveScenarioFigure(pltName, plt, path)
 
     except OSError:
         testFailCount += 1

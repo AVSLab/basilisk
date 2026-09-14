@@ -152,9 +152,7 @@ def build_simulation(local, custom=False, nested=False):
     vehicle.hub.IHubPntBc_B = 100.0 * np.eye(3)  # [kg m^2]
     sim.AddModelToTask("task", vehicle)
     if local:
-        import effectorNamingTestSupport
-
-        effectorNamingTestSupport.enableManagerLocalNaming(vehicle.dynManager)
+        vehicle.dynManager.useManagerLocalEffectorNames = True
     models = []
     for bank in reversed(range(2)):
         for kind in KINDS:
@@ -204,7 +202,7 @@ def run_simulation(bundle):
 
 @pytest.mark.parametrize("nested", [False, True])
 @pytest.mark.parametrize("custom", [False, True])
-def test_multibody_lifetimes(naming_support, nested, custom):
+def test_multibody_lifetimes(nested, custom):
     """Names and dynamics repeat across overlapping lifetimes and cyclic garbage collection."""
     live = build_simulation(True, custom, nested)
     reference, reference_names = run_simulation(live)
@@ -224,7 +222,7 @@ def test_multibody_lifetimes(naming_support, nested, custom):
 
 
 @pytest.mark.parametrize("nested", [False, True])
-def test_multibody_physics_matches_legacy(naming_support, nested):
+def test_multibody_physics_matches_legacy(nested):
     """Explicit state names isolate the naming policy when comparing complete trajectories."""
     legacy = build_simulation(False, True, nested)
     local = build_simulation(True, True, nested)
@@ -234,7 +232,7 @@ def test_multibody_physics_matches_legacy(naming_support, nested):
 
 
 @pytest.mark.parametrize("kind", KINDS)
-def test_every_python_name_tracks_explicit_assignments(naming_support, kind):
+def test_every_python_name_tracks_explicit_assignments(kind):
     """All scalar name attributes distinguish explicit constructor-looking assignments."""
     unused = make_model(kind, "unused")
     for field in unused.fields:
@@ -244,7 +242,7 @@ def test_every_python_name_tracks_explicit_assignments(naming_support, kind):
         vehicle = spacecraft.Spacecraft()
         vehicle.hub.mHub = 100.0  # [kg]
         vehicle.hub.IHubPntBc_B = np.eye(3)  # [kg m^2]
-        naming_support.enableManagerLocalNaming(vehicle.dynManager)
+        vehicle.dynManager.useManagerLocalEffectorNames = True
         vehicle.addStateEffector(model.effector)
         vehicle.initializeDynamics()
         assert getattr(model.effector, field) == original
@@ -253,13 +251,13 @@ def test_every_python_name_tracks_explicit_assignments(naming_support, kind):
 
 
 @pytest.mark.parametrize("kind", ["spins", "slides", "chain"])
-def test_body_property_custom_names(naming_support, kind):
+def test_body_property_custom_names(kind):
     """Custom per-body names survive attachment and resolve to distinct properties."""
     model = make_model(kind, "bodyNames", True)
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
     vehicle.hub.IHubPntBc_B = np.eye(3)  # [kg m^2]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(model.effector)
     vehicle.initializeDynamics()
     for index, child in enumerate(model.children):
@@ -271,7 +269,7 @@ def test_body_property_custom_names(naming_support, kind):
 
 
 @pytest.mark.parametrize("field", ["nameOfThetaState", "nameOfInertialPositionProperty"])
-def test_cross_type_custom_collisions_fail_before_registration(naming_support, field):
+def test_cross_type_custom_collisions_fail_before_registration(field):
     """A collision between a spinner and a prescribed body publishes no effector states."""
     spinner = make_model("spin", "spinner")
     parent = make_model("prescribed", "parent")
@@ -280,7 +278,7 @@ def test_cross_type_custom_collisions_fail_before_registration(naming_support, f
     setattr(parent.effector, other_field, "collision")
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(spinner.effector)
     vehicle.addStateEffector(parent.effector)
     with pytest.raises(bskLogging.BasiliskError, match="already in use"):
@@ -290,14 +288,14 @@ def test_cross_type_custom_collisions_fail_before_registration(naming_support, f
 
 
 @pytest.mark.parametrize("also_root", [False, True])
-def test_shared_nested_children_rejected(naming_support, also_root):
+def test_shared_nested_children_rejected(also_root):
     """Reject a child used by two parents or both a parent and the spacecraft."""
     first = make_model("prescribed", "first")
     second = make_model("prescribed", "second")
     child = make_model("spin", "child")
     first.effector.addStateEffector(child.effector)
     vehicle = spacecraft.Spacecraft()
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(first.effector)
     if also_root:
         vehicle.addStateEffector(child.effector)
@@ -309,7 +307,7 @@ def test_shared_nested_children_rejected(naming_support, also_root):
 
 
 @pytest.mark.parametrize("kind", ["spin", "gimbal", "slide", "dual", "spins", "slides"])
-def test_rename_after_dynamic_attachment(naming_support, kind):
+def test_rename_after_dynamic_attachment(kind):
     """Refresh dependent property names after a custom assignment made during setup."""
     model = make_model(kind, "renamed")
     if model.bodies:
@@ -320,7 +318,7 @@ def test_rename_after_dynamic_attachment(naming_support, kind):
         model.effector.nameOfInertialPositionProperty = "renamedPosition"
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(model.effector)
     vehicle.initializeDynamics()
     child = model.children[-1]
@@ -331,12 +329,12 @@ def test_rename_after_dynamic_attachment(naming_support, kind):
 
 
 @pytest.mark.parametrize("kind", ["spins", "slides", "chain"])
-def test_body_addition_after_registration_rejected(naming_support, kind):
+def test_body_addition_after_registration_rejected(kind):
     """Freeze the body count once state dimensions and per-body names are registered."""
     model = make_model(kind, "fixedBodies")
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(model.effector)
     vehicle.initializeDynamics()
     add_body = {
@@ -349,27 +347,27 @@ def test_body_addition_after_registration_rejected(naming_support, kind):
 
 
 @pytest.mark.parametrize("kind", ["spins", "slides"])
-def test_duplicate_body_properties_rejected(naming_support, kind):
+def test_duplicate_body_properties_rejected(kind):
     """Reject two bodies claiming the same custom property within one effector."""
     model = make_model(kind, "duplicateBodies")
     for body in model.bodies:
         body.nameOfInertialPositionProperty = "duplicatePosition"
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(model.effector)
     with pytest.raises(bskLogging.BasiliskError, match="already in use"):
         vehicle.initializeDynamics()
 
 
 @pytest.mark.parametrize("kind", ["spins", "slides"])
-def test_shared_body_cannot_change_registered_parent_names(naming_support, kind):
+def test_shared_body_cannot_change_registered_parent_names(kind):
     """Reject sharing a registered body while preserving its original property bindings."""
     first = make_model(kind, "firstOwner")
     second = make_model(kind, "secondOwner")
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
-    naming_support.enableManagerLocalNaming(vehicle.dynManager)
+    vehicle.dynManager.useManagerLocalEffectorNames = True
     vehicle.addStateEffector(first.effector)
     vehicle.initializeDynamics()
     original = first.bodies[0].nameOfInertialPositionProperty

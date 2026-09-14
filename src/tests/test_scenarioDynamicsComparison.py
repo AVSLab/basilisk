@@ -706,6 +706,23 @@ def test_variable_mass_leak_depletes_without_external_impulse():
     module.plt.close("all")
 
 
+def test_variable_mass_logging_agrees_under_both_naming_policies():
+    """Deferred mass and slosh lookups preserve the variable-mass scenario's histories."""
+    module = importlib.import_module("scenarioCompareVariableMass")
+    histories = []
+    duration = 1.0  # [s]
+    step = module.timeStep()  # [s]
+    for local in (False, True):
+        simulation, recorders, handles = module.buildBSM(
+            step, True, simDuration=duration, useManagerLocalEffectorNames=local)
+        simulation.ConfigureStopTime(macros.sec2nano(duration))
+        simulation.ExecuteSimulation()
+        histories.append(module.pullBSM(recorders, module.earthMu()))
+    for key in histories[0]:
+        assert np.all(np.isfinite(histories[0][key])), key
+        np.testing.assert_allclose(histories[0][key], histories[1][key], rtol=1e-13, atol=1e-13, err_msg=key)
+
+
 def test_variable_mass_thruster_burn_covers_requested_horizon():
     """Continue depleting propellant beyond the former 1800-second command limit."""
     module = importlib.import_module("scenarioCompareVariableMass")

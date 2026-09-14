@@ -43,6 +43,9 @@ No module-specific input or output messages are used. Other modules can consume
 the state by reading it from the dynamics state manager by name.
 
 The registered state name can be set or queried using ``setStateName("...")`` and ``getStateName()``.
+With manager-local naming, an automatic name becomes final during initialization.
+For a connection configured earlier, such as ``drag.densityCorrectionStateName``,
+set an explicit custom name first. See :ref:`effectorNaming` for both policies.
 
 Detailed Behavior
 -----------------

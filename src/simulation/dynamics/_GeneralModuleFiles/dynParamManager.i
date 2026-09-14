@@ -13,7 +13,11 @@
 %include "std_pair.i"
 %include "std_vector.i"
 %include "std_string.i"
+%include "attribute.i"
 %include "swig_eigen.i"
+
+%attribute(DynParamManager, bool, useManagerLocalEffectorNames,
+           getUseManagerLocalEffectorNames, setUseManagerLocalEffectorNames);
 
 // Suppress assignment operator warning before parsing the class
 %warnfilter(362) StateVector::operator=;

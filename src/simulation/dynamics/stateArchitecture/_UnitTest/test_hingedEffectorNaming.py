@@ -70,9 +70,7 @@ def build_simulation(manager_local, custom_names=False):
     vehicle.hub.v_CN_NInit = [0.5, -0.2, 0.3]  # [m/s]
     simulation.AddModelToTask("task", vehicle)
     if manager_local:
-        import effectorNamingTestSupport
-
-        effectorNamingTestSupport.enableManagerLocalNaming(vehicle.dynManager)
+        vehicle.dynManager.useManagerLocalEffectorNames = True
 
     # Reverse construction order to distinguish it from collection order.
     panels = [hingedRigidBodyStateEffector.HingedRigidBodyStateEffector() for _ in range(2)]
@@ -178,7 +176,7 @@ def test_overlapping_lifetimes_and_garbage_collection(manager_local, collect_bef
 
 
 @pytest.mark.parametrize("field", NAME_FIELDS)
-def test_explicit_constructor_name_is_preserved(naming_support, field):
+def test_explicit_constructor_name_is_preserved(field):
     """Assignment of the current auto-looking string still records an explicit override."""
     bundle = build_simulation(True)
     panel = bundle.panels[0]
@@ -188,20 +186,20 @@ def test_explicit_constructor_name_is_preserved(naming_support, field):
     assert getattr(panel, field) == original
 
 
-def test_new_and_legacy_physics_agree(naming_support):
+def test_new_and_legacy_physics_agree():
     """Changing name allocation does not change the integrated panel states."""
     legacy = build_simulation(False)
     local = build_simulation(True)
     np.testing.assert_array_equal(run_simulation(legacy, False), run_simulation(local, True))
 
 
-def test_deprecated_spacecraft_system_rejects_new_policy(naming_support):
-    """The gated policy fails explicitly in an architecture that has not been migrated."""
+def test_deprecated_spacecraft_system_rejects_new_policy():
+    """The deprecated architecture explicitly requires legacy naming."""
     from Basilisk.utilities import deprecated
 
     with pytest.warns((deprecated.BSKDeprecationWarning, deprecated.BSKUrgentDeprecationWarning)):
         system = spacecraftSystem.SpacecraftSystem()
-    naming_support.enableManagerLocalNaming(system.dynManager)
+    system.dynManager.useManagerLocalEffectorNames = True
     with pytest.raises(bskLogging.BasiliskError, match="supported only by Spacecraft"):
         system.initializeDynamics()
 
@@ -257,7 +255,7 @@ def test_environmental_effectors_bind_resolved_properties(manager_local, kind):
 
 
 @pytest.mark.parametrize("reverse_attachment", [False, True])
-def test_constraint_tracks_both_panel_parents(naming_support, reverse_attachment):
+def test_constraint_tracks_both_panel_parents(reverse_attachment):
     """A shared constraint refreshes each original attachment without appending parents."""
     bundle = build_simulation(True)
     constraint = constraintDynamicEffector.ConstraintDynamicEffector()
@@ -288,7 +286,7 @@ def test_constraint_tracks_both_panel_parents(naming_support, reverse_attachment
 
 @pytest.mark.parametrize("hub_attached_first", [False, True])
 @pytest.mark.parametrize("hub_initialized_first", [False, True])
-def test_constraint_with_a_hub_parent(naming_support, hub_attached_first, hub_initialized_first):
+def test_constraint_with_a_hub_parent(hub_attached_first, hub_initialized_first):
     """A shared panel/hub constraint retains its slots across either setup and binding order."""
     bundle = build_simulation(True)
     panel = bundle.panels[0]

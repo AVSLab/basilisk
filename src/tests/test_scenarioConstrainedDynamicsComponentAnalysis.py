@@ -49,8 +49,9 @@ import scenarioConstrainedDynamicsComponentAnalysis
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("component_list, sc_model", [(["panels"], "MEV2"), (["slosh"], "MEV2")])
+@pytest.mark.parametrize("manager_local", [False, True], ids=["legacy", "manager-local"])
 @pytest.mark.scenarioTest
-def test_scenarioConstrainedDynamicsComponentAnalysis(show_plots, component_list, sc_model):
+def test_scenarioConstrainedDynamicsComponentAnalysis(show_plots, component_list, sc_model, manager_local):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
@@ -58,10 +59,12 @@ def test_scenarioConstrainedDynamicsComponentAnalysis(show_plots, component_list
     testMessages = []  # create empty array to store test log messages
 
     try:
-        figureList = scenarioConstrainedDynamicsComponentAnalysis.run(show_plots, component_list, sc_model)
+        figureList = scenarioConstrainedDynamicsComponentAnalysis.run(
+            show_plots, component_list, sc_model, useManagerLocalEffectorNames=manager_local)
         # save the figures to the Doxygen scenario images folder
         for pltName, plt in list(figureList.items()):
-            simHelpers.saveScenarioFigure(pltName, plt, path)
+            if not manager_local:
+                simHelpers.saveScenarioFigure(pltName, plt, path)
 
     except OSError as err:
         testFailCount += 1

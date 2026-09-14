@@ -88,9 +88,7 @@ def build_simulation(manager_local, custom_names=False, stochastic=False):
     vehicle.hub.IHubPntBc_B = np.eye(3) * 100.0  # [kg m^2]
     simulation.AddModelToTask("task", vehicle)
     if manager_local:
-        import effectorNamingTestSupport
-
-        effectorNamingTestSupport.enableManagerLocalNaming(vehicle.dynManager)
+        vehicle.dynManager.useManagerLocalEffectorNames = True
     # Noise states require a stochastic integrator even when their diffusion is zero.
     integrator = svIntegrators.svStochasticIntegratorMayurama(vehicle)
     integrator.setRNGSeed(42)
@@ -204,7 +202,7 @@ def test_mixed_lifetimes(manager_local, custom_names):
 
 
 @pytest.mark.parametrize("custom_names", [False, True])
-def test_mixed_physics_matches_legacy(naming_support, custom_names):
+def test_mixed_physics_matches_legacy(custom_names):
     """Renaming preserves coupled mass depletion, thrust, slosh motion, and noise drift."""
     legacy = build_simulation(False, custom_names)
     local = build_simulation(True, custom_names)
@@ -215,7 +213,7 @@ def test_mixed_physics_matches_legacy(naming_support, custom_names):
 
 
 @pytest.mark.parametrize("kind,field", [(kind, field) for kind, fields in FIELDS.items() for field in fields])
-def test_python_custom_assignments_are_tracked(naming_support, kind, field):
+def test_python_custom_assignments_are_tracked(kind, field):
     """Assigning an automatic-looking name through each Python interface makes it explicit."""
     bundle = build_simulation(True)
     effector = bundle.banks[0][kind]
@@ -228,7 +226,7 @@ def test_python_custom_assignments_are_tracked(naming_support, kind, field):
     assert get_name(kind, effector, field) == original
 
 
-def test_fuel_tank_deprecated_attribute_tracks_custom_names(naming_support):
+def test_fuel_tank_deprecated_attribute_tracks_custom_names():
     """The legacy Python attribute still warns and routes assignments through the name setter."""
     bundle = build_simulation(True)
     tank = bundle.banks[0]["tank"]
@@ -239,7 +237,7 @@ def test_fuel_tank_deprecated_attribute_tracks_custom_names(naming_support):
     assert tank.getNameOfMassState() == original
 
 
-def test_stochastic_builds_repeat_with_local_names(naming_support):
+def test_stochastic_builds_repeat_with_local_names():
     """Fixed seeds produce repeatable stochastic trajectories despite intervening constructions."""
     first = build_simulation(True, stochastic=True)
     reference = run_simulation(first, True)

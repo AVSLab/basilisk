@@ -145,11 +145,29 @@ class DynParamManager {
     BSKLogger bskLogger;
 
   public:
+    /** @brief Select manager-local automatic effector names instead of legacy names.
+     * @param enabled True for manager-local naming; false for the legacy default.
+     * @note Set this before collecting names or registering states and properties.
+     * Python exposes this as the useManagerLocalEffectorNames property.
+     */
+    void setUseManagerLocalEffectorNames(bool enabled)
+    {
+        this->setEffectorNamingPolicy(enabled ? EffectorNamingPolicy::ManagerLocal : EffectorNamingPolicy::Legacy);
+    }
+
+    /** @brief Report whether this manager resolves automatic effector names.
+     * @return True for manager-local naming, false for legacy naming.
+     */
+    bool getUseManagerLocalEffectorNames() const
+    {
+        return this->getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    }
+
 #ifndef SWIG
     /** @brief Select the naming policy before declaring names or registering dynamics data.
      * @param policy Policy used by participating effectors.
-     * @note This C++ preparation API is not exposed through Python. Existing
-     * simulation initialization continues to use Legacy until the effector migration is complete.
+     * @note Python selects the policy through useManagerLocalEffectorNames.
+     * Legacy remains the default.
      */
     void setEffectorNamingPolicy(EffectorNamingPolicy policy);
 
@@ -359,7 +377,7 @@ private:
     StateDataType* registerStateImplementation(uint32_t nRow, uint32_t nCol,
                                               const std::string& stateName, bool warnOnDuplicate);
 
-    EffectorNamingPolicy effectorNamingPolicy = EffectorNamingPolicy::Legacy; //!< Opt-in C++ preparation policy.
+    EffectorNamingPolicy effectorNamingPolicy = EffectorNamingPolicy::Legacy; //!< Selected preparation policy.
     std::vector<EffectorNameRequest> effectorNameRequests; //!< Immutable snapshots in declaration order.
     std::vector<std::map<std::string, std::string>> resolvedEffectorNames; //!< Resolved local-key/name pairs per request.
     std::map<std::pair<EffectorNameKind, std::string>, EffectorNameRequest> effectorNameOwners; //!< Registration authority for each reserved name.

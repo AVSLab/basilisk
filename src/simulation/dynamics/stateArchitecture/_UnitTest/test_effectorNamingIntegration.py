@@ -53,9 +53,7 @@ def make_tree(local):
     vehicle.hub.mHub = 100.0  # [kg]
     vehicle.hub.IHubPntBc_B = 100.0 * np.eye(3)  # [kg m^2]
     if local:
-        import effectorNamingTestSupport
-
-        effectorNamingTestSupport.enableManagerLocalNaming(vehicle.dynManager)
+        vehicle.dynManager.useManagerLocalEffectorNames = True
         leaves[1].nameOfThetaState = "prescribedObjectspinningBodyTheta1"
         leaves[1].nameOfInertialPositionProperty = "spinningBodyInertialPosition1"
         roots[1].nameOfPrescribedPositionProperty = "prescribedObjectPosition1"
@@ -119,7 +117,7 @@ def test_independent_spacecraft_repeat_preparation_in_one_simulation(manager_loc
 @pytest.mark.parametrize("reverse_attachment", [False, True])
 @pytest.mark.parametrize("reverse_initialization", [False, True])
 def test_constraint_keeps_equal_names_in_independent_managers_distinct(
-    naming_support, reverse_attachment, reverse_initialization
+    reverse_attachment, reverse_initialization
 ):
     """A cross-spacecraft constraint binds each parent's own storage in either order."""
     trees = [make_tree(True) for _ in range(2)]
@@ -196,10 +194,10 @@ def test_deprecated_system_preserves_legacy_names_in_its_shared_manager():
         np.testing.assert_array_equal(load.inertialPositionProperty, marker)
 
 
-def test_deprecated_unit_rejects_new_policy_before_registering(naming_support):
+def test_deprecated_unit_rejects_new_policy_before_registering():
     """Direct initialization cannot bypass the deprecated system's legacy-only boundary."""
     system, units, panels, loads, ports = make_legacy_system()
-    naming_support.enableManagerLocalNaming(system.dynManager)
+    system.dynManager.useManagerLocalEffectorNames = True
     with pytest.raises(bskLogging.BasiliskError, match="legacy naming"):
         units[0].initializeDynamicsSC(system.dynManager)
 

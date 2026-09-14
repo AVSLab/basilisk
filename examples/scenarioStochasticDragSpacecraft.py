@@ -116,7 +116,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 def run(showPlots: bool = False, rngSeed: Optional[int] = None, useWind: bool = False,
-        useIgbm: bool = False):
+        useIgbm: bool = False, useManagerLocalEffectorNames: bool = False):
     """
     Run the spacecraft-based stochastic drag scenario.
 
@@ -129,6 +129,8 @@ def run(showPlots: bool = False, rngSeed: Optional[int] = None, useWind: bool = 
         useIgbm (bool): If True, model the density correction factor with an inhomogeneous
             geometric Brownian motion (multiplicative noise, strictly positive factor)
             instead of the additive Ornstein-Uhlenbeck correction. Defaults to False.
+        useManagerLocalEffectorNames (bool): Resolve automatic effector names during initialization.
+            Defaults to False, retaining legacy naming.
     Returns:
         Dict of matplotlib figure handles.
     """
@@ -158,6 +160,7 @@ def run(showPlots: bool = False, rngSeed: Optional[int] = None, useWind: bool = 
 
     # Spacecraft setup (point-mass equivalent to the MuJoCo cannonball body)
     scObject = spacecraft.Spacecraft()
+    scObject.dynManager.useManagerLocalEffectorNames = useManagerLocalEffectorNames
     scObject.ModelTag = "bsk-Sat"
     scObject.hub.mHub = 1.0 # [kg]
     scObject.hub.IHubPntBc_B = np.identity(3) # [kg*m^2]
@@ -204,6 +207,8 @@ def run(showPlots: bool = False, rngSeed: Optional[int] = None, useWind: bool = 
     stochasticAtmo.ModelTag = "StochasticExpAtmo"
     stochasticAtmo.setStationaryStd(0.15)
     stochasticAtmo.setTimeConstant(1.8 * 60.0)  # [s]
+    # This name is shared with drag before initialization, so make it explicit.
+    stochasticAtmo.setStateName("atmosphericDensityCorrection")
     scObject.addStateEffector(stochasticAtmo)
 
     # Cannonball drag model

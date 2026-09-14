@@ -7,6 +7,49 @@ fuel slosh. A dynamic object calls each effector during every integrator stage
 to assemble instantaneous mass properties, Backsubstitution terms, state
 derivatives, and energy and momentum contributions.
 
+Manager-Local Naming Protocol
+-----------------------------
+
+The opt-in policy described in :ref:`effectorNaming` requires every attached state
+effector to declare its states and properties before registration. External C++
+effectors can retain legacy support while implementing these preparation hooks:
+
+#. Override ``describeEffectorNames()`` to return a non-empty family and an
+   ``EffectorNameSpec`` for each name. Each specification contains a unique local
+   key, state or property kind, automatic prefix and suffix, and an optional exact
+   custom name. Track explicit assignments in setters; do not infer custom names
+   by comparing a string with its constructor default.
+#. Override ``getNestedStateEffectors()`` when the effector owns an attachment
+   tree. Return all children in attachment order. The shared collection pass
+   rejects cycles and children attached more than once.
+#. In manager-local registration, collect or validate the declaration with
+   ``collectEffectorNames(manager)``, then retrieve final names through
+   ``getResolvedEffectorName(manager, key)``. The spacecraft resolves the complete
+   set of declarations before it calls effector registration.
+#. Use ``registerEffectorState()`` and ``createEffectorProperty()`` with
+   ``getEffectorNameRequest()`` and the local key. String-only registration cannot
+   claim a reserved name. Preserve the existing registration path under
+   ``EffectorNamingPolicy::Legacy``.
+#. Implement ``bindAttachedDynamicEffectors()`` if there are dependent attachments.
+   Refresh their property names and bindings here, after the entire forest is
+   registered. Recurse through owned children. Bindings for a dynamic effector
+   shared by multiple parents must distinguish each parent and body segment.
+#. Reject changes to resolved names and attachment topology. Repeated preparation
+   must reuse names and compatible storage. Follow the module's established
+   initialization behavior for state values.
+
+For direct C++ use with a shared manager, collect all roots with
+``StateEffector::collectEffectorNames(manager, roots)``, register fixed names from
+all owners, call ``manager.resolveEffectorNames()``, register every root, and then
+bind every root. Resolving each independent tree separately would freeze the
+manager before later declarations can participate in collision checks. Name
+preparation does not add physical support for otherwise unsupported attachments.
+
+The default declaration is empty. In manager-local mode it raises an actionable
+error before state or property registration, including the effector's
+``ModelTag`` when the object is also a ``SysModel``. Legacy mode does not require
+these hooks.
+
 Retained Mass-Property Derivatives and Equation-of-Motion Overrides
 -------------------------------------------------------------------
 

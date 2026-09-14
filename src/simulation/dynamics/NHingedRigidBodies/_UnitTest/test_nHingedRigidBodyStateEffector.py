@@ -54,7 +54,8 @@ from Basilisk.utilities import pythonVariableLogger
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-def test_nHingedRigidBodyAllTest(show_plots, testCase):
+@pytest.mark.parametrize("manager_local", [False, True], ids=["legacy", "manager-local"])
+def test_nHingedRigidBodyAllTest(show_plots, testCase, manager_local):
     """
 In this integrated test there are two hinged rigid bodies connected to the spacecraft hub, one with 4 \
 interconnected panels and one with 3 interconnected panels.  Depending on the scenario, there are different \
@@ -87,7 +88,7 @@ desired result. In the python test these values are automatically checked theref
 values have all been confirmed to be conserved.
 
     """
-    [testResults, testMessage] = nHingedRigidBody(show_plots, testCase)
+    [testResults, testMessage] = nHingedRigidBody(show_plots, testCase, manager_local)
     assert testResults < 1, testMessage
 
 
@@ -270,7 +271,7 @@ must reject both. The inertia is not factored out, so dissimilar inertia tensors
         unitTestSim.InitializeSimulation()
 
 
-def nHingedRigidBody(show_plots, testCase):
+def nHingedRigidBody(show_plots, testCase, manager_local=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -280,6 +281,7 @@ def nHingedRigidBody(show_plots, testCase):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
+    scObject.dynManager.useManagerLocalEffectorNames = manager_local
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -357,11 +359,9 @@ def nHingedRigidBody(show_plots, testCase):
     scObjectLog = scObject.logger(["totOrbEnergy", "totOrbAngMomPntN_N", "totRotAngMomPntC_N", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
-    theta1Name = unitTestSim.effector1.nameOfThetaState
-    theta2Name = unitTestSim.effector2.nameOfThetaState
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject(theta1Name).getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject(theta2Name).getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.effector1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.effector2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

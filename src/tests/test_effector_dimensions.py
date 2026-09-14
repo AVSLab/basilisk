@@ -294,12 +294,12 @@ def test_wheel_direct_command_dimensions(count):
 
 
 def state_devices(kind, count):
-    """Return a state effector and the names of its device vector and integrated state."""
+    """Return an effector, its device-vector attribute, and its state-name attribute."""
     if kind == "thruster":
         effector = thrusters(thrusterStateEffector, count)
-        return effector, "thrusterData", effector.nameOfKappaState
+        return effector, "thrusterData", "nameOfKappaState"
     effector = wheels(count)
-    return effector, "ReactionWheelData", effector.nameOfReactionWheelOmegasState
+    return effector, "ReactionWheelData", "nameOfReactionWheelOmegasState"
 
 
 @pytest.mark.parametrize("kind", ["thruster", "body_thruster", "wheel"])
@@ -307,12 +307,12 @@ def state_devices(kind, count):
 def test_registered_device_addition(kind, initial_count):
     """Reject both thruster overloads and wheel additions without altering a runnable simulation."""
     device_kind = "wheel" if kind == "wheel" else "thruster"
-    effector, vector_name, state_name = state_devices(device_kind, initial_count)
+    effector, vector_name, state_name_field = state_devices(device_kind, initial_count)
     donor, _, _ = state_devices(device_kind, 1)
     config = getattr(donor, vector_name)[0]
     sim, parent = attach(effector, state=True)
     sim.InitializeSimulation()
-    state = parent.dynManager.getStateObject(state_name)
+    state = parent.dynManager.getStateObject(getattr(effector, state_name_field))
     before = np.asarray(state.getState()).copy()
     with pytest.raises(BasiliskError, match="cannot add .* after state registration"):
         if kind == "wheel":
@@ -336,10 +336,10 @@ def test_registered_device_addition(kind, initial_count):
 @pytest.mark.parametrize("path", ["reset", "input", "output", "dynamics"])
 def test_registered_device_count_mutation(kind, change, path):
     """Catch public-vector changes before Reset, messages, or an attached-only dynamics step."""
-    effector, vector_name, state_name = state_devices(kind, 1 if change == "append" else 2)
+    effector, vector_name, state_name_field = state_devices(kind, 1 if change == "append" else 2)
     sim, parent = attach(effector, state=True)
     sim.InitializeSimulation()
-    state = parent.dynManager.getStateObject(state_name)
+    state = parent.dynManager.getStateObject(getattr(effector, state_name_field))
     before = np.asarray(state.getState()).copy()
     devices = getattr(effector, vector_name)
     if change == "append":
@@ -404,7 +404,7 @@ def test_registered_wheel_counter_mutation(counter):
 @pytest.mark.parametrize("priority", [None, -100, 100])
 def test_registered_layout_reset_lifecycle(kind, priority):
     """Allow setup after an early Reset and preserve states regardless of scheduled Reset order."""
-    effector, vector_name, state_name = state_devices(kind, 1)
+    effector, vector_name, state_name_field = state_devices(kind, 1)
     donor, _, _ = state_devices(kind, 1)
     effector.Reset(0)
     config = getattr(donor, vector_name)[0]
@@ -416,7 +416,7 @@ def test_registered_layout_reset_lifecycle(kind, priority):
     if priority is not None:
         sim.AddModelToTask("task", effector, priority)
     sim.InitializeSimulation()
-    state = parent.dynManager.getStateObject(state_name)
+    state = parent.dynManager.getStateObject(getattr(effector, state_name_field))
     # Thrust factors are dimensionless; wheel speeds are in rad/s.
     values = [[0.25], [0.75]]  # [-] or [rad/s], according to kind
     state.setState(values)

@@ -471,7 +471,7 @@ def velocityAlignedAttitude(rN, vN, mu):
 
 
 def buildBSM(dt, record, useThruster=True, inOrbit=True,
-             simDuration=SIM_DURATION, nearRigid=False):
+             simDuration=SIM_DURATION, nearRigid=False, useManagerLocalEffectorNames=False):
     """Build (and initialize) the Backsubstitution variable-mass reference simulation.
 
     Args:
@@ -490,6 +490,8 @@ def buildBSM(dt, record, useThruster=True, inOrbit=True,
         nearRigid (bool, optional): if True, retain the same model topology
             with negligible slosh masses and zero residual slosh. Defaults to
             False.
+        useManagerLocalEffectorNames (bool): Resolve automatic effector names during initialization.
+            Defaults to False, retaining legacy naming.
 
     Returns:
         tuple: ``(scSim, recorders, handles)`` where ``recorders`` is a dict of the attached
@@ -501,6 +503,7 @@ def buildBSM(dt, record, useThruster=True, inOrbit=True,
     process.addTask(scSim.CreateNewTask("dynTask", macros.sec2nano(dt)))
 
     scObject = spacecraft.Spacecraft()
+    scObject.dynManager.useManagerLocalEffectorNames = useManagerLocalEffectorNames
     scObject.ModelTag = "hub"
     scObject.hub.mHub = HUB_MASS  # [kg]
     scObject.hub.r_BcB_B = [[c] for c in HUB_R_BcB_B]  # [m]
@@ -626,20 +629,18 @@ def buildBSM(dt, record, useThruster=True, inOrbit=True,
             return lambda _: scObject.dynManager.getStateObject(
                 particle.nameOfRhoState).getState()[0][0]
 
-        def pendGetter(name):
-            return lambda _: scObject.dynManager.getStateObject(name).getState()[0][0]
+        def stateGetter(getName):
+            """Resolve generated names after simulation initialization."""
+            return lambda _: scObject.dynManager.getStateObject(getName()).getState()[0][0]
 
         loggerSpec = {f"rho{i+1}": rhoGetter(p) for i, p in enumerate(particles)}
-        loggerSpec["phi"] = pendGetter(pendulum.nameOfPhiState)
-        loggerSpec["theta"] = pendGetter(pendulum.nameOfThetaState)
-        loggerSpec["bulkMass"] = pendGetter(tank.getNameOfMassState())
-        propellantMassStates = [
-            tank.getNameOfMassState(),
-            *(particle.nameOfMassState for particle in sloshEffectors),
-        ]
-        loggerSpec["propellantMass"] = lambda _: sum(
-            scObject.dynManager.getStateObject(name).getState()[0][0]
-            for name in propellantMassStates
+        loggerSpec["phi"] = stateGetter(lambda: pendulum.nameOfPhiState)
+        loggerSpec["theta"] = stateGetter(lambda: pendulum.nameOfThetaState)
+        loggerSpec["bulkMass"] = stateGetter(tank.getNameOfMassState)
+        loggerSpec["propellantMass"] = lambda _: scObject.dynManager.getStateObject(
+            tank.getNameOfMassState()).getState()[0][0] + sum(
+            scObject.dynManager.getStateObject(particle.nameOfMassState).getState()[0][0]
+            for particle in sloshEffectors
         )
         recorders["slosh"] = pythonVariableLogger.PythonVariableLogger(
             loggerSpec, macros.sec2nano(dt))
@@ -1046,7 +1047,7 @@ def pullMujoco(recorders, mu):
 
 def run(showPlots=False, saveJson=False, simDuration=SIM_DURATION, useThruster=True,
         inOrbit=True, saveReference=False, saveTiming=False, nearRigid=False,
-        resultsDir=None):
+        resultsDir=None, useManagerLocalEffectorNames=False):
     """Main function, see scenario description.
 
     Args:
@@ -1072,6 +1073,8 @@ def run(showPlots=False, saveJson=False, simDuration=SIM_DURATION, useThruster=T
             available only in deep space. Defaults to False.
         resultsDir (str, optional): explicit artifact directory. Defaults to
             the scenario ``results`` folder.
+        useManagerLocalEffectorNames (bool): Opt into manager-local names for the BSM spacecraft.
+            Defaults to False.
 
     Returns:
         dict: mapping from figure name to matplotlib figure.
@@ -1085,7 +1088,7 @@ def run(showPlots=False, saveJson=False, simDuration=SIM_DURATION, useThruster=T
     targetResults = resultsPath if resultsDir is None else resultsDir
 
     bsmSim, bsmRec, _ = buildBSM(
-        dt, True, useThruster, inOrbit, simDuration, nearRigid)
+        dt, True, useThruster, inOrbit, simDuration, nearRigid, useManagerLocalEffectorNames)
     mu = earthMu()  # [m^3/s^2]
     bsmSim.ConfigureStopTime(macros.sec2nano(simDuration))
     bsmSim.ExecuteSimulation()
@@ -1188,7 +1191,7 @@ def run(showPlots=False, saveJson=False, simDuration=SIM_DURATION, useThruster=T
     if saveTiming:
         def buildTimedBSM():
             simulation, recorders, handles = buildBSM(
-                dt, False, useThruster, inOrbit, simDuration, nearRigid)
+                dt, False, useThruster, inOrbit, simDuration, nearRigid, useManagerLocalEffectorNames)
             simulation.ConfigureStopTime(macros.sec2nano(simDuration))
             return simulation, recorders, handles
 

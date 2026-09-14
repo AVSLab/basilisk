@@ -386,8 +386,8 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

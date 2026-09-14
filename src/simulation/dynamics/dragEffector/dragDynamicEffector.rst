@@ -28,17 +28,22 @@ Example setup:
     # Drag model
     drag = dragDynamicEffector.DragDynamicEffector()
     drag.coreParams.dragCoeff = 2.2
-    drag.coreParams.projectedArea = 10.0
+    drag.coreParams.projectedArea = 10.0  # [m^2]
     drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
 
     # Optional: apply multiplicative density correction from a scalar state
     stochasticAtmo = meanRevertingNoiseStateEffector.MeanRevertingNoiseStateEffector()
+    # Use an explicit name for this connection, which is made before initialization.
+    stochasticAtmo.setStateName("atmosphericDensityCorrection")
     # ... Configure stochasticAtmo here
     scObject.addStateEffector(stochasticAtmo)
     drag.densityCorrectionStateName = stochasticAtmo.getStateName()
 
     scObject.addDynamicEffector(drag)
     scSim.AddModelToTask(simTaskName, drag)
+
+Using an explicit name keeps this connection valid under both :ref:`effectorNaming`
+policies. Automatic names may change during initialization in manager-local mode.
 
 Wind Velocity Input
 --------------------
@@ -58,7 +63,7 @@ Example setup:
 
     drag = dragDynamicEffector.DragDynamicEffector()
     drag.coreParams.dragCoeff = 2.2
-    drag.coreParams.projectedArea = 10.0
+    drag.coreParams.projectedArea = 10.0  # [m^2]
     drag.atmoDensInMsg.subscribeTo(atmo.envOutMsgs[0])
 
     # Optional: link a wind model for atmosphere-relative velocity

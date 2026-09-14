@@ -222,16 +222,20 @@ def plot_slosh_displacement_error(timeData, rhoLog, rhoTLog):
     plt.ylabel('Mass Displacement Error [m]')
 
 
-def run(show_plots, component_list, sc_model):
+def run(show_plots, component_list, sc_model, useManagerLocalEffectorNames=False):
     """
     Args:
         show_plots (bool): Determines if the script should display plots
         component_list (str): Choose which components to add between ``panels``, ``slosh`` or ``None``
         sc_model (str): Choose which spacecraft models to use between ``bskSat``, ``MEV1``, or ``MEV2``
+        useManagerLocalEffectorNames (bool): Resolve names separately in each spacecraft manager.
+            Defaults to False, retaining legacy naming.
     """
     scSim = SimBaseClass()
 
     set_up_spacecraft(scSim, sc_model)
+    for vehicle in (scSim.scObject1, scSim.scObject2, scSim.scObjectT):
+        vehicle.dynManager.useManagerLocalEffectorNames = useManagerLocalEffectorNames
     set_up_initial_conditions(scSim, component_list)
     set_up_constraint_effector(scSim)
     set_up_additional_effectors(scSim, component_list)
@@ -589,23 +593,17 @@ def log_data(scSim, component_list):
         scSim.AddModelToTask(scSim.simTaskName, scSim.sp4Log)
 
     if "slosh" in component_list:
-        rho1Name = scSim.particle1.nameOfRhoState
-        rho2Name = scSim.particle2.nameOfRhoState
-        rho3Name = scSim.particle3.nameOfRhoState
         scSim.rhoLog = pythonVariableLogger.PythonVariableLogger({
-            "rho1": lambda _: scSim.scObject1.dynManager.getStateObject(rho1Name).getState(),
-            "rho2": lambda _: scSim.scObject1.dynManager.getStateObject(rho2Name).getState(),
-            "rho3": lambda _: scSim.scObject1.dynManager.getStateObject(rho3Name).getState(),
+            "rho1": lambda _: scSim.scObject1.dynManager.getStateObject(scSim.particle1.nameOfRhoState).getState(),
+            "rho2": lambda _: scSim.scObject1.dynManager.getStateObject(scSim.particle2.nameOfRhoState).getState(),
+            "rho3": lambda _: scSim.scObject1.dynManager.getStateObject(scSim.particle3.nameOfRhoState).getState(),
         })
         scSim.AddModelToTask(scSim.simTaskName, scSim.rhoLog)
 
-        rho4Name = scSim.particle4.nameOfRhoState
-        rho5Name = scSim.particle5.nameOfRhoState
-        rho6Name = scSim.particle6.nameOfRhoState
         scSim.rhoTLog = pythonVariableLogger.PythonVariableLogger({
-            "rho4": lambda _: scSim.scObjectT.dynManager.getStateObject(rho4Name).getState(),
-            "rho5": lambda _: scSim.scObjectT.dynManager.getStateObject(rho5Name).getState(),
-            "rho6": lambda _: scSim.scObjectT.dynManager.getStateObject(rho6Name).getState(),
+            "rho4": lambda _: scSim.scObjectT.dynManager.getStateObject(scSim.particle4.nameOfRhoState).getState(),
+            "rho5": lambda _: scSim.scObjectT.dynManager.getStateObject(scSim.particle5.nameOfRhoState).getState(),
+            "rho6": lambda _: scSim.scObjectT.dynManager.getStateObject(scSim.particle6.nameOfRhoState).getState(),
         })
         scSim.AddModelToTask(scSim.simTaskName, scSim.rhoTLog)
 

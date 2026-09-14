@@ -292,6 +292,7 @@ Complex Spacecraft Dynamics Simulations
 
    IMU Gyro Random Walk <scenarioGaussMarkovRandomWalk>
    Fuel Slosh <scenarioFuelSlosh>
+   Automatic and Custom Effector Names <scenarioEffectorNaming>
    Flexible (Hinged) Panels <scenarioHingedRigidBody>
    Bending and Torsional Flexible Panels <scenarioFlexiblePanel>
    Sensors Attached to a Rotating Panel <scenarioRotatingPanel>

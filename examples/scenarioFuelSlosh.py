@@ -190,7 +190,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-def run(show_plots, damping_parameter, timeStep):
+def run(show_plots, damping_parameter, timeStep, useManagerLocalEffectorNames=False):
     """
     At the end of the python script you can specify the following example parameters.
 
@@ -198,6 +198,8 @@ def run(show_plots, damping_parameter, timeStep):
         show_plots (bool): Determines if the script should display plots
         damping_parameter (float): Hinge damping coefficient
         timeStep (float): Integration time step
+        useManagerLocalEffectorNames (bool): Resolve automatic effector names during initialization.
+            Defaults to False, retaining legacy naming.
 
     """
 
@@ -214,6 +216,7 @@ def run(show_plots, damping_parameter, timeStep):
 
     #  create spacecraft object
     scObject = spacecraft.Spacecraft()
+    scObject.dynManager.useManagerLocalEffectorNames = useManagerLocalEffectorNames
     scObject.ModelTag = "bskSat"
 
     scSim.AddModelToTask(simTaskName, scObject)
@@ -327,11 +330,11 @@ def run(show_plots, damping_parameter, timeStep):
 
     damperRhoLog = None
     if damping_parameter != 0.0:
-        rhoNames = [scSim.particle1.nameOfRhoState, scSim.particle2.nameOfRhoState,
-                    scSim.particle3.nameOfRhoState]
+        particles = [scSim.particle1, scSim.particle2, scSim.particle3]
 
         def get_rho(CurrentSimNanos, i):
-            return scObject.dynManager.getStateObject(rhoNames[i - 1]).getState()[0][0]
+            """Read the final state name when the logger runs after initialization."""
+            return scObject.dynManager.getStateObject(particles[i - 1].nameOfRhoState).getState()[0][0]
 
         damperRhoLog = pythonVariableLogger.PythonVariableLogger({
                 "damperRho1": lambda CurrentSimNanos: get_rho(CurrentSimNanos, 1),

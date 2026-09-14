@@ -38,8 +38,9 @@ import scenarioFuelSlosh
     (0.0, 0.3),
     (15.0, 0.75),
 ])
+@pytest.mark.parametrize("manager_local", [False, True], ids=["legacy", "manager-local"])
 @pytest.mark.scenarioTest
-def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
+def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep, manager_local):
     """This function is called by the py.test environment."""
     # each test method requires a single assert method to be called
     # provide a unique test method name, starting with test_
@@ -47,7 +48,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
     testMessages = []  # create empty array to store test log messages
 
     time, rhojOuts, figureList = scenarioFuelSlosh.run(
-        show_plots, damping_parameter, timeStep)
+        show_plots, damping_parameter, timeStep, useManagerLocalEffectorNames=manager_local)
 
     if damping_parameter != 0:
         accuracy = 0.05
@@ -66,7 +67,8 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in list(figureList.items()):
-        simHelpers.saveScenarioFigure(pltName, plt, path)
+        if not manager_local:
+            simHelpers.saveScenarioFigure(pltName, plt, path)
 
     if testFailCount == 0:
         print("PASSED ")

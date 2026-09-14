@@ -19,7 +19,8 @@
 
 import pytest
 
-from Basilisk.simulation import hingedRigidBodyStateEffector, stateArchitecture
+from Basilisk.architecture import bskLogging
+from Basilisk.simulation import hingedRigidBodyStateEffector, spacecraft, stateArchitecture
 
 
 @pytest.mark.parametrize("custom_names", [False, True])
@@ -46,10 +47,15 @@ def test_setup_time_names_remain_valid(custom_names):
         assert state.getState()[0][0] == angle
 
 
-def test_preparation_api_remains_cpp_only():
-    """Python cannot select a policy before the built-in effector migration is complete."""
+def test_public_policy_flag_keeps_preparation_internal():
+    """Python selects either policy while the preparation protocol remains internal."""
     manager = stateArchitecture.DynParamManager()
     panel = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    assert manager.useManagerLocalEffectorNames is False
+    manager.useManagerLocalEffectorNames = True
+    assert manager.useManagerLocalEffectorNames is True
+    manager.useManagerLocalEffectorNames = False
+    assert manager.useManagerLocalEffectorNames is False
     assert not hasattr(manager, "setEffectorNamingPolicy")
     assert not hasattr(manager, "requestEffectorNames")
     assert not hasattr(manager, "resolveEffectorNames")
@@ -59,6 +65,23 @@ def test_preparation_api_remains_cpp_only():
     assert not hasattr(panel, "collectEffectorNames")
     assert not hasattr(panel, "cancelEffectorNames")
     assert not hasattr(panel, "bindAttachedDynamicEffectors")
+
+
+@pytest.mark.parametrize("local", [False, True])
+def test_public_policy_cannot_change_after_initialization(local):
+    """Changing the flag cannot invalidate registered states or resolved names."""
+    vehicle = spacecraft.Spacecraft()
+    vehicle.hub.mHub = 100.0  # [kg]
+    panel = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    vehicle.dynManager.useManagerLocalEffectorNames = local
+    vehicle.addStateEffector(panel)
+    vehicle.initializeDynamics()
+    original = panel.nameOfThetaState
+    vehicle.dynManager.useManagerLocalEffectorNames = local
+    with pytest.raises(bskLogging.BasiliskError, match="select the naming policy before"):
+        vehicle.dynManager.useManagerLocalEffectorNames = not local
+    assert vehicle.dynManager.useManagerLocalEffectorNames is local
+    assert panel.nameOfThetaState == original
 
 
 if __name__ == "__main__":

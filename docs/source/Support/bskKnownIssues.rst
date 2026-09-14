@@ -10,6 +10,15 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 288: Constructor counters could make generated effector names depend on earlier
+  simulations, overlapping object lifetimes, or garbage collection. Opt into
+  ``scObject.dynManager.useManagerLocalEffectorNames = True`` before initialization to allocate
+  names within each dynamics manager. This policy is recommended for new ``Spacecraft`` scripts;
+  legacy naming remains the default for compatibility. In the new policy,
+  generated state and inertial-property names become final during ``InitializeSimulation()``;
+  read them afterward or within logging callbacks. Use explicit custom names for string-based
+  connections configured before initialization. Deprecated ``SpacecraftSystem`` remains legacy-only;
+  external state effectors need the naming preparation hooks. See :ref:`effectorNaming`.
 - GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
   They now reject non-finite operands and non-finite or negative tolerances. The new
   ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` assertions

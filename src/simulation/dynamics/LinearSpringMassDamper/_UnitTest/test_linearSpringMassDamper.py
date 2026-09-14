@@ -51,12 +51,13 @@ from Basilisk.architecture import messaging
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_fuelSloshAllTest(show_plots,useFlag,testCase):
+@pytest.mark.parametrize("manager_local", [False, True], ids=["legacy", "manager-local"])
+def test_fuelSloshAllTest(show_plots, useFlag, testCase, manager_local):
     """Module Unit Test"""
-    [testResults, testMessage] = fuelSloshTest(show_plots,useFlag,testCase)
+    [testResults, testMessage] = fuelSloshTest(show_plots, useFlag, testCase, manager_local)
     assert testResults < 1, testMessage
 
-def fuelSloshTest(show_plots,useFlag,testCase):
+def fuelSloshTest(show_plots, useFlag, testCase, manager_local=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -66,6 +67,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     testMessages = []  # create empty list to store test log messages
 
     scObject = spacecraft.Spacecraft()
+    scObject.dynManager.useManagerLocalEffectorNames = manager_local
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -191,13 +193,10 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.AddModelToTask(unitTaskName, scObjectLog)
 
     if testCase == 'MassDepletion':
-        mass1Name = unitTestSim.particle1.nameOfMassState
-        mass2Name = unitTestSim.particle2.nameOfMassState
-        mass3Name = unitTestSim.particle3.nameOfMassState
         stateLog = pythonVariableLogger.PythonVariableLogger({
-            "mass1": lambda _: scObject.dynManager.getStateObject(mass1Name).getState(),
-            "mass2": lambda _: scObject.dynManager.getStateObject(mass2Name).getState(),
-            "mass3": lambda _: scObject.dynManager.getStateObject(mass3Name).getState(),
+            "mass1": lambda _: scObject.dynManager.getStateObject(unitTestSim.particle1.nameOfMassState).getState(),
+            "mass2": lambda _: scObject.dynManager.getStateObject(unitTestSim.particle2.nameOfMassState).getState(),
+            "mass3": lambda _: scObject.dynManager.getStateObject(unitTestSim.particle3.nameOfMassState).getState(),
         })
         unitTestSim.AddModelToTask(unitTaskName, stateLog)
 

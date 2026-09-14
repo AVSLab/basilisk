@@ -34,34 +34,13 @@ if(WIN32)
 endif()
 gtest_discover_tests(test_effectorNames DISCOVERY_MODE PRE_TEST)
 
-# Keep the opt-in bridge outside the Basilisk package and build it only for tests.
-set_property(SOURCE effectorNamingTestSupport.i PROPERTY CPLUSPLUS ON)
-set_property(SOURCE effectorNamingTestSupport.i PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE)
-swig_add_library(effectorNamingTestSupport LANGUAGE python TYPE MODULE
-  SOURCES effectorNamingTestSupport.i
-  OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
-  OUTFILE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-bsk_suppress_strict_warnings_for_sources(
-  "${CMAKE_CURRENT_BINARY_DIR}/effectorNamingTestSupportPYTHON_wrap.cxx")
-target_link_libraries(effectorNamingTestSupport PRIVATE dynamicsLib ${PYTHON3_MODULE})
-target_include_directories(effectorNamingTestSupport PRIVATE ${Python3_INCLUDE_DIRS})
-set_target_properties(effectorNamingTestSupport PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-foreach(config DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
-  set_target_properties(effectorNamingTestSupport PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY_${config} "${CMAKE_CURRENT_BINARY_DIR}"
-    RUNTIME_OUTPUT_DIRECTORY_${config} "${CMAKE_CURRENT_BINARY_DIR}")
-endforeach()
 add_test(NAME effectorNamingPython
   COMMAND "${Python3_EXECUTABLE}" -m pytest -q
   "${CMAKE_CURRENT_SOURCE_DIR}/test_hingedEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_simpleEffectorNaming.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_actuatorEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_multibodyEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingIntegration.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingCompatibility.py")
-cmake_path(CONVERT "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}"
-  TO_NATIVE_PATH_LIST naming_test_pythonpath)
-string(REPLACE ";" "\\;" naming_test_pythonpath "${naming_test_pythonpath}")
 set_tests_properties(effectorNamingPython PROPERTIES
-  ENVIRONMENT "PYTHONPATH=${naming_test_pythonpath};MPLBACKEND=Agg;BSK_REQUIRE_NAMING_TEST_SUPPORT=1")
+  ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR};MPLBACKEND=Agg")
