@@ -20,6 +20,8 @@
 #ifndef SPACECRAFT_DYNAMICS_H
 #define SPACECRAFT_DYNAMICS_H
 
+#include <Eigen/Dense>
+#include <string>
 #include <vector>
 #include <stdint.h>
 #include "../_GeneralModuleFiles/dynParamManager.h"
@@ -158,13 +160,15 @@ private:
     StateData *hubGravVelocity;          //!< State data access to the gravity-accumulated DV on the Body frame
     StateData *BcGravVelocity;           //!< State data access to the gravity-accumulated DV on point Bc
 
-    std::string propName_m_SC;                  //!< property name of m_SC
-    std::string propName_mDot_SC;               //!< property name of mDot_SC
-    std::string propName_centerOfMassSC;        //!< property name of centerOfMassSC
-    std::string propName_inertiaSC;             //!< property name of inertiaSC
-    std::string propName_inertiaPrimeSC;        //!< property name of inertiaPrimeSC
-    std::string propName_centerOfMassPrimeSC;   //!< property name of centerOfMassPrimeSC
-    std::string propName_centerOfMassDotSC;     //!< property name of centerOfMassDotSC
+    std::string propName_m_SC = "m_SC";                            //!< Property name of total mass.
+    std::string propName_mDot_SC = "mDot_SC";                       //!< Property name of mass rate.
+    std::string propName_centerOfMassSC = "centerOfMassSC";         //!< Property name of center of mass.
+    std::string propName_inertiaSC = "inertiaSC";                   //!< Property name of inertia.
+    std::string propName_inertiaPrimeSC = "inertiaPrimeSC";         //!< Property name of inertia rate.
+    std::string propName_centerOfMassPrimeSC = "centerOfMassPrimeSC"; //!< Property name of center-of-mass rate.
+    std::string propName_centerOfMassDotSC = "centerOfMassDotSC";    //!< Property name of inertial center-of-mass rate.
+    bool namesPrepared = false;                                  //!< Prevent repeated spacecraft-name prefixes.
+    std::string preparedSpacecraftName;                           //!< Spacecraft name used during preparation.
 
 };
 

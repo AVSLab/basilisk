@@ -18,6 +18,7 @@
  */
 
 #include "stateEffector.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 /*! This is the constructor, just setting the variables to zero */
 StateEffector::StateEffector()
@@ -79,8 +80,11 @@ void StateEffector::collectEffectorNames(DynParamManager& manager, std::set<cons
     }
     const auto group = this->describeEffectorNames();
     if (group.family.empty()) {
-        this->bskLogger.bskError("StateEffector: manager-local naming requires describeEffectorNames() support. "
-                                "Migrate this effector or use legacy naming.");
+        const auto* model = dynamic_cast<const SysModel*>(this);
+        const std::string label = model && !model->ModelTag.empty() ? model->ModelTag : "unnamed state effector";
+        this->bskLogger.bskError("StateEffector '%s': manager-local naming requires describeEffectorNames() support. "
+                                "Migrate this effector's name declaration and registration or use legacy naming.",
+                                label.c_str());
     }
     const auto& owner = this->effectorNameIdentity.getToken();
     const auto& managerIdentity = manager.effectorNameIdentity.getToken();

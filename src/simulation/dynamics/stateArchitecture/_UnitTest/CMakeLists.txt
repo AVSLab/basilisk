@@ -2,7 +2,7 @@
 # This file is distributed under the ISC License in LICENSE.
 
 add_executable(test_effectorNames test_effectorNames.cpp test_hingedEffectorNames.cpp
-  test_simpleEffectorNames.cpp test_multibodyEffectorNames.cpp
+  test_simpleEffectorNames.cpp test_multibodyEffectorNames.cpp test_effectorNamingIntegration.cpp
   ../../HingedRigidBodies/hingedRigidBodyStateEffector.cpp
   ../../spacecraft/spacecraft.cpp
   ../../LinearSpringMassDamper/linearSpringMassDamper.cpp
@@ -58,6 +58,7 @@ add_test(NAME effectorNamingPython
   "${CMAKE_CURRENT_SOURCE_DIR}/test_hingedEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_simpleEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_multibodyEffectorNaming.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingIntegration.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingCompatibility.py")
 cmake_path(CONVERT "${CMAKE_CURRENT_BINARY_DIR};${CMAKE_BINARY_DIR}"
   TO_NATIVE_PATH_LIST naming_test_pythonpath)
