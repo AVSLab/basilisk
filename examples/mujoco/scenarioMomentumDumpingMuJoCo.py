@@ -673,7 +673,7 @@ class RWTorqueDistributor(sysModel.SysModel):
     """ RWTorqueDistributor: custom sys model to fan a single array motor-torque message out into
         one single-actuator message per reaction wheel
         INPUTS:
-            - numRW: number of reaction wheels to distribute torque commands to"""
+        - numRW: number of reaction wheels to distribute torque commands to"""
 
     def __init__(self, numRW):
         """Initialize"""
@@ -697,7 +697,7 @@ class RWSpeedCombiner(sysModel.SysModel):
     """ RWSpeedCombiner: custom sys model to combine per-joint MuJoCo wheel speeds into a single
         RWSpeedMsg expected by the FSW momentum-management chain
         INPUTS:
-            - joints: list of MuJoCo scalar joints, one per reaction wheel"""
+        - joints: list of MuJoCo scalar joints, one per reaction wheel"""
 
     def __init__(self, joints):
         """Initialize"""
