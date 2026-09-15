@@ -41,6 +41,7 @@ add_test(NAME effectorNamingPython
   "${CMAKE_CURRENT_SOURCE_DIR}/test_actuatorEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_multibodyEffectorNaming.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingIntegration.py"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingDeprecation.py"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_effectorNamingCompatibility.py")
 set_tests_properties(effectorNamingPython PROPERTIES
   ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR};MPLBACKEND=Agg")

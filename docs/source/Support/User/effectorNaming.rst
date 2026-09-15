@@ -24,9 +24,10 @@ rename that state.
    creation in the same Python session. Existing scripts should also migrate
    after updating any lookups that depend on generated names, as described below.
 
-   Legacy naming remains available and is still the default for compatibility
-   during the transition. Deprecated ``SpacecraftSystem`` and unsupported external
-   effectors must continue to use legacy naming; see the compatibility section.
+   Legacy automatic naming is deprecated and is scheduled for removal on **September 14,
+   2027**. Legacy naming remains the default during the transition.
+   Deprecated ``SpacecraftSystem`` and unsupported external effectors require
+   migration before they can use the new policy; see the compatibility section.
 
 Enabling Manager-Local Naming
 -----------------------------
@@ -170,6 +171,37 @@ Migrating an Existing Script
    tests. For otherwise identical, valid configurations, changing the naming
    policy should leave the physical results unchanged.
 
+Legacy Automatic-Naming Warning
+--------------------------------
+
+When a built-in effector registers an automatically named state or property in
+legacy mode, its Python interface reports a dated Basilisk deprecation warning:
+
+* Before **September 14, 2027**: ``BSKDeprecationWarning``.
+* On or after that date: ``BSKUrgentDeprecationWarning``.
+
+The warning identifies the opt-in flag, links to these migration instructions,
+and gives the removal date. Reaching the date escalates the warning; it does not
+disable legacy naming or change the selected policy. Removing legacy support
+requires a future Basilisk release.
+
+Each manager reports this warning only once, even with multiple effectors,
+nested attachments, or repeated initialization. A new spacecraft has a new
+manager and can report its own warning. These are Python warnings, independent
+of the ``BSKLogger`` verbosity setting. Python warning filters may suppress
+repeated messages. Basilisk's ``deprecated.ignore()`` helper can suppress the
+ordinary warning, but does not suppress the urgent category; see
+:ref:`deprecatingCode`.
+
+Setting ``vehicle.dynManager.useManagerLocalEffectorNames = True`` suppresses the
+warning and selects the new naming policy. Explicit names alone do not trigger
+it, but a partial override can still leave automatic names. For example,
+assigning a panel's angle and angular-rate names leaves its four inertial-property
+names automatic. Unused names do not count: a balanced reaction-wheel array does
+not register its wheel-angle state and therefore does not warn about that name.
+You do not need to assign every name to avoid the warning; opting in retains
+the convenience of automatic naming.
+
 How Automatic Names Are Allocated
 ---------------------------------
 
@@ -223,10 +255,25 @@ Existing physical restrictions on which effectors can attach to a prescribed
 frame or another body still apply.
 
 Deprecated ``SpacecraftSystem`` and ``SpacecraftUnit`` remain legacy-only and
-reject the opt-in policy. External C++ state effectors must implement the naming
+reject the opt-in policy. Migrate these simulations to ``Spacecraft`` to use
+manager-local names. External C++ state effectors must implement the naming
 protocol described in :ref:`stateEffector`. An unsupported effector raises a
 diagnostic identifying its ``ModelTag`` when available and recommending migration
-or legacy mode.
+or legacy mode during the transition. External effectors using generic
+string-only registration do not report the automatic-naming warning unless
+they adopt the legacy registration helpers described there.
+
+As with Basilisk's other SWIG deprecations, the dated warnings are reported
+through Python. Direct C++ use records automatic-name use without emitting a
+Python warning. Normal ``InitializeSimulation()`` reports pending warnings after
+the C++ initialization workers finish. For scheduled managers, this also defers
+warnings triggered by Python callbacks until initialization has completed.
+If an initialization callback initializes another simulation, that simulation's
+warnings also wait until the outer initialization or task reset completes.
+Independent simulations initialized concurrently report to their own callers.
+``ResetTask()`` and a task's ``resetTask()`` report pending warnings after the
+task finishes resetting. Direct Python calls to effector registration,
+``initializeDynamics()``, and spacecraft ``Reset()`` also report them.
 
 In C++, select the policy with
 ``vehicle.dynManager.setUseManagerLocalEffectorNames(true)`` or the

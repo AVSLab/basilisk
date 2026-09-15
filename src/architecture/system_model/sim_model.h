@@ -23,10 +23,13 @@
 #include "architecture/utilities/bskSemaphore.h"
 #include "architecture/system_model/sys_process.h"
 #include <condition_variable>
+#include <cstddef>
+#include <exception>
 #include <iostream>
 #include <mutex>
 #include <stdint.h>
 #include <set>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -70,6 +73,7 @@ public:
     bool crossInitNow{};             //!< Flag requesting cross-init
     bool resetNow{};                 //!< Flag requesting that the thread execute reset
     std::exception_ptr threadException = nullptr;  //!< Exception pointer for thread errors
+    uint64_t pythonExecutionContext = 0;  //!< Opaque Python lifecycle context; zero means no context
     //!
 private:
     bool threadRunning{};            //!< Flag that will allow for easy concurrent locking
@@ -101,6 +105,19 @@ public:
     void assignRemainingProcs();
     uint64_t getThreadCount() const {return threadList.size();} //!< returns the number of threads used
 
+    /** @brief Set the opaque context propagated to initialization callbacks.
+     * @param context Python lifecycle context identifier; zero means no context.
+     */
+    void setPythonExecutionContext(uint64_t context) {this->pythonExecutionContext = context;}
+    /** @brief Get the context assigned to this simulation.
+     * @return Opaque Python lifecycle context identifier, or zero if unset.
+     */
+    uint64_t getPythonExecutionContext() const {return this->pythonExecutionContext;}
+    /** @brief Get the context of the current native initialization callback.
+     * @return Opaque Python lifecycle context identifier, or zero outside initialization.
+     */
+    static uint64_t getCurrentPythonExecutionContext();
+
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
@@ -109,6 +126,8 @@ public:
     uint64_t CurrentNanos=0;  //!< [ns] Current sim time
     uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
     int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
+private:
+    uint64_t pythonExecutionContext = 0;  //!< Opaque context for Python initialization callbacks
 };
 
 #endif /* _SimModel_H_ */

@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import FancyArrowPatch
 from Basilisk.architecture import alg_contain, bskLogging, sim_model
-from Basilisk.utilities import deprecated, simulationArchTypes
+from Basilisk.utilities import _effectorNaming, deprecated, simulationArchTypes
 from Basilisk.utilities.pythonVariableLogger import PythonVariableLogger
 from Basilisk.utilities.simulationProgessBar import SimulationProgressBar
 
@@ -1878,19 +1878,23 @@ class SimBaseClass:
     def ResetTask(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
-                Task.resetTask(self.TotalSim.CurrentNanos)
+                # Attribute diagnostics to this public call after the task's nested scope exits.
+                with _effectorNaming.deferReports(Task.TaskModels):
+                    Task.resetTask(self.TotalSim.CurrentNanos)
 
     def InitializeSimulation(self):
         """
         Initialize the BSK simulation.  This runs the SelfInit() and Reset() methods on each module.
         """
-        if self.simulationInitialized:
-            self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
-        self.TotalSim.assignRemainingProcs()
-        self.TotalSim.ResetSimulation()
-        self.TotalSim.selfInitSimulation()
-        self.TotalSim.resetInitSimulation()
-        self.simulationInitialized = True
+        models = (model for task in self.TaskList for model in task.TaskModels)
+        with _effectorNaming.deferReports(models, simulation=self.TotalSim):
+            if self.simulationInitialized:
+                self.TotalSim.resetThreads(self.TotalSim.getThreadCount())
+            self.TotalSim.assignRemainingProcs()
+            self.TotalSim.ResetSimulation()
+            self.TotalSim.selfInitSimulation()
+            self.TotalSim.resetInitSimulation()
+            self.simulationInitialized = True
 
     def ConfigureStopTime(self, TimeStop, StopCondition: Literal["<=", ">="] = "<="):
         """

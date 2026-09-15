@@ -29,7 +29,13 @@ effectors can retain legacy support while implementing these preparation hooks:
 #. Use ``registerEffectorState()`` and ``createEffectorProperty()`` with
    ``getEffectorNameRequest()`` and the local key. String-only registration cannot
    claim a reserved name. Preserve the existing registration path under
-   ``EffectorNamingPolicy::Legacy``.
+   ``EffectorNamingPolicy::Legacy`` using ``registerLegacyEffectorState()`` and
+   ``createLegacyEffectorProperty()``. Set the ``automatic`` argument to ``true``
+   only when no custom name was explicitly assigned. These helpers preserve
+   legacy registration behavior and record its use for the dated Python
+   deprecation warning, reported once per manager. Call them only for
+   states and properties actually registered by the configured model; an unused
+   optional state must not trigger a warning.
 #. Implement ``bindAttachedDynamicEffectors()`` if there are dependent attachments.
    Refresh their property names and bindings here, after the entire forest is
    registered. Recurse through owned children. Bindings for a dynamic effector
@@ -49,6 +55,27 @@ The default declaration is empty. In manager-local mode it raises an actionable
 error before state or property registration, including the effector's
 ``ModelTag`` when the object is also a ``SysModel``. Legacy mode does not require
 these hooks.
+
+Generic ``registerState()`` and ``createProperty()`` calls do not identify whether
+a string was generated automatically. External effectors that continue to use
+these calls in legacy mode therefore do not participate in the automatic-naming
+warning. Track assignments explicitly and use the legacy helpers to participate;
+fixed hub names and manually registered data can retain the generic calls.
+
+The shared ``dynParamManager.i`` interface reports pending warnings after direct
+Python calls with a ``DynParamManager&`` argument return from C++. The dynamic
+object wrappers and ``SimulationBaseClass.InitializeSimulation()`` cover
+initialization of attached trees; task resets also report pending warnings.
+Scheduled managers defer reports throughout these lifecycle calls, including
+reports triggered by Python callbacks running on C++ workers. The report uses
+``deprecated.deprecationWarn()`` and its standard ordinary/urgent warning
+categories. Deferred reports run on the Python calling thread after successful
+initialization or reset, including when Python filters treat warnings as
+exceptions. Simulations initialized inside these callbacks join the outer
+reporting scope. Their model owners are retained until reporting finishes, so
+temporary inner simulations can be safely discarded by the callback.
+Independent concurrent simulations retain separate reporting scopes, and
+unrelated managers retain their own reporting behavior.
 
 Retained Mass-Property Derivatives and Equation-of-Motion Overrides
 -------------------------------------------------------------------

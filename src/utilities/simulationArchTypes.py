@@ -20,6 +20,7 @@
 
 from Basilisk.architecture import sim_model
 from Basilisk.architecture import sys_model_task
+from Basilisk.utilities import _effectorNaming
 
 
 class ProcessBaseClass(object):
@@ -66,4 +67,5 @@ class TaskBaseClass(object):
         self.TaskData.enableTask()
 
     def resetTask(self, callTime):
-        self.TaskData.ResetTaskList(callTime)
+        with _effectorNaming.deferReports(self.TaskModels):
+            self.TaskData.ResetTaskList(callTime)
