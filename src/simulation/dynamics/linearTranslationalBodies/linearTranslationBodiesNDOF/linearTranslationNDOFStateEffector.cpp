@@ -471,12 +471,16 @@ void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesI
     }
 
     // Register the rho states
-    this->rhoState = managerLocal
+    this->rhoState =
+      managerLocal
         ? statesIn.registerEffectorState(static_cast<uint32_t>(N), 1, this->getEffectorNameRequest(), "nameOfRhoState")
-        : statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoState);
+        : statesIn.registerLegacyEffectorState(
+            static_cast<uint32_t>(N), 1, this->nameOfRhoState, !this->customNameOfRhoState);
     this->rhoDotState = managerLocal
-        ? statesIn.registerEffectorState(static_cast<uint32_t>(N), 1, this->getEffectorNameRequest(), "nameOfRhoDotState")
-        : statesIn.registerState(static_cast<uint32_t>(N), 1, this->nameOfRhoDotState);
+                          ? statesIn.registerEffectorState(
+                              static_cast<uint32_t>(N), 1, this->getEffectorNameRequest(), "nameOfRhoDotState")
+                          : statesIn.registerLegacyEffectorState(
+                              static_cast<uint32_t>(N), 1, this->nameOfRhoDotState, !this->customNameOfRhoDotState);
     Eigen::MatrixXd RhoInitMatrix(N,1);
     Eigen::MatrixXd RhoDotInitMatrix(N,1);
     int i = 0;
@@ -525,17 +529,22 @@ LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
         auto& body = *this->translatingBodyVec[index];
         const std::string suffix = "_" + std::to_string(index + 1);
         body.r_FN_N = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "position" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialPositionProperty, stateInit);
+                        ? states.createEffectorProperty(this->getEffectorNameRequest(), "position" + suffix, stateInit)
+                        : states.createLegacyEffectorProperty(
+                            body.nameOfInertialPositionProperty, stateInit, !body.customNameOfInertialPositionProperty);
         body.v_FN_N = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "velocity" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialVelocityProperty, stateInit);
-        body.sigma_FN = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "attitude" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialAttitudeProperty, stateInit);
-        body.omega_FN_F = managerLocal
+                        ? states.createEffectorProperty(this->getEffectorNameRequest(), "velocity" + suffix, stateInit)
+                        : states.createLegacyEffectorProperty(
+                            body.nameOfInertialVelocityProperty, stateInit, !body.customNameOfInertialVelocityProperty);
+        body.sigma_FN =
+          managerLocal ? states.createEffectorProperty(this->getEffectorNameRequest(), "attitude" + suffix, stateInit)
+                       : states.createLegacyEffectorProperty(
+                           body.nameOfInertialAttitudeProperty, stateInit, !body.customNameOfInertialAttitudeProperty);
+        body.omega_FN_F =
+          managerLocal
             ? states.createEffectorProperty(this->getEffectorNameRequest(), "angularVelocity" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialAngVelocityProperty, stateInit);
+            : states.createLegacyEffectorProperty(
+                body.nameOfInertialAngVelocityProperty, stateInit, !body.customNameOfInertialAngVelocityProperty);
         if (!managerLocal) {
             for (auto* effector : body.dynEffectors) {
                 effector->linkInProperties(states);

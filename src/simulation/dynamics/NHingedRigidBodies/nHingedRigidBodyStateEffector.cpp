@@ -367,12 +367,16 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
         it += 1;
     }
     this->thetaState = managerLocal
-        ? statesIn.registerEffectorState((uint32_t) this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaState")
-        : statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaState);
+                         ? statesIn.registerEffectorState(
+                             (uint32_t)this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaState")
+                         : statesIn.registerLegacyEffectorState(
+                             (uint32_t)this->PanelVec.size(), 1, this->nameOfThetaState, !this->customNameOfThetaState);
     this->thetaState->setState(thetaInitMatrix);
-    this->thetaDotState = managerLocal
-        ? statesIn.registerEffectorState((uint32_t) this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaDotState")
-        : statesIn.registerState((uint32_t) this->PanelVec.size(), 1, this->nameOfThetaDotState);
+    this->thetaDotState =
+      managerLocal ? statesIn.registerEffectorState(
+                       (uint32_t)this->PanelVec.size(), 1, this->getEffectorNameRequest(), "nameOfThetaDotState")
+                   : statesIn.registerLegacyEffectorState(
+                       (uint32_t)this->PanelVec.size(), 1, this->nameOfThetaDotState, !this->customNameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
 
     registerProperties(statesIn);
@@ -414,17 +418,22 @@ NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
         auto& body = this->PanelVec[index];
         const std::string suffix = "_" + std::to_string(index + 1);
         body.r_HN_N = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "position" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialPositionProperty, stateInit);
+                        ? states.createEffectorProperty(this->getEffectorNameRequest(), "position" + suffix, stateInit)
+                        : states.createLegacyEffectorProperty(
+                            body.nameOfInertialPositionProperty, stateInit, !body.customNameOfInertialPositionProperty);
         body.v_HN_N = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "velocity" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialVelocityProperty, stateInit);
-        body.sigma_SN = managerLocal
-            ? states.createEffectorProperty(this->getEffectorNameRequest(), "attitude" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialAttitudeProperty, stateInit);
-        body.omega_SN_S = managerLocal
+                        ? states.createEffectorProperty(this->getEffectorNameRequest(), "velocity" + suffix, stateInit)
+                        : states.createLegacyEffectorProperty(
+                            body.nameOfInertialVelocityProperty, stateInit, !body.customNameOfInertialVelocityProperty);
+        body.sigma_SN =
+          managerLocal ? states.createEffectorProperty(this->getEffectorNameRequest(), "attitude" + suffix, stateInit)
+                       : states.createLegacyEffectorProperty(
+                           body.nameOfInertialAttitudeProperty, stateInit, !body.customNameOfInertialAttitudeProperty);
+        body.omega_SN_S =
+          managerLocal
             ? states.createEffectorProperty(this->getEffectorNameRequest(), "angularVelocity" + suffix, stateInit)
-            : states.createProperty(body.nameOfInertialAngVelocityProperty, stateInit);
+            : states.createLegacyEffectorProperty(
+                body.nameOfInertialAngVelocityProperty, stateInit, !body.customNameOfInertialAngVelocityProperty);
         if (!managerLocal) {
             for (auto* effector : body.dynEffectors) {
                 effector->linkInProperties(states);

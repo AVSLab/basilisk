@@ -89,6 +89,42 @@ requestIndex(const std::vector<EffectorNameRequest>& requests, const EffectorNam
 
 } // namespace
 
+bool
+DynParamManager::consumeLegacyAutomaticEffectorNamingWarning()
+{
+    if (!this->usesLegacyAutomaticEffectorNames) {
+        return false;
+    }
+    const auto& owner = this->effectorNameIdentity.getToken();
+    if (this->legacyNamingWarningOwner.lock() == owner) {
+        return false;
+    }
+    this->legacyNamingWarningOwner = owner;
+    return true;
+}
+
+StateData*
+DynParamManager::registerLegacyEffectorState(uint32_t nRow, uint32_t nCol, const std::string& stateName, bool automatic)
+{
+    if (this->effectorNamingPolicy != EffectorNamingPolicy::Legacy) {
+        namingError("legacy effector registration requires the Legacy policy.");
+    }
+    auto* state = this->registerState(nRow, nCol, stateName);
+    this->usesLegacyAutomaticEffectorNames = this->usesLegacyAutomaticEffectorNames || automatic;
+    return state;
+}
+
+Eigen::MatrixXd*
+DynParamManager::createLegacyEffectorProperty(const std::string& propName, const Eigen::MatrixXd& value, bool automatic)
+{
+    if (this->effectorNamingPolicy != EffectorNamingPolicy::Legacy) {
+        namingError("legacy effector registration requires the Legacy policy.");
+    }
+    auto* property = this->createProperty(propName, value);
+    this->usesLegacyAutomaticEffectorNames = this->usesLegacyAutomaticEffectorNames || automatic;
+    return property;
+}
+
 void
 DynParamManager::setEffectorNamingPolicy(EffectorNamingPolicy policy)
 {

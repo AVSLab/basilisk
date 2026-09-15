@@ -184,30 +184,41 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
       managerLocal
         ? states.registerEffectorState(
             static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGOmegasState")
-        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGOmegasState);
+        : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numVSCMG),
+                                             1,
+                                             this->nameOfVSCMGOmegasState,
+                                             !this->customNameOfVSCMGOmegasState);
     this->gammasState =
       managerLocal
         ? states.registerEffectorState(
             static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGGammasState")
-        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammasState);
+        : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numVSCMG),
+                                             1,
+                                             this->nameOfVSCMGGammasState,
+                                             !this->customNameOfVSCMGGammasState);
     this->gammaDotsState =
       managerLocal
         ? states.registerEffectorState(
             static_cast<uint32_t>(this->numVSCMG), 1, this->getEffectorNameRequest(), "nameOfVSCMGGammaDotsState")
-        : states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
+        : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numVSCMG),
+                                             1,
+                                             this->nameOfVSCMGGammaDotsState,
+                                             !this->customNameOfVSCMGGammaDotsState);
 
     this->OmegasState->setState(omegasForInit);
 	this->gammasState->setState(gammasForInit);
 	this->gammaDotsState->setState(gammaDotsForInit);
 
 	if (numVSCMGJitter > 0) {
-        this->thetasState =
-          managerLocal
-            ? states.registerEffectorState(static_cast<uint32_t>(this->numVSCMGJitter),
-                                           1,
-                                           this->getEffectorNameRequest(),
-                                           "nameOfVSCMGThetasState")
-            : states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
+        this->thetasState = managerLocal
+                              ? states.registerEffectorState(static_cast<uint32_t>(this->numVSCMGJitter),
+                                                             1,
+                                                             this->getEffectorNameRequest(),
+                                                             "nameOfVSCMGThetasState")
+                              : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numVSCMGJitter),
+                                                                   1,
+                                                                   this->nameOfVSCMGThetasState,
+                                                                   !this->customNameOfVSCMGThetasState);
         Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);

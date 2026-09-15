@@ -350,18 +350,22 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
     }
 
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->theta1State = managerLocal
+    this->theta1State =
+      managerLocal
         ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta1State")
-        : statesIn.registerState(1, 1, this->nameOfTheta1State);
-    this->theta1DotState = managerLocal
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta1State, !this->customNameOfTheta1State);
+    this->theta1DotState =
+      managerLocal
         ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta1DotState")
-        : statesIn.registerState(1, 1, this->nameOfTheta1DotState);
-    this->theta2State = managerLocal
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta1DotState, !this->customNameOfTheta1DotState);
+    this->theta2State =
+      managerLocal
         ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta2State")
-        : statesIn.registerState(1, 1, this->nameOfTheta2State);
-    this->theta2DotState = managerLocal
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta2State, !this->customNameOfTheta2State);
+    this->theta2DotState =
+      managerLocal
         ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta2DotState")
-        : statesIn.registerState(1, 1, this->nameOfTheta2DotState);
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta2DotState, !this->customNameOfTheta2DotState);
 
     // - Add this code to allow for non-zero initial conditions, as well hingedRigidBody
     Eigen::MatrixXd theta1InitMatrix(1,1);
@@ -416,30 +420,46 @@ void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& state
     this->sigma_SN.resize(2);
     this->omega_SN_S.resize(2);
 
-    this->r_HN_N[0] = managerLocal
+    this->r_HN_N[0] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty1", stateInit)
-        : states.createProperty(this->nameOfInertialPositionProperty1, stateInit);
-    this->r_HN_N[1] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty1, stateInit, !this->customNameOfInertialPositionProperty1);
+    this->r_HN_N[1] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty2", stateInit)
-        : states.createProperty(this->nameOfInertialPositionProperty2, stateInit);
-    this->v_HN_N[0] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty2, stateInit, !this->customNameOfInertialPositionProperty2);
+    this->v_HN_N[0] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty1", stateInit)
-        : states.createProperty(this->nameOfInertialVelocityProperty1, stateInit);
-    this->v_HN_N[1] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty1, stateInit, !this->customNameOfInertialVelocityProperty1);
+    this->v_HN_N[1] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty2", stateInit)
-        : states.createProperty(this->nameOfInertialVelocityProperty2, stateInit);
-    this->sigma_SN[0] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty2, stateInit, !this->customNameOfInertialVelocityProperty2);
+    this->sigma_SN[0] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty1", stateInit)
-        : states.createProperty(this->nameOfInertialAttitudeProperty1, stateInit);
-    this->sigma_SN[1] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty1, stateInit, !this->customNameOfInertialAttitudeProperty1);
+    this->sigma_SN[1] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty2", stateInit)
-        : states.createProperty(this->nameOfInertialAttitudeProperty2, stateInit);
-    this->omega_SN_S[0] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty2, stateInit, !this->customNameOfInertialAttitudeProperty2);
+    this->omega_SN_S[0] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty1", stateInit)
-        : states.createProperty(this->nameOfInertialAngVelocityProperty1, stateInit);
-    this->omega_SN_S[1] = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty1, stateInit, !this->customNameOfInertialAngVelocityProperty1);
+    this->omega_SN_S[1] =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty2", stateInit)
-        : states.createProperty(this->nameOfInertialAngVelocityProperty2, stateInit);
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty2, stateInit, !this->customNameOfInertialAngVelocityProperty2);
 
     if (!managerLocal) {
         this->bindAttachedDynamicEffectors(states);

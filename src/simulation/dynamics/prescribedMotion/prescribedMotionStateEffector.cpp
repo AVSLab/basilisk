@@ -339,9 +339,10 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
         this->applyResolvedNames(statesIn);
     }
 
-    this->sigma_PMState = managerLocal
+    this->sigma_PMState =
+      managerLocal
         ? statesIn.registerEffectorState(3, 1, this->getEffectorNameRequest(), "nameOfsigma_PMState")
-        : statesIn.registerState(3, 1, this->nameOfsigma_PMState);
+        : statesIn.registerLegacyEffectorState(3, 1, this->nameOfsigma_PMState, !this->customNameOfsigma_PMState);
     this->sigma_PMState->setState(this->sigma_PM.coeffs());
 
     // Call method to register the prescribed motion properties
@@ -367,37 +368,60 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
     }
 
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    this->r_PN_N = managerLocal
+    this->r_PN_N =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty", stateInit)
-        : states.createProperty(this->nameOfInertialPositionProperty, stateInit);
-    this->v_PN_N = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty, stateInit, !this->customNameOfInertialPositionProperty);
+    this->v_PN_N =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty", stateInit)
-        : states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
-    this->sigma_PN = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty, stateInit, !this->customNameOfInertialVelocityProperty);
+    this->sigma_PN =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty", stateInit)
-        : states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
-    this->omega_PN_P = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty, stateInit, !this->customNameOfInertialAttitudeProperty);
+    this->omega_PN_P =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty", stateInit)
-        : states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty, stateInit, !this->customNameOfInertialAngVelocityProperty);
 
-    this->r_PB_B = managerLocal
+    this->r_PB_B =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedPositionProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedPositionProperty, stateInit);
-    this->rPrime_PB_B = managerLocal
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedPositionProperty, stateInit, !this->customNameOfPrescribedPositionProperty);
+    this->rPrime_PB_B =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedVelocityProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedVelocityProperty, stateInit);
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedVelocityProperty, stateInit, !this->customNameOfPrescribedVelocityProperty);
     this->rPrimePrime_PB_B = managerLocal
-        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedAccelerationProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedAccelerationProperty, stateInit);
-    this->sigma_PB = managerLocal
+                               ? states.createEffectorProperty(
+                                   this->getEffectorNameRequest(), "nameOfPrescribedAccelerationProperty", stateInit)
+                               : states.createLegacyEffectorProperty(this->nameOfPrescribedAccelerationProperty,
+                                                                     stateInit,
+                                                                     !this->customNameOfPrescribedAccelerationProperty);
+    this->sigma_PB =
+      managerLocal
         ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedAttitudeProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedAttitudeProperty, stateInit);
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedAttitudeProperty, stateInit, !this->customNameOfPrescribedAttitudeProperty);
     this->omega_PB_P = managerLocal
-        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedAngVelocityProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedAngVelocityProperty, stateInit);
-    this->omegaPrime_PB_P = managerLocal
-        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedAngAccelerationProperty", stateInit)
-        : states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
+                         ? states.createEffectorProperty(
+                             this->getEffectorNameRequest(), "nameOfPrescribedAngVelocityProperty", stateInit)
+                         : states.createLegacyEffectorProperty(this->nameOfPrescribedAngVelocityProperty,
+                                                               stateInit,
+                                                               !this->customNameOfPrescribedAngVelocityProperty);
+    this->omegaPrime_PB_P =
+      managerLocal ? states.createEffectorProperty(
+                       this->getEffectorNameRequest(), "nameOfPrescribedAngAccelerationProperty", stateInit)
+                   : states.createLegacyEffectorProperty(this->nameOfPrescribedAngAccelerationProperty,
+                                                         stateInit,
+                                                         !this->customNameOfPrescribedAngAccelerationProperty);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the

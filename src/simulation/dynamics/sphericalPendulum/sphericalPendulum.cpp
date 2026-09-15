@@ -176,37 +176,37 @@ void SphericalPendulum::registerStates(DynParamManager& states)
 
 	    // - Register phi, theta, phiDot and thetaDot
     this->phiState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phi")
-        : states.registerState(1, 1, this->nameOfPhiState);
+                       ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phi")
+                       : states.registerLegacyEffectorState(1, 1, this->nameOfPhiState, !this->customPhiState);
     Eigen::MatrixXd phiInitMatrix(1,1);
     phiInitMatrix(0,0) = this->phiInit;
     this->phiState->setState(phiInitMatrix);
 
     this->thetaState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "theta")
-        : states.registerState(1, 1, this->nameOfThetaState);
+                         ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "theta")
+                         : states.registerLegacyEffectorState(1, 1, this->nameOfThetaState, !this->customThetaState);
     Eigen::MatrixXd thetaInitMatrix(1,1);
     thetaInitMatrix(0,0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
 
     this->phiDotState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phiDot")
-        : states.registerState(1, 1, this->nameOfPhiDotState);
+                          ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "phiDot")
+                          : states.registerLegacyEffectorState(1, 1, this->nameOfPhiDotState, !this->customPhiDotState);
     Eigen::MatrixXd phiDotInitMatrix(1,1);
     phiDotInitMatrix(0,0) = this->phiDotInit;
     this->phiDotState->setState(phiDotInitMatrix);
 
-    this->thetaDotState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "thetaDot")
-        : states.registerState(1, 1, this->nameOfThetaDotState);
+    this->thetaDotState =
+      managerLocal ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "thetaDot")
+                   : states.registerLegacyEffectorState(1, 1, this->nameOfThetaDotState, !this->customThetaDotState);
     Eigen::MatrixXd thetaDotInitMatrix(1,1);
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
 	// - Register m
     this->massState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
-        : states.registerState(1, 1, this->nameOfMassState);
+                        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+                        : states.registerLegacyEffectorState(1, 1, this->nameOfMassState, !this->customMassState);
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
     this->massState->setState(massInitMatrix);

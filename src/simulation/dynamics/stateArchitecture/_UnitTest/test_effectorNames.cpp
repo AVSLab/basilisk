@@ -120,6 +120,87 @@ TEST_F(EffectorNames, rejectsUnsupportedEffectors)
     EXPECT_THROW(effector.collectEffectorNames(this->manager), BasiliskError);
 }
 
+TEST(EffectorNamingDeprecation, explicitAndOrdinaryRegistrationsAreQuiet)
+{
+    DynParamManager manager;
+    manager.registerState(1, 1, "ordinaryState");
+    manager.createProperty("ordinaryProperty", Eigen::Vector3d::Zero());
+    // Explicit names may have exactly the same spelling as generated names.
+    manager.registerLegacyEffectorState(1, 1, "hingedRigidBodyTheta1", false);
+    manager.createLegacyEffectorProperty("hingedRigidBodyInertialPosition1", Eigen::Vector3d::Zero(), false);
+    EXPECT_FALSE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+}
+
+TEST(EffectorNamingDeprecation, automaticStatesAndPropertiesWarnOnceTogether)
+{
+    DynParamManager manager;
+    auto* state = manager.registerLegacyEffectorState(1, 1, "angle", true);
+    manager.createLegacyEffectorProperty("position", Eigen::Vector3d::Zero(), true);
+    EXPECT_TRUE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+    EXPECT_EQ(manager.registerLegacyEffectorState(1, 1, "angle", true), state);
+    EXPECT_FALSE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+}
+
+TEST(EffectorNamingDeprecation, explicitStatesDoNotHideAutomaticProperties)
+{
+    DynParamManager manager;
+    manager.registerLegacyEffectorState(1, 1, "angle", false);
+    EXPECT_FALSE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+    manager.createLegacyEffectorProperty("position", Eigen::Vector3d::Zero(), true);
+    EXPECT_TRUE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+}
+
+TEST(EffectorNamingDeprecation, failedRegistrationDoesNotConsumeTheWarning)
+{
+    DynParamManager manager;
+    manager.registerState(1, 1, "existing");
+    EXPECT_THROW(manager.registerLegacyEffectorState(2, 1, "existing", true), BasiliskError);
+    EXPECT_FALSE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+    manager.registerLegacyEffectorState(1, 1, "automatic", true);
+    EXPECT_TRUE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+}
+
+TEST(EffectorNamingDeprecation, newManagersAndCopiesWarnIndependently)
+{
+    DynParamManager source;
+    source.registerLegacyEffectorState(1, 1, "first", true);
+    EXPECT_TRUE(source.consumeLegacyAutomaticEffectorNamingWarning());
+    auto copied = source;
+    DynParamManager assigned;
+    assigned = source;
+    DynParamManager independent;
+    for (auto* manager : {&copied, &assigned, &independent}) {
+        manager->registerLegacyEffectorState(1, 1, "second", true);
+        EXPECT_TRUE(manager->consumeLegacyAutomaticEffectorNamingWarning());
+        EXPECT_FALSE(manager->consumeLegacyAutomaticEffectorNamingWarning());
+    }
+}
+
+TEST(EffectorNamingDeprecation, movesPreserveTheManagersWarningHistory)
+{
+    DynParamManager source;
+    source.registerLegacyEffectorState(1, 1, "first", true);
+    EXPECT_TRUE(source.consumeLegacyAutomaticEffectorNamingWarning());
+    auto moved = std::move(source);
+    moved.registerLegacyEffectorState(1, 1, "second", true);
+    EXPECT_FALSE(moved.consumeLegacyAutomaticEffectorNamingWarning());
+    DynParamManager assigned;
+    assigned = std::move(moved);
+    assigned.createLegacyEffectorProperty("position", Eigen::Vector3d::Zero(), true);
+    EXPECT_FALSE(assigned.consumeLegacyAutomaticEffectorNamingWarning());
+}
+
+TEST(EffectorNamingDeprecation, optInRejectsLegacyRegistrationWithoutSideEffects)
+{
+    DynParamManager manager;
+    manager.setUseManagerLocalEffectorNames(true);
+    EXPECT_THROW(manager.registerLegacyEffectorState(1, 1, "angle", true), BasiliskError);
+    EXPECT_THROW(manager.createLegacyEffectorProperty("position", Eigen::Vector3d::Zero(), true), BasiliskError);
+    EXPECT_FALSE(manager.consumeLegacyAutomaticEffectorNamingWarning());
+    EXPECT_TRUE(manager.stateContainer.stateMap.empty());
+    EXPECT_TRUE(manager.dynProperties.empty());
+}
+
 TEST_F(EffectorNames, assignsWholeGroupsInRequestOrder)
 {
     const auto first = this->manager.requestEffectorNames(panelNames());

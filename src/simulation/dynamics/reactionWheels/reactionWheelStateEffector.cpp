@@ -201,16 +201,24 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     }
 
     this->OmegasState =
-      managerLocal ? states.registerEffectorState(
-                       static_cast<uint32_t>(this->numRW), 1, this->getEffectorNameRequest(), "nameOfReactionWheelOmegasState")
-                   : states.registerState(static_cast<uint32_t>(this->numRW), 1, this->nameOfReactionWheelOmegasState);
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->numRW), 1, this->getEffectorNameRequest(), "nameOfReactionWheelOmegasState")
+        : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numRW),
+                                             1,
+                                             this->nameOfReactionWheelOmegasState,
+                                             !this->customNameOfReactionWheelOmegasState);
 
     if (numRWJitter > 0) {
-        this->thetasState =
-          managerLocal
-            ? states.registerEffectorState(
-                static_cast<uint32_t>(this->numRWJitter), 1, this->getEffectorNameRequest(), "nameOfReactionWheelThetasState")
-            : states.registerState(static_cast<uint32_t>(this->numRWJitter), 1, this->nameOfReactionWheelThetasState);
+        this->thetasState = managerLocal
+                              ? states.registerEffectorState(static_cast<uint32_t>(this->numRWJitter),
+                                                             1,
+                                                             this->getEffectorNameRequest(),
+                                                             "nameOfReactionWheelThetasState")
+                              : states.registerLegacyEffectorState(static_cast<uint32_t>(this->numRWJitter),
+                                                                   1,
+                                                                   this->nameOfReactionWheelThetasState,
+                                                                   !this->customNameOfReactionWheelThetasState);
     }
 
     this->OmegasState->setState(omegasForInit);

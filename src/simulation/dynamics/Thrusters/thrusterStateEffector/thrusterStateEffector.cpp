@@ -405,10 +405,12 @@ void ThrusterStateEffector::registerStates(DynParamManager& states)
 
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     // - Register the states associated with thruster - kappa
-    this->kappaState = managerLocal
-        ? states.registerEffectorState(static_cast<uint32_t>(this->thrusterData.size()), 1,
-                                       this->getEffectorNameRequest(), "kappa")
-        : states.registerState(static_cast<uint32_t>(this->thrusterData.size()), 1, this->nameOfKappaState);
+    this->kappaState =
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->thrusterData.size()), 1, this->getEffectorNameRequest(), "kappa")
+        : states.registerLegacyEffectorState(
+            static_cast<uint32_t>(this->thrusterData.size()), 1, this->nameOfKappaState, !this->customKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (Eigen::Index i = 0; i < kappaInitMatrix.rows(); i++) {

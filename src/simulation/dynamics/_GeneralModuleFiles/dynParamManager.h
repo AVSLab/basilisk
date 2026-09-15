@@ -176,6 +176,33 @@ class DynParamManager {
      */
     EffectorNamingPolicy getEffectorNamingPolicy() const { return this->effectorNamingPolicy; }
 
+    /** @brief Register an effector state using its legacy name and record automatic naming use.
+     * @param nRow Number of state rows.
+     * @param nCol Number of state columns.
+     * @param stateName Current legacy name, including any owner prefix.
+     * @param automatic True when no explicit custom name was assigned.
+     * @return New state or compatible existing state, preserving legacy registration behavior.
+     * @note Requires Legacy. Call only for states actually used by the configured effector.
+     */
+    StateData* registerLegacyEffectorState(uint32_t nRow, uint32_t nCol, const std::string& stateName, bool automatic);
+
+    /** @brief Register a legacy effector property and record automatic naming use.
+     * @param propName Current legacy property name.
+     * @param value Initial property value.
+     * @param automatic True when no explicit custom name was assigned.
+     * @return New or existing property, preserving legacy registration behavior.
+     * @note Requires Legacy. Explicit state names do not exempt automatic property names.
+     */
+    Eigen::MatrixXd* createLegacyEffectorProperty(const std::string& propName,
+                                                  const Eigen::MatrixXd& value,
+                                                  bool automatic);
+
+    /** @brief Consume a pending legacy automatic-naming diagnostic for the Python deprecation bridge.
+     * @return True once per manager lifetime after an automatic legacy name is registered.
+     * @note Copies report independently; moves preserve whether the diagnostic was consumed.
+     */
+    bool consumeLegacyAutomaticEffectorNamingWarning();
+
     /** @brief Collect a complete effector name group without registering states or properties.
      * @param group Naming family and explicitly classified name requests.
      * @param previous Current handle for this effector, or an empty handle for a new effector.
@@ -378,6 +405,9 @@ private:
                                               const std::string& stateName, bool warnOnDuplicate);
 
     EffectorNamingPolicy effectorNamingPolicy = EffectorNamingPolicy::Legacy; //!< Selected preparation policy.
+    bool usesLegacyAutomaticEffectorNames = false; //!< An automatic legacy state or property was registered.
+    /// Copies warn independently; moves retain warning history.
+    std::weak_ptr<const EffectorNameIdentity::Token> legacyNamingWarningOwner;
     std::vector<EffectorNameRequest> effectorNameRequests; //!< Immutable snapshots in declaration order.
     std::vector<std::map<std::string, std::string>> resolvedEffectorNames; //!< Resolved local-key/name pairs per request.
     std::map<std::pair<EffectorNameKind, std::string>, EffectorNameRequest> effectorNameOwners; //!< Registration authority for each reserved name.

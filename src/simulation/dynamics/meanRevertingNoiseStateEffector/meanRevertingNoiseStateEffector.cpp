@@ -114,9 +114,8 @@ void MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
         this->applyResolvedNames(states);
     }
 
-    this->state = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "noise")
-        : states.registerState(1, 1, this->nameOfState);
+    this->state = managerLocal ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "noise")
+                               : states.registerLegacyEffectorState(1, 1, this->nameOfState, !this->customStateName);
     this->state->setNumNoiseSources(1);
 
     Eigen::MatrixXd state(1, 1);

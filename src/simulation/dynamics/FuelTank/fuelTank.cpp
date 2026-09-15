@@ -196,8 +196,8 @@ void FuelTank::registerStates(DynParamManager &states) {
     // Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1, 1);
     this->massState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
-        : states.registerState(1, 1, this->nameOfMassState);
+                        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+                        : states.registerLegacyEffectorState(1, 1, this->nameOfMassState, !this->customMassState);
     massMatrix(0, 0) = this->fuelTankModel->propMassInit;
     this->massState->setState(massMatrix);
     this->emptyTankWarningPrinted = false;

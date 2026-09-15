@@ -151,22 +151,22 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
 
     // - Register rho and rhoDot
     this->rhoState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rho")
-        : states.registerState(1, 1, this->nameOfRhoState);
+                       ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rho")
+                       : states.registerLegacyEffectorState(1, 1, this->nameOfRhoState, !this->customRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);
     rhoInitMatrix(0,0) = this->rhoInit;
     this->rhoState->setState(rhoInitMatrix);
     this->rhoDotState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rhoDot")
-        : states.registerState(1, 1, this->nameOfRhoDotState);
+                          ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "rhoDot")
+                          : states.registerLegacyEffectorState(1, 1, this->nameOfRhoDotState, !this->customRhoDotState);
     Eigen::MatrixXd rhoDotInitMatrix(1,1);
     rhoDotInitMatrix(0,0) = this->rhoDotInit;
     this->rhoDotState->setState(rhoDotInitMatrix);
 
 	// - Register mass
     this->massState = managerLocal
-        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
-        : states.registerState(1, 1, this->nameOfMassState);
+                        ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "mass")
+                        : states.registerLegacyEffectorState(1, 1, this->nameOfMassState, !this->customMassState);
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
     this->massState->setState(massInitMatrix);
