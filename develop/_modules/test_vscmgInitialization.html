@@ -1,0 +1,631 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_vscmgInitialization &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_vscmgInitialization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_vscmgInitialization</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Verify VSCMG attachment initialization and repeatable configuration validation."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">vscmgStateEffector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+
+<span class="n">MODELS</span> <span class="o">=</span> <span class="p">[</span><span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgBalancedWheels</span><span class="p">,</span>
+          <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterSimple</span><span class="p">,</span>
+          <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterFullyCoupled</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="configuration">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.configuration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a device with finite geometry and nonzero spin and gimbal inertia."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGConfigMsgPayload</span><span class="p">()</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">VSCMGModel</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">massW</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">IW2</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="mf">0.15</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">IG1</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">IG2</span> <span class="o">=</span> <span class="mf">0.15</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">rGcG_G</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># [m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># [rad]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.02</span>  <span class="c1"># [rad/s]</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+
+<div class="viewcode-block" id="simulation_with_effector">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.simulation_with_effector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Attach one device and optionally schedule its command-processing lifecycle."""</span>
+    <span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"process"</span><span class="p">)</span>
+    <span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)))</span>  <span class="c1"># [ns]</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">VSCMGStateEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">parent</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">priority</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">cmdsInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span></div>
+
+
+
+<div class="viewcode-block" id="test_attachment_matches_both_scheduler_orders">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_attachment_matches_both_scheduler_orders">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_attachment_matches_both_scheduler_orders</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Derived properties and propagation must agree with either Reset ordering or no scheduled Reset."""</span>
+    <span class="n">histories</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">priority</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">]:</span>
+        <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">),</span> <span class="n">priority</span><span class="p">)</span>
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">massV</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [kg]</span>
+        <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">rhoW</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>  <span class="c1"># [-]</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterFullyCoupled</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">d</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [m]</span>
+            <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">IW13</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">IV1</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># [kg*m^2]</span>
+            <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">IV3</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.35</span><span class="p">)</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.02</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+        <span class="n">histories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">recorder</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">,</span> <span class="n">recorder</span><span class="o">.</span><span class="n">sigma_BN</span><span class="p">,</span> <span class="n">recorder</span><span class="o">.</span><span class="n">omega_BN_B</span><span class="p">)))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">histories</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">history</span> <span class="ow">in</span> <span class="n">histories</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">histories</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_massless_device_has_finite_derived_values">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_massless_device_has_finite_derived_values">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_massless_device_has_finite_derived_values</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Balanced and simple jitter devices retain support for zero translational mass."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">massW</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">massV</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [kg]</span>
+    <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">rhoW</span> <span class="o">==</span> <span class="n">device</span><span class="o">.</span><span class="n">rhoG</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [-]</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="s2">"hubOmega"</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_fully_coupled_device_allows_massless_gimbal">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_fully_coupled_device_allows_massless_gimbal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_fully_coupled_device_allows_massless_gimbal</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Only wheel and total mass are divisors in fully coupled initialization."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterFullyCoupled</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rhoG</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [-]</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rhoW</span> <span class="o">==</span> <span class="mf">1.0</span>  <span class="c1"># [-]</span></div>
+
+
+
+<div class="viewcode-block" id="test_uncoupled_models_reject_zero_inertia_divisor">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_uncoupled_models_reject_zero_inertia_divisor">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"IW1"</span><span class="p">,</span> <span class="s2">"IV3"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_uncoupled_models_reject_zero_inertia_divisor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject zero denominators without requiring positive translational mass."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"IW1"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"must be positive"</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_configuration_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_invalid_configuration_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"attachment"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field,value,match"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"massW"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">"massW"</span><span class="p">),</span>  <span class="c1"># [kg]</span>
+    <span class="p">(</span><span class="s2">"massG"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">"massG"</span><span class="p">),</span>  <span class="c1"># [kg]</span>
+    <span class="p">(</span><span class="s2">"massW"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">"massW"</span><span class="p">),</span>  <span class="c1"># [kg], fully coupled model</span>
+    <span class="p">(</span><span class="s2">"massG"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s2">"massG"</span><span class="p">),</span>  <span class="c1"># [kg]</span>
+    <span class="p">(</span><span class="s2">"gsHat0_B"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"gsHat0_B"</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="p">(</span><span class="s2">"gsHat0_B"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"gsHat0_B"</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="p">(</span><span class="s2">"gtHat0_B"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"orthogonal"</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="p">(</span><span class="s2">"ggHat_B"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s2">"right-handed"</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="p">(</span><span class="s2">"U_s"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">"U_s"</span><span class="p">),</span>  <span class="c1"># [kg*m]</span>
+    <span class="p">(</span><span class="s2">"gamma"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s2">"gamma"</span><span class="p">),</span>  <span class="c1"># [rad]</span>
+    <span class="p">(</span><span class="s2">"IW1"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">"inertias"</span><span class="p">),</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="p">(</span><span class="s2">"IG13"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="s2">"IG13"</span><span class="p">),</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="p">(</span><span class="s2">"rGcG_G"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">"rGcG_G"</span><span class="p">),</span>  <span class="c1"># [m]</span>
+    <span class="p">(</span><span class="s2">"VSCMGModel"</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="s2">"VSCMGModel"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_configuration_rejected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">match</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject each invalid configuration before state registration or derived divisions."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterFullyCoupled</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">match</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_repeated_reset_normalizes_axes_and_preserves_states">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_repeated_reset_normalizes_axes_and_preserves_states">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"scale"</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1e300</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_repeated_reset_normalizes_axes_and_preserves_states</span><span class="p">(</span><span class="n">scale</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repeated normalization is stable and Reset does not rewind integrated states or applied torques."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">vscmgJitterFullyCoupled</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gsHat0_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">scale</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gtHat0_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">ggHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">u_s_current</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># [N*m]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">nameOfVSCMGOmegasState</span><span class="p">)</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">]])</span>  <span class="c1"># [rad/s]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">pending</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGCmdMsgPayload</span><span class="p">()</span>
+        <span class="n">pending</span><span class="o">.</span><span class="n">u_s_cmd</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [N*m]</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">newVSCMGCmds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pending</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">device</span><span class="o">.</span><span class="n">gsHat0_B</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">gtHat0_B</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">ggHat_B</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">d</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [m]</span>
+        <span class="k">assert</span> <span class="n">device</span><span class="o">.</span><span class="n">u_s_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+        <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">newVSCMGCmds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_s_cmd</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [N*m]</span>
+        <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getState</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">2.0</span>  <span class="c1"># [rad/s]</span></div>
+
+
+
+<div class="viewcode-block" id="test_device_count_exceeding_payload_capacity_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_device_count_exceeding_payload_capacity_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"attachment"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_device_count_exceeding_payload_capacity_is_rejected</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject oversized device arrays before accessing fixed-size message payloads."""</span>
+    <span class="n">capacity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">()</span><span class="o">.</span><span class="n">wheelTorque</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">capacity</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"device count.*MAX_EFF_CNT"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_device_count_at_payload_capacity_processes_last_command">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_device_count_at_payload_capacity_processes_last_command">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_device_count_at_payload_capacity_processes_last_command</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The largest supported array must command and publish its last device correctly."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">()</span>
+    <span class="n">capacity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">wheelTorque</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">capacity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">wheelTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">capacity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.04</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">gimbalTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">capacity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+    <span class="n">command</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">u_s_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.04</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">u_g_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">effector</span><span class="o">.</span><span class="n">speedOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">wheel_state</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">nameOfVSCMGOmegasState</span><span class="p">)</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">wheel_state</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">wheelSpeeds</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">wheel_state</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="test_nonfinite_motor_configuration_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_nonfinite_motor_configuration_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"attachment"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">"u_s_current"</span><span class="p">,</span> <span class="s2">"u_g_current"</span><span class="p">,</span> <span class="s2">"u_s_f"</span><span class="p">,</span> <span class="s2">"u_g_f"</span><span class="p">,</span>  <span class="c1"># [N*m]</span>
+    <span class="s2">"u_s_max"</span><span class="p">,</span> <span class="s2">"u_g_max"</span><span class="p">,</span> <span class="s2">"u_s_min"</span><span class="p">,</span> <span class="s2">"u_g_min"</span><span class="p">,</span>  <span class="c1"># [N*m]</span>
+    <span class="s2">"Omega_max"</span><span class="p">,</span> <span class="s2">"gammaDot_max"</span><span class="p">,</span>  <span class="c1"># [rad/s]</span>
+    <span class="s2">"wheelLinearFrictionRatio"</span><span class="p">,</span> <span class="s2">"gimbalLinearFrictionRatio"</span><span class="p">,</span>  <span class="c1"># [-]</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonfinite_motor_configuration_is_rejected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject non-finite motor settings through both configuration entry points."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">field</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="coupled_configuration_with_invalid_divisor">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.coupled_configuration_with_invalid_divisor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coupled_configuration_with_invalid_divisor</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Construct finite inputs that produce a zero or overflowing coupled divisor."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">rGcG_G</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"zero_spin"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"tiny_spin"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">1e-320</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"overflow_spin"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="mf">1e200</span>  <span class="c1"># [kg*m]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"tiny_mass"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">massW</span> <span class="o">=</span> <span class="mf">1e-320</span>  <span class="c1"># [kg]</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">massG</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"zero_gimbal"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"overflow_gimbal"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">1e308</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">elif</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"singular_coupling"</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">IW3</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">IG3</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_coupled_divisors_stop_initialization">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_invalid_coupled_divisors_stop_initialization">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case,divisor"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"zero_spin"</span><span class="p">,</span> <span class="s2">"eOmega"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"tiny_spin"</span><span class="p">,</span> <span class="s2">"eOmega"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"overflow_spin"</span><span class="p">,</span> <span class="s2">"eOmega"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"tiny_mass"</span><span class="p">,</span> <span class="s2">"massV"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zero_gimbal"</span><span class="p">,</span> <span class="s2">"egamma"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"overflow_gimbal"</span><span class="p">,</span> <span class="s2">"egamma"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"singular_coupling"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"1 - cOmega\*cgamma"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_coupled_divisors_stop_initialization</span><span class="p">(</span><span class="n">case</span><span class="p">,</span> <span class="n">divisor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fail before dividing by a singular coupled inertia or elimination coefficient."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">coupled_configuration_with_invalid_divisor</span><span class="p">(</span><span class="n">case</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">divisor</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_coupled_spin_divisor_is_rejected_by_reset">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_invalid_coupled_spin_divisor_is_rejected_by_reset">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"zero_spin"</span><span class="p">,</span> <span class="s2">"tiny_spin"</span><span class="p">,</span> <span class="s2">"overflow_spin"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_coupled_spin_divisor_is_rejected_by_reset</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Validate the configuration-dependent spin divisor without linked parent states."""</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">VSCMGStateEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">coupled_configuration_with_invalid_divisor</span><span class="p">(</span><span class="n">case</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"eOmega"</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_coupled_divisor_is_checked_again_during_propagation">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_coupled_divisor_is_checked_again_during_propagation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_coupled_divisor_is_checked_again_during_propagation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A valid startup must not bypass guards when a later dynamics evaluation is singular."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">U_s</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">U_d</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m], [kg*m^2]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">IW1</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [kg*m^2]</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"eOmega"</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_nonfinite_command_is_rejected_before_motor_processing">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_nonfinite_command_is_rejected_before_motor_processing">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"field"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"wheelTorque"</span><span class="p">,</span> <span class="s2">"gimbalTorque"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonfinite_command_is_rejected_before_motor_processing</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject non-finite commanded torques before saturation or friction can mask them."""</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">()</span>
+    <span class="n">torques</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+    <span class="n">torques</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># [N*m]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">torques</span><span class="p">)</span>
+    <span class="n">command</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"u_s_cmd and u_g_cmd must be finite"</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_invalid_linear_friction_threshold_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_invalid_linear_friction_threshold_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"limit_field,ratio_field"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"Omega_max"</span><span class="p">,</span> <span class="s2">"wheelLinearFrictionRatio"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"gammaDot_max"</span><span class="p">,</span> <span class="s2">"gimbalLinearFrictionRatio"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"limit,ratio"</span><span class="p">,</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1e-300</span><span class="p">,</span> <span class="mf">1e-300</span><span class="p">),</span> <span class="p">(</span><span class="mf">1e300</span><span class="p">,</span> <span class="mf">1e300</span><span class="p">)])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_linear_friction_threshold_is_rejected</span><span class="p">(</span><span class="n">limit_field</span><span class="p">,</span> <span class="n">ratio_field</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Finite settings must not create a zero, negative, or infinite friction divisor."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">limit_field</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ratio_field</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">ratio_field</span><span class="p">):</span>
+        <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_negative_motor_limits_and_friction_ratios_remain_supported">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_negative_motor_limits_and_friction_ratios_remain_supported">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_negative_motor_limits_and_friction_ratios_remain_supported</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Negative sentinels disable limits and friction smoothing without rejecting valid commands."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">u_s_max</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">u_g_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># [N*m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">u_s_min</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">u_g_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># [N*m]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">Omega_max</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">gammaDot_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">wheelLinearFrictionRatio</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">gimbalLinearFrictionRatio</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># [-]</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGArrayTorqueMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">wheelTorque</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.04</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">gimbalTorque</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.01</span><span class="p">]</span>  <span class="c1"># [N*m]</span>
+    <span class="n">command</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.002</span><span class="p">))</span>  <span class="c1"># [ns]</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_s_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.04</span><span class="p">)</span>  <span class="c1"># [N*m]</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_g_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># [N*m]</span></div>
+
+
+
+<div class="viewcode-block" id="test_gimbal_friction_uses_its_own_smoothing_ratio">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_gimbal_friction_uses_its_own_smoothing_ratio">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"wheel_ratio"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_gimbal_friction_uses_its_own_smoothing_ratio</span><span class="p">(</span><span class="n">wheel_ratio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Gimbal smoothing must be independent of the wheel friction configuration."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">wheelLinearFrictionRatio</span> <span class="o">=</span> <span class="n">wheel_ratio</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gimbalLinearFrictionRatio</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [-]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">Omega_max</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">gammaDot_max</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">gammaDot</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">u_g_f</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [N*m]</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">VSCMGStateEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">ConfigureVSCMGRequests</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_g_current</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># [N*m]</span></div>
+
+
+
+<div class="viewcode-block" id="test_motor_arithmetic_overflow_is_rejected_before_applying_torque">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_motor_arithmetic_overflow_is_rejected_before_applying_torque">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_motor_arithmetic_overflow_is_rejected_before_applying_torque</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Finite commands and friction must not silently overflow the applied torque."""</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configuration</span><span class="p">(</span><span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">u_s_f</span> <span class="o">=</span> <span class="mf">1e308</span>  <span class="c1"># [N*m]</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">vscmgStateEffector</span><span class="o">.</span><span class="n">VSCMGStateEffector</span><span class="p">()</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pending</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VSCMGCmdMsgPayload</span><span class="p">()</span>
+    <span class="n">pending</span><span class="o">.</span><span class="n">u_s_cmd</span> <span class="o">=</span> <span class="mf">1e308</span>  <span class="c1"># [N*m]</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">newVSCMGCmds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pending</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"non-finite applied torque"</span><span class="p">):</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">ConfigureVSCMGRequests</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">VSCMGData</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">u_s_current</span> <span class="o">==</span> <span class="mf">0.0</span>  <span class="c1"># [N*m]</span></div>
+
+
+
+<div class="viewcode-block" id="test_mixed_models_publish_only_their_own_jitter_angles">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/VSCMGs/_UnitTest/test_vscmgInitialization.html#test_vscmgInitialization.test_mixed_models_publish_only_their_own_jitter_angles">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"models"</span><span class="p">,</span> <span class="p">[</span><span class="n">MODELS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_mixed_models_publish_only_their_own_jitter_angles</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Output indexing must follow the compact jitter state array when models are mixed."""</span>
+    <span class="n">simulation</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">effector</span><span class="p">,</span> <span class="n">command</span> <span class="o">=</span> <span class="n">simulation_with_effector</span><span class="p">(</span><span class="n">configuration</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">AddVSCMG</span><span class="p">(</span><span class="n">configuration</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+    <span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>  <span class="c1"># [rad]</span>
+    <span class="n">theta_state</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">dynManager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">nameOfVSCMGThetasState</span><span class="p">)</span>
+    <span class="n">theta_state</span><span class="o">.</span><span class="n">setState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">WriteOutputMessages</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">jitter_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># [rad]</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="o">!=</span> <span class="n">MODELS</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">jitter_index</span><span class="p">]</span>
+            <span class="n">jitter_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">vscmgOutMsgs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">theta</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>  <span class="c1"># [rad]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

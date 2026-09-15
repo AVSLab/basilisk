@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_sunSafePoint:
+
+sunSafePoint
+============
+
+:doc:`Module documentation <sunSafePoint>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

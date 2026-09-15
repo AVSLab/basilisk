@@ -1,0 +1,13 @@
+.. _RigidBodyKinematicsNumba:
+
+RigidBodyKinematicsNumba
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: RigidBodyKinematicsNumba
+   :members:
+   :show-inheritance:
+

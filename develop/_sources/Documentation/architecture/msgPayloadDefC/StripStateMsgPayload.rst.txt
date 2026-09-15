@@ -1,0 +1,10 @@
+.. _StripStateMsgPayload:
+
+StripStateMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: StripStateMsgPayload.h
+   :project: msgPayloadDefC
+

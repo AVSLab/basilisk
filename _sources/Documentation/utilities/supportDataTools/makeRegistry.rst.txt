@@ -1,0 +1,13 @@
+.. _makeRegistry:
+
+makeRegistry
+============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: makeRegistry
+   :members:
+   :show-inheritance:
+

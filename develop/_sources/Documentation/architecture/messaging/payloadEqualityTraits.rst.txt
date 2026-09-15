@@ -1,0 +1,10 @@
+.. _payloadEqualityTraits:
+
+payloadEqualityTraits
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: payloadEqualityTraits.h
+   :project: messaging
+

@@ -1,0 +1,42 @@
+.. _stateVecIntegrator:
+
+:module-type:`C++` Module: stateVecIntegrator
+=============================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`_UnitTestDynamics <_UnitTestDynamics/index>`
+   * :doc:`BodyToHubInfo <BodyToHubInfo>`
+   * :doc:`extendedStateVector <extendedStateVector>`
+   * :doc:`fuelSlosh <fuelSlosh>`
+   * :doc:`gravityModel <gravityModel>`
+   * :doc:`interpolator <interpolator>`
+   * :doc:`pointMassGravityModel <pointMassGravityModel>`
+   * :doc:`RWConfigPayload <RWConfigPayload>`
+   * :doc:`stateVecStochasticIntegrator <stateVecStochasticIntegrator>`
+   * :doc:`stochasticNoiseGenerator <stochasticNoiseGenerator>`
+   * :doc:`stochasticRKIntegratorBase <stochasticRKIntegratorBase>`
+   * :doc:`stochasticWeakRandomVariables <stochasticWeakRandomVariables>`
+   * :doc:`svIntegratorAdaptiveRungeKutta <svIntegratorAdaptiveRungeKutta>`
+   * :doc:`svIntegratorRungeKutta <svIntegratorRungeKutta>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRA <svIntegratorStrongStochasticRungeKuttaSRA>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRI <svIntegratorStrongStochasticRungeKuttaSRI>`
+   * :doc:`svIntegratorWeakSIESME <svIntegratorWeakSIESME>`
+   * :doc:`THROperation <THROperation>`
+   * :doc:`THRSimConfig <THRSimConfig>`
+   * :doc:`THRTimePair <THRTimePair>`
+
+
+Base clase for every StateVecIntegrator. For creating a new StateVecIntegrator, inherit this class and override the ``integrate()`` method. ``integrate()`` only needs to advance one time step. DO NOT CHANGE THIS CLASS, if possible.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: stateVecIntegrator.h
+   :project: _GeneralModuleFiles4
+

@@ -1,0 +1,500 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>runAllComparisons &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="scenarioCompareOrbit" href="scenarioCompareOrbit.html" />
+    <link rel="prev" title="BSK_MujocoFSW" href="../mujoco/mujocoModels/BSK_MujocoFSW.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../scenarioBasicOrbit.html">Basic Orbit Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioOrbitManeuver.html">Delta_v Orbit Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioJupiterArrival.html">Hyperbolic Jupiter Arrival Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioOrbitMultiBody.html">Multiple Gravitational Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioOrbitConsistencyVerification.html">Verifying Spherical Harmonic Propagation Consistency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioLagrangePointOrbit.html">Lagrange Point Orbits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioCentralBody.html">Defining Motion Relative to Planet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioPatchedConics.html">Simulating Trajectory about Multiple Celestial Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioCustomGravBody.html">Including Custom Gravitational Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioHaloOrbit.html">Near-Halo Orbit Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioGroundTracks.html">Showing Ground Tracks on a Planet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedback.html">Inertial Attitude Pointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedbackNumba.html">Inertial Attitude Pointing with Numba FSW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedback2T.html">Using Separate Task Group for Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudePointing.html">Basic Attitude Pointing in Deep Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudePointingNumba.html">Basic Attitude Pointing in Deep Space with Numba Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedbackNoEarth.html">Complex Attitude Pointing in Deep Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeConstraintViolation.html">Sun-Pointing Constraint Violation in Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSpiceSpacecraft.html">Inertial Pointing with Spice prescribed translational motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioHohmann.html">Basic attitude pointing flight mode with Hohmann transfer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioOrbitManeuverTH.html">Thrusted Hohmann Transfer Maneuver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeGuidance.html">Hill Frame Pointing on Elliptic Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttGuideHyperbolic.html">Velocity Frame Pointing on Hyperbolic Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttLocPoint.html">Pointing at Earth Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudePrescribed.html">Prescribing the spacecraft orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioInertialSpiral.html">Layered spiral attitude guidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeConstrainedManeuver.html">Constrained Attitude Maneuver Guidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSweepingSpacecraft.html">Performing Sweeping Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioStripImaging.html">Earth Strip Imaging Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedbackRW.html">Pointing with Reaction Wheels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedback2T_stateEffTH.html">Pointing with Attitude State Effector Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedback2T_TH.html">Pointing with Attitude Dynamic Effector Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMomentumDumping.html">Reaction Wheel Momentum Dumping using Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSepMomentumManagement.html">Continuous Momentum Management using Dual-Gimbaled Electric Thruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeSteering.html">MRP Steering Law</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSmallBodyFeedbackControl.html">Small Body Waypoint-to-Waypoint Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioLambertSolver.html">Lambert Solver Delta-V Maneuver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMagneticFieldCenteredDipole.html">Centered Dipole Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMagneticFieldWMM.html">World Magnetic Model WMM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeGG.html">Gravity Gradient Perturbed Hill Pointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDragDeorbit.html">Satellite Drag Deorbit about Earth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioStochasticDragSpacecraft.html">Satellite Drag with Stochastic (Random) Density using Spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioGroundDownlink.html">Satellite communicating to Earth ground station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSpacecraftLocation.html">Satellite checking communication access to another satellite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAlbedo.html">Albedo CSS simulation about Multiple Celestial Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioCSS.html">Adding CSS Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioCSSFilters.html">Estimating Sun Heading with CSS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioTAM.html">Adding a Three-Axis Magnetometer (TAM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMtbMomentumManagementSimple.html">RW Momentum Management using TAMs and MTBs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMtbMomentumManagement.html">RW Momentum Management using TAMs and MTBs Using desired Nominal RW Speed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioTAMcomparison.html">TAM Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioPowerDemo.html">Basic Power Usage and Tracking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudeFeedbackRWPower.html">Power Usage with RW-Based ADCS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDataDemo.html">Basic Data Generation and Transmission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioGroundLocationImaging.html">Ground Target Imaging and Downlink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioGroundMapping.html">Mapping A Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSensorThermal.html">Thermal Modeling of a Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioTempMeasurementAttitude.html">Temperature Measurement with Random Seed Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioMJEarthMoonGravity.html">Earth-Moon Gravity with SPICE or PlanetEphemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSpiceReconstruction.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Position)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioVestaOrientation.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Orientation)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioAttitudeFeedbackRWMuJoCo.html">Pointing with Reaction Wheels in MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioFormationFlyingWithDrag.html">Translation-only formation flying under differential drag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioStochasticDrag.html">Satellite Drag with Stochastic (Random) Density using MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioThrArmControl.html">Spacecraft Control with Thruster Arms using MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/scenarioMJSceneVizard.html">Combining MuJoCo Scenes and a Spacecraft in Vizard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/BSK_mujocoMasters.html">Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mujoco/mujocoModels/index.html">Models Folder</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Comparison Overview and Execution Guide</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareOrbit.html">Keplerian Orbit Baseline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareTorque.html">Rigid Body with Constant Torque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareRwPanels.html">Hub with Reaction Wheels and Hinged Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareFlexPanels.html">Lumped-Mass Flexible Panels and Runtime Scaling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareOrbitMultibody.html">Multi-Body in Orbit with Gravity-Gradient Torque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareVariableMass.html">Variable-Mass Fuel Slosh and Depletion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareParetoRwPanels.html">Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scenarioCompareParetoFlexPanels.html">Accuracy vs Runtime Pareto Front (Stiff Flexible Panels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepOrbitDt.html">Integrator-Step Sweep (Keplerian Orbit)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepTorqueArtifact.html">Velocity-Regime Round-Off Sweep (Constant Torque)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepTorqueMechanismChecks.html">Torque-Artifact Mechanism Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepRwBookkeepingMass.html">Bookkeeping-Mass Sweep (Reaction Wheels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepSloshDisplacement.html">Slosh-Displacement Metric (Variable Mass)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweepVariableMassPendulumInertia.html">Pendulum-Inertia and Step Sweep (Variable Mass)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paperFigures.html">Paper Figure Rendering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioConstrainedDynamics.html">Two Spacecraft Connected Using Holonomic Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioConstrainedDynamicsManeuverAnalysis.html">Constraint Gain Tuning Analysis With Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioConstrainedDynamicsComponentAnalysis.html">Constrained Motion Component Analysis Using a Truth Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioConstrainedDynamicsFrequencyAnalysis.html">Frequency Analysis of Solar Panel Resonance Using the Constraint Effector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioGaussMarkovRandomWalk.html">IMU Gyro Random Walk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFuelSlosh.html">Fuel Slosh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioHingedRigidBody.html">Flexible (Hinged) Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFlexiblePanel.html">Bending and Torsional Flexible Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioRotatingPanel.html">Sensors Attached to a Rotating Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDeployingPanel.html">Hinged Panel Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioTwoChargedSC.html">MSM Simulation of Charged Spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSpinningBodiesTwoDOF.html">Spacecraft with 1- or 2-DOF Panel using single effector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioRoboticArm.html">Robotic Arm Effector with Profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioExtendingBoom.html">Spacecraft with an multi-link extending component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioImpact.html">Solar Array Debris Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioPrescribedScrewMotion.html">Prescribed Helical Screw Motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDeployingSolarArrays.html">Prescribed Motion Rotational Solar Array Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioPrescribedMotionWithTranslationBranching.html">Prescribed Motion with Translating Effector Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioPrescribedMotionWithRotationBranching.html">Prescribed Motion with Rotating Effector Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioHelioTransSpice.html">Heliocentric Translation Using Custom Spice Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFlybySpice.html">Planetary Flybys Using Custom Spice File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAsteroidArrival.html">Asteroid Arrival</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAerocapture.html">Aerocapture Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFormationBasic.html">Basic Servicer/Debris Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFormationMeanOEFeedback.html">Mean orbit element based relative motion control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioFormationReconfig.html">Impulsive feedback control of relative motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDebrisReorbitET.html">Electrostatic Tractor Debris Reorbiting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDragRendezvous.html">Attitude-Driven differential drag control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioRendezVous.html">Servicer approaching a debris object with 3 flight modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSatelliteConstellation.html">Walker-Delta Satellite Constellation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSmallBodyNav.html"> Proximity Operations Hybrid EKF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSmallBodyNavUKF.html"> Non-Keplerian Acceleration Estimation using UKF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioSmallBodyLandmarks.html"> Landmarks-based Navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_BasicOrbit.html">1. Basic Orbital Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_FeedbackRW.html">2. Attitude Detumble Control with RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttGuidance.html">3. Hill Pointing Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttGuidHyperbolic.html">4. Velocity Frame Pointing Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttSteering.html">5. MRP Steering Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttEclipse.html">6. Sun Pointing Mode Include Eclipse Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttModes.html">7. Alternating FSW Attitude Pointing Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AddRWFault.html">8. Reaction Wheel Fault Scenario Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_LambertGuidance.html">9. Lambert Guidance Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_AttFeedback.html">10. Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_FaultList.html">11. Fault Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_BasicOrbitFormation.html">1. Two-Spacecraft Formation using BskSim</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/scenarios/scenario_RelativePointingFormation.html">2. Relative Pointing Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/BSK_masters.html">Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/models/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BskSim/plotting/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat.html">1. Three-Spacecraft Formation using MultiSat architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/scenariosMultiSat/scenario_AttGuidMultiSat.html">2. Attitude Guidance Modes Scheduling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/scenariosMultiSat/scenario_StationKeepingMultiSat.html">3. Formation Flying Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/scenariosMultiSat/scenario_constellationFromTle.html">4. Constellation from TLE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/BSK_MultiSatMasters.html">Master file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/modelsMultiSat/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/plottingMultiSat/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/BSK_OpNav.html">1. BSK OpNav Sim Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavAttOD.html">2. Hough Circles for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavAttODLimb.html">3. Limb-based method for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_CNNAttOD.html">4. CNN for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_faultDetOpNav.html">5. Perform fault detection with two OpNav methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavOD.html">6. Orbit Determination with Hough Circles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavODLimb.html">7. Orbit Determination with Limb-based method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavPoint.html">8. Pointing with Hough Circles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb.html">9. Pointing with Limb-based method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/scenario_OpNavHeading.html">10. Filter Heading measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/modelsOpNav/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/plottingOpNav/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/CNN_ImageGen/OpNavMonteCarlo.html">Monte-Carlo Script to Create Image Set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/CNN_ImageGen/scenario_CNNImages.html">Scenario called by MC Image Generation Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/OpNavMC/MonteCarlo.html">Monte-Carlo Simulations using a OpNav Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/OpNavMC/scenario_LimbAttOD.html">Optical Limb Tracking Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../OpNavScenarios/scenariosOpNav/OpNavMC/scenario_OpNavAttODMC.html">Optical Navitation Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMonteCarloAttRW.html">MC run with RW control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioMonteCarloSpice.html">MC run using Python Spice setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MonteCarloExamples/index.html">MC bskSim example folder with bokeh visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDragSensitivity.html">Sensitivity Analysis of a differential drag spacecraft control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioIntegrators.html">Setting Type of Integrator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioVariableTimeStepIntegrators.html">Using a Variable Time Step Integrator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioIntegratorsComparison.html">Comparison of different integrators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioBenchmarkNumba.html">Benchmark Numba Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioAttitudePointingPy.html">Using a Python BSK Module Inherited from SysModel Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioBskLog.html">Changing the bskLog Verbosity from Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat_MT.html">Simulation of Multiple independent spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioBasicOrbitStream.html">Live Streaming to Vizard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioVizPoint.html">Pointing a Vizard Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioDataToViz.html">Convert Simulation Data File to Vizard File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenarioQuadMaps.html">Creating QuadMap Surface Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Integrated Example Scripts</a></li>
+      <li class="breadcrumb-item active">runAllComparisons</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/examples/dynamicsComparison/runAllComparisons.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="runallcomparisons">
+<span id="id1"></span><h1>runAllComparisons<a class="headerlink" href="#runallcomparisons" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-runAllComparisons">Dynamics-engine comparison overview and execution guide.</p>
+<p>Every <code class="docutils literal notranslate"><span class="pre">scenarioCompare*.py</span></code> script in <code class="docutils literal notranslate"><span class="pre">basilisk/examples/dynamicsComparison</span></code>
+exposes a <code class="docutils literal notranslate"><span class="pre">run(showPlots,</span> <span class="pre">saveJson,</span> <span class="pre">...)</span></code> function returning a mapping from figure
+name to matplotlib figure. This script discovers all of them, runs each with its
+default arguments, and persists their artifacts:</p>
+<ol class="arabic simple">
+<li><p>the JSON summary of the comparison metrics (<code class="docutils literal notranslate"><span class="pre">saveJson=True</span></code>), written to the
+<code class="docutils literal notranslate"><span class="pre">results</span></code> folder next to this script;</p></li>
+<li><p>every figure in the returned <code class="docutils literal notranslate"><span class="pre">figureList</span></code>, saved as a transparent <code class="docutils literal notranslate"><span class="pre">.svg</span></code> both
+to <code class="docutils literal notranslate"><span class="pre">results</span></code> and to <code class="docutils literal notranslate"><span class="pre">basilisk/docs/source/_images/Scenarios</span></code> (via
+<a class="reference internal" href="../../Documentation/utilities/simHelpers.html#simhelpers"><span class="std std-ref">simHelpers</span></a>) so the docs build picks them up; and</p></li>
+<li><p>for the accuracy-comparison scenarios, an optional local BSM-vs-MJScene
+runtime <code class="docutils literal notranslate"><span class="pre">.csv</span></code> (<code class="docutils literal notranslate"><span class="pre">saveTiming=True</span></code>).</p></li>
+</ol>
+<section id="required-build-features">
+<h2>Required build features<a class="headerlink" href="#required-build-features" title="Link to this heading"></a></h2>
+<p>The cross-engine comparisons require a Basilisk build configured with MuJoCo. Vizard
+and optical-navigation support are not required. Use a Release build for timing
+measurements; debug builds and machines under changing thermal or power-management
+conditions do not provide comparable performance data. The modules remain importable
+without MuJoCo so documentation discovery can still run, but cross-engine execution
+and the MuJoCo-specific sweeps then raise a clear <code class="docutils literal notranslate"><span class="pre">ImportError</span></code> or omit MuJoCo data.</p>
+</section>
+<section id="study-types">
+<h2>Study types<a class="headerlink" href="#study-types" title="Link to this heading"></a></h2>
+<p>The correctness scenarios progress from analytic rigid-body anchors through reaction
+wheels, flexible appendages, differential gravity, fuel slosh, and mass depletion.
+They report state agreement and conserved or analytic quantities. The two Pareto
+scenarios and the flexible-panel dimensionality study are benchmarks: they compare
+error with propagation-only wall time after warm-up. The six <code class="docutils literal notranslate"><span class="pre">sweep*.py</span></code> drivers
+are research controls for step size, velocity-dependent round-off, reaction-wheel
+bookkeeping mass, slosh displacement, torque-artifact scaling, and pendulum-bob
+inertia. Benchmark timings are descriptive measurements, not pass/fail guarantees.</p>
+</section>
+<section id="execution-order-and-outputs">
+<h2>Execution order and outputs<a class="headerlink" href="#execution-order-and-outputs" title="Link to this heading"></a></h2>
+<p>Run these commands from the repository root after building Basilisk:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 examples/dynamicsComparison/runAllComparisons.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepOrbitDt.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepTorqueArtifact.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepTorqueMechanismChecks.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepRwBookkeepingMass.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepSloshDisplacement.py</span>
+<span class="go">python3 examples/dynamicsComparison/sweepVariableMassPendulumInertia.py</span>
+<span class="go">python3 examples/dynamicsComparison/paperFigures.py --update-provenance</span>
+</pre></div>
+</div>
+<p>The documentation workflow instead invokes <code class="docutils literal notranslate"><span class="pre">runAllComparisons.py</span>
+<span class="pre">--documentation-figures</span></code>. That option uses explicitly reduced dimensionality and
+Pareto profiles to bound CI time. The affected scenario pages label those generated
+figures and state which conclusions require the complete default runs; the reduced
+figures are workflow demonstrations, not publication benchmark evidence.</p>
+<p>The runner writes scenario JSON and SVG files to <code class="docutils literal notranslate"><span class="pre">results/</span></code>, copies documentation
+figures to <code class="docutils literal notranslate"><span class="pre">docs/source/_images/Scenarios</span></code>, and may write optional local runtime
+CSV tables. Each sweep writes its own JSON and SVG artifacts. <code class="docutils literal notranslate"><span class="pre">paperFigures.py</span></code>
+reruns every scenario and sweep used by a paper figure, table, or quantitative claim,
+writes print PDFs to <code class="docutils literal notranslate"><span class="pre">results/paper</span></code>, and replaces <code class="docutils literal notranslate"><span class="pre">results/provenance.json</span></code> with
+source, native-build, dependency, host, input, and output hashes. Run the provenance
+update only from a clean worktree whose Release build identifies the current commit.
+A later render validates those hashes before accepting the figures.</p>
+<p>On a 2026 Apple M4 Pro Release build, the full scenario runner takes roughly five
+minutes, the documentation-only timing pass takes two to three minutes, and the
+standard sweeps finish in about one minute combined. The direct torque-mechanism
+control is intentionally longer at about ten minutes. Paper rendering takes less
+than a minute. These values are planning estimates only and vary with hardware,
+compiler, background load, and thermal state.</p>
+</section>
+<section id="interpretation-limits">
+<h2>Interpretation limits<a class="headerlink" href="#interpretation-limits" title="Link to this heading"></a></h2>
+<p>Agreement demonstrates equivalence only for the modeled force, mass-property, joint,
+gravity, and integration conventions documented by each scenario. The engines do not
+share every gravity or multibody approximation, so some extended cases intentionally
+retain a physical residual. Timing ratios apply to the listed model sizes, integrators,
+tolerances, and host; they must not be generalized into an engine-wide performance
+claim. Inspect the scenario-specific assumptions and the stored configuration metadata
+before reusing any result.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="runAllComparisons.discoverScenarios">
+<span class="sig-prename descclassname"><span class="pre">runAllComparisons.</span></span><span class="sig-name descname"><span class="pre">discoverScenarios</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/runAllComparisons.html#discoverScenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#runAllComparisons.discoverScenarios" title="Link to this definition"></a></dt>
+<dd><p>Return the module names of every comparison scenario in this folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sorted module names (without the <code class="docutils literal notranslate"><span class="pre">.py</span></code> extension) of the
+<code class="docutils literal notranslate"><span class="pre">scenarioCompare*.py</span></code> scripts living next to this runner.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="runAllComparisons.requireMujoco">
+<span class="sig-prename descclassname"><span class="pre">runAllComparisons.</span></span><span class="sig-name descname"><span class="pre">requireMujoco</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/runAllComparisons.html#requireMujoco"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#runAllComparisons.requireMujoco" title="Link to this definition"></a></dt>
+<dd><p>Require the build feature needed for complete comparison figures.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="runAllComparisons.run">
+<span class="sig-prename descclassname"><span class="pre">runAllComparisons.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timingOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenarios</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenarioRunKwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resultsDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveDocumentationFigures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveJson</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveTiming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/runAllComparisons.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#runAllComparisons.run" title="Link to this definition"></a></dt>
+<dd><p>Run every comparison scenario with its defaults, saving JSON, figures, and tables.</p>
+<p>Each scenario runs with <code class="docutils literal notranslate"><span class="pre">showPlots=False</span></code> and <code class="docutils literal notranslate"><span class="pre">saveJson=True</span></code>; the accuracy
+scenarios additionally run with <code class="docutils literal notranslate"><span class="pre">saveTiming=True</span></code> to regenerate their runtime
+table. Scenarios returning no figures (e.g. built without MuJoCo) are skipped after
+their JSON is written.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timingOnly</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, run only the scenarios that publish a
+local runtime table, and skip their JSON summaries and figures.</p></li>
+<li><p><strong>scenarios</strong> (<em>sequence</em><em>, </em><em>optional</em>) – explicit module names to run. Defaults to the
+timing scenarios when <code class="docutils literal notranslate"><span class="pre">timingOnly</span></code> is True and discovered scenarios otherwise.</p></li>
+<li><p><strong>scenarioRunKwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – per-module keyword overrides passed to <code class="docutils literal notranslate"><span class="pre">run</span></code>.</p></li>
+<li><p><strong>resultsDir</strong> (<em>str</em><em>, </em><em>optional</em>) – explicit artifact directory. Defaults to
+the comparison <code class="docutils literal notranslate"><span class="pre">results</span></code> folder.</p></li>
+<li><p><strong>saveDocumentationFigures</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, copy generated
+figures into the Sphinx scenario-image directory. Defaults to True.</p></li>
+<li><p><strong>saveJson</strong> (<em>bool</em><em>, </em><em>optional</em>) – override JSON generation for every scenario.
+Defaults to True except in timing-only mode.</p></li>
+<li><p><strong>saveTiming</strong> (<em>bool</em><em>, </em><em>optional</em>) – override runtime-table generation for every
+timing scenario. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>module names completed in execution order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="runAllComparisons.saveFigures">
+<span class="sig-prename descclassname"><span class="pre">runAllComparisons.</span></span><span class="sig-name descname"><span class="pre">saveFigures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figureList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resultsDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveDocumentationFigures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/runAllComparisons.html#saveFigures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#runAllComparisons.saveFigures" title="Link to this definition"></a></dt>
+<dd><p>Save every figure produced by a scenario as a transparent SVG.</p>
+<p>Each figure is written twice: once into the <code class="docutils literal notranslate"><span class="pre">results</span></code> folder, and once into
+the documentation image folder via <code class="docutils literal notranslate"><span class="pre">simHelpers.saveScenarioFigure</span></code> (the
+same path the scenario unit test uses) so the docs build can pick it up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>figureList</strong> (<em>dict</em>) – mapping from figure name to matplotlib figure, as
+returned by a scenario’s <code class="docutils literal notranslate"><span class="pre">run</span></code> function.</p></li>
+<li><p><strong>resultsDir</strong> (<em>str</em><em>, </em><em>optional</em>) – explicit artifact directory. Defaults to
+the comparison <code class="docutils literal notranslate"><span class="pre">results</span></code> folder.</p></li>
+<li><p><strong>saveDocumentationFigures</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, also copy each
+figure into the Sphinx scenario-image directory. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../mujoco/mujocoModels/BSK_MujocoFSW.html" class="btn btn-neutral float-left" title="BSK_MujocoFSW" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scenarioCompareOrbit.html" class="btn btn-neutral float-right" title="scenarioCompareOrbit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

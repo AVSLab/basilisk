@@ -1,0 +1,8 @@
+.. _MJSite:
+
+MJSite
+======
+
+.. autodoxygenfile:: MJSite.h
+   :project: _GeneralModuleFiles6
+

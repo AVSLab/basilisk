@@ -1,0 +1,13 @@
+.. _test_hingedRigidBodyDefaultConfig:
+
+test_hingedRigidBodyDefaultConfig
+=================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_hingedRigidBodyDefaultConfig
+   :members:
+   :show-inheritance:
+

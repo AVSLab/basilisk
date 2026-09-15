@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_eclipse:
+
+eclipse
+=======
+
+:doc:`Module documentation <eclipse>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

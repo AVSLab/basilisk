@@ -1,0 +1,38 @@
+.. _celestialTwoBodyPoint:
+
+:module-type:`C` Module: celestialTwoBodyPoint
+==============================================
+
+Executive Summary
+-----------------
+
+This module point one body-fixed axis towards a primary celestial object.  The secondary goal is to point a second body-fixed axis towards another celestial object.
+
+For example, the goal is to point the sensor towards the center of a planet while doing the best to keep the solar panel normal point at the sun.The module
+:download:`PDF Description </../../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/Basilisk-celestialTwoBodyPoint-20190311.pdf>`
+contains further information on this module's function, how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: celestialTwoBodyPoint
+    :caption: Module I/O Messages
+
+    output attRefOutMsg AttRefMsgPayload
+        attitude reference output message
+    input transNavInMsg NavTransMsgPayload
+        spacecraft translation motion input message
+    input celBodyInMsg EphemerisMsgPayload
+        primary celestial body information input message
+    input secCelBodyInMsg EphemerisMsgPayload
+        (optional) secondary celestial body information
+
+
+----
+
+.. autodoxygenfile:: celestialTwoBodyPoint.h
+   :project: celestialTwoBodyPoint
+

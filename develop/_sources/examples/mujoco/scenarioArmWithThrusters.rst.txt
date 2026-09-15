@@ -1,0 +1,15 @@
+.. _scenarioArmWithThrusters:
+
+scenarioArmWithThrusters
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioArmWithThrusters
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,15 @@
+.. _checkSync:
+
+checkSync
+=========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: checkSync
+   :members:
+   :show-inheritance:
+

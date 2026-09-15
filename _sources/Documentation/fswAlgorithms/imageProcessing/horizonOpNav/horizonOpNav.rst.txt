@@ -1,0 +1,39 @@
+.. _horizonOpNav:
+
+:module-type:`C` Module: horizonOpNav
+=====================================
+
+Executive Summary
+-----------------
+
+Converter that takes a limb message and camera information and outputs a relative position to the object. This algorithm was developed by J. Christian.
+
+The module
+:download:`PDF Description </../../src/fswAlgorithms/imageProcessing/horizonOpNav/_Documentation/Basilisk-horizonOpNav-20190918.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: horizonOpNav
+    :caption: Module I/O Messages
+
+    output opNavOutMsg OpNavMsgPayload
+        Output navigation message for relative position
+    input cameraConfigInMsg CameraConfigMsgPayload
+        camera config input message
+    input attInMsg NavAttMsgPayload
+        attitude input message
+    input limbInMsg OpNavLimbMsgPayload
+        limb input message
+
+
+----
+
+.. autodoxygenfile:: horizonOpNav.h
+   :project: horizonOpNav
+

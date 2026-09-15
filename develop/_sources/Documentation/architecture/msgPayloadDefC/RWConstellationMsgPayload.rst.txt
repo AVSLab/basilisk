@@ -1,0 +1,10 @@
+.. _RWConstellationMsgPayload:
+
+RWConstellationMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWConstellationMsgPayload.h
+   :project: msgPayloadDefC
+

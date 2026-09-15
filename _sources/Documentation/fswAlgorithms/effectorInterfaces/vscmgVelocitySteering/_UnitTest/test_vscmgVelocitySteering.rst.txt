@@ -1,0 +1,13 @@
+.. _test_vscmgVelocitySteering:
+
+test_vscmgVelocitySteering
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_vscmgVelocitySteering
+   :members:
+   :show-inheritance:
+

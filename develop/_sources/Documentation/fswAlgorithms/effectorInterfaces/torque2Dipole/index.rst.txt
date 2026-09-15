@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_torque2Dipole:
+
+torque2Dipole
+=============
+
+:doc:`Module documentation <torque2Dipole>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

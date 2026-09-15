@@ -1,0 +1,32 @@
+.. _chebyPosEphem:
+
+:module-type:`C` Module: chebyPosEphem
+======================================
+
+Executive Summary
+-----------------
+
+This module allows the user to specify a set of Chebyshev
+coefficients to fit a space ephemeris trajectory. Next the input time is used to determine where a given body is in space.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+
+.. bsk-module-io:: chebyPosEphem
+    :caption: Module I/O Messages
+
+    output posFitOutMsg EphemerisMsgPayload
+        Output navigation message for pos/vel
+    input clockCorrInMsg TDBVehicleClockCorrelationMsgPayload
+        clock correlation input message
+
+
+----
+
+.. autodoxygenfile:: chebyPosEphem.h
+   :project: chebyPosEphem
+

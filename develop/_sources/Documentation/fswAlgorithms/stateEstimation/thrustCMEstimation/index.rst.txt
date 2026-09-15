@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrustCMEstimation:
+
+thrustCMEstimation
+==================
+
+:doc:`Module documentation <thrustCMEstimation>`
+
+:doc:`Unit tests <_UnitTest/index>`
+
