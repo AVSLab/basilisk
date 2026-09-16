@@ -28,6 +28,10 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <Eigen/Dense>
+#include <cmath>
+#include <cstdint>
+#include <string>
+#include <vector>
 
 /*! @brief This module converts instantaneous reference angle changes for an array of joints to smooth profiles.
  */
@@ -71,6 +75,18 @@ public:
     void setFilterDt(double filterDt);
     /** getter for the `filterDt` property */
     double getFilterDt() const {return this->filterDt;}
+    /** setter for the `jointAngleWrapStart` property that enables joint-angle wrapping */
+    void setJointAngleWrapStart(double jointAngleWrapStart);
+    /** getter for the `jointAngleWrapStart` property */
+    double getJointAngleWrapStart() const {return this->jointAngleWrapStart;}
+    /** getter for the joint-angle wrapping enabled status */
+    bool getJointAngleWrappingEnabled() const {return this->jointAngleWrappingEnabled;}
+    /** method for disabling joint-angle wrapping */
+    void disableJointAngleWrapping();
+    /** setter for the `useShortestPath` property */
+    void setUseShortestPath(bool useShortestPath);
+    /** getter for the `useShortestPath` property */
+    bool getUseShortestPath() const {return this->useShortestPath;}
     /** method for adding a new hinged joint to the system */
     void addHingedJoint();
 
@@ -79,11 +95,15 @@ private:
     double profileDuration = -1.0;  //!< [s] Reference profile duration, used for all profile types except "lowPass"
     double wc = -1.0;               //!< [rad/s] low pass filter cutoff frequency, only used if profileType is "lowPass"
     double filterDt = -1.0;         //!< [s] low pass filter time step, only used if profileType is "lowPass"
+    bool jointAngleWrappingEnabled = false;  //!< Whether rotational joint angles are wrapped before profiling
+    double jointAngleWrapStart = -M_PI;  //!< [rad] Lower bound of the joint-angle wrapping interval
+    bool useShortestPath = false;   //!< Whether rotational joint profiles use the shortest angular path
     int numHingedJoints = 0;  //!< number of hinged joints in the system
     uint64_t profileStartTime = 0;  //!< [ns] simulation time at which the current profile started
     bool profileStartTimeSet = false;  //!< flag indicating whether the profile start time has been set
     Eigen::VectorXd startJointAngles;  //!< [rad] joint angles at the start of the current reference profile
     Eigen::VectorXd startJointRates;  //!< [rad/s] joint angle rates at the start of the current reference profile
+    Eigen::VectorXd targetJointAngles;  //!< [rad] effective joint-angle targets for the current reference profile
     Eigen::VectorXd refJointAngles;  //!< [rad] current profiled joint angles
     Eigen::VectorXd refJointRates;  //!< [rad/s] current profiled joint angle rates
     Eigen::VectorXd refJointAccels;  //!< [rad/s^2] current profiled joint angle accelerations
@@ -91,27 +111,23 @@ private:
 
     /*! Method for computing the low pass filtered joint reference profile
         * @param CurrentSimNanos current simulation time in nanoseconds
-        * @param desJointStatesIn desired joint states input message payload
         * */
-    void computeLowPassFilter(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn);
+    void computeLowPassFilter(uint64_t CurrentSimNanos);
 
     /*! Method for computing the linear joint reference profile
         * @param CurrentSimNanos current simulation time in nanoseconds
-        * @param desJointStatesIn desired joint states input message payload
         * */
-    void computeLinearProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn);
+    void computeLinearProfile(uint64_t CurrentSimNanos);
 
     /*! Method for computing the cubic joint reference profile
         * @param CurrentSimNanos current simulation time in nanoseconds
-        * @param desJointStatesIn desired joint states input message payload
         * */
-    void computeCubicProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn);
+    void computeCubicProfile(uint64_t CurrentSimNanos);
 
     /*! Method for computing the quintic joint reference profile
         * @param CurrentSimNanos current simulation time in nanoseconds
-        * @param desJointStatesIn desired joint states input message payload
         * */
-    void computeQuinticProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn);
+    void computeQuinticProfile(uint64_t CurrentSimNanos);
 
 };
 

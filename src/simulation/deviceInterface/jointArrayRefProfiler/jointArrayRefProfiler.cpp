@@ -19,6 +19,36 @@
 
 #include "simulation/deviceInterface/jointArrayRefProfiler/jointArrayRefProfiler.h"
 
+#include <cmath>
+
+namespace {
+
+/*! @brief Wrap an angle to a configured interval of width 2*pi.
+ * @param angle Angle to wrap [rad].
+ * @param wrapStart Lower bound of the wrapping interval [rad].
+ * @return Wrapped angle [rad].
+ */
+double wrapJointAngle(double angle, double wrapStart)
+{
+    const double fullCircle = 2.0 * M_PI;  // [rad]
+    double wrappedAngle = std::fmod(angle - wrapStart, fullCircle);
+    if (wrappedAngle < 0.0) {
+        wrappedAngle += fullCircle;
+    }
+    return wrapStart + wrappedAngle;
+}
+
+/*! @brief Return the shortest angular displacement equivalent to an input displacement.
+ * @param angleDisplacement Angular displacement [rad].
+ * @return Shortest equivalent angular displacement [rad].
+ */
+double shortestAngularDisplacement(double angleDisplacement)
+{
+    return std::remainder(angleDisplacement, 2.0 * M_PI);
+}
+
+}  // namespace
+
 void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
@@ -76,11 +106,18 @@ void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         }
     }
 
+    if (this->jointAngleWrappingEnabled && !std::isfinite(this->jointAngleWrapStart)) {
+        this->bskLogger.bskError(
+            "JointArrayRefProfiler.jointAngleWrapStart must be finite when joint-angle wrapping is enabled."
+        );
+    }
+
     this->profileStartTime = 0;  // [ns]
     this->profileStartTimeSet = false;
     this->refJointAngles = Eigen::VectorXd::Zero(this->numHingedJoints);
     this->refJointRates = Eigen::VectorXd::Zero(this->numHingedJoints);
     this->refJointAccels = Eigen::VectorXd::Zero(this->numHingedJoints);
+    this->targetJointAngles = Eigen::VectorXd::Zero(this->numHingedJoints);
 }
 
 void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
@@ -116,13 +153,23 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
         this->profileStartTimeSet = true;
         this->startJointAngles = Eigen::VectorXd::Zero(this->numHingedJoints);
         this->startJointRates = Eigen::VectorXd::Zero(this->numHingedJoints);
+        this->targetJointAngles = Eigen::VectorXd::Zero(this->numHingedJoints);
         this->prevDesJointStates = desJointStatesIn;
         for (std::size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
             ScalarJointStateMsgPayload jointStateIn = this->jointStatesInMsgs[i]();
             ScalarJointStateMsgPayload jointStateDotIn = this->jointStateDotsInMsgs[i]();
             const Eigen::Index jointIndex = static_cast<Eigen::Index>(i);
-            this->startJointAngles[jointIndex] = jointStateIn.state;
+            this->startJointAngles[jointIndex] = this->jointAngleWrappingEnabled
+                ? wrapJointAngle(jointStateIn.state, this->jointAngleWrapStart)
+                : jointStateIn.state;
             this->startJointRates[jointIndex] = jointStateDotIn.state;
+            const double desJointAngle = this->jointAngleWrappingEnabled
+                ? wrapJointAngle(desJointStatesIn.states[i], this->jointAngleWrapStart)
+                : desJointStatesIn.states[i];
+            this->targetJointAngles[jointIndex] = this->useShortestPath
+                ? this->startJointAngles[jointIndex]
+                    + shortestAngularDisplacement(desJointAngle - this->startJointAngles[jointIndex])
+                : desJointAngle;
         }
 
         if (this->profileType == "lowPass") {
@@ -135,16 +182,16 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
 
     // compute the current reference states based on the profile type
     if (this->profileType == "lowPass" && !newDesiredStateMsg) {
-        this->computeLowPassFilter(CurrentSimNanos, desJointStatesIn);
+        this->computeLowPassFilter(CurrentSimNanos);
     }
     else if (this->profileType == "linear") {
-        this->computeLinearProfile(CurrentSimNanos, desJointStatesIn);
+        this->computeLinearProfile(CurrentSimNanos);
     }
     else if (this->profileType == "cubic") {
-        this->computeCubicProfile(CurrentSimNanos, desJointStatesIn);
+        this->computeCubicProfile(CurrentSimNanos);
     }
     else if (this->profileType == "quintic") {
-        this->computeQuinticProfile(CurrentSimNanos, desJointStatesIn);
+        this->computeQuinticProfile(CurrentSimNanos);
     }
 
     // write the current reference states to the output message
@@ -153,28 +200,30 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     desJointStatesOut.stateDots.resize(static_cast<std::size_t>(this->numHingedJoints), 0.0);
     desJointStatesOut.stateDDots.resize(static_cast<std::size_t>(this->numHingedJoints), 0.0);
     for (int i = 0; i < this->numHingedJoints; ++i) {
-        desJointStatesOut.states[static_cast<std::size_t>(i)] = this->refJointAngles[i];
+        desJointStatesOut.states[static_cast<std::size_t>(i)] = this->jointAngleWrappingEnabled
+            ? wrapJointAngle(this->refJointAngles[i], this->jointAngleWrapStart)
+            : this->refJointAngles[i];
         desJointStatesOut.stateDots[static_cast<std::size_t>(i)] = this->refJointRates[i];
         desJointStatesOut.stateDDots[static_cast<std::size_t>(i)] = this->refJointAccels[i];
     }
     this->desJointStatesOutMsg.write(&desJointStatesOut, this->moduleID, CurrentSimNanos);
 }
 
-void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unused]], const JointArrayStateMsgPayload& desJointStatesIn)
+void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     double beta = 1.0 - std::exp(-this->wc * this->filterDt);
 
     Eigen::VectorXd prevRefJointAngles = this->refJointAngles;
     Eigen::VectorXd prevRefJointRates = this->refJointRates;
     for (int i = 0; i < this->numHingedJoints; ++i) {
-        const double thetaCmd = desJointStatesIn.states[static_cast<size_t>(i)];
+        const double thetaCmd = this->targetJointAngles[i];
         this->refJointAngles[i] = prevRefJointAngles[i] + beta * (thetaCmd - prevRefJointAngles[i]);
         this->refJointRates[i] = (this->refJointAngles[i] - prevRefJointAngles[i]) / this->filterDt;
         this->refJointAccels[i] = (this->refJointRates[i] - prevRefJointRates[i]) / this->filterDt;
     }
 }
 
-void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
+void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -183,7 +232,7 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
+            this->refJointAngles[i] = this->targetJointAngles[i];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -192,7 +241,7 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
+        double thetaf = this->targetJointAngles[i];
         double T = this->profileDuration;
 
         // compute reference angle, rate, and acceleration
@@ -202,7 +251,7 @@ void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos, const
     }
 }
 
-void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
+void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -211,7 +260,7 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
+            this->refJointAngles[i] = this->targetJointAngles[i];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -220,7 +269,7 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
+        double thetaf = this->targetJointAngles[i];
         double thetaDot0 = this->startJointRates[i];
         double T = this->profileDuration;
 
@@ -237,7 +286,7 @@ void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos, const 
     }
 }
 
-void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, const JointArrayStateMsgPayload& desJointStatesIn)
+void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -246,7 +295,7 @@ void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, cons
     this->refJointAccels.setZero(this->numHingedJoints);
     if (tau >= this->profileDuration) {
         for (int i = 0; i < this->numHingedJoints; ++i) {
-            this->refJointAngles[i] = desJointStatesIn.states[static_cast<size_t>(i)];
+            this->refJointAngles[i] = this->targetJointAngles[i];
             this->refJointRates[i] = 0.0;
             this->refJointAccels[i] = 0.0;
         }
@@ -255,7 +304,7 @@ void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos, cons
 
     for (int i = 0; i < this->numHingedJoints; ++i) {
         double theta0 = this->startJointAngles[i];
-        double thetaf = desJointStatesIn.states[static_cast<size_t>(i)];
+        double thetaf = this->targetJointAngles[i];
         double thetaDot0 = this->startJointRates[i];
         double deltaTheta = thetaf - theta0;
         double T = this->profileDuration;
@@ -293,6 +342,22 @@ void JointArrayRefProfiler::setWc(double wc)
 void JointArrayRefProfiler::setFilterDt(double filterDt)
 {
     this->filterDt = filterDt;
+}
+
+void JointArrayRefProfiler::setJointAngleWrapStart(double jointAngleWrapStart)
+{
+    this->jointAngleWrapStart = jointAngleWrapStart;
+    this->jointAngleWrappingEnabled = true;
+}
+
+void JointArrayRefProfiler::disableJointAngleWrapping()
+{
+    this->jointAngleWrappingEnabled = false;
+}
+
+void JointArrayRefProfiler::setUseShortestPath(bool useShortestPath)
+{
+    this->useShortestPath = useShortestPath;
 }
 
 void JointArrayRefProfiler::addHingedJoint()
