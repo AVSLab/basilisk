@@ -1,3 +1,96 @@
+#
+# ISC License
+#
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+r"""
+Overview
+--------
+
+This scenario demonstrates the multi-body prescribed motion dynamics capability of the
+:ref:`prescribedMotionStateEffector` module through a sequential rotational and translational solar array deployment
+scenario. The spacecraft in this example consists of a rigid hub and two symmetrical solar arrays. Each array is modeled
+as a collection of 4 prescribed motion elements. Therefore, 8 instances of the :ref:`prescribedMotionStateEffector`
+module are required to simulate the array deployments.
+
+Note that in order to simulate hub-relative prescribed motion, kinematic profiler modules must be connected to the
+prescribed motion state effector modules. The kinematic profiler modules specify the translational and rotational
+states of each prescribed sub-component relative to the spacecraft hub and write the sub-component states at each time
+step to the prescribed motions state effector modules using the Basilisk messaging system. Currently two kinematic
+profiler modules exist in Basilisk that can be used to simulate prescribed motion. The first
+:ref:`prescribedLinearTranslation` module prescribes linear translational motion of a prescribed sub-component
+relative to the hub; while the second :ref:`prescribedRotation1DOF` module prescribes 1 DOF rotational motion relative
+to the hub.
+
+The type of deployment simulated in this scenario is a 1 DOF rotational solar array deployment followed by a linear
+solar array deployment, therefore the :ref:`prescribedRotation1DOF` and :ref:`prescribedLinearTranslation` modules are
+used in this scenario to profile the array element prescribed motion. Note that 8 instances of these profiler modules
+are required to profile the array deployments. Also note that because only rotational motion is profiled in the first
+movement, :ref:`PrescribedTranslationMsgPayload` messages are required to be written for each array element before the
+translational motion is simulated and must be connected directly to the element prescribed motion state
+effector modules. This ensures that both the translational and rotational motion of each array element is defined
+relative to the hub for the entire simulation.
+
+In this deployment scenario, the solar arrays on both sides of the hub are rotated at the same time. Further, each array
+deploys in two stages, meaning that there are four simulation chunks required in this scenario. The 1 DOF rotational
+kinematic profiler modules prescribe a bang-bang acceleration profile for each array element during the rotational
+deployment phase. After first initializing all array elements to their stowed configuration, the array elements rotate
+together in the initial deployment phase upward away from the spacecraft hub. Array 1 rotates -90 degrees about +Y
+hub-frame axis while array 2 rotates 90 degrees about the +Y hub-frame axis. After the initial deployment phase for
+each array, the main deployment phase beings where the array elements extend simultaneously to their final deployment
+configurations. The array elements are extended one a time until the arrays reach their final exteded state.
+
+The script is found in the folder ``basilisk/examples`` and executed by using::
+
+    python3 scenarioRotTransArrayDeployment.py
+
+The scenario outputs five plots. The first two plots illustrate the array element angles relative to the
+hub; while the following two plots illustrate the array element rates relative to the hub. The final plots
+illustrate the hub's inertial motion during the array deployment. The hub's inertial position, attitude,
+angular velocity, and angular velocity magnitude are given. This scenario also creates a Vizard simulation to
+visualize the solar array deployment.
+
+Illustration of Simulation Results
+----------------------------------
+
+The following plots illustrate the solar array deployment scenario simulation results.
+
+.. image:: /_images/Scenarios/scenarioRotTransArrayDeployment_ArrayElementsTheta.svg
+   :align: center
+
+.. image:: /_images/Scenarios/scenarioRotTransArrayDeployment_ArrayElementPositions.svg
+    :align: center
+
+.. image:: /_images/Scenarios/scenarioRotTransArrayDeployment_HubInertialMRPAttitude.svg
+    :align: center
+
+.. image:: /_images/Scenarios/scenarioRotTransArrayDeployment_HubInertialPosition.svg
+    :align: center
+
+.. image:: /_images/Scenarios/scenarioRotTransArrayDeployment_HubInertialAngularVelocity.svg
+    :align: center
+
+"""
+
+#
+#   Solar Array Deployment Scenario
+#   Author:             Mason Drumwright
+#   Creation Date:      September 14, 2026
+#
+
 import inspect
 import os
 
@@ -206,7 +299,7 @@ def run(show_plots):
         array1_trans_profiler_list.append(prescribedLinearTranslation.PrescribedLinearTranslation())
         array2_trans_profiler_list.append(prescribedLinearTranslation.PrescribedLinearTranslation())
         array1_trans_profiler_list[i].setTransHat_M(trans_hat_M)
-        array2_trans_profiler_list[i].setTransHat_M(-trans_hat_M)
+        array2_trans_profiler_list[i].setTransHat_M(trans_hat_M)
         array1_trans_profiler_list[i].setTransAccelMax(accel_max)
         array2_trans_profiler_list[i].setTransAccelMax(accel_max)
         array1_trans_profiler_list[i].setTransPosInit(0.0)
@@ -288,13 +381,19 @@ def run(show_plots):
         for j in range(num_elements - count):
             target_rho = count * (length_element + gap)
 
-            trans_ref = messaging.LinearTranslationRigidBodyMsgPayload()
-            trans_ref.rho = target_rho
-            trans_ref.rhoDot = 0.0
-            trans_msg = messaging.LinearTranslationRigidBodyMsg().write(trans_ref)
+            trans_ref_1 = messaging.LinearTranslationRigidBodyMsgPayload()
+            trans_ref_1.rho = target_rho
+            trans_ref_1.rhoDot = 0.0
 
-            array1_trans_profiler_list[j].linearTranslationRigidBodyInMsg.subscribeTo(trans_msg)
-            array2_trans_profiler_list[j].linearTranslationRigidBodyInMsg.subscribeTo(trans_msg)
+            trans_ref_2 = messaging.LinearTranslationRigidBodyMsgPayload()
+            trans_ref_2.rho = -target_rho
+            trans_ref_2.rhoDot = 0.0
+
+            trans_msg1 = messaging.LinearTranslationRigidBodyMsg().write(trans_ref_1)
+            trans_msg2 = messaging.LinearTranslationRigidBodyMsg().write(trans_ref_2)
+
+            array1_trans_profiler_list[j].linearTranslationRigidBodyInMsg.subscribeTo(trans_msg1)
+            array2_trans_profiler_list[j].linearTranslationRigidBodyInMsg.subscribeTo(trans_msg2)
 
         current_time += translation_duration
         # Add time after final extension
@@ -309,8 +408,31 @@ def run(show_plots):
     omega_BN_B = sc_state_data.omega_BN_B * macros.R2D  # [deg/s]
     sigma_BN = sc_state_data.sigma_BN
 
-    # Plot element positions
+    # Plot the results
+    figure_list = {}
+
+    # Array element angle relative to hub
     plt.figure(1)
+    for i in range(num_elements):
+        plt.plot(timespan, array1_prescribed_data_log[i].theta * macros.R2D, label=f"Array 1 Element {i+1}")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Angle Relative to Hub [deg]")
+    plt.title("Array 1 Element Angle Relative to Hub")
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
+    plt.grid(True)
+    # Array 2 element angle relative to hub
+    for i in range(num_elements):
+        plt.plot(timespan, array2_prescribed_data_log[i].theta * macros.R2D, linestyle="--", label=f"Array 2 Element {i+1}")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Angle Relative to Hub [deg]")
+    plt.title("Array 2 Element Angle Relative to Hub")
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
+    plt.grid(True)
+    pltName = filename + "_ArrayElementsTheta"
+    figure_list[pltName] = plt.figure(1)
+
+    # Plot element positions
+    plt.figure(2)
     for i in range(num_elements):
         plt.plot(timespan, array1_trans_data_log_list[i].rho, label=f"Array1 Element {i+1}")
         plt.xlabel("Time [s]")
@@ -318,14 +440,15 @@ def run(show_plots):
         plt.title("Element Translation Position vs Time")
         plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
         plt.grid(True)
-    plt.figure(2)
     for i in range(num_elements):
         plt.plot(timespan, array2_trans_data_log_list[i].rho, linestyle="--", label=f"Array2 Element {i+1}")
-        plt.xlabel("Time [s]")
-        plt.ylabel("rho [m]")
-        plt.title("Element Translation Position vs Time")
-        plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
-        plt.grid(True)
+    plt.xlabel("Time [s]")
+    plt.ylabel("rho [m]")
+    plt.title("Element Translation Position vs Time")
+    plt.legend(bbox_to_anchor=(1.25, 0.5), loc="center left", fontsize=8)
+    plt.grid(True)
+    pltName = filename + "_ArrayElementPositions"
+    figure_list[pltName] = plt.figure(2)
 
     # Plot sigma_BN
     plt.figure(3)
@@ -337,6 +460,8 @@ def run(show_plots):
     plt.title("Hub Inertial Attitude (MRP) vs Time")
     plt.legend()
     plt.grid(True)
+    pltName = filename + "_HubInertialMRPAttitude"
+    figure_list[pltName] = plt.figure(3)
 
     # Plot r_BN_N
     plt.figure(4)
@@ -348,6 +473,8 @@ def run(show_plots):
     plt.title("Hub Inertial Position vs Time")
     plt.legend()
     plt.grid(True)
+    pltName = filename + "_HubInertialPosition"
+    figure_list[pltName] = plt.figure(4)
 
     # Plot omega_BN_B
     plt.figure(5)
@@ -359,6 +486,8 @@ def run(show_plots):
     plt.title("Hub Angular Velocity vs Time")
     plt.legend()
     plt.grid(True)
+    pltName = filename + "_HubInertialAngularVelocity"
+    figure_list[pltName] = plt.figure(5)
 
     if show_plots:
         plt.show()
