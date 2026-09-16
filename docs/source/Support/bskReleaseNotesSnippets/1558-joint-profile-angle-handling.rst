@@ -1,0 +1,1 @@
+- Added configurable joint-angle wrapping and opt-in shortest-path joint profiling to :ref:`jointArrayRefProfiler`.
