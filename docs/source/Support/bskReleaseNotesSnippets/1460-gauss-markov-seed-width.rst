@@ -1,0 +1,1 @@
+- Normalized the ``GaussMarkov`` secondary stream seed to 32 bits so secondary sensor noise and fault streams select the same sequence regardless of the standard library Basilisk is built against; ``std::minstd_rand::result_type`` is ``std::uint_fast32_t``, whose width is implementation defined.
