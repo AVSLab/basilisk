@@ -244,3 +244,26 @@ TEST(GaussMarkov, secondarySeedDoesNotAliasZero)
 
     EXPECT_NE(baseGenerator(), secondaryGenerator());
 }
+
+TEST(GaussMarkov, secondarySeedIsPlatformIndependent)
+{
+    //! - std::minstd_rand::result_type is std::uint_fast32_t, whose width is implementation
+    //!   defined.  A derived seed carrying bits above 32 would therefore seed the secondary
+    //!   engine differently depending on the standard library Basilisk was built against.
+    constexpr uint64_t defaultSeed = 0x1badcad1;
+    constexpr uint64_t expectedSecondarySeed = 0x64e7b6c4;
+    constexpr uint64_t expectedFirstDraw = 128424993;
+    constexpr uint64_t seedWidthMask = 0xFFFFFFFFULL;
+
+    const uint64_t secondarySeed = GaussMarkov::deriveSecondarySeed(defaultSeed);
+    EXPECT_EQ(secondarySeed, expectedSecondarySeed);
+
+    std::minstd_rand secondaryGenerator(static_cast<std::minstd_rand::result_type>(secondarySeed));
+    EXPECT_EQ(static_cast<uint64_t>(secondaryGenerator()), expectedFirstDraw);
+
+    //! - The normalization must hold for any base seed, including one that fills all 64 bits.
+    const uint64_t probeSeeds[] = {0, 1, defaultSeed, 0x7FFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL};
+    for (const uint64_t probeSeed : probeSeeds) {
+        EXPECT_LE(GaussMarkov::deriveSecondarySeed(probeSeed), seedWidthMask);
+    }
+}
