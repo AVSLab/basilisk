@@ -64,8 +64,13 @@ uint64_t
 GaussMarkov::deriveSecondarySeed(uint64_t baseSeed)
 {
     constexpr uint64_t secondaryStreamDiscriminator = 0x9E3779B97F4A7C15ULL;
-    const uint64_t candidateSeed = baseSeed ^ secondaryStreamDiscriminator;
-    std::minstd_rand primaryGenerator(static_cast<std::minstd_rand::result_type>(baseSeed));
+    //! - std::minstd_rand::result_type is std::uint_fast32_t, whose width is implementation
+    //!   defined (32 bit with libc++, 64 bit with libstdc++ on LP64).  Both seeds are
+    //!   normalized to 32 bits so the derived stream does not depend on the platform.
+    constexpr uint64_t seedWidthMask = 0xFFFFFFFFULL;
+    const uint64_t normalizedBaseSeed = baseSeed & seedWidthMask;
+    const uint64_t candidateSeed = (baseSeed ^ secondaryStreamDiscriminator) & seedWidthMask;
+    std::minstd_rand primaryGenerator(static_cast<std::minstd_rand::result_type>(normalizedBaseSeed));
     std::minstd_rand secondaryGenerator(static_cast<std::minstd_rand::result_type>(candidateSeed));
     if (primaryGenerator == secondaryGenerator) {
         return static_cast<uint64_t>(primaryGenerator());
