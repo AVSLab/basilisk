@@ -341,6 +341,46 @@ def test_allocation_configuration_helpers():
     assert bounds[3] == (0.0, 4.0)  # [N]
 
 
+def test_joint_motion_penalty_configuration():
+    """
+    **Validation Test Description**
+
+    This unit test verifies that :class:`jointThrAllocation.JointThrAllocation`
+    configures the optional joint-motion penalty and its joint-state readers.
+
+    **Description of Variables Being Tested**
+
+    This unit test checks scalar, vector, and matrix joint-motion weights and
+    the optional joint-state message connections.
+    """
+    allocation = jointThrAllocation.JointThrAllocation()
+    allocation.nJoint = 2
+
+    allocation.setWtheta(2.0)
+    allocation.resolveWtheta()
+    np.testing.assert_allclose(allocation.Wtheta, 2.0 * np.eye(2))
+
+    allocation.setWtheta(np.array([1.0, 3.0]))
+    allocation.resolveWtheta()
+    np.testing.assert_allclose(allocation.Wtheta, np.diag([1.0, 3.0]))
+
+    w_theta = np.array([[1.0, 0.5], [0.5, 2.0]])
+    allocation.setWtheta(w_theta)
+    allocation.resolveWtheta()
+    np.testing.assert_allclose(allocation.Wtheta, w_theta)
+
+    for i in range(allocation.nJoint):
+        jointStateMsg = messaging.ScalarJointStateMsg().write(
+            messaging.ScalarJointStateMsgPayload()
+        )
+        allocation.addHingedJoint()
+        allocation.jointStatesInMsgs[i].subscribeTo(jointStateMsg)
+
+    assert allocation.useThetaPenalty
+    assert len(allocation.jointStatesInMsgs) == allocation.nJoint
+    assert all(jointStateInMsg.isLinked() for jointStateInMsg in allocation.jointStatesInMsgs)
+
+
 @pytest.mark.parametrize(
     "missing_msg_name",
     [
