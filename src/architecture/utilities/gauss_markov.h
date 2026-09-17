@@ -50,6 +50,11 @@ public:
         where @c std::minstd_rand normalizes seeds zero and one to the same
         initial state.
 
+        The returned seed is normalized to 32 bits. @c std::minstd_rand::result_type
+        is @c std::uint_fast32_t, whose width is implementation defined, so an
+        unmasked seed would select a different secondary stream depending on the
+        standard library the simulation was built against.
+
         @param baseSeed Seed used by the primary random stream.
         @return Seed for a distinct, repeatable secondary random stream.
      */
