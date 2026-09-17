@@ -1,0 +1,272 @@
+#
+#  ISC License
+#
+#  Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+#
+#  Permission to use, copy, modify, and/or distribute this software for any
+#  purpose with or without fee is hereby granted, provided that the above
+#  copyright notice and this permission notice appear in all copies.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+#   Unit Test Script
+#   Module Name: ommHandling
+#   Author: robotrocketscience (https://github.com/robotrocketscience)
+#   Creation Date: September 16, 2026
+#
+
+import json
+
+import numpy as np
+import pytest
+
+import Basilisk.utilities.ommHandling as ommHandling
+
+A_TOL_DIST = 1e-6  # [m] semi-major axis agreement between OMM encodings
+A_TOL = 1e-12  # [-] agreement between encodings of identical values
+A_TOL_TLE_DIST = 0.1  # [m] OMM vs TLE agreement, limited by the TLE's fixed field widths
+A_TOL_TLE_ANG = 1e-6  # [rad] OMM vs TLE angular agreement
+
+# ISS (ZARYA), one OMM record expressed in each of the four CelesTrak encodings.
+# All four carry bit-identical field values, so every encoding must yield the same elements.
+_OMM_FIELDS = {
+    "OBJECT_NAME": "ISS (ZARYA)",
+    "OBJECT_ID": "1998-067A",
+    "CENTER_NAME": "EARTH",
+    "REF_FRAME": "TEME",
+    "TIME_SYSTEM": "UTC",
+    "MEAN_ELEMENT_THEORY": "SGP4",
+    "EPOCH": "2026-09-10T12:00:00.000000",
+    "MEAN_MOTION": "15.50103472",
+    "ECCENTRICITY": "0.0004364",
+    "INCLINATION": "51.6416",
+    "RA_OF_ASC_NODE": "247.4627",
+    "ARG_OF_PERICENTER": "130.5360",
+    "MEAN_ANOMALY": "325.0288",
+    "EPHEMERIS_TYPE": "0",
+    "CLASSIFICATION_TYPE": "U",
+    "NORAD_CAT_ID": "25544",
+    "ELEMENT_SET_NO": "999",
+    "REV_AT_EPOCH": "47859",
+    "BSTAR": "0.00016717",
+    "MEAN_MOTION_DOT": "0.00002182",
+    "MEAN_MOTION_DDOT": "0.0",
+}
+
+
+def _writeKvn(path, fieldSets):
+    lines = []
+    for fields in fieldSets:
+        lines.append("CCSDS_OMM_VERS = 2.0")
+        lines.append("COMMENT this comment line must be ignored")
+        for key, value in fields.items():
+            lines.append(f"{key} = {value}")
+    path.write_text("\n".join(lines) + "\n")
+    return path
+
+
+def _writeJson(path, fieldSets):
+    path.write_text(json.dumps(list(fieldSets)))
+    return path
+
+
+def _writeCsv(path, fieldSets):
+    fieldSets = list(fieldSets)
+    header = ",".join(fieldSets[0].keys())
+    rows = [",".join(str(v) for v in fields.values()) for fields in fieldSets]
+    path.write_text("\n".join([header] + rows) + "\n")
+    return path
+
+
+def _writeXml(path, fieldSets):
+    segments = []
+    for fields in fieldSets:
+        metadataKeys = ("OBJECT_NAME", "OBJECT_ID", "CENTER_NAME", "REF_FRAME",
+                        "TIME_SYSTEM", "MEAN_ELEMENT_THEORY")
+        meanKeys = ("EPOCH", "MEAN_MOTION", "ECCENTRICITY", "INCLINATION",
+                    "RA_OF_ASC_NODE", "ARG_OF_PERICENTER", "MEAN_ANOMALY")
+        tleKeys = ("EPHEMERIS_TYPE", "CLASSIFICATION_TYPE", "NORAD_CAT_ID",
+                   "ELEMENT_SET_NO", "REV_AT_EPOCH", "BSTAR",
+                   "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT")
+
+        def block(name, keys):
+            inner = "".join(f"<{k}>{fields[k]}</{k}>" for k in keys if k in fields)
+            return f"<{name}>{inner}</{name}>"
+
+        segments.append(
+            "<segment>"
+            + block("metadata", metadataKeys)
+            + "<data>" + block("meanElements", meanKeys) + block("tleParameters", tleKeys) + "</data>"
+            + "</segment>"
+        )
+    path.write_text(f"<ndm><omm>{''.join(segments)}</omm></ndm>")
+    return path
+
+
+_WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+def test_omm_each_encoding_parses(tmp_path, encoding):
+    """Every CelesTrak OMM encoding is detected and parsed into one populated record."""
+    path = _WRITERS[encoding](tmp_path / f"iss.{encoding}", [_OMM_FIELDS])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert len(ommDataList) == 1
+    ommData = ommDataList[0]
+    assert ommData.satName == "ISS (ZARYA)"
+    assert ommData.noradID == "25544"
+    assert ommData.objectID == "1998-067A"
+    assert ommData.classification == "Unclassified"
+    assert ommData.refFrame == "TEME"
+    assert ommData.ommEpoch.year == 2026
+    assert ommData.ommEpoch.month == 9
+    assert ommData.ommEpoch.day == 10
+    # A sane LEO orbit came back
+    assert 6.6e6 < ommData.oe.a < 7.0e6  # [m]
+    assert 0.0 <= ommData.oe.e < 0.01  # [-]
+    assert np.isclose(np.degrees(ommData.oe.i), 51.6416, atol=0.5)  # [deg], atol [deg]
+
+
+def test_omm_encodings_agree(tmp_path):
+    """All four encodings of identical field values produce identical orbital elements."""
+    results = {}
+    for encoding, writer in _WRITERS.items():
+        path = writer(tmp_path / f"iss.{encoding}", [_OMM_FIELDS])
+        results[encoding] = ommHandling.satOmm2elem(str(path))[0].oe
+
+    reference = results["kvn"]
+    for encoding, oe in results.items():
+        assert np.isclose(oe.a, reference.a, atol=A_TOL_DIST), encoding
+        for name in ("e", "i", "Omega", "omega", "f"):
+            assert np.isclose(getattr(oe, name), getattr(reference, name), atol=A_TOL), encoding
+
+
+def test_omm_six_digit_catalog_number(tmp_path):
+    """A six-digit catalog number, which the TLE format cannot express, is read normally."""
+    fields = dict(_OMM_FIELDS)
+    fields["NORAD_CAT_ID"] = "100001"
+    fields["OBJECT_NAME"] = "NEW-CATALOG-OBJECT"
+    path = _writeKvn(tmp_path / "sixdigit.kvn", [fields])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert len(ommDataList) == 1
+    assert ommDataList[0].noradID == "100001"
+    assert 6.6e6 < ommDataList[0].oe.a < 7.0e6  # [m]
+
+
+def test_omm_multiple_records(tmp_path):
+    """A constellation file yields one record per satellite, in file order."""
+    second = dict(_OMM_FIELDS)
+    second["OBJECT_NAME"] = "SECOND-SAT"
+    second["NORAD_CAT_ID"] = "25545"
+    second["INCLINATION"] = "97.4000"
+    path = _writeKvn(tmp_path / "constellation.kvn", [_OMM_FIELDS, second])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert [d.satName for d in ommDataList] == ["ISS (ZARYA)", "SECOND-SAT"]
+    assert not np.isclose(ommDataList[0].oe.i, ommDataList[1].oe.i)
+
+
+def test_omm_optional_fields_defaulted(tmp_path):
+    """Records omitting the optional SGP4 fields still parse, using CCSDS defaults."""
+    fields = {k: v for k, v in _OMM_FIELDS.items()
+              if k not in ("BSTAR", "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT",
+                           "ELEMENT_SET_NO", "REV_AT_EPOCH")}
+    path = _writeKvn(tmp_path / "sparse.kvn", [fields])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert len(ommDataList) == 1
+    assert ommDataList[0].bStar == 0.0
+    assert ommDataList[0].revAtEpoch == 0
+
+
+@pytest.mark.parametrize("epochStr,expectedSecond", [
+    ("2026-09-10T12:00:00.000000", 0),
+    ("2026-09-10T12:00:30", 30),
+    ("2026-09-10T12:00:30Z", 30),
+    ("2026-253T12:00:30", 30),
+])
+def test_omm_epoch_formats(tmp_path, epochStr, expectedSecond):
+    """The permitted CCSDS epoch spellings all parse, including day-of-year and 'Z'."""
+    fields = dict(_OMM_FIELDS)
+    fields["EPOCH"] = epochStr
+    path = _writeKvn(tmp_path / "epoch.kvn", [fields])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert len(ommDataList) == 1
+    assert ommDataList[0].ommEpoch.second == expectedSecond
+
+
+def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
+    """A record missing a required element is skipped while good records still return."""
+    broken = dict(_OMM_FIELDS)
+    del broken["MEAN_MOTION"]
+    broken["OBJECT_NAME"] = "BROKEN-SAT"
+    path = _writeKvn(tmp_path / "mixed.kvn", [broken, _OMM_FIELDS])
+
+    ommDataList = ommHandling.satOmm2elem(str(path))
+
+    assert [d.satName for d in ommDataList] == ["ISS (ZARYA)"]
+
+
+def test_omm_unknown_format_raises(tmp_path):
+    """A file that is none of the four encodings is reported clearly."""
+    path = tmp_path / "junk.txt"
+    path.write_text("this is not an OMM file\n")
+
+    with pytest.raises(ValueError, match="could not determine the OMM format"):
+        ommHandling.satOmm2elem(str(path))
+
+
+def test_omm_empty_file_raises(tmp_path):
+    """An empty file is reported rather than silently returning nothing."""
+    path = tmp_path / "empty.kvn"
+    path.write_text("")
+
+    with pytest.raises(ValueError, match="empty OMM file"):
+        ommHandling.satOmm2elem(str(path))
+
+
+def test_omm_matches_tle_for_same_elements(tmp_path):
+    """
+    The OMM path reproduces the TLE path.
+
+    The same mean elements are fed through both readers; both run SGP4 at the epoch and the
+    same TEME -> J2000 conversion, so the osculating elements must agree to within the
+    resolution the TLE's fixed-width fields can express.
+    """
+    import Basilisk.utilities.tleHandling as tleHandling
+
+    # ISS TLE whose fields match _OMM_FIELDS exactly.
+    line1 = "1 25544U 98067A   26253.50000000  .00002182  00000-0  16717-3 0  9991"
+    line2 = "2 25544  51.6416 247.4627 0004364 130.5360 325.0288 15.50103472478591"
+    tlePath = tmp_path / "iss.2le"
+    tlePath.write_text(f"{line1}\n{line2}\n")
+
+    tleDataList = tleHandling.satTle2elem(str(tlePath))
+    assert len(tleDataList) == 1
+
+    ommPath = _writeKvn(tmp_path / "iss.kvn", [_OMM_FIELDS])
+    ommDataList = ommHandling.satOmm2elem(str(ommPath))
+    assert len(ommDataList) == 1
+
+    tleOe = tleDataList[0].oe
+    ommOe = ommDataList[0].oe
+
+    assert np.isclose(ommOe.a, tleOe.a, atol=A_TOL_TLE_DIST)
+    assert np.isclose(ommOe.e, tleOe.e, atol=1e-9)  # [-]
+    for name in ("i", "Omega", "omega", "f"):
+        assert np.isclose(getattr(ommOe, name), getattr(tleOe, name), atol=A_TOL_TLE_ANG), name
