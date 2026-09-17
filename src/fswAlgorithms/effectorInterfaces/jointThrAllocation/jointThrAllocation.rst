@@ -36,6 +36,10 @@ The following diagram and table list the module input and output messages.
     input rotTorqueInMsg CmdTorqueBodyMsgPayload
         Input body-frame commanded torque message.
 
+    input jointStatesInMsgs ScalarJointStateMsgPayload
+        (optional) Vector of current joint-state input messages used by the
+        joint-motion penalty.
+
     output thrForceOutMsg THRArrayCmdForceMsgPayload
         Output thruster force command message.
 
@@ -48,6 +52,23 @@ Module Assumptions and Limitations
 The implementation assumes serial arm chains packed in arm order, one
 spacecraft tree, and one thruster per arm.  The thruster parent joint is
 assumed to be the configured joint index on that arm.
+
+Mathematical Modeling
+---------------------
+The following conference papers provide detailed descriptions of the
+joint-thruster allocation problem solved by this module.
+
+.. note::
+
+    W. Schwend and H. Schaub, `"Cascaded Control Architecture for
+    Spacecraft with Arm-Mounted Thrusters Using Reaction Torque Compensation"
+    <https://hanspeterschaub.info/Papers/Schwend2026b.pdf>`_, AAS Astrodynamics
+    Specialist Conference, Whistler, Canada, July 26--30, 2026.
+
+    W. Schwend, A. Rogers and H. Schaub, `"Hub Reaction Torque Reduction
+    for Spacecraft Control Using Robotic Arm-Mounted Thrusters"
+    <https://hanspeterschaub.info/Papers/Schwend2026a.pdf>`_, AAS Astrodynamics
+    Specialist Conference, Whistler, Canada, July 26--30, 2026.
 
 
 User Guide
@@ -104,3 +125,14 @@ vector:
 .. code-block:: python
 
     allocation.setWf(1.0e-6)
+
+To penalize deviations from the current joint angles, set ``Wtheta`` and add
+one ``ScalarJointStateMsg`` reader for every configured joint. The readers must
+be added in the same order as the joints in ``armConfigInMsg``:
+
+.. code-block:: python
+
+    allocation.setWtheta(1.0e-5)
+    for i, jointStateMsg in enumerate(jointStateMsgs):
+        allocation.addHingedJoint()
+        allocation.jointStatesInMsgs[i].subscribeTo(jointStateMsg)
