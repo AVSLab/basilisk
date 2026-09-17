@@ -1,0 +1,1 @@
+- Added :ref:`ommHandling` to read CCSDS Orbit Mean-Elements Message (OMM) general perturbations data in all four CelesTrak encodings (XML, JSON, CSV and KVN) and convert it to osculating orbital elements, lifting the five-digit catalog number limit of the TLE format.
