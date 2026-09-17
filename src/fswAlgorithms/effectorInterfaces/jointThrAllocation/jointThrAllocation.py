@@ -33,6 +33,14 @@ def _get_optimizer():
     return minimize
 
 
+def wrapAngle(angles: np.ndarray) -> np.ndarray:
+    """Wrap an angle or angle array to the range :math:`[-\\pi, \\pi]`."""
+    angleWrapped = (np.asarray(angles) + np.pi) % (2.0 * np.pi) - np.pi
+    if np.ndim(angleWrapped) == 0:
+        return float(angleWrapped)
+    return angleWrapped
+
+
 def mapMatrix(
     rVec_B: np.ndarray, fHatVec_B: np.ndarray, r_ComB_B: np.ndarray
 ) -> np.ndarray:
@@ -74,6 +82,7 @@ class JointThrAllocation(sysModel.SysModel):
         self.hubStatesInMsg = messaging.SCStatesMsgReader()
         self.transForceInMsg = messaging.CmdForceInertialMsgReader()
         self.rotTorqueInMsg = messaging.CmdTorqueBodyMsgReader()
+        self.jointStatesInMsgs = []
 
         # Output messages
         self.thrForceOutMsg = messaging.THRArrayCmdForceMsg()
@@ -81,15 +90,22 @@ class JointThrAllocation(sysModel.SysModel):
         self.thrForcePayload = messaging.THRArrayCmdForceMsgPayload()
         self.jointAnglePayload = messaging.JointArrayStateMsgPayload()
 
+        # Optimization result diagnostics
+        self.solutionFound = 0
+        self.bestErrInf = np.nan
+        self.wrenchError = np.full(6, np.nan)
+        self.costVal = np.nan
+
         # Cost settings
         self.Wc = np.eye(6)
         self.WfScale = 1e-6
         self.Wf = None
+        self.Wtheta = None
+        self.useThetaPenalty = False
 
         # Optimization settings
         self.maxiter = 3000
         self.ftol = 1e-10
-        self.errTol = 1e-4
         self.thrForceMax = 2.5  # [N]
 
         # Runtime data
@@ -106,6 +122,10 @@ class JointThrAllocation(sysModel.SysModel):
         self.fHat_P = None
         self.dcm_C0P = None
         self.x0 = None
+
+    def addHingedJoint(self):
+        """Add a joint-state input used by the optional joint-motion penalty."""
+        self.jointStatesInMsgs.append(messaging.ScalarJointStateMsgReader())
 
     def validateInputMessages(self):
         """Raise ``BasiliskError`` if a required input message is not linked."""
@@ -159,6 +179,11 @@ class JointThrAllocation(sysModel.SysModel):
             return
         raise ValueError("setWc expects scalar, length-6 vector, or 6x6 matrix.")
 
+    def setWtheta(self, wThetaIn):
+        """Set joint-angle deviation weights for the cost function."""
+        self.Wtheta = wThetaIn
+        self.useThetaPenalty = True
+
     def resolveWf(self):
         """Resolve Wf to a length-nThr vector after nThr is known."""
         if self.Wf is None:
@@ -179,6 +204,22 @@ class JointThrAllocation(sysModel.SysModel):
                 f"Wf vector length {wfArr.size} does not match nThr {self.nThr}."
             )
         self.Wf = wfArr.copy()
+
+    def resolveWtheta(self):
+        """Resolve Wtheta to an nJoint-by-nJoint weighting matrix."""
+        wThetaArr = np.asarray(self.Wtheta, dtype=float)
+        if wThetaArr.ndim == 0:
+            self.Wtheta = float(wThetaArr) * np.eye(self.nJoint)
+            return
+        if wThetaArr.ndim == 1 and wThetaArr.size == self.nJoint:
+            self.Wtheta = np.diag(wThetaArr)
+            return
+        if wThetaArr.shape == (self.nJoint, self.nJoint):
+            self.Wtheta = wThetaArr.copy()
+            return
+        raise ValueError(
+            "setWtheta expects scalar, length-nJoint vector, or nJoint x nJoint matrix."
+        )
 
     def setThrForceMax(self, thrForceMaxIn):
         """
@@ -300,7 +341,12 @@ class JointThrAllocation(sysModel.SysModel):
                     dcm_PB = dcm_CB[priorJointIdx]
                     r_PB_B = r_CB_B[priorJointIdx]
 
-                dcm_CC0 = rbk.PRV2C(theta[jointFlatIdx] * self.sHat_P[jointFlatIdx])
+                axis_P = self.sHat_P[jointFlatIdx]
+                axisNorm = np.linalg.norm(axis_P)
+                if axisNorm <= 1e-12:  # [-]
+                    raise ValueError("Joint axis has near-zero norm.")
+                axis_P = axis_P / axisNorm
+                dcm_CC0 = rbk.PRV2C(theta[jointFlatIdx] * axis_P)
                 dcm_CP = dcm_CC0 @ self.dcm_C0P[jointFlatIdx]
 
                 r_CB_B[jointFlatIdx] = r_PB_B + dcm_PB.T @ self.r_CP_P[jointFlatIdx]
@@ -357,24 +403,39 @@ class JointThrAllocation(sysModel.SysModel):
 
         return mapMatrix(r_TB_B, fHatVec_B, r_ComB_B)
 
-    def cost(self, decisionVar: np.ndarray, desiredWrench_B: np.ndarray) -> float:
+    def cost(
+        self,
+        decisionVar: np.ndarray,
+        desiredWrench_B: np.ndarray,
+        currentJointAngles: np.ndarray = None,
+    ) -> float:
         """
         Compute the cost function for the given decision variables and desired wrench.
 
         :param decisionVar: Concatenated vector of joint angles and thruster forces.
         :param desiredWrench_B: Desired force and torque in body-frame coordinates.
+        :param currentJointAngles: Current joint angles when using the joint-motion
+            penalty.
         :return: Cost function value.
         """
         theta = decisionVar[: self.nJoint]
         thrForces = decisionVar[self.nJoint:]
         wrenchMap = self.mapping(theta)
         wrenchError = desiredWrench_B - wrenchMap @ thrForces
-        return float(wrenchError.T @ self.Wc @ wrenchError + self.Wf.T @ thrForces)
+        costValue = wrenchError.T @ self.Wc @ wrenchError + self.Wf.T @ thrForces
+        if self.useThetaPenalty:
+            if currentJointAngles is None:
+                raise ValueError("currentJointAngles is required when using Wtheta.")
+            deltaTheta = wrapAngle(theta - np.asarray(currentJointAngles))
+            costValue += deltaTheta.T @ self.Wtheta @ deltaTheta
+        return float(costValue)
 
     def Reset(self, CurrentSimNanos):
         self.validateInputMessages()
         self.parseArmConfig()
         self.resolveWf()
+        if self.useThetaPenalty:
+            self.resolveWtheta()
         self.initialGuesses()
 
         self.desJointAnglesOutMsg.write(messaging.JointArrayStateMsgPayload())
@@ -398,12 +459,24 @@ class JointThrAllocation(sysModel.SysModel):
         optOptions = {"maxiter": self.maxiter, "ftol": self.ftol, "disp": False}
         boundTuple = self.bounds()
 
+        currentJointAngles = None
+        if self.useThetaPenalty:
+            if len(self.jointStatesInMsgs) != self.nJoint:
+                raise ValueError(
+                    "The number of joint-state inputs must match the number of joints."
+                )
+            currentJointAngles = np.array(
+                [jointStateInMsg().state for jointStateInMsg in self.jointStatesInMsgs]
+            )
+
         bestDecision = None
-        bestErrInf = np.inf
+        bestCost = np.inf
 
         for initialDecision in self.x0:
             optResult = minimize(
-                fun=lambda decision: self.cost(decision, desiredWrench_B),
+                fun=lambda decision: self.cost(
+                    decision, desiredWrench_B, currentJointAngles
+                ),
                 x0=initialDecision,
                 bounds=boundTuple,
                 method="SLSQP",
@@ -413,19 +486,28 @@ class JointThrAllocation(sysModel.SysModel):
                 continue
 
             decisionOpt = optResult.x
-            wrenchError = (
-                desiredWrench_B
-                - self.mapping(decisionOpt[: self.nJoint]) @ decisionOpt[self.nJoint:]
-            )
-            errInf = float(np.linalg.norm(wrenchError, ord=np.inf))
-            if errInf < bestErrInf:
-                bestErrInf = errInf
+            costOpt = self.cost(decisionOpt, desiredWrench_B, currentJointAngles)
+            if costOpt < bestCost:
+                bestCost = costOpt
                 bestDecision = decisionOpt
-            if bestErrInf <= self.errTol:
-                break
 
         if bestDecision is None:
+            self.solutionFound = 0
+            self.bestErrInf = np.inf
+            self.wrenchError = desiredWrench_B.copy()
+            self.costVal = np.nan
             bestDecision = np.zeros(self.nJoint + self.nThr)
+            if currentJointAngles is not None:
+                bestDecision[: self.nJoint] = currentJointAngles
+        else:
+            self.solutionFound = 1
+            self.wrenchError = (
+                desiredWrench_B
+                - self.mapping(bestDecision[: self.nJoint])
+                @ bestDecision[self.nJoint :]
+            )
+            self.bestErrInf = float(np.linalg.norm(self.wrenchError, ord=np.inf))
+            self.costVal = bestCost
 
         self.thrForcePayload.thrForce = bestDecision[self.nJoint :].tolist()
         self.thrForceOutMsg.write(self.thrForcePayload, CurrentSimNanos, self.moduleID)
