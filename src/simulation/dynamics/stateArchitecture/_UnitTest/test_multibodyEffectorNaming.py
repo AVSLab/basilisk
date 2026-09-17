@@ -251,19 +251,27 @@ def test_every_python_name_tracks_explicit_assignments(kind):
 
 
 @pytest.mark.parametrize("kind", ["spins", "slides", "chain"])
-def test_body_property_custom_names(kind):
-    """Custom per-body names survive attachment and resolve to distinct properties."""
+def test_body_property_custom_names(kind, manager_local):
+    """Custom names captured after body attachment remain valid under both policies."""
     model = make_model(kind, "bodyNames", True)
+    captured_names = property_names(model)
+    expected_names = tuple(
+        f"bodyNames_body{index}_{field}"
+        for index in range(len(model.bodies)) for field in PROPERTIES
+    )
+    assert captured_names == expected_names
+    if kind != "chain":
+        assert tuple(getattr(body, field) for body in model.bodies for field in PROPERTIES) == expected_names
     vehicle = spacecraft.Spacecraft()
     vehicle.hub.mHub = 100.0  # [kg]
     vehicle.hub.IHubPntBc_B = np.eye(3)  # [kg m^2]
-    vehicle.dynManager.useManagerLocalEffectorNames = True
+    vehicle.dynManager.useManagerLocalEffectorNames = manager_local
     vehicle.addStateEffector(model.effector)
     vehicle.initializeDynamics()
-    for index, child in enumerate(model.children):
-        for field, getter in zip(PROPERTIES, DYNAMIC_GETTERS):
-            assert getattr(child, getter)() == f"bodyNames_body{index}_{field}"
-    if kind != "chain":
+    assert property_names(model) == captured_names
+    for name in captured_names:
+        assert np.asarray(vehicle.dynManager.getPropertyReference(name)).shape == (3, 1)
+    if manager_local and kind != "chain":
         with pytest.raises(bskLogging.BasiliskError, match="resolved names cannot be changed"):
             model.bodies[0].nameOfInertialPositionProperty = "tooLate"
 

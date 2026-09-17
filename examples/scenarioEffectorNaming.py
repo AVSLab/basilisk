@@ -169,4 +169,4 @@ def run(show_plots=False, useManagerLocalEffectorNames=False, customNames=False)
 
 
 if __name__ == "__main__":
-    run(True, useManagerLocalEffectorNames=False, customNames=False)
+    run(True, useManagerLocalEffectorNames=True, customNames=False)

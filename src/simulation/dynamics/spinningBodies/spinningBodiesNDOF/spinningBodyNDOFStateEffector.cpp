@@ -318,11 +318,15 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     this->BTheta.conservativeResize(this->BTheta.rows()+1, 3);
     this->CTheta.conservativeResize(this->CTheta.rows()+1);
 
-    const size_t bodyIndex = static_cast<size_t>(this->numberOfDegreesOfFreedom - 1);
-    spinningBodyVec[bodyIndex]->nameOfInertialPositionProperty = "spinningBodyInertialPosition" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
-    spinningBodyVec[bodyIndex]->nameOfInertialVelocityProperty = "spinningBodyInertialVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
-    spinningBodyVec[bodyIndex]->nameOfInertialAttitudeProperty = "spinningBodyInertialAttitude" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
-    spinningBodyVec[bodyIndex]->nameOfInertialAngVelocityProperty = "spinningBodyInertialAngVelocity" + this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    const std::string bodySuffix = this->propertyNameIndex + "_" + std::to_string(this->numberOfDegreesOfFreedom);
+    newBody->nameOfInertialPositionProperty =
+        newBody->customNameOfInertialPositionProperty.value_or("spinningBodyInertialPosition" + bodySuffix);
+    newBody->nameOfInertialVelocityProperty =
+        newBody->customNameOfInertialVelocityProperty.value_or("spinningBodyInertialVelocity" + bodySuffix);
+    newBody->nameOfInertialAttitudeProperty =
+        newBody->customNameOfInertialAttitudeProperty.value_or("spinningBodyInertialAttitude" + bodySuffix);
+    newBody->nameOfInertialAngVelocityProperty =
+        newBody->customNameOfInertialAngVelocityProperty.value_or("spinningBodyInertialAngVelocity" + bodySuffix);
 }
 
 /*! @brief Get a spinning-body configuration.

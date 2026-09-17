@@ -203,10 +203,14 @@ NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 
     const std::string panelSuffix = this->propertyNameIndex + "_" + std::to_string(this->PanelVec.size());
     HingedPanel& panel = this->PanelVec.back();
-    panel.nameOfInertialPositionProperty = "nHingedRigidBodyInertialPosition" + panelSuffix;
-    panel.nameOfInertialVelocityProperty = "nHingedRigidBodyInertialVelocity" + panelSuffix;
-    panel.nameOfInertialAttitudeProperty = "nHingedRigidBodyInertialAttitude" + panelSuffix;
-    panel.nameOfInertialAngVelocityProperty = "nHingedRigidBodyInertialAngVelocity" + panelSuffix;
+    panel.nameOfInertialPositionProperty =
+        panel.customNameOfInertialPositionProperty.value_or("nHingedRigidBodyInertialPosition" + panelSuffix);
+    panel.nameOfInertialVelocityProperty =
+        panel.customNameOfInertialVelocityProperty.value_or("nHingedRigidBodyInertialVelocity" + panelSuffix);
+    panel.nameOfInertialAttitudeProperty =
+        panel.customNameOfInertialAttitudeProperty.value_or("nHingedRigidBodyInertialAttitude" + panelSuffix);
+    panel.nameOfInertialAngVelocityProperty =
+        panel.customNameOfInertialAngVelocityProperty.value_or("nHingedRigidBodyInertialAngVelocity" + panelSuffix);
 
     return;
 }

@@ -262,10 +262,14 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     this->CRho.conservativeResize(this->CRho.rows()+1);
 
     const std::string bodySuffix = this->propertyNameIndex + "_" + std::to_string(this->N);
-    newBody->nameOfInertialPositionProperty = "linearTranslationInertialPosition" + bodySuffix;
-    newBody->nameOfInertialVelocityProperty = "linearTranslationInertialVelocity" + bodySuffix;
-    newBody->nameOfInertialAttitudeProperty = "linearTranslationInertialAttitude" + bodySuffix;
-    newBody->nameOfInertialAngVelocityProperty = "linearTranslationInertialAngVelocity" + bodySuffix;
+    newBody->nameOfInertialPositionProperty =
+        newBody->customNameOfInertialPositionProperty.value_or("linearTranslationInertialPosition" + bodySuffix);
+    newBody->nameOfInertialVelocityProperty =
+        newBody->customNameOfInertialVelocityProperty.value_or("linearTranslationInertialVelocity" + bodySuffix);
+    newBody->nameOfInertialAttitudeProperty =
+        newBody->customNameOfInertialAttitudeProperty.value_or("linearTranslationInertialAttitude" + bodySuffix);
+    newBody->nameOfInertialAngVelocityProperty =
+        newBody->customNameOfInertialAngVelocityProperty.value_or("linearTranslationInertialAngVelocity" + bodySuffix);
 }
 
 /*! This method is used to get a translating body.

@@ -20,8 +20,9 @@ Version |release|
   on or after that date. Scheduled managers report after initialization or task reset completes,
   including when callbacks encounter legacy names or initialize another simulation. Nested
   simulation warnings wait for the outer call; concurrent independent calls report separately.
-  Opting in or using only explicit names avoids
-  this warning. In the new policy,
+  Opting in or using only explicit names avoids this warning. Custom body-property names
+  assigned before attachment are retained for N-DOF spinning bodies, N-DOF translating bodies,
+  and N-hinged panels under both policies. In the new policy,
   generated state and inertial-property names become final during ``InitializeSimulation()``;
   read them afterward or within logging callbacks. Use explicit custom names for string-based
   connections configured before initialization. Deprecated ``SpacecraftSystem`` remains legacy-only;
