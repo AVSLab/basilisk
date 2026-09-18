@@ -21,8 +21,8 @@
 #
 # Purpose:  Integrated test for scenarioRoboticGrappling. The scenario default
 #           uses dt = 1e-4 s for paper-quality results; the test passes
-#           dt = 1e-3 s for a ~10x speedup that still produces all four
-#           documentation plots cleanly. The test also shrinks the
+#           dt = 0.01 s and 25% linear constraint damping to save all four
+#           documentation plots quickly. The test also shrinks the
 #           free-flight approach gap and trims the post-retraction berth
 #           duration to keep wall time small.
 #
@@ -51,9 +51,10 @@ def test_scenarioRoboticGrappling(show_plots):
         figureList = scenarioRoboticGrappling.run(
             show_plots,
             gain=1e4,
-            dynRateSeconds=1e-3,
+            dynRateSeconds=0.01,  # [s]
             approachGapMeters=0.2,    # 50 s of drift → ~10 s
             berthDurationSeconds=45.0,  # retraction + brief hold (was 90 s)
+            constraintLinearDampingScale=0.25,  # [-]
         )
         for pltName, plt in list(figureList.items()):
             simHelpers.saveScenarioFigure(pltName, plt, path)

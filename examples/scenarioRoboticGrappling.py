@@ -60,8 +60,8 @@ Illustration of Simulation Results
 
 The default ``run()`` invocation reproduces the configuration presented in the companion
 journal article (citation pending publication), at ``dynRateSeconds = 1e-4``. The pytest
-wrapper in ``src/tests`` passes 1e-3 for a roughly tenfold speedup, at the cost of a small
-constraint-violation transient on the retraction step.
+wrapper in ``src/tests`` uses a 0.01 s step and 25% linear constraint damping to reduce runtime,
+with differences in the capture transient. Direct execution retains the default settings.
 
 The hub-separation plot tracks the inertial distance between the two vehicles through the
 free-flight approach, holds near 3.2 m after capture, and draws down to about 2.2 m as the arm
@@ -163,15 +163,15 @@ def run(show_plots, gain,
         dynRateSeconds=defaultDynRate,
         approachGapMeters=approachGap,
         settleDurationSeconds=settleDuration,
-        berthDurationSeconds=berthDuration):
+        berthDurationSeconds=berthDuration,
+        constraintLinearDampingScale=1.0):
     """
     Args:
         show_plots (bool): Whether to display plots interactively.
         gain (float): Constraint effector Baumgarte gain (alpha = beta).
         dynRateSeconds (float): integration step. Default ``defaultDynRate``
             (1e-4 s) is the journal-paper configuration. The test wrapper
-            passes 1e-3 s for a ~10× speedup at the cost of a slight
-            constraint-violation transient at the start of the retraction phase.
+            uses 0.01 s with reduced linear constraint damping for faster execution.
         approachGapMeters (float): free-flight separation at simulation start.
             Default 1.0 m matches the journal-paper configuration. The test
             harness passes a smaller value to compress phase 1 wall time.
@@ -181,6 +181,9 @@ def run(show_plots, gain,
             simulation stop. Default 90 s gives ample post-retraction settle;
             the test harness passes a shorter value covering only the active
             retraction segment plus a brief hold.
+        constraintLinearDampingScale (float): multiplier [-] for the linear
+            constraint damping. Default 1.0 preserves the original damping;
+            the pytest wrapper uses 0.25. Angular damping and stiffness are unaffected.
     """
     scSim = SimBaseClass(dynRate=dynRateSeconds)
     scSim.approachGapMeters = approachGapMeters
@@ -189,7 +192,7 @@ def run(show_plots, gain,
     createSpacecraft(scSim)
     defineInitialConditions(scSim)
     setUpTranslationEffector(scSim)
-    setUpConstraintEffector(scSim, gain)
+    setUpConstraintEffector(scSim, gain, constraintLinearDampingScale)
     logData(scSim)
     setUpCaptureEvent(scSim)
 
@@ -306,7 +309,7 @@ def setUpTranslationEffector(scSim):
     scSim.translationProfiler = translationProfiler
 
 
-def setUpConstraintEffector(scSim, gain):
+def setUpConstraintEffector(scSim, gain, constraintLinearDampingScale=1.0):
     constraintEffector = constraintDynamicEffector.ConstraintDynamicEffector()
     constraintEffector.ModelTag = "grapple"
     constraintEffector.setR_P1B1_B1([0.0, 0.0, 0.0])
@@ -326,7 +329,7 @@ def setUpConstraintEffector(scSim, gain):
                        scSim.scObject2.hub.IHubPntBc_B[2][2])
     k_d = gain ** 2
     k_a = gain ** 2
-    constraintEffector.setC_d(2.0 * np.sqrt(k_d * reducedMass))
+    constraintEffector.setC_d(constraintLinearDampingScale * 2.0 * np.sqrt(k_d * reducedMass))
     constraintEffector.setC_a(2.0 * np.sqrt(k_a * I_target_min))
 
     scSim.constraintStatusMsg = messaging.DeviceStatusMsg()
