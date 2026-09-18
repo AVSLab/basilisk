@@ -261,6 +261,10 @@ Version |release|
 - :ref:`MJSystemCoM` reported mass-weighted material velocity rather than the
   time derivative of its center-of-mass position when individual MuJoCo body
   masses changed. This is fixed in the current version.
+- :ref:`jointThrAllocation` selected a multi-start optimization result by wrench-tracking error
+  and could stop after the first sufficiently accurate result, rather than selecting the result with the
+  lowest complete allocation cost. This is fixed in the current version: all successful optimizer results
+  are evaluated and the minimum-cost result is selected.
 
 
 Version 2.11.0 (July 7, 2026)
