@@ -23,7 +23,7 @@ explains how the message is used.
     :caption: Module I/O Messages
 
     input effectorStatusInMsg DeviceStatusMsgPayload
-        (Optional) Device status input; when linked, a nonzero status enables filtering and output-message publication.
+        (Optional) Device status input; a zero status disables the constraint force and torque. The effector is active when this message is not linked.
     output constraintElements ConstDynEffectorMsgPayload
         Constraint force, torque, violation, and filtered force and torque magnitude output message.
 
