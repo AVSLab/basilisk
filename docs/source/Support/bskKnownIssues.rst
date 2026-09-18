@@ -10,6 +10,23 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
+- GitHub issue 288: Constructor counters could make generated effector names depend on earlier
+  simulations, overlapping object lifetimes, or garbage collection. Opt into
+  ``scObject.dynManager.useManagerLocalEffectorNames = True`` before initialization to allocate
+  names within each dynamics manager. This policy is recommended for new ``Spacecraft`` scripts;
+  legacy naming remains the default during the transition. Legacy automatic naming is deprecated
+  for removal on September 14, 2027, with one Python deprecation warning per manager when a built-in
+  effector registers an automatic legacy name. The warning escalates to ``BSKUrgentDeprecationWarning``
+  on or after that date. Scheduled managers report after initialization or task reset completes,
+  including when callbacks encounter legacy names or initialize another simulation. Nested
+  simulation warnings wait for the outer call; concurrent independent calls report separately.
+  Opting in or using only explicit names avoids this warning. Custom body-property names
+  assigned before attachment are retained for N-DOF spinning bodies, N-DOF translating bodies,
+  and N-hinged panels under both policies. In the new policy,
+  generated state and inertial-property names become final during ``InitializeSimulation()``;
+  read them afterward or within logging callbacks. Use explicit custom names for string-based
+  connections configured before initialization. Deprecated ``SpacecraftSystem`` remains legacy-only;
+  external state effectors need the naming preparation hooks. See :ref:`effectorNaming`.
 - GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
   They now reject non-finite operands and non-finite or negative tolerances. The new
   ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` assertions

@@ -56,6 +56,41 @@ ThrusterStateEffector::ThrusterStateEffector()
     return;
 }
 
+void ThrusterStateEffector::setNameOfKappaState(const std::string& value)
+{
+    this->setCustomName(this->nameOfKappaState, this->customKappaState, value);
+}
+
+void ThrusterStateEffector::setCustomName(std::string& currentName,
+                                          std::optional<std::string>& customName,
+                                          const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("ThrusterStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup ThrusterStateEffector::describeEffectorNames() const
+{
+    return {"thruster",
+            {
+                {"kappa", EffectorNameKind::State, "kappaState", "", this->customKappaState}
+            }};
+}
+
+void ThrusterStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfKappaState = this->getResolvedEffectorName(manager, "kappa");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t ThrusterStateEffector::effectorID = 1;
 
 /*! The destructor. */
@@ -363,9 +398,19 @@ void ThrusterStateEffector::linkInStates(DynParamManager& states){
 void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0);  // [s]
     // - Register the states associated with thruster - kappa
-    this->kappaState = states.registerState((uint32_t) this->thrusterData.size(), 1, this->nameOfKappaState);
+    this->kappaState =
+      managerLocal
+        ? states.registerEffectorState(
+            static_cast<uint32_t>(this->thrusterData.size()), 1, this->getEffectorNameRequest(), "kappa")
+        : states.registerLegacyEffectorState(
+            static_cast<uint32_t>(this->thrusterData.size()), 1, this->nameOfKappaState, !this->customKappaState);
     Eigen::MatrixXd kappaInitMatrix(this->thrusterData.size(), 1);
     // Loop through all thrusters to initialize each state variable
     for (Eigen::Index i = 0; i < kappaInitMatrix.rows(); i++) {

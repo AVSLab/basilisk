@@ -44,6 +44,9 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 %import  "simulation/dynamics/gravityEffector/gravityEffector.i"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
+%pythonappend SpacecraftSystem::Reset %{
+    self.dynManager._reportLegacyAutomaticEffectorNaming()
+%}
 %include "spacecraftSystem.h"
 %include "../_GeneralModuleFiles/hubEffector.h"
 

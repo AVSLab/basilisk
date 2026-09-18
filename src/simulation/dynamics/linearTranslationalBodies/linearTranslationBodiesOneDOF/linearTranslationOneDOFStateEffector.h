@@ -38,6 +38,88 @@ class LinearTranslationOneDOFStateEffector final :
 	public StateEffector, public SysModel
 {
 public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfRhoState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfRhoState() const { return this->nameOfRhoState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfRhoDotState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfRhoDotState() const { return this->nameOfRhoDotState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty() const { return this->nameOfInertialPositionProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty() const { return this->nameOfInertialVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty() const { return this->nameOfInertialAttitudeProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty() const { return this->nameOfInertialAngVelocityProperty; }
+
+private:
+    std::string nameOfRhoState; //!< Current state or property name.
+    std::optional<std::string> customNameOfRhoState; //!< Explicit override.
+    std::string nameOfRhoDotState; //!< Current state or property name.
+    std::optional<std::string> customNameOfRhoDotState; //!< Explicit override.
+    std::string nameOfInertialPositionProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the manager's resolved names before registering data.
+     * @param manager Manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
+public:
+
     Message<LinearTranslationRigidBodyMsgPayload> translatingBodyOutMsg;        //!< state output message
     Message<SCStatesMsgPayload> translatingBodyConfigLogOutMsg;                 //!< translating body state config log message
     ReadFunctor<ArrayMotorForceMsgPayload> motorForceInMsg;                     //!< (optional) motor force input message
@@ -101,12 +183,6 @@ private:
     Eigen::Vector3d r_F0B_B = Eigen::Vector3d::Zero();        //!< [m] vector pointing from body frame B origin to point to F0 origin of F frame in B frame components
     Eigen::Matrix3d IPntFc_F = Eigen::Matrix3d::Identity();   //!< [kg-m^2] Inertia of pc about point Fc in F frame component
     Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity();     //!< DCM from the body frame to the F frame
-    std::string nameOfRhoState{};     //!< Identifier for the rho state data container
-    std::string nameOfRhoDotState{};  //!< Identifier for the rhoDot state data container
-    std::string nameOfInertialPositionProperty;                      //!< identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;                      //!< identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;                      //!< identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty;                   //!< identifier for the inertial angular velocity property
     std::vector<DynamicEffector*> dynEffectors;                      //!< Vector of dynamic effectors attached
 
     bool isAxisLocked = false;    //!< flag for locking the translation axis
@@ -173,14 +249,24 @@ private:
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 
-    template <typename Type>
-    /** Assign the state engine parameter names */
-    void assignStateParamNames(Type effector) {
-        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
-        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
-        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
-        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
-    };
+    /** @brief Assign the selected body's property names to an attached effector.
+     * @param effector Dynamic effector receiving the names.
+     * @param segment One-based body index.
+     */
+    void assignStateParamNames(DynamicEffector* effector, int segment);
+
+#ifndef SWIG
+public:
+    /** @brief Bind dependent effectors after all body properties are registered.
+     * @param manager Manager containing the resolved states and properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+protected:
+    /** @brief Declare the names sharing this effector's automatic index.
+     * @return State and property declarations, including every body.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 #endif /* LINEAR_TRANSLATION_ONE_DOF_STATE_EFFECTOR_H */

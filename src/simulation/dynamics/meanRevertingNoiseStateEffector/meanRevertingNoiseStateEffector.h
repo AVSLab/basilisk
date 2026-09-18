@@ -19,6 +19,7 @@
 #ifndef MEAN_REVERTING_NOISE_STATE_EFFECTOR_H
 #define MEAN_REVERTING_NOISE_STATE_EFFECTOR_H
 
+#include <optional>
 #include <cstdint>
 #include <string>
 #include <Eigen/Dense>
@@ -26,6 +27,9 @@
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
 /*!
@@ -115,11 +119,25 @@ public:
     std::string getStateName() const { return this->nameOfState; }
 
     /*! @brief Set the state manager name.
-     * @param name State name.
+     * @param name Exact custom state name.
+     * @note Manager-local names cannot change after registration.
      */
-    void setStateName(std::string name) { this->nameOfState = name; }
+    void setStateName(std::string name);
 
 private:
+    std::optional<std::string> customStateName; //!< Explicit override, independent of automatic names.
+    bool effectorNamesResolved = false; //!< Prevent changes to registered manager-local names.
+    /** @brief Record an explicit name assignment, enforcing resolved-name immutability.
+     * @param currentName Currently visible name to update.
+     * @param customName Metadata identifying an explicit override.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the prepared names before registering effector states.
+     * @param manager Dynamics manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
     static uint64_t effectorID;  //!< unique ID counter used to generate a distinct state name
 
     std::string nameOfState;      //!< state manager key for scalar state @f$x@f$
@@ -128,6 +146,13 @@ private:
     double sigmaStationary = 0.0;  //!< stationary standard deviation @f$\sigma_{\mathrm{st}}@f$ [-]
     double timeConstant = 1.0;     //!< OU time constant @f$\tau@f$ [s]
     double stateInit = 0.0;        //!< initial value for @f$x@f$ used at state registration
+#ifndef SWIG
+protected:
+    /** @brief Declare the state names allocated together for this effector.
+     * @return Group with a shared automatic index and independently tracked custom names.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 #endif

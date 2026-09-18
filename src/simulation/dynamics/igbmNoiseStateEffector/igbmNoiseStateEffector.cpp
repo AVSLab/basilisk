@@ -21,6 +21,41 @@
 #include <cmath>
 #include <algorithm>
 
+void IgbmNoiseStateEffector::setStateName(std::string name)
+{
+    this->setCustomName(this->nameOfState, this->customStateName, name);
+}
+
+void IgbmNoiseStateEffector::setCustomName(std::string& currentName,
+                                           std::optional<std::string>& customName,
+                                           const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("IgbmNoiseStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup IgbmNoiseStateEffector::describeEffectorNames() const
+{
+    return {"igbmNoise",
+            {
+                {"noise", EffectorNameKind::State, "igbmNoiseState", "", this->customStateName}
+            }};
+}
+
+void IgbmNoiseStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    // Verify that configuration still matches the collected declaration.
+    this->collectEffectorNames(manager);
+    this->nameOfState = this->getResolvedEffectorName(manager, "noise");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t IgbmNoiseStateEffector::effectorID = 1;
 
 IgbmNoiseStateEffector::IgbmNoiseStateEffector()
@@ -89,7 +124,13 @@ void IgbmNoiseStateEffector::setStateValue(double val)
 
 void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
 {
-    this->state = states.registerState(1, 1, this->nameOfState);
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
+    this->state = managerLocal ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "noise")
+                               : states.registerLegacyEffectorState(1, 1, this->nameOfState, !this->customStateName);
     this->state->setNumNoiseSources(1);
 
     // Default the correction to mu - 1 (the factor 1 + delta at its mean level): the

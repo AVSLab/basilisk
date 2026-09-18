@@ -29,7 +29,11 @@
 #include <Eigen/Dense>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include <vector>
 
 #include "architecture/msgPayloadDefC/ArrayMotorForceMsgPayload.h"
@@ -40,6 +44,64 @@
 
 /*! @brief translating body structure */
 struct TranslatingBody {
+public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialPositionProperty() const { return this->nameOfInertialPositionProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialVelocityProperty() const { return this->nameOfInertialVelocityProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAttitudeProperty() const { return this->nameOfInertialAttitudeProperty; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty() const { return this->nameOfInertialAngVelocityProperty; }
+
+private:
+    std::string nameOfInertialPositionProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialPositionProperty; //!< Explicit override.
+    std::string nameOfInertialVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialVelocityProperty; //!< Explicit override.
+    std::string nameOfInertialAttitudeProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAttitudeProperty; //!< Explicit override.
+    std::string nameOfInertialAngVelocityProperty; //!< Current state or property name.
+    std::optional<std::string> customNameOfInertialAngVelocityProperty; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    std::weak_ptr<const EffectorNameGroup> namingOwner; //!< Manager-owned name group using this body.
+
+public:
+
 public:
     /** setter for `mass` property */
     void setMass(double mass);
@@ -135,11 +197,6 @@ private:
     Eigen::MatrixXd* sigma_FN = nullptr;    //!< MRP attitude of frame F relative to inertial frame
     Eigen::MatrixXd* omega_FN_F = nullptr;  //!< [rad/s] inertial translating body frame angular velocity vector
 
-    std::string nameOfInertialPositionProperty;    //!< identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;    //!< identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;    //!< identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty; //!< identifier for the inertial angular velocity property
-
     std::vector<DynamicEffector*> dynEffectors;    //!< vector of dynamic effectors attached to this body
     Eigen::Vector3d extForce_B = Eigen::Vector3d::Zero();      //!< [N] attached effector force on this body in B frame components
     Eigen::Vector3d extTorquePntF_B = Eigen::Vector3d::Zero(); //!< [N-m] attached effector torque on this body about F in B frame components
@@ -163,6 +220,44 @@ private:
 /*! @brief translating body state effector class */
 class LinearTranslationNDOFStateEffector final: public StateEffector, public SysModel {
 public:
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfRhoState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfRhoState() const { return this->nameOfRhoState; }
+    /** @brief Set the explicit name used by the dynamics manager.
+     * @param value Exact custom name, including names matching the automatic pattern.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfRhoDotState(const std::string& value);
+    /** @brief Get the constructor name or the resolved name after registration.
+     * @return Current state or property name.
+     */
+    const std::string& getNameOfRhoDotState() const { return this->nameOfRhoDotState; }
+
+private:
+    std::string nameOfRhoState; //!< Current state or property name.
+    std::optional<std::string> customNameOfRhoState; //!< Explicit override.
+    std::string nameOfRhoDotState; //!< Current state or property name.
+    std::optional<std::string> customNameOfRhoDotState; //!< Explicit override.
+    bool effectorNamesResolved = false; //!< Protect registered manager-local names.
+    /** @brief Track explicit assignments and reject changes after registration.
+     * @param currentName Visible name to update.
+     * @param customName Explicit override metadata.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply the manager's resolved names before registering data.
+     * @param manager Manager holding this effector's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
+public:
+
 
     LinearTranslationNDOFStateEffector();         //!< Constructor
     ~LinearTranslationNDOFStateEffector() override;  //!< Destructor
@@ -177,14 +272,6 @@ public:
     void addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody);
     /** method for getting an indexed translating body */
     std::shared_ptr<TranslatingBody> getTranslatingBody(uint64_t index);
-    /** setter for `nameOfRhoState` property */
-    void setNameOfRhoState(const std::string& nameOfRhoState) { this->nameOfRhoState = nameOfRhoState; };
-    /** setter for `nameOfRhoDotState` property */
-    void setNameOfRhoDotState(const std::string& nameOfRhoDotState) { this->nameOfRhoDotState = nameOfRhoDotState; };
-    /** getter for `nameOfRhoState` property */
-    std::string getNameOfRhoState() const { return this->nameOfRhoState; };
-    /** getter for `nameOfRhoDotState` property */
-    std::string getNameOfRhoDotState() const { return this->nameOfRhoDotState; };
 
 private:
     static uint64_t effectorID;    //!< [] ID number of this effector
@@ -207,8 +294,6 @@ private:
     StateData* rhoState = nullptr;
     StateData* rhoDotState = nullptr;
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
-    std::string nameOfRhoState;        //!< identifier for the rho state data container
-    std::string nameOfRhoDotState;     //!< identifier for the rhoDot state data container
     std::string propertyNameIndex;     //!< effector identifier used to name the per body properties
 
     // module functions
@@ -245,6 +330,18 @@ private:
     void checkBodyConfiguration();
     void checkJointMassMatrix();
     void computeTranslatingBodyInertialStates();
+#ifndef SWIG
+public:
+    /** @brief Bind dependent effectors after all body properties are registered.
+     * @param manager Manager containing the resolved states and properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+protected:
+    /** @brief Declare the names sharing this effector's automatic index.
+     * @return State and property declarations, including every body.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 };
 
 #endif /* LINEAR_TRANSLATION_N_DOF_STATE_EFFECTOR_H */

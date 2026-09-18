@@ -107,6 +107,7 @@ void DynParamManager::propagateStateVector(double dt, const std::unordered_map<s
 Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
                                                  const Eigen::MatrixXd& propValue)
 {
+    this->checkUnownedNameRegistration(EffectorNameKind::Property, propName);
     std::map<std::string, Eigen::MatrixXd>::iterator it;
     it = dynProperties.find(propName);
     if (it == dynProperties.end()) {

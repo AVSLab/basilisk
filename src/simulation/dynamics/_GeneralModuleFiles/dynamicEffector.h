@@ -21,8 +21,21 @@
 #define DYNAMIC_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <string>
 #include "dynParamManager.h"
 #include "architecture/utilities/bskLogging.h"
+
+#ifndef SWIG
+class StateEffector;
+
+/** @brief Names of a parent body's inertial kinematic properties. */
+struct AttachedBodyPropertyNames {
+    std::string position; //!< Inertial position property.
+    std::string velocity; //!< Inertial velocity property.
+    std::string attitude; //!< MRP attitude property.
+    std::string angularVelocity; //!< Angular velocity property.
+};
+#endif
 
 /*! @brief dynamic effector class */
 class DynamicEffector {
@@ -33,6 +46,23 @@ public:
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method to get access to other states/stateEffectors
     virtual void linkInProperties(DynParamManager& properties);  //!< Method to get access to other properties/stateEffectors
     virtual void computeForceTorque(double integTime, double timeStep) = 0;  //!< Method to computeForce and torque on the body
+
+#ifndef SWIG
+    /** @brief Assign or refresh property names for one attached parent.
+     * @param parent State effector supplying the properties.
+     * @param segment One-based body index within the parent effector.
+     * @param names Current names, replaced by resolved names during preparation.
+     * @note Effectors with multiple parents must override this method to update the
+     * original attachment instead of appending another parent when called again.
+     */
+    virtual void setAttachedBodyPropertyNames(const StateEffector& parent, const AttachedBodyPropertyNames& names, int segment = 1);
+    /** @brief Bind the registered properties of one attached parent.
+     * @param parent State effector identifying the attachment.
+     * @param segment One-based body index within the parent effector.
+     * @param manager Dynamics manager containing that parent's properties.
+     */
+    virtual void linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager, int segment = 1);
+#endif
 
 public:
     Eigen::VectorXd stateDerivContribution; //!< DynamicEffectors contribution to a stateEffector

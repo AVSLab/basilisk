@@ -22,6 +22,10 @@
 #define CONSTRAINT_DYNAMIC_EFFECTOR_H
 
 #include <cstdint>
+#include <array>
+#include <cstddef>
+#include <map>
+#include <utility>
 #include <string>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
@@ -47,6 +51,20 @@ class ConstraintDynamicEffector final: public SysModel, public DynamicEffector {
 public:
     ConstraintDynamicEffector();
     ~ConstraintDynamicEffector();
+#ifndef SWIG
+    /** @brief Refresh the original property-name entries for one state-effector parent.
+     * @param parent State effector identifying the attachment.
+     * @param segment One-based body index within the parent effector.
+     * @param names Current inertial property names for this parent.
+     */
+    void setAttachedBodyPropertyNames(const StateEffector& parent, const AttachedBodyPropertyNames& names, int segment = 1) override;
+    /** @brief Bind a parent's own slots independently of attachment and initialization order.
+     * @param parent State effector identifying the attachment.
+     * @param segment One-based body index within the parent effector.
+     * @param manager Dynamics manager containing that parent's properties.
+     */
+    void linkInAttachedBodyProperties(const StateEffector& parent, DynParamManager& manager, int segment = 1) override;
+#endif
     void Reset(uint64_t CurrentSimNanos) override;
     void linkInStates(DynParamManager& states) override;
     void linkInProperties(DynParamManager& properties) override;
@@ -199,6 +217,10 @@ private:
     std::vector<std::string> propName_inertialVelocity;      //!< property name of inertialVelocity
     std::vector<std::string> propName_inertialAttitude;      //!< property name of inertialAttitude
     std::vector<std::string> propName_inertialAngVelocity;   //!< property name of inertialAngVelocity
+#ifndef SWIG
+    std::map<std::pair<const StateEffector*, int>, std::array<std::size_t, 4>> attachedBodyNameIndices; //!< Slots retained per parent.
+    std::map<std::pair<const StateEffector*, int>, std::size_t> attachedBodyPropertyIndices; //!< Bound property slots per parent.
+#endif
     std::vector<Eigen::MatrixXd*> inertialPositionProperty;  //!< [m] position relative to inertial frame
     std::vector<Eigen::MatrixXd*> inertialVelocityProperty;  //!< [m/s] velocity relative to inertial frame
     std::vector<Eigen::MatrixXd*> inertialAttitudeProperty;  //!< attitude relative to inertial frame

@@ -32,6 +32,14 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfThetaState, getNameOfThetaState, setNameOfThetaState);
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfThetaDotState, getNameOfThetaDotState, setNameOfThetaDotState);
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(SpinningBodyOneDOFStateEffector, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 %include <std_array.i>

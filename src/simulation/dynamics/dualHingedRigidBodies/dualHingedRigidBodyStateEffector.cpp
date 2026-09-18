@@ -84,6 +84,184 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     return;
 }
 
+void
+DualHingedRigidBodyStateEffector::setNameOfTheta1State(const std::string& value)
+{
+    this->setCustomName(this->nameOfTheta1State, this->customNameOfTheta1State, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfTheta1DotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfTheta1DotState, this->customNameOfTheta1DotState, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfTheta2State(const std::string& value)
+{
+    this->setCustomName(this->nameOfTheta2State, this->customNameOfTheta2State, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfTheta2DotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfTheta2DotState, this->customNameOfTheta2DotState, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialPositionProperty1(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty1, this->customNameOfInertialPositionProperty1, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialVelocityProperty1(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty1, this->customNameOfInertialVelocityProperty1, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialAttitudeProperty1(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty1, this->customNameOfInertialAttitudeProperty1, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialAngVelocityProperty1(const std::string& value)
+{
+    this->setCustomName(
+      this->nameOfInertialAngVelocityProperty1, this->customNameOfInertialAngVelocityProperty1, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialPositionProperty2(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty2, this->customNameOfInertialPositionProperty2, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialVelocityProperty2(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty2, this->customNameOfInertialVelocityProperty2, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialAttitudeProperty2(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty2, this->customNameOfInertialAttitudeProperty2, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setNameOfInertialAngVelocityProperty2(const std::string& value)
+{
+    this->setCustomName(
+      this->nameOfInertialAngVelocityProperty2, this->customNameOfInertialAngVelocityProperty2, value);
+}
+
+void
+DualHingedRigidBodyStateEffector::setCustomName(std::string& currentName,
+                                                std::optional<std::string>& customName,
+                                                const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("DualHingedRigidBodyStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+DualHingedRigidBodyStateEffector::describeEffectorNames() const
+{
+    return { "dualHingedRigidBody",
+             {
+               { "nameOfTheta1State",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "DualHingedRigidBodyStateEffectorTheta1",
+                 "",
+                 this->customNameOfTheta1State },
+               { "nameOfTheta1DotState",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "DualHingedRigidBodyStateEffectorTheta1Dot",
+                 "",
+                 this->customNameOfTheta1DotState },
+               { "nameOfTheta2State",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "DualHingedRigidBodyStateEffectorTheta2",
+                 "",
+                 this->customNameOfTheta2State },
+               { "nameOfTheta2DotState",
+                 EffectorNameKind::State,
+                 this->nameOfSpacecraftAttachedTo + "DualHingedRigidBodyStateEffectorTheta2Dot",
+                 "",
+                 this->customNameOfTheta2DotState },
+               { "nameOfInertialPositionProperty1",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialPosition1",
+                 "",
+                 this->customNameOfInertialPositionProperty1 },
+               { "nameOfInertialVelocityProperty1",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialVelocity1",
+                 "",
+                 this->customNameOfInertialVelocityProperty1 },
+               { "nameOfInertialAttitudeProperty1",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialAttitude1",
+                 "",
+                 this->customNameOfInertialAttitudeProperty1 },
+               { "nameOfInertialAngVelocityProperty1",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialAngVelocity1",
+                 "",
+                 this->customNameOfInertialAngVelocityProperty1 },
+               { "nameOfInertialPositionProperty2",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialPosition2",
+                 "",
+                 this->customNameOfInertialPositionProperty2 },
+               { "nameOfInertialVelocityProperty2",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialVelocity2",
+                 "",
+                 this->customNameOfInertialVelocityProperty2 },
+               { "nameOfInertialAttitudeProperty2",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialAttitude2",
+                 "",
+                 this->customNameOfInertialAttitudeProperty2 },
+               { "nameOfInertialAngVelocityProperty2",
+                 EffectorNameKind::Property,
+                 "DualHingedRigidBodyStateEffectorInertialAngVelocity2",
+                 "",
+                 this->customNameOfInertialAngVelocityProperty2 },
+             } };
+}
+
+void
+DualHingedRigidBodyStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfTheta1State = this->getResolvedEffectorName(manager, "nameOfTheta1State");
+    this->nameOfTheta1DotState = this->getResolvedEffectorName(manager, "nameOfTheta1DotState");
+    this->nameOfTheta2State = this->getResolvedEffectorName(manager, "nameOfTheta2State");
+    this->nameOfTheta2DotState = this->getResolvedEffectorName(manager, "nameOfTheta2DotState");
+    this->nameOfInertialPositionProperty1 = this->getResolvedEffectorName(manager, "nameOfInertialPositionProperty1");
+    this->nameOfInertialVelocityProperty1 = this->getResolvedEffectorName(manager, "nameOfInertialVelocityProperty1");
+    this->nameOfInertialAttitudeProperty1 = this->getResolvedEffectorName(manager, "nameOfInertialAttitudeProperty1");
+    this->nameOfInertialAngVelocityProperty1 =
+      this->getResolvedEffectorName(manager, "nameOfInertialAngVelocityProperty1");
+    this->nameOfInertialPositionProperty2 = this->getResolvedEffectorName(manager, "nameOfInertialPositionProperty2");
+    this->nameOfInertialVelocityProperty2 = this->getResolvedEffectorName(manager, "nameOfInertialVelocityProperty2");
+    this->nameOfInertialAttitudeProperty2 = this->getResolvedEffectorName(manager, "nameOfInertialAttitudeProperty2");
+    this->nameOfInertialAngVelocityProperty2 =
+      this->getResolvedEffectorName(manager, "nameOfInertialAngVelocityProperty2");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 
 DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
@@ -128,6 +306,10 @@ void DualHingedRigidBodyStateEffector::validateConfiguration()
 
 void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 {
+    if (this->effectorNamesResolved) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: resolved names already include their owner prefix.");
+    }
+
     this->nameOfTheta1State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1State;
     this->nameOfTheta1DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1DotState;
     this->nameOfTheta2State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2State;
@@ -161,11 +343,29 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
+
+    const bool managerLocal = statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(statesIn);
+    }
+
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->theta1State = statesIn.registerState(1, 1, this->nameOfTheta1State);
-    this->theta1DotState = statesIn.registerState(1, 1, this->nameOfTheta1DotState);
-    this->theta2State = statesIn.registerState(1, 1, this->nameOfTheta2State);
-    this->theta2DotState = statesIn.registerState(1, 1, this->nameOfTheta2DotState);
+    this->theta1State =
+      managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta1State")
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta1State, !this->customNameOfTheta1State);
+    this->theta1DotState =
+      managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta1DotState")
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta1DotState, !this->customNameOfTheta1DotState);
+    this->theta2State =
+      managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta2State")
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta2State, !this->customNameOfTheta2State);
+    this->theta2DotState =
+      managerLocal
+        ? statesIn.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfTheta2DotState")
+        : statesIn.registerLegacyEffectorState(1, 1, this->nameOfTheta2DotState, !this->customNameOfTheta2DotState);
 
     // - Add this code to allow for non-zero initial conditions, as well hingedRigidBody
     Eigen::MatrixXd theta1InitMatrix(1,1);
@@ -193,7 +393,7 @@ void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDy
         bskLogger.bskError("DualHingedRigidBodyStateEffector: segment must be either 1 or 2.");
     }
 
-    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector, segment);
+    this->assignStateParamNames(newDynamicEffector, segment);
 
     this->dynEffectors.push_back(newDynamicEffector);
     this->dynEffectorSegments.push_back(segment);
@@ -206,6 +406,11 @@ void DualHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector *newDy
  */
 void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
 
     this->r_SN_N.resize(2, Eigen::Vector3d::Zero());
@@ -215,19 +420,49 @@ void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& state
     this->sigma_SN.resize(2);
     this->omega_SN_S.resize(2);
 
-    this->r_HN_N[0] = states.createProperty(this->nameOfInertialPositionProperty1, stateInit);
-    this->r_HN_N[1] = states.createProperty(this->nameOfInertialPositionProperty2, stateInit);
-    this->v_HN_N[0] = states.createProperty(this->nameOfInertialVelocityProperty1, stateInit);
-    this->v_HN_N[1] = states.createProperty(this->nameOfInertialVelocityProperty2, stateInit);
-    this->sigma_SN[0] = states.createProperty(this->nameOfInertialAttitudeProperty1, stateInit);
-    this->sigma_SN[1] = states.createProperty(this->nameOfInertialAttitudeProperty2, stateInit);
-    this->omega_SN_S[0] = states.createProperty(this->nameOfInertialAngVelocityProperty1, stateInit);
-    this->omega_SN_S[1] = states.createProperty(this->nameOfInertialAngVelocityProperty2, stateInit);
+    this->r_HN_N[0] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty1", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty1, stateInit, !this->customNameOfInertialPositionProperty1);
+    this->r_HN_N[1] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty2", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty2, stateInit, !this->customNameOfInertialPositionProperty2);
+    this->v_HN_N[0] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty1", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty1, stateInit, !this->customNameOfInertialVelocityProperty1);
+    this->v_HN_N[1] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty2", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty2, stateInit, !this->customNameOfInertialVelocityProperty2);
+    this->sigma_SN[0] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty1", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty1, stateInit, !this->customNameOfInertialAttitudeProperty1);
+    this->sigma_SN[1] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty2", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty2, stateInit, !this->customNameOfInertialAttitudeProperty2);
+    this->omega_SN_S[0] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty1", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty1, stateInit, !this->customNameOfInertialAngVelocityProperty1);
+    this->omega_SN_S[1] =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty2", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty2, stateInit, !this->customNameOfInertialAngVelocityProperty2);
 
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInProperties(states);
+    if (!managerLocal) {
+        this->bindAttachedDynamicEffectors(states);
     }
 }
 
@@ -624,4 +859,55 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     *this->v_HN_N[1] = v_PN_N + Eigen::Vector3d(dcm_NP * rDot_H2P_P);
 
     return;
+}
+
+void
+DualHingedRigidBodyStateEffector::assignStateParamNames(DynamicEffector* effector, int segment)
+{
+    if (segment < 1 || segment > 2) {
+        this->bskLogger.bskError("DualHingedRigidBodyStateEffector: invalid attachment segment.");
+    }
+    if (segment == 1) {
+        effector->setAttachedBodyPropertyNames(*this,
+                                               { this->nameOfInertialPositionProperty1,
+                                                 this->nameOfInertialVelocityProperty1,
+                                                 this->nameOfInertialAttitudeProperty1,
+                                                 this->nameOfInertialAngVelocityProperty1 },
+                                               segment);
+    }
+    if (segment == 2) {
+        effector->setAttachedBodyPropertyNames(*this,
+                                               { this->nameOfInertialPositionProperty2,
+                                                 this->nameOfInertialVelocityProperty2,
+                                                 this->nameOfInertialAttitudeProperty2,
+                                                 this->nameOfInertialAngVelocityProperty2 },
+                                               segment);
+    }
+}
+
+void
+DualHingedRigidBodyStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    const bool managerLocal = manager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(manager);
+        manager.getPropertyReference(this->nameOfInertialPositionProperty1);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty1);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty1);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty1);
+        manager.getPropertyReference(this->nameOfInertialPositionProperty2);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty2);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty2);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty2);
+    }
+    for (std::size_t index = 0; index < this->dynEffectors.size(); ++index) {
+        auto* effector = this->dynEffectors[index];
+        if (managerLocal) {
+            const int segment = this->dynEffectorSegments.at(index);
+            this->assignStateParamNames(effector, segment);
+            effector->linkInAttachedBodyProperties(*this, manager, segment);
+        } else {
+            effector->linkInProperties(manager);
+        }
+    }
 }

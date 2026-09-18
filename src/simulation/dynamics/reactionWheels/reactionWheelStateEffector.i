@@ -29,6 +29,12 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
+%include "attribute.i"
+%attribute(ReactionWheelStateEffector, std::string, nameOfReactionWheelOmegasState,
+           getNameOfReactionWheelOmegasState, setNameOfReactionWheelOmegasState);
+%attribute(ReactionWheelStateEffector, std::string, nameOfReactionWheelThetasState,
+           getNameOfReactionWheelThetasState, setNameOfReactionWheelThetasState);
+
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 

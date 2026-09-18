@@ -73,10 +73,12 @@ This section is to outline the steps needed to setup a Translating Body State Ef
     translatingBody.setK(100.0)
     translatingBody.setC(0.0)
 
-#. (Optional) Define a unique name for each state.  If you have multiple translating bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+#. Optionally override state names. Unspecified names are automatic under both policies.
+   Legacy naming uses constructor counters; manager-local naming resolves names during
+   initialization. See :ref:`effectorNaming` before using generated names in callbacks::
 
-    translatingBody.nameOfThetaState = "translatingBodyRho"
-    translatingBody.nameOfThetaDotState = "translatingBodyRhoDot"
+    translatingBody.nameOfRhoState = "translatingBodyRho"
+    translatingBody.nameOfRhoDotState = "translatingBodyRhoDot"
 
 #. (Optional) Connect a command force message::
 

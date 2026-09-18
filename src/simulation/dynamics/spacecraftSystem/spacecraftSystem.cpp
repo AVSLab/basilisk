@@ -143,6 +143,12 @@ void SpacecraftUnit::linkInStatesSC(DynParamManager& statesIn)
 
 void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
 {
+    if (statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal) {
+        this->bskLogger.bskError("SpacecraftUnit: use legacy naming with SpacecraftSystem, or migrate to Spacecraft.");
+    }
+    if (this->namesPrepared && this->spacecraftName != this->preparedSpacecraftName) {
+        this->bskLogger.bskError("SpacecraftUnit: rebuild the unit to change its spacecraft name after initialization.");
+    }
     // - Spacecraft() initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
     Eigen::MatrixXd initMDot_SC(1,1);
@@ -174,12 +180,15 @@ void SpacecraftUnit::initializeDynamicsSC(DynParamManager& statesIn)
     this->gravField.nameOfSpacecraftAttachedTo = this->spacecraftName;
 
     // - Before er'body registers their properties, we need to prepend their state names with the spacecraft
-    this->hub.prependSpacecraftNameToStates();
-    this->gravField.prependSpacecraftNameToStates();
     std::vector<StateEffector*>::iterator stateIt;
-    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
-    {
-        (*stateIt)->prependSpacecraftNameToStates();
+    if (!this->namesPrepared) {
+        this->hub.prependSpacecraftNameToStates();
+        this->gravField.prependSpacecraftNameToStates();
+        for (auto* effector : this->states) {
+            effector->prependSpacecraftNameToStates();
+        }
+        this->preparedSpacecraftName = this->spacecraftName;
+        this->namesPrepared = true;
     }
 
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
@@ -426,6 +435,9 @@ void SpacecraftSystem::UpdateState(uint64_t CurrentSimNanos)
  for the simulation */
 void SpacecraftSystem::initializeDynamics()
 {
+    if (this->dynManager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal) {
+        this->bskLogger.bskError("SpacecraftSystem: manager-local effector naming is supported only by Spacecraft.");
+    }
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);

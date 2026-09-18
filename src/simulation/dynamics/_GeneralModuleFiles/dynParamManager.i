@@ -13,7 +13,24 @@
 %include "std_pair.i"
 %include "std_vector.i"
 %include "std_string.i"
+%include "attribute.i"
 %include "swig_eigen.i"
+
+%attribute(DynParamManager, bool, useManagerLocalEffectorNames,
+           getUseManagerLocalEffectorNames, setUseManagerLocalEffectorNames);
+
+// Report direct Python calls such as effector.registerStates(manager) after C++
+// returns. This also covers nested registrations and SpacecraftUnit initialization.
+// The Python reporter defers scheduled managers while a lifecycle call is active,
+// including when a Python callback invokes this wrapper on a C++ worker thread.
+%typemap(argout) DynParamManager& {
+    PyObject* warningResult = PyObject_CallMethod($input, "_reportLegacyAutomaticEffectorNaming", nullptr);
+    if (warningResult == nullptr) {
+        Py_XDECREF(resultobj);
+        SWIG_fail;
+    }
+    Py_DECREF(warningResult);
+}
 
 // Suppress assignment operator warning before parsing the class
 %warnfilter(362) StateVector::operator=;
@@ -48,6 +65,30 @@
 %template() std::vector<std::pair<const StateData*, size_t>>;
 
 %extend DynParamManager {
+   bool _consumeLegacyAutomaticEffectorNamingWarning() {
+      return $self->consumeLegacyAutomaticEffectorNamingWarning();
+   }
+
+   %pythoncode %{
+   def _reportLegacyAutomaticEffectorNaming(self, *, stacklevel=4):
+       """Report actual legacy automatic naming through Basilisk's dated warning helper."""
+       from Basilisk.utilities import _effectorNaming, deprecated
+
+       if _effectorNaming.isReportDeferred(self):
+           return
+       if self._consumeLegacyAutomaticEffectorNamingWarning():
+           removalDate = "2027/09/14"
+           deprecated.deprecationWarn(
+               "Legacy automatic effector naming",
+               removalDate,
+               "Set scObject.dynManager.useManagerLocalEffectorNames = True before "
+               "InitializeSimulation(). SpacecraftSystem users must migrate to Spacecraft. "
+               f"Removal date: {removalDate.replace('/', '-')}. Migration instructions: "
+               "https://hanspeterschaub.info/basilisk/Support/User/effectorNaming.html",
+               stacklevel=stacklevel,
+           )
+   %}
+
    // SWIG doesnt like const StateData& so we have to use const StateData* and convert
    void registerSharedNoiseSource(std::vector<std::pair<const StateData*, size_t>> list) {
       // Convert from pointer pairs to reference pairs

@@ -22,10 +22,18 @@
 
 #include "architecture/utilities/bskLogging.h"
 #include "stateData.h"
+#ifndef SWIG
+#include "effectorName.h"
+#endif
 #include <Eigen/Dense>
+#include <cstddef>
 #include <map>
+#include <memory>
 #include <stdint.h>
+#include <string>
 #include <type_traits>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 #include <functional>
 
@@ -82,6 +90,21 @@ class StateVector {
     /** Assignment operator */
     StateVector& operator= (const StateVector&);
 
+#ifndef SWIG
+    /** @brief Transfer state storage without cloning the StateData objects.
+     * @param other State vector to move from.
+     * @note Pointers to transferred states remain valid after the source is destroyed.
+     */
+    StateVector(StateVector&& other) = default;
+
+    /** @brief Replace state storage by transferring another vector's StateData objects.
+     * @param other State vector to move from.
+     * @return This state vector.
+     * @note Pointers to source states remain valid; existing destination states are destroyed.
+     */
+    StateVector& operator=(StateVector&& other) = default;
+#endif
+
     /** Sets the values of the states of this StateVector to a copy the
      * values of the states of the other StateVector.
      *
@@ -122,6 +145,126 @@ class DynParamManager {
     BSKLogger bskLogger;
 
   public:
+    /** @brief Select manager-local automatic effector names instead of legacy names.
+     * @param enabled True for manager-local naming; false for the legacy default.
+     * @note Set this before collecting names or registering states and properties.
+     * Python exposes this as the useManagerLocalEffectorNames property.
+     */
+    void setUseManagerLocalEffectorNames(bool enabled)
+    {
+        this->setEffectorNamingPolicy(enabled ? EffectorNamingPolicy::ManagerLocal : EffectorNamingPolicy::Legacy);
+    }
+
+    /** @brief Report whether this manager resolves automatic effector names.
+     * @return True for manager-local naming, false for legacy naming.
+     */
+    bool getUseManagerLocalEffectorNames() const
+    {
+        return this->getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    }
+
+#ifndef SWIG
+    /** @brief Select the naming policy before declaring names or registering dynamics data.
+     * @param policy Policy used by participating effectors.
+     * @note Python selects the policy through useManagerLocalEffectorNames.
+     * Legacy remains the default.
+     */
+    void setEffectorNamingPolicy(EffectorNamingPolicy policy);
+
+    /** @brief Return the selected naming policy.
+     * @return Legacy by default, or the explicitly selected policy.
+     */
+    EffectorNamingPolicy getEffectorNamingPolicy() const { return this->effectorNamingPolicy; }
+
+    /** @brief Register an effector state using its legacy name and record automatic naming use.
+     * @param nRow Number of state rows.
+     * @param nCol Number of state columns.
+     * @param stateName Current legacy name, including any owner prefix.
+     * @param automatic True when no explicit custom name was assigned.
+     * @return New state or compatible existing state, preserving legacy registration behavior.
+     * @note Requires Legacy. Call only for states actually used by the configured effector.
+     */
+    StateData* registerLegacyEffectorState(uint32_t nRow, uint32_t nCol, const std::string& stateName, bool automatic);
+
+    /** @brief Register a legacy effector property and record automatic naming use.
+     * @param propName Current legacy property name.
+     * @param value Initial property value.
+     * @param automatic True when no explicit custom name was assigned.
+     * @return New or existing property, preserving legacy registration behavior.
+     * @note Requires Legacy. Explicit state names do not exempt automatic property names.
+     */
+    Eigen::MatrixXd* createLegacyEffectorProperty(const std::string& propName,
+                                                  const Eigen::MatrixXd& value,
+                                                  bool automatic);
+
+    /** @brief Consume a pending legacy automatic-naming diagnostic for the Python deprecation bridge.
+     * @return True once per manager lifetime after an automatic legacy name is registered.
+     * @note Copies report independently; moves preserve whether the diagnostic was consumed.
+     */
+    bool consumeLegacyAutomaticEffectorNamingWarning();
+
+    /** @brief Collect a complete effector name group without registering states or properties.
+     * @param group Naming family and explicitly classified name requests.
+     * @param previous Current handle for this effector, or an empty handle for a new effector.
+     * @return Handle to retain for subsequent collection, lookup, and registration.
+     * @note Requires ManagerLocal. Before successful resolution, changed requests
+     * replace the old snapshot in its original position and return a new handle.
+     * After resolution, only identical repeated requests are accepted. Collect the
+     * entire attachment tree, in deterministic order, before resolving names.
+     */
+    EffectorNameRequest requestEffectorNames(const EffectorNameGroup& group,
+                                           const EffectorNameRequest& previous = {});
+
+    /** @brief Cancel an unresolved request so it can be corrected or moved to another manager.
+     * @param request Current handle issued by this manager.
+     * @note Cancellation is allowed after failed resolution, but never after
+     * successful resolution. A cancelled handle cannot be reused for lookup or registration.
+     */
+    void cancelEffectorNames(const EffectorNameRequest& request);
+
+    /** @brief Reserve custom names first, then resolve automatic groups in request order.
+     * @note Resolution checks existing states and properties in their respective
+     * namespaces. All results are committed together; failed resolution reserves
+     * nothing. Repeated successful calls preserve the assigned names.
+     */
+    void resolveEffectorNames();
+
+    /** @brief Retrieve a resolved name without changing the allocation.
+     * @param request Handle issued by this manager.
+     * @param key Effector-local key from the name specification.
+     * @return Final name, valid for the lifetime of the manager or until its assignment.
+     * @note Calling before resolution or using a foreign handle or unknown key raises BasiliskError.
+     */
+    const std::string& getEffectorName(const EffectorNameRequest& request, const std::string& key) const;
+
+    /** @brief Register a state using its owning request and local key.
+     * @param nRow Number of state rows.
+     * @param nCol Number of state columns.
+     * @param request Owning request issued by this manager.
+     * @param key State key supplied in that request.
+     * @return New state, or the existing state on repeated registration by its owner.
+     * @note Requires successful resolution. Repeated registration preserves values
+     * and requires the same dimensions and a compatible StateData type. String-only registration
+     * cannot claim a reserved name, even before its owner first registers it.
+     */
+    template <typename StateDataType = StateData,
+              std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
+    StateDataType* registerEffectorState(uint32_t nRow, uint32_t nCol,
+                                        const EffectorNameRequest& request, const std::string& key);
+
+    /** @brief Register a property using its owning request and local key.
+     * @param request Owning request issued by this manager.
+     * @param key Property key supplied in that request.
+     * @param value Initial property value.
+     * @return New property, or the existing property on repeated registration by its owner.
+     * @note Requires successful resolution. Repeated registration preserves the
+     * current value and requires matching dimensions. Use setPropertyValue() for
+     * an intentional value update after registration.
+     */
+    Eigen::MatrixXd* createEffectorProperty(const EffectorNameRequest& request,
+                                           const std::string& key, const Eigen::MatrixXd& value);
+#endif
+
     /** Creates and stores a new state to be managed by this class.
      *
      * The state name should be unique: registering two states with the
@@ -212,21 +355,106 @@ protected:
      * are unique.
      */
     size_t sharedNoiseMapIdCounter = 0;
+
+private:
+#ifndef SWIG
+    friend class StateEffector;
+
+    /** @brief Test whether a request is current in this manager.
+     * @param request Request retained by an effector or inherited from its source.
+     * @return True for a current request, including one inherited by a manager copy.
+     */
+    bool hasEffectorNameRequest(const EffectorNameRequest& request) const;
+
+    /** @brief Collect an effector request while preventing two owners from claiming the same slot.
+     * @param group Current name specification.
+     * @param previous Current request or a request inherited from an effector copy.
+     * @param owner Identity of the collecting effector.
+     * @return Request owned by this effector in this manager.
+     * @note A copied manager allows each inherited request to be claimed once.
+     * A second effector requires a new request, subject to the normal resolution freeze.
+     */
+    EffectorNameRequest requestEffectorNamesForOwner(const EffectorNameGroup& group,
+                                                    const EffectorNameRequest& previous,
+                                                    const std::shared_ptr<const EffectorNameIdentity::Token>& owner);
+
+    /** @brief Reject string-only registration of a reserved name.
+     * @param kind Namespace being registered.
+     * @param name Requested state or property name.
+     */
+    void checkUnownedNameRegistration(EffectorNameKind kind, const std::string& name) const;
+
+    /** @brief Validate the owner and namespace for registration of a resolved name.
+     * @param request Owning request issued by this manager.
+     * @param key Local key in the request.
+     * @param kind Required namespace.
+     * @return Resolved name after ownership and namespace validation.
+     */
+    const std::string& getOwnedEffectorName(const EffectorNameRequest& request,
+                                          const std::string& key, EffectorNameKind kind) const;
+
+    /** @brief Create or retrieve state storage after validating registration ownership.
+     * @param nRow Number of state rows.
+     * @param nCol Number of state columns.
+     * @param stateName Validated state name.
+     * @param warnOnDuplicate Whether to retain the legacy duplicate-registration warning.
+     * @return New state or compatible existing state.
+     */
+    template <typename StateDataType>
+    StateDataType* registerStateImplementation(uint32_t nRow, uint32_t nCol,
+                                              const std::string& stateName, bool warnOnDuplicate);
+
+    EffectorNamingPolicy effectorNamingPolicy = EffectorNamingPolicy::Legacy; //!< Selected preparation policy.
+    bool usesLegacyAutomaticEffectorNames = false; //!< An automatic legacy state or property was registered.
+    /// Copies warn independently; moves retain warning history.
+    std::weak_ptr<const EffectorNameIdentity::Token> legacyNamingWarningOwner;
+    std::vector<EffectorNameRequest> effectorNameRequests; //!< Immutable snapshots in declaration order.
+    std::vector<std::map<std::string, std::string>> resolvedEffectorNames; //!< Resolved local-key/name pairs per request.
+    std::map<std::pair<EffectorNameKind, std::string>, EffectorNameRequest> effectorNameOwners; //!< Registration authority for each reserved name.
+    bool effectorNamesResolved = false; //!< True after successful resolution; ordinary resets must preserve it.
+    EffectorNameIdentity effectorNameIdentity; //!< Distinct manager lifetime, including after copying.
+    /** @brief Identify which effector claimed a request in a particular manager lifetime. */
+    struct EffectorNameBinding {
+        std::weak_ptr<const EffectorNameIdentity::Token> manager; //!< Manager that recorded the binding.
+        std::weak_ptr<const EffectorNameIdentity::Token> effector; //!< Effector that claimed the request.
+    };
+    std::map<EffectorNameRequest, EffectorNameBinding> effectorNameBindings; //!< Copied bindings require claiming in the new manager.
+#endif
 };
 
 template <typename StateDataType,
           std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool>>
 StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
+    this->checkUnownedNameRegistration(EffectorNameKind::State, stateName);
+    return this->registerStateImplementation<StateDataType>(nRow, nCol, stateName, true);
+}
+
+#ifndef SWIG
+template <typename StateDataType,
+          std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool>>
+StateDataType* DynParamManager::registerEffectorState(uint32_t nRow, uint32_t nCol,
+                                                    const EffectorNameRequest& request, const std::string& key)
+{
+    const auto& name = this->getOwnedEffectorName(request, key, EffectorNameKind::State);
+    return this->registerStateImplementation<StateDataType>(nRow, nCol, name, false);
+}
+
+template <typename StateDataType>
+StateDataType* DynParamManager::registerStateImplementation(uint32_t nRow, uint32_t nCol,
+                                                          const std::string& stateName, bool warnOnDuplicate)
+{
     if (stateName == "") {
         bskLogger.bskError("Your state name can't be an empty string.  Come on.  You get null.");
     }
 
     if (stateContainer.stateMap.count(stateName) > 0) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created a state with the name: %s more than once.  Go ahead and don't do this.",
-            stateName.c_str());
+        if (warnOnDuplicate) {
+            bskLogger.bskLog(
+                BSK_WARNING,
+                "You created a state with the name: %s more than once.  Go ahead and don't do this.",
+                stateName.c_str());
+        }
 
         auto& stateData = stateContainer.stateMap.at(stateName);
 
@@ -254,5 +482,6 @@ StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std:
     stateContainer.stateMap.emplace(stateName, stateData);
     return stateData;
 }
+#endif
 
 #endif /* STATE_MANAGER_H */

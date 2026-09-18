@@ -38,6 +38,105 @@ LinearTranslationOneDOFStateEffector::LinearTranslationOneDOFStateEffector()
     LinearTranslationOneDOFStateEffector::effectorID++;
 }
 
+void
+LinearTranslationOneDOFStateEffector::setNameOfRhoState(const std::string& value)
+{
+    this->setCustomName(this->nameOfRhoState, this->customNameOfRhoState, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setNameOfRhoDotState(const std::string& value)
+{
+    this->setCustomName(this->nameOfRhoDotState, this->customNameOfRhoDotState, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setNameOfInertialPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty, this->customNameOfInertialPositionProperty, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setNameOfInertialVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty, this->customNameOfInertialVelocityProperty, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setNameOfInertialAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty, this->customNameOfInertialAttitudeProperty, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setNameOfInertialAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAngVelocityProperty, this->customNameOfInertialAngVelocityProperty, value);
+}
+
+void
+LinearTranslationOneDOFStateEffector::setCustomName(std::string& currentName,
+                                                    std::optional<std::string>& customName,
+                                                    const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+LinearTranslationOneDOFStateEffector::describeEffectorNames() const
+{
+    return { "linearTranslationOneDOF",
+             {
+               { "nameOfRhoState", EffectorNameKind::State, "linearTranslationRho", "", this->customNameOfRhoState },
+               { "nameOfRhoDotState",
+                 EffectorNameKind::State,
+                 "linearTranslationRhoDot",
+                 "",
+                 this->customNameOfRhoDotState },
+               { "nameOfInertialPositionProperty",
+                 EffectorNameKind::Property,
+                 "linearTranslationInertialPosition",
+                 "",
+                 this->customNameOfInertialPositionProperty },
+               { "nameOfInertialVelocityProperty",
+                 EffectorNameKind::Property,
+                 "linearTranslationInertialVelocity",
+                 "",
+                 this->customNameOfInertialVelocityProperty },
+               { "nameOfInertialAttitudeProperty",
+                 EffectorNameKind::Property,
+                 "linearTranslationInertialAttitude",
+                 "",
+                 this->customNameOfInertialAttitudeProperty },
+               { "nameOfInertialAngVelocityProperty",
+                 EffectorNameKind::Property,
+                 "linearTranslationInertialAngVelocity",
+                 "",
+                 this->customNameOfInertialAngVelocityProperty },
+             } };
+}
+
+void
+LinearTranslationOneDOFStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfRhoState = this->getResolvedEffectorName(manager, "nameOfRhoState");
+    this->nameOfRhoDotState = this->getResolvedEffectorName(manager, "nameOfRhoDotState");
+    this->nameOfInertialPositionProperty = this->getResolvedEffectorName(manager, "nameOfInertialPositionProperty");
+    this->nameOfInertialVelocityProperty = this->getResolvedEffectorName(manager, "nameOfInertialVelocityProperty");
+    this->nameOfInertialAttitudeProperty = this->getResolvedEffectorName(manager, "nameOfInertialAttitudeProperty");
+    this->nameOfInertialAngVelocityProperty =
+      this->getResolvedEffectorName(manager, "nameOfInertialAngVelocityProperty");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t LinearTranslationOneDOFStateEffector::effectorID = 1;
 
 LinearTranslationOneDOFStateEffector::~LinearTranslationOneDOFStateEffector()
@@ -174,12 +273,22 @@ void LinearTranslationOneDOFStateEffector::linkInPrescribedMotionProperties(DynP
 void LinearTranslationOneDOFStateEffector::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
-	this->rhoState = states.registerState(1, 1, nameOfRhoState);
+
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
+
+    this->rhoState = managerLocal
+                       ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfRhoState")
+                       : states.registerLegacyEffectorState(1, 1, this->nameOfRhoState, !this->customNameOfRhoState);
     Eigen::MatrixXd rhoInitMatrix(1,1);
     rhoInitMatrix(0,0) = this->rhoInit;
     this->rhoState->setState(rhoInitMatrix);
 
-	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
+    this->rhoDotState =
+      managerLocal ? states.registerEffectorState(1, 1, this->getEffectorNameRequest(), "nameOfRhoDotState")
+                   : states.registerLegacyEffectorState(1, 1, this->nameOfRhoDotState, !this->customNameOfRhoDotState);
     Eigen::MatrixXd rhoDotInitMatrix(1,1);
     rhoDotInitMatrix(0,0) = this->rhoDotInit;
     this->rhoDotState->setState(rhoDotInitMatrix);
@@ -196,7 +305,7 @@ void LinearTranslationOneDOFStateEffector::addDynamicEffector(DynamicEffector *n
         bskLogger.bskError("Specifying attachment to a non-existent translating bodies linkage.");
     }
 
-    this->assignStateParamNames<DynamicEffector *>(newDynamicEffector);
+    this->assignStateParamNames(newDynamicEffector, segment);
 
     this->dynEffectors.push_back(newDynamicEffector);
 }
@@ -208,16 +317,35 @@ void LinearTranslationOneDOFStateEffector::addDynamicEffector(DynamicEffector *n
  */
 void LinearTranslationOneDOFStateEffector::registerProperties(DynParamManager& states)
 {
-    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    this->r_FN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
-    this->v_FN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
-    this->sigma_FN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
-    this->omega_FN_F = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
 
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInProperties(states);
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_FN_N =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty, stateInit, !this->customNameOfInertialPositionProperty);
+    this->v_FN_N =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty, stateInit, !this->customNameOfInertialVelocityProperty);
+    this->sigma_FN =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty, stateInit, !this->customNameOfInertialAttitudeProperty);
+    this->omega_FN_F =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty, stateInit, !this->customNameOfInertialAngVelocityProperty);
+
+    if (!managerLocal) {
+        this->bindAttachedDynamicEffectors(states);
     }
 }
 
@@ -541,4 +669,39 @@ void LinearTranslationOneDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->writeOutputStateMessages(CurrentSimNanos);
+}
+
+void
+LinearTranslationOneDOFStateEffector::assignStateParamNames(DynamicEffector* effector, int segment)
+{
+    if (segment != 1) {
+        this->bskLogger.bskError("LinearTranslationOneDOFStateEffector: invalid attachment segment.");
+    }
+    effector->setAttachedBodyPropertyNames(*this,
+                                           { this->nameOfInertialPositionProperty,
+                                             this->nameOfInertialVelocityProperty,
+                                             this->nameOfInertialAttitudeProperty,
+                                             this->nameOfInertialAngVelocityProperty },
+                                           segment);
+}
+
+void
+LinearTranslationOneDOFStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    const bool managerLocal = manager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(manager);
+        manager.getPropertyReference(this->nameOfInertialPositionProperty);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty);
+    }
+    for (auto* effector : this->dynEffectors) {
+        if (managerLocal) {
+            this->assignStateParamNames(effector, 1);
+            effector->linkInAttachedBodyProperties(*this, manager, 1);
+        } else {
+            effector->linkInProperties(manager);
+        }
+    }
 }

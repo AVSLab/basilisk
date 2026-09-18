@@ -33,6 +33,18 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(SpinningBodyNDOFStateEffector, std::string, nameOfThetaState, getNameOfThetaState, setNameOfThetaState);
+%rename(getNameOfThetaState) SpinningBodyNDOFStateEffector::getNameOfThetaState() const;
+%rename(setNameOfThetaState) SpinningBodyNDOFStateEffector::setNameOfThetaState;
+%attribute(SpinningBodyNDOFStateEffector, std::string, nameOfThetaDotState, getNameOfThetaDotState, setNameOfThetaDotState);
+%rename(getNameOfThetaDotState) SpinningBodyNDOFStateEffector::getNameOfThetaDotState() const;
+%rename(setNameOfThetaDotState) SpinningBodyNDOFStateEffector::setNameOfThetaDotState;
+%attribute(SpinningBody, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(SpinningBody, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(SpinningBody, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(SpinningBody, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+
 %include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"

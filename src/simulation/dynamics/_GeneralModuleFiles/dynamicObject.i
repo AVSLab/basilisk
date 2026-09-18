@@ -31,5 +31,8 @@
 // transfer Python ownership on call so the integrator is not double-freed
 // when the Python reference later goes out of scope.
 %apply SWIGTYPE *DISOWN { StateVecIntegrator* newIntegrator };
+%pythonappend DynamicObject::initializeDynamics %{
+    self.dynManager._reportLegacyAutomaticEffectorNaming()
+%}
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 %clear StateVecIntegrator* newIntegrator;

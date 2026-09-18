@@ -18,6 +18,7 @@
  */
 
 #include "stateEffector.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 
 /*! This is the constructor, just setting the variables to zero */
 StateEffector::StateEffector()
@@ -47,6 +48,119 @@ StateEffector::StateEffector()
 StateEffector::~StateEffector()
 {
     return;
+}
+
+void StateEffector::collectEffectorNames(DynParamManager& manager)
+{
+    std::set<const StateEffector*> visited;
+    this->collectEffectorNames(manager, visited);
+}
+
+void StateEffector::collectEffectorNames(DynParamManager& manager, const std::vector<StateEffector*>& roots)
+{
+    if (manager.getEffectorNamingPolicy() == EffectorNamingPolicy::Legacy) {
+        return;
+    }
+    std::set<const StateEffector*> visited;
+    for (auto* root : roots) {
+        if (root == nullptr) {
+            throw BasiliskError("StateEffector: null state-effector attachment.");
+        }
+        root->collectEffectorNames(manager, visited);
+    }
+}
+
+void StateEffector::collectEffectorNames(DynParamManager& manager, std::set<const StateEffector*>& visited)
+{
+    if (manager.getEffectorNamingPolicy() == EffectorNamingPolicy::Legacy) {
+        return;
+    }
+    if (!visited.insert(this).second) {
+        throw BasiliskError("StateEffector: cyclic or repeated nested state-effector attachment.");
+    }
+    const auto group = this->describeEffectorNames();
+    if (group.family.empty()) {
+        const auto* model = dynamic_cast<const SysModel*>(this);
+        const std::string label = model && !model->ModelTag.empty() ? model->ModelTag : "unnamed state effector";
+        this->bskLogger.bskError("StateEffector '%s': manager-local naming requires describeEffectorNames() support. "
+                                "Migrate this effector's name declaration and registration or use legacy naming.",
+                                label.c_str());
+    }
+    const auto& owner = this->effectorNameIdentity.getToken();
+    const auto& managerIdentity = manager.effectorNameIdentity.getToken();
+    const auto previousManager = this->effectorNameManager.lock();
+    const bool ownsRequest = this->effectorNameRequestOwner.lock() == owner;
+    if (ownsRequest && previousManager && previousManager != managerIdentity) {
+        throw BasiliskError("StateEffector: cancel the pending request before moving to another live manager.");
+    }
+    auto previous = this->effectorNameRequest;
+    // A stale handle in the same manager remains an error. A copy or an effector
+    // whose manager has died can instead start in a manager with no matching slot.
+    if (!(ownsRequest && previousManager == managerIdentity) && !manager.hasEffectorNameRequest(previous)) {
+        previous.reset();
+    }
+    this->effectorNameRequest = manager.requestEffectorNamesForOwner(group, previous, owner);
+    this->effectorNameRequestOwner = owner;
+    this->effectorNameManager = managerIdentity;
+    for (auto* child : this->getNestedStateEffectors()) {
+        if (child == nullptr) {
+            throw BasiliskError("StateEffector: null nested state-effector attachment.");
+        }
+        child->collectEffectorNames(manager, visited);
+    }
+}
+
+const std::string& StateEffector::getResolvedEffectorName(const DynParamManager& manager, const std::string& key) const
+{
+    return manager.getEffectorName(this->getEffectorNameRequest(), key);
+}
+
+void StateEffector::cancelEffectorNames(DynParamManager& manager)
+{
+    std::vector<StateEffector*> pending{this};
+    std::vector<StateEffector*> collected;
+    std::set<StateEffector*> visited;
+    // Validate every owned request before cancelling any part of the tree.
+    while (!pending.empty()) {
+        auto* effector = pending.back();
+        pending.pop_back();
+        // Failed collection can leave a cyclic or repeated attachment with a pending request.
+        if (effector == nullptr || !visited.insert(effector).second) {
+            continue;
+        }
+        if (effector->effectorNameRequestOwner.lock() != effector->effectorNameIdentity.getToken() ||
+            !effector->effectorNameRequest) {
+            // In particular, an uncollected copy must not cancel its source's children.
+            continue;
+        }
+        if (effector->effectorNameManager.lock() != manager.effectorNameIdentity.getToken()) {
+            throw BasiliskError("StateEffector: cancel names through the manager used for collection.");
+        }
+        if (!manager.hasEffectorNameRequest(effector->effectorNameRequest)) {
+            throw BasiliskError("StateEffector: name request no longer belongs to this dynamics manager.");
+        }
+        if (manager.effectorNamesResolved) {
+            throw BasiliskError("StateEffector: a resolved name request cannot be cancelled.");
+        }
+        collected.push_back(effector);
+        const auto children = effector->getNestedStateEffectors();
+        pending.insert(pending.end(), children.begin(), children.end());
+    }
+    for (auto* effector : collected) {
+        manager.cancelEffectorNames(effector->effectorNameRequest);
+        effector->effectorNameRequest.reset();
+        effector->effectorNameRequestOwner.reset();
+        effector->effectorNameManager.reset();
+    }
+}
+
+const EffectorNameRequest& StateEffector::getEffectorNameRequest() const
+{
+    if (this->effectorNameRequestOwner.lock() != this->effectorNameIdentity.getToken() ||
+        this->effectorNameManager.expired()) {
+        throw BasiliskError("StateEffector: collect this effector's names before retrieving them.");
+    }
+    return this->effectorNameRequest;
 }
 
 /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject. This
@@ -113,6 +227,10 @@ void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos [[maybe_unu
 void StateEffector::registerProperties(DynParamManager& states [[maybe_unused]])
 {
     return;
+}
+
+void StateEffector::bindAttachedDynamicEffectors(DynParamManager& manager [[maybe_unused]])
+{
 }
 
 /*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */

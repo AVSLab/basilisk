@@ -86,17 +86,22 @@ This section is to outline the steps needed to setup a Hinged Rigid Body State E
 
    Do this for all of the parameters for a Hinged Rigid Body seen in the Hinged Rigid Body 1 Parameters Table.
 
-#. (Optional) Define a unique name for each state.  If you have multiple panels, they each must have
-   a unique name.  If these names are not specified, then the default names are used which are
-   incremented by the effector number::
+#. Define the initial panel angle and angular rate::
 
-    panel1.thetaInit = 5*numpy.pi/180.0
-    panel1.thetaDotInit = 0.0
+    panel1.thetaInit = 5*numpy.pi/180.0  # [rad]
+    panel1.thetaDotInit = 0.0  # [rad/s]
 
-#. Define a unique name for each state::
+#. Optionally override either state name::
 
-    panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    panel1.nameOfThetaState = "leftPanelAngle"
+    panel1.nameOfThetaDotState = "leftPanelRate"
+
+   Automatic names are provided when overrides are omitted. Legacy naming uses
+   constructor counters. With ``scObject.dynManager.useManagerLocalEffectorNames = True``,
+   automatic state and inertial-property names are resolved during initialization
+   within that manager. Read generated names after ``InitializeSimulation()`` or
+   inside a logging callback. See :ref:`effectorNaming` for the preparation sequence
+   and :ref:`scenarioEffectorNaming` for a complete example.
 
 #. Define an optional motor torque input message::
 

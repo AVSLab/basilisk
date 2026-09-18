@@ -198,3 +198,14 @@ This section is to outline the steps needed to setup a VSCMG State Effector in P
 #. Add the module to the task list::
 
     unitTestSim.AddModelToTask(unitTaskName, vscmgStateEffector)
+
+Effector Names
+--------------
+
+Legacy naming retains the fixed array state names. Multiple arrays in one
+spacecraft require distinct custom names under that policy. With
+``scObject.dynManager.useManagerLocalEffectorNames = True``, each array receives
+its own automatic name index during initialization. Optional custom names use
+the existing Python attributes; C++ uses corresponding getters and setters.
+Read generated names after initialization, or use the existing output message
+recorders. See :ref:`effectorNaming` for collision checks and migration guidance.

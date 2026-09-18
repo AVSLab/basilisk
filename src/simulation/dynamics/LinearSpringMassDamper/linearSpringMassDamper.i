@@ -33,6 +33,15 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+
+%attribute(LinearSpringMassDamper, std::string, nameOfRhoState,
+           getNameOfRhoState, setNameOfRhoState);
+%attribute(LinearSpringMassDamper, std::string, nameOfRhoDotState,
+           getNameOfRhoDotState, setNameOfRhoDotState);
+%attribute(LinearSpringMassDamper, std::string, nameOfMassState,
+           getNameOfMassState, setNameOfMassState);
+
 %include "swig_eigen.i"
 %include "stdint.i"
 

@@ -85,7 +85,9 @@ This section is to outline the steps needed to setup a Spinning Body State Effec
     spinningBody.k = 1.0
     spinningBody.c = 0.5
 
-#. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+#. Optionally override state names. Unspecified names are automatic under both policies.
+   Legacy naming uses constructor counters; manager-local naming resolves names during
+   initialization. See :ref:`effectorNaming` before using generated names in callbacks::
 
     spinningBody.nameOfThetaState = "spinningBodyTheta"
     spinningBody.nameOfThetaDotState = "spinningBodyThetaDot"

@@ -63,6 +63,13 @@ User Guide
 ----------
 This section is to outline the steps needed to setup a Spacecraft module in python using Basilisk.
 
+Effector names retain their legacy behavior by default. Set
+``scObject.dynManager.useManagerLocalEffectorNames = True`` before initialization
+to allocate automatic names separately for each dynamics manager. Generated names
+become final during ``InitializeSimulation()``. Custom overrides are optional;
+read automatic names after initialization or inside deferred logging callbacks.
+See :ref:`effectorNaming` and :ref:`scenarioEffectorNaming` for both policies.
+
 #.  Import the spacecraft class::
 
         from Basilisk.simulation import spacecraft

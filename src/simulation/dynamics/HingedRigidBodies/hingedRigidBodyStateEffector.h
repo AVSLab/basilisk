@@ -22,9 +22,13 @@
 
 #include <Eigen/Dense>
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#ifndef SWIG
+#include "simulation/dynamics/_GeneralModuleFiles/effectorName.h"
+#endif
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -49,12 +53,60 @@ public:
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
     double thetaRef;                  //!< [rad] hinged rigid body reference angle
     double thetaDotRef;               //!< [rad/s] hinged rigid body reference angle rate
-    std::string nameOfThetaState;    //!< Identifier for the theta state data container
-    std::string nameOfThetaDotState; //!< Identifier for the thetaDot state data container
-    std::string nameOfInertialPositionProperty;     //!< identifier for the inertial position property
-    std::string nameOfInertialVelocityProperty;     //!< identifier for the inertial velocity property
-    std::string nameOfInertialAttitudeProperty;     //!< identifier for the inertial attitude property
-    std::string nameOfInertialAngVelocityProperty;  //!< identifier for the inertial angular velocity property
+    /** @brief Set the explicit theta name; Python exposes this as nameOfThetaState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaState(const std::string& value);
+    /** @brief Get the current theta name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfThetaState() const { return this->nameOfThetaState; }
+    /** @brief Set the explicit thetaDot name; Python exposes this as nameOfThetaDotState.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfThetaDotState(const std::string& value);
+    /** @brief Get the current thetaDot name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfThetaDotState() const { return this->nameOfThetaDotState; }
+    /** @brief Set the explicit position name; Python exposes this as nameOfInertialPositionProperty.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialPositionProperty(const std::string& value);
+    /** @brief Get the current position name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfInertialPositionProperty() const { return this->nameOfInertialPositionProperty; }
+    /** @brief Set the explicit velocity name; Python exposes this as nameOfInertialVelocityProperty.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialVelocityProperty(const std::string& value);
+    /** @brief Get the current velocity name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfInertialVelocityProperty() const { return this->nameOfInertialVelocityProperty; }
+    /** @brief Set the explicit attitude name; Python exposes this as nameOfInertialAttitudeProperty.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAttitudeProperty(const std::string& value);
+    /** @brief Get the current attitude name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfInertialAttitudeProperty() const { return this->nameOfInertialAttitudeProperty; }
+    /** @brief Set the explicit angularVelocity name; Python exposes this as nameOfInertialAngVelocityProperty.
+     * @param value Exact custom name, including names that match an automatic name.
+     * @note Manager-local names cannot change after registration.
+     */
+    void setNameOfInertialAngVelocityProperty(const std::string& value);
+    /** @brief Get the current angularVelocity name.
+     * @return Legacy name before preparation, or the resolved name after registration.
+     */
+    const std::string& getNameOfInertialAngVelocityProperty() const { return this->nameOfInertialAngVelocityProperty; }
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< DCM from body frame to hinge frame
@@ -67,17 +119,37 @@ public:
     std::vector<DynamicEffector*> dynEffectors;  //!< Vector of dynamic effectors attached
 
 private:
+    std::string nameOfThetaState; //!< Current theta name.
+    std::optional<std::string> customThetaState; //!< Explicit override, independent of automatic names.
+    std::string nameOfThetaDotState; //!< Current thetaDot name.
+    std::optional<std::string> customThetaDotState; //!< Explicit override, independent of automatic names.
+    std::string nameOfInertialPositionProperty; //!< Current position name.
+    std::optional<std::string> customInertialPositionProperty; //!< Explicit override, independent of automatic names.
+    std::string nameOfInertialVelocityProperty; //!< Current velocity name.
+    std::optional<std::string> customInertialVelocityProperty; //!< Explicit override, independent of automatic names.
+    std::string nameOfInertialAttitudeProperty; //!< Current attitude name.
+    std::optional<std::string> customInertialAttitudeProperty; //!< Explicit override, independent of automatic names.
+    std::string nameOfInertialAngVelocityProperty; //!< Current angularVelocity name.
+    std::optional<std::string> customInertialAngVelocityProperty; //!< Explicit angular-velocity property override.
+    bool effectorNamesResolved = false; //!< Prevent changes to registered manager-local names.
+    /** @brief Record an explicit name assignment, enforcing resolved-name immutability.
+     * @param currentName Currently visible name to update.
+     * @param customName Metadata identifying an explicit override.
+     * @param value Exact custom name.
+     */
+    void setCustomName(std::string& currentName, std::optional<std::string>& customName, const std::string& value);
+    /** @brief Apply resolved names before registering panel data.
+     * @param manager Dynamics manager holding this panel's declaration.
+     */
+    void applyResolvedNames(DynParamManager& manager);
+
     static uint64_t effectorID;        //!< [] ID number of this panel
     double u;                        //!< [N-m] optional motor torque
 
-    template <typename Type>
-    /** Assign the state engine parameter names */
-    void assignStateParamNames(Type effector) {
-        effector->setPropName_inertialPosition(this->nameOfInertialPositionProperty);
-        effector->setPropName_inertialVelocity(this->nameOfInertialVelocityProperty);
-        effector->setPropName_inertialAttitude(this->nameOfInertialAttitudeProperty);
-        effector->setPropName_inertialAngVelocity(this->nameOfInertialAngVelocityProperty);
-    };
+    /** @brief Assign current inertial property names to one attachment.
+     * @param effector Dynamic effector attached to this panel.
+     */
+    void assignStateParamNames(DynamicEffector* effector);
 
     // Terms needed for Backsubstitution
     Eigen::Vector3d aTheta;         //!< term needed for Backsubstitution
@@ -146,6 +218,19 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override; //!< Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) override;  //!< Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates() override; //!< class method
+
+#ifndef SWIG
+    /** @brief Bind attached effectors after the panel properties have been registered.
+     * @param manager Dynamics manager containing this panel's properties.
+     */
+    void bindAttachedDynamicEffectors(DynParamManager& manager) override;
+
+protected:
+    /** @brief Declare the panel's two state names and four inertial property names.
+     * @return Group with a shared automatic index and independently tracked custom names.
+     */
+    EffectorNameGroup describeEffectorNames() const override;
+#endif
 
 private:
     void validateConfiguration(); //!< Validate mass and the configured hinge-frame DCM

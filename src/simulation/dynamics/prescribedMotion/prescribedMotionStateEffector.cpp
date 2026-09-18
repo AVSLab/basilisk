@@ -72,6 +72,175 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     PrescribedMotionStateEffector::effectorID++;
 }
 
+void
+PrescribedMotionStateEffector::setNameOfsigma_PMState(const std::string& value)
+{
+    this->setCustomName(this->nameOfsigma_PMState, this->customNameOfsigma_PMState, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfInertialPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialPositionProperty, this->customNameOfInertialPositionProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfInertialVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialVelocityProperty, this->customNameOfInertialVelocityProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfInertialAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAttitudeProperty, this->customNameOfInertialAttitudeProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfInertialAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfInertialAngVelocityProperty, this->customNameOfInertialAngVelocityProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedPositionProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfPrescribedPositionProperty, this->customNameOfPrescribedPositionProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedVelocityProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfPrescribedVelocityProperty, this->customNameOfPrescribedVelocityProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedAccelerationProperty(const std::string& value)
+{
+    this->setCustomName(
+      this->nameOfPrescribedAccelerationProperty, this->customNameOfPrescribedAccelerationProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedAttitudeProperty(const std::string& value)
+{
+    this->setCustomName(this->nameOfPrescribedAttitudeProperty, this->customNameOfPrescribedAttitudeProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedAngVelocityProperty(const std::string& value)
+{
+    this->setCustomName(
+      this->nameOfPrescribedAngVelocityProperty, this->customNameOfPrescribedAngVelocityProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setNameOfPrescribedAngAccelerationProperty(const std::string& value)
+{
+    this->setCustomName(
+      this->nameOfPrescribedAngAccelerationProperty, this->customNameOfPrescribedAngAccelerationProperty, value);
+}
+
+void
+PrescribedMotionStateEffector::setCustomName(std::string& currentName,
+                                             std::optional<std::string>& customName,
+                                             const std::string& value)
+{
+    if (this->effectorNamesResolved) {
+        if (value != currentName) {
+            this->bskLogger.bskError("PrescribedMotionStateEffector: resolved names cannot be changed.");
+        }
+        return;
+    }
+    currentName = value;
+    customName = value;
+}
+
+EffectorNameGroup
+PrescribedMotionStateEffector::describeEffectorNames() const
+{
+    return { "prescribedMotion",
+             {
+               { "nameOfsigma_PMState",
+                 EffectorNameKind::State,
+                 "prescribedObjectsigma_PM",
+                 "",
+                 this->customNameOfsigma_PMState },
+               { "nameOfInertialPositionProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectInertialPosition",
+                 "",
+                 this->customNameOfInertialPositionProperty },
+               { "nameOfInertialVelocityProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectInertialVelocity",
+                 "",
+                 this->customNameOfInertialVelocityProperty },
+               { "nameOfInertialAttitudeProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectInertialAttitude",
+                 "",
+                 this->customNameOfInertialAttitudeProperty },
+               { "nameOfInertialAngVelocityProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectInertialAngVelocity",
+                 "",
+                 this->customNameOfInertialAngVelocityProperty },
+               { "nameOfPrescribedPositionProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectPosition",
+                 "",
+                 this->customNameOfPrescribedPositionProperty },
+               { "nameOfPrescribedVelocityProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectVelocity",
+                 "",
+                 this->customNameOfPrescribedVelocityProperty },
+               { "nameOfPrescribedAccelerationProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectAcceleration",
+                 "",
+                 this->customNameOfPrescribedAccelerationProperty },
+               { "nameOfPrescribedAttitudeProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectAttitude",
+                 "",
+                 this->customNameOfPrescribedAttitudeProperty },
+               { "nameOfPrescribedAngVelocityProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectAngVelocity",
+                 "",
+                 this->customNameOfPrescribedAngVelocityProperty },
+               { "nameOfPrescribedAngAccelerationProperty",
+                 EffectorNameKind::Property,
+                 "prescribedObjectAngAcceleration",
+                 "",
+                 this->customNameOfPrescribedAngAccelerationProperty },
+             } };
+}
+
+void
+PrescribedMotionStateEffector::applyResolvedNames(DynParamManager& manager)
+{
+    this->collectEffectorNames(manager);
+    this->nameOfsigma_PMState = this->getResolvedEffectorName(manager, "nameOfsigma_PMState");
+    this->nameOfInertialPositionProperty = this->getResolvedEffectorName(manager, "nameOfInertialPositionProperty");
+    this->nameOfInertialVelocityProperty = this->getResolvedEffectorName(manager, "nameOfInertialVelocityProperty");
+    this->nameOfInertialAttitudeProperty = this->getResolvedEffectorName(manager, "nameOfInertialAttitudeProperty");
+    this->nameOfInertialAngVelocityProperty =
+      this->getResolvedEffectorName(manager, "nameOfInertialAngVelocityProperty");
+    this->nameOfPrescribedPositionProperty = this->getResolvedEffectorName(manager, "nameOfPrescribedPositionProperty");
+    this->nameOfPrescribedVelocityProperty = this->getResolvedEffectorName(manager, "nameOfPrescribedVelocityProperty");
+    this->nameOfPrescribedAccelerationProperty =
+      this->getResolvedEffectorName(manager, "nameOfPrescribedAccelerationProperty");
+    this->nameOfPrescribedAttitudeProperty = this->getResolvedEffectorName(manager, "nameOfPrescribedAttitudeProperty");
+    this->nameOfPrescribedAngVelocityProperty =
+      this->getResolvedEffectorName(manager, "nameOfPrescribedAngVelocityProperty");
+    this->nameOfPrescribedAngAccelerationProperty =
+      this->getResolvedEffectorName(manager, "nameOfPrescribedAngAccelerationProperty");
+    this->effectorNamesResolved = true;
+}
+
 uint64_t PrescribedMotionStateEffector::effectorID = 1;
 
 /*! This is the destructor. */
@@ -164,7 +333,16 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateMass(this->mass);
-    this->sigma_PMState = statesIn.registerState(3, 1, this->nameOfsigma_PMState);
+
+    const bool managerLocal = statesIn.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(statesIn);
+    }
+
+    this->sigma_PMState =
+      managerLocal
+        ? statesIn.registerEffectorState(3, 1, this->getEffectorNameRequest(), "nameOfsigma_PMState")
+        : statesIn.registerLegacyEffectorState(3, 1, this->nameOfsigma_PMState, !this->customNameOfsigma_PMState);
     this->sigma_PMState->setState(this->sigma_PM.coeffs());
 
     // Call method to register the prescribed motion properties
@@ -184,18 +362,66 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 */
 void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
 {
-    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
-    this->r_PN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
-    this->v_PN_N = states.createProperty(this->nameOfInertialVelocityProperty, stateInit);
-    this->sigma_PN = states.createProperty(this->nameOfInertialAttitudeProperty, stateInit);
-    this->omega_PN_P = states.createProperty(this->nameOfInertialAngVelocityProperty, stateInit);
+    const bool managerLocal = states.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(states);
+    }
 
-    this->r_PB_B = states.createProperty(this->nameOfPrescribedPositionProperty, stateInit);
-    this->rPrime_PB_B = states.createProperty(this->nameOfPrescribedVelocityProperty, stateInit);
-    this->rPrimePrime_PB_B = states.createProperty(this->nameOfPrescribedAccelerationProperty, stateInit);
-    this->sigma_PB = states.createProperty(this->nameOfPrescribedAttitudeProperty, stateInit);
-    this->omega_PB_P = states.createProperty(this->nameOfPrescribedAngVelocityProperty, stateInit);
-    this->omegaPrime_PB_P = states.createProperty(this->nameOfPrescribedAngAccelerationProperty, stateInit);
+    Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
+    this->r_PN_N =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialPositionProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialPositionProperty, stateInit, !this->customNameOfInertialPositionProperty);
+    this->v_PN_N =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialVelocityProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialVelocityProperty, stateInit, !this->customNameOfInertialVelocityProperty);
+    this->sigma_PN =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAttitudeProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAttitudeProperty, stateInit, !this->customNameOfInertialAttitudeProperty);
+    this->omega_PN_P =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfInertialAngVelocityProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfInertialAngVelocityProperty, stateInit, !this->customNameOfInertialAngVelocityProperty);
+
+    this->r_PB_B =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedPositionProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedPositionProperty, stateInit, !this->customNameOfPrescribedPositionProperty);
+    this->rPrime_PB_B =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedVelocityProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedVelocityProperty, stateInit, !this->customNameOfPrescribedVelocityProperty);
+    this->rPrimePrime_PB_B = managerLocal
+                               ? states.createEffectorProperty(
+                                   this->getEffectorNameRequest(), "nameOfPrescribedAccelerationProperty", stateInit)
+                               : states.createLegacyEffectorProperty(this->nameOfPrescribedAccelerationProperty,
+                                                                     stateInit,
+                                                                     !this->customNameOfPrescribedAccelerationProperty);
+    this->sigma_PB =
+      managerLocal
+        ? states.createEffectorProperty(this->getEffectorNameRequest(), "nameOfPrescribedAttitudeProperty", stateInit)
+        : states.createLegacyEffectorProperty(
+            this->nameOfPrescribedAttitudeProperty, stateInit, !this->customNameOfPrescribedAttitudeProperty);
+    this->omega_PB_P = managerLocal
+                         ? states.createEffectorProperty(
+                             this->getEffectorNameRequest(), "nameOfPrescribedAngVelocityProperty", stateInit)
+                         : states.createLegacyEffectorProperty(this->nameOfPrescribedAngVelocityProperty,
+                                                               stateInit,
+                                                               !this->customNameOfPrescribedAngVelocityProperty);
+    this->omegaPrime_PB_P =
+      managerLocal ? states.createEffectorProperty(
+                       this->getEffectorNameRequest(), "nameOfPrescribedAngAccelerationProperty", stateInit)
+                   : states.createLegacyEffectorProperty(this->nameOfPrescribedAngAccelerationProperty,
+                                                         stateInit,
+                                                         !this->customNameOfPrescribedAngAccelerationProperty);
 }
 
 /*! This method allows the state effector to provide its contributions to the mass props and mass prop rates of the
@@ -596,6 +822,10 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
  */
 void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
 {
+    if (this->effectorNamesResolved) {
+        this->bskLogger.bskError("PrescribedMotionStateEffector: attachments cannot change after name registration.");
+    }
+
     this->assignStateParamNames<StateEffector *>(newStateEffector);
 
     this->stateEffectors.push_back(newStateEffector);
@@ -728,3 +958,28 @@ const Eigen::Vector3d PrescribedMotionStateEffector::getR_MB_B() const { return 
  @return const Eigen::MRPd
 */
 const Eigen::MRPd PrescribedMotionStateEffector::getSigma_MB() const { return this->sigma_MB; }
+
+void
+PrescribedMotionStateEffector::bindAttachedDynamicEffectors(DynParamManager& manager)
+{
+    const bool managerLocal = manager.getEffectorNamingPolicy() == EffectorNamingPolicy::ManagerLocal;
+    if (managerLocal) {
+        this->applyResolvedNames(manager);
+        manager.getPropertyReference(this->nameOfInertialPositionProperty);
+        manager.getPropertyReference(this->nameOfInertialVelocityProperty);
+        manager.getPropertyReference(this->nameOfInertialAttitudeProperty);
+        manager.getPropertyReference(this->nameOfInertialAngVelocityProperty);
+        manager.getPropertyReference(this->nameOfPrescribedPositionProperty);
+        manager.getPropertyReference(this->nameOfPrescribedVelocityProperty);
+        manager.getPropertyReference(this->nameOfPrescribedAccelerationProperty);
+        manager.getPropertyReference(this->nameOfPrescribedAttitudeProperty);
+        manager.getPropertyReference(this->nameOfPrescribedAngVelocityProperty);
+        manager.getPropertyReference(this->nameOfPrescribedAngAccelerationProperty);
+    }
+    for (auto* effector : this->stateEffectors) {
+        if (managerLocal) {
+            this->assignStateParamNames(effector);
+        }
+        effector->bindAttachedDynamicEffectors(manager);
+    }
+}

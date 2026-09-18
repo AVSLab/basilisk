@@ -79,4 +79,8 @@ namespace std {
 %ignore SysModel::operator=(const SysModel &);
 %include "sys_model.h"
 %include "sys_process.h"
+%ignore SimThreadExecution::pythonExecutionContext;
+%rename(_setPythonExecutionContext) SimModel::setPythonExecutionContext;
+%rename(_getPythonExecutionContext) SimModel::getPythonExecutionContext;
+%rename(_getCurrentPythonExecutionContext) SimModel::getCurrentPythonExecutionContext;
 %include "sim_model.h"

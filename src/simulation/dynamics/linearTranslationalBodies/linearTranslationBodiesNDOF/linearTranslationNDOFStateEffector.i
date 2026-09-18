@@ -33,6 +33,18 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(LinearTranslationNDOFStateEffector, std::string, nameOfRhoState, getNameOfRhoState, setNameOfRhoState);
+%rename(getNameOfRhoState) LinearTranslationNDOFStateEffector::getNameOfRhoState() const;
+%rename(setNameOfRhoState) LinearTranslationNDOFStateEffector::setNameOfRhoState;
+%attribute(LinearTranslationNDOFStateEffector, std::string, nameOfRhoDotState, getNameOfRhoDotState, setNameOfRhoDotState);
+%rename(getNameOfRhoDotState) LinearTranslationNDOFStateEffector::getNameOfRhoDotState() const;
+%rename(setNameOfRhoDotState) LinearTranslationNDOFStateEffector::setNameOfRhoDotState;
+%attribute(TranslatingBody, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(TranslatingBody, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(TranslatingBody, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(TranslatingBody, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+
 %include "std_vector.i"
 %include "swig_conly_data.i"
 %include "swig_eigen.i"

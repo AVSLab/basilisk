@@ -31,6 +31,20 @@
 from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
+%include "attribute.i"
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfTheta1State, getNameOfTheta1State, setNameOfTheta1State);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfTheta1DotState, getNameOfTheta1DotState, setNameOfTheta1DotState);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfTheta2State, getNameOfTheta2State, setNameOfTheta2State);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfTheta2DotState, getNameOfTheta2DotState, setNameOfTheta2DotState);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialPositionProperty1, getNameOfInertialPositionProperty1, setNameOfInertialPositionProperty1);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialVelocityProperty1, getNameOfInertialVelocityProperty1, setNameOfInertialVelocityProperty1);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialAttitudeProperty1, getNameOfInertialAttitudeProperty1, setNameOfInertialAttitudeProperty1);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialAngVelocityProperty1, getNameOfInertialAngVelocityProperty1, setNameOfInertialAngVelocityProperty1);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialPositionProperty2, getNameOfInertialPositionProperty2, setNameOfInertialPositionProperty2);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialVelocityProperty2, getNameOfInertialVelocityProperty2, setNameOfInertialVelocityProperty2);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialAttitudeProperty2, getNameOfInertialAttitudeProperty2, setNameOfInertialAttitudeProperty2);
+%attribute(DualHingedRigidBodyStateEffector, std::string, nameOfInertialAngVelocityProperty2, getNameOfInertialAngVelocityProperty2, setNameOfInertialAngVelocityProperty2);
+
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 %include "std_vector.i"

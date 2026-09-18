@@ -93,23 +93,19 @@ class ignore:
         self.catch.__exit__(*exc_info)
 
 
-def deprecationWarn(id: str, removalDate: Union[datetime.date, str], msg: str):
+def deprecationWarn(id: str, removalDate: Union[datetime.date, str], msg: str, *, stacklevel: int = 3):
     """Utility function to raise deprecation warnings inside a function body.
 
     This function should rarely be used on its own. For deprecated Python code,
     prefer the `@deprecated` decorator. For deprecated C++ code, use the SWIG
     macros in `swig_deprecated.i`.
 
-    Args:
-        id (str): An identifier for the deprecated feature (function/variable
-            qualified name)
-        removalDate (Union[datetime.date, str]): The date when we expect to remove this
-            deprecated feature, in the format 'YYYY/MM/DD' or as a ``datetime.date``.
-            Think of an amount of time that would let users update their code, and then
-            add that duration to today's date to find a reasonable removal date.
-        msg (str, optional): a text that is directly shown to the users. Here, you may
-            explain why the function is deprecated, alternative functions, links to
-            documentation or scenarios that show how to translate deprecated code...
+    :param id: Identifier for the deprecated feature, such as a qualified function name.
+    :param removalDate: Expected removal date, as ``YYYY/MM/DD`` or a ``datetime.date``.
+        Allow enough time for users to migrate before this date.
+    :param msg: User-facing migration instructions, including replacement APIs or documentation links.
+    :param stacklevel: Stack level passed to ``warnings.warn``. The default reports the
+        caller of one deprecation wrapper; additional wrapper layers can increase it.
     """
 
     id = id.replace(")", "").replace("(", "")
@@ -120,13 +116,13 @@ def deprecationWarn(id: str, removalDate: Union[datetime.date, str], msg: str):
         warnings.warn(
             f"{id} will be removed after {removalDate}: {msg}",
             category=BSKDeprecationWarning,
-            stacklevel=3,
+            stacklevel=stacklevel,
         )
     else:
         warnings.warn(
             f"{id} will be removed soon: {msg}",
             category=BSKUrgentDeprecationWarning,
-            stacklevel=3,
+            stacklevel=stacklevel,
         )
 
 

@@ -103,7 +103,9 @@ This section is to outline the steps needed to setup a Translating Body State Ef
        :math:`\hat{x} + \hat{y}` have pairwise independent axes and are still rejected, because the
        three axes span only two dimensions.
 
-#. (Optional) Define a unique name for each state.  If you have multiple effectors, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+#. Optionally override state names. Unspecified names are automatic under both policies.
+   Legacy naming uses constructor counters; manager-local naming resolves names during
+   initialization. See :ref:`effectorNaming` before using generated names in callbacks::
 
     translatingBodyEffector.setNameOfRhoState("translatingBodyRho")
     translatingBodyEffector.setNameOfRhoDotState("translatingBodyRhoDot")

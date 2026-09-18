@@ -32,6 +32,14 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfRhoState, getNameOfRhoState, setNameOfRhoState);
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfRhoDotState, getNameOfRhoDotState, setNameOfRhoDotState);
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(LinearTranslationOneDOFStateEffector, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 %include <std_array.i>

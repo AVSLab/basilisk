@@ -32,6 +32,19 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "attribute.i"
+%attribute(PrescribedMotionStateEffector, std::string, nameOfsigma_PMState, getNameOfsigma_PMState, setNameOfsigma_PMState);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfInertialPositionProperty, getNameOfInertialPositionProperty, setNameOfInertialPositionProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfInertialVelocityProperty, getNameOfInertialVelocityProperty, setNameOfInertialVelocityProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfInertialAttitudeProperty, getNameOfInertialAttitudeProperty, setNameOfInertialAttitudeProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfInertialAngVelocityProperty, getNameOfInertialAngVelocityProperty, setNameOfInertialAngVelocityProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedPositionProperty, getNameOfPrescribedPositionProperty, setNameOfPrescribedPositionProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedVelocityProperty, getNameOfPrescribedVelocityProperty, setNameOfPrescribedVelocityProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedAccelerationProperty, getNameOfPrescribedAccelerationProperty, setNameOfPrescribedAccelerationProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedAttitudeProperty, getNameOfPrescribedAttitudeProperty, setNameOfPrescribedAttitudeProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedAngVelocityProperty, getNameOfPrescribedAngVelocityProperty, setNameOfPrescribedAngVelocityProperty);
+%attribute(PrescribedMotionStateEffector, std::string, nameOfPrescribedAngAccelerationProperty, getNameOfPrescribedAngAccelerationProperty, setNameOfPrescribedAngAccelerationProperty);
+
 %include "swig_conly_data.i"
 %include "swig_eigen.i"
 

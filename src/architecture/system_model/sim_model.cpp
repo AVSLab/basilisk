@@ -20,6 +20,29 @@
 #include "sim_model.h"
 #include <iostream>
 
+namespace {
+thread_local uint64_t currentPythonExecutionContext = 0;
+
+class PythonExecutionContextGuard
+{
+public:
+    explicit PythonExecutionContextGuard(uint64_t context) : previousContext(currentPythonExecutionContext)
+    {
+        currentPythonExecutionContext = context;
+    }
+    ~PythonExecutionContextGuard() {currentPythonExecutionContext = this->previousContext;}
+    PythonExecutionContextGuard(const PythonExecutionContextGuard&) = delete;
+    PythonExecutionContextGuard& operator=(const PythonExecutionContextGuard&) = delete;
+private:
+    uint64_t previousContext;
+};
+}
+
+uint64_t SimModel::getCurrentPythonExecutionContext()
+{
+    return currentPythonExecutionContext;
+}
+
 void activateNewThread(void *threadData)
 {
 
@@ -32,20 +55,23 @@ void activateNewThread(void *threadData)
         while(theThread->threadValid())
         {
             theThread->lockThread();
-            if(theThread->selfInitNow){
-                theThread->selfInitProcesses();
-                theThread->selfInitNow = false;
-            }
-            else if(theThread->crossInitNow){
-                theThread->crossInitProcesses();
-                theThread->crossInitNow = false;
-            }
-            else if(theThread->resetNow){
-                theThread->resetProcesses();
-                theThread->resetNow = false;
-            }
-            else{
-                theThread->StepUntilStop();
+            {
+                PythonExecutionContextGuard contextGuard(theThread->pythonExecutionContext);
+                if(theThread->selfInitNow){
+                    theThread->selfInitProcesses();
+                    theThread->selfInitNow = false;
+                }
+                else if(theThread->crossInitNow){
+                    theThread->crossInitProcesses();
+                    theThread->crossInitNow = false;
+                }
+                else if(theThread->resetNow){
+                    theThread->resetProcesses();
+                    theThread->resetNow = false;
+                }
+                else{
+                    theThread->StepUntilStop();
+                }
             }
             theThread->unlockParent();
         }
@@ -264,6 +290,7 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     {
         simThread->stopThreadNanos = SimStopTime;
         simThread->stopThreadPriority = stopPri;
+        simThread->pythonExecutionContext = 0;
         if(simThread->procCount() > 0) {
             simThread->unlockThread();
         }
@@ -318,15 +345,20 @@ void SimModel::selfInitSimulation()
     for(auto const& simThread : this->threadList)
     {
         simThread->selfInitNow = true;
+        simThread->pythonExecutionContext = this->pythonExecutionContext;
         simThread->unlockThread();
     }
+    std::exception_ptr firstException;
     for(auto const& simThread : this->threadList) {
         simThread->lockParent();
 
-        // Check if any thread had an exception and re-throw it
-        if(simThread->threadException) {
-            std::rethrow_exception(simThread->threadException);
+        // Finish every callback before Python releases the shared lifecycle context.
+        if(simThread->threadException && !firstException) {
+            firstException = simThread->threadException;
         }
+    }
+    if(firstException) {
+        std::rethrow_exception(firstException);
     }
     this->NextTaskTime = 0;
     this->CurrentNanos = 0;
@@ -344,16 +376,21 @@ void SimModel::resetInitSimulation() const
     for(auto const& simThread : this->threadList)
     {
         simThread->resetNow = true;
+        simThread->pythonExecutionContext = this->pythonExecutionContext;
         simThread->unlockThread();
     }
+    std::exception_ptr firstException;
     for(auto const& simThread : this->threadList)
     {
         simThread->lockParent();
 
-        // Check if any thread had an exception and re-throw it
-        if(simThread->threadException) {
-            std::rethrow_exception(simThread->threadException);
+        // Finish every callback before Python releases the shared lifecycle context.
+        if(simThread->threadException && !firstException) {
+            firstException = simThread->threadException;
         }
+    }
+    if(firstException) {
+        std::rethrow_exception(firstException);
     }
 }
 
