@@ -972,6 +972,84 @@ def test_update_optimizer_failure(
     np.testing.assert_allclose(allocation.wrenchError, [1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
 
+@pytest.mark.parametrize("previous_success", [True, False])
+def test_reset_clears_solution_diagnostics(
+    single_arm_allocation, monkeypatch, previous_success
+):
+    """
+    **Validation Test Description**
+
+    Run an allocation, reset the module, and run another allocation. The
+    optimizer stub supplies a 0.5 N candidate for a 1 N request with unit
+    thrust-use weight, giving cost 0.75 and wrench error 0.5 N when successful.
+    Reset must discard these diagnostics together with the output commands.
+
+    **Test Parameter Discussion**
+
+    ``previous_success`` marks all optimizer results either successful or
+    failed before reset. The failed case starts with the failure sentinel
+    ``bestErrInf == inf`` and a 1 N wrench error. Both cases must return to the
+    constructor's no-allocation state after reset. The subsequent update uses
+    successful 0.75 N candidates, with cost 0.8125 and wrench error 0.25 N.
+
+    **Description of Variables Being Tested**
+
+    Before reset, verify the expected status, cost, and wrench-error diagnostics
+    so the test cannot pass by resetting an unused module. After reset,
+    ``solutionFound`` must be zero; ``bestErrInf``, ``costVal``, and all six
+    entries of ``wrenchError`` must be NaN. Thrust outputs must be zero and all
+    three joint-command arrays must be empty. The next update must populate
+    the commands and diagnostics with the new successful allocation.
+    """
+    allocation, _ = single_arm_allocation
+    allocation.setWf(1.0)
+    allocation.Reset(0)
+    decisions = np.tile([0.4, -0.3, 0.5], (5, 1))  # columns: [rad, rad, N]
+    successes = [previous_success] * 5
+    _stub_optimizer(monkeypatch, decisions, successes)
+
+    allocation.UpdateState(0)
+
+    assert allocation.solutionFound == int(previous_success)
+    if previous_success:
+        assert allocation.costVal == pytest.approx(0.75)
+        assert allocation.bestErrInf == pytest.approx(0.5)  # [N]
+        expected_error = 0.5  # [N]
+    else:
+        assert np.isnan(allocation.costVal)
+        assert np.isposinf(allocation.bestErrInf)
+        expected_error = 1.0  # [N]
+    np.testing.assert_allclose(
+        allocation.wrenchError, [expected_error, 0.0, 0.0, 0.0, 0.0, 0.0]
+    )
+
+    allocation.Reset(1)  # [ns]
+
+    assert allocation.solutionFound == 0
+    assert np.isnan(allocation.bestErrInf)
+    assert np.isnan(allocation.costVal)
+    assert allocation.wrenchError.shape == (6,)
+    assert np.isnan(allocation.wrenchError).all()
+    np.testing.assert_array_equal(allocation.thrForceOutMsg.read().thrForce, 0.0)
+    joint_output = allocation.desJointAnglesOutMsg.read()
+    assert len(joint_output.states) == 0
+    assert len(joint_output.stateDots) == 0
+    assert len(joint_output.stateDDots) == 0
+
+    successes[:] = [True] * 5
+    decisions[:, 2] = 0.75  # [N]
+    allocation.UpdateState(2)  # [ns]
+
+    assert allocation.solutionFound == 1
+    assert allocation.costVal == pytest.approx(0.8125)
+    assert allocation.bestErrInf == pytest.approx(0.25)  # [N]
+    np.testing.assert_allclose(allocation.wrenchError, [0.25, 0.0, 0.0, 0.0, 0.0, 0.0])
+    assert allocation.thrForceOutMsg.read().thrForce[0] == pytest.approx(0.75)  # [N]
+    np.testing.assert_allclose(
+        allocation.desJointAnglesOutMsg.read().states, decisions[0, :2]
+    )
+
+
 @pytest.mark.parametrize(
     "missing_msg_name",
     [
