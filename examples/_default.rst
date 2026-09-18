@@ -312,6 +312,7 @@ Prescribed Motion Spacecraft Dynamics Simulations
    Prescribed Motion Rotational Solar Array Deployment <scenarioDeployingSolarArrays>
    Prescribed Motion with Translating Effector Branching <scenarioPrescribedMotionWithTranslationBranching>
    Prescribed Motion with Rotating Effector Branching <scenarioPrescribedMotionWithRotationBranching>
+   Prescribed Motion with Rotating and Translating Solar Array Deployment <scenarioRotTransArrayDeployment>
 
 Mission Simulations
 ---------------------------------------
