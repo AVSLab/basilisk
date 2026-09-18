@@ -180,7 +180,17 @@ class JointThrAllocation(sysModel.SysModel):
         raise ValueError("setWc expects scalar, length-6 vector, or 6x6 matrix.")
 
     def setWtheta(self, wThetaIn):
-        """Set joint-angle deviation weights for the cost function."""
+        """
+        Configure the optional joint-angle deviation penalty.
+
+        Validation occurs in ``resolveWtheta()`` during ``Reset()``, after the
+        number of joints is known. All weights must be finite. Scalar and
+        vector weights must be nonnegative; a matrix must be symmetric positive
+        semidefinite to floating-point roundoff.
+
+        :param wThetaIn: Scalar weight, length-nJoint vector of diagonal weights,
+            or nJoint-by-nJoint weighting matrix. Zero weights are allowed.
+        """
         self.Wtheta = wThetaIn
         self.useThetaPenalty = True
 
@@ -206,16 +216,70 @@ class JointThrAllocation(sysModel.SysModel):
         self.Wf = wfArr.copy()
 
     def resolveWtheta(self):
-        """Resolve Wtheta to an nJoint-by-nJoint weighting matrix."""
+        """
+        Validate and resolve Wtheta to an nJoint-by-nJoint weighting matrix.
+
+        Matrix symmetry and eigenvalue checks use a tolerance of
+        ``10 * nJoint * numpy.finfo(float).eps`` after scaling by the largest
+        absolute matrix entry. Negative diagonal entries are always rejected.
+        Roundoff-level asymmetry is removed by averaging unequal transpose
+        entries; already symmetric entries are preserved. Negative eigenvalues
+        within the tolerance are projected to zero. Zero and singular
+        positive-semidefinite matrices are accepted.
+
+        :raises ValueError: If the shape is invalid, an entry is non-finite,
+            a scalar/vector weight or matrix diagonal entry is negative, or a
+            matrix is asymmetric or has a negative eigenvalue beyond the
+            roundoff tolerance.
+        """
         wThetaArr = np.asarray(self.Wtheta, dtype=float)
+        if not np.all(np.isfinite(wThetaArr)):
+            raise ValueError("Wtheta weights must be finite.")
         if wThetaArr.ndim == 0:
+            if wThetaArr < 0.0:
+                raise ValueError("Wtheta scalar weight must be nonnegative.")
             self.Wtheta = float(wThetaArr) * np.eye(self.nJoint)
             return
         if wThetaArr.ndim == 1 and wThetaArr.size == self.nJoint:
+            if np.any(wThetaArr < 0.0):
+                raise ValueError("Wtheta vector weights must be nonnegative.")
             self.Wtheta = np.diag(wThetaArr)
             return
         if wThetaArr.shape == (self.nJoint, self.nJoint):
-            self.Wtheta = wThetaArr.copy()
+            if np.any(np.diag(wThetaArr) < 0.0):
+                raise ValueError(
+                    "Wtheta matrix must be positive semidefinite: "
+                    "diagonal entries must be nonnegative."
+                )
+            resolved_weights = wThetaArr.copy()
+            # Scaling keeps validation relative to the weights and avoids
+            # overflow when checking large but finite matrix entries.
+            weight_scale = np.max(np.abs(wThetaArr), initial=0.0)
+            if weight_scale > 0.0:
+                scaled_weights = wThetaArr / weight_scale
+                roundoff_tol = 10.0 * self.nJoint * np.finfo(float).eps
+                if not np.allclose(
+                    scaled_weights, scaled_weights.T, rtol=0.0, atol=roundoff_tol
+                ):
+                    raise ValueError("Wtheta matrix must be symmetric.")
+                unequal_entries = wThetaArr != wThetaArr.T
+                resolved_weights[unequal_entries] = (
+                    0.5 * wThetaArr[unequal_entries]
+                    + 0.5 * wThetaArr.T[unequal_entries]
+                )
+                eigenvalues, eigenvectors = np.linalg.eigh(resolved_weights / weight_scale)
+                if np.any(eigenvalues < -roundoff_tol):
+                    raise ValueError("Wtheta matrix must be positive semidefinite.")
+                if np.any(eigenvalues < 0.0):
+                    projected_weights = (
+                        eigenvectors * np.maximum(eigenvalues, 0.0)
+                    ) @ eigenvectors.T
+                    projected_weights = 0.5 * projected_weights + 0.5 * projected_weights.T
+                    # Preserve finiteness if projection raises an entry just
+                    # above the original scale near the floating-point limit.
+                    projected_weights /= max(1.0, np.max(np.abs(projected_weights)))
+                    resolved_weights = projected_weights * weight_scale
+            self.Wtheta = resolved_weights
             return
         raise ValueError(
             "setWtheta expects scalar, length-nJoint vector, or nJoint x nJoint matrix."
@@ -427,7 +491,13 @@ class JointThrAllocation(sysModel.SysModel):
             if currentJointAngles is None:
                 raise ValueError("currentJointAngles is required when using Wtheta.")
             deltaTheta = wrapAngle(theta - np.asarray(currentJointAngles))
-            costValue += deltaTheta.T @ self.Wtheta @ deltaTheta
+            motion_cost = deltaTheta.T @ self.Wtheta @ deltaTheta
+            if np.isinf(motion_cost):
+                # Either sign of overflow must rule out the candidate.
+                motion_cost = np.inf
+            # Cancellation near a null direction can leave a negative residual
+            # even after PSD projection. NaN still propagates through maximum.
+            costValue += np.maximum(motion_cost, 0.0)
         return float(costValue)
 
     def Reset(self, CurrentSimNanos):

@@ -466,6 +466,251 @@ def test_joint_motion_penalty_configuration():
     assert all(jointStateInMsg.isLinked() for jointStateInMsg in allocation.jointStatesInMsgs)
 
 
+@pytest.mark.parametrize(
+    "weight, error_message",
+    [
+        pytest.param(-1.0, "nonnegative", id="negative-scalar"),
+        pytest.param(-1.0e-20, "nonnegative", id="small-negative-scalar"),
+        pytest.param(np.nan, "finite", id="nan-scalar"),
+        pytest.param(np.inf, "finite", id="infinite-scalar"),
+        pytest.param(-np.inf, "finite", id="negative-infinite-scalar"),
+        pytest.param([1.0, -1.0], "nonnegative", id="negative-vector-entry"),
+        pytest.param([1.0, np.nan], "finite", id="nan-vector-entry"),
+        pytest.param([1.0, np.inf], "finite", id="infinite-vector-entry"),
+        pytest.param([[1.0, np.nan], [np.nan, 1.0]], "finite", id="nan-matrix-entry"),
+        pytest.param([[1.0, np.inf], [np.inf, 1.0]], "finite", id="infinite-matrix-entry"),
+        pytest.param([[1.0, 1.0], [0.0, 1.0]], "symmetric", id="asymmetric-matrix"),
+        pytest.param([[1.0, 2.0], [2.0, 1.0]], "positive semidefinite", id="indefinite-matrix"),
+        pytest.param(
+            1.0e-20 * np.array([[1.0, 2.0], [2.0, 1.0]]),
+            "positive semidefinite", id="small-indefinite-matrix",
+        ),
+        pytest.param(
+            -1.0e-20 * np.eye(2), "positive semidefinite", id="small-negative-matrix",
+        ),
+        pytest.param(
+            np.diag([1.0e15, -1.0]), "nonnegative", id="negative-diagonal-large-scale",
+        ),
+        pytest.param(
+            np.diag([1.0, -np.nextafter(0.0, 1.0)]), "nonnegative",
+            id="negative-subnormal-diagonal",
+        ),
+        pytest.param([1.0], "length-nJoint", id="wrong-vector-length"),
+        pytest.param(np.ones((2, 3)), "nJoint x nJoint", id="wrong-matrix-shape"),
+    ],
+)
+def test_reset_rejects_invalid_motion_weights(single_arm_allocation, weight, error_message):
+    """
+    **Validation Test Description**
+
+    Configure an invalid motion weight on a connected two-joint allocation and
+    call ``Reset()``. Validation must fail during initialization, before any
+    optimizer can use a negative or non-finite motion penalty.
+
+    **Test Parameter Discussion**
+
+    ``weight`` covers negative scalar/vector entries, NaN and infinity in each
+    supported input form, an asymmetric matrix, indefinite matrices, and wrong
+    dimensions. The indefinite matrix has positive entries but eigenvalues
+    -1 and 3, so checking entries alone is insufficient. Small negative and
+    indefinite weights ensure that an absolute tolerance cannot hide invalid
+    weights merely because their magnitude is small. Negative diagonals must
+    also be rejected regardless of other entries' scale, even at the smallest
+    representable magnitude. ``error_message`` names the expected failure.
+
+    **Description of Variables Being Tested**
+
+    ``Reset()`` must raise ``ValueError`` with a message identifying the failed
+    condition. Required messages and arm geometry are valid, so each failure
+    must originate from motion-weight validation.
+    """
+    allocation, _ = single_arm_allocation
+    allocation.setWtheta(weight)
+
+    with pytest.raises(ValueError, match=error_message):
+        allocation.Reset(0)
+
+
+@pytest.mark.parametrize(
+    "weight, expected_matrix",
+    [
+        pytest.param(0.0, np.zeros((2, 2)), id="zero-scalar"),
+        pytest.param(1.0e-20, 1.0e-20 * np.eye(2), id="small-positive-scalar"),
+        pytest.param([0.0, 3.0], np.diag([0.0, 3.0]), id="zero-vector-entry"),
+        pytest.param(np.zeros((2, 2)), np.zeros((2, 2)), id="zero-matrix"),
+        pytest.param(
+            np.nextafter(0.0, 1.0) * np.eye(2),
+            np.nextafter(0.0, 1.0) * np.eye(2),
+            id="smallest-positive-diagonal",
+        ),
+        pytest.param(
+            np.nextafter(0.0, 1.0) * np.ones((2, 2)),
+            np.nextafter(0.0, 1.0) * np.ones((2, 2)),
+            id="smallest-positive-symmetric-entries",
+        ),
+        pytest.param(
+            [[1.0, -1.0], [-1.0, 1.0]], [[1.0, -1.0], [-1.0, 1.0]],
+            id="singular-matrix-negative-cross-terms",
+        ),
+        pytest.param(
+            np.outer([0.1, 0.3], [0.1, 0.3]), np.outer([0.1, 0.3], [0.1, 0.3]),
+            id="singular-matrix-roundoff",
+        ),
+        pytest.param(
+            1.0e-20 * np.array([[1.0, -1.0], [-1.0, 1.0]]),
+            1.0e-20 * np.array([[1.0, -1.0], [-1.0, 1.0]]),
+            id="small-singular-matrix",
+        ),
+        pytest.param(
+            1.0e308 * np.array([[1.0, -0.5], [-0.5, 1.0]]),
+            1.0e308 * np.array([[1.0, -0.5], [-0.5, 1.0]]),
+            id="large-finite-matrix",
+        ),
+        pytest.param(
+            [[1.0, 0.5 + np.finfo(float).eps], [0.5, 1.0]],
+            [[1.0, 0.5 + np.finfo(float).eps / 2.0],
+             [0.5 + np.finfo(float).eps / 2.0, 1.0]],
+            id="roundoff-asymmetry",
+        ),
+    ],
+)
+def test_reset_accepts_semidefinite_motion_weights(single_arm_allocation, weight, expected_matrix):
+    """
+    **Validation Test Description**
+
+    Initialize the connected allocation with valid motion weights at the
+    boundaries of the allowed domain. Zero and singular weights must remain
+    usable, including matrices with negative off-diagonal entries. Validation
+    must handle small and large finite scales without overflow or an arbitrary
+    minimum weight.
+
+    **Test Parameter Discussion**
+
+    ``weight`` covers scalar/vector zeros, zero and singular matrices, a
+    floating-point Gram matrix with a mathematically zero eigenvalue, extreme
+    scales including the smallest positive float, and asymmetry of one machine
+    epsilon. ``expected_matrix`` contains the resolved diagonal or full matrix.
+    In the asymmetric case, the expected off-diagonal entries are the mean of
+    the configured pair. Singular matrices may change within roundoff when
+    negative computed eigenvalues are projected to zero.
+
+    **Description of Variables Being Tested**
+
+    ``Reset()`` must succeed, retain finite entries, and produce an exactly
+    symmetric ``Wtheta`` matching the expected matrix. Comparison uses zero
+    absolute tolerance so that small weights cannot pass after being erased.
+    The caller's input array must remain unchanged.
+    """
+    allocation, _ = single_arm_allocation
+    original_weight = np.asarray(weight).copy()
+    allocation.setWtheta(weight)
+
+    with np.errstate(over="raise", invalid="raise"):
+        allocation.Reset(0)
+
+    assert np.all(np.isfinite(allocation.Wtheta))
+    np.testing.assert_array_equal(allocation.Wtheta, allocation.Wtheta.T)
+    np.testing.assert_allclose(allocation.Wtheta, expected_matrix, rtol=1e-14, atol=0.0)
+    np.testing.assert_array_equal(np.asarray(weight), original_weight)
+
+
+@pytest.mark.parametrize(
+    "weight, angle_error",
+    [
+        pytest.param(
+            [[1.0e15, 1.0e8], [1.0e8, 9.0]], [-1.0e-7, 1.0],  # [rad]
+            id="negative-mode-below-relative-tolerance",
+        ),
+        pytest.param(
+            [[1.0, 1.0 + np.finfo(float).eps],
+             [1.0 + np.finfo(float).eps, 1.0]], [1.0, -1.0],  # [rad]
+            id="negative-mode-at-roundoff",
+        ),
+        pytest.param(
+            [[1.0e16, 1.0e8], [1.0e8, 1.0]], [-1.0e-8, 1.0],  # [rad]
+            id="singular-quadratic-cancellation",
+        ),
+    ],
+)
+def test_motion_penalty_is_nonnegative(single_arm_allocation, weight, angle_error):
+    """
+    **Validation Test Description**
+
+    Resolve nearly positive-semidefinite weights and evaluate ``cost()`` near
+    their null directions with zero requested wrench and zero thrust. There
+    are no other cost contributions, so a negative result would reward motion.
+
+    **Test Parameter Discussion**
+
+    ``weight`` includes a matrix with a -1 eigenvalue hidden by a 1e15 scale,
+    a matrix with a negative eigenvalue of roundoff magnitude, and a singular
+    matrix susceptible to cancellation in the quadratic form. Negative modes
+    within the documented relative tolerance must be projected out, rather
+    than retained. ``angle_error`` gives the tested near-null direction [rad].
+
+    **Description of Variables Being Tested**
+
+    The resolved matrix must have no eigenvalue below -1e-12 in these cases.
+    The actual motion cost must be finite, nonnegative, and at most 1e-12.
+    The first input previously produced a cost of approximately -1 despite
+    passing validation, while its projected penalty is approximately zero.
+    """
+    allocation, _ = single_arm_allocation
+    allocation.setWtheta(weight)
+    allocation.Reset(0)
+    decision = np.array([*angle_error, 0.0])  # [rad, rad, N]
+
+    cost = allocation.cost(decision, np.zeros(6), np.zeros(2))
+
+    assert np.linalg.eigvalsh(allocation.Wtheta).min() >= -1e-12
+    assert np.isfinite(cost)
+    assert 0.0 <= cost <= 1e-12
+
+
+def test_motion_penalty_preserves_nan(single_arm_allocation):
+    """
+    Verify that bounding motion cost below by zero does not hide invalid inputs.
+
+    A NaN measured joint angle makes only the motion penalty invalid; the
+    candidate angles, force-to-wrench map, requested wrench, and thrust are
+    otherwise finite. ``cost()`` must remain NaN so the candidate cannot be
+    mistaken for a finite, zero-cost allocation.
+    """
+    allocation, _ = single_arm_allocation
+    allocation.setWtheta(1.0)
+    allocation.Reset(0)
+
+    cost = allocation.cost(np.zeros(3), np.zeros(6), np.array([np.nan, 0.0]))
+
+    assert np.isnan(cost)
+
+
+def test_motion_penalty_does_not_hide_overflow(single_arm_allocation):
+    """
+    Verify that the nonnegative cost bound cannot turn overflow into zero cost.
+
+    This finite, nearly singular matrix and angle error have a positive motion
+    penalty, but intermediate products can overflow to negative infinity.
+    Resolve the weights and call the real cost with zero wrench and thrust.
+    Depending on floating-point evaluation order, the result can be positive
+    or NaN, but it must never be zero or negative. Either sign of infinity in
+    the motion term must produce a positive-infinite cost rather than being
+    clipped to zero and treated as a favorable allocation.
+    """
+    allocation, _ = single_arm_allocation
+    allocation.setWtheta([
+        [6.227709133842637e307, -7.891547020745441e307],
+        [-7.891547020745441e307, 1.0e308],
+    ])
+    allocation.Reset(0)
+    decision = np.array([-2.7992763360330044, -1.7941584448303567, 0.0])  # [rad, rad, N]
+
+    with np.errstate(over="ignore", invalid="ignore"):
+        cost = allocation.cost(decision, np.zeros(6), np.zeros(2))
+
+    assert np.isnan(cost) or cost > 0.0
+
+
 @pytest.mark.parametrize("extra_turns", [0, 3], ids=["boundary", "multiple-turns"])
 @pytest.mark.parametrize(
     "weight, expected_penalty",

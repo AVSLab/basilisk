@@ -136,3 +136,23 @@ be added in the same order as the joints in ``armConfigInMsg``:
     for i, jointStateMsg in enumerate(jointStateMsgs):
         allocation.addHingedJoint()
         allocation.jointStatesInMsgs[i].subscribeTo(jointStateMsg)
+
+``setWtheta()`` accepts a scalar, a vector of length ``nJoint`` containing
+diagonal weights, or an ``nJoint``-by-``nJoint`` matrix. All entries must be
+finite. Scalar and vector weights must be nonnegative, and matrix weights must
+be symmetric positive semidefinite. Zero weights and singular matrices are
+allowed; negative off-diagonal entries are also allowed when the matrix is
+positive semidefinite.
+
+The weights are validated during ``Reset()``, after the arm configuration
+determines the number of joints. Invalid weights raise ``ValueError`` before
+optimization. Matrix symmetry and eigenvalue checks allow a roundoff tolerance
+of ``10 * nJoint * numpy.finfo(float).eps`` relative to the largest absolute
+matrix entry. Negative diagonal entries are always rejected. Roundoff-level
+asymmetry is removed by averaging unequal transpose entries; entries that are
+already symmetric are preserved. Accepted negative eigenvalues within the
+roundoff tolerance are projected to zero. The motion cost is bounded below by
+zero to suppress negative residuals from floating-point cancellation near a
+null direction of the weighting matrix. Non-finite motion costs remain
+non-finite, so overflow or invalid joint-state data cannot become a zero-cost
+candidate.
