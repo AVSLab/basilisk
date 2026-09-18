@@ -137,6 +137,13 @@ be added in the same order as the joints in ``armConfigInMsg``:
         allocation.addHingedJoint()
         allocation.jointStatesInMsgs[i].subscribeTo(jointStateMsg)
 
+When the motion penalty is enabled, ``UpdateState()`` requires every measured
+joint angle to be finite. NaN or infinite measurements trigger ``BSK_ERROR``
+through the module logger, raising ``BasiliskError`` before optimization or
+output publication. Existing output messages retain their previous payloads
+and timestamps. Finite angles may include multiple revolutions. Joint-state
+inputs are unused when the penalty is disabled.
+
 ``setWtheta()`` accepts a scalar, a vector of length ``nJoint`` containing
 diagonal weights, or an ``nJoint``-by-``nJoint`` matrix. All entries must be
 finite. Scalar and vector weights must be nonnegative, and matrix weights must
