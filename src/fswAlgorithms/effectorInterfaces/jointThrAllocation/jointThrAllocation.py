@@ -548,6 +548,10 @@ class JointThrAllocation(sysModel.SysModel):
             currentJointAngles = np.array(
                 [jointStateInMsg().state for jointStateInMsg in self.jointStatesInMsgs]
             )
+            if not np.all(np.isfinite(currentJointAngles)):
+                self.bskLogger.error(
+                    "Joint-state measurements must be finite when using Wtheta."
+                )
 
         bestDecision = None
         bestCost = np.inf

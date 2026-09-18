@@ -909,6 +909,92 @@ def test_update_uses_current_joint_states(single_arm_allocation, monkeypatch):
     assert len(calls) == 10
 
 
+@pytest.mark.parametrize(
+    "invalid_state", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "negative-inf"]
+)
+@pytest.mark.parametrize("invalid_joint", [0, 1])
+@pytest.mark.parametrize("use_motion_penalty", [False, True])
+def test_update_rejects_nonfinite_joint_states(
+    single_arm_allocation, monkeypatch, invalid_state, invalid_joint, use_motion_penalty
+):
+    """
+    **Validation Test Description**
+
+    Run a successful allocation, then replace one measured joint angle with a
+    non-finite value and call ``UpdateState()`` again. When the motion penalty
+    is enabled, the update must use the module logger's ``BSK_ERROR`` path and
+    raise ``BasiliskError`` before invoking the optimizer or publishing
+    commands. This prevents the failure fallback from copying an invalid
+    measurement into a joint command.
+
+    **Test Parameter Discussion**
+
+    ``invalid_state`` covers NaN and both signs of infinity. ``invalid_joint``
+    places the invalid measurement in either input, leaving the other finite,
+    so validating only the first joint or accepting any finite joint fails.
+    ``use_motion_penalty`` also covers the disabled case, where joint-state
+    inputs are unused and must not prevent allocation.
+
+    **Description of Variables Being Tested**
+
+    The optimizer stub must receive no additional calls after rejection. Both
+    output timestamps and their previously valid commands must remain
+    unchanged. With the penalty disabled, another five optimizer calls and
+    fresh output timestamps confirm normal operation. Finally, restore a
+    finite measured angle containing a full revolution and verify that a new
+    allocation succeeds, so the check does not restrict valid unwrapped
+    angles or leave the module unable to process corrected input.
+    """
+    allocation, input_messages = single_arm_allocation
+    # Direct lifecycle calls need the logger normally assigned by AddModelToTask.
+    allocation.bskLogger = bskLogging.BSKLogger()
+    if use_motion_penalty:
+        allocation.setWtheta(1.0)
+    allocation.Reset(0)
+    decisions = np.tile([0.4, -0.3, 0.5], (5, 1))  # columns: [rad, rad, N]
+    calls = _stub_optimizer(monkeypatch, decisions, [True] * 5)
+    allocation.UpdateState(1)  # [ns]
+    assert allocation.solutionFound == 1
+    assert len(calls) == 5
+    thrust_reader = allocation.thrForceOutMsg.addSubscriber()
+    joint_reader = allocation.desJointAnglesOutMsg.addSubscriber()
+    previous_thrust = np.array(allocation.thrForceOutMsg.read().thrForce)
+    previous_angles = np.array(allocation.desJointAnglesOutMsg.read().states)
+
+    payload = messaging.ScalarJointStateMsgPayload()
+    payload.state = invalid_state
+    input_messages["jointStatesInMsgs"][invalid_joint].write(payload)
+
+    if use_motion_penalty:
+        with pytest.raises(
+            bskLogging.BasiliskError, match="Joint-state measurements must be finite"
+        ):
+            allocation.UpdateState(2)  # [ns]
+        assert len(calls) == 5
+        expected_time = 1  # [ns]
+    else:
+        allocation.UpdateState(2)  # [ns]
+        assert len(calls) == 10
+        expected_time = 2  # [ns]
+
+    assert thrust_reader.timeWritten() == expected_time
+    assert joint_reader.timeWritten() == expected_time
+    np.testing.assert_array_equal(allocation.thrForceOutMsg.read().thrForce, previous_thrust)
+    np.testing.assert_array_equal(
+        allocation.desJointAnglesOutMsg.read().states, previous_angles
+    )
+
+    payload.state = 2.0 * np.pi + 0.2  # [rad]
+    input_messages["jointStatesInMsgs"][invalid_joint].write(payload)
+    calls_before_recovery = len(calls)
+    allocation.UpdateState(3)  # [ns]
+    assert len(calls) == calls_before_recovery + 5
+    assert allocation.solutionFound == 1
+    assert np.isfinite(allocation.costVal)
+    assert thrust_reader.timeWritten() == 3  # [ns]
+    assert joint_reader.timeWritten() == 3  # [ns]
+
+
 @pytest.mark.parametrize("use_motion_penalty", [False, True])
 def test_update_optimizer_failure(
     single_arm_allocation, monkeypatch, use_motion_penalty
