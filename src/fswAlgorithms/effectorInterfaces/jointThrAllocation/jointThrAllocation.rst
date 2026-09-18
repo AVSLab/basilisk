@@ -156,3 +156,9 @@ zero to suppress negative residuals from floating-point cancellation near a
 null direction of the weighting matrix. Non-finite motion costs remain
 non-finite, so overflow or invalid joint-state data cannot become a zero-cost
 candidate.
+
+``Reset()`` clears the output commands and restores the initial diagnostic
+state: ``solutionFound`` is zero, and ``costVal``, ``bestErrInf``, and all six
+entries of ``wrenchError`` are ``NaN``. These values indicate that no allocation
+has been attempted since reset. The next ``UpdateState()`` replaces them with
+the result of the new allocation attempt.

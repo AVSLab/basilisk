@@ -501,12 +501,22 @@ class JointThrAllocation(sysModel.SysModel):
         return float(costValue)
 
     def Reset(self, CurrentSimNanos):
+        """
+        Reinitialize configuration and clear allocation outputs and diagnostics.
+
+        :param CurrentSimNanos: Current simulation time [ns].
+        """
         self.validateInputMessages()
         self.parseArmConfig()
         self.resolveWf()
         if self.useThetaPenalty:
             self.resolveWtheta()
         self.initialGuesses()
+
+        self.solutionFound = 0
+        self.bestErrInf = np.nan
+        self.wrenchError = np.full(6, np.nan)
+        self.costVal = np.nan
 
         self.desJointAnglesOutMsg.write(messaging.JointArrayStateMsgPayload())
         self.thrForceOutMsg.write(messaging.THRArrayCmdForceMsgPayload())
