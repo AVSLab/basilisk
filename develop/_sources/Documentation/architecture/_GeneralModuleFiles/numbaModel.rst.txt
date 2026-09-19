@@ -1,0 +1,10 @@
+.. _numbaModel:
+
+numbaModel
+==========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: numbaModel.h
+   :project: _GeneralModuleFiles0
+

@@ -1,0 +1,10 @@
+.. _RealTimeFactorMsgPayload:
+
+RealTimeFactorMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RealTimeFactorMsgPayload.h
+   :project: msgPayloadDefC
+

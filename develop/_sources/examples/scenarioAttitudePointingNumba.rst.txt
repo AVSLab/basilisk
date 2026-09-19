@@ -1,0 +1,15 @@
+.. _scenarioAttitudePointingNumba:
+
+scenarioAttitudePointingNumba
+=============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioAttitudePointingNumba
+   :members:
+   :show-inheritance:
+

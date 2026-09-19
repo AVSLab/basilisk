@@ -1,0 +1,13 @@
+.. _test_CMsgRecorderReadsLiveMessage:
+
+test_CMsgRecorderReadsLiveMessage
+=================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_CMsgRecorderReadsLiveMessage
+   :members:
+   :show-inheritance:
+

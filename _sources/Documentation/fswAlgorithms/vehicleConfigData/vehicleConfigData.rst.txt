@@ -1,0 +1,8 @@
+.. _vehicleConfigData:
+
+:module-type:`C` Module: vehicleConfigData
+==========================================
+
+.. autodoxygenfile:: vehicleConfigData.h
+   :project: vehicleConfigData
+

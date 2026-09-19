@@ -1,0 +1,92 @@
+.. _supportDataList:
+
+Support Data Files
+==================
+.. note::
+
+   Below is a list of all the data files that are packaged into Basilisk.
+   They are organized into a range of topical folders where the folder name is the data category.
+
+Albedodata
+----------
+
+- ``Earth_ALB_2018_CERES_All_10x10.csv``
+- ``Earth_ALB_2018_CERES_All_1x1.csv``
+- ``Earth_ALB_2018_CERES_All_5x5.csv``
+- ``Earth_ALB_2018_CERES_Clear_10x10.csv``
+- ``Earth_ALB_2018_CERES_Clear_1x1.csv``
+- ``Earth_ALB_2018_CERES_Clear_5x5.csv``
+- ``Mars_ALB_TES_10x10.csv``
+- ``Mars_ALB_TES_1x1.csv``
+- ``Mars_ALB_TES_5x5.csv``
+- ``earthReflectivityMean_10x10.dat``
+- ``earthReflectivityMean_1p25x1.dat``
+- ``earthReflectivityMean_5x5.dat``
+- ``earthReflectivityStd_10x10.dat``
+- ``earthReflectivityStd_1p25x1.dat``
+- ``earthReflectivityStd_5x5.dat``
+- ``marsReflectivityMean_10x10.dat``
+- ``marsReflectivityMean_1p25x1.dat``
+- ``marsReflectivityMean_5x5.dat``
+
+Atmradiofreqdampdata
+--------------------
+
+- ``oxygen.json``
+- ``waterVapour.json``
+
+Atmospheredata
+--------------
+
+- ``EarthGRAMNominal.txt``
+- ``JupiterGRAMNominal.csv``
+- ``MarsGRAMNominal.txt``
+- ``NRLMSISE00Nominal.txt``
+- ``NeptuneGRAMNominal.csv``
+- ``TitanGRAMNominal.csv``
+- ``USStandardAtmosphere1976.csv``
+- ``UranusGRAMNominal.csv``
+- ``VenusGRAMNominal.csv``
+
+Dentongeo
+---------
+
+- ``model_e_array_all.txt``
+- ``model_e_array_high.txt``
+- ``model_e_array_low.txt``
+- ``model_e_array_mid.txt``
+- ``model_i_array_all.txt``
+- ``model_i_array_high.txt``
+- ``model_i_array_low.txt``
+- ``model_i_array_mid.txt``
+
+Ephemerisdata
+-------------
+
+- ``MVN_SCLKSCET.00000.tsc``
+- ``de-403-masses.tpc``
+- ``de430.bsp``
+- ``hst_edited.bsp``
+- ``naif0011.tls``
+- ``naif0012.tls``
+- ``nh_pred_od077.bsp``
+- ``pck00010.tpc``
+
+Localgravdata
+-------------
+
+- ``GGM03S-J2-only.txt``
+- ``GGM03S.txt``
+- ``GGM2BData.txt``
+- ``VESTA20H.txt``
+- ``eros007790.tab``
+
+Magneticfield
+-------------
+
+- ``WMM2025.COF``
+
+Skybrightnessdata
+-----------------
+
+- ``haslam408_dsds_Remazeilles2014.fits``

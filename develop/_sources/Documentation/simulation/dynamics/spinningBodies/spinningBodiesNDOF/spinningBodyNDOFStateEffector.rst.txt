@@ -1,0 +1,207 @@
+.. _spinningBodyNDOFStateEffector:
+
+:module-type:`C++` Module: spinningBodyNDOFStateEffector
+========================================================
+
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+The N-degree-of-freedom spinning body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the N-DoF spinning body module and the rigid body hub that it is attached to. In this case, an N-DoF spinning body system has four masses and four inertia tensors. The lower axis is attached to the hub and the upper axis is attached to the lower body. This module can represent multiple different effectors, with any number of degrees of freedom. A spring and damper can be included in each axis, and an optional motor torque can be applied on each spinning axis.
+
+Nominally, each degree of freedom corresponds to an additional rigid body link. However, by setting the mass and the inertia of to 0, the module can simulate multiple degrees of freedom for the same spinning body instead.
+
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+
+.. bsk-module-io:: spinningBodyNDOFStateEffector
+    :caption: Module I/O Messages
+
+    output spinningBodyOutMsgs HingedRigidBodyMsgPayload
+        Output vector of messages containing the spinning body state angle and angle rate.
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Motor torques for the axes in the order bodies were added with ``addSpinningBody()``.
+    input motorLockInMsg ArrayEffectorLockMsgPayload
+        (Optional) Lock commands for the axes in the order bodies were added with ``addSpinningBody()``.
+    output spinningBodyConfigLogOutMsgs SCStatesMsgPayload
+        Output vector of messages containing the spinning body inertial position and attitude states.
+
+
+Detailed Module Description
+---------------------------
+
+An N-DoF spinning body has 2N states: ``theta``, ``thetaDot`` for each degree of freedom.
+
+Command Array Indexing
+^^^^^^^^^^^^^^^^^^^^^^
+One lock message controls the degrees of freedom within this module. Element
+``effectorLockFlag[i]`` controls the axis of the body added by the ``i``-th call to
+``addSpinningBody()``, counting from zero. Use ``0`` for a free axis and ``1`` for a
+locked axis. For a three-body chain, ``[1, 0, 1]`` locks the first and third axes and
+leaves the second free to rotate. Motor torque commands use the same ordering in
+``motorTorque[i]``. Set one entry for every body in the chain.
+
+These indexes identify degrees of freedom within a single module, independently of
+``effectorID`` and the order in which module instances are added to the spacecraft.
+Connect the messages to ``spinningBodyEffector``, which owns the chain, rather than to
+an individual ``SpinningBody``. Use separate lock and torque messages for module
+instances that need independent commands. Instances sharing a message read the same
+array starting at element ``[0]``. See :ref:`spinningBodyOneDOFStateEffector` for an
+example of independent lock messages.
+
+The lock and motor torque payload arrays each contain `MAX_EFF_CNT
+<https://github.com/AVSLab/basilisk/blob/develop/src/architecture/utilities/macroDefinitions.h>`__ entries.
+When using either input message, limit the chain to that many degrees
+of freedom. Spacecraft initialization and ``Reset()`` raise a ``BasiliskError`` if
+either input is linked and the chain exceeds this limit, even if the message has not
+been written. Input processing repeats the check to catch messages connected after
+initialization. Larger chains are allowed when neither array input is linked.
+
+Mathematical Modeling
+^^^^^^^^^^^^^^^^^^^^^
+See the following conference paper for a detailed description of this model.
+
+.. note::
+
+    J. Vaz Carneiro, C. Allard and H. Schaub, `"Effector Dynamics For Sequentially Rotating Rigid Body Spacecraft Components" <https://hanspeterschaub.info/Papers/VazCarneiro2023a.pdf>`_,
+    AAS Astrodynamics Specialist Conference, Bog Sky, MT, Aug. 13-17, 2023
+
+User Guide
+----------
+This section is to outline the steps needed to setup a Spinning Body N DoF State Effector in Python using Basilisk.
+
+#. Import the spinningBodyNDOFStateEffector class::
+
+    from Basilisk.simulation import spinningBodyNDOFStateEffector
+
+#. Create an instantiation of a Spinning body::
+
+    spinningBodyEffector = spinningBodyNDOFStateEffector.SpinningBodyNDOFStateEffector()
+
+#. Define all physical parameters for each spinning body. For example::
+
+    spinningBody = spinningBodyNDOFStateEffector.SpinningBody()
+    spinningBody.setMass(25.0)
+    spinningBody.setISPntSc_S([[50, 0.0, 0.0],
+                                [0.0, 40, 0.0],
+                                [0.0, 0.0, 30]])
+    spinningBody.setDCM_S0P([[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
+    spinningBody.setR_ScS_S([[0.2],
+                              [-0.3],
+                              [0.1]])
+    spinningBody.setR_SP_P([[-0.05],
+                             [0.0],
+                             [0.1]])
+    spinningBody.setSHat_S([[0], [0], [1]])
+    spinningBodyEffector.addSpinningBody(spinningBody)
+
+#. (Optional) Define initial conditions of the effector.  Default values are zero states::
+
+    spinningBody.setThetaInit(10.0 * macros.D2R)
+    spinningBody.setThetaDotInit(-1.0 * macros.D2R)
+
+#. (Optional) Define spring and damper coefficients.  Default values are zero states::
+
+    spinningBody.setK(100)
+    spinningBody.setC(20)
+
+#. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+
+    spinningBodyEffector.setNameOfThetaState("spinningBodyTheta")
+    spinningBodyEffector.setNameOfThetaDotState("spinningBodyThetaDot")
+
+#. (Optional) Connect a command torque message. This example commands the single body added above::
+
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBodyEffector.motorTorqueInMsg.subscribeTo(cmdMsg)
+
+#. (Optional) Connect an axis-locking message. This example locks the single body added above::
+
+    lockArray = messaging.ArrayEffectorLockMsgPayload()
+    lockArray.effectorLockFlag = [1]
+    lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+    spinningBodyEffector.motorLockInMsg.subscribeTo(lockMsg)
+
+#. The angular states of the body are created using an output vector of messages ``spinningBodyOutMsgs``.
+
+#. The spinning body config log state output messages is ``spinningBodyConfigLogOutMsgs``.
+
+#. Add the effector to your spacecraft::
+
+    scObject.addStateEffector(spinningBodyEffector)
+
+   See :ref:`spacecraft` documentation on how to set up a spacecraft object.
+
+#. Add the module to the task list::
+
+    unitTestSim.AddModelToTask(unitTaskName, spinningBodyEffector)
+
+Initialization and Reset
+------------------------
+Attaching the effector to a spacecraft causes its configuration to be validated when the spacecraft registers
+the effector states.  Initialization requires at least one body and a positive mass for the final body.  It also
+rejects an invalid initial rotation matrix or an invalid inertia tensor for any body with positive mass.  Spin
+axes are normalized and validated by ``setSHat_S()`` when configured.
+
+The spacecraft drives the effector dynamics.  Add the effector to a task to process its optional torque, lock,
+and reference inputs and to update its output messages through ``UpdateState()``.
+
+When the effector is scheduled, its ``Reset()`` repeats the chain validation.
+``Reset()`` does not reset the integrated angle or angle-rate states; those states receive their configured
+initial values when they are registered with the spacecraft dynamics.
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by one of the spinning bodies rather than by the hub::
+
+    spinningBodyEffector.addDynamicEffector(childEffector, segment)
+
+Here ``segment`` is the one-based spinning body number, counting outward from the hub, so ``1`` is the
+spinning body attached to the hub.
+
+This effector then makes its inertial position, velocity, attitude, and angular velocity available
+in place of the hub's, and the child reads whichever of the four its model needs. Any geometry given
+to the child is expressed in that spinning body's frame rather than the hub body frame. Both this
+effector and the child are still added to the task in the usual way.
+
+
+Finite Configuration Values
+---------------------------
+The combined body mass must remain finite. All configured masses, spring and damping coefficients,
+initial angles and angular rates, position offsets, and inertia entries must be finite. This requirement also applies to inertia
+entries on massless bodies; the existing rules for inertia realizability remain unchanged.
+The frame rotation checks reject non-finite DCMs as well as improper rotations.
+
+Spin axes must contain only finite components and have a norm strictly greater than ``0.01``.
+Normalization scales the components before computing their norm, so very large finite axes
+retain the correct direction. Repeated resets preserve integrated states and commands.
+
+``setMass()``, ``setK()``, ``setC()``, and ``setSHat_S()`` reject invalid values before replacing
+the previous setting. Other configured values are checked before state registration and from
+``Reset()``. Massless intermediate bodies remain supported; the final body still requires a
+strictly positive mass. Invalid values raise ``BasiliskError``.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: spinningBodyNDOFStateEffector.h
+   :project: spinningBodiesNDOF
+

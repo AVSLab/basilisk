@@ -1,0 +1,35 @@
+.. _cppModuleTemplate:
+
+:module-type:`C++` Module: cppModuleTemplate
+============================================
+
+Executive Summary
+-----------------
+
+This is a very basic dummy C++ Basilisk module that can be used as a template to create other C++ modules.
+It mimics the functionality of :ref:`cModuleTemplate`.  See that module for a more complete discussion
+of how to write the RST module documentation file.
+
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: cppModuleTemplate
+    :caption: Module I/O Messages
+
+    input dataInMsg CModuleTemplateMsgPayload
+        (optional) Input message description.  Note here if this message is optional, and what the default behavior
+        is if this message is not provided.
+
+    output dataOutMsg CModuleTemplateMsgPayload
+        Output message description.
+
+
+----
+
+.. autodoxygenfile:: cppModuleTemplate.h
+   :project: cppModuleTemplate
+

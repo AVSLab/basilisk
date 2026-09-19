@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_formationBarycenter:
+
+formationBarycenter
+===================
+
+:doc:`Module documentation <formationBarycenter>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

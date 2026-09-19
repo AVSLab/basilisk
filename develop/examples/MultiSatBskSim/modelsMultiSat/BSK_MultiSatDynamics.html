@@ -1,0 +1,442 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSK_MultiSatDynamics &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="BSK_MultiSatFsw" href="BSK_MultiSatFsw.html" />
+    <link rel="prev" title="BSK_EnvironmentMercury" href="BSK_EnvironmentMercury.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">Integrated Example Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioBasicOrbit.html">Basic Orbit Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioOrbitManeuver.html">Delta_v Orbit Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioJupiterArrival.html">Hyperbolic Jupiter Arrival Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioOrbitMultiBody.html">Multiple Gravitational Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioOrbitConsistencyVerification.html">Verifying Spherical Harmonic Propagation Consistency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioLagrangePointOrbit.html">Lagrange Point Orbits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioCentralBody.html">Defining Motion Relative to Planet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioPatchedConics.html">Simulating Trajectory about Multiple Celestial Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioCustomGravBody.html">Including Custom Gravitational Bodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioHaloOrbit.html">Near-Halo Orbit Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioGroundTracks.html">Showing Ground Tracks on a Planet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedback.html">Inertial Attitude Pointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedbackNumba.html">Inertial Attitude Pointing with Numba FSW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedback2T.html">Using Separate Task Group for Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudePointing.html">Basic Attitude Pointing in Deep Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudePointingNumba.html">Basic Attitude Pointing in Deep Space with Numba Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedbackNoEarth.html">Complex Attitude Pointing in Deep Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeConstraintViolation.html">Sun-Pointing Constraint Violation in Space</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSpiceSpacecraft.html">Inertial Pointing with Spice prescribed translational motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioHohmann.html">Basic attitude pointing flight mode with Hohmann transfer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioOrbitManeuverTH.html">Thrusted Hohmann Transfer Maneuver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeGuidance.html">Hill Frame Pointing on Elliptic Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttGuideHyperbolic.html">Velocity Frame Pointing on Hyperbolic Orbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttLocPoint.html">Pointing at Earth Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudePrescribed.html">Prescribing the spacecraft orientation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioInertialSpiral.html">Layered spiral attitude guidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeConstrainedManeuver.html">Constrained Attitude Maneuver Guidance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSweepingSpacecraft.html">Performing Sweeping Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioStripImaging.html">Earth Strip Imaging Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedbackRW.html">Pointing with Reaction Wheels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedback2T_stateEffTH.html">Pointing with Attitude State Effector Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedback2T_TH.html">Pointing with Attitude Dynamic Effector Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMomentumDumping.html">Reaction Wheel Momentum Dumping using Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSepMomentumManagement.html">Continuous Momentum Management using Dual-Gimbaled Electric Thruster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeSteering.html">MRP Steering Law</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSmallBodyFeedbackControl.html">Small Body Waypoint-to-Waypoint Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioLambertSolver.html">Lambert Solver Delta-V Maneuver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMagneticFieldCenteredDipole.html">Centered Dipole Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMagneticFieldWMM.html">World Magnetic Model WMM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeGG.html">Gravity Gradient Perturbed Hill Pointing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDragDeorbit.html">Satellite Drag Deorbit about Earth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioStochasticDragSpacecraft.html">Satellite Drag with Stochastic (Random) Density using Spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioGroundDownlink.html">Satellite communicating to Earth ground station</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSpacecraftLocation.html">Satellite checking communication access to another satellite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAlbedo.html">Albedo CSS simulation about Multiple Celestial Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioCSS.html">Adding CSS Sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioCSSFilters.html">Estimating Sun Heading with CSS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioTAM.html">Adding a Three-Axis Magnetometer (TAM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMtbMomentumManagementSimple.html">RW Momentum Management using TAMs and MTBs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMtbMomentumManagement.html">RW Momentum Management using TAMs and MTBs Using desired Nominal RW Speed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioTAMcomparison.html">TAM Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioPowerDemo.html">Basic Power Usage and Tracking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudeFeedbackRWPower.html">Power Usage with RW-Based ADCS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDataDemo.html">Basic Data Generation and Transmission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioGroundLocationImaging.html">Ground Target Imaging and Downlink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioGroundMapping.html">Mapping A Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSensorThermal.html">Thermal Modeling of a Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioTempMeasurementAttitude.html">Temperature Measurement with Random Seed Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioReactionWheel.html">CubeSat with Reaction Wheel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioUnbalancedThrusters.html">CubeSat with 4 Unbalanced Thrusters and Fuel Tanks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioArmWithThrusters.html">Branching Deployable Arm with Thrusters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioDeployPanels.html">Chained Hinged Panel Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioSRPInPanels.html">Solar Radiation Pressure Model on Arbitrary Surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioAsteroidLanding.html">Landing on Asteroid with Contact Physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioMJEarthMoonGravity.html">Earth-Moon Gravity with SPICE or PlanetEphemeris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSpiceReconstruction.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Position)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioVestaOrientation.html">Optimizing SPICE Cost with Ephemeris Reconstruction (Orientation)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioSimpleDocking.html">Docking between Two CubeSats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioBranchingPanels.html">Branching Panel Deployment with Locking Mechanisms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioAttitudeFeedbackRWMuJoCo.html">Pointing with Reaction Wheels in MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioFormationFlyingWithDrag.html">Translation-only formation flying under differential drag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioStochasticDrag.html">Satellite Drag with Stochastic (Random) Density using MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioThrArmControl.html">Spacecraft Control with Thruster Arms using MuJoCo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/scenarioMJSceneVizard.html">Combining MuJoCo Scenes and a Spacecraft in Vizard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/BSK_mujocoMasters.html">Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujoco/mujocoModels/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/runAllComparisons.html">Comparison Overview and Execution Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareOrbit.html">Keplerian Orbit Baseline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareTorque.html">Rigid Body with Constant Torque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareRwPanels.html">Hub with Reaction Wheels and Hinged Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareFlexPanels.html">Lumped-Mass Flexible Panels and Runtime Scaling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareOrbitMultibody.html">Multi-Body in Orbit with Gravity-Gradient Torque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareVariableMass.html">Variable-Mass Fuel Slosh and Depletion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareParetoRwPanels.html">Accuracy vs Runtime Pareto Front (Reaction Wheels and Panels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/scenarioCompareParetoFlexPanels.html">Accuracy vs Runtime Pareto Front (Stiff Flexible Panels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepOrbitDt.html">Integrator-Step Sweep (Keplerian Orbit)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepTorqueArtifact.html">Velocity-Regime Round-Off Sweep (Constant Torque)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepTorqueMechanismChecks.html">Torque-Artifact Mechanism Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepRwBookkeepingMass.html">Bookkeeping-Mass Sweep (Reaction Wheels)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepSloshDisplacement.html">Slosh-Displacement Metric (Variable Mass)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/sweepVariableMassPendulumInertia.html">Pendulum-Inertia and Step Sweep (Variable Mass)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamicsComparison/paperFigures.html">Paper Figure Rendering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioConstrainedDynamics.html">Two Spacecraft Connected Using Holonomic Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioConstrainedDynamicsManeuverAnalysis.html">Constraint Gain Tuning Analysis With Maneuvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioConstrainedDynamicsComponentAnalysis.html">Constrained Motion Component Analysis Using a Truth Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioConstrainedDynamicsFrequencyAnalysis.html">Frequency Analysis of Solar Panel Resonance Using the Constraint Effector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioGaussMarkovRandomWalk.html">IMU Gyro Random Walk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFuelSlosh.html">Fuel Slosh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioHingedRigidBody.html">Flexible (Hinged) Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFlexiblePanel.html">Bending and Torsional Flexible Panels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioRotatingPanel.html">Sensors Attached to a Rotating Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDeployingPanel.html">Hinged Panel Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioTwoChargedSC.html">MSM Simulation of Charged Spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSpinningBodiesTwoDOF.html">Spacecraft with 1- or 2-DOF Panel using single effector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioRoboticArm.html">Robotic Arm Effector with Profiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioExtendingBoom.html">Spacecraft with an multi-link extending component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioImpact.html">Solar Array Debris Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioPrescribedScrewMotion.html">Prescribed Helical Screw Motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDeployingSolarArrays.html">Prescribed Motion Rotational Solar Array Deployment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioPrescribedMotionWithTranslationBranching.html">Prescribed Motion with Translating Effector Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioPrescribedMotionWithRotationBranching.html">Prescribed Motion with Rotating Effector Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioHelioTransSpice.html">Heliocentric Translation Using Custom Spice Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFlybySpice.html">Planetary Flybys Using Custom Spice File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAsteroidArrival.html">Asteroid Arrival</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAerocapture.html">Aerocapture Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFormationBasic.html">Basic Servicer/Debris Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFormationMeanOEFeedback.html">Mean orbit element based relative motion control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioFormationReconfig.html">Impulsive feedback control of relative motion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDebrisReorbitET.html">Electrostatic Tractor Debris Reorbiting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDragRendezvous.html">Attitude-Driven differential drag control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioRendezVous.html">Servicer approaching a debris object with 3 flight modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSatelliteConstellation.html">Walker-Delta Satellite Constellation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSmallBodyNav.html"> Proximity Operations Hybrid EKF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSmallBodyNavUKF.html"> Non-Keplerian Acceleration Estimation using UKF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioSmallBodyLandmarks.html"> Landmarks-based Navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_BasicOrbit.html">1. Basic Orbital Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_FeedbackRW.html">2. Attitude Detumble Control with RW</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttGuidance.html">3. Hill Pointing Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttGuidHyperbolic.html">4. Velocity Frame Pointing Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttSteering.html">5. MRP Steering Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttEclipse.html">6. Sun Pointing Mode Include Eclipse Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttModes.html">7. Alternating FSW Attitude Pointing Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AddRWFault.html">8. Reaction Wheel Fault Scenario Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_LambertGuidance.html">9. Lambert Guidance Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_AttFeedback.html">10. Attitude Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_FaultList.html">11. Fault Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_BasicOrbitFormation.html">1. Two-Spacecraft Formation using BskSim</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/scenarios/scenario_RelativePointingFormation.html">2. Relative Pointing Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/BSK_masters.html">Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/models/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../BskSim/plotting/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenariosMultiSat/scenario_BasicOrbitMultiSat.html">1. Three-Spacecraft Formation using MultiSat architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenariosMultiSat/scenario_AttGuidMultiSat.html">2. Attitude Guidance Modes Scheduling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenariosMultiSat/scenario_StationKeepingMultiSat.html">3. Formation Flying Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenariosMultiSat/scenario_constellationFromTle.html">4. Constellation from TLE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../BSK_MultiSatMasters.html">Master file</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Models Folder</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BSK_EnvironmentEarth.html">BSK_EnvironmentEarth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BSK_EnvironmentMercury.html">BSK_EnvironmentMercury</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">BSK_MultiSatDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BSK_MultiSatFsw.html">BSK_MultiSatFsw</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../plottingMultiSat/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/BSK_OpNav.html">1. BSK OpNav Sim Master File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavAttOD.html">2. Hough Circles for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavAttODLimb.html">3. Limb-based method for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_CNNAttOD.html">4. CNN for Pointing and Orbit Determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_faultDetOpNav.html">5. Perform fault detection with two OpNav methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavOD.html">6. Orbit Determination with Hough Circles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavODLimb.html">7. Orbit Determination with Limb-based method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavPoint.html">8. Pointing with Hough Circles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavPointLimb.html">9. Pointing with Limb-based method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/scenario_OpNavHeading.html">10. Filter Heading measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/modelsOpNav/index.html">Models Folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/plottingOpNav/index.html">Plotting Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/CNN_ImageGen/OpNavMonteCarlo.html">Monte-Carlo Script to Create Image Set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/CNN_ImageGen/scenario_CNNImages.html">Scenario called by MC Image Generation Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/OpNavMC/MonteCarlo.html">Monte-Carlo Simulations using a OpNav Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/OpNavMC/scenario_LimbAttOD.html">Optical Limb Tracking Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../OpNavScenarios/scenariosOpNav/OpNavMC/scenario_OpNavAttODMC.html">Optical Navitation Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMonteCarloAttRW.html">MC run with RW control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioMonteCarloSpice.html">MC run using Python Spice setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../MonteCarloExamples/index.html">MC bskSim example folder with bokeh visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDragSensitivity.html">Sensitivity Analysis of a differential drag spacecraft control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioIntegrators.html">Setting Type of Integrator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioVariableTimeStepIntegrators.html">Using a Variable Time Step Integrator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioIntegratorsComparison.html">Comparison of different integrators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioBenchmarkNumba.html">Benchmark Numba Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioAttitudePointingPy.html">Using a Python BSK Module Inherited from SysModel Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioBskLog.html">Changing the bskLog Verbosity from Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../scenariosMultiSat/scenario_BasicOrbitMultiSat_MT.html">Simulation of Multiple independent spacecraft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioBasicOrbitStream.html">Live Streaming to Vizard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioVizPoint.html">Pointing a Vizard Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioDataToViz.html">Convert Simulation Data File to Vizard File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../scenarioQuadMaps.html">Creating QuadMap Surface Visualizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Learn/makingModules.html">Basics of Writing Basilisk Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Integrated Example Scripts</a></li>
+          <li class="breadcrumb-item"><a href="index.html">modelsMultiSat</a></li>
+      <li class="breadcrumb-item active">BSK_MultiSatDynamics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/examples/MultiSatBskSim/modelsMultiSat/BSK_MultiSatDynamics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bsk-multisatdynamics">
+<span id="id1"></span><h1>BSK_MultiSatDynamics<a class="headerlink" href="#bsk-multisatdynamics" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-BSK_MultiSatDynamics">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BSK_MultiSatDynamics.</span></span><span class="sig-name descname"><span class="pre">BSKDynamicModels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynRate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacecraftIndex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Defines the Dynamics class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.InitAllDynObjects">
+<span class="sig-name descname"><span class="pre">InitAllDynObjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.InitAllDynObjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.InitAllDynObjects" title="Link to this definition"></a></dt>
+<dd><p>Initializes all dynamic objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetBattery">
+<span class="sig-name descname"><span class="pre">SetBattery</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetBattery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetBattery" title="Link to this definition"></a></dt>
+<dd><p>Sets up the battery with all the power components</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetEclipseObject">
+<span class="sig-name descname"><span class="pre">SetEclipseObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetEclipseObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetEclipseObject" title="Link to this definition"></a></dt>
+<dd><p>Adds the spacecraft to the eclipse module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetFuelTank">
+<span class="sig-name descname"><span class="pre">SetFuelTank</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetFuelTank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetFuelTank" title="Link to this definition"></a></dt>
+<dd><p>Defines the fuel tank for the thrusters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetGravityBodies">
+<span class="sig-name descname"><span class="pre">SetGravityBodies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetGravityBodies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetGravityBodies" title="Link to this definition"></a></dt>
+<dd><p>Specify what gravitational bodies to include in the simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetGroundLocations">
+<span class="sig-name descname"><span class="pre">SetGroundLocations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetGroundLocations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetGroundLocations" title="Link to this definition"></a></dt>
+<dd><p>Adds the spacecraft to the ground location module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetPowerSink">
+<span class="sig-name descname"><span class="pre">SetPowerSink</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetPowerSink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetPowerSink" title="Link to this definition"></a></dt>
+<dd><p>Defines the energy sink parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetReactionWheelDynEffector">
+<span class="sig-name descname"><span class="pre">SetReactionWheelDynEffector</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetReactionWheelDynEffector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetReactionWheelDynEffector" title="Link to this definition"></a></dt>
+<dd><p>Defines the RW state effector.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetReactionWheelPower">
+<span class="sig-name descname"><span class="pre">SetReactionWheelPower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetReactionWheelPower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetReactionWheelPower" title="Link to this definition"></a></dt>
+<dd><p>Sets the reaction wheel power parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetSimpleMassPropsObject">
+<span class="sig-name descname"><span class="pre">SetSimpleMassPropsObject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetSimpleMassPropsObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetSimpleMassPropsObject" title="Link to this definition"></a></dt>
+<dd><p>Defines the navigation module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetSimpleNavObject">
+<span class="sig-name descname"><span class="pre">SetSimpleNavObject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetSimpleNavObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetSimpleNavObject" title="Link to this definition"></a></dt>
+<dd><p>Defines the navigation module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetSolarPanel">
+<span class="sig-name descname"><span class="pre">SetSolarPanel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SimBase</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetSolarPanel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetSolarPanel" title="Link to this definition"></a></dt>
+<dd><p>Sets the solar panel</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetSpacecraftHub">
+<span class="sig-name descname"><span class="pre">SetSpacecraftHub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetSpacecraftHub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetSpacecraftHub" title="Link to this definition"></a></dt>
+<dd><p>Defines the spacecraft object properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BSK_MultiSatDynamics.BSKDynamicModels.SetThrusterDynEffector">
+<span class="sig-name descname"><span class="pre">SetThrusterDynEffector</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/BSK_MultiSatDynamics.html#BSKDynamicModels.SetThrusterDynEffector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BSK_MultiSatDynamics.BSKDynamicModels.SetThrusterDynEffector" title="Link to this definition"></a></dt>
+<dd><p>Defines the thruster state effector.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BSK_EnvironmentMercury.html" class="btn btn-neutral float-left" title="BSK_EnvironmentMercury" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BSK_MultiSatFsw.html" class="btn btn-neutral float-right" title="BSK_MultiSatFsw" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

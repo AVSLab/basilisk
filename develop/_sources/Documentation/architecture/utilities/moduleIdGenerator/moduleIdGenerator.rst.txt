@@ -1,0 +1,10 @@
+.. _moduleIdGenerator:
+
+moduleIdGenerator
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: moduleIdGenerator.h
+   :project: moduleIdGenerator
+

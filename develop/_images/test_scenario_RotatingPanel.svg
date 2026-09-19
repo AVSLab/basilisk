@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-20.09091 40 316.0909 257.5" width="316.0909" height="257.5">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 9 8" markerWidth="9" markerHeight="8" color="black">
+      <g>
+        <path d="M 3.5 0 L -2.1 -2.1 L 0 0 L 0 0 L -2.1 2.1 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Canvas_1" stroke-dasharray="none" fill-opacity="1" stroke="none" fill="none" stroke-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_7">
+        <rect x="92.5" y="94.5" width="83" height="28" fill="#c0ffc0"/>
+        <rect x="92.5" y="94.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(97.5 102.86947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="13.991" y="9">spacecraft()</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <path d="M 102.5 40.5 L 165.5 40.5 C 171.02285 40.5 175.5 44.97715 175.5 50.5 L 175.5 58.5 C 175.5 64.02285 171.02285 68.5 165.5 68.5 L 102.5 68.5 C 96.97715 68.5 92.5 64.02285 92.5 58.5 L 92.5 50.5 C 92.5 44.97715 96.97715 40.5 102.5 40.5 Z" fill="#c0ffff"/>
+        <path d="M 102.5 40.5 L 165.5 40.5 C 171.02285 40.5 175.5 44.97715 175.5 50.5 L 175.5 58.5 C 175.5 64.02285 171.02285 68.5 165.5 68.5 L 102.5 68.5 C 96.97715 68.5 92.5 64.02285 92.5 58.5 L 92.5 50.5 C 92.5 44.97715 96.97715 40.5 102.5 40.5 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(97.5 48.86947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="5.9135" y="9">Simulation Task</tspan>
+        </text>
+      </g>
+      <g id="Line_3">
+        <line x1="134" y1="68.5" x2="134" y2="89.1" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_8">
+        <rect x="-19.5" y="69.85" width="25" height="9.299998" fill="#c0ffc0"/>
+        <rect x="-19.5" y="69.85" width="25" height="9.299998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_9">
+        <text transform="translate(14.5 68.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="0" y="9">SIM module</tspan>
+        </text>
+      </g>
+      <g id="Line_12">
+        <line x1="-19.5" y1="88.75" x2=".1" y2="88.75" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_14">
+        <text transform="translate(14.5 82.34091)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="0" y="9">MPI Path</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <rect x="-19.59091" y="56.12273" width="25" height="9.299998" fill="#c0ffff"/>
+        <rect x="-19.59091" y="56.12273" width="25" height="9.299998" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_16">
+        <text transform="translate(14.5 54.77273)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="0" y="9">Python Task</tspan>
+        </text>
+      </g>
+      <g id="Graphic_18">
+        <rect x="212.5" y="94.5" width="83" height="28" fill="#c0ffc0"/>
+        <rect x="212.5" y="94.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(217.5 102.86947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="26.33" y="9">Earth</tspan>
+        </text>
+      </g>
+      <g id="Line_19">
+        <line x1="212.5" y1="108.5" x2="180.9" y2="108.5" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_20">
+        <rect x="84" y="142" width="100" height="28" fill="#c0ffc0"/>
+        <rect x="84" y="142" width="100" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(89 144.73894)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="1.071" y="9">HingedRigidBodyState</tspan>
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="27.909" y="20.261063">Effector()</tspan>
+        </text>
+      </g>
+      <g id="Graphic_21">
+        <rect x="18" y="203" width="83" height="28" fill="#c0ffc0"/>
+        <rect x="18" y="203" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(23 211.36947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x=".4865" y="9">SimpleSolarPanel()</tspan>
+        </text>
+      </g>
+      <g id="Line_22">
+        <path d="M 134 142 L 134 132.25 L 134 127.9" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_23">
+        <rect x="122" y="203" width="46" height="28" fill="#c0ffc0"/>
+        <rect x="122" y="203" width="46" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(127 211.36947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="4.491" y="9">CSS1()</tspan>
+        </text>
+      </g>
+      <g id="Graphic_24">
+        <rect x="189" y="203" width="46" height="28" fill="#c0ffc0"/>
+        <rect x="189" y="203" width="46" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(194 211.36947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="4.491" y="9">CSS2()</tspan>
+        </text>
+      </g>
+      <g id="Line_25">
+        <path d="M 134 170 L 134 186.5 L 59.5 186.5 L 59.5 197.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_26">
+        <path d="M 134 170 L 134 186.5 L 145 186.5 L 145 197.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_27">
+        <path d="M 134 170 L 134 186.5 L 212 186.5 L 212 197.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_28">
+        <rect x="103.5" y="269" width="83" height="28" fill="#ccc"/>
+        <rect x="103.5" y="269" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(108.5 277.36947)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="9" fill="black" x="2.552" y="9">Sun Position Msg</tspan>
+        </text>
+      </g>
+      <g id="Line_29">
+        <path d="M 145 269 L 145 250 L 212 250 L 212 236.4" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_30">
+        <line x1="145" y1="269" x2="145" y2="236.4" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_31">
+        <path d="M 145 269 L 145 250 L 59.5 250 L 59.5 236.4" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

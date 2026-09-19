@@ -1,0 +1,13 @@
+.. _test_changeParametersSpinningBodyNDOF:
+
+test_changeParametersSpinningBodyNDOF
+=====================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_changeParametersSpinningBodyNDOF
+   :members:
+   :show-inheritance:
+

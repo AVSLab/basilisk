@@ -1,0 +1,34 @@
+.. _imuComm:
+
+:module-type:`C` Module: imuComm
+================================
+
+Executive Summary
+-----------------
+
+Converts incoming IMU data in the sensor platform frame P to the spacecraft body frame B.
+
+Message Connection Descriptions
+-------------------------------
+The following diagram and table list all the module input and output messages.  The module message connection is
+set by the user from Python.  The message type contains a link to the message structure definition, while the
+description provides information on what this message is used for.
+
+.. bsk-module-io:: imuComm
+    :caption: Module I/O Messages
+
+    input imuComInMsg IMUSensorMsgPayload
+        imu input message in sensor platform frame
+    output imuSensorOutMsg IMUSensorBodyMsgPayload
+        imu output message in spacecraft body frame
+
+User Guide
+----------
+The only variable that must be set is the DCM from the platform frame P to the body frame B, ``dcm_BP``.
+
+
+----
+
+.. autodoxygenfile:: imuComm.h
+   :project: IMUSensorData
+

@@ -1,0 +1,15 @@
+.. _test_swigMemberLeak:
+
+test_swigMemberLeak
+===================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_swigMemberLeak
+   :members:
+   :show-inheritance:
+

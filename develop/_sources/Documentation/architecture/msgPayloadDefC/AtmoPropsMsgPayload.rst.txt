@@ -1,0 +1,10 @@
+.. _AtmoPropsMsgPayload:
+
+AtmoPropsMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AtmoPropsMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _MJQPosStateData:
+
+MJQPosStateData
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJQPosStateData.h
+   :project: _GeneralModuleFiles6
+

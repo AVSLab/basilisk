@@ -1,0 +1,13 @@
+.. _test_hingedJointArrayMotor:
+
+test_hingedJointArrayMotor
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: test_hingedJointArrayMotor
+   :members:
+   :show-inheritance:
+

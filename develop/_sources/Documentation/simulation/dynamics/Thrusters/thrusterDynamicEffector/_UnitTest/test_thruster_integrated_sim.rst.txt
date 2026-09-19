@@ -1,0 +1,15 @@
+.. _test_thruster_integrated_sim:
+
+test_thruster_integrated_sim
+============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_thruster_integrated_sim
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,408 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing Dynamic and State Effectors &mdash; Basilisk 2.12.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=a5bb3c78" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=4ad2e773"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=b4248121"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Automation Script to Create a New Basilisk Module" href="makingDraftModule.html" />
+    <link rel="prev" title="Module Unit Test File" href="makingModules-4.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rustModules.html"><span class="beta-label">[BETA]</span> Making Rust Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbaModules.html">Making Numba Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Writing Dynamic and State Effectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+      <li class="breadcrumb-item active">Writing Dynamic and State Effectors</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/makingModules/writingEffectors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="writing-dynamic-and-state-effectors">
+<span id="writingeffectors"></span><h1>Writing Dynamic and State Effectors<a class="headerlink" href="#writing-dynamic-and-state-effectors" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#choosing-an-effector-type">Choosing an Effector Type</a>
+      </li>
+      
+      <li>
+        <a href="#attachment-and-task-scheduling">Attachment and Task Scheduling</a>
+      </li>
+      
+      <li>
+        <a href="#initialization-and-configuration-validation">Initialization and Configuration Validation</a>
+      </li>
+      
+      <li>
+        <a href="#implementing-a-dynamic-effector">Implementing a Dynamic Effector</a>
+      </li>
+      
+      <li>
+        <a href="#implementing-a-state-effector">Implementing a State Effector</a>
+      </li>
+      
+      <li>
+        <a href="#documentation-and-testing">Documentation and Testing</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<p>Effectors extend the equations of motion of a parent dynamics module that uses the Backsubstitution Method
+(BSM), such as <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a>. The parent registers and links their states and properties, evaluates
+their contributions, and integrates the coupled system. This guide introduces the C++ interfaces and
+lifecycle requirements for writing effectors for the spacecraft BSM dynamics engine.</p>
+<p>The automation script described in <a class="reference internal" href="makingDraftModule.html#makingdraftmodule"><span class="std std-ref">Automation Script to Create a New Basilisk Module</span></a> generates ordinary scheduled modules;
+it does not generate dynamic or state effectors. Start from the appropriate abstract effector interface
+and consult an existing implementation with similar physics. Concrete effectors declared <code class="docutils literal notranslate"><span class="pre">final</span></code>
+are examples to study, not base classes to extend.</p>
+<section id="choosing-an-effector-type">
+<h2>Choosing an Effector Type<a class="headerlink" href="#choosing-an-effector-type" title="Link to this heading"></a></h2>
+<p>A <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynamicEffector.html#dynamiceffector"><span class="std std-ref">C++ Module: dynamicEffector</span></a> supplies external forces and torques without registering its own integrated
+states. Examples include <a class="reference internal" href="../../Documentation/simulation/dynamics/extForceTorque/extForceTorque.html#extforcetorque"><span class="std std-ref">C++ Module: extForceTorque</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/GravityGradientEffector/GravityGradientEffector.html#gravitygradienteffector"><span class="std std-ref">C++ Module: GravityGradientEffector</span></a>. Derive the new
+effector from <code class="docutils literal notranslate"><span class="pre">DynamicEffector</span></code> and implement its force and torque evaluation and state-linking methods.</p>
+<p>A <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">C++ Module: stateEffector</span></a> participates in the coupled dynamics through its own states and contributions
+to mass properties and the BSM equations of motion. Examples include <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a>
+and <a class="reference internal" href="../../Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">C++ Module: reactionWheelStateEffector</span></a>. Derive the new effector from <code class="docutils literal notranslate"><span class="pre">StateEffector</span></code> and implement
+state registration, state linking, and derivatives, together with the other contributions required
+by its physical model. Consult <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> and its linked mathematical description when deriving
+the Backsubstitution terms.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Effectors that also provide scheduled behavior inherit from <code class="docutils literal notranslate"><span class="pre">SysModel</span></code>. This supplies the familiar
+<code class="docutils literal notranslate"><span class="pre">Reset()</span></code> and <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> interface for processing commands, updating discrete logic, and
+publishing messages. The effector and scheduler interfaces have separate responsibilities.</p>
+</div>
+</section>
+<section id="attachment-and-task-scheduling">
+<h2>Attachment and Task Scheduling<a class="headerlink" href="#attachment-and-task-scheduling" title="Link to this heading"></a></h2>
+<p>Attach a dynamic effector with the spacecraft’s <code class="docutils literal notranslate"><span class="pre">addDynamicEffector()</span></code> method or a state effector
+with <code class="docutils literal notranslate"><span class="pre">addStateEffector()</span></code>. Schedule the spacecraft so that it initializes and integrates the system.
+Attachment does not automatically add the effector to a simulation task.</p>
+<p>During spacecraft initialization, the parent calls each state effector’s <code class="docutils literal notranslate"><span class="pre">registerStates()</span></code> and
+then links the state and dynamic effectors through <code class="docutils literal notranslate"><span class="pre">linkInStates()</span></code>. During integration, the parent
+calls their dynamics methods as needed by the integrator. These calls occur even when the effector
+has not been separately added to a task.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">AddModelToTask()</span></code> for an effector when its <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> behavior is needed. For example,
+an effector that reads commands in <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code> needs task scheduling to receive new commands.
+Document the required execution order relative to command producers and the spacecraft. The scheduler
+calls the effector’s <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> only when it has been added to a task.</p>
+<p>Message publication can also use a parent dynamics hook: <code class="docutils literal notranslate"><span class="pre">Spacecraft</span></code> calls state effectors’
+<code class="docutils literal notranslate"><span class="pre">writeOutputStateMessages()</span></code> after initialization and after integration. State clearly which messages
+use that hook and which require the effector’s scheduled <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code>.</p>
+</section>
+<section id="initialization-and-configuration-validation">
+<span id="effectorinitialization"></span><h2>Initialization and Configuration Validation<a class="headerlink" href="#initialization-and-configuration-validation" title="Link to this heading"></a></h2>
+<p>Configuration work required by the equations of motion must not rely exclusively on <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.
+An effector that is only attached to a spacecraft still participates in the dynamics and must be
+fully initialized and validated before those dynamics are evaluated.</p>
+<p>Place shared configuration validation, normalization, and initialization of derived dynamics parameters
+in a dedicated helper method. Call that helper from <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> when the effector provides that method,
+and from each applicable attachment path:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Configuration initialization hooks</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Effector attachment</p></th>
+<th class="head"><p>Hook that calls the shared helper</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>State effector attached to a spacecraft</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">registerStates()</span></code>, before configuration-dependent state registration and initialization</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dynamic effector attached directly to a spacecraft</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">linkInStates()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Dynamic effector attached to a supporting state effector</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">linkInProperties()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The helper must be safe to call more than once because an effector can be both attached and scheduled.
+Derive values from the configured inputs without accumulating changes on successive calls. Keep state
+registration in <code class="docutils literal notranslate"><span class="pre">registerStates()</span></code> and retrieval of parent state or property references in the linking
+methods. The shared helper should not assume that parent references or integrated states already exist,
+because the scheduler can call the effector’s <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> before the spacecraft initializes them.</p>
+<p>Validate dimensions, finite values, physical bounds, and other assumptions required by the model before
+using them in its equations. Report invalid configurations through <a class="reference internal" href="../../Documentation/architecture/utilities/bskLogging.html#bsklogging"><span class="std std-ref">bskLogging</span></a> with <code class="docutils literal notranslate"><span class="pre">bskLogger.bskError()</span></code>
+and an explanation identifying the offending parameter. A check that requires a linked parent reference
+belongs in the corresponding linking method, after that reference is obtained.</p>
+<p>Keep operations that belong only to the scheduled lifecycle, such as clearing command buffers or
+resetting discrete filter history, in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> when they are not required by the dynamics.
+Initialize any buffers used by the dynamics to safe defaults even if the effector is never scheduled.
+Document what repeated resets change, especially for commands, filters, and integrated initial conditions.</p>
+</section>
+<section id="implementing-a-dynamic-effector">
+<h2>Implementing a Dynamic Effector<a class="headerlink" href="#implementing-a-dynamic-effector" title="Link to this heading"></a></h2>
+<p>Implement <code class="docutils literal notranslate"><span class="pre">linkInStates()</span></code> to obtain the parent states and properties required by the model from
+<a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/dynParamManager.html#dynparammanager"><span class="std std-ref">C++ Module: dynParamManager</span></a>. Use the state and property names supplied by the attachment interface rather
+than assuming a particular spacecraft name. A model that needs no parent states still implements this
+required method and performs any necessary configuration initialization there.</p>
+<p>Implement <code class="docutils literal notranslate"><span class="pre">computeForceTorque()</span></code> to evaluate the loads at the supplied integration time, using the
+current integration-stage states. For direct spacecraft attachment, the output members have these meanings:</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Dynamic effector load contributions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Member</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">forceExternal_N</span></code></p></td>
+<td><p>Applied force expressed in the inertial frame, in newtons</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">forceExternal_B</span></code></p></td>
+<td><p>Applied force expressed in the spacecraft body frame, in newtons</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">torqueExternalPntB_B</span></code></p></td>
+<td><p>Applied torque about body point B, expressed in the body frame, in newton meters</p></td>
+</tr>
+</tbody>
+</table>
+<p>The spacecraft adds both force members after expressing them in a common frame. Do not place the
+same physical force in both members. Include the moment of an offset applied force in the torque
+about the specified reference point. Assign or clear the load contributions on each evaluation so
+that loads from a previous call do not remain when the model becomes inactive.</p>
+<p>Keep continuous load evaluation in the dynamics callback rather than computing it only once per
+scheduled <code class="docutils literal notranslate"><span class="pre">UpdateState()</span></code>. Integrators may evaluate intermediate states multiple times within one
+task interval. Use the integration time in seconds supplied to dynamics callbacks; scheduler callbacks
+use integer nanoseconds. Avoid advancing discrete command or filter state simply because an integrator
+requests another evaluation.</p>
+<p>Attachment to a state effector is an additional capability. Implement its property-linking path and
+parent-frame conventions before enabling <code class="docutils literal notranslate"><span class="pre">isAttachableToStateEffector</span></code>. See <a class="reference internal" href="advancedTopics/effectorBranching.html#effectorbranching"><span class="std std-ref">Enabling Branching of Basilisk Effectors</span></a>
+for the required changes to both the child dynamic effector and its parent state effector.</p>
+</section>
+<section id="implementing-a-state-effector">
+<h2>Implementing a State Effector<a class="headerlink" href="#implementing-a-state-effector" title="Link to this heading"></a></h2>
+<p>Register each integrated state through <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code> in <code class="docutils literal notranslate"><span class="pre">registerStates()</span></code>, retain its
+<code class="docutils literal notranslate"><span class="pre">StateData</span></code> reference, and set its configured initial value. Ensure state names remain distinct
+when multiple instances are attached. Use <code class="docutils literal notranslate"><span class="pre">linkInStates()</span></code> to obtain other states and properties
+required for coupling after the parent has registered the system’s states.</p>
+<p>Implement the following contributions as required by the model:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">State effector dynamics methods</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 38.0%" />
+<col style="width: 62.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Responsibility</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">updateEffectorMassProps()</span></code></p></td>
+<td><p>Evaluate <code class="docutils literal notranslate"><span class="pre">effProps</span></code> mass, center of mass, inertia, and their applicable rates from the current state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">updateContributions()</span></code></p></td>
+<td><p>Supply the <code class="docutils literal notranslate"><span class="pre">BackSubMatrices</span></code> terms that couple the effector dynamics to the parent equations of motion.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">computeDerivatives()</span></code></p></td>
+<td><p>Set the registered state derivatives using the current state and the solved parent accelerations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">updateEnergyMomContributions()</span></code></p></td>
+<td><p>Supply the effector energy and angular momentum contributions used in system diagnostics.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">writeOutputStateMessages()</span></code></p></td>
+<td><p>Publish state outputs when called by the parent after initialization and integration.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Use the base-class declarations for the exact signatures and required overrides. Optional hooks with
+default implementations still need an override when the physical model contributes those quantities.
+In particular, omitting a mass, coupling, or energy contribution merely because the code compiles can
+produce an incomplete model.</p>
+<p>Evaluate mass properties and coupling terms from the current integration-stage states, and clear
+accumulated contributions before recomputing them. Set derivatives through the registered state objects;
+the parent integrator advances the coupled states. Use <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd</span></code> for C++ MRP attitude values,
+with raw vector storage only at interfaces that require it, such as state containers and message payloads.</p>
+<p>For variable-mass models, follow the retained-property and dynamics-rate contracts in <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/stateEffector.html#stateeffector"><span class="std std-ref">C++ Module: stateEffector</span></a>.
+For a state effector that hosts child effectors, also follow <a class="reference internal" href="advancedTopics/effectorBranching.html#effectorbranching"><span class="std std-ref">Enabling Branching of Basilisk Effectors</span></a> for property
+registration, frame conventions, and propagation of child loads.</p>
+</section>
+<section id="documentation-and-testing">
+<h2>Documentation and Testing<a class="headerlink" href="#documentation-and-testing" title="Link to this heading"></a></h2>
+<p>Provide the C++ source and self-contained header, a SWIG interface, a module RST page, and unit tests.
+Use <a class="reference internal" href="../../Documentation/moduleTemplates/cppModuleTemplate/cppModuleTemplate.html#cppmoduletemplate"><span class="std std-ref">C++ Module: cppModuleTemplate</span></a> for the documentation structure and common module packaging conventions.
+Document physical units, reference frames and points, initial conditions, valid parameter ranges,
+attachment support, and any task scheduling requirements. Describe messages with the
+<code class="docutils literal notranslate"><span class="pre">bsk-module-io</span></code> directive, identifying optional inputs and their defaults.</p>
+<p>Test the effector through a spacecraft as well as any useful isolated calculations. The tests should cover:</p>
+<ul class="simple">
+<li><p>Initialization with the effector attached but omitted from <code class="docutils literal notranslate"><span class="pre">AddModelToTask()</span></code>. Check that invalid
+configurations fail and that valid configurations initialize the required derived parameters and states.</p></li>
+<li><p>Initialization with the effector both attached and scheduled. Verify that repeated shared initialization
+does not accumulate changes or depend on the effector’s <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> running first.</p></li>
+<li><p>Physical behavior against an analytical result or an independent reference. For conservative systems,
+check the appropriate energy and momentum balances; account for external work or dissipation when present.</p></li>
+<li><p>Multiple instances, limiting configurations, and disabled or zero-load behavior, as applicable to the model.</p></li>
+<li><p>Command processing, optional inputs, output messages, and reset behavior when scheduled operation is supported.</p></li>
+<li><p>Attachment to a state effector, including initialization and transformed loads, when branching is supported.</p></li>
+</ul>
+<p>Follow <a class="reference internal" href="../../Support/Developer/bskModuleCheckoutList.html#bskmodulecheckoutlist"><span class="std std-ref">Basilisk Module Checkout List</span></a> for the remaining coding, documentation, build, and test requirements.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="makingModules-4.html" class="btn btn-neutral float-left" title="Module Unit Test File" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="makingDraftModule.html" class="btn btn-neutral float-right" title="Automation Script to Create a New Basilisk Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

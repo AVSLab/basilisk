@@ -1,0 +1,10 @@
+.. _SmallBodyNavMsgPayload:
+
+SmallBodyNavMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SmallBodyNavMsgPayload.h
+   :project: msgPayloadDefC
+

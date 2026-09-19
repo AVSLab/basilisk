@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrusterPlatformReference:
+
+thrusterPlatformReference
+=========================
+
+:doc:`Module documentation <thrusterPlatformReference>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

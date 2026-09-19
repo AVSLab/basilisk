@@ -1,0 +1,13 @@
+.. _scenarioArmWithThrusters:
+
+scenarioArmWithThrusters
+========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. automodule:: scenarioArmWithThrusters
+   :members:
+   :show-inheritance:
+

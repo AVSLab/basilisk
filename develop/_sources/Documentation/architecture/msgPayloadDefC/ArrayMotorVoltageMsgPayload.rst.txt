@@ -1,0 +1,10 @@
+.. _ArrayMotorVoltageMsgPayload:
+
+ArrayMotorVoltageMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ArrayMotorVoltageMsgPayload.h
+   :project: msgPayloadDefC
+

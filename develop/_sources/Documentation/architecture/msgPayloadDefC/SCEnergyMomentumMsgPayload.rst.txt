@@ -1,0 +1,10 @@
+.. _SCEnergyMomentumMsgPayload:
+
+SCEnergyMomentumMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SCEnergyMomentumMsgPayload.h
+   :project: msgPayloadDefC
+

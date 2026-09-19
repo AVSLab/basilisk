@@ -1,0 +1,10 @@
+.. _PIDController:
+
+PIDController
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PIDController.h
+   :project: _GeneralModuleFiles6
+

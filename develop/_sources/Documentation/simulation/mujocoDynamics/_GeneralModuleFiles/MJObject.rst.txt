@@ -1,0 +1,10 @@
+.. _MJObject:
+
+MJObject
+========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJObject.h
+   :project: _GeneralModuleFiles6
+

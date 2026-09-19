@@ -1,0 +1,10 @@
+.. _RWAvailabilityMsgPayload:
+
+RWAvailabilityMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWAvailabilityMsgPayload.h
+   :project: msgPayloadDefC
+

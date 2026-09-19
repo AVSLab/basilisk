@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_autoCppModule:
+
+autoCppModule
+=============
+
+:doc:`Module documentation <autoCppModule>`
+
+:doc:`Unit tests <_UnitTest/index>`
+
