@@ -301,6 +301,7 @@ Complex Spacecraft Dynamics Simulations
    Robotic Arm Effector with Profiler <scenarioRoboticArm>
    Spacecraft with an multi-link extending component <scenarioExtendingBoom>
    Solar Array Debris Impact <scenarioImpact>
+   Spacecraft with Generally Rotating/Translating Components <scenarioGeneralSingleBodies>
 
 Prescribed Motion Spacecraft Dynamics Simulations
 -------------------------------------------------
