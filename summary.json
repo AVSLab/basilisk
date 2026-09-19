@@ -1,0 +1,45 @@
+{
+  "collection_status": "complete",
+  "generated_at": "2026-09-19T10:58:21+00:00",
+  "github": {
+    "current_clone_window": {
+      "clones": 7644,
+      "end": "2026-09-18",
+      "start": "2026-09-05",
+      "unique_cloners": 703
+    },
+    "forks": 136,
+    "release_asset_downloads": 0,
+    "repository": "AVSLab/basilisk",
+    "tracked_clone_coverage": {
+      "end": "2026-09-18",
+      "start": "2026-08-22"
+    },
+    "tracked_clones": 12664
+  },
+  "pypi": {
+    "counting_policy": "distribution_files_or_unknown_filename",
+    "coverage": {
+      "end": "2026-09-18",
+      "start": "2025-08-27"
+    },
+    "downloads_excluding_known_mirrors": 37739,
+    "package": "bsk",
+    "pip_downloads": 11681
+  },
+  "schema_version": 2,
+  "sources": {
+    "github": {
+      "error": null,
+      "last_attempt_at": "2026-09-19T10:58:21+00:00",
+      "last_success_at": "2026-09-19T10:58:21+00:00",
+      "status": "ok"
+    },
+    "pypi": {
+      "error": null,
+      "last_attempt_at": "2026-09-19T10:58:21+00:00",
+      "last_success_at": "2026-09-19T10:58:21+00:00",
+      "status": "ok"
+    }
+  }
+}
