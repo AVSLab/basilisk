@@ -8,8 +8,9 @@ Basilisk Known Issues
 
     The use of ``cMsgCInterfacePy`` is deprecated.  Use ``messaging`` instead.
 
-Version |release|
------------------
+Version |release| (September 21, 2026)
+--------------------------------------
+
 - GitHub issue 329: Scalar test comparators could accept NaN values or invalid tolerances.
   They now reject non-finite operands and non-finite or negative tolerances. The new
   ``EXPECT_NEAR_REL``, ``EXPECT_VECTOR3_NEAR``, and ``EXPECT_VECTOR3_NEAR_REL`` assertions
