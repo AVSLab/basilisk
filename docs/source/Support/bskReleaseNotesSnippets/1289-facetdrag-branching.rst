@@ -1,1 +1,0 @@
-- Enabled :ref:`facetDragDynamicEffector` to be attached to a branching state effector.

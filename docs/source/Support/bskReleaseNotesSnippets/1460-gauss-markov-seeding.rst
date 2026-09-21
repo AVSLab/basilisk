@@ -1,1 +1,0 @@
-- Reseeding the ``GaussMarkov`` utility now clears cached normal variates, and secondary sensor-noise streams use deterministic seeds that remain distinct when ``RNGSeed`` is zero.

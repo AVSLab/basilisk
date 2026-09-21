@@ -1,1 +1,0 @@
-- MuJoCo support is now generally available. Removed its beta labels and preliminary-use warnings from the documentation.

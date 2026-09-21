@@ -1,1 +1,0 @@
-- Fixed ``RetentionPolicy.addVariableLog()`` to retain complete direct module variables through the supported logger API and deprecated its legacy component/type arguments; nested and computed histories require an explicit ``PythonVariableLogger``.

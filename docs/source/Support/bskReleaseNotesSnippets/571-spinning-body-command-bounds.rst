@@ -1,1 +1,0 @@
-- Fixed out-of-bounds lock and motor torque command reads in :ref:`spinningBodyNDOFStateEffector` by rejecting chains larger than ``MAX_EFF_CNT`` when either array input is linked, including subscriptions added after initialization.

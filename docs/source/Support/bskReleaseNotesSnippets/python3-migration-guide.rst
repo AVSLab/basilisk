@@ -1,1 +1,0 @@
-- Removed the obsolete Python 2-to-3 migration guide now that Basilisk supports Python 3 exclusively.
