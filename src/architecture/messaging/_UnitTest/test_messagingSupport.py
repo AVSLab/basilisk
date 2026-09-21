@@ -26,6 +26,15 @@ from Basilisk.architecture import messaging
 from Basilisk.architecture.messaging import messagingSupport
 
 
+def test_removed_c_message_compatibility_import():
+    """The retired ``cMsgCInterfacePy`` package is no longer importable."""
+
+    module_name = "Basilisk.architecture.cMsgCInterfacePy"
+    with pytest.raises(ModuleNotFoundError) as error:
+        importlib.import_module(module_name)
+    assert error.value.name == module_name
+
+
 def test_common_helpers_are_reexported():
     """Common helpers retain their package and payload-module Python names."""
 
