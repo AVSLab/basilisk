@@ -18,7 +18,10 @@
 
 import importlib.util
 import io
+import os
+import subprocess
 import sys
+import venv
 import zipfile
 from contextlib import contextmanager
 from importlib.metadata import distributions
@@ -462,20 +465,37 @@ def test_optional_wheel_declares_build_feature(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize(
+    "build_version, runtime_version, installed_version",
+    [
+        pytest.param("2.12.0", "2.12.0", "2.12.0", id="matching-versions"),
+        pytest.param("2.12.0b0", "2.12.0", "2.12.0", id="stale-build"),
+        pytest.param("2.12.0", "2.12.0b0", "2.12.0b0", id="stale-metadata"),
+        pytest.param("2.12.0", "2.12.0b0", "2.12.0", id="stale-runtime"),
+        pytest.param("2.12.0", "2.12.0", "2.12.0b0", id="stale-distribution"),
+        pytest.param("2.12.0", "0.0.0", "2.12.0", id="unknown-runtime"),
+    ],
+)
+@pytest.mark.parametrize(
     "expectedFeatures",
     [
         pytest.param(WHEEL_TESTER.CORE_FEATURES, id="core"),
         pytest.param(WHEEL_TESTER.OPNAV_FEATURES, id="opnav"),
     ],
 )
-def test_optional_wheel_import_check_uses_public_feature_api(
+def test_optional_wheel_import_check_validates_features_and_version(
     monkeypatch,
     expectedFeatures,
+    build_version,
+    runtime_version,
+    installed_version,
 ):
-    """Verify the generated import check queries the public feature API.
+    """Verify wheel checks validate public features and version consistency.
 
     :param monkeypatch: Pytest fixture used to install isolated fake modules.
     :param expectedFeatures: Expected build-feature values for the wheel variant.
+    :param build_version: Version recorded in the compiled build metadata.
+    :param runtime_version: Version exposed by the imported Basilisk package.
+    :param installed_version: Version recorded in the installed distribution.
     """
     queriedFeatures = []
 
@@ -488,10 +508,18 @@ def test_optional_wheel_import_check_uses_public_feature_api(
 
     fakeBasilisk = ModuleType("Basilisk")
     fakeBasilisk.__file__ = "fake/Basilisk/__init__.py"
+    fakeBasilisk.__version__ = runtime_version
     fakeBasilisk.hasBuildFeature = hasBuildFeature
     fakeBasilisk.getBuildInfo = lambda: {
+        "artifact": {"basiliskVersion": build_version},
         "diagnostics": {"tools": {"corrosion": "test-version"}}
     }
+
+    def distribution_version(name):
+        assert name == "bsk"
+        return installed_version
+
+    monkeypatch.setattr("importlib.metadata.version", distribution_version)
 
     fakeRustModuleApi = ModuleType("Basilisk.moduleTemplates.rustModuleTemplate")
     fakeRustModuleApi.rustModuleTemplate = FakeRustModule
@@ -504,9 +532,73 @@ def test_optional_wheel_import_check_uses_public_feature_api(
     )
 
     script = WHEEL_TESTER.import_check_script([], [], expectedFeatures)
-    exec(script, {})
+    if build_version == runtime_version == installed_version:
+        exec(script, {})
+    else:
+        with pytest.raises(SystemExit, match="wheel version mismatch"):
+            exec(script, {})
 
     assert queriedFeatures == list(expectedFeatures)
+
+
+def test_optional_wheel_checks_ignore_checkout_metadata(tmp_path, monkeypatch):
+    """Wheel subprocesses ignore checkout metadata and ``PYTHONPATH`` packages."""
+    environment = tmp_path / "environment"
+    venv.EnvBuilder(with_pip=False).create(environment)
+    python = WHEEL_TESTER.venv_python(environment)
+    site_packages = Path(subprocess.check_output(
+        [python, "-I", "-c", 'import sysconfig; print(sysconfig.get_path("purelib"))'],
+        text=True,
+    ).strip())
+
+    package = site_packages / "Basilisk"
+    package.mkdir()
+    (package / "__init__.py").write_text(
+        'from importlib.metadata import version\n'
+        '__version__ = version("bsk")\n'
+        'def getBuildInfo():\n'
+        '    return {"artifact": {"basiliskVersion": "2.12.0"},\n'
+        '            "diagnostics": {"tools": {"corrosion": "test-version"}}}\n',
+        encoding="utf-8",
+    )
+    module_templates = package / "moduleTemplates"
+    module_templates.mkdir()
+    (module_templates / "__init__.py").write_text("", encoding="utf-8")
+    (module_templates / "rustModuleTemplate.py").write_text(
+        "class rustModuleTemplate:\n    pass\n", encoding="utf-8"
+    )
+    metadata = site_packages / "bsk-2.12.0.dist-info"
+    metadata.mkdir()
+    (metadata / "METADATA").write_text(
+        "Metadata-Version: 2.4\nName: bsk\nVersion: 2.12.0\n", encoding="utf-8"
+    )
+
+    stale_metadata = tmp_path / "bsk.egg-info"
+    stale_metadata.mkdir()
+    (stale_metadata / "PKG-INFO").write_text(
+        "Metadata-Version: 2.4\nName: bsk\nVersion: 2.12.0b0\n", encoding="utf-8"
+    )
+    shadow_package = tmp_path / "shadow" / "Basilisk"
+    shadow_package.mkdir(parents=True)
+    (shadow_package / "__init__.py").write_text(
+        'raise RuntimeError("Imported a package from PYTHONPATH")\n', encoding="utf-8"
+    )
+    monkeypatch.chdir(tmp_path)
+    subprocess_environment = {**os.environ, "PYTHONPATH": str(shadow_package.parent)}
+    module_name = "Basilisk.moduleTemplates.rustModuleTemplate"
+    WHEEL_TESTER.run_import_check(
+        python,
+        required=[module_name],
+        missing=[],
+        expected_features={},
+        env=subprocess_environment,
+    )
+
+    # The shutdown checks must use the installed package as well.
+    monkeypatch.setattr(
+        WHEEL_TESTER, "PROTOBUF_CONSUMERS", ((module_name, "rustModuleTemplate"),)
+    )
+    WHEEL_TESTER.run_protobuf_consumer_checks(python, subprocess_environment)
 
 
 def test_optional_wheel_rejects_unsafe_license_path():

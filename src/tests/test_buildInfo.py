@@ -244,9 +244,13 @@ def test_build_info():
     abi = buildInfo["abi"]
 
     assert buildInfo["schemaVersion"] == 4
-    assert buildInfo["artifact"]["basiliskVersion"]
-    if Basilisk.__version__ != "0.0.0":
-        assert buildInfo["artifact"]["basiliskVersion"] == Basilisk.__version__
+    # A direct Conan build does not refresh installed Python package metadata.
+    # Check the version of the source under test; wheel installation checks
+    # separately verify that the distribution and runtime versions agree.
+    version_file = Path(__file__).resolve().parents[2] / "docs/source/bskVersion.txt"
+    expected_version = version_file.read_text(encoding="utf-8").strip()
+    assert expected_version
+    assert buildInfo["artifact"]["basiliskVersion"] == expected_version
     assert buildInfo["artifact"]["extensionAbiVersion"] == _integerDefine(
         "BSK_EXTENSION_ABI_VERSION"
     )
