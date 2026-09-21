@@ -199,9 +199,8 @@ function(generate_messages searchDir generateCCode messageFilesVariable)
   endforeach()
 endfunction(generate_messages)
 
-# Copy the cMsgCInterfacePy wrapper module to support backwards-compatibility.
-# TODO: Deprecate this!
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cMsgCInterfacePy/__init__.py ${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy/__init__.py COPYONLY)
+# Remove the retired compatibility package from incremental builds as well.
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/Basilisk/architecture/cMsgCInterfacePy")
 
 # issue #1433: Python-side keep-alive helpers for Msg_C subscribers. Copy at
 # build time so this helper does not make the messaging package directory exist

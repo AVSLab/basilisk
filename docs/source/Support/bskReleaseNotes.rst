@@ -24,6 +24,7 @@ Basilisk Release Notes
 Version |release| (September 21, 2026)
 --------------------------------------
 
+- Removed the deprecated ``Basilisk.architecture.cMsgCInterfacePy`` compatibility package; import C message wrappers from ``Basilisk.architecture.messaging`` instead.
 - Added support for :ref:`dualHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
 - Added support for :ref:`nHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
 - Added panel state and panel configuration log output messages to :ref:`nHingedRigidBodyStateEffector`.
