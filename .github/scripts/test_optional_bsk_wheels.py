@@ -92,6 +92,7 @@ def import_check_script(
 ) -> str:
     return f"""
 import importlib
+import importlib.metadata
 import importlib.util
 import sys
 
@@ -111,6 +112,15 @@ for name, expected in expected_features.items():
     print("OK feature", name, "->", actual)
 
 build_info = Basilisk.getBuildInfo()
+build_version = build_info["artifact"]["basiliskVersion"]
+installed_version = importlib.metadata.version("bsk")
+if not build_version == Basilisk.__version__ == installed_version:
+    raise SystemExit(
+        f"wheel version mismatch: build={{build_version!r}}, "
+        f"runtime={{Basilisk.__version__!r}}, installed={{installed_version!r}}"
+    )
+print("OK version", build_version)
+
 if not build_info["diagnostics"]["tools"]["corrosion"]:
     raise SystemExit("wheel did not record its Corrosion version")
 
@@ -138,7 +148,7 @@ def run_import_check(
     env: dict[str, str],
 ) -> None:
     run(
-        [python, "-c", import_check_script(required, missing, expected_features)],
+        [python, "-I", "-c", import_check_script(required, missing, expected_features)],
         env=env,
     )
 
@@ -162,6 +172,7 @@ def run_protobuf_consumer_checks(python: Path, env: dict[str, str]) -> None:
     for import_order in import_orders:
         run([
             python,
+            "-I",
             "-X",
             "faulthandler",
             "-c",

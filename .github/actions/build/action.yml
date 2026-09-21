@@ -122,6 +122,24 @@ runs:
         fi
         bskLargeData
 
+    - name: Verify installed Basilisk version
+      shell: bash
+      if: ${{ inputs.skip-build == 'false' }}
+      run: |
+        python -I - <<'PY'
+        from importlib.metadata import version
+        import Basilisk
+
+        build_version = Basilisk.getBuildInfo()["artifact"]["basiliskVersion"]
+        installed_version = version("bsk")
+        if not build_version == Basilisk.__version__ == installed_version:
+            raise SystemExit(
+                f"installed version mismatch: build={build_version!r}, "
+                f"runtime={Basilisk.__version__!r}, installed={installed_version!r}"
+            )
+        print("OK installed Basilisk version", build_version)
+        PY
+
     - name: Save Conan cache
       if: ${{ success() && inputs.skip-build == 'false' && inputs.save-conan-cache == 'true' && steps.conan-cache.outcome == 'success' && steps.conan-cache.outputs.cache-hit != 'true' }}
       continue-on-error: true
