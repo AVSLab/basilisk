@@ -21,8 +21,14 @@ Basilisk Release Notes
     - support effector branching for additional state and dynamic effectors
     - More effector and sensor fault modeling
 
-Version |release| (September 21, 2026)
---------------------------------------
+
+Version |release|
+-----------------
+
+.. include:: bskReleaseNotesSnippets/_compiled_latest.rst
+
+Version 2.12.0 (September 21, 2026)
+-----------------------------------
 
 - Removed the deprecated ``Basilisk.architecture.cMsgCInterfacePy`` compatibility package; import C message wrappers from ``Basilisk.architecture.messaging`` instead.
 - Added support for :ref:`dualHingedRigidBodyStateEffector` to be the parent for dynamic effectors.
