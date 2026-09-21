@@ -1,1 +1,0 @@
-- Improved :ref:`hingedRigidBodyMotor` documentation, gain and torque-limit configuration, parameter validation, and unit-test coverage.

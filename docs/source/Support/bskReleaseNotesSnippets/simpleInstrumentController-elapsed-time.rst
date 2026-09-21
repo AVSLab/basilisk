@@ -1,1 +1,0 @@
-- Added the Python-accessible ``elapsedTime`` state to :ref:`simpleInstrumentController` for duration-based imaging attempts.

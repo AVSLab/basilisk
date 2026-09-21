@@ -1,1 +1,0 @@
-- Corrected :ref:`horizonOpNav` to use a planet's polar radius along its polar axis instead of applying the equatorial radius to all three axes.

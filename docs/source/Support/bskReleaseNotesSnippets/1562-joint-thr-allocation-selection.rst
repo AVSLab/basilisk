@@ -1,2 +1,0 @@
-- Enhanced :ref:`jointThrAllocation` to evaluate all successful optimizer seeds and select the minimum-cost solution.
-- Added optional current-joint-state motion penalties to :ref:`jointThrAllocation` allocations.

@@ -1,1 +1,0 @@
-- Reduced heap allocation in fixed-dimension Eigen operations used by Lambert propagation, navigation models and filters, VSCMG steering, magnetic torque bars, hinged-joint controllers, coordinate conversions, and common numerical support utilities.

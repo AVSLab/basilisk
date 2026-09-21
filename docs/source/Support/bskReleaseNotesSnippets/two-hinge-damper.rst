@@ -1,1 +1,0 @@
-- Added :ref:`twoHingeDamper` to apply isotropic Cartesian bob damping as generalized torques for a two-hinge spherical pendulum.

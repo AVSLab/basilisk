@@ -1,1 +1,0 @@
-- ConstraintDynamicEffector now recomputes derived gains from updated alpha and beta on reset or attachment initialization while preserving explicit individual-gain overrides. Gain setters reject non-finite values, and derived-gain overflow fails before replacing active gains. Document the physical gain units and shared numerical tuning convention.

@@ -1,2 +1,0 @@
-- Prevented signed integer overflow when storage units integrate or directly add very large data quantities, while preserving exact 64-bit Python integer inputs.
-- Ensured that simple storage units evaluate each data node against the current storage level without exceeding capacity.
