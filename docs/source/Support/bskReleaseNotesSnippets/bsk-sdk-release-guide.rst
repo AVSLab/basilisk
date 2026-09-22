@@ -1,0 +1,1 @@
+- Updated :ref:`bskSdkReleaseGuide` with beta and release workflows, the single-command ``--refresh-example`` version update, and nightly source verification.
