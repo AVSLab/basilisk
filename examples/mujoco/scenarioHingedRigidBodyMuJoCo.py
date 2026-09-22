@@ -127,9 +127,15 @@ def plotAngDisp(timeAxis: np.ndarray, panel1thetaLog: np.ndarray, panel2thetaLog
 
 
 def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float] = (900.0, 800.0, 600.0)):
-    """ makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
-         - hubMass: mass of the s/c hub
-         - busIDiag: Tuple list representing diagonal of inertia matrix I (assuming symmetric)"""
+    """Build MuJoCo XML for a spacecraft hub with two hinged panels.
+
+    :param hubMass: Hub mass [kg]. Defaults to 800.0 kg.
+    :param busIDiag: Principal moments of inertia about the hub center of mass,
+        ordered along the hub x, y, and z axes [kg m^2]. Defaults to
+        ``(900.0, 800.0, 600.0)`` kg m^2.
+    :returns: XML defining the hub, panel bodies, hinge joints, and thrust site.
+    :rtype: str
+    """
     ixx, iyy, izz = busIDiag
 
     return f"""
@@ -376,12 +382,12 @@ class InertialForceToSiteActuator(sysModel.SysModel):
 
 
 class JointSpringDamper(sysModel.SysModel):
-    """ JointSpringDamper: custom sys model to incorporate torsional spring effects
-        torque for a hinge joint in MuJoCo
-        INPUTS:
-        - k : stiffness coefficient
-        - c : damping coefficient
-        - thetaRef : reference angle to equilibrium"""
+    """Compute the restoring torque of a torsional spring and damper.
+
+    :param k: Torsional stiffness [N m/rad].
+    :param c: Torsional damping coefficient [N m s/rad].
+    :param thetaRef: Equilibrium hinge angle [rad].
+    """
 
     def __init__(self, k: float, c: float, thetaRef: float):
         """Initialize"""

@@ -219,11 +219,15 @@ class geometryClass:
 
 
 def panelChainGen(scGeometry: geometryClass, baseIndent: int):
-    """ panelChainGen: supporter function for XML constructor function to generate sub-panel bodies
-        that make up the flexible panel.
-        INPUTS:
-        - scGeometry: geometryClass instance
-        - baseIndent: scalar value defining initial number of indents (tabs) necessary for proper XML formatting"""
+    """Build the nested MuJoCo body elements for a flexible panel.
+
+    :param scGeometry: Hub and panel geometry, including the number of segments,
+        segment dimensions [m], and segment mass [kg].
+    :param baseIndent: Number of leading indentation tabs for the first segment.
+    :returns: XML defining the nested segment bodies, bending and twisting
+        joints, inertial properties, and visual geometry.
+    :rtype: str
+    """
 
     openTags = []
     closeTags = []
@@ -263,8 +267,13 @@ f"""{pad}<body name = "subPanel{n}" pos = "{bendingPos}">
 
 
 def makeMjXmlString(scGeometry: geometryClass):
-    """ makeMjXmlString: MuJoCo string constuctor, creates MJ model with the following inputs:
-        - scGeometry: geometryClass instance, provides all necessary measurements"""
+    """Build MuJoCo XML for a spacecraft hub with a flexible panel.
+
+    :param scGeometry: Hub and panel geometry, including dimensions [m],
+        masses [kg], and the number of panel segments.
+    :returns: Complete MuJoCo model XML containing the hub and panel chain.
+    :rtype: str
+    """
 
     # Inertia matrix diagonal values for hub
     ixx = scGeometry.massHub / 12 * (scGeometry.lengthHub**2 + scGeometry.heightHub**2)
@@ -529,12 +538,12 @@ def run(showPlots: bool = False):
 
 
 class JointSpringDamper(sysModel.SysModel):
-    """ JointSpringDamper: custom sys model to incorporate torsional spring effects
-        torque for a hinge joint in MuJoCo
-        INPUTS:
-        - k : stiffness coefficient
-        - c : damping coefficient
-        - thetaRef : reference angle to equilibrium"""
+    """Compute the restoring torque of a torsional spring and damper.
+
+    :param k: Torsional stiffness [N m/rad].
+    :param c: Torsional damping coefficient [N m s/rad].
+    :param thetaRef: Equilibrium hinge angle [rad].
+    """
 
     def __init__(self, k: float, c: float, thetaRef: float):
         """Initialize"""

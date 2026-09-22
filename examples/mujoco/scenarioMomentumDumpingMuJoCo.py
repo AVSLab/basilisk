@@ -245,14 +245,22 @@ def addRWsXML(rwPos: list,
               rwFactory: simIncludeRW,
               maxMomentum: float = 100.,
               baseIndent: int = 3):
-    """ addRWsXML: supporter function for XML constructor function to generate RW bodies within
-        hub body, generalized for any number of RWs
-        INPUTS:
-        - rwPos: list of [x, y, z] positions, one per wheel
-        - rwAxes: list of [x, y, z] unit spin-axis vectors, one per wheel
-        - rwFactory: simIncludeRW.rwFactory instance used to create the RW config objects
-        - maxMomentum: maximum momentum spec [Nms]
-        - baseIndent: initial num of indents (tabs) necessary for proper XML formatting"""
+    """Build MuJoCo XML for reaction-wheel bodies and motor actuators.
+
+    :param rwPos: Wheel mounting positions in the hub frame [m], one
+        three-component vector per wheel.
+    :param rwAxes: Unit spin-axis vectors in the hub frame, in the same order
+        as ``rwPos``.
+    :param rwFactory: Factory in which the wheel configuration objects are
+        created and registered.
+    :param maxMomentum: Maximum momentum specification per wheel [N m s].
+        Defaults to 100.0 N m s.
+    :param baseIndent: Number of leading indentation tabs for wheel-body XML.
+        Defaults to 3.
+    :returns: A tuple containing the wheel-body XML, motor-actuator XML, and
+        list of registered wheel configuration objects in mounting order.
+    :rtype: tuple[str, str, list]
+    """
 
     numRW = len(rwPos)
     pad = "\t" * baseIndent
@@ -287,14 +295,22 @@ def addThrustersXML(thrustLocs: list,
                     thrFactory: simIncludeThruster,
                     maxThrust: float = 5.0,
                     baseIndent: int = 2):
-    """ addThrustersXML: supporter function for XML constructor function to generate thruster sites
-        and force actuators on the hub body, generalized for any number of thrusters
-        INPUTS:
-        - thrustLocs: list of [x, y, z] thruster mounting positions
-        - thrustDirs: list of [x, y, z] unit thrust-direction vectors, one per thruster
-        - thrFactory: simIncludeThruster.thrusterFactory instance used to create the thruster config objects
-        - maxThrust: maximum thrust force spec [N]
-        - baseIndent: initial number of indents (tabs) necessary for proper XML formatting"""
+    """Build MuJoCo XML for thruster sites and force actuators.
+
+    :param thrustLocs: Thruster mounting positions in the hub frame [m], one
+        three-component vector per thruster.
+    :param thrustDirs: Unit thrust directions in the hub frame, in the same
+        order as ``thrustLocs``.
+    :param thrFactory: Factory in which the thruster configuration objects are
+        created and registered.
+    :param maxThrust: Maximum thrust specification per thruster [N].
+        Defaults to 5.0 N.
+    :param baseIndent: Base number of indentation tabs for the generated XML.
+        Defaults to 2; site elements receive one additional tab.
+    :returns: A tuple containing the site XML, force-actuator XML, and list of
+        registered thruster configuration objects in mounting order.
+    :rtype: tuple[str, str, list]
+    """
 
     numTHRs = len(thrustLocs)
     pad = "\t" * baseIndent
@@ -318,8 +334,15 @@ def addThrustersXML(thrustLocs: list,
 
 
 def makeMjXmlString():
-    """ makeMjXmlString: MuJoCo string constructor, creates MJ model of the hub carrying 4 RWs and
-        8 ACS thrusters, hub properties specified in function"""
+    """Build MuJoCo XML for a hub with four wheels and eight ACS thrusters.
+
+    The hub, wheel, and thruster properties are specified within this function.
+
+    :returns: A tuple containing the complete model XML, wheel configuration
+        objects, thruster configuration objects, reaction-wheel factory, and
+        thruster factory, in that order.
+    :rtype: tuple
+    """
     # Hub mass properties
     hubMass = 2500.0
     hubIxx, hubIyy, hubIzz = 1700.0, 1700.0, 1800.0
@@ -670,10 +693,11 @@ def run(showPlots: bool = False):
 
 
 class RWTorqueDistributor(sysModel.SysModel):
-    """ RWTorqueDistributor: custom sys model to fan a single array motor-torque message out into
-        one single-actuator message per reaction wheel
-        INPUTS:
-        - numRW: number of reaction wheels to distribute torque commands to"""
+    """Distribute an array motor-torque command to individual wheel actuators.
+
+    :param numRW: Number of reaction wheels and scalar actuator output messages.
+    :type numRW: int
+    """
 
     def __init__(self, numRW):
         """Initialize"""
@@ -694,10 +718,13 @@ class RWTorqueDistributor(sysModel.SysModel):
 
 
 class RWSpeedCombiner(sysModel.SysModel):
-    """ RWSpeedCombiner: custom sys model to combine per-joint MuJoCo wheel speeds into a single
-        RWSpeedMsg expected by the FSW momentum-management chain
-        INPUTS:
-        - joints: list of MuJoCo scalar joints, one per reaction wheel"""
+    """Combine MuJoCo wheel-joint rates into one reaction-wheel speed message.
+
+    :param joints: MuJoCo scalar joints, one per wheel, ordered to match the
+        reaction-wheel configuration message. Their rate messages provide
+        wheel speeds [rad/s].
+    :type joints: list
+    """
 
     def __init__(self, joints):
         """Initialize"""
