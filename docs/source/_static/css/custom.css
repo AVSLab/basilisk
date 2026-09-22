@@ -116,6 +116,27 @@ a.el:visited {
     padding-bottom: calc(0.4045em * 0.75) !important;
 }
 
+/* Scenario headings add levels without making the links smaller or excessively
+ * indented. Keep the theme's current/expanded state and keyboard controls. */
+.wy-menu-vertical .bsk-scenario-tree li li {
+    font-size: inherit;
+}
+
+.wy-menu-vertical .bsk-scenario-group > a {
+    font-weight: 600;
+}
+
+.bsk-scenario-tree .toctree-l3 { --bsk-scenario-indent: 4em; }
+.bsk-scenario-tree .toctree-l4 { --bsk-scenario-indent: 5em; }
+.bsk-scenario-tree .toctree-l5 { --bsk-scenario-indent: 6em; }
+.bsk-scenario-tree .toctree-l6 { --bsk-scenario-indent: 7em; }
+.bsk-scenario-tree .toctree-l7 { --bsk-scenario-indent: 8em; }
+
+.wy-menu-vertical .bsk-scenario-tree li > a {
+    padding-left: var(--bsk-scenario-indent) !important;
+    padding-right: 1em !important;
+}
+
 .wy-nav-content {
     --bsk-content-link: #765A16;
     --bsk-content-link-hover: #4F3B0C;

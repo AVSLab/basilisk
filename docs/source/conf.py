@@ -187,6 +187,7 @@ extensions = [
     'breathe',
     'doxygen_cache',
     'generated_documentation',
+    'scenario_navigation',
     'module_catalog',
     'module_examples',
     'sphinx_copybutton',

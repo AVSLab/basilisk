@@ -36,6 +36,7 @@ runs:
           tests/test_documentation_search.py \
           tests/test_generated_documentation_sync.py \
           tests/test_module_catalog.py \
+          tests/test_scenario_documentation_navigation.py \
           -m docsIntegration --error-for-skips --timeout=300 -v
     - name: Test documentation search ranking
       shell: bash
