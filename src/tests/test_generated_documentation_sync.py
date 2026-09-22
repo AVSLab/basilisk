@@ -185,7 +185,8 @@ def test_local_contents_are_separate_from_site_navigation(tmp_path):
         f"templates_path = [{str(templates)!r}]\n"
     ))
     _write_file(source / "index.rst", (
-        "Home\n====\n\n.. toctree::\n\n   guide\n   short\n   Documentation/module\n"
+        "Home\n====\n\n.. toctree::\n\n   guide\n   short\n"
+        "   Support/bskReleaseNotes/2.1\n   Documentation/module\n"
     ))
     sections = "".join(
         f"Section {index}\n---------\n\nText.\n\n" for index in range(4)
@@ -194,6 +195,7 @@ def test_local_contents_are_separate_from_site_navigation(tmp_path):
         "Subsection & details\n~~~~~~~~~~~~~~~~~~~~\n\nDetails.\n"
     )
     _write_file(source / "guide.rst", guide)
+    _write_file(source / "Support/bskReleaseNotes/2.1.rst", guide)
     _write_file(source / "Documentation/module.rst", guide)
     _write_file(source / "short.rst", "Short\n=====\n\nOverview\n--------\n\nText.\n")
     result = subprocess.run(
@@ -215,7 +217,7 @@ def test_local_contents_are_separate_from_site_navigation(tmp_path):
     sidebar = html.split('aria-label="Navigation menu"')[1].split("</nav>")[0]
     assert "Section 0" not in sidebar
     assert "guide.html" in (output / "short.html").read_text(encoding="utf8")
-    for page in ("short", "Documentation/module"):
+    for page in ("short", "Documentation/module", "Support/bskReleaseNotes/2.1"):
         assert 'class="bsk-page-navigation"' not in (
             output / (page + ".html")
         ).read_text(encoding="utf8")

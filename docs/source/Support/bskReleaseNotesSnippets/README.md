@@ -6,8 +6,9 @@ Purpose
 This file is the source of truth for release-note snippet requirements.
 
 Pull requests with user- or developer-facing changes should contribute release notes by
-adding a snippet file in this folder instead of editing
-``docs/source/Support/bskReleaseNotes.rst`` directly.
+adding a snippet file in this folder. Maintainers collect and edit the notes
+at release time and place them in the matching version-series file under
+``docs/source/Support/bskReleaseNotes/``.
 
 User- or developer-facing changes include public APIs, modules, examples,
 documentation, build/install behavior, packaging, validation semantics, performance,
@@ -28,7 +29,7 @@ What to add
 
 How snippets are inserted
 -------------------------
-The file ``docs/source/Support/bskReleaseNotes.rst`` includes:
+The active development section in the matching version-series page includes:
 
 ``docs/source/Support/bskReleaseNotesSnippets/_compiled_latest.rst``
 
@@ -38,6 +39,24 @@ When you run the regular ``make html`` command, this will create the compiled re
 
 The generator reads snippet files in this folder, concatenates them in filename-sorted order,
 and writes the compiled output file.
+
+For example, development notes for ``2.13.0b0`` appear in
+``docs/source/Support/bskReleaseNotes/2.13.rst`` beneath ``Version |release|``.
+The relative include from a series page is
+``.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst``.
+Keep exactly one active include in the documentation.
+
+At release time, maintainers replace the include with reviewed bullet content
+under a literal version and release date, then remove only the consumed
+snippets. A release such as ``2.12.1`` goes into ``2.12.rst``, above ``2.12.0``.
+The compiler does not choose a release or move notes between series pages.
+
+When starting a new development cycle, reuse the series page for a patch or
+create the next series page and add it at the top of the
+``docs/source/Support/bskReleaseNotes.rst`` index. Place the active include and
+the ``bsk-release-current`` label in the new development section. There is no
+separate upcoming-release page. See the BSK Release Guide for the complete
+finalization and next-beta procedures.
 
 Formatting guidance
 -------------------

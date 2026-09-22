@@ -158,6 +158,11 @@ a.el:visited {
     color: var(--bsk-secondary-text);
 }
 
+/* Old release fragments are redirect targets, not a second visible index. */
+.bsk-release-bookmarks {
+    display: none;
+}
+
 /* Search results ----------------------------------------------------------- */
 
 /* Compact search results without hiding excerpts or changing their ranking. */

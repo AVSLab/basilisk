@@ -1,0 +1,102 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.6 Release Notes
+=========================
+
+.. _bsk-release-2-6-0:
+
+Version  2.6.0  (Feb. 21, 2025)
+-------------------------------
+
+- Build ``ubuntu-latest`` wheels for Python 3.9, 3.10, and 3.11 on GitHub CI, allowing for
+  other CI systems to use these wheels for testing with Basilisk as a dependency.
+- updated README file.  Links now point to local documentation instead of to the pages
+  on the AVS lab web page that used to host the documentation.
+- Updated :ref:`scenarioBasicOrbitStream` to add the ability to pause and resume the live BSK stream
+- Added documenation on installing with ``pip`` via source code in :ref:`pipInstall`
+- Updated :ref:`scenarioOrbitManeuver` to include a SPICE module that rotates the Earth
+- Changed the way polyhedron gravity is computed to be more computationally efficient
+- Updated :ref:`vizInterface` to flush the output buffer when saving binary files to avoid truncation
+- Updated :ref:`examples` to better include folders of scenario tutorial scripts
+- Updated documentation build to use latest version of ``sphinx`` and ``sphinx_rtd_theme``.
+  Updated the install documenation and optional package requirements.
+- Updated ``MonteCarloExamples`` directory with a bokeh plotting feature robust to large Monte Carlo datasets
+- Updated :ref:`scenarioVisualizeMonteCarlo` to autogenerate live bokeh plots in Sphinx documentation
+- Updated :ref:`scenarioMonteCarloAttRW` to include the new ``useBokeh`` feature in the ``run()`` method
+- Updated :ref:`scenarioMonteCarloAttRW` to use more pythonic OOP for Monte Carlo data retention
+- Updated :ref:`scenarioMonteCarloSpice` to use more pythonic OOP for Monte Carlo data retention
+- Decreased the Basilisk wheel size by keeping large data files out of the wheel.
+- The wheel installs the local command tool ``bskLargeData`` to execute :ref:`bskLargeData`.
+  The purpose is to install the large Basilisk data files into the local Basilisk
+  python package.
+- The wheel installs the local command tool ``bskExamples`` to execute :ref:`bskExamples`.  This
+  tool downloads the Basilisk repo ``examples`` folder into the local folder
+- Removed the now deprecated ``datashader_utilities.py`` in favor of the new bokeh plotting features in ``AnalysisBaseClass.py``
+- Upgraded protoc compiler to v3.20.0, added ``protobuf`` to optional package install list
+- Created unit tests for protobuffer packing and saving in :ref:`vizInterface`
+- Added YouTube video links of Vizard illustrating the :ref:`scenarioFlexiblePanel` and
+  :ref:`scenarioRoboticArm` scenarios.
+- Fixed issue in which reading ``RWModel`` from RW message payloads when :ref:`vizInterface` was also
+  imported would return a Swig Object instead of an enumerated integer.
+- Refactored the ``GaussMarkov`` class to enforce walk bounds and remove the need for the 1.5x noise multiplier.
+  Note: Existing code that used this multiplier will need to be updated to maintain the same behavior.
+- Removed the deprecated 1.5x multiplier in :ref:`magnetometer` and :ref:`coarsesunsensor` when setting 'senNoiseStd'
+- Updated ``starTracker`` unit tests to properly convert EP's to rotation vector now that random walk exists
+- Added :ref:`scenarioGaussMarkovRandomWalk` to showcase ``GaussMarkov`` class functionality
+- Added unit test coverage for ``GaussMarkov`` implementation in :ref:`tempMeasurement`,
+  :ref:`simpleNav` and :ref:`planetNav`.
+- Fixed SWIG array handling for message payloads on macOS, particularly addressing issues with uint8_t arrays and other
+  array types in message payloads. This resolves compatibility issues between SWIG's array typemaps and builds.
+- A bug was fixed in the :ref:`facetSRPDynamicEffector` module. A transpose was required to be added to a dcm
+  in order to correctly express rotated facet normals in the spacecraft body frame.
+- The :ref:`facetSRPDynamicEffector` module was refactored and setters and getters were added for the module
+  variables ``numFacets`` and ``numArticulatedFacets``. A deprecation warning is added to the module documentation
+  stating that these variables will be moved to private module variables in Dec 2025. To access these variables
+  the added setters and getters must be used.
+- Fixed a bug in which the ``MtbEffector.py`` module was not being imported correctly in Python due to lack of ``swig_eigen.i``
+  include file in ``MtbEffector.i``.
+- Added the capability to simulate a fault in the :ref:`simpleBattery` module that reduces the actual storage capacity without directly altering the stated capacity.
+- Cleaned up what python packages are required to build BSK (``requirements_dev.txt``),
+  to run BSK (``requirements.txt``) and to build BSK documentation (``requirements_doc.txt``).
+- The BSK install instructions are updated to ask users to install by first ``pip`` installing build
+  required packages through ``requirements_dev.txt``.
+- Update the build process to use ``conan`` version 2.x
+
+  .. warning::
+
+    You have to upgrade your python ``conan`` package to be able to build Basilisk.
+    Use ``python install --upgrade conan``.
+- Added support for subclassing ``StateData`` and overloading certain methods. This enables support for custom state
+  behavior, such as quaternions, which have size 4 but their derivative is size 3. This is done in preparation of
+  a future MuJoCo integration. Note the warning below regarding SWIG files for ``dynamicEffector`` and ``stateEffector``.
+
+  .. warning::
+
+    SWIG files for subclasses of ``dynamicEffector`` and ``stateEffector`` must now
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"`` instead of
+    ``%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"``. See
+    ``src/simulation/dynamics/dragEffector/dragDynamicEffector.i`` for an example.
+- Update CI Linux build with ``opNav`` to use Ubuntu 22.04, not latest (i.e. 24.02).  The latter does not
+  support directly Python 3.11, and Basilisk does not support Python 3.13 yet.
+- :ref:`simIncludeGravBody` set the moon equatorial radius in km, not meters.
+- fixed ``subMRP()`` routine in :ref:`RigidBodyKinematics`
+- Updated :ref:`solarArrayReference` to correct the wrong assumption of reflective solar arrays for momentum management pointing mode.
+- Updated the CI build that includes the documentation to fail if a doxygen warning happens
+- Removed deprecated swig code that allowed still importing `sys_model.h` instead of `sys_model.i`
+- Updated :ref:`groundMapping` to correct behavior if ``maximumRange == -1``
+- Updated scripts to work with ``matplotlib`` version 3.10.x without errors or warnings
+- Add support for Python 3.12
+- Resolved inconstencies in sensor noise handling for the :ref:`imuSensor`, :ref:`coarseSunsensor`,
+  :ref:`magnetometer`, :ref:`starTracker`, and :ref:`simpleVoltEstimator` modules.
+- Added setter and getter methods for the propagation matrices in the :ref:`simpleVoltEstimator`
+  and :ref:`starTracker` modules as their ``Amatrix`` attributes were private.
+- Name change warning added to module documentation for the ``imuSensor`` ``walkBounds`` attribute to ``errorBounds``
+  and a note on specifying sensor properties in  :ref:`scenarioGaussMarkovRandomWalk`.
+- Update :ref:`makingModules-2` on how to make messages available to Basilisk modules
+- Support for Vizard release 2.2.1, including rotating frame settings and documentation for support of ``.glb`` shape files
+- ``vizProtobuffer`` upgraded to use latest C++ compiler, ``protobuf`` Python/C++ library upgraded
+- Updated :ref:`installLinux` to discuss installing BSK on Fedora Linux systems.
+- Updated CI scripts to catch cases where tests are skipped that should be.  Windows now builds properly with `conan2`.
+- Download ``cspice`` using ``conan`` instead of providing custom libraries.  This ensures all platforms are using
+  the same version of ``cspice``.
+- Ensured that the ability to designate an external BSK folder still works with ``conan2``
