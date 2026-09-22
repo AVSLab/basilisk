@@ -582,7 +582,7 @@ if __name__ == "__main__":
     # --- XML GENERATION TESTING ---
     numSegments = 5 # specifies number of discretized sub-panels (only for testing)
     scGeometry = geometryClass(numSegments)
-    xmlString = makeMjXmlString(scGeometry, hubMass = 1000.0)
+    xmlString = makeMjXmlString(scGeometry)
 
     # Writes XML to file for confirmation of proper string gen
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sat_flexiblePanel.xml"), "w") as f:
