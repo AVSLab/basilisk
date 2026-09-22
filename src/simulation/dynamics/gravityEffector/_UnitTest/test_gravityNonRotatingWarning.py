@@ -32,6 +32,7 @@ import os
 
 import pytest
 from Basilisk import __path__
+from Basilisk.architecture import bskLogging
 from Basilisk.simulation import spacecraft
 from Basilisk.simulation.pointMassGravityModel import PointMassGravityModel
 from Basilisk.simulation.polyhedralGravityModel import PolyhedralGravityModel
@@ -62,6 +63,8 @@ def _buildShSim(gravFile, gravDeg):
 
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "sc"
+    # Keep warning assertions independent of other tests' default log levels.
+    scObject.gravField.bskLogger.setLogLevel(bskLogging.WARNING)
     scSim.AddModelToTask("t", scObject)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -89,6 +92,8 @@ def _buildPolySim():
 
     scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "sc"
+    # Keep warning assertions independent of other tests' default log levels.
+    scObject.gravField.bskLogger.setLogLevel(bskLogging.WARNING)
     scSim.AddModelToTask("t", scObject)
 
     gravFactory = simIncludeGravBody.gravBodyFactory()
