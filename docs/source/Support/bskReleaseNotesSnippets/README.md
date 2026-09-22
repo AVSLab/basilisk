@@ -51,6 +51,14 @@ under a literal version and release date, then remove only the consumed
 snippets. A release such as ``2.12.1`` goes into ``2.12.rst``, above ``2.12.0``.
 The compiler does not choose a release or move notes between series pages.
 
+Before a tagged release, maintainers sort longer lists into topic subsections
+and edit or combine related entries as needed. Follow the topic order in the
+BSK Release Guide, put compatibility and migration changes first, and keep
+each entry in one category with its related examples and tests. Preserve
+migration instructions, references, issue numbers, and beta markers. Small
+patch releases can remain simple lists. PR snippets remain individual bullet
+entries; the compiler does not assign topics.
+
 When starting a new development cycle, reuse the series page for a patch or
 create the next series page and add it at the top of the
 ``docs/source/Support/bskReleaseNotes.rst`` index. Place the active include and

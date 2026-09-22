@@ -222,6 +222,28 @@ the snippet compiler does not assign notes to releases. At release time:
    release date, newest first. For example, ``2.12.1`` belongs above ``2.12.0``
    in ``2.12.rst``; ``2.13.0`` belongs in ``2.13.rst``. Create a series page and
    add it to the index when preparing the first release in that series.
+#. Before tagging, sort longer release-note lists into topic subsections within
+   the dated release section. Use the topics below in the same order, omitting
+   empty categories. Small patch releases can remain simple bullet lists.
+
+   - Compatibility and migration
+   - Build, installation, and CI
+   - Simulation framework and module development
+   - Spacecraft dynamics and effectors
+   - Environment, gravity, and ephemerides
+   - Sensors and flight software
+   - MuJoCo and stochastic integration
+   - Visualization and data handling
+   - Documentation, examples, and validation
+
+   Use RST subsection headings underlined with ``~`` characters, as in the
+   ``2.12.0``, ``2.11.0``, and ``2.10.0`` notes. Place each entry once under its
+   primary topic, keeping feature-specific examples, documentation, and tests
+   with the feature. Put changes requiring users to adapt their code or setup
+   under Compatibility and migration. Edit for clarity and combine related
+   entries where appropriate, preserving migration instructions, RST references,
+   issue numbers, and beta markers. Sorting and editing are maintainer tasks;
+   PR snippets remain individual bullet entries.
 #. When finalizing the active development version, replace its
    ``_compiled_latest.rst`` include with the finalized bullet content. Leave
    the include present but commented if useful for the next development cycle.
