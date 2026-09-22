@@ -1,0 +1,129 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.2 Release Notes
+=========================
+
+.. _bsk-release-2-2-1:
+
+Version 2.2.1 (Dec. 22, 2023)
+-----------------------------
+
+- Created a new example scenario :ref:`scenarioSatelliteConstellation` demonstrating setup of a Walker-Delta constellation
+- Created a new :ref:`pinholeCamera` module to support generation of landmarks-based measurements around a
+  small body.
+- Corrected a memory leak in the ``swig`` access to standard vectors inside messages.
+- A new integrated example script :ref:`scenarioSmallBodyLandmarks` demonstrates the use of the pinhole camera module
+- Created a new example scenario :ref:`scenarioSpinningBodiesTwoDOF` that showcases the different capabilities of the
+  :ref:`spinningBodyTwoDOFStateEffector` module.
+- Corrected an error with :ref:`thrusterStateEffector` where if there are multiple instances of the
+  thruster state effector then the last effector will over-write all the state of the earlier thrusters.
+- Corrected an error with :ref:`magnetometer` where the RNG seed was passed to the Gauss-Markov noise model within the
+  constructor and could therefore not be modified after creating the object. Furthermore, the noise model is now only
+  used if all three components of the standard deviation parameter are initialized to a positive value.
+- Removed fswAuto and associated documentation, as the tool was outdated.
+- Changed how C modules are wrapped as C++ classes. This makes handling C modules the same as C++ modules,
+  removing the need for "Config" and "Wrap" objects. Updated all scenarios and test files for this new syntax.
+  To convert prior script to use the new syntax, see :ref:`bskPrinciples-2` for the simple new
+  syntaxt to add C-modules.
+- Modified :ref:`mrpFeedback` to enable the use of a modified control law, and added the integral control torque
+  feedback output message.
+- Resolved a crash, induced by uninitialized memory, in the Camera module. The crash was first seen on Ubuntu 22 with
+  gcc 9.5
+- Implemented new syntax for variable logging. See :ref:`bskPrinciples-6`.
+- Basilisk minimum Python version is now formally 3.8.x (checked by build files). Previously, it was indicated to be
+  3.7.x yet in practice it was 3.8.x.
+- Added a ``TotalAccumDV_CN_N`` field in :ref:`SCStatesMsgPayload` that saves the total accumulated velocity of the
+  spacecraft's center of mass in the inertial frame.
+
+.. warning::
+
+    SWIG files (``.i``) for modules should include ``%include "sys_model.i"`` instead of ``%include "sys_model.h"``
+    to take advantage of the new module variable logging feature.
+
+- Added prescribed angle and angle rates to :ref:`spinningBodyOneDOFStateEffector` and :ref:`spinningBodyTwoDOFStateEffector`
+  modules.
+- Created a :ref:`scanningInstrumentController`, similar to :ref:`simpleInstrumentController`, but which constantly checks if the attitude error
+  and angular rate (optional) are within the requirement limits and sends an imaging command to a :ref:`simpleInstrument`.
+- Added a new scenario :ref:`scenarioHohmann` that performs a Hohmann transfer with attitude mode changes.
+  The basic attitude flight modes are implemented using the Basilisk event system.
+- updated conan support to latest ``1.xx`` version to provide support for macOS Sonoma
+- updated macOS ``cspice`` library to be compiled with Xcode 15.  This addresses some errors that appeared
+  when calling the prior pre-built ``cspice`` library.  The new library is backwards compatible with
+  prior versions of Xcode.
+- Fixed a bug in the conanfile where the ``stderr`` output from a ``subprocess.Popen`` call was being interpreted as an
+  error. Rather, the process return code (0 for success, and anything else for failure) indicates the success.
+- The ``MAX_N_CSS_MEAS`` define is increased to 32 matching the maximum number of coarse sun sensors.
+- mixed bug in time to nano-seconds conversions in ``macros.py`` support file
+- Created :ref:`thrusterPlatformState` to map the thruster configuration information to body frame given the time-varying platform states.
+- Updated :ref:`thrusterPlatformReference` to add an input and output thruster config msg, and integral feedback term
+  which dumps steady-state momentum in case of uncertainties on the CM location.
+- Created :ref:`thrustCMEstimation` to perform online estimation of the CM using gimbaled thruster torque measurements.
+- Refactored ``GravityEffector``. Adding custom gravity models can now be done by subclassing ``GravityModel``. The
+  utility method ``useSphericalHarmonicsGravityModel`` has been added to planetary body objects, which makes the body
+  use spherical harmonics and loads them from a file with a single command. Similarly, the methods ``usePolyhedralGravityModel``
+  and ``usePointMassGravityModel`` have been added.
+- Fixed examples and tests to run even when Basilisk is built with ``--vizInterface False``.
+- Added a new method ``setDataBuffer()`` to :ref:`simpleStorageUnit` and :ref:`partitionedStorageUnit` to add or remove data from specified partitions.
+- Refactored ``simIncludeGravBody``. The most notable change for users is that the commonly used line
+  ``scObject.gravField.gravBodies = spacecraft.GravBodyVector(list(gravFactory.gravBodies.values()))``
+  can be replaced by ``gravFactory.addBodiesTo(scObject)`` (where ``scObject`` is a ``spacecraft.Spacecraft``
+  or  ``spacecraftSystem.SpacecraftSystem``, and ``gravFactory`` is a ``simIncludeGravBody.gravBodyFactory``)
+- Added condition in :ref:`thrustCMEstimation` to avoid measurement updates when input ``attGuidInMsg`` has not been written.
+- Added :ref:`scenarioSepMomentumManagement` to show how to use a dual-gimbaled electric thruster to perform contunuous
+  momentum management.
+- Clarified documentation of the input variable ``FirstStart`` of the method  ``CreateNewTask()``.
+- Marked the method ``CreateNewTask()`` input variable ``InputDelay`` as depreciated.  This variable
+  was never implemented and did nothing.
+- Fixed terminal events to terminate at the time they are triggered instead of one timestep after.
+
+.. _bsk-release-2-2-0:
+
+Version 2.2.0 (June 28, 2023)
+-----------------------------
+
+- Created new way to define Python modules by inheriting from ``Basilisk.architecture.sysModel.SysModel``.
+  See :ref:`pyModules` for details.
+- Added the ability to integrate the ODE's of two or more Basilisk modules that are ``DynamicObject`` class
+  member at the same time.  See :ref:`bskPrinciples-9`
+- updated ZMQ version to 4.5.0.  For 2-way communication with ``opNav`` modules talking to Vizard
+  then Vizard 2.1.5 or newer should be used.  This also removes the need for the legacy bincrafters code repo.
+  Delete ``~/.conan`` folder if you run into ``conan`` issues.
+- The Basilisk project C++ version is advanced from C++11 to C++17
+- Disabled the following build options in the conan included OpenCV dependency; with_ffmpeg video frame encoding lib,
+  with_ade graph manipulations framework, with_tiff generate image in TIFF format, with_openexr generate image in EXR
+  format, with_quirc QR code lib. Users that have Basilisk control the build of these modules through the External
+  Modules CMake integration will need to manual toggle these OpenCV build options.
+- Updated :ref:`SmallBodyNavEKF` with several bug fixes. Removed spacecraft attitude estimation component.
+- Bug fix made to :ref:`eclipse`: Saturn, Jupiter, Uranus, and Neptune radii were incorrectly being assigned the
+  radius of Mars.
+- Added custom planet name to :ref:`eclipse` in case the user wants to use a body not contained within the module.
+- Removed all instances of using ``unitTestSupport.np2EigenVectorXd()``, as this function is now unneeded.
+- Created a :ref:`facetSRPDynamicEffector` dynamics module to calculate the B frame SRP force and torque acting on a
+  static spacecraft.
+- fixed ``PCI2PCPF()`` and ``PCPF2PCI`` methods in :ref:`geodeticConversion` to use the correct DCM
+- updated :ref:`geodeticConversion` to be able to account for planet ellipsoidal shape if polar radius is provided
+- Google Test C/C++ testing framework added
+- Created a :ref:`prescribedRot2DOF` fsw module to profile a prescribed 2 DOF rotational maneuver for a secondary rigid
+  body connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+  :ref:`prescribedMotionStateEffector` dynamics module.
+- Corrected default value of ``accuracyNanos`` in :ref:`simSynch` to be 0.01 seconds.
+- Added a deprecation system for Basilisk. For developers, see :ref:`deprecatingCode`.
+- Changed the units of plasma flux in :ref:`dentonFluxModel` and :ref:`PlasmaFluxMsgPayload` from
+  [cm^-2 s^-1 sr^-2 eV^-1] to [m^-2 s^-1 sr^-2 eV^-1], because m^-2 is used more frequently in computations
+- Fixed a bug in eclipse that caused potentially occluding bodies to be skipped if a prior body was closer to the sun
+  than the spacecraft
+- fixed the time evaluation in :ref:`msisAtmosphere`
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the
+  :ref:`simpleInstrumentController` to match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are
+  not thrown
+- Fixed bug where message struct members of bool python types are returned as empty dicts instead of array of boolsgit
+- Refactored the :ref:`prescribedMotionStateEffector` dynamics module to vary the prescribed states across the dynamics
+  integration time step.
+- The encryption build option for the project's conan zmq dependency is disabled because it is uneeded.
+- Added an optional ``controllerStatus`` variable and ``deviceStatusInMsg`` message to the :ref:`simpleInstrumentController` to
+  match the functionality of the corresponding data and power modules
+- Corrected tasks priorities in several scenarios and added checks in two modules to ensure that C MSG read errors are not thrown
+- Reworked how integrators are implemented. New Runge-Kutta integrators may
+  now be added simply by specifying the relevant coefficients.
+- Added a scenario that showcases differences between integrators. See :ref:`scenarioIntegratorsComparison`
