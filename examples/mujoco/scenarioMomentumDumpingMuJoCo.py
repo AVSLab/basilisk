@@ -404,6 +404,7 @@ def run(showPlots: bool = False):
     # -------------------------------------------------------------------------
     fswTaskName = "fswTask"
     dynTaskName = "dynTask"
+    recordTaskName = "recordTask"
     simProcessName = "simProcess"
 
     # Initializing simulation time/time-steps for dynamics/fsw task
@@ -414,8 +415,10 @@ def run(showPlots: bool = False):
     sim = SimulationBaseClass.SimBaseClass()
 
     dynProcess = sim.CreateNewProcess(simProcessName)
-    dynProcess.addTask(sim.CreateNewTask(dynTaskName, simulationTimeStepDyn))
-    dynProcess.addTask(sim.CreateNewTask(fswTaskName, simulationTimeStepFsw))
+    # Run dynamics and navigation, then FSW, then record the current outputs.
+    dynProcess.addTask(sim.CreateNewTask(dynTaskName, simulationTimeStepDyn), 3)
+    dynProcess.addTask(sim.CreateNewTask(fswTaskName, simulationTimeStepFsw), 2)
+    dynProcess.addTask(sim.CreateNewTask(recordTaskName, simulationTimeStepDyn), 1)
 
     # Constructing MJ XML string (hub + 4 RWs + 8 thrusters) and loading into MJScene
     xmlString, RWs, THRs, rwFactory, thrFactory = makeMjXmlString()
@@ -596,37 +599,37 @@ def run(showPlots: bool = False):
     samplingTime = simHelpers.samplingTime(simulationTime, simulationTimeStepDyn, numDataPoints)
 
     sNavRec = simpleNavObj.attOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, sNavRec)
+    sim.AddModelToTask(recordTaskName, sNavRec)
 
     dataRec = busBody.getCenterOfMass().stateOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, dataRec)
+    sim.AddModelToTask(recordTaskName, dataRec)
 
     rwMotorLog = rwMotorTorqueObj.rwMotorTorqueOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, rwMotorLog)
+    sim.AddModelToTask(recordTaskName, rwMotorLog)
 
     attErrorLog = attError.attGuidOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, attErrorLog)
+    sim.AddModelToTask(recordTaskName, attErrorLog)
 
     deltaHLog  = thrDesatControl.deltaHOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, deltaHLog)
+    sim.AddModelToTask(recordTaskName, deltaHLog)
 
     thrMapLog = thrForceMappingObj.thrForceCmdOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, thrMapLog)
+    sim.AddModelToTask(recordTaskName, thrMapLog)
 
     onTimeLog = thrDump.thrusterOnTimeOutMsg.recorder(samplingTime)
-    sim.AddModelToTask(dynTaskName, onTimeLog)
+    sim.AddModelToTask(recordTaskName, onTimeLog)
 
     # Wheel speeds live as individual MuJoCo joint states, so log each separately and column-stack later for plotting
     rwSpeedLogs = []
     for i in range(numRWs):
         rwSpeedLogs.append(RWJoints[i].stateDotOutMsg.recorder(samplingTime))
-        sim.AddModelToTask(dynTaskName, rwSpeedLogs[i])
+        sim.AddModelToTask(recordTaskName, rwSpeedLogs[i])
 
     # Delivered force at each thruster actuator, logged individually
     thrForceLogs = []
     for i in range(numTHRs):
         thrForceLogs.append(THRActuators[i].actuatorInMsg.recorder(samplingTime))
-        sim.AddModelToTask(dynTaskName, thrForceLogs[i])
+        sim.AddModelToTask(recordTaskName, thrForceLogs[i])
 
     # -------------------------------------------------------------------------
     # 8) Running simulation
