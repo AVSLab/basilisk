@@ -108,7 +108,7 @@ def plotBendingAngles(timeAxis: np.ndarray, theta: list, numberOfSegments: int) 
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\theta$ [deg]')
-    plt.title("Bending Angles", fontsize="22")
+    plt.title("Bending Angles")
 
     return fig
 
@@ -125,7 +125,7 @@ def plotTorsionalAngles(timeAxis: np.ndarray, beta: list, numberOfSegments: int)
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\beta$ [deg]')
-    plt.title("Torsional Angles", fontsize="22")
+    plt.title("Torsional Angles")
 
     return fig
 
@@ -142,7 +142,7 @@ def plotBendingAngleRates(timeAxis: np.ndarray, thetaDot: list, numberOfSegments
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\dot{\theta}$ [deg/s]')
-    plt.title("Bending Angle Rates", fontsize="22")
+    plt.title("Bending Angle Rates")
 
     return fig
 
@@ -159,7 +159,7 @@ def plotTorsionalAngleRates(timeAxis: np.ndarray, betaDot: list, numberOfSegment
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\dot{\beta}$ [deg/s]')
-    plt.title("Torsional Angle Rates", fontsize="22")
+    plt.title("Torsional Angle Rates")
 
     return fig
 
@@ -176,7 +176,7 @@ def plotAttitudeError(timeAxis: np.ndarray, sigma_BR: np.ndarray) -> plt.Figure:
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\sigma_{B/R}$')
-    plt.title("Attitude Error", fontsize="22")
+    plt.title("Attitude Error")
 
     return fig
 
@@ -193,7 +193,7 @@ def plotAttitudeErrorRate(timeAxis: np.ndarray, omega_BR_B: np.ndarray) -> plt.F
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
     plt.ylabel(r'$\omega_{B/R}$')
-    plt.title("Attitude Error Rate", fontsize="22")
+    plt.title("Attitude Error Rate")
 
     return fig
 
