@@ -242,7 +242,7 @@ def plot_thrForce(timeDataFSW, dataThr, numTh):
 
 def addRWsXML(rwPos: list,
               rwAxes: list,
-              rwFactory: simIncludeRW,
+              rwFactory: simIncludeRW.rwFactory,
               maxMomentum: float = 100.,
               baseIndent: int = 3):
     """Build MuJoCo XML for reaction-wheel bodies and motor actuators.
@@ -292,7 +292,7 @@ f"""{pad}<body name = "rw{n}Spin" pos = "{pos[0]} {pos[1]} {pos[2]}" zaxis = "{r
 
 def addThrustersXML(thrustLocs: list,
                     thrustDirs: list,
-                    thrFactory: simIncludeThruster,
+                    thrFactory: simIncludeThruster.thrusterFactory,
                     maxThrust: float = 5.0,
                     baseIndent: int = 2):
     """Build MuJoCo XML for thruster sites and force actuators.
