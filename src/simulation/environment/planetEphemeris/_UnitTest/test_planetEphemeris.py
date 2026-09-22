@@ -247,9 +247,13 @@ def test_module(show_plots, setRAN, setDEC, setLST, setRate):
     """Module Unit Test"""
     # each test method requires a single assert method to be called
     expect_error = any([setRAN, setDEC, setLST, setRate]) and not all([setRAN, setDEC, setLST, setRate])
-    with pytest.raises(BasiliskError) if expect_error else nullcontext():
-        [testResults, testMessage] = planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate)
-        assert testResults < 1, testMessage
+    previous_log_level = bskLogging.getDefaultLogLevel()
+    try:
+        with pytest.raises(BasiliskError) if expect_error else nullcontext():
+            [testResults, testMessage] = planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate)
+            assert testResults < 1, testMessage
+    finally:
+        bskLogging.setDefaultLogLevel(previous_log_level)
 
 
 def planetEphemerisTest(show_plots, setRAN, setDEC, setLST, setRate):
