@@ -67,6 +67,22 @@
         let bookmark = takeBookmark();
         const originalReset = navigation.reset;
         navigation.reset = function (...args) {
+            // Follow only authored compatibility links, on load or hash change.
+            // Replacing the URL keeps Back from returning to the redirect.
+            try {
+                const target = document.getElementById(
+                    decodeURIComponent(window.location.hash.slice(1))
+                );
+                const releaseLink = target?.closest(".bsk-release-bookmarks")
+                    ? target.querySelector("a[href]") : null;
+                if (releaseLink) {
+                    window.location.replace(releaseLink.href);
+                    return;
+                }
+            } catch (_) {
+                // A malformed fragment must not interrupt normal navigation.
+            }
+
             const scrollTop = sidebar.scrollTop;
             const pageX = window.scrollX;
             const pageY = window.scrollY;

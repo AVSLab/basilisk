@@ -100,9 +100,14 @@ release:
 #. Create a ``beta_X_Y`` branch from ``develop`` for the next planned release.
 #. Set ``docs/source/bskVersion.txt`` to the next beta version, such as
    ``2.X.0b0``. Do not include a leading ``v``.
-#. In ``bskReleaseNotes.rst``, change the completed release heading to its
-   literal version, then create a new ``Version |release|`` section above it
-   containing the active ``_compiled_latest.rst`` include.
+#. Keep the completed release notes under their literal version and date in
+   ``docs/source/Support/bskReleaseNotes/2.X.rst``. Create the next series page
+   if needed and add it at the top of the ``bskReleaseNotes.rst`` index.
+   At the top of the next series page, add a ``Version |release|`` section
+   containing the active
+   ``.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst`` directive.
+   Move the ``bsk-release-current`` label to this section. Keep only one active
+   snippet include in the documentation so notes appear once.
 #. In ``bskKnownIssues.rst``, change the completed release heading to its
    literal version and create a new ``Version |release|`` section above it for
    the new beta cycle.
@@ -202,7 +207,9 @@ Finalize the Release Notes and Known Issues
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Normal PRs contribute release-note snippets under
-``docs/source/Support/bskReleaseNotesSnippets``. At release time:
+``docs/source/Support/bskReleaseNotesSnippets``. Maintainers gather, review,
+and place the finalized notes in the appropriate version-series RST file;
+the snippet compiler does not assign notes to releases. At release time:
 
 #. Compile the current snippets:
 
@@ -210,18 +217,45 @@ Normal PRs contribute release-note snippets under
 
       make -C docs release-notes-snippets
 
-#. Replace the active ``_compiled_latest.rst`` include in
-   ``bskReleaseNotes.rst`` with the generated bullet content. Leave the include
-   present but commented so it can be re-enabled for the next beta cycle.
-#. Add the release date to the active headings in ``bskReleaseNotes.rst`` and
-   ``bskKnownIssues.rst``.
+#. Collect and edit the notes for the release. Put them in
+   ``docs/source/Support/bskReleaseNotes/2.X.rst`` under a literal version and
+   release date, newest first. For example, ``2.12.1`` belongs above ``2.12.0``
+   in ``2.12.rst``; ``2.13.0`` belongs in ``2.13.rst``. Create a series page and
+   add it to the index when preparing the first release in that series.
+#. When finalizing the active development version, replace its
+   ``_compiled_latest.rst`` include with the finalized bullet content. Leave
+   the include present but commented if useful for the next development cycle.
+   Retain existing section labels and anchors when finalizing a heading so
+   bookmarks continue to work.
+#. Add the release date to the corresponding heading in ``bskKnownIssues.rst``.
 #. Review the notes for duplicate, internal-only, or unclear entries and verify
    that every RST reference resolves.
 #. Delete only the consumed snippet files. Preserve ``README.md``, the compiler
    script, the sample, and other underscore-prefixed support files.
 
 For a patch release, create dated ``2.X.Y`` sections for the selected patch
-notes and known issues without disturbing newer ``develop`` release content.
+notes in ``bskReleaseNotes/2.X.rst`` and for the known issues in
+``bskKnownIssues.rst``, without disturbing newer ``develop`` release content.
+
+Each series page starts with a title followed by its release sections. Use this
+structure when adding a new series, replacing ``2.X`` with its version series:
+
+.. code-block:: rst
+
+   Version 2.X Release Notes
+   ========================
+
+   .. _bsk-release-current:
+
+   Version |release|
+   -----------------
+
+   .. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst
+
+Move the current-release label and active include when advancing to a new
+series. For another development patch in the same series, add the active
+section above the finalized releases in the same file. Keep
+``Version 1.x and earlier`` as the last archive link in the index.
 
 .. _bsk-release-task-local-validation:
 

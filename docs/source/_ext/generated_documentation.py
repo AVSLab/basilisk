@@ -33,10 +33,12 @@ def refresh_navigation_pages(app, env):
 def add_page_navigation(app, pagename, templatename, context, doctree):
     """Add a collapsible local contents list to long, authored HTML guides.
 
-    Keep generated module/API pages and examples out of this initial trial.
+    Keep module/API, example, and release-series pages out of this contents list.
     Use resolved section IDs, not guessed anchors or headings copied by hand.
     """
-    if doctree is None or pagename.startswith(("Documentation/", "examples/")):
+    if doctree is None or pagename.startswith((
+        "Documentation/", "examples/", "Support/bskReleaseNotes/"
+    )):
         return
     from docutils import nodes
 
