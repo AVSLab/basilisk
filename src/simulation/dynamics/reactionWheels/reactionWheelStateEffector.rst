@@ -187,6 +187,13 @@ be positive definite. With positive diagonal moments, this last check requires `
 These checks apply even when ``includeWheelMassProperties`` is ``False``, and occur before the
 derived wheel configuration is used. They run during state registration and ``Reset()``.
 
+The fully coupled checks do not enforce the triangle inequalities on the principal moments of
+inertia. Passing validation therefore does not guarantee a physically realizable mass distribution.
+This limitation preserves compatibility with existing factory inertia approximations, which combine
+``Jt = Jg = Js/2`` with nonzero ``U_d``. Stricter realizability checks would require revisiting those
+factory assumptions. When ``U_d`` is nonzero, the principal moments are the eigenvalues of the full
+rotor inertia tensor; checking its diagonal entries alone is insufficient.
+
 Validation
 ~~~~~~~~~~
 
