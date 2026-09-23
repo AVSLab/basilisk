@@ -1,0 +1,1 @@
+- Fixed :ref:`makeDraftModule` path handling and generated test imports, preserved the caller's working directory, and protected existing module files from validation and generation failures by staging replacements.
