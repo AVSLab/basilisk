@@ -296,11 +296,12 @@ function(bsk_generate_build_info package_directory)
   _bsk_python_string(BSK_INFO_CARGO_VERSION "${_cargo_version}")
   _bsk_python_string(BSK_INFO_CORROSION_VERSION "${_corrosion_version}")
 
-  if(BSK_VERSION)
-    set(_basilisk_version "${BSK_VERSION}")
-  else()
-    file(STRINGS "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../docs/source/bskVersion.txt" _basilisk_version LIMIT_COUNT 1)
-  endif()
+  # Native incremental builds do not rerun Conan, so its cached BSK_VERSION
+  # can be stale. Track and read the source version on every configuration.
+  set(_version_file "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../docs/source/bskVersion.txt")
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_version_file}")
+  file(READ "${_version_file}" _basilisk_version)
+  string(STRIP "${_basilisk_version}" _basilisk_version)
   _bsk_git_metadata(_source_revision _source_dirty)
   _bsk_read_integer_define(_extension_abi_version BSK_EXTENSION_ABI_VERSION)
   _bsk_python_string(BSK_INFO_BASILISK_VERSION "${_basilisk_version}")
