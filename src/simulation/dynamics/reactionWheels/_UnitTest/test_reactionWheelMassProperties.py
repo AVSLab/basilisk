@@ -16,6 +16,8 @@
 
 """Validate optional wheel mass accounting against fully coupled and lumped-hub models."""
 
+from contextlib import nullcontext
+
 import numpy as np
 import pytest
 
@@ -178,6 +180,81 @@ def test_default_mass_accounting_is_preserved(model):
         enabled = _run([model] * 3, include=True)
         for name in default:
             np.testing.assert_array_equal(default[name], enabled[name])
+
+
+@pytest.mark.parametrize("wheel_type,max_momentum", [
+    ("Honeywell_HR16", 100.0),  # [N*m*s] momentum capacities in this table
+    ("Honeywell_HR16", 75.0),
+    ("Honeywell_HR16", 50.0),
+    ("Honeywell_HR14", 75.0),
+    ("Honeywell_HR14", 50.0),
+    ("Honeywell_HR14", 25.0),
+    ("Honeywell_HR12", 50.0),
+    ("Honeywell_HR12", 25.0),
+    ("Honeywell_HR12", 12.0),
+    ("BCT_RWP015", None),
+    ("NanoAvionics_RW0", None),
+])
+@pytest.mark.parametrize("model", [BALANCED, SIMPLE], ids=["balanced", "simple"])
+def test_factory_wheels_support_automatic_mass_properties(wheel_type, max_momentum, model):
+    """Accept built-in wheels at the thin-disk boundary and include their nominal mass and inertia.
+
+    Both state registration and reset must accept the factory's exact ``Js = 2*Jt`` and ``Jt = Jg``
+    values. A wheel at the body origin with its spin axis along body x has a diagonal nominal inertia.
+    """
+    sc = spacecraft.Spacecraft()
+    factory = simIncludeRW.rwFactory()
+    options = {} if max_momentum is None else {"maxMomentum": max_momentum}
+    wheel = factory.create(wheel_type, [1.0, 0.0, 0.0], RWModel=model, **options)
+    assert wheel.Js == 2.0*wheel.Jt
+    assert wheel.Jt == wheel.Jg
+    wheels = reactionWheelStateEffector.ReactionWheelStateEffector()
+    wheels.includeWheelMassProperties = True
+    factory.addToSpacecraft("wheels", wheels, sc)
+
+    wheels.registerStates(sc.dynManager)
+    wheels.Reset(0)
+    wheels.updateEffectorMassProps(0.0)  # [s]
+
+    assert wheels.effProps.mEff == pytest.approx(wheel.mass)
+    np.testing.assert_array_equal(wheels.effProps.rEff_CB_B, 0.0)
+    np.testing.assert_allclose(wheels.effProps.IEffPntB_B, np.diag([wheel.Js, wheel.Jt, wheel.Jg]),
+                               rtol=1.0e-14, atol=0.0)
+
+
+@pytest.mark.parametrize("field,relative_offset,accepted", [
+    pytest.param("Js", 0.0, True, id="thin_disk"),  # [-] relative offsets in this table
+    pytest.param("Js", 0.5e-12, True, id="spin_within_tolerance"),
+    pytest.param("Js", 2.0e-12, False, id="spin_outside_tolerance"),
+    pytest.param("Jg", 0.5e-12, True, id="transverse_above_within_tolerance"),
+    pytest.param("Jg", -0.5e-12, True, id="transverse_below_within_tolerance"),
+    pytest.param("Jg", 2.0e-12, False, id="transverse_above_outside_tolerance"),
+    pytest.param("Jg", -2.0e-12, False, id="transverse_below_outside_tolerance"),
+])
+@pytest.mark.parametrize("transverse_inertia", [1.0e-5, 1.0])  # [kg*m^2]
+@pytest.mark.parametrize("model", [BALANCED, SIMPLE], ids=["balanced", "simple"])
+@pytest.mark.parametrize("validation_path", ["attachment", "reset"])
+def test_automatic_mass_properties_inertia_tolerance(field, relative_offset, accepted, transverse_inertia,
+                                                   model, validation_path):
+    """Exercise the documented relative inertia tolerance at two scales and through both validation paths.
+
+    The exact thin-disk boundary and deviations within the relative tolerance of ``1e-12`` must pass.
+    Larger spin-inertia excesses and transverse-inertia mismatches of either sign must raise an error.
+    """
+    objects = _make_simulation([model], include=True)
+    sim, sc, wheels, factory = objects[:4]
+    wheel = factory.rwList["RW1"]
+    wheel.Js = 2.0*transverse_inertia  # [kg*m^2]
+    wheel.Jt = transverse_inertia
+    wheel.Jg = transverse_inertia
+    setattr(wheel, field, getattr(wheel, field)*(1.0 + relative_offset))
+
+    outcome = nullcontext() if accepted else pytest.raises(BasiliskError, match="axisymmetric wheel inertia")
+    with outcome:
+        if validation_path == "attachment":
+            wheels.registerStates(sc.dynManager)
+        else:
+            wheels.Reset(0)
 
 
 @pytest.mark.parametrize("field,value,expected_error", [
