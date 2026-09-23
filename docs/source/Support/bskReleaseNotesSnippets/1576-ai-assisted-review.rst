@@ -1,1 +1,0 @@
-- Clarified contributor guidance for agentic AI code review, the role of ``AGENTS.md``, review priority labels, and human approval responsibilities (GitHub issue 1576).

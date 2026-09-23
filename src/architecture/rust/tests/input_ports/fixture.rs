@@ -44,6 +44,9 @@ pub struct TestPort {
     data: usize,
     header: usize,
     linked: bool,
+    written: bool,
+    time_written: u64,
+    module_id: i64,
 }
 
 // SAFETY: This mock uses only TestPort's Rust representation, never C++.
@@ -79,6 +82,15 @@ unsafe impl Msg for TestMessage {
                 .get(&port.data)
                 .expect("read of a released mock source")
         })
+    }
+    unsafe fn __is_written(port: &mut TestPort) -> bool {
+        port.written
+    }
+    unsafe fn __time_written(port: &mut TestPort) -> u64 {
+        port.time_written
+    }
+    unsafe fn __module_id(port: &mut TestPort) -> i64 {
+        port.module_id
     }
     unsafe fn __init(_port: &mut TestPort) {
         unreachable!("this fixture has no output ports")

@@ -292,6 +292,24 @@ fn render_message_trait_impls(bindings: &str) -> Result<String, Box<dyn Error>> 
         writeln!(implementations, "    #[inline(always)]")?;
         writeln!(
             implementations,
+            "    unsafe fn __is_written(port: &mut {message_type}_C) -> bool {{ unsafe {{ \
+             {message_type}_C_isWritten(port) != 0 }} }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
+            "    unsafe fn __time_written(port: &mut {message_type}_C) -> u64 {{ unsafe {{ \
+             {message_type}_C_timeWritten(port) }} }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
+            "    unsafe fn __module_id(port: &mut {message_type}_C) -> i64 {{ unsafe {{ \
+             {message_type}_C_moduleID(port) }} }}"
+        )?;
+        writeln!(implementations, "    #[inline(always)]")?;
+        writeln!(
+            implementations,
             "    fn __is_initialized(port: &{message_type}_C) -> bool {{ \
              !port.payloadPointer.is_null() && !port.headerPointer.is_null() }}"
         )?;

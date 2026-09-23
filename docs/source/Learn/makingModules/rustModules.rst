@@ -725,6 +725,23 @@ For an optional input, check ``is_linked()`` before an explicit read. The
 generated optional fields in ``inputs`` already provide ``Some(payload)`` or
 ``None`` as described above.
 
+The same context authorizes queries of the subscribed message. These methods
+are available on input ``MsgReader`` ports. ``is_written`` reports whether
+that message has ever been published, ``time_written`` returns that
+publication time in nanoseconds, and ``module_id`` returns the ID of the
+module that published it:
+
+.. code-block:: rust
+
+    let written = self.vehConfigInMsg.is_written(context)?;
+    let written_at = self.vehConfigInMsg.time_written(context)?; // [ns]
+    let writer = self.vehConfigInMsg.module_id(context)?;
+
+A linked message that has never been published returns ``Ok(false)`` from
+``is_written`` and ``Ok(0)`` from ``time_written``. ``module_id`` returns an
+error until the message has been published. An unlinked or unauthorized
+reader returns an error.
+
 Keep the ``MsgReader`` fields in their declared configuration slots. To retain
 input data between calls, copy the payload or the required values into
 ``State``; do not move or swap the readers themselves. Python's subscription

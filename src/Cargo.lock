@@ -61,6 +61,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bsk-c-message-header-tests"
+version = "0.1.0"
+dependencies = [
+ "bsk-messages",
+]
+
+[[package]]
 name = "bsk-input-port-tests"
 version = "0.1.0"
 dependencies = [

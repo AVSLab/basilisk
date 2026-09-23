@@ -171,10 +171,6 @@ Conference Papers
    `Autonomous Tip-and-Cue Earth-Observing Constellation Tasking with Reinforcement Learning <https://hanspeterschaub.info/Papers/Stephenson2026.pdf>`__.
    IEEE Aerospace Conference, Big Sky, Montana, March 7--14, 2026.
 
-#. R. McAmis, C. Willison, R. Skowyra, and S. Mergendahl.
-   `The Compromised Satellite Peripheral Dilemma <https://www.ndss-symposium.org/ndss-paper/auto-draft-644/>`__.
-   Workshop on Security of Space and Satellite Systems (SpaceSec), San Diego, California, February 23, 2026.
-
 #. J. Garcia-Bonilla and H. Schaub.
    `A Message-Passing Simulation Framework for Generally Articulated Spacecraft Dynamics <https://hanspeterschaub.info/Papers/GarciaBonilla2025.pdf>`__.
    AAS/AIAA Astrodynamics Specialist Conference, Boston, Massachusetts, August 10--14, 2025.
