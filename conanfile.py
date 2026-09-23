@@ -696,7 +696,6 @@ class BasiliskConan(ConanFile):
             BASILISK_FETCHCONTENT_CACHE_DIR.as_posix()
         )
         tc.cache_variables["BSK_CONAN_BUILD_TYPE"] = str(self.settings.build_type)
-        tc.cache_variables["BSK_VERSION"] = str(self.version).strip()
         tc.cache_variables["BSK_CONAN_VERSION"] = importlib.metadata.version("conan")
         tc.cache_variables["BSK_CONAN_CXX_STANDARD"] = str(self.settings.get_safe("compiler.cppstd") or "")
         tc.cache_variables["BSK_CONAN_CXX_STANDARD_LIBRARY"] = str(self.settings.get_safe("compiler.libcxx") or "")
