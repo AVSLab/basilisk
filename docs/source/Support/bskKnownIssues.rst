@@ -6,7 +6,12 @@ Basilisk Known Issues
 
 Version |release|
 -----------------
-- text goes here
+
+- Incremental native builds could retain an old version in
+  ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.
+  CMake now tracks that file and reads the current source version instead of
+  Conan's cached version. Running ``ninja -j 12`` in an existing build directory
+  applies the fix and refreshes the metadata without a clean build.
 
 Version 2.12.0 (September 21, 2026)
 -----------------------------------
