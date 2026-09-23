@@ -25,13 +25,10 @@
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "extendedStateVector.h"
 #include <array>
-#include <functional>
 #include <memory>
 #include <stdint.h>
-#include <unordered_map>
 #include <utility>
 
-#include <iostream>
 
 /**
  * Stores the coefficients necessary to use the Runge-Kutta methods.

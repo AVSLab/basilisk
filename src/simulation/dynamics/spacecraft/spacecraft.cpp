@@ -22,7 +22,6 @@
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
-#include <iostream>
 
 
 /*! This is the constructor, setting variables to default values */
