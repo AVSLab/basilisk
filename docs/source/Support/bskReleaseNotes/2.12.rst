@@ -3,6 +3,13 @@
 Version 2.12 Release Notes
 ==========================
 
+.. _bsk-release-current:
+
+Version |release| (unreleased)
+--------------------------------
+
+.. include:: ../bskReleaseNotesSnippets/_compiled_latest.rst
+
 .. _bsk-release-2-12-0:
 
 Version 2.12.0 (September 21, 2026)

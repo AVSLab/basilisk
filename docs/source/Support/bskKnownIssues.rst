@@ -4,7 +4,7 @@
 Basilisk Known Issues
 =====================
 
-Version |release| (September 21, 2026)
+Version 2.12.0 (September 21, 2026)
 --------------------------------------
 
 - Removed the deprecated ``Basilisk.architecture.cMsgCInterfacePy`` compatibility package.

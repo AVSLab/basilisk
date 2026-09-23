@@ -26,7 +26,6 @@ releases newest first, including the development version where applicable.
 .. toctree::
    :maxdepth: 1
 
-   2.13 <bskReleaseNotes/2.13>
    2.12 <bskReleaseNotes/2.12>
    2.11 <bskReleaseNotes/2.11>
    2.10 <bskReleaseNotes/2.10>
@@ -50,6 +49,10 @@ releases newest first, including the development version where applicable.
    - .. _version-release:
 
      :ref:`Current development version <bsk-release-current>`
+
+   - .. _version-release-september-21-2026:
+
+     :ref:`Version 2.12.0 (September 21, 2026) <bsk-release-2-12-0>`
 
    - .. _version-2-12-0-september-21-2026:
 
