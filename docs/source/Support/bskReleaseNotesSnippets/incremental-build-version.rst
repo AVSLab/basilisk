@@ -1,0 +1,1 @@
+- Incremental native builds now refresh ``Basilisk.getBuildInfo()`` when ``docs/source/bskVersion.txt`` changes, including in existing build trees with an old Conan-cached version.
