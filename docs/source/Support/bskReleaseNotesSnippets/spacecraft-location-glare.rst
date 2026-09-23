@@ -1,0 +1,2 @@
+- Added optional viewing-angle and geometric specular-glare access limits to :ref:`spacecraftLocation` for optical observation planning (issue #864).
+- Corrected :ref:`spacecraftLocation` Sun and viewing directions to originate at the configured body-fixed location; the viewing angle is now reported without a Sun input (issue #864).
