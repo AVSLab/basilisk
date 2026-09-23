@@ -24,6 +24,7 @@ members = [
     "architecture/rust/bsk_messages",
     "architecture/rust/bsk_utilities",
     "architecture/rust/tests/input_ports",
+    "architecture/rust/tests/c_message_header",
     "fswAlgorithms/attControl/mrpPDRust",
     "moduleTemplates/rustModuleTemplate",
 ]

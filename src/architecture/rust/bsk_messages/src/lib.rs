@@ -75,4 +75,16 @@ mod input_subscription_tests {
             assert_eq!(source.header.timeWritten, 27); // [ns]
         }
     }
+
+    /// Generated `Msg` impls must call the C write-metadata accessors.
+    #[test]
+    fn generated_reader_metadata_calls_c_interface() {
+        let bindings = include_str!(concat!(env!("OUT_DIR"), "/bsk_message_bindings.rs"));
+        assert!(bindings.contains("unsafe fn __is_written"));
+        assert!(bindings.contains("CModuleTemplateMsg_C_isWritten"));
+        assert!(bindings.contains("unsafe fn __time_written"));
+        assert!(bindings.contains("CModuleTemplateMsg_C_timeWritten"));
+        assert!(bindings.contains("unsafe fn __module_id"));
+        assert!(bindings.contains("CModuleTemplateMsg_C_moduleID"));
+    }
 }

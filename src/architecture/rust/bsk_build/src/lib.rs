@@ -164,9 +164,13 @@
 //!
 //! During ``update``, normally use the copied payloads in ``inputs``. An
 //! explicit input read in ``reset`` or ``update`` must call
-//! ``self.inputPort.read(context)?`` with that call's [`BskContext`]. Keep
-//! readers in their declared configuration fields; retain copied payloads in
-//! private state rather than moving or retaining the readers themselves.
+//! ``self.inputPort.read(context)?`` with that call's [`BskContext`].
+//! ``is_written(context)?``, ``time_written(context)?``, and
+//! ``module_id(context)?`` query the subscribed message header. They are
+//! available on input readers and use the same authorization as ``read``.
+//! Keep readers in their
+//! declared configuration fields; retain copied payloads in private state
+//! rather than moving or retaining the readers themselves.
 //! See [`MsgReader::read`] for the linkage and lifetime checks.
 //!
 //! Built-in and custom C messages both need generated Rust bindings from
@@ -1137,6 +1141,9 @@ mod runtime_abi_tests {
 /// * [`Msg::__is_initialized`] and [`Msg::__port_pointers`] must report the
 ///   actual C payload and header pointer state without dereferencing either
 ///   pointer; linkage inspection must likewise access only the port itself;
+/// * [`Msg::__is_written`], [`Msg::__time_written`], and [`Msg::__module_id`]
+///   must call the matching C-message functions, which read the source header.
+///   Callers must establish linkage and initialization before invoking them;
 /// * [`Msg::__restore_subscription`] must restore only subscription metadata,
 ///   without dereferencing the source or changing the port's inline payload.
 ///
@@ -1177,6 +1184,33 @@ pub unsafe trait Msg: Sized + Copy + 'static {
     /// pointers.
     #[doc(hidden)]
     unsafe fn __read(port: &mut Self::Port) -> Self;
+    /// Report whether the subscribed source header has been written.
+    ///
+    /// # Safety
+    ///
+    /// The port must be linked and initialized with a valid header pointer.
+    /// Implementations must call `<Message>_C_isWritten` and must not use the
+    /// reader's inline header, which does not store the source write flag.
+    #[doc(hidden)]
+    unsafe fn __is_written(port: &mut Self::Port) -> bool;
+    /// Report the simulation time [ns] at which the source was last written.
+    ///
+    /// # Safety
+    ///
+    /// The port must be linked and initialized with a valid header pointer.
+    /// Implementations must call `<Message>_C_timeWritten`. A source that has
+    /// never been written still has a header; its time is zero.
+    #[doc(hidden)]
+    unsafe fn __time_written(port: &mut Self::Port) -> u64;
+    /// Report the module ID recorded in the subscribed source header.
+    ///
+    /// # Safety
+    ///
+    /// The port must be linked and initialized with a valid header pointer,
+    /// and the source must already have been written. Implementations must
+    /// call `<Message>_C_moduleID`.
+    #[doc(hidden)]
+    unsafe fn __module_id(port: &mut Self::Port) -> i64;
     #[doc(hidden)]
     unsafe fn __init(port: &mut Self::Port);
     /// Write through the underlying C message interface.
@@ -1255,6 +1289,84 @@ impl<T: Msg> MsgReader<T> {
     pub fn is_linked(&mut self) -> bool {
         T::__is_linked(&mut self.0)
     }
+
+    /// Authorize a source-header or payload read for this lifecycle call.
+    fn prepare_source_access(
+        &mut self,
+        context: &BskContext<'_>,
+        unlinked: &str,
+        uninitialized: &str,
+    ) -> BskResult<()> {
+        let binding = self.current_binding();
+        if !context.input_bindings.contains(&binding) {
+            return Err(BskError::new(
+                "Basilisk input message reader is not authorized by this lifecycle context; \
+                 read the original configuration port, not a moved or retained reader",
+            ));
+        }
+        if !self.is_linked() {
+            return Err(BskError::new(unlinked));
+        }
+        if !T::__is_initialized(&self.0) {
+            return Err(BskError::new(uninitialized));
+        }
+        Ok(())
+    }
+
+    /// Whether the subscribed message has ever been written.
+    ///
+    /// Pass the context supplied to `reset` or `update`. The checks match
+    /// [`Self::read`]. A linked message that has never been published returns
+    /// ``Ok(false)``.
+    pub fn is_written(&mut self, context: &BskContext<'_>) -> BskResult<bool> {
+        self.prepare_source_access(
+            context,
+            "cannot check whether an unlinked Basilisk input message is written",
+            "cannot check whether a Basilisk input message with uninitialized port pointers is written",
+        )?;
+        // SAFETY: `prepare_source_access` established authorization, linkage,
+        // and a non-null source header pointer for this callback.
+        Ok(unsafe { T::__is_written(&mut self.0) })
+    }
+
+    /// Simulation time [ns] at which the subscribed message was last written.
+    ///
+    /// Pass the context supplied to `reset` or `update`. The checks match
+    /// [`Self::read`]. A linked message that has never been published returns
+    /// ``Ok(0)``.
+    pub fn time_written(&mut self, context: &BskContext<'_>) -> BskResult<u64> {
+        self.prepare_source_access(
+            context,
+            "cannot read the write time of an unlinked Basilisk input message",
+            "cannot read the write time of a Basilisk input message with uninitialized port pointers",
+        )?;
+        // SAFETY: `prepare_source_access` established authorization, linkage,
+        // and a non-null source header pointer for this callback.
+        Ok(unsafe { T::__time_written(&mut self.0) })
+    }
+
+    /// ID of the module that last wrote the subscribed message.
+    ///
+    /// Pass the context supplied to `reset` or `update`. The checks match
+    /// [`Self::read`]. A linked message that has never been published returns
+    /// an error.
+    pub fn module_id(&mut self, context: &BskContext<'_>) -> BskResult<i64> {
+        self.prepare_source_access(
+            context,
+            "cannot read the module ID of an unlinked Basilisk input message",
+            "cannot read the module ID of a Basilisk input message with uninitialized port pointers",
+        )?;
+        // SAFETY: `prepare_source_access` established authorization, linkage,
+        // and a non-null source header pointer for this callback.
+        if !unsafe { T::__is_written(&mut self.0) } {
+            return Err(BskError::new(
+                "cannot read the module ID of an unwritten Basilisk input message",
+            ));
+        }
+        // SAFETY: The source header is linked, initialized, and already written.
+        Ok(unsafe { T::__module_id(&mut self.0) })
+    }
+
     /// Read the current message value.
     ///
     /// Pass the context supplied to `reset` or `update`. It authorizes only
@@ -1276,26 +1388,13 @@ impl<T: Msg> MsgReader<T> {
     /// }
     /// ```
     pub fn read(&mut self, context: &BskContext<'_>) -> BskResult<T> {
-        let binding = self.current_binding();
-        if !context.input_bindings.contains(&binding) {
-            return Err(BskError::new(
-                "Basilisk input message reader is not authorized by this lifecycle context; \
-                 read the original configuration port, not a moved or retained reader",
-            ));
-        }
-        if !self.is_linked() {
-            return Err(BskError::new(
-                "cannot read an unlinked Basilisk input message",
-            ));
-        }
-        if !T::__is_initialized(&self.0) {
-            return Err(BskError::new(
-                "cannot read a Basilisk input message with uninitialized port pointers",
-            ));
-        }
-        // SAFETY: The context proves that this exact slot, message type, and
-        // subscription match the current callback's live-source guarantee.
-        // The checks above additionally establish linkage and initialization.
+        self.prepare_source_access(
+            context,
+            "cannot read an unlinked Basilisk input message",
+            "cannot read a Basilisk input message with uninitialized port pointers",
+        )?;
+        // SAFETY: `prepare_source_access` established authorization, linkage,
+        // and initialized source pointers for this callback.
         Ok(unsafe { T::__read(&mut self.0) })
     }
 }
@@ -1488,6 +1587,9 @@ mod module_input_tests {
         initialized: bool,
         bound_address: usize,
         value: TestMessage,
+        written: bool,
+        time_written: u64,
+        module_id: i64,
     }
 
     // SAFETY: This test-only implementation never crosses the generated C++
@@ -1518,6 +1620,15 @@ mod module_input_tests {
         }
         unsafe fn __read(port: &mut Self::Port) -> Self {
             port.value
+        }
+        unsafe fn __is_written(port: &mut Self::Port) -> bool {
+            port.written
+        }
+        unsafe fn __time_written(port: &mut Self::Port) -> u64 {
+            port.time_written
+        }
+        unsafe fn __module_id(port: &mut Self::Port) -> i64 {
+            port.module_id
         }
         unsafe fn __init(port: &mut Self::Port) {
             port.initialized = true;
@@ -1610,6 +1721,142 @@ mod module_input_tests {
         assert_eq!(
             error,
             BskError::new("cannot read a Basilisk input message with uninitialized port pointers")
+        );
+    }
+
+    #[test]
+    fn source_header_reports_write_flag_and_time() {
+        let mut reader = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            initialized: true,
+            written: true,
+            time_written: 27, // [ns]
+            module_id: 7,
+            ..TestPort::default()
+        });
+        let bindings = [reader.__capture_binding()];
+        let runtime = BskModuleRuntime::for_testing();
+        // SAFETY: This test port stores the write metadata inline and does not
+        // dereference a C source.
+        let context = unsafe { BskContext::for_testing(&runtime).__with_input_bindings(&bindings) };
+        assert!(reader
+            .is_written(&context)
+            .expect("linked source must be queryable"));
+        assert_eq!(
+            reader
+                .time_written(&context)
+                .expect("linked source must be queryable"),
+            27
+        );
+        assert_eq!(
+            reader
+                .module_id(&context)
+                .expect("a written source must expose its module ID"),
+            7
+        );
+
+        reader.0.written = false;
+        reader.0.time_written = 0;
+        assert!(!reader
+            .is_written(&context)
+            .expect("an unwritten source is still linked"));
+        assert_eq!(
+            reader
+                .time_written(&context)
+                .expect("an unwritten source still has a header"),
+            0
+        );
+        let error = reader
+            .module_id(&context)
+            .expect_err("an unwritten source has no module ID");
+        assert_eq!(
+            error,
+            BskError::new("cannot read the module ID of an unwritten Basilisk input message")
+        );
+    }
+
+    #[test]
+    fn write_metadata_rejects_unauthorized_unlinked_and_uninitialized_ports() {
+        let mut reader = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            initialized: true,
+            written: true,
+            time_written: 11, // [ns]
+            module_id: 7,
+            ..TestPort::default()
+        });
+        let runtime = BskModuleRuntime::for_testing();
+        let unauthorized = reader
+            .is_written(&BskContext::for_testing(&runtime))
+            .expect_err("a testing context must not authorize source-header access");
+        assert!(unauthorized.to_string().contains("not authorized"));
+        let unauthorized = reader
+            .time_written(&BskContext::for_testing(&runtime))
+            .expect_err("a testing context must not authorize source-header access");
+        assert!(unauthorized.to_string().contains("not authorized"));
+        let unauthorized = reader
+            .module_id(&BskContext::for_testing(&runtime))
+            .expect_err("a testing context must not authorize source-header access");
+        assert!(unauthorized.to_string().contains("not authorized"));
+
+        let mut unlinked = MsgReader::<TestMessage>(TestPort::default());
+        let mut uninitialized = MsgReader::<TestMessage>(TestPort {
+            linked: true,
+            ..TestPort::default()
+        });
+        let bindings = [
+            unlinked.__capture_binding(),
+            uninitialized.__capture_binding(),
+        ];
+        // SAFETY: These test ports never dereference a C source.
+        let context = unsafe { BskContext::for_testing(&runtime).__with_input_bindings(&bindings) };
+        let error = unlinked
+            .is_written(&context)
+            .expect_err("write-flag checks must reject an unlinked port");
+        assert_eq!(
+            error,
+            BskError::new("cannot check whether an unlinked Basilisk input message is written")
+        );
+        let error = unlinked
+            .time_written(&context)
+            .expect_err("write-time checks must reject an unlinked port");
+        assert_eq!(
+            error,
+            BskError::new("cannot read the write time of an unlinked Basilisk input message")
+        );
+        let error = unlinked
+            .module_id(&context)
+            .expect_err("module-ID checks must reject an unlinked port");
+        assert_eq!(
+            error,
+            BskError::new("cannot read the module ID of an unlinked Basilisk input message")
+        );
+        let error = uninitialized
+            .is_written(&context)
+            .expect_err("write-flag checks must reject invalid port pointers");
+        assert_eq!(
+            error,
+            BskError::new(
+                "cannot check whether a Basilisk input message with uninitialized port pointers is written"
+            )
+        );
+        let error = uninitialized
+            .time_written(&context)
+            .expect_err("write-time checks must reject invalid port pointers");
+        assert_eq!(
+            error,
+            BskError::new(
+                "cannot read the write time of a Basilisk input message with uninitialized port pointers"
+            )
+        );
+        let error = uninitialized
+            .module_id(&context)
+            .expect_err("module-ID checks must reject invalid port pointers");
+        assert_eq!(
+            error,
+            BskError::new(
+                "cannot read the module ID of a Basilisk input message with uninitialized port pointers"
+            )
         );
     }
 
