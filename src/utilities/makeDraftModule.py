@@ -24,17 +24,19 @@ This script is used to create a Basilisk module folder given the basic I/O and n
 
 """
 
+import keyword
 import os
 import re
 import shutil
+from contextlib import contextmanager
 from datetime import datetime
+from pathlib import Path
+from tempfile import TemporaryDirectory, mkdtemp
 
 # assumes this script is in .../basilisk/src/utilities
 pathToSrc = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-initialCwd = os.getcwd()
 
 statusColor = '\033[92m'
-failColor = '\033[91m'
 warningColor = '\033[93m'
 endColor = '\033[0m'
 
@@ -60,6 +62,7 @@ class moduleGenerator:
         self._absPath = None  # absolute path to the folder which will contain the module folder
         self._newModuleLocation = None  # absolute path to the auto-generated Basilisk module folder
         self._licenseText = None  # BSK open-source license statement
+        self._output_path = None  # temporary directory used while generating files
 
     def log(self, statement, **kwargs):
         if self.verbose:
@@ -70,42 +73,135 @@ class moduleGenerator:
                 print(statement)
 
     def checkPathToNewFolderLocation(self):
-        """
-        Make sure the supplied module destination path is correct
-        """
+        """Check the destination parent without changing the working directory."""
         self.log(f"{statusColor}Checking Module location:{endColor}", end=" ")
-        if os.path.isdir(self._absPath):
-            os.chdir(self._absPath)
-        else:
-            self.log(f"{failColor}\nERROR: {endColor}Incorrect path to the new folder:")
-            self.log(self._absPath)
-            exit()
+        if not self._absPath.is_dir():
+            raise NotADirectoryError(f"Incorrect path to the new folder: {self._absPath}")
         self.log("Done")
         self.log(self._absPath)
 
-    def createNewModuleFolder(self):
-        """
-        Create the new module folder
-        """
-        self.log(f"{statusColor}Creating Module Folder:{endColor}", end=" ")
-        if os.path.isdir(self._newModuleLocation):
-            self.log(f"\n{warningColor}WARNING: {endColor}The new module destination already exists.")
-            if not self.cleanBuild:
-                ans = input("Do you want to delete this folder and recreate? (y or n): ")
-                if ans != "y":
-                    self.log(f"{failColor}Aborting module creation.{endColor}")
-                    exit()
-            self.log("Cleared the old folder.")
-            shutil.rmtree(self._newModuleLocation)
-        else:
-            self.log("Done")
-        os.mkdir(self._newModuleLocation)
-        os.chdir(self._newModuleLocation)
+    def _validate_specification(self, module_type):
+        """Validate generation inputs before creating or replacing any files."""
+        for field in ("moduleName", "briefDescription", "copyrightHolder"):
+            value = getattr(self, field)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{field} must be a nonempty string")
+        self._validate_identifier(self.moduleName, "moduleName")
+
+        if not isinstance(self.modulePathRelSrc, (str, os.PathLike)):
+            raise ValueError("modulePathRelSrc must be a path relative to basilisk/src")
+        module_path = Path(self.modulePathRelSrc)
+        if module_path.is_absolute() or not module_path.parts or ".." in module_path.parts:
+            raise ValueError("modulePathRelSrc must stay within a package under basilisk/src")
+        self._validate_identifier(module_path.parts[0], "Basilisk package name")
+        source_path = Path(pathToSrc).resolve()
+        self._absPath = (source_path / module_path).resolve()
+        if not self._absPath.is_relative_to(source_path):
+            raise ValueError("modulePathRelSrc must stay within basilisk/src")
+        self.checkPathToNewFolderLocation()
+        self._newModuleLocation = self._absPath / self.moduleName
+        self._module_path = module_path
+        # Basilisk flattens modules below each top-level source package.
+        self._python_package = module_path.parts[0]
+
+        names = set()
+        message_wrappers = {}
+        for field in ("inMsgList", "outMsgList", "variableList"):
+            entries = getattr(self, field)
+            if not isinstance(entries, list):
+                raise ValueError(f"{field} must be a list")
+            for entry in entries:
+                required = ("type", "var", "desc")
+                if field != "variableList":
+                    required += ("wrap",)
+                if not isinstance(entry, dict) or any(
+                    not isinstance(entry.get(key), str) for key in required
+                ):
+                    raise ValueError(f"{field} entries require string fields: {', '.join(required)}")
+                self._validate_identifier(entry["var"], f"{field} variable")
+                if entry["var"] in names:
+                    raise ValueError(f"Duplicate module variable: {entry['var']}")
+                names.add(entry["var"])
+                if not entry["type"].strip():
+                    raise ValueError(f"{field} type must not be empty")
+                if field != "variableList":
+                    self._validate_identifier(entry["type"], "message type")
+                    allowed_wrappers = ("C",) if module_type == "C" else ("C", "C++")
+                    if entry["wrap"] not in allowed_wrappers:
+                        raise ValueError(f"{module_type} modules require message wrappers in {allowed_wrappers}")
+                    previous = message_wrappers.setdefault(entry["type"], entry["wrap"])
+                    if previous != entry["wrap"]:
+                        raise ValueError(f"Conflicting wrappers for message type: {entry['type']}")
+
+    @staticmethod
+    def _validate_identifier(value, description):
+        """Reject names that cannot be used as generated identifiers or filenames."""
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", value) or keyword.iskeyword(value):
+            raise ValueError(f"Invalid {description}: {value!r}")
+
+    def _check_destination(self):
+        """Return whether replacement of an existing module is authorized."""
+        destination = self._newModuleLocation
+        if destination.is_symlink():
+            raise ValueError(f"The module destination must not be a symbolic link: {destination}")
+        if not destination.exists():
+            return False
+        if not destination.is_dir():
+            raise FileExistsError(f"The module destination is not a directory: {destination}")
+        self.log(f"{warningColor}WARNING: {endColor}The new module destination already exists.")
+        if not self.cleanBuild and input("Do you want to replace this folder? (y or n): ") != "y":
+            raise FileExistsError(f"Module creation cancelled; preserved {destination}")
+        return True
+
+    @contextmanager
+    def _module_directory(self, module_type):
+        """Stage a complete draft before publishing it at the requested destination."""
+        self._validate_specification(module_type)
+        self.readLicense()
+        replace_existing = self._check_destination()
+        with TemporaryDirectory(prefix=f".{self.moduleName}-draft-", dir=self._absPath) as directory:
+            self._output_path = Path(directory) / self.moduleName
+            self._output_path.mkdir()
+            try:
+                yield
+                self._publish_module(replace_existing)
+            finally:
+                self._output_path = None
+
+    def _publish_module(self, replace_existing):
+        """Publish staged files, restoring the old directory if installation fails."""
+        destination = self._newModuleLocation
+        backup_root = None
+        if destination.is_symlink():
+            raise ValueError(f"The module destination must not be a symbolic link: {destination}")
+        if destination.exists():
+            if not replace_existing or not destination.is_dir():
+                raise FileExistsError(f"The module destination already exists: {destination}")
+            # Keep the backup outside staging so failed recovery cannot delete it.
+            backup_root = Path(mkdtemp(prefix=f".{self.moduleName}-backup-", dir=self._absPath))
+            try:
+                destination.rename(backup_root / self.moduleName)
+            except BaseException:
+                backup_root.rmdir()
+                raise
+        try:
+            self._output_path.rename(destination)
+        except BaseException:
+            if backup_root is not None:
+                backup = backup_root / self.moduleName
+                try:
+                    backup.rename(destination)
+                except OSError as error:
+                    raise OSError(f"Could not restore the original module; its files remain at {backup}") from error
+                backup_root.rmdir()
+            raise
+        if backup_root is not None:
+            shutil.rmtree(backup_root)
 
     def readLicense(self):
         """Read the Basilisk license file"""
         self.log(statusColor + "Importing License:" + endColor, end=" ")
-        with open(pathToSrc + "/../LICENSE", 'r') as f:
+        with (Path(pathToSrc).parent / "LICENSE").open(encoding="utf-8") as f:
             self._licenseText = f.read()
             self._licenseText = self._licenseText.replace("2016", str(datetime.now().year))
             self._licenseText = self._licenseText.replace(
@@ -147,7 +243,7 @@ class moduleGenerator:
             rstFile += 'This module does not define input or output messages.\n'
         rstFile += '\n'
 
-        with open(rstFileName, 'w') as w:
+        with (self._output_path / rstFileName).open('w', encoding="utf-8") as w:
             w.write(rstFile)
         self.log("Done")
 
@@ -156,8 +252,8 @@ class moduleGenerator:
             Create a functioning python unit test file that loads the new module, creates and connect blank
             input messages, and sets up recorder modules for each output message.
         """
-        os.mkdir('_UnitTest')
-        os.chdir('_UnitTest')
+        test_path = self._output_path / '_UnitTest'
+        test_path.mkdir()
         testFileName = f"test_{self.moduleName}.py"
         self.log(f"{statusColor}Creating Python Init Test File {testFileName}:{endColor}", end=" ")
         testFile = ""
@@ -170,7 +266,7 @@ class moduleGenerator:
         testFile += 'from Basilisk.utilities import unitTestSupport\n'
         testFile += 'from Basilisk.architecture import messaging\n'
         testFile += 'from Basilisk.utilities import macros\n'
-        testFile += f'from Basilisk.{os.path.split(self.modulePathRelSrc)[0]} import {self.moduleName}\n'
+        testFile += f'from Basilisk.{self._python_package} import {self.moduleName}\n'
         testFile += '\n'
         testFile += '@pytest.mark.parametrize("accuracy", [1e-12])\n'
         testFile += '@pytest.mark.parametrize("param1, param2", [\n'
@@ -219,8 +315,7 @@ class moduleGenerator:
         elif type == "C":
             testFile += f'    module = {self.moduleName}.{self.moduleName}()\n'
         else:
-            self.log(f"{failColor}ERROR: {endColor}Wrong module type provided to test file method.")
-            exit(0)
+            raise ValueError(f"Unsupported module type: {type}")
         testFile += f'    module.ModelTag = "{self.moduleName}Tag"\n'
         testFile += '    unitTestSim.AddModelToTask(unitTaskName, module)\n'
         testFile += '\n'
@@ -257,15 +352,18 @@ class moduleGenerator:
         testFile += '\n'
         testFile += '\n'
 
-        with open(testFileName, 'w') as w:
+        with (test_path / testFileName).open('w', encoding="utf-8") as w:
             w.write(testFile)
         self.log("Done")
 
     def createCppModule(self):
-        """
-        Create a C++ Basilisk module
-        """
-        modulePath = self.modulePathRelSrc
+        """Create a C++ draft, preserving existing files if generation fails."""
+        with self._module_directory("C++"):
+            self._create_cpp_module()
+
+    def _create_cpp_module(self):
+        """Write the C++ draft into the staging directory."""
+        modulePath = self._module_path.as_posix()
         name = self.moduleName
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
@@ -273,19 +371,9 @@ class moduleGenerator:
         variableList = self.variableList
 
         self.log(statusColor + '\nCreating C++ Module: ' + endColor + name)
-        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
+        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, count=1)
 
-        # read in the license information
-        self.readLicense()
         licenseC = "/*" + self._licenseText + "*/\n\n"
-
-        # make sure the path, specified relative to basilisk/src, to the new module location is correct
-        self._absPath = os.path.join(pathToSrc, modulePath)
-        self.checkPathToNewFolderLocation()
-
-        # create new Module folder
-        self._newModuleLocation = os.path.join(self._absPath, name)
-        self.createNewModuleFolder()
 
         #
         # make module header file
@@ -346,7 +434,7 @@ class moduleGenerator:
         headerFile += '\n'
         headerFile += "\n#endif\n"
 
-        with open(headerFileName, 'w') as w:
+        with (self._output_path / headerFileName).open('w', encoding="utf-8") as w:
             w.write(headerFile)
         self.log("Done")
 
@@ -420,7 +508,7 @@ class moduleGenerator:
                 defFile += '}\n'
                 defFile += '\n'
 
-        with open(defFileName, 'w') as w:
+        with (self._output_path / defFileName).open('w', encoding="utf-8") as w:
             w.write(defFile)
         self.log("Done")
 
@@ -465,7 +553,7 @@ class moduleGenerator:
         swigFile += '%}\n'
         swigFile += '\n'
 
-        with open(swigFileName, 'w') as w:
+        with (self._output_path / swigFileName).open('w', encoding="utf-8") as w:
             w.write(swigFile)
         self.log("Done")
 
@@ -475,14 +563,14 @@ class moduleGenerator:
         # make module unit test file
         self.createTestFile("C++")
 
-        # restore current working directory
-        os.chdir(initialCwd)
-
     def createCModule(self):
-        """
-        Create a C Basilisk module
-        """
-        modulePath = self.modulePathRelSrc
+        """Create a C draft, preserving existing files if generation fails."""
+        with self._module_directory("C"):
+            self._create_c_module()
+
+    def _create_c_module(self):
+        """Write the C draft into the staging directory."""
+        modulePath = self._module_path.as_posix()
         name = self.moduleName
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
@@ -490,19 +578,9 @@ class moduleGenerator:
         variableList = self.variableList
 
         self.log(f"{statusColor}\nCreating C Module: {endColor}{name}")
-        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, 1)
+        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, count=1)
 
-        # read in the license information
-        self.readLicense()
         licenseC = f"/*{self._licenseText}*/\n\n"
-
-        # make sure the path, specified relative to basilisk/src, to the new module location is correct
-        self._absPath = os.path.join(pathToSrc, modulePath)
-        self.checkPathToNewFolderLocation()
-
-        # create new Module folder
-        self._newModuleLocation = os.path.join(self._absPath, name)
-        self.createNewModuleFolder()
 
         #
         # make module header file
@@ -522,9 +600,6 @@ class moduleGenerator:
             if msg['type'] not in includedMsgs:
                 if msg['wrap'] == 'C':
                     headerFile += f'#include "cMsgCInterface/{msg["type"]}_C.h"\n'
-                if msg['wrap'] == 'C++':
-                    self.log(f"{failColor}Error: {endColor}You can't include C++ messages in a C module.")
-                    exit()
                 includedMsgs.append(msg['type'])
         headerFile += '#include "architecture/utilities/bskLogging.h"\n'
         headerFile += '\n'
@@ -557,7 +632,7 @@ class moduleGenerator:
         headerFile += '\n'
         headerFile += '#endif\n'
 
-        with open(headerFileName, 'w') as w:
+        with (self._output_path / headerFileName).open('w', encoding="utf-8") as w:
             w.write(headerFile)
         self.log("Done")
 
@@ -638,7 +713,7 @@ class moduleGenerator:
         defFile += '}\n'
         defFile += '\n'
 
-        with open(defFileName, 'w') as w:
+        with (self._output_path / defFileName).open('w', encoding="utf-8") as w:
             w.write(defFile)
         self.log("Done")
 
@@ -672,8 +747,6 @@ class moduleGenerator:
                 if msg['wrap'] == 'C':
                     swigFile += f'%include "architecture/msgPayloadDefC/{msg["type"]}Payload.h"\n'
                     swigFile += f'struct {msg["type"]}_C;\n'
-                if msg['wrap'] == 'C++':
-                    self.log(f"{failColor}ERROR: {endColor}you cannot swig a C++ message in a C module.")
                 includedMsgs.append(msg['type'])
         swigFile += '\n'
         swigFile += '%pythoncode %{\n'
@@ -682,7 +755,7 @@ class moduleGenerator:
         swigFile += '%}\n'
         swigFile += '\n'
 
-        with open(swigFileName, 'w') as w:
+        with (self._output_path / swigFileName).open('w', encoding="utf-8") as w:
             w.write(swigFile)
         self.log("Done")
 
@@ -691,8 +764,6 @@ class moduleGenerator:
 
         # make module unit test file
         self.createTestFile("C")
-
-        os.chdir(initialCwd)
 
 
 def fillCppInfo(module):

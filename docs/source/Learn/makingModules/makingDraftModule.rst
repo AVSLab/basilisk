@@ -64,7 +64,22 @@ User Guide
 To run the script to make a C++ Basilisk module draft, edit the content of the ``fillCppInfo()`` method.
 To create a C module, edit the method ``fillCInfo()``.  Next, in the main routine only run the needed method.
 
-Note, once created, if you make edits and re-run this script it will delete the older module folder and create a new
-one.  Thus, this script cannot be used to add input or output messages if you have already started
-to flesh out the rest of the module code.  It is intended to be run only once before you start to edit the
-module code.
+Set ``modulePathRelSrc`` to an existing directory relative to ``basilisk/src``, such as
+``moduleTemplates`` or ``fswAlgorithms/attControl``. A trailing path separator is optional.
+The generated test imports the module from the top-level Basilisk package, for example
+``Basilisk.fswAlgorithms``, even when its source is in a nested directory. Generation does
+not change the caller's working directory. Absolute paths, parent-directory traversal,
+and destinations that are symbolic links are rejected.
+
+If the module folder already exists, the script asks before replacing it. Setting
+``cleanBuild = True`` enables replacement without a prompt, as used for the generated
+build examples. The generator validates the specification and writes all draft files to
+a temporary directory before replacing an existing module. Validation or file-generation
+errors leave the existing module intact; a failed installation attempts to restore the
+original directory. If restoration also fails, the exception identifies the backup
+directory containing the original files. Errors raise Python exceptions and produce a
+nonzero exit status when unhandled by the calling script.
+
+A successful replacement still discards previous edits in that module folder. This
+script cannot merge new input or output messages into an implementation that you have
+already started. It is intended to create the initial draft before you edit the module code.

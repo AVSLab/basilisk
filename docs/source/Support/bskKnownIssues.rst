@@ -7,6 +7,12 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 281: :ref:`makeDraftModule` could generate invalid test imports for
+  nested paths or paths without a trailing separator, change the caller's working
+  directory, and delete an existing module before rejecting an invalid specification.
+  Generation now normalizes paths, preserves the working directory, validates inputs,
+  and stages complete drafts before replacement. Failures raise Python exceptions.
+
 - Incremental native builds could retain an old version in
   ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.
   CMake now tracks that file and reads the current source version instead of
