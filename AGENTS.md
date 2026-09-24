@@ -1,6 +1,15 @@
 # AGENTS.md
 
-## Codex PR Review Rules
+This file provides repository-specific instructions for agentic AI tools assisting
+with development or code review, including tools such as Codex and Claude Code.
+Ensure these instructions are supplied to the tool when it works in this repository;
+tools differ in how they discover and load instruction files. This file does not
+enable an integration or trigger an automated review.
+
+See [AI-assisted code review](CONTRIBUTING.md#ai-assisted-code-review) for the
+contributor workflow, review priority labels, and human review responsibilities.
+
+## Code Review Rules
 
 Apply these rules to all **new or materially modified code and documentation** in
 this repository.
