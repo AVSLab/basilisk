@@ -1,284 +1,57 @@
 Executive Summary
 -----------------
-Provide a brief introduction to purpose and intent of this module.  This should be a short description.
-If this requires lots explanation, images, equations, etc., then use the `Detailed Module Description`_
-section below.
+The C module template demonstrates message handling, a simple vector calculation, reset
+behavior, and variable logging. On every update, it copies an optional input vector and
+adds an increasing counter to the first component. It is a working starting point for
+new C modules; :ref:`cppModuleTemplate` implements the same example in C++.
+
+This page also serves as an example of module documentation. See :ref:`makingModules-3`
+for the RST authoring tutorial, including equations, figures, tables, and code blocks.
+
+Module Assumptions and Limitations
+----------------------------------
+The calculation is an instructional example with dimensionless vectors and a dimensionless
+counter. It does not model a physical system. The counter advances once per scheduled
+update, independently of the task period. No configuration is required to run the module.
+
+The input is optional. When connected, the module uses the latest message payload; it
+does not check its age or whether the publisher has written a new value since the last
+update. When disconnected, the input vector is zero.
 
 Message Connection Descriptions
 -------------------------------
-The following diagram and table list all the module input and output messages.  The module message connection is
-set by the user from Python.  The message type contains a link to the message structure definition, while the
-description provides information on what this message is used for.
+Connect the input from Python using ``subscribeTo()``. Both messages use the three-element
+``dataVector`` field of :ref:`CModuleTemplateMsgPayload`.
 
 .. bsk-module-io:: cModuleTemplate
     :caption: Module I/O Messages
 
     input dataInMsg CModuleTemplateMsgPayload
-        (optional) Input message description.  Note here if this message is optional, and what the default behavior
-        is if this message is not provided.
+        Optional dimensionless input vector. Uses a zero vector when disconnected.
 
     output dataOutMsg CModuleTemplateMsgPayload
-        Output message description.
+        Dimensionless input vector with the update counter added to its first component.
+        Reset publishes a zero vector; each update publishes the calculated vector.
 
 Detailed Module Description
 ---------------------------
-Provide a brief introduction to the material being discussed in this report.  For example, include what the
-motivation is, maybe provide a supportive figure such as shown below, reference earlier work if needed in a
-literature review web links. Describe the module including mathematics, implementation, etc.
-
-Equations
-^^^^^^^^^
-Equations can be provided with LaTeX as well.  For example, the code::
-
-    :math:`a = b^{2}`
-
-produces this equation inline :math:`a = b^{2}` equation.  In contrast, this code::
-
-    .. math::
-        a = b^2
-
-or this compact version for 1 liners::
-
-    .. math:: a = b^2
-
-creates this block of math.
+Let :math:`\mathbf{x}_k` be the input vector at update :math:`k`, :math:`c_k` the counter,
+and :math:`\mathbf{y}_k` the output. After reset, :math:`c_0 = 0`; the first update is
+:math:`k = 1`. Each update computes
 
 .. math::
-    a = b^2
+    :label: eq-cModuleTemplate-update
 
-To create a numbered equation you need to add a label::
+    c_k = c_{k-1} + 1, \qquad
+    \mathbf{y}_k = \mathbf{x}_k + \begin{bmatrix} c_k & 0 & 0 \end{bmatrix}^{T}.
 
-    .. math::
-        :label: eq-fswModule-firstLaw
+For a disconnected input, :math:`\mathbf{x}_k = \mathbf{0}` and the output is
+:math:`[c_k, 0, 0]^T`. The implementation demonstrates ``v3SetZero()`` and ``v3Copy()``
+from :ref:`linearAlgebra`, and zeroes the output payload before populating it.
 
-        a = b^2
-
-which creates this
-
-.. math::
-    :label: eq-fswModule-firstLaw
-
-    a = b^2
-
-This label can be referenced using ``:eq:`eq-fswModule-firstLaw``` to cite Eq. :eq:`eq-fswModule-firstLaw`.
-Note that these label names must be unique across all of the Basilisk RST documentation.  It is encouraged to use
-a module-unique naming scheme.
-
-To do bold math, we can't use the popular ``\bm`` command.  Instead, we can use ``{\bf u}`` (regular letters) or
-``\pmb \omega`` (greek letters).  The following math is an example of this showing both bold and un-bold letters
-next to each other:
-
-.. math:: {\bf u} u = 3 \hat{\bf e}_3
-    :label: eq-2
-
-.. math::  \pmb \omega \omega = 2 \hat{\imath}_{\theta}
-    :label: eq-3
-
-More details on how to typeset TeX math in Sphinx can be found `here <https://documentation.help/Sphinx/math.html>`__.
-
-If the module description requires extensive math discussion, this can be TeX'd up using the technical note
-template inside the ``_Documentation`` folder. A link should be included in the HTML documentation to
-the :download:`Detailed PDF Documentation </../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
-using the code::
-
-    :download:`Detailed PDF Documentation </../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf>`
-
-The PDF technical should only be used as a last resort effort if the math is simply too complex and long to
-include in the `spinx` documentation.  Another option is to link to a web site, conference paper, journal
-paper, book or thesis document that discussed the mathematical developments used.
-
-Citations
-^^^^^^^^^
-If you want to cite other papers or text, provide a web link to a paper.  For example::
-
-    `The link text <http://example.net/>`__
-
-creates `The link text <http://example.net/>`__.
-
-Images and Figures
-^^^^^^^^^^^^^^^^^^
-To include static, non-``pytest`` generated images and figures, you must copy the web compatible image (svg, jpg, png)
-to a local sub-folder ``cModuleTemplate/_Documentation/Images/``.   This keeps the modules images grouped
-within this sub-folder and contained within the main module folder.  The SVG image format is preferred as it is
-a vectorized format that renders in a higher quality.  Further, when viewed in dark mode the svg will
-automatically convert to a dark image (preserving colors).  Pixelated formats such as jpg and png remain the same
-in light and dark mode of the documentation web page.
-
-For example, to include an image (has no caption) you can use code such as::
-
-    .. image:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
-        :align: center
-
-to generate the following image.
-
-.. image:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
-     :align: center
-
-Note that with pixelated images such as ``jpg`` and ``png`` format save the file at twice the resolution
-that you need, then provide ``:scale: 50 %`` to shrink it to the normal size.  This way the image has
-enough resolution to look good on high-resolution displays.
-
-To include a figure (has a caption and you can add label), use the following code::
-
-    .. _figLabel:
-    .. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
-        :align: center
-
-        Figure 2: Concept Illustration of the Math used in this Module
-
-This yields
-
-.. _figLabel:
-.. figure:: /../../src/moduleTemplates/cModuleTemplate/_Documentation/Images/fig1.svg
-    :align: center
-
-    Figure 2: Concept Illustration of the Math used in this Module
-
-You can cite the figure using ``:ref:`figLabel```. For example, as seen in :ref:`figLabel`, the figure can
-now be referenced.
-
-More information on how to include images or figures using sphinx can be found
-`here <http://docutils.sourceforge.net/docs/ref/rst/directives.html#images>`__.  In particular, it is
-also possible to include an image as a figure which has a caption.
-
-
-Tables
-^^^^^^
-The standard sphinx table formatting can be used to generate tables.  More information on spinx table formatting
-can be found `here <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables>`__.
-For example, the code::
-
-    .. table:: Module I/O Messages
-
-        +------------------------+------------+----------+----------+
-        | Header row, column 1   | Header 2   | Header 3 | Header 4 |
-        | (header rows optional) |            |          |          |
-        +========================+============+==========+==========+
-        | body row 1, column 1   | column 2   | column 3 | column 4 |
-        +------------------------+------------+----------+----------+
-        | body row 2             | Cells may span columns.          |
-        +------------------------+------------+---------------------+
-        | body row 3             | Cells may  | - Table cells       |
-        +------------------------+ span rows. | - contain           |
-        | body row 4             |            | - body elements.    |
-        +------------------------+------------+---------------------+
-
-will generate the following table:
-
-.. table:: Module I/O Messages
-
-        +------------------------+------------+----------+----------+
-        | Header row, column 1   | Header 2   | Header 3 | Header 4 |
-        | (header rows optional) |            |          |          |
-        +========================+============+==========+==========+
-        | body row 1, column 1   | column 2   | column 3 | column 4 |
-        +------------------------+------------+----------+----------+
-        | body row 2             | Cells may span columns.          |
-        +------------------------+------------+---------------------+
-        | body row 3             | Cells may  | - Table cells       |
-        +------------------------+ span rows. | - contain           |
-        | body row 4             |            | - body elements.    |
-        +------------------------+------------+---------------------+
-
-
-
-.. note:: Doing tables with spinx is not simple.  The table outline must abide by tedious spacing rules.
-
-The ``list-table`` command is nice in that it allows for a simple table to be created where the table
-structure does not have to be drawn with ASCII vertical and horizontal lines.  However, the formatting options
-are more limited than with the above method.  See
-`documentation <https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table>`__ for more info.
-For example, the code::
-
-    .. list-table:: List Based Table Title
-        :widths: auto
-        :header-rows: 1
-
-        * - Header 1
-          - Header 2
-          - Header 3
-        * - Label 1
-          - text
-          - more text
-        * - Label 2
-          - text
-          -
-        * - Label 3
-          - text
-          - some more text
-
-will produce this table:
-
-.. list-table:: List Based Table Title
-    :widths: auto
-    :header-rows: 1
-
-    * - Header 1
-      - Header 2
-      - Header 3
-    * - Label 1
-      - text
-      - more text
-    * - Label 2
-      - text
-      -
-    * - Label 3
-      - text
-      - some more text
-
-HTML Highlight Options
-----------------------
-With Sphinx you can easily create HTML highlight blocks called admonitions such as
-attention, caution, danger, error, hint, important, note, tip, warning.  Here are samples of what these
-blocks look like.
-
-.. danger::
-
-    text goes here
-
-.. error::
-
-    text goes here
-
-.. attention::
-
-    text goes here
-
-.. caution::
-
-    text goes here
-
-.. warning::
-
-    text goes here
-
-.. hint::
-
-    text goes here
-
-.. important::
-
-    text goes here
-
-.. tip::
-
-    text goes here
-
-.. note::
-
-    text goes here
-
-
-Module Assumptions and Limitations
-----------------------------------
-This section should describe the assumptions used in formulating the mathematical model and how those assumptions
-limit the usefulness of the module.
-
-
-User Guide
-----------
-This section contains information directed specifically to users. It contains clear descriptions of what inputs
-are needed and what effect they have. It should also help the user be able to use the model for the first time.
+``SelfInit()`` initializes the C output message. ``Reset()`` clears the counter and writes
+a zero output payload at the reset time. It preserves the sample configuration vector.
+The next update starts the counter at one and evaluates Eq. :eq:`eq-cModuleTemplate-update`.
 
 .. _moduleTemplateVariableRoles:
 
@@ -301,24 +74,47 @@ are public. The sample variables in the C and C++ templates have these roles:
 
 See :ref:`bskPrinciples-6` for an example of recording the counter and the sample vector.
 
-Add sample code as needed. For example, demonstrate assignment to the sample variables with a
-Python code block using::
-
-    .. code-block:: python
-        :linenos:
-
-        module.updateCounter = 1  # [-] Runtime counter; Reset() clears this value.
-        module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging.
-
-to show:
+User Guide
+----------
+The following complete script runs three updates, at 0, 0.5, and 1 second, and checks the
+output vectors. Add the recorder after the module so it samples the newly written output
+at each task time. ``InitializeSimulation()`` calls the module's initialization and reset
+methods before the scheduled updates begin.
 
 .. code-block:: python
-    :linenos:
 
-    module.updateCounter = 1  # [-] Runtime counter; Reset() clears this value.
-    module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging.
+    import numpy as np
 
-More information of including code blocks can be found `here <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block>`_.
+    from Basilisk.architecture import messaging
+    from Basilisk.moduleTemplates import cModuleTemplate
+    from Basilisk.utilities import SimulationBaseClass, macros
 
-In the user guide, provide sub-sections as need to help explain how to use this module, list what variables
-must be set, discuss variables that might have default values if not specified by the user, etc.
+    simulation = SimulationBaseClass.SimBaseClass()
+    time_step = macros.sec2nano(0.5)  # [ns]
+    process = simulation.CreateNewProcess("exampleProcess")
+    process.addTask(simulation.CreateNewTask("exampleTask", time_step))
+
+    module = cModuleTemplate.cModuleTemplate()
+    module.ModelTag = "cModuleExample"
+    module.sampleConfigVector = [1.0, 2.0, 3.0]  # [-] Preserved by reset.
+    simulation.AddModelToTask("exampleTask", module)
+
+    input_payload = messaging.CModuleTemplateMsgPayload()
+    input_payload.dataVector = [1.0, 2.0, 3.0]  # [-]
+    input_message = messaging.CModuleTemplateMsg().write(input_payload)
+    module.dataInMsg.subscribeTo(input_message)
+
+    recorder = module.dataOutMsg.recorder()
+    simulation.AddModelToTask("exampleTask", recorder)
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(2 * time_step)
+    simulation.ExecuteSimulation()
+
+    expected = [[2.0, 2.0, 3.0], [3.0, 2.0, 3.0], [4.0, 2.0, 3.0]]  # [-]
+    np.testing.assert_array_equal(recorder.dataVector, expected)
+    np.testing.assert_array_equal(recorder.times(), [0, time_step, 2 * time_step])
+    assert module.updateCounter == 3
+
+To try the disconnected-input case, omit the ``subscribeTo()`` call and change ``expected``
+to ``[[1.0, 0.0, 0.0], [2.0, 0.0, 0.0], [3.0, 0.0, 0.0]]``. The initial zero payload
+written by reset is replaced by the first update before the recorder samples at time zero.

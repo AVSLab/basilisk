@@ -1,32 +1,101 @@
 Executive Summary
 -----------------
+The C++ module template demonstrates message handling, a simple vector calculation, reset
+behavior, and accessors for private variables. On every update, it copies an optional
+input vector and adds an increasing counter to the first component. It implements the
+same calculation as :ref:`cModuleTemplate` using the C++ ``SysModel`` interface.
 
-This is a very basic sample C++ Basilisk module that can be used as a template to create other C++ modules.
-It mimics the functionality of :ref:`cModuleTemplate`.  See that module for a more complete discussion
-of how to write the RST module documentation file.
+This page is a working example of module documentation. See :ref:`makingModules-3` for
+the RST authoring tutorial.
 
+Module Assumptions and Limitations
+----------------------------------
+The vectors and counter are dimensionless teaching examples, with no physical model.
+The counter advances once per scheduled update, independently of the task period.
+No configuration is required to run the module. A connected input supplies its latest
+payload; the module does not check its age or require a new write on every update.
+A disconnected input supplies a zero vector.
 
 Message Connection Descriptions
 -------------------------------
-The following diagram and table list all the module input and output messages.  The module message connection is
-set by the user from Python.  The message type contains a link to the message structure definition, while the
-description provides information on what this message is used for.
+Connect the input from Python using ``subscribeTo()``. Both messages use the three-element
+``dataVector`` field of :ref:`CModuleTemplateMsgPayload`.
 
 .. bsk-module-io:: cppModuleTemplate
     :caption: Module I/O Messages
 
     input dataInMsg CModuleTemplateMsgPayload
-        (optional) Input message description.  Note here if this message is optional, and what the default behavior
-        is if this message is not provided.
+        Optional dimensionless input vector. Uses a zero vector when disconnected.
 
     output dataOutMsg CModuleTemplateMsgPayload
-        Output message description.
+        Dimensionless input vector with the update counter added to its first component.
+        Reset publishes a zero vector; each update publishes the calculated vector.
+
+Detailed Module Description
+---------------------------
+Each ``UpdateState()`` call increments ``updateCounter``, copies the input vector, and
+adds the counter to its first component, as in Eq. :eq:`eq-cModuleTemplate-update`.
+The implementation uses ``v3SetZero()`` and ``v3Copy()`` from :ref:`linearAlgebra` to
+demonstrate sample vector math. Its input scratch array is local to the update method.
+
+The C++ output message initializes itself on construction. ``Reset()`` clears the counter
+and publishes a zero output payload at the reset time. The next update uses a counter
+value of one. Reset preserves ``sampleConfigVector``.
+
+Configuration and Runtime State
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The private variables follow the :ref:`configuration and runtime state roles
+<moduleTemplateVariableRoles>` described for the C template:
+
+- ``setSampleConfigVector()`` demonstrates setting a configuration vector. Its three
+  components must be positive when using the setter. The vector defaults to zero,
+  survives resets and updates, and does not affect the output calculation.
+- ``setUpdateCounter()`` demonstrates scalar assignment and validation, accepting a
+  positive value. The counter is runtime state: ``Reset()`` clears it, including values
+  assigned before ``InitializeSimulation()``.
+- ``getSampleConfigVector()`` and ``getUpdateCounter()`` provide read access. Variable
+  logging through these getters is demonstrated in :ref:`bskPrinciples-6`.
 
 User Guide
 ----------
-The sample variables follow the :ref:`configuration and runtime state roles <moduleTemplateVariableRoles>`
-described for the C template. Use ``setSampleConfigVector()`` to set the vector for configuration and logging
-examples; its value is preserved by resets and updates. ``setUpdateCounter()`` demonstrates a scalar setter,
-but ``updateCounter`` is runtime state: ``Reset()`` clears it and each update increments it. The corresponding
-``getSampleConfigVector()`` and ``getUpdateCounter()`` methods allow these private variables to be recorded as shown
-in :ref:`bskPrinciples-6`.
+The following complete script runs three updates, at 0, 0.5, and 1 second, and checks the
+output vectors. Add the recorder after the module to record the newly written output.
+``InitializeSimulation()`` calls ``Reset()`` before the scheduled updates begin.
+
+.. code-block:: python
+
+    import numpy as np
+
+    from Basilisk.architecture import messaging
+    from Basilisk.moduleTemplates import cppModuleTemplate
+    from Basilisk.utilities import SimulationBaseClass, macros
+
+    simulation = SimulationBaseClass.SimBaseClass()
+    time_step = macros.sec2nano(0.5)  # [ns]
+    process = simulation.CreateNewProcess("exampleProcess")
+    process.addTask(simulation.CreateNewTask("exampleTask", time_step))
+
+    module = cppModuleTemplate.CppModuleTemplate()
+    module.ModelTag = "cppModuleExample"
+    module.setSampleConfigVector([1.0, 2.0, 3.0])  # [-] Preserved by reset.
+    simulation.AddModelToTask("exampleTask", module)
+
+    input_payload = messaging.CModuleTemplateMsgPayload()
+    input_payload.dataVector = [1.0, 2.0, 3.0]  # [-]
+    input_message = messaging.CModuleTemplateMsg().write(input_payload)
+    module.dataInMsg.subscribeTo(input_message)
+
+    recorder = module.dataOutMsg.recorder()
+    simulation.AddModelToTask("exampleTask", recorder)
+    simulation.InitializeSimulation()
+    simulation.ConfigureStopTime(2 * time_step)
+    simulation.ExecuteSimulation()
+
+    expected = [[2.0, 2.0, 3.0], [3.0, 2.0, 3.0], [4.0, 2.0, 3.0]]  # [-]
+    np.testing.assert_array_equal(recorder.dataVector, expected)
+    np.testing.assert_array_equal(recorder.times(), [0, time_step, 2 * time_step])
+    assert module.getUpdateCounter() == 3
+
+To try the disconnected-input case, omit the ``subscribeTo()`` call and change ``expected``
+to ``[[1.0, 0.0, 0.0], [2.0, 0.0, 0.0], [3.0, 0.0, 0.0]]``. The initial zero payload
+written by reset is replaced by the first update before the recorder samples at time zero.

@@ -44,6 +44,10 @@ RST Module Documentation
 The module RST documentation file uses the provided module description string to create the module
 executive summary.  Further, the module input and output message entries are used to create a generated message
 diagram and table listing each message name, type and description.
+The draft also includes prompts for assumptions and limitations, algorithm details, and a
+user guide. Complete these sections with the implemented behavior and a runnable Python
+example. See :ref:`makingModules-3` for authoring instructions and :ref:`cModuleTemplate`
+and :ref:`cppModuleTemplate` for completed examples.
 
 Unit Test File
 --------------

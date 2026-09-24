@@ -217,6 +217,10 @@ class moduleGenerator:
         rstFile += '-----------------\n'
         rstFile += f'{self.briefDescription}\n'
         rstFile += '\n'
+        rstFile += 'Module Assumptions and Limitations\n'
+        rstFile += '----------------------------------\n'
+        rstFile += 'Describe the model assumptions, required inputs, and limits on valid use.\n'
+        rstFile += '\n'
         rstFile += 'Message Connection Descriptions\n'
         rstFile += '-------------------------------\n'
         rstFile += 'The following diagram and table list all the module input and output messages.  \n'
@@ -242,6 +246,20 @@ class moduleGenerator:
         else:
             rstFile += 'This module does not define input or output messages.\n'
         rstFile += '\n'
+        rstFile += 'Detailed Module Description\n'
+        rstFile += '---------------------------\n'
+        rstFile += 'Describe the implemented algorithm and mathematics, including units and reset behavior.\n'
+        rstFile += 'This section is optional for modules whose behavior is fully explained above.\n'
+        rstFile += '\n'
+        rstFile += 'User Guide\n'
+        rstFile += '----------\n'
+        rstFile += 'Provide a runnable Python example with configuration, message connections, and expected results.\n'
+        rstFile += 'Explain which variables are configuration and which are runtime state.\n'
+        rstFile += f'Use ``_UnitTest/test_{self.moduleName}.py`` as a starting point for simulation setup;\n'
+        rstFile += 'its smoke checks verify execution and publication, not numerical payload values.\n'
+        rstFile += '\n'
+        rstFile += 'See :ref:`makingModules-3` for RST authoring instructions and :ref:`cModuleTemplate`\n'
+        rstFile += 'and :ref:`cppModuleTemplate` for completed module documentation examples.\n'
 
         with (self._output_path / rstFileName).open('w', encoding="utf-8") as w:
             w.write(rstFile)

@@ -1,0 +1,1 @@
+- Documented the actual C and C++ template behavior with runnable Python examples, moved general RST instruction to :ref:`makingModules-3`, and added the standard documentation outline to generated module drafts.
