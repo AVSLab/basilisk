@@ -184,8 +184,11 @@ and coplanarity, including the normal-incidence case where cross-product-based p
 
 The peak of this geometric alignment coincides with the specular peak of the `Blinn--Phong model used by van Wijk et al. <https://arxiv.org/abs/2308.02743>`__. The module does not evaluate that model's intensity profile: material coefficients, a shininess exponent, light intensity, and sensor-dependent thresholds would be needed for radiometric overexposure predictions.
 
-The output ``hasGlare`` is set when ``glareFactor >= glareThreshold``. The default ``glareThreshold`` is 0.95. Glare
-is evaluated separately for every spacecraft connected through ``addSpacecraftToModel()`` and only when ``sunInMsg``
+The output ``hasGlare`` uses an inclusive comparison against ``glareThreshold``, with an absolute tolerance of
+16 times double-precision machine epsilon to accommodate numerical roundoff. This includes exact reflections
+when ``glareThreshold`` is 1. The reported ``glareFactor`` retains the computed, clamped alignment.
+The default ``glareThreshold`` is 0.95. Glare is evaluated separately for every spacecraft connected through
+``addSpacecraftToModel()`` and only when ``sunInMsg``
 is connected. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare
 is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared
 observations, allowing an inspection planner to leave those points available for re-imaging.
