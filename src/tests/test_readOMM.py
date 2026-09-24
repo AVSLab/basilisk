@@ -113,6 +113,112 @@ def _writeXml(path, fieldSets):
 
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
 
+_PHYSICAL_METADATA_FIELDS = ("CENTER_NAME", "REF_FRAME", "TIME_SYSTEM", "MEAN_ELEMENT_THEORY")
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("field_name,value", [
+    ("CENTER_NAME", "MARS"),
+    ("REF_FRAME", "GCRF"),
+    ("REF_FRAME", "ITRF"),
+    ("TIME_SYSTEM", "TAI"),
+    ("TIME_SYSTEM", "TT"),
+    ("MEAN_ELEMENT_THEORY", "DSST"),
+    ("MEAN_ELEMENT_THEORY", "SGP4-XP"),
+    ("MEAN_ELEMENT_THEORY", "SGP"),
+    ("EPHEMERIS_TYPE", "1"),
+    ("EPHEMERIS_TYPE", "3"),
+    ("EPHEMERIS_TYPE", "4"),
+    ("EPHEMERIS_TYPE", "5"),
+    ("EPHEMERIS_TYPE", "6"),
+    ("EPHEMERIS_TYPE", "99"),
+])
+def test_omm_unsupported_physical_metadata_is_skipped(
+    tmp_path, monkeypatch, capsys, encoding, field_name, value
+):
+    """Unsupported physical declarations never reach SGP4; valid records still return."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("field_name", _PHYSICAL_METADATA_FIELDS)
+@pytest.mark.parametrize("value", ["", " ", None])
+def test_omm_empty_physical_metadata_is_skipped(
+    tmp_path, monkeypatch, capsys, encoding, field_name, value
+):
+    """Explicitly empty or null physical metadata cannot silently select defaults."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+
+
+@pytest.mark.parametrize("encoding", ["json", "csv"])
+@pytest.mark.parametrize("omitted_fields", [
+    ("CENTER_NAME",), ("REF_FRAME",), ("TIME_SYSTEM",), ("MEAN_ELEMENT_THEORY",),
+    _PHYSICAL_METADATA_FIELDS,
+])
+def test_omm_celestrak_physical_metadata_defaults(tmp_path, capsys, encoding, omitted_fields):
+    """CelesTrak JSON/CSV omissions give the same orbit as explicit physical metadata."""
+    fields = {name: value for name, value in _OMM_FIELDS.items() if name not in omitted_fields}
+    path = _WRITERS[encoding](tmp_path / f"defaults.{encoding}", [fields])
+    reference_path = _WRITERS[encoding](tmp_path / f"explicit.{encoding}", [_OMM_FIELDS])
+
+    records = ommHandling.satOmm2elem(str(path))
+    reference = ommHandling.satOmm2elem(str(reference_path))[0]
+
+    assert len(records) == 1
+    record = records[0]
+    assert (record.centerName, record.refFrame, record.timeSystem, record.meanElementTheory) == (
+        "EARTH", "TEME", "UTC", "SGP4",
+    )
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(record.oe, name) == getattr(reference.oe, name)
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "xml"])
+@pytest.mark.parametrize("field_name", _PHYSICAL_METADATA_FIELDS)
+def test_omm_missing_required_physical_metadata_is_skipped(
+    tmp_path, monkeypatch, capsys, encoding, field_name
+):
+    """CCSDS XML/KVN records must explicitly declare their physical metadata."""
+    fields = {name: value for name, value in _OMM_FIELDS.items() if name != field_name}
+    path = _WRITERS[encoding](tmp_path / f"missing-metadata.{encoding}", [fields])
+
+    def unexpected_initialize(*args, **kwargs):
+        """Fail if a record with missing metadata reaches SGP4."""
+        pytest.fail("SGP4 received a record with missing physical metadata")
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", unexpected_initialize)
+
+    assert ommHandling.satOmm2elem(str(path)) == []
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert field_name in warning
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("ephemeris_type", [None, "0", "2"])
+def test_omm_supported_physical_metadata(tmp_path, capsys, encoding, ephemeris_type):
+    """Supported metadata accepts case/whitespace variations and compatible ephemeris types."""
+    fields = dict(_OMM_FIELDS)
+    for name in _PHYSICAL_METADATA_FIELDS:
+        fields[name] = f" {_OMM_FIELDS[name].lower()} "
+    if ephemeris_type is None:
+        del fields["EPHEMERIS_TYPE"]
+    else:
+        fields["EPHEMERIS_TYPE"] = ephemeris_type
+    path = _WRITERS[encoding](tmp_path / f"supported-metadata.{encoding}", [fields])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    record = records[0]
+    assert (record.centerName, record.refFrame, record.timeSystem, record.meanElementTheory) == (
+        "EARTH", "TEME", "UTC", "SGP4",
+    )
+    assert record.propagator == (ephemeris_type or "0")
+    assert all(np.isfinite(getattr(record.oe, name)) for name in ("a", "e", "i", "Omega", "omega", "f"))
+    assert capsys.readouterr().out == ""
+
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 def test_omm_each_encoding_parses(tmp_path, encoding):
@@ -334,7 +440,7 @@ def test_omm_invalid_numeric_record_is_skipped(
     tmp_path, monkeypatch, capsys, encoding, field_name, value
 ):
     """Invalid numbers are rejected before SGP4 while subsequent records survive."""
-    _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
@@ -362,14 +468,14 @@ def test_omm_out_of_range_record_is_skipped(
     tmp_path, monkeypatch, capsys, encoding, field_name, value
 ):
     """Invalid orbital ranges and integer metadata do not reach SGP4."""
-    _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
 
 
-def _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value):
+def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value):
     """Check record recovery and verify that SGP4 only receives the valid record."""
     broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
     broken[field_name] = value
-    path = _WRITERS[encoding](tmp_path / f"invalid-number.{encoding}", [broken, _OMM_FIELDS])
+    path = _WRITERS[encoding](tmp_path / f"invalid-record.{encoding}", [broken, _OMM_FIELDS])
     initialize = ommHandling.sgp4omm.initialize
     initialized_names = []
 
