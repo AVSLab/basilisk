@@ -26,6 +26,7 @@ import json
 
 import numpy as np
 import pytest
+from sgp4.model import Satrec as PythonSatrec
 
 import Basilisk.utilities.ommHandling as ommHandling
 
@@ -150,18 +151,44 @@ def test_omm_encodings_agree(tmp_path):
             assert np.isclose(getattr(oe, name), getattr(reference, name), atol=A_TOL), encoding
 
 
-def test_omm_six_digit_catalog_number(tmp_path):
-    """A six-digit catalog number, which the TLE format cannot express, is read normally."""
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("catalog_id", [
+    "00001", "99999", "100000", "100001", "339999", "340000",
+    "999999", "799500001", "999999999",
+])
+def test_omm_catalog_numbers(tmp_path, monkeypatch, encoding, catalog_id):
+    """Catalog IDs survive ingestion unchanged without affecting the orbital elements."""
+    monkeypatch.setattr(ommHandling, "Satrec", PythonSatrec)
+
     fields = dict(_OMM_FIELDS)
-    fields["NORAD_CAT_ID"] = "100001"
+    fields["NORAD_CAT_ID"] = catalog_id
     fields["OBJECT_NAME"] = "NEW-CATALOG-OBJECT"
-    path = _writeKvn(tmp_path / "sixdigit.kvn", [fields])
+    path = _WRITERS[encoding](tmp_path / f"catalog.{encoding}", [_OMM_FIELDS, fields])
 
-    ommDataList = ommHandling.satOmm2elem(str(path))
+    records = ommHandling.satOmm2elem(str(path))
 
-    assert len(ommDataList) == 1
-    assert ommDataList[0].noradID == "100001"
-    assert 6.6e6 < ommDataList[0].oe.a < 7.0e6  # [m]
+    assert len(records) == 2
+    reference, actual = records
+    assert reference.noradID == _OMM_FIELDS["NORAD_CAT_ID"]
+    assert actual.noradID == catalog_id
+    assert actual.satName == "NEW-CATALOG-OBJECT"
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(actual.oe, name) == getattr(reference.oe, name), name
+
+
+@pytest.mark.parametrize("catalog_id", ["A0001", "100000.5", "-1", "nan"])
+def test_omm_invalid_catalog_number_is_skipped(tmp_path, capsys, catalog_id):
+    """Substituting an internal SGP4 ID must not admit malformed catalog numbers."""
+    fields = dict(_OMM_FIELDS, NORAD_CAT_ID=catalog_id)
+    path = _writeJson(tmp_path / "invalid-catalog.json", [fields, _OMM_FIELDS])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.noradID for record in records] == [_OMM_FIELDS["NORAD_CAT_ID"]]
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert "NORAD_CAT_ID" in warning
+    assert catalog_id in warning
 
 
 def test_omm_multiple_records(tmp_path):

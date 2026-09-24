@@ -307,6 +307,13 @@ def _normalizeOmmFields(fields: dict) -> dict:
             f"satOmm2elem() found an OMM record missing required field(s): {', '.join(sorted(missing))}"
         )
 
+    # Validate the external ID before replacing it in the private SGP4 input.
+    catalog_id = normalized["NORAD_CAT_ID"].strip()
+    if not catalog_id.isascii() or not catalog_id.isdecimal():
+        raise ValueError(
+            f"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: {catalog_id!r}"
+        )
+
     # sgp4.omm.initialize() parses EPOCH with a strict "%Y-%m-%dT%H:%M:%S.%f" format.
     epoch = _parseOmmEpoch(normalized["EPOCH"])
     normalized["EPOCH"] = epoch.strftime("%Y-%m-%dT%H:%M:%S.%f")
@@ -369,9 +376,11 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
     :param ommData: the OmmData carrying the epoch and identifiers, used for error reporting
     :return: osculating classical orbital elements in the Basilisk inertial frame
     """
-    # Build the SGP4 record straight from the mean elements
+    # SGP4 limits its internal Alpha-5 ID to 339999, but the ID does not affect
+    # propagation. Preserve the real catalog number in fields and ommData.
+    sgp4_fields = dict(fields, NORAD_CAT_ID="0")
     satellite = Satrec()
-    sgp4omm.initialize(satellite, fields)
+    sgp4omm.initialize(satellite, sgp4_fields)
 
     # Convert epoch to Julian date
     epoch = ommData.ommEpoch
@@ -406,9 +415,9 @@ def satOmm2elem(omm_path: str) -> list:
     """
     Convert the OMM records of a constellation to osculating orbital elements for each satellite.
 
-    The encoding (XML, JSON, CSV or KVN) is detected from the file contents.  Unlike the TLE
-    reader this imposes no limit on the catalog number, so objects numbered 100000 and above
-    are read normally.
+    The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
+    including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
+    SGP4's internal identifier storage.
 
     :param omm_path: path to an OMM file holding one or many satellites
     :return: ommDataList: list of :py:class:`OmmData`, one per satellite, each carrying the
