@@ -272,6 +272,10 @@ Version 2.12.0 (September 21, 2026)
   and both noise models were initialized with the same random stream. Both propagation matrices now
   default to zero, and the accelerometer and gyro use distinct repeatable streams for every
   ``RNGSeed`` value, including zero. This is fixed in the current version.
+- GitHub issue 1560: Normalizing ``GaussMarkov`` secondary seeds to 32 bits could make a secondary
+  stream identical to its primary stream for some 64-bit input seeds on platforms with a 64-bit
+  engine result type. Seed derivation now avoids both the truncated and full-width primary states
+  while preserving existing primary seeding. This is fixed in the current version.
 - BSK-1460: Configuring :ref:`starTracker` ``PMatrix`` produced an unbounded attitude-error random
   walk by default. The propagation matrix now defaults to zero so ``PMatrix`` alone produces white
   Gaussian attitude errors; random-walk behavior remains explicitly configurable. This is fixed in

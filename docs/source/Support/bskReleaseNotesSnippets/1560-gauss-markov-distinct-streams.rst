@@ -1,0 +1,1 @@
+- Fixed ``GaussMarkov::deriveSecondarySeed()`` collisions for 64-bit input seeds by checking both 32-bit and 64-bit primary engine states while preserving existing primary seeding.

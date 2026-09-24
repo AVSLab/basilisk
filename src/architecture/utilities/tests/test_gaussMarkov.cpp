@@ -20,6 +20,8 @@
 #include "architecture/utilities/gauss_markov.h"
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
+#include <random>
+#include <stdint.h>
 
 
 Eigen::Vector2d calculateSD(const Eigen::MatrixXd& dat, int64_t numPts)
@@ -266,4 +268,35 @@ TEST(GaussMarkov, secondarySeedIsPlatformIndependent)
     for (const uint64_t probeSeed : probeSeeds) {
         EXPECT_LE(GaussMarkov::deriveSecondarySeed(probeSeed), seedWidthMask);
     }
+}
+
+TEST(GaussMarkov, secondarySeedSeparatesBothEngineWidths)
+{
+    // Exercise both platform seed widths even when the native engine uses only one.
+    using Engine32 = std::linear_congruential_engine<uint32_t, 48271, 0, 2147483647>;
+    using Engine64 = std::linear_congruential_engine<uint64_t, 48271, 0, 2147483647>;
+    const uint64_t probeSeeds[] = {
+        0, 1, 0x1badcad1, 0x7FFFFFFFULL, 0x80000000ULL, 0xFFFFFFFFULL,
+        0x100000000ULL, 0xFFFFFFFFFFFFFFFFULL,
+        0x7fa53e0900000001ULL,  // The review reproducer aliases the full-width primary state.
+        0x005ac1f57f4a7c15ULL,  // Both full-width primary and candidate seeds reduce to zero.
+        0x005ac1f67f4a7c14ULL,  // Both full-width primary and candidate seeds reduce to one.
+    };
+    for (const uint64_t baseSeed : probeSeeds) {
+        SCOPED_TRACE(::testing::Message() << "baseSeed = " << baseSeed);
+        const uint64_t secondarySeed = GaussMarkov::deriveSecondarySeed(baseSeed);
+        ASSERT_LE(secondarySeed, 0xFFFFFFFFULL);
+        EXPECT_EQ(secondarySeed, GaussMarkov::deriveSecondarySeed(baseSeed));
+
+        const Engine32 primary32(static_cast<uint32_t>(baseSeed));
+        const Engine64 primary64(baseSeed);
+        Engine32 secondary32(static_cast<uint32_t>(secondarySeed));
+        Engine64 secondary64(secondarySeed);
+        EXPECT_NE(primary32, secondary32);
+        EXPECT_NE(primary64, secondary64);
+        EXPECT_EQ(secondary32(), secondary64());
+    }
+
+    // Pin the collision fallback so every platform selects the same secondary stream.
+    EXPECT_EQ(GaussMarkov::deriveSecondarySeed(0x7fa53e0900000001ULL), 1304083119ULL);
 }
