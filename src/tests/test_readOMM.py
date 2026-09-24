@@ -494,6 +494,43 @@ def test_omm_malformed_epoch_fraction_is_skipped(tmp_path, monkeypatch, capsys, 
     _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, "EPOCH", epoch_string)
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("epoch_string", [
+    "2026-366T12:00:30",
+    "2026-366T12:00:30.123456Z",
+    "2026-366T23:59:59.999999999Z",
+    "1900-366T12:00:30",
+    "2100-366T12:00:30.123456",
+    "2026-000T12:00:30",
+    "2024-367T12:00:30",
+])
+def test_omm_invalid_day_of_year_is_skipped(tmp_path, monkeypatch, capsys, encoding, epoch_string):
+    """Out-of-year dates never reach SGP4; later valid records remain available."""
+    warning = _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, "EPOCH", epoch_string)
+    assert epoch_string in warning
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("epoch_string,calendar_epoch", [
+    ("2026-001T00:00:00", "2026-01-01T00:00:00"),
+    ("2026-365T23:59:59Z", "2026-12-31T23:59:59"),
+    ("2024-366T23:59:59.999999999Z", "2024-12-31T23:59:59.999999"),
+    ("2000-366T12:00:30.123456", "2000-12-31T12:00:30.123456"),
+    ("2024-060T12:00:30", "2024-02-29T12:00:30"),
+    ("2026-060T12:00:30", "2026-03-01T12:00:30"),
+])
+def test_omm_valid_day_of_year(tmp_path, capsys, encoding, epoch_string, calendar_epoch):
+    """Gregorian leap years and valid year boundaries retain the exact calendar date."""
+    fields = dict(_OMM_FIELDS, EPOCH=epoch_string)
+    path = _WRITERS[encoding](tmp_path / f"day-of-year.{encoding}", [fields])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert records[0].ommEpoch == dt.datetime.fromisoformat(calendar_epoch)
+    assert capsys.readouterr().out == ""
+
+
 def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     """A record missing a required element is skipped while good records still return."""
     broken = dict(_OMM_FIELDS)
