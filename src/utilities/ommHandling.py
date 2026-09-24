@@ -25,10 +25,12 @@
 Read CCSDS Orbit Mean-Elements Message (OMM) general perturbations data and convert it to
 osculating classical orbital elements in the Basilisk inertial (J2000/ICRF) frame.
 
-The OMM format supersedes the TLE for general perturbations data.  The TLE's five-character
-catalog number field cannot represent the six-digit catalog numbers that CelesTrak began
-assigning in 2026, whereas OMM has no such limit.  See
-https://celestrak.org/NORAD/documentation/gp-data-formats.php.
+OMM supports NORAD catalog numbers of up to nine digits, removing the classic numeric
+TLE field's five-digit restriction. The U.S. Space Force (USSF) assigns catalog numbers;
+CelesTrak distributes the data. This reader supports IDs through ``999999999`` and
+preserves them in ``OmmData.noradID``, independently of SGP4's internal identifier. See
+`CelesTrak's GP format documentation
+<https://celestrak.org/NORAD/documentation/gp-data-formats.php>`__.
 
 All four CelesTrak encodings are accepted and auto-detected: XML, JSON, CSV and KVN.  The
 mean elements are handed to SGP4 exactly as :ref:`tleHandling` does for a TLE, so both paths
