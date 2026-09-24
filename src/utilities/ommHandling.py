@@ -90,6 +90,9 @@ _SUPPORTED_OMM_METADATA = {
     "MEAN_ELEMENT_THEORY": "SGP4",
 }
 
+#: Human-readable names for the supported classification codes.
+_CLASSIFICATION_NAMES = {"U": "Unclassified", "C": "Classified", "S": "Secret"}
+
 #: CCSDS units for numeric fields consumed by this reader; empty tuples forbid units.
 _OMM_FIELD_UNITS = {
     "MEAN_MOTION": ("rev/day",),
@@ -472,6 +475,14 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     _validate_omm_numeric_fields(normalized)
     _normalize_omm_physical_metadata(normalized, omm_format)
 
+    classification_code = normalized["CLASSIFICATION_TYPE"].strip()
+    if not classification_code.isascii() or classification_code.upper() not in _CLASSIFICATION_NAMES:
+        raise ValueError(
+            f"Unsupported OMM CLASSIFICATION_TYPE: {normalized['CLASSIFICATION_TYPE']!r}; "
+            "expected U, C, or S."
+        )
+    normalized["CLASSIFICATION_TYPE"] = classification_code.upper()
+
     # sgp4.omm.initialize() parses EPOCH with a strict "%Y-%m-%dT%H:%M:%S.%f" format.
     epoch = _parseOmmEpoch(normalized["EPOCH"])
     normalized["EPOCH"] = epoch.strftime("%Y-%m-%dT%H:%M:%S.%f")
@@ -481,9 +492,6 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
         normalized["OBJECT_ID"] = _OPTIONAL_OMM_DEFAULTS["OBJECT_ID"]
 
     return normalized
-
-
-_CLASSIFICATION_NAMES = {"U": "Unclassified", "C": "Classified", "S": "Secret"}
 
 
 def _ommFields2Data(fields: dict, epoch: dt.datetime) -> OmmData:
@@ -496,15 +504,13 @@ def _ommFields2Data(fields: dict, epoch: dt.datetime) -> OmmData:
     :param epoch: the parsed OMM epoch
     :return: the populated OmmData, with a placeholder ``oe``
     """
-    classificationCode = fields.get("CLASSIFICATION_TYPE", "U").strip().upper()
-
     return OmmData(
         oe=om.ClassicElements(),
         ommEpoch=epoch,
         satName=fields.get("OBJECT_NAME", "BSK-Sat-00").strip() or "BSK-Sat-00",
         noradID=str(fields["NORAD_CAT_ID"]).strip(),
         objectID=fields.get("OBJECT_ID", "0000-000A").strip(),
-        classification=_CLASSIFICATION_NAMES.get(classificationCode, "Unknown"),
+        classification=_CLASSIFICATION_NAMES[fields["CLASSIFICATION_TYPE"]],
         revAtEpoch=int(fields["REV_AT_EPOCH"]),
         propagator=str(fields.get("EPHEMERIS_TYPE", "0")).strip(),
         elemSetNo=int(fields["ELEMENT_SET_NO"]),
@@ -607,6 +613,10 @@ def satOmm2elem(omm_path: str) -> list:
     (``1/ER`` or ``1/[Earth radii]``) for ``BSTAR``. Dimensionless fields must
     omit units. Unsupported declarations cause the record to be skipped;
     values are not converted between units. Omitted units use these same conventions.
+
+    ``CLASSIFICATION_TYPE`` accepts ``U``, ``C``, or ``S`` after trimming whitespace
+    and normalizing case. Missing or blank values default to ``U``; unsupported
+    values cause the record to be skipped before SGP4 is invoked.
 
     :param omm_path: path to an OMM file holding one or many satellites
     :return: ommDataList: list of :py:class:`OmmData`, one per satellite, each carrying the
