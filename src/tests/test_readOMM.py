@@ -71,12 +71,12 @@ def _writeKvn(path, fieldSets):
         lines.append("COMMENT this comment line must be ignored")
         for key, value in fields.items():
             lines.append(f"{key} = {value}")
-    path.write_text("\n".join(lines) + "\n")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
 
 
 def _writeJson(path, fieldSets):
-    path.write_text(json.dumps(list(fieldSets)))
+    path.write_text(json.dumps(list(fieldSets)), encoding="utf-8")
     return path
 
 
@@ -84,7 +84,7 @@ def _writeCsv(path, fieldSets):
     fieldSets = list(fieldSets)
     header = ",".join(fieldSets[0].keys())
     rows = [",".join(str(v) for v in fields.values()) for fields in fieldSets]
-    path.write_text("\n".join([header] + rows) + "\n")
+    path.write_text("\n".join([header] + rows) + "\n", encoding="utf-8")
     return path
 
 
@@ -109,7 +109,7 @@ def _writeXml(path, fieldSets):
             + "<data>" + block("meanElements", meanKeys) + block("tleParameters", tleKeys) + "</data>"
             + "</segment>"
         )
-    path.write_text(f"<ndm><omm>{''.join(segments)}</omm></ndm>")
+    path.write_text(f"<ndm><omm>{''.join(segments)}</omm></ndm>", encoding="utf-8")
     return path
 
 
@@ -721,7 +721,7 @@ def test_omm_xml_without_segments_raises(tmp_path):
 def test_omm_invalid_xml_syntax_raises(tmp_path):
     """Invalid XML syntax remains a file-level failure."""
     path = tmp_path / "truncated.xml"
-    path.write_text("<ndm><omm><segment>")
+    path.write_text("<ndm><omm><segment>", encoding="utf-8")
 
     with pytest.raises(ET.ParseError):
         ommHandling.satOmm2elem(str(path))
@@ -771,7 +771,7 @@ def test_omm_json_field_normalization(tmp_path, capsys, as_array):
     fields["element_set_no"] = 999
     fields["bstar"] = None
     path = tmp_path / "normalized.json"
-    path.write_text(json.dumps([fields] if as_array else fields))
+    path.write_text(json.dumps([fields] if as_array else fields), encoding="utf-8")
 
     records = ommHandling.satOmm2elem(str(path))
 
@@ -787,7 +787,7 @@ def test_omm_json_field_normalization(tmp_path, capsys, as_array):
 def test_omm_invalid_json_syntax_raises(tmp_path):
     """A syntax error affecting the JSON document remains a file-level failure."""
     path = tmp_path / "truncated.json"
-    path.write_text("[" + json.dumps(_OMM_FIELDS) + ",")
+    path.write_text("[" + json.dumps(_OMM_FIELDS) + ",", encoding="utf-8")
 
     with pytest.raises(json.JSONDecodeError):
         ommHandling.satOmm2elem(str(path))
@@ -974,7 +974,7 @@ def test_omm_nonfinite_sgp4_state_is_skipped(tmp_path, monkeypatch, capsys, comp
 def test_omm_unknown_format_raises(tmp_path):
     """A file that is none of the four encodings is reported clearly."""
     path = tmp_path / "junk.txt"
-    path.write_text("this is not an OMM file\n")
+    path.write_text("this is not an OMM file\n", encoding="utf-8")
 
     with pytest.raises(ValueError, match="could not determine the OMM format"):
         ommHandling.satOmm2elem(str(path))
@@ -983,7 +983,7 @@ def test_omm_unknown_format_raises(tmp_path):
 def test_omm_empty_file_raises(tmp_path):
     """An empty file is reported rather than silently returning nothing."""
     path = tmp_path / "empty.kvn"
-    path.write_text("")
+    path.write_text("", encoding="utf-8")
 
     with pytest.raises(ValueError, match="empty OMM file"):
         ommHandling.satOmm2elem(str(path))
@@ -1003,7 +1003,7 @@ def test_omm_matches_tle_for_same_elements(tmp_path):
     line1 = "1 25544U 98067A   26253.50000000  .00002182  00000-0  16717-3 0  9991"
     line2 = "2 25544  51.6416 247.4627 0004364 130.5360 325.0288 15.50103472478591"
     tlePath = tmp_path / "iss.2le"
-    tlePath.write_text(f"{line1}\n{line2}\n")
+    tlePath.write_text(f"{line1}\n{line2}\n", encoding="utf-8")
 
     tleDataList = tleHandling.satTle2elem(str(tlePath))
     assert len(tleDataList) == 1
