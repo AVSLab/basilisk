@@ -196,19 +196,19 @@ def _parseOmmJson(text: str) -> list:
     """
     Parse the JSON encoding, which CelesTrak serves as a list of flat field objects.
 
+    Keep every array entry so validation can report malformed records individually
+    using their original positions in the file.
+
     :param text: full text of the JSON file
-    :return: list of dictionaries of raw OMM field strings
+    :return: list of raw JSON records, to be validated and normalized individually
+    :raises ValueError: if the JSON document is invalid or is not an object or array
     """
     payload = json.loads(text)
     if isinstance(payload, dict):
-        payload = [payload]
-
-    records = []
-    for entry in payload:
-        # JSON delivers native numbers; SGP4 parses strings, so normalize here.
-        records.append({str(key).upper(): "" if value is None else str(value)
-                        for key, value in entry.items()})
-    return records
+        return [payload]
+    if not isinstance(payload, list):
+        raise ValueError("OMM JSON must contain an object or an array of records.")
+    return payload
 
 
 def _parseOmmXml(text: str) -> list:
@@ -337,12 +337,18 @@ def _validate_omm_numeric_fields(fields: dict) -> None:
 
 def _normalizeOmmFields(fields: dict) -> dict:
     """
-    Fill optional fields and put ``EPOCH`` in the exact form ``sgp4.omm.initialize`` expects.
+    Validate one OMM record and normalize its fields for ``sgp4.omm.initialize``.
 
     :param fields: raw OMM field dictionary
     :return: a normalized copy safe to hand to SGP4
+    :raises ValueError: if the record is not a field dictionary or its fields are invalid
     """
-    normalized = dict(fields)
+    if not isinstance(fields, dict):
+        raise ValueError(f"OMM record must be a field object, got {type(fields).__name__}.")
+
+    # JSON delivers native numbers; normalize inside the per-record error handler.
+    normalized = {str(key).upper(): "" if value is None else str(value)
+                  for key, value in fields.items()}
 
     for key, default in _OPTIONAL_OMM_DEFAULTS.items():
         if not normalized.get(key, "").strip():

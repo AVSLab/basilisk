@@ -249,6 +249,80 @@ def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     assert [d.satName for d in ommDataList] == ["ISS (ZARYA)"]
 
 
+@pytest.mark.parametrize("invalid_entry", [
+    None, 42, 1.5, True, "not-an-object", [], [["OBJECT_NAME", "BROKEN-SAT"]],
+])
+def test_omm_json_invalid_entries_preserve_record_numbers(tmp_path, capsys, invalid_entry):
+    """Malformed JSON entries are skipped without losing records or shifting diagnostics."""
+    incomplete = dict(_OMM_FIELDS)
+    del incomplete["MEAN_MOTION"]
+    second = dict(_OMM_FIELDS, OBJECT_NAME="SECOND-SAT", NORAD_CAT_ID="25545")
+    path = _writeJson(tmp_path / "mixed.json", [invalid_entry, _OMM_FIELDS, incomplete, second])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == ["ISS (ZARYA)", "SECOND-SAT"]
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 2
+    assert f"skipped OMM record 1 in {path}" in warnings[0]
+    assert "object" in warnings[0]
+    assert f"skipped OMM record 3 in {path}" in warnings[1]
+    assert "MEAN_MOTION" in warnings[1]
+
+
+def test_omm_json_all_invalid_entries_are_reported(tmp_path, capsys):
+    """An array of malformed records returns an empty result with one warning per entry."""
+    path = _writeJson(tmp_path / "invalid.json", [None, 42, []])
+
+    assert ommHandling.satOmm2elem(str(path)) == []
+
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 3
+    for record_number, warning in enumerate(warnings, start=1):
+        assert f"skipped OMM record {record_number} in {path}" in warning
+        assert "object" in warning
+
+
+@pytest.mark.parametrize("as_array", [False, True])
+def test_omm_json_field_normalization(tmp_path, capsys, as_array):
+    """Single objects and arrays still accept native numbers, lowercase keys, and nulls."""
+    fields = {name.lower(): value for name, value in _OMM_FIELDS.items()}
+    fields["norad_cat_id"] = 799500001
+    fields["mean_motion"] = float(_OMM_FIELDS["MEAN_MOTION"])  # [rev/day]
+    fields["inclination"] = float(_OMM_FIELDS["INCLINATION"])  # [deg]
+    fields["element_set_no"] = 999
+    fields["bstar"] = None
+    path = tmp_path / "normalized.json"
+    path.write_text(json.dumps([fields] if as_array else fields))
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert records[0].satName == _OMM_FIELDS["OBJECT_NAME"]
+    assert records[0].noradID == "799500001"
+    assert records[0].meanMotion == fields["mean_motion"]
+    assert records[0].elemSetNo == fields["element_set_no"]
+    assert records[0].bStar == 0.0  # [1/Earth radii]
+    assert capsys.readouterr().out == ""
+
+
+def test_omm_invalid_json_syntax_raises(tmp_path):
+    """A syntax error affecting the JSON document remains a file-level failure."""
+    path = tmp_path / "truncated.json"
+    path.write_text("[" + json.dumps(_OMM_FIELDS) + ",")
+
+    with pytest.raises(json.JSONDecodeError):
+        ommHandling.satOmm2elem(str(path))
+
+
+def test_omm_empty_json_array_raises(tmp_path):
+    """An empty JSON array contains no records to process."""
+    path = _writeJson(tmp_path / "empty.json", [])
+
+    with pytest.raises(ValueError, match="found no OMM records"):
+        ommHandling.satOmm2elem(str(path))
+
+
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 @pytest.mark.parametrize("field_name", [
     "MEAN_MOTION", "ECCENTRICITY", "INCLINATION", "RA_OF_ASC_NODE",
