@@ -32,7 +32,8 @@ https://celestrak.org/NORAD/documentation/gp-data-formats.php.
 
 All four CelesTrak encodings are accepted and auto-detected: XML, JSON, CSV and KVN.  The
 mean elements are handed to SGP4 exactly as :ref:`tleHandling` does for a TLE, so both paths
-produce osculating elements through the same propagation and frame conversion.
+produce osculating elements through the same propagation and frame conversion. Only the
+Earth-centered, TEME, UTC, SGP4 profile is supported.
 """
 
 import datetime as dt
@@ -81,6 +82,14 @@ _OPTIONAL_OMM_DEFAULTS = {
     "MEAN_MOTION_DDOT": "0.0",
 }
 
+#: Supported physical metadata, omitted by CelesTrak's JSON and CSV encodings.
+_SUPPORTED_OMM_METADATA = {
+    "CENTER_NAME": "EARTH",
+    "REF_FRAME": "TEME",
+    "TIME_SYSTEM": "UTC",
+    "MEAN_ELEMENT_THEORY": "SGP4",
+}
+
 
 # ---------------------------------------------------------------------------------------------------------- #
 #                                          OMM Data Class                                                     #
@@ -104,7 +113,7 @@ class OmmData:
     objectID: str = field(default="0000-000A")  # international designator, e.g. "1998-067A"
     classification: str = field(default="Unknown")  # "Unclassified", "Classified", "Secret"
     revAtEpoch: int = field(default=0)  # revolution number at epoch [-]
-    propagator: str = field(default="0")  # 0: Unknown, 1: SGP4, 2: SDP4, 3: SGP8, 4: SDP8
+    propagator: str = field(default="0")  # EPHEMERIS_TYPE: 0 (CelesTrak default) or 2 (SGP4)
     elemSetNo: int = field(default=999)  # element set number [-]
     meanMotion: float = field(default=0.0)  # mean motion at epoch [rev/day]
     nDot: float = field(default=0.0)  # first derivative of mean motion [rev/day^2]
@@ -113,6 +122,7 @@ class OmmData:
     centerName: str = field(default="EARTH")  # CENTER_NAME
     refFrame: str = field(default="TEME")  # REF_FRAME
     meanElementTheory: str = field(default="SGP4")  # MEAN_ELEMENT_THEORY
+    timeSystem: str = field(default="UTC")  # TIME_SYSTEM of ommEpoch
 
     def __setattr__(self, name, value):
         # Only allow setting attributes that are defined in the dataclass
@@ -335,11 +345,42 @@ def _validate_omm_numeric_fields(fields: dict) -> None:
             raise ValueError(f"OMM {name} must be a non-negative integer: {fields[name]!r}")
 
 
-def _normalizeOmmFields(fields: dict) -> dict:
+def _normalize_omm_physical_metadata(fields: dict, omm_format: str) -> None:
+    """
+    Validate and normalize physical metadata in place for the supported SGP4 profile.
+
+    CelesTrak JSON and CSV may omit the four fixed metadata fields. XML and KVN
+    must declare them. Explicitly empty or incompatible declarations are rejected
+    in every encoding. Ephemeris type 0 is accepted for CelesTrak compatibility;
+    type 2 explicitly identifies SGP4.
+
+    :param fields: normalized field strings with numeric fields already validated
+    :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)
+    :raises ValueError: if physical metadata is missing or unsupported
+    """
+    for name, expected in _SUPPORTED_OMM_METADATA.items():
+        if name not in fields:
+            if omm_format not in ("json", "csv"):
+                raise ValueError(f"OMM {name} is required for {omm_format.upper()} records.")
+            fields[name] = expected
+        value = fields[name].strip().upper()
+        if value != expected:
+            raise ValueError(f"Unsupported OMM {name}: {fields[name]!r}; expected {expected}.")
+        fields[name] = value
+
+    if int(fields["EPHEMERIS_TYPE"]) not in (0, 2):
+        raise ValueError(
+            f"Unsupported OMM EPHEMERIS_TYPE: {fields['EPHEMERIS_TYPE']!r}; "
+            "expected 0 (CelesTrak default) or 2 (SGP4)."
+        )
+
+
+def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     """
     Validate one OMM record and normalize its fields for ``sgp4.omm.initialize``.
 
     :param fields: raw OMM field dictionary
+    :param omm_format: detected encoding (``xml``, ``kvn``, ``json``, or ``csv``)
     :return: a normalized copy safe to hand to SGP4
     :raises ValueError: if the record is not a field dictionary or its fields are invalid
     """
@@ -368,6 +409,7 @@ def _normalizeOmmFields(fields: dict) -> dict:
         )
 
     _validate_omm_numeric_fields(normalized)
+    _normalize_omm_physical_metadata(normalized, omm_format)
 
     # sgp4.omm.initialize() parses EPOCH with a strict "%Y-%m-%dT%H:%M:%S.%f" format.
     epoch = _parseOmmEpoch(normalized["EPOCH"])
@@ -409,9 +451,10 @@ def _ommFields2Data(fields: dict, epoch: dt.datetime) -> OmmData:
         nDot=float(fields["MEAN_MOTION_DOT"]),  # [rev/day^2]
         nDotDot=float(fields["MEAN_MOTION_DDOT"]),  # [rev/day^3]
         bStar=float(fields["BSTAR"]),  # [1/Earth radii]
-        centerName=fields.get("CENTER_NAME", "EARTH").strip() or "EARTH",
-        refFrame=fields.get("REF_FRAME", "TEME").strip() or "TEME",
-        meanElementTheory=fields.get("MEAN_ELEMENT_THEORY", "SGP4").strip() or "SGP4",
+        centerName=fields["CENTER_NAME"],
+        refFrame=fields["REF_FRAME"],
+        meanElementTheory=fields["MEAN_ELEMENT_THEORY"],
+        timeSystem=fields["TIME_SYSTEM"],
     )
 
 
@@ -487,6 +530,13 @@ def satOmm2elem(omm_path: str) -> list:
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
     SGP4's internal identifier storage.
 
+    Only Earth-centered, TEME, UTC, SGP4 records with ephemeris type 0 (CelesTrak
+    default) or 2 (SGP4) are supported. JSON and CSV records may omit
+    ``CENTER_NAME``, ``REF_FRAME``, ``TIME_SYSTEM``, and ``MEAN_ELEMENT_THEORY``;
+    CelesTrak's EARTH/TEME/UTC/SGP4 defaults then apply. XML and KVN require these
+    fields explicitly. Empty or incompatible declarations cause the record to
+    be skipped with a warning before SGP4 is invoked.
+
     :param omm_path: path to an OMM file holding one or many satellites
     :return: ommDataList: list of :py:class:`OmmData`, one per satellite, each carrying the
              osculating orbital elements in ``oe`` plus the record's metadata
@@ -503,7 +553,7 @@ def satOmm2elem(omm_path: str) -> list:
     ommDataList = []
     for recordNo, rawFields in enumerate(records, start=1):
         try:
-            fields = _normalizeOmmFields(rawFields)
+            fields = _normalizeOmmFields(rawFields, ommFormat)
             epoch = _parseOmmEpoch(fields["EPOCH"])
             ommData = _ommFields2Data(fields, epoch)
             ommData.oe = _convertOmmMean2osculating(fields, ommData)
