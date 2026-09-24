@@ -63,6 +63,9 @@ class moduleGenerator:
         self._newModuleLocation = None  # absolute path to the auto-generated Basilisk module folder
         self._licenseText = None  # BSK open-source license statement
         self._output_path = None  # temporary directory used while generating files
+        self._module_path = None  # source path relative to basilisk/src
+        self._python_package = None  # top-level Basilisk package for Python imports
+        self._className = None  # derived C++ class name
 
     def log(self, statement, **kwargs):
         if self.verbose:
@@ -81,7 +84,9 @@ class moduleGenerator:
         self.log(self._absPath)
 
     def _validate_specification(self, module_type):
-        """Validate generation inputs before creating or replacing any files."""
+        """Validate configuration and prepare derived names without filesystem access."""
+        if module_type not in ("C", "C++"):
+            raise ValueError(f"Unsupported module type: {module_type}")
         for field in ("moduleName", "briefDescription", "copyrightHolder"):
             value = getattr(self, field)
             if not isinstance(value, str) or not value.strip():
@@ -94,15 +99,6 @@ class moduleGenerator:
         if module_path.is_absolute() or not module_path.parts or ".." in module_path.parts:
             raise ValueError("modulePathRelSrc must stay within a package under basilisk/src")
         self._validate_identifier(module_path.parts[0], "Basilisk package name")
-        source_path = Path(pathToSrc).resolve()
-        self._absPath = (source_path / module_path).resolve()
-        if not self._absPath.is_relative_to(source_path):
-            raise ValueError("modulePathRelSrc must stay within basilisk/src")
-        self.checkPathToNewFolderLocation()
-        self._newModuleLocation = self._absPath / self.moduleName
-        self._module_path = module_path
-        # Basilisk flattens modules below each top-level source package.
-        self._python_package = module_path.parts[0]
 
         names = set()
         message_wrappers = {}
@@ -133,6 +129,22 @@ class moduleGenerator:
                     if previous != entry["wrap"]:
                         raise ValueError(f"Conflicting wrappers for message type: {entry['type']}")
 
+        self._module_path = module_path
+        # Basilisk flattens modules below each top-level source package.
+        self._python_package = module_path.parts[0]
+        self._className = re.sub(
+            '([a-zA-Z])', lambda match: match.group(1).upper(), self.moduleName, count=1
+        )
+
+    def _resolve_destination(self):
+        """Resolve the validated destination and check its parent on disk."""
+        source_path = Path(pathToSrc).resolve()
+        self._absPath = (source_path / self._module_path).resolve()
+        if not self._absPath.is_relative_to(source_path):
+            raise ValueError("modulePathRelSrc must stay within basilisk/src")
+        self.checkPathToNewFolderLocation()
+        self._newModuleLocation = self._absPath / self.moduleName
+
     @staticmethod
     def _validate_identifier(value, description):
         """Reject names that cannot be used as generated identifiers or filenames."""
@@ -154,11 +166,8 @@ class moduleGenerator:
         return True
 
     @contextmanager
-    def _module_directory(self, module_type):
+    def _module_directory(self, replace_existing):
         """Stage a complete draft before publishing it at the requested destination."""
-        self._validate_specification(module_type)
-        self.readLicense()
-        replace_existing = self._check_destination()
         with TemporaryDirectory(prefix=f".{self.moduleName}-draft-", dir=self._absPath) as directory:
             self._output_path = Path(directory) / self.moduleName
             self._output_path.mkdir()
@@ -198,6 +207,47 @@ class moduleGenerator:
         if backup_root is not None:
             shutil.rmtree(backup_root)
 
+    def _create_module(self, module_type):
+        """Prepare configuration, render all files, then stage and publish the draft."""
+        self._validate_specification(module_type)
+        self._resolve_destination()
+        self.readLicense()
+        replace_existing = self._check_destination()
+        self.log(f"{statusColor}\nCreating {module_type} Module: {endColor}{self.moduleName}")
+        files = self._render_module(module_type)
+        with self._module_directory(replace_existing):
+            self._write_files(files)
+
+    def _render_module(self, module_type):
+        """Return relative filenames and text for a validated, prepared specification."""
+        name = self.moduleName
+        if module_type == "C":
+            files = {
+                Path(f"{name}.h"): self._render_c_header(),
+                Path(f"{name}.c"): self._render_c_source(),
+                Path(f"{name}.i"): self._render_c_swig(),
+            }
+        elif module_type == "C++":
+            files = {
+                Path(f"{name}.h"): self._render_cpp_header(),
+                Path(f"{name}.cpp"): self._render_cpp_source(),
+                Path(f"{name}.i"): self._render_cpp_swig(),
+            }
+        else:
+            raise ValueError(f"Unsupported module type: {module_type}")
+        files[Path(f"{name}.rst")] = self._render_rst(module_type)
+        files[Path('_UnitTest') / f"test_{name}.py"] = self._render_test(module_type)
+        return files
+
+    def _write_files(self, files):
+        """Write rendered files into the active staging directory."""
+        for relative_path, content in files.items():
+            self.log(f"{statusColor}Creating {relative_path}:{endColor}", end=" ")
+            output = self._output_path / relative_path
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(content, encoding="utf-8")
+            self.log("Done")
+
     def readLicense(self):
         """Read the Basilisk license file"""
         self.log(statusColor + "Importing License:" + endColor, end=" ")
@@ -210,9 +260,11 @@ class moduleGenerator:
         self.log("Done")
 
     def createRstFile(self, moduleType):
-        """Create the Module RST documentation draft."""
-        rstFileName = f"{self.moduleName}.rst"
-        self.log(f"{statusColor}Creating RST Documentation File {rstFileName}:{endColor}", end=" ")
+        """Write the rendered documentation into the active staging directory."""
+        self._write_files({Path(f"{self.moduleName}.rst"): self._render_rst(moduleType)})
+
+    def _render_rst(self, module_type):
+        """Return the module documentation text without filesystem access."""
         rstFile = 'Executive Summary\n'
         rstFile += '-----------------\n'
         rstFile += f'{self.briefDescription}\n'
@@ -231,7 +283,7 @@ class moduleGenerator:
         if self.inMsgList or self.outMsgList:
             rstFile += f'.. bsk-module-io:: {self.moduleName}\n'
             rstFile += '    :caption: Module I/O Messages\n'
-            rstFile += f'    :module-type: {moduleType}\n'
+            rstFile += f'    :module-type: {module_type}\n'
             rstFile += '\n'
             for msg in self.inMsgList:
                 rstFile += f'    input {msg["var"]} {msg["type"]}Payload\n'
@@ -260,17 +312,15 @@ class moduleGenerator:
         rstFile += '\n'
         rstFile += 'See :ref:`makingModules-3` for RST authoring instructions and :ref:`cModuleTemplate`\n'
         rstFile += 'and :ref:`cppModuleTemplate` for completed module documentation examples.\n'
-
-        with (self._output_path / rstFileName).open('w', encoding="utf-8") as w:
-            w.write(rstFile)
-        self.log("Done")
+        return rstFile
 
     def createTestFile(self, module_type):
-        """Create a smoke test for scheduled execution and output message writes."""
-        test_path = self._output_path / '_UnitTest'
-        test_path.mkdir()
-        test_file_name = f"test_{self.moduleName}.py"
-        self.log(f"{statusColor}Creating Python Smoke Test {test_file_name}:{endColor}", end=" ")
+        """Write the rendered smoke test into the active staging directory."""
+        test_path = Path('_UnitTest') / f"test_{self.moduleName}.py"
+        self._write_files({test_path: self._render_test(module_type)})
+
+    def _render_test(self, module_type):
+        """Return the smoke test text without filesystem access."""
         test_file = ""
         for line in self._licenseText.split('\n'):
             test_file += f'# {line}\n'
@@ -346,35 +396,21 @@ class moduleGenerator:
         test_file += '\n\n'
         test_file += 'if __name__ == "__main__":\n'
         test_file += f'    test_{self.moduleName}()\n'
-
-        with (test_path / test_file_name).open('w', encoding="utf-8") as output:
-            output.write(test_file)
-        self.log("Done")
+        return test_file
 
     def createCppModule(self):
         """Create a C++ draft, preserving existing files if generation fails."""
-        with self._module_directory("C++"):
-            self._create_cpp_module()
+        self._create_module("C++")
 
-    def _create_cpp_module(self):
-        """Write the C++ draft into the staging directory."""
-        modulePath = self._module_path.as_posix()
+    def _render_cpp_header(self):
+        """Return the C++ header text without filesystem access."""
         name = self.moduleName
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
         variableList = self.variableList
-
-        self.log(statusColor + '\nCreating C++ Module: ' + endColor + name)
-        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, count=1)
-
         licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        #
-        # make module header file
-        #
-        headerFileName = name + ".h"
-        self.log(f"{statusColor}Creating Header File {headerFileName}:{endColor}", end=" ")
         headerFile = licenseC
         headerFile += '\n'
         headerFile += f'#ifndef {name.upper()}_H\n'
@@ -428,16 +464,17 @@ class moduleGenerator:
         headerFile += '};\n'
         headerFile += '\n'
         headerFile += "\n#endif\n"
+        return headerFile
 
-        with (self._output_path / headerFileName).open('w', encoding="utf-8") as w:
-            w.write(headerFile)
-        self.log("Done")
+    def _render_cpp_source(self):
+        """Return the C++ source text without filesystem access."""
+        modulePath = self._module_path.as_posix()
+        name = self.moduleName
+        inMsgList = self.inMsgList
+        outMsgList = self.outMsgList
+        variableList = self.variableList
+        licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        #
-        # make module definition file
-        #
-        defFileName = name + ".cpp"
-        self.log(statusColor + "Creating Definition File " + defFileName + ":" + endColor, end=" ")
         defFile = licenseC
         defFile += '\n'
         defFile += f'#include "{modulePath}/{name}/{name}.h"\n'
@@ -502,16 +539,15 @@ class moduleGenerator:
                 defFile += f'    this->{varName} = var;\n'
                 defFile += '}\n'
                 defFile += '\n'
+        return defFile
 
-        with (self._output_path / defFileName).open('w', encoding="utf-8") as w:
-            w.write(defFile)
-        self.log("Done")
+    def _render_cpp_swig(self):
+        """Return the C++ SWIG interface text without filesystem access."""
+        name = self.moduleName
+        inMsgList = self.inMsgList
+        outMsgList = self.outMsgList
+        licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        #
-        # make module swig interface file
-        #
-        swigFileName = name + ".i"
-        self.log(statusColor + "Creating Swig Interface File " + swigFileName + ":" + endColor, end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
         swigFile += '\n'
@@ -547,41 +583,21 @@ class moduleGenerator:
         swigFile += 'protectAllClasses(sys.modules[__name__])\n'
         swigFile += '%}\n'
         swigFile += '\n'
-
-        with (self._output_path / swigFileName).open('w', encoding="utf-8") as w:
-            w.write(swigFile)
-        self.log("Done")
-
-        # make module definition file
-        self.createRstFile("C++")
-
-        # make module unit test file
-        self.createTestFile("C++")
+        return swigFile
 
     def createCModule(self):
         """Create a C draft, preserving existing files if generation fails."""
-        with self._module_directory("C"):
-            self._create_c_module()
+        self._create_module("C")
 
-    def _create_c_module(self):
-        """Write the C draft into the staging directory."""
-        modulePath = self._module_path.as_posix()
+    def _render_c_header(self):
+        """Return the C header text without filesystem access."""
         name = self.moduleName
         briefDescription = self.briefDescription
         inMsgList = self.inMsgList
         outMsgList = self.outMsgList
         variableList = self.variableList
+        licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        self.log(f"{statusColor}\nCreating C Module: {endColor}{name}")
-        self._className = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), name, count=1)
-
-        licenseC = f"/*{self._licenseText}*/\n\n"
-
-        #
-        # make module header file
-        #
-        headerFileName = f"{name}.h"
-        self.log(f"{statusColor}Creating Header File {headerFileName}:{endColor}", end=" ")
         headerFile = licenseC
         headerFile += '\n'
         headerFile += f'#ifndef {name.upper()}_H\n'
@@ -626,16 +642,16 @@ class moduleGenerator:
         headerFile += '#endif\n'
         headerFile += '\n'
         headerFile += '#endif\n'
+        return headerFile
 
-        with (self._output_path / headerFileName).open('w', encoding="utf-8") as w:
-            w.write(headerFile)
-        self.log("Done")
+    def _render_c_source(self):
+        """Return the C source text without filesystem access."""
+        modulePath = self._module_path.as_posix()
+        name = self.moduleName
+        inMsgList = self.inMsgList
+        outMsgList = self.outMsgList
+        licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        #
-        # make module definition file
-        #
-        defFileName = f"{name}.c"
-        self.log(f"{statusColor}Creating Definition File {defFileName}:{endColor}", end=" ")
         defFile = licenseC
         defFile += '\n'
         defFile += f'#include "{modulePath}/{name}/{name}.h"\n'
@@ -707,16 +723,15 @@ class moduleGenerator:
             defFile += f'    {msg["type"]}_C_write(&{msg["var"]}Buffer, &configData->{msg["var"]}, moduleID, callTime);\n'
         defFile += '}\n'
         defFile += '\n'
+        return defFile
 
-        with (self._output_path / defFileName).open('w', encoding="utf-8") as w:
-            w.write(defFile)
-        self.log("Done")
+    def _render_c_swig(self):
+        """Return the C SWIG interface text without filesystem access."""
+        name = self.moduleName
+        inMsgList = self.inMsgList
+        outMsgList = self.outMsgList
+        licenseC = "/*" + self._licenseText + "*/\n\n"
 
-        #
-        # make module swig interface file
-        #
-        swigFileName = f"{name}.i"
-        self.log(f"{statusColor}Creating Swig Interface File {swigFileName}:{endColor}", end=" ")
         swigFile = licenseC
         swigFile += f'%module {name}\n'
         swigFile += '\n'
@@ -749,16 +764,7 @@ class moduleGenerator:
         swigFile += 'protectAllClasses(sys.modules[__name__])\n'
         swigFile += '%}\n'
         swigFile += '\n'
-
-        with (self._output_path / swigFileName).open('w', encoding="utf-8") as w:
-            w.write(swigFile)
-        self.log("Done")
-
-        # make module definition file
-        self.createRstFile("C")
-
-        # make module unit test file
-        self.createTestFile("C")
+        return swigFile
 
 
 def fillCppInfo(module):
