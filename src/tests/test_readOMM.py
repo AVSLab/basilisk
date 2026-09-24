@@ -595,6 +595,49 @@ def test_omm_valid_day_of_year(tmp_path, capsys, encoding, epoch_string, calenda
     assert capsys.readouterr().out == ""
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("epoch_string,calendar_epoch", [
+    ("2100-03-01T12:00:00", "2100-03-01T12:00:00.000000"),
+    ("2100-02-28T23:59:59.123456", "2100-02-28T23:59:59.123456"),
+    ("2100-03-01T00:00:00Z", "2100-03-01T00:00:00.000000"),
+    ("2100-060T00:00:00.123456789Z", "2100-03-01T00:00:00.123456"),
+    ("2100-365T23:59:59.999999999", "2100-12-31T23:59:59.999999"),
+    ("2000-02-29T12:00:00Z", "2000-02-29T12:00:00.000000"),
+    ("2000-03-01T12:00:00Z", "2000-03-01T12:00:00.000000"),
+    ("1900-02-28T12:00:00", "1900-02-28T12:00:00.000000"),
+    ("1900-03-01T12:00:00", "1900-03-01T12:00:00.000000"),
+    ("2026-09-10T12:00:30.123456", "2026-09-10T12:00:30.123456"),
+])
+def test_omm_propagates_at_initialized_epoch(tmp_path, capsys, encoding, epoch_string, calendar_epoch):
+    """Returned elements reproduce SGP4 at zero elapsed time across century boundaries."""
+    fields = dict(_OMM_FIELDS, EPOCH=epoch_string)
+    path = _WRITERS[encoding](tmp_path / f"epoch-state.{encoding}", [fields])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    record = records[0]
+    epoch = dt.datetime.fromisoformat(calendar_epoch)
+    assert record.ommEpoch == epoch
+
+    # Use SGP4's elapsed-time interface as the reference, with no Julian-date conversion.
+    satellite = ommHandling.Satrec()
+    ommHandling.sgp4omm.initialize(satellite, dict(_OMM_FIELDS, EPOCH=calendar_epoch))
+    error, position, velocity = satellite.sgp4_tsince(0.0)  # [min] since initialization epoch
+    assert error == 0
+    position_m = np.array(position) * 1e3  # [m]
+    velocity_m_s = np.array(velocity) * 1e3  # [m/s]
+    expected_position, expected_velocity = ommHandling._teme2j2000(position_m, velocity_m_s, epoch)
+    actual_position, actual_velocity = ommHandling.om.elem2rv(
+        ommHandling.om.MU_EARTH * 1e9, record.oe  # [m^3/s^2]
+    )
+
+    # Allow only roundoff from converting the returned elements back to a state vector.
+    np.testing.assert_allclose(actual_position, expected_position, rtol=0.0, atol=1e-5)  # [m]
+    np.testing.assert_allclose(actual_velocity, expected_velocity, rtol=0.0, atol=1e-8)  # [m/s]
+    assert capsys.readouterr().out == ""
+
+
 def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     """A record missing a required element is skipped while good records still return."""
     broken = dict(_OMM_FIELDS)

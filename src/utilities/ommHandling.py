@@ -43,7 +43,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from sgp4 import omm as sgp4omm
-from sgp4.api import Satrec, jday
+from sgp4.api import Satrec
 
 from Basilisk.utilities import orbitalMotion as om
 # The TEME -> J2000 conversion is shared with the TLE reader so both formats land in the
@@ -537,6 +537,9 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
     Mirrors :py:func:`Basilisk.utilities.tleHandling._convertMean2osculating`; the only
     difference is that the SGP4 record is initialized from OMM fields rather than two lines.
 
+    Propagation uses SGP4's stored initialization epoch, avoiding a separate calendar
+    conversion that could shift the propagation time.
+
     :param fields: normalized OMM field dictionary
     :param ommData: the OmmData carrying the epoch and identifiers, used for error reporting
     :return: osculating classical orbital elements in the Basilisk inertial frame
@@ -546,17 +549,11 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
     sgp4_fields = dict(fields, NORAD_CAT_ID="0")
     satellite = Satrec()
 
-    # Convert epoch to Julian date
-    epoch = ommData.ommEpoch
-    jd, fr = jday(epoch.year, epoch.month, epoch.day,
-                  epoch.hour, epoch.minute,
-                  epoch.second + epoch.microsecond / 1e6)
-
     # Propagate to epoch to get the True Equator, Mean Equinox (TEME) state vector.
     # Extreme finite inputs can still exceed the backend's numerical capacity.
     try:
         sgp4omm.initialize(satellite, sgp4_fields)
-        e, r, v = satellite.sgp4(jd, fr)
+        e, r, v = satellite.sgp4(satellite.jdsatepoch, satellite.jdsatepochF)
     except (OverflowError, ZeroDivisionError) as error:
         raise ValueError(
             f"SGP4 numerical failure for satellite {ommData.satName} with NORAD ID "
