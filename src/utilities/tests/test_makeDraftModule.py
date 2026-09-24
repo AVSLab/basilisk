@@ -14,12 +14,13 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Regression tests for draft-module paths and preservation of existing work."""
+"""Regression tests for draft generation, smoke checks, and file preservation."""
 
 import ast
 import importlib.util
 import os
 from pathlib import Path
+import runpy
 import shutil
 import subprocess
 import sys
@@ -340,3 +341,78 @@ def test_invalid_specification_exits_unsuccessfully(draft):
     )
     assert result.returncode != 0
     assert "ValueError: moduleName must be a nonempty string" in result.stderr
+
+
+def _run_generated_smoke_test(draft, monkeypatch, module_factory):
+    """Execute a generated test with the supplied module implementation."""
+    from Basilisk import moduleTemplates
+
+    draft.create()
+    name = draft.generator.moduleName
+    class_name = name if draft.extension == ".c" else draft.generator._className
+    monkeypatch.setattr(
+        moduleTemplates, name, SimpleNamespace(**{class_name: module_factory}), raising=False
+    )
+    namespace = runpy.run_path(str(draft.destination / "_UnitTest" / f"test_{name}.py"))
+    namespace[f"test_{name}"]()
+
+
+@pytest.mark.parametrize("module_name", [
+    "draftExample", "simulation", "process", "reader", "np", "messaging", "module_under_test",
+])
+def test_generated_smoke_checks_pass_for_native_drafts(draft, monkeypatch, module_name):
+    """Run native drafts even when their names match test locals or imports."""
+    from Basilisk.moduleTemplates import autoCModule, autoCppModule
+
+    draft.generator.moduleName = module_name
+    draft.destination = draft.destination.with_name(module_name)
+    factory = autoCModule.autoCModule if draft.extension == ".c" else autoCppModule.AutoCppModule
+    _run_generated_smoke_test(draft, monkeypatch, factory)
+
+
+@pytest.mark.parametrize("run_simulation", [True, False])
+def test_generated_smoke_checks_without_messages(draft, monkeypatch, run_simulation):
+    """Require scheduled execution even for a draft without message interfaces."""
+    from Basilisk.architecture import sysModel
+    from Basilisk.utilities import SimulationBaseClass
+
+    draft.generator.inMsgList = []
+    draft.generator.outMsgList = []
+    if run_simulation:
+        _run_generated_smoke_test(draft, monkeypatch, sysModel.SysModel)
+    else:
+        monkeypatch.setattr(SimulationBaseClass.SimBaseClass, "ExecuteSimulation", lambda self: None)
+        with pytest.raises(AssertionError, match="Module did not run"):
+            _run_generated_smoke_test(draft, monkeypatch, sysModel.SysModel)
+
+
+@pytest.mark.parametrize("write_output", [False, True])
+def test_generated_smoke_checks_reject_missing_or_stale_writes(draft, monkeypatch, write_output):
+    """Reject an executing module that omits writes or always timestamps them zero."""
+    from Basilisk.architecture import messaging, sysModel
+
+    draft.generator.inMsgList = []
+    faulty_output = draft.generator.outMsgList[-1]["var"]
+
+    class BrokenWriter(sysModel.SysModel):
+        """Publish missing or stale outputs using real Basilisk message objects."""
+
+        def __init__(self):
+            """Create the output interfaces specified by the generated test."""
+            super().__init__()
+            for message in draft.generator.outMsgList:
+                setattr(self, message["var"], getattr(messaging, message["type"])())
+
+        def UpdateState(self, current_sim_nanos):
+            """Write every output correctly except the final message interface."""
+            for message in draft.generator.outMsgList:
+                is_faulty = message["var"] == faulty_output
+                if is_faulty and not write_output:
+                    continue
+                write_time = 0 if is_faulty else current_sim_nanos  # [ns]
+                output = getattr(self, message["var"])
+                output.write(output.zeroMsgPayload, write_time, self.moduleID)
+
+    error = "write times" if write_output else "was never written"
+    with pytest.raises(AssertionError, match=f"{faulty_output} {error}"):
+        _run_generated_smoke_test(draft, monkeypatch, BrokenWriter)

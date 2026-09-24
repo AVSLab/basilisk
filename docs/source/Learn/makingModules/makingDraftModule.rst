@@ -47,16 +47,22 @@ diagram and table listing each message name, type and description.
 
 Unit Test File
 --------------
-A draft unit test python file is created in the local ``_UnitTest`` folder.  This script
+A Python smoke test is created in the local ``_UnitTest`` folder. This script
 
 - imports the new module
-- sets up a proces and task to run this module
-- creates empty input messages object for all the module input messages
-- sets up a recorder for all the module output messages
-- run the script
+- sets up a process and task to run the module at a 0.5-second interval
+- creates blank input messages and subscribes every module input
+- records every module output after each update
+- checks that the module executes three times, at 0, 0.5, and 1 second
+- checks that every output was written and that recording and write timestamps
+  match all three task times
 
-The user can then expand this script to properly configure the module variables and input message contents
-to create a fully implemented module unit test.
+The execution check also applies to modules without outputs. The generated test has no
+placeholder parameters and can run through ``pytest`` or directly as a Python script.
+
+These checks exercise scheduling and message publication. They do not validate numerical
+payload values. Once the module algorithm is implemented, configure meaningful input
+payloads and add assertions for the expected output values at the indicated location.
 
 
 User Guide

@@ -1,0 +1,1 @@
+- :ref:`makeDraftModule` now generates smoke tests that check module execution and output message publication, including recording and write timestamps. Removed unused placeholder test parameters; add numerical payload assertions when implementing the module algorithm.
