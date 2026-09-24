@@ -90,6 +90,32 @@ _SUPPORTED_OMM_METADATA = {
     "MEAN_ELEMENT_THEORY": "SGP4",
 }
 
+#: CCSDS units for numeric fields consumed by this reader; empty tuples forbid units.
+_OMM_FIELD_UNITS = {
+    "MEAN_MOTION": ("rev/day",),
+    "ECCENTRICITY": (),
+    "INCLINATION": ("deg",),
+    "RA_OF_ASC_NODE": ("deg",),
+    "ARG_OF_PERICENTER": ("deg",),
+    "MEAN_ANOMALY": ("deg",),
+    "NORAD_CAT_ID": (),
+    "EPHEMERIS_TYPE": (),
+    "ELEMENT_SET_NO": (),
+    "REV_AT_EPOCH": (),
+    # CCSDS lists inverse Earth radii as both a descriptive unit and the 1/ER symbol.
+    "BSTAR": ("1/ER", "1/[Earth radii]"),
+    "MEAN_MOTION_DOT": ("rev/day**2",),
+    "MEAN_MOTION_DDOT": ("rev/day**3",),
+}
+
+
+@dataclass(frozen=True)
+class _OmmFieldWithUnits:
+    """Preserve a numeric field's unit declaration until per-record validation."""
+
+    value: str
+    units: str
+
 
 # ---------------------------------------------------------------------------------------------------------- #
 #                                          OMM Data Class                                                     #
@@ -173,7 +199,7 @@ def _parseOmmKvn(text: str) -> list:
     Each record starts at a ``CCSDS_OMM_VERS`` key, so a single file may hold many satellites.
 
     :param text: full text of the KVN file
-    :return: list of dictionaries of raw OMM field strings
+    :return: list of raw field dictionaries retaining numeric unit declarations
     """
     records = []
     current = {}
@@ -187,10 +213,11 @@ def _parseOmmKvn(text: str) -> list:
 
         key, _, value = line.partition("=")
         key = key.strip().upper()
-        # Strip the CCSDS units annotation, e.g. "SEMI_MAJOR_AXIS = 6800.0 [km]"
         value = value.strip()
-        if value.endswith("]") and "[" in value:
-            value = value[: value.rfind("[")].strip()
+        # Only numeric fields have units; brackets in names are ordinary text.
+        if key in _OMM_FIELD_UNITS and value.endswith("]") and "[" in value:
+            number, _, units = value.partition("[")
+            value = _OmmFieldWithUnits(number.strip(), units[:-1].strip())
 
         if key == "CCSDS_OMM_VERS" and current:
             records.append(current)
@@ -226,7 +253,7 @@ def _parseOmmXml(text: str) -> list:
     Parse the XML (CCSDS NDM) encoding.
 
     :param text: full text of the XML file
-    :return: list of dictionaries of raw OMM field strings
+    :return: list of raw field dictionaries retaining numeric unit declarations
     """
     root = ET.fromstring(text)
     records = []
@@ -241,8 +268,12 @@ def _parseOmmXml(text: str) -> list:
         for block in blocks:
             if block is None:
                 continue
-            fields.update((element.tag.upper(), (element.text or "").strip())
-                          for element in block)
+            for element in block:
+                key = element.tag.upper()
+                value = (element.text or "").strip()
+                if key in _OMM_FIELD_UNITS and "units" in element.attrib:
+                    value = _OmmFieldWithUnits(value, element.attrib["units"])
+                fields[key] = value
         records.append(fields)
     return records
 
@@ -387,9 +418,23 @@ def _normalizeOmmFields(fields: dict, omm_format: str) -> dict:
     if not isinstance(fields, dict):
         raise ValueError(f"OMM record must be a field object, got {type(fields).__name__}.")
 
-    # JSON delivers native numbers; normalize inside the per-record error handler.
-    normalized = {str(key).upper(): "" if value is None else str(value)
-                  for key, value in fields.items()}
+    # Check declared units before discarding them or supplying optional defaults.
+    # Validation stays inside the per-record error handler for XML and KVN alike.
+    normalized = {}
+    for key, value in fields.items():
+        key = str(key).upper()
+        if isinstance(value, _OmmFieldWithUnits):
+            supported_units = _OMM_FIELD_UNITS[key]
+            if value.units not in supported_units:
+                expected = " or ".join(supported_units) if supported_units else "no unit declaration"
+                raise ValueError(
+                    f"Unsupported OMM {key} units: {value.units!r}; expected {expected}."
+                )
+            if not value.value:
+                raise ValueError(f"OMM {key} has a unit declaration but no numeric value.")
+            value = value.value
+        # JSON also delivers native numbers and nulls.
+        normalized[key] = "" if value is None else str(value)
 
     for key, default in _OPTIONAL_OMM_DEFAULTS.items():
         if not normalized.get(key, "").strip():
@@ -536,6 +581,12 @@ def satOmm2elem(omm_path: str) -> list:
     CelesTrak's EARTH/TEME/UTC/SGP4 defaults then apply. XML and KVN require these
     fields explicitly. Empty or incompatible declarations cause the record to
     be skipped with a warning before SGP4 is invoked.
+
+    Numeric XML/KVN unit declarations must match the CCSDS units used by SGP4:
+    ``deg``, ``rev/day``, ``rev/day**2``, ``rev/day**3``, and inverse Earth radii
+    (``1/ER`` or ``1/[Earth radii]``) for ``BSTAR``. Dimensionless fields must
+    omit units. Unsupported declarations cause the record to be skipped;
+    values are not converted between units. Omitted units use these same conventions.
 
     :param omm_path: path to an OMM file holding one or many satellites
     :return: ommDataList: list of :py:class:`OmmData`, one per satellite, each carrying the
