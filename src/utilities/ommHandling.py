@@ -288,6 +288,53 @@ def _parseOmmEpoch(epochStr: str) -> dt.datetime:
     raise ValueError(f"satOmm2elem() could not parse the OMM EPOCH field: {epochStr!r}")
 
 
+def _validate_omm_numeric_fields(fields: dict) -> None:
+    """
+    Validate numeric OMM fields before constructing metadata or initializing SGP4.
+
+    Mean motion must be positive, eccentricity must lie in ``[0, 1)``, inclination
+    in ``[0, 180]`` degrees, and the remaining angles in ``[0, 360]`` degrees.
+    Drag terms and mean-motion derivatives may be negative but must be finite.
+
+    :param fields: OMM field strings with required fields and defaults populated
+    :raises ValueError: if a field is non-finite, malformed, or outside its allowed range
+    """
+    numeric_fields = {}
+    for name in (
+        "MEAN_MOTION", "ECCENTRICITY", "INCLINATION", "RA_OF_ASC_NODE",
+        "ARG_OF_PERICENTER", "MEAN_ANOMALY", "BSTAR", "MEAN_MOTION_DOT",
+        "MEAN_MOTION_DDOT",
+    ):
+        try:
+            value = float(fields[name])
+        except ValueError as error:
+            raise ValueError(f"OMM {name} must be a finite number: {fields[name]!r}") from error
+        if not np.isfinite(value):
+            raise ValueError(f"OMM {name} must be a finite number: {fields[name]!r}")
+        numeric_fields[name] = value
+
+    if numeric_fields["MEAN_MOTION"] <= 0.0:  # [rev/day]
+        raise ValueError("OMM MEAN_MOTION must be positive [rev/day].")
+    if not 0.0 <= numeric_fields["ECCENTRICITY"] < 1.0:  # [-]
+        raise ValueError("OMM ECCENTRICITY must satisfy 0 <= e < 1.")
+    for name, upper_bound in (
+        ("INCLINATION", 180.0),  # [deg]
+        ("RA_OF_ASC_NODE", 360.0),  # [deg]
+        ("ARG_OF_PERICENTER", 360.0),  # [deg]
+        ("MEAN_ANOMALY", 360.0),  # [deg]
+    ):
+        if not 0.0 <= numeric_fields[name] <= upper_bound:  # [deg]
+            raise ValueError(f"OMM {name} must be between 0 and {upper_bound} [deg].")
+
+    for name in ("EPHEMERIS_TYPE", "ELEMENT_SET_NO", "REV_AT_EPOCH"):
+        try:
+            value = int(fields[name])
+        except ValueError as error:
+            raise ValueError(f"OMM {name} must be a non-negative integer: {fields[name]!r}") from error
+        if value < 0:
+            raise ValueError(f"OMM {name} must be a non-negative integer: {fields[name]!r}")
+
+
 def _normalizeOmmFields(fields: dict) -> dict:
     """
     Fill optional fields and put ``EPOCH`` in the exact form ``sgp4.omm.initialize`` expects.
@@ -313,6 +360,8 @@ def _normalizeOmmFields(fields: dict) -> dict:
         raise ValueError(
             f"satOmm2elem() requires NORAD_CAT_ID to be a non-negative decimal integer: {catalog_id!r}"
         )
+
+    _validate_omm_numeric_fields(normalized)
 
     # sgp4.omm.initialize() parses EPOCH with a strict "%Y-%m-%dT%H:%M:%S.%f" format.
     epoch = _parseOmmEpoch(normalized["EPOCH"])
@@ -347,9 +396,9 @@ def _ommFields2Data(fields: dict, epoch: dt.datetime) -> OmmData:
         noradID=str(fields["NORAD_CAT_ID"]).strip(),
         objectID=fields.get("OBJECT_ID", "0000-000A").strip(),
         classification=_CLASSIFICATION_NAMES.get(classificationCode, "Unknown"),
-        revAtEpoch=int(float(fields["REV_AT_EPOCH"])),
+        revAtEpoch=int(fields["REV_AT_EPOCH"]),
         propagator=str(fields.get("EPHEMERIS_TYPE", "0")).strip(),
-        elemSetNo=int(float(fields["ELEMENT_SET_NO"])),
+        elemSetNo=int(fields["ELEMENT_SET_NO"]),
         meanMotion=float(fields["MEAN_MOTION"]),  # [rev/day]
         nDot=float(fields["MEAN_MOTION_DOT"]),  # [rev/day^2]
         nDotDot=float(fields["MEAN_MOTION_DDOT"]),  # [rev/day^3]
@@ -380,7 +429,6 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
     # propagation. Preserve the real catalog number in fields and ommData.
     sgp4_fields = dict(fields, NORAD_CAT_ID="0")
     satellite = Satrec()
-    sgp4omm.initialize(satellite, sgp4_fields)
 
     # Convert epoch to Julian date
     epoch = ommData.ommEpoch
@@ -388,8 +436,16 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
                   epoch.hour, epoch.minute,
                   epoch.second + epoch.microsecond / 1e6)
 
-    # Propagate to epoch to get the True Equator, Mean Equinox (TEME) state vector
-    e, r, v = satellite.sgp4(jd, fr)
+    # Propagate to epoch to get the True Equator, Mean Equinox (TEME) state vector.
+    # Extreme finite inputs can still exceed the backend's numerical capacity.
+    try:
+        sgp4omm.initialize(satellite, sgp4_fields)
+        e, r, v = satellite.sgp4(jd, fr)
+    except (OverflowError, ZeroDivisionError) as error:
+        raise ValueError(
+            f"SGP4 numerical failure for satellite {ommData.satName} with NORAD ID "
+            f"{ommData.noradID}: {error}"
+        ) from error
 
     if e != 0:
         raise ValueError(
@@ -398,8 +454,14 @@ def _convertOmmMean2osculating(fields: dict, ommData: OmmData) -> om.ClassicElem
         )
 
     # Convert km -> m for Basilisk
-    r_teme_m = np.array(r) * 1e3  # [m]
-    v_teme_m = np.array(v) * 1e3  # [m/s]
+    with np.errstate(over="ignore"):
+        r_teme_m = np.array(r) * 1e3  # [m]
+        v_teme_m = np.array(v) * 1e3  # [m/s]
+    if not np.all(np.isfinite(r_teme_m)) or not np.all(np.isfinite(v_teme_m)):
+        raise ValueError(
+            f"SGP4 produced a non-finite state in SI units for satellite {ommData.satName} "
+            f"with NORAD ID {ommData.noradID} at epoch {ommData.ommEpoch}."
+        )
 
     # Convert TEME -> J2000/ICRF (Basilisk inertial frame)
     r_m, v_m = _teme2j2000(r_teme_m, v_teme_m, ommData.ommEpoch)
