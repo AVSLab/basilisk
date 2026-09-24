@@ -31,7 +31,7 @@ from sgp4.model import Satrec as PythonSatrec
 import Basilisk.utilities.ommHandling as ommHandling
 
 A_TOL_DIST = 1e-6  # [m] semi-major axis agreement between OMM encodings
-A_TOL = 1e-12  # [-] agreement between encodings of identical values
+A_TOL = 1e-12  # [-] eccentricity; [rad] angles; agreement between encodings
 A_TOL_TLE_DIST = 0.1  # [m] OMM vs TLE agreement, limited by the TLE's fixed field widths
 A_TOL_TLE_ANG = 1e-6  # [rad] OMM vs TLE angular agreement
 
@@ -240,11 +240,11 @@ def test_omm_each_encoding_parses(tmp_path, encoding):
     # A sane LEO orbit came back
     assert 6.6e6 < ommData.oe.a < 7.0e6  # [m]
     assert 0.0 <= ommData.oe.e < 0.01  # [-]
-    assert np.isclose(np.degrees(ommData.oe.i), 51.6416, atol=0.5)  # [deg], atol [deg]
+    assert np.isclose(np.degrees(ommData.oe.i), 51.6416, rtol=0.0, atol=0.5)  # [deg], atol [deg]
 
 
 def test_omm_encodings_agree(tmp_path):
-    """All four encodings of identical field values produce identical orbital elements."""
+    """All four encodings of identical field values agree within absolute tolerances."""
     results = {}
     for encoding, writer in _WRITERS.items():
         path = writer(tmp_path / f"iss.{encoding}", [_OMM_FIELDS])
@@ -252,9 +252,11 @@ def test_omm_encodings_agree(tmp_path):
 
     reference = results["kvn"]
     for encoding, oe in results.items():
-        assert np.isclose(oe.a, reference.a, atol=A_TOL_DIST), encoding
+        assert np.isclose(oe.a, reference.a, rtol=0.0, atol=A_TOL_DIST), encoding
         for name in ("e", "i", "Omega", "omega", "f"):
-            assert np.isclose(getattr(oe, name), getattr(reference, name), atol=A_TOL), encoding
+            assert np.isclose(
+                getattr(oe, name), getattr(reference, name), rtol=0.0, atol=A_TOL
+            ), (encoding, name)
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
@@ -617,8 +619,8 @@ def test_omm_matches_tle_for_same_elements(tmp_path):
     The OMM path reproduces the TLE path.
 
     The same mean elements are fed through both readers; both run SGP4 at the epoch and the
-    same TEME -> J2000 conversion, so the osculating elements must agree to within the
-    resolution the TLE's fixed-width fields can express.
+    same TEME -> J2000 conversion, so the osculating elements must agree within absolute
+    tolerances based on the resolution the TLE's fixed-width fields can express.
     """
     import Basilisk.utilities.tleHandling as tleHandling
 
@@ -638,7 +640,9 @@ def test_omm_matches_tle_for_same_elements(tmp_path):
     tleOe = tleDataList[0].oe
     ommOe = ommDataList[0].oe
 
-    assert np.isclose(ommOe.a, tleOe.a, atol=A_TOL_TLE_DIST)
-    assert np.isclose(ommOe.e, tleOe.e, atol=1e-9)  # [-]
+    assert np.isclose(ommOe.a, tleOe.a, rtol=0.0, atol=A_TOL_TLE_DIST)
+    assert np.isclose(ommOe.e, tleOe.e, rtol=0.0, atol=1e-9)  # [-]
     for name in ("i", "Omega", "omega", "f"):
-        assert np.isclose(getattr(ommOe, name), getattr(tleOe, name), atol=A_TOL_TLE_ANG), name
+        assert np.isclose(
+            getattr(ommOe, name), getattr(tleOe, name), rtol=0.0, atol=A_TOL_TLE_ANG
+        ), name
