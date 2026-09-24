@@ -42,8 +42,9 @@ void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleI
 }
 
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! @brief Reset the runtime counter and publish a zero output payload.
+ @note The sampleConfigVector configuration is preserved. The inputVector scratch
+ storage is refreshed on the next update.
 
  @param configData The configuration data associated with the module
  @param callTime [ns] time the method is called
@@ -51,10 +52,10 @@ void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleI
 */
 void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    /*! reset any required variables */
-    configData->dummy = 0.0;
+    /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
+    configData->updateCounter = 0.0;
     char info[MAX_LOGGING_LENGTH];
-    snprintf(info, sizeof(info), "Variable dummy set to %f in reset.", configData->dummy);
+    snprintf(info, sizeof(info), "Variable updateCounter set to %f in reset.", configData->updateCounter);
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     /* initialize the output message to zero on reset */
@@ -86,8 +87,8 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
 
     // Sample math: copy the input vector and add the counter to its first component.
     v3Copy(configData->inputVector, outMsgBuffer.dataVector);
-    configData->dummy += 1.0;  // [-]
-    outMsgBuffer.dataVector[0] += configData->dummy;
+    configData->updateCounter += 1.0;  // [-]
+    outMsgBuffer.dataVector[0] += configData->updateCounter;
 
     /*! - Write the module output message */
     CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);

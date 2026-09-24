@@ -27,7 +27,7 @@ Let us assume the module is to be called ``SomeModule``.  The input and output m
     /*! @brief Top level structure for the sub-module routines. */
     typedef struct {
         /* declare module variables */
-        double dummy;                                   //!< [units] sample module variable declaration
+        double updateCounter;                           //!< [-] Sample runtime counter
 
         /* declare module IO interfaces */
         SomeMsg_C dataOutMsg;              //!< sample output message
@@ -83,4 +83,3 @@ For example, assume the module needs an array of input messages of type ``SomeMs
 The module needs to implement separate logic to determine how many messages have been set.  For example, the reset function could loop over this array and up to what slot the associate message object has been linked.
 
 As the C wrapped message object can act as either input or output messages, the above example can readily be converted to an outpout message example by renaming the array variable ``moreOutMsgs``.
-

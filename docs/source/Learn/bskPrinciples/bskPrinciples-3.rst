@@ -42,8 +42,8 @@ If you execute this python code you should see the following terminal output:
 .. code-block::
 
     source/codeSamples % python3 bsk-3.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
     BSK_INFORMATION: C Module ID 1 ran Update at 5.000000s

@@ -45,16 +45,16 @@ def run():
     mod2.ModelTag = "cppModule2"
     scSim.AddModelToTask("dynamicsTask", mod2)
 
-    # set module variables
-    mod1.dummy = 1
-    mod1.dumVector = [1., 2., 3.]
-    mod2.setDummy(1)
-    mod2.setDumVector([1., 2., 3.])
+    # Initialization clears updateCounter and preserves sampleConfigVector.
+    mod1.updateCounter = 1  # [-] Runtime counter
+    mod1.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration
+    mod2.setUpdateCounter(1)  # [-] Runtime counter
+    mod2.setSampleConfigVector([1., 2., 3.])  # [-] Sample configuration
 
     # request these module variables to be recorded
-    mod1Logger = mod1.logger("dummy", macros.sec2nano(1.))
+    mod1Logger = mod1.logger("updateCounter", macros.sec2nano(1.))
     scSim.AddModelToTask("dynamicsTask", mod1Logger)
-    mod2Logger = mod2.logger(["dummy", "dumVector"])
+    mod2Logger = mod2.logger(["updateCounter", "sampleConfigVector"])
     scSim.AddModelToTask("dynamicsTask", mod2Logger)
 
     #  initialize Simulation:
@@ -68,12 +68,12 @@ def run():
     print("Times: ", mod1Logger.times())
 
     # Print values logged
-    print("mod1.dummy:")
-    print(mod1Logger.dummy)
-    print("mod2.dummy:")
-    print(mod2Logger.dummy)
-    print("mod2.getDumVector():")
-    print(mod2Logger.dumVector)
+    print("mod1.updateCounter:")
+    print(mod1Logger.updateCounter)
+    print("mod2.updateCounter:")
+    print(mod2Logger.updateCounter)
+    print("mod2.sampleConfigVector:")
+    print(mod2Logger.sampleConfigVector)
 
 if __name__ == "__main__":
     run()

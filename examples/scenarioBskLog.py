@@ -97,7 +97,7 @@ def run(case):
 
     # Initialize the test module configuration data
     module.dataInMsg.subscribeTo(dataMsg)
-    module.dummy = 1
+    module.updateCounter = 1  # [-]
 
     # setup the bskLog verbosity
     if case == 0:

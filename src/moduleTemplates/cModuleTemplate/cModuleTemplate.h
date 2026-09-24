@@ -26,17 +26,17 @@
 
 
 
-/*! @brief Top level structure for the sub-module routines. */
+/*! @brief Public module data containing runtime state, configuration, and message interfaces. */
 typedef struct {
-    /* declare module private variables */
-    double dummy;                                   //!< [units] sample module variable declaration
-    double dumVector[3];                            //!< [units] sample vector variable
+    /* Runtime state and user configuration share this public C structure. */
+    double updateCounter;                           //!< [-] Runtime counter; Reset clears it and Update increments it.
+    double sampleConfigVector[3];                   //!< [-] Sample configuration for logging; retained by Reset and unused by Update.
 
     /* declare module IO interfaces */
     CModuleTemplateMsg_C dataOutMsg;              //!< sample output message
     CModuleTemplateMsg_C dataInMsg;               //!< sample input message
 
-    double  inputVector[3];                         //!< [units]  vector description
+    double  inputVector[3];                         //!< [-] Input scratch storage; overwritten on every Update.
     BSKLogger *bskLogger;                           //!< BSK Logging
 }cModuleTemplateConfig;
 

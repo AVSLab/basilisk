@@ -6,14 +6,15 @@ The module function is defined in the ``SomeModule.cpp`` file.  This page outlin
 
 Constructor
 -----------
-The constructor ensure that all class variables that require default values are setup correctly.  For example, in the tutorial ``SomeModule`` class we are using in this documenation, assume the class variable ``dummy`` must be ``42`` be default.  This is done using:
+The constructor sets up class variables that require default values. For example, initialize the
+sample runtime counter ``updateCounter`` to zero:
 
 .. code:: cpp
 
-    /*! Module Constructor */
+    /*! @brief Initialize the sample runtime counter. */
     SomeModule::SomeModule()
     {
-        self->dummy = 42.0;
+        this->updateCounter = 0.0;  // [-]
     }
 
 Instead of declaring default values in the constructor, this can also be done in the module ``*.h`` file

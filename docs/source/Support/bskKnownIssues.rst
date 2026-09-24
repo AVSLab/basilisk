@@ -13,6 +13,13 @@ Version |release|
   Generation now normalizes paths, preserves the working directory, validates inputs,
   and stages complete drafts before replacement. Failures raise Python exceptions.
 
+- GitHub issue 281: The C and C++ module template fields ``dummy`` and ``dumVector``
+  are now named ``updateCounter`` and ``sampleConfigVector``. Update Python assignments
+  and logger field names accordingly. The C++ accessors are now ``setUpdateCounter()``,
+  ``getUpdateCounter()``, ``setSampleConfigVector()``, and ``getSampleConfigVector()``;
+  the old names are no longer available. ``Reset()`` still clears the counter and
+  preserves the sample configuration vector, which is used for logging examples.
+
 - Incremental native builds could retain an old version in
   ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.
   CMake now tracks that file and reads the current source version instead of

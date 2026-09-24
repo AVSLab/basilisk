@@ -18,8 +18,8 @@ The simulation setup is shown in the figure below.  Both a C and C++ module are 
 the single task.  However, no messages are connected here.  Rather, this sample code illustrates how
 to record module internal variables.  The variables are either public C++ class variables,
 private C++ variables which have a getter method, or they are
-variables with the C module configuration structure.  Both :ref:`cModuleTemplate` and
-:ref:`cppModuleTemplate` have the exact same variables for easy comparison.
+variables in the C module configuration structure. Both :ref:`cModuleTemplate` and
+:ref:`cppModuleTemplate` expose the sample variables ``updateCounter`` and ``sampleConfigVector`` for comparison.
 
 .. image:: ../../_images/static/qs-bsk-6.svg
    :align: center
@@ -30,12 +30,17 @@ if the module variable is public (all C modules and some C++ modules).  If the C
 private, but has a public setter function, then it is set using the setter
 method ``someModule.setSomeVariable(...)`` as outlined in :ref:`cppModules-1`.
 
+Here ``updateCounter`` is a runtime counter: the assignment demonstrates variable access, and
+``InitializeSimulation()`` calls ``Reset()`` to clear it before updates begin. ``sampleConfigVector`` is a
+sample configuration vector retained across resets and updates for logging; it does not affect the
+output calculation. See :ref:`moduleTemplateVariableRoles` for the roles of the template variables.
+
 .. literalinclude:: ../../codeSamples/bsk-6.py
    :language: python
    :linenos:
    :lines: 18-
 
-Logging a user-configurable variable from a module is similar to recording a message::
+Logging a module variable is similar to recording a message::
 
     moduleLogger = module.logger(variableName, recordingTime)
 
@@ -59,18 +64,18 @@ Executing the script you should thus see the following output:
 .. code-block::
 
     source/codeSamples % python bsk-6.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
     BSK_INFORMATION: C Module ID 1 ran Update at 1.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 1.000000s
     Times:  [         0 1000000000]
-    mod1.dummy:
+    mod1.updateCounter:
     [1. 2.]
-    mod2.dummy:
+    mod2.updateCounter:
     [1. 2.]
-    mod2.dumVector:
+    mod2.sampleConfigVector:
     [[1. 2. 3.]
     [1. 2. 3.]]
 

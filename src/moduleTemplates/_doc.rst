@@ -31,7 +31,7 @@ To use the C or C++ template module:
 
     - provide a unique sub-module MACRO name at the top of the file
     - replace old module name text inside this ``*.h`` file with new module name
-    - add any needed Module configuration data states and remove the dummy variable
+    - add the module's configuration and runtime state, replacing the sample ``updateCounter`` and ``sampleConfigVector`` variables
     - add any needed output or input message interface variables
     - add any needed sub-module specific support subroutine interface definitions
 
@@ -74,5 +74,3 @@ already checks if the input messages are connected (assuming they are all requir
 provides sample code the creates buffer variables for the input and output messages, reads in the input messages,
 and write to the output messages.  The unit test already loads up the module, creates blank input message copies
 that are subscribed to the module, creates recorder modules for each output message, etc.
-
-

@@ -58,7 +58,7 @@ with an underscore to show that it is intentionally unused:
 
     def Reset(self, _current_sim_nanos):
         """Reset the module state."""
-        self.dummy = 0.0  # [-]
+        self.updateCounter = 0.0  # [-]
 
 This convention also prevents unused-argument reports from common Python
 linters.  Remove the underscore if the implementation later uses the value.
@@ -99,10 +99,10 @@ Running the above code prints:
 .. code-block::
 
     (.venv) source/codeSamples % python making-pyModules.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     BSK_INFORMATION: Reset in TestPythonModule
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     InitializeSimulation() completed...
     BSK_INFORMATION: C Module ID 3 ran Update at 0.000000s
     BSK_INFORMATION: Python Module ID 4 ran Update at 0.0s

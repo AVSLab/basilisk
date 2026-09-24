@@ -21,7 +21,7 @@ The function ``scSim.InitializeSimulation()`` calls ``SelfInit()`` and ``Reset()
 .. image:: ../../_images/static/qs-bsk-2a.svg
    :align: center
 
-The sample script below creates a single Basilisk module as illustrated above.  The module variable ``dummy`` is set to a non-zero value after the module is created.  The ``InitializeSimulation()`` method calls ``Reset()`` which sets this ``dummy`` variable equal to zero.
+The sample script below creates a single Basilisk module as illustrated above.  The module variable ``updateCounter`` is set to a non-zero value after the module is created.  The ``InitializeSimulation()`` method calls ``Reset()`` which sets this ``updateCounter`` variable equal to zero.
 
 .. literalinclude:: ../../codeSamples/bsk-2a.py
    :language: python
@@ -32,7 +32,9 @@ To execute the code, this script doesn't run the simulation for a period of time
 
     scSim.TotalSim.SingleStepProcesses()
 
-After the single process step execution the module ``dummy`` variable is printed out again to illustrate that an ``Update()`` call has occured.  Looking at the module source code you see that this variable is zero'd on reset and incremented by +1 on each ``Update()`` call.
+After the single process step execution the module ``updateCounter`` variable is printed again to
+illustrate that an ``Update()`` call has occurred. The module resets this counter to zero and
+increments it by one on each ``Update()`` call.
 
 If you execute this python code you should see the following terminal output:
 
@@ -40,9 +42,7 @@ If you execute this python code you should see the following terminal output:
 
     $ python bsk-2a.py
     -10.0
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     0.0
     BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
     1.0
-
-
