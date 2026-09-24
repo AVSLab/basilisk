@@ -23,14 +23,9 @@
 
 /* modify the path to reflect the new module names */
 #include "cModuleTemplate.h"
-#include "string.h"
 #include <stdio.h>
 
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
+/* Pull in support files using paths relative to the Basilisk src directory. */
 #include "architecture/utilities/linearAlgebra.h"
 
 
@@ -68,7 +63,7 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
     CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! @brief Add the update counter to the first component of the optional input vector.
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -76,12 +71,11 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
 */
 void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
 {
-    double Lr[3];                                   /*!< [unit] variable description */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    // Zero the output buffer each update to avoid publishing uninitialized fields.
+    CModuleTemplateMsgPayload outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
     CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
 
-    // always zero the output buffer first
-    outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
+    // Use a zero vector when the optional input is not connected.
     v3SetZero(configData->inputVector);
 
     /*! - Read the optional input messages */
@@ -90,15 +84,12 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
         v3Copy(inMsgBuffer.dataVector, configData->inputVector);
     }
 
-    /*! - Add the module specific code */
-    v3Copy(configData->inputVector, Lr);
-    configData->dummy += 1.0;
-    Lr[0] += configData->dummy;
+    // Sample math: copy the input vector and add the counter to its first component.
+    v3Copy(configData->inputVector, outMsgBuffer.dataVector);
+    configData->dummy += 1.0;  // [-]
+    outMsgBuffer.dataVector[0] += configData->dummy;
 
-    /*! - store the output message */
-    v3Copy(Lr, outMsgBuffer.dataVector);
-
-    /*! - write the module output message */
+    /*! - Write the module output message */
     CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 
     /* this logging statement is not typically required.  It is done here to see in the
@@ -108,5 +99,4 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
              (long long int) moduleID, (double) callTime/(1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
-    return;
 }
