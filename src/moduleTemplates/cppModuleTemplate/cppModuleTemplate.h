@@ -36,6 +36,7 @@ public:
 
     /*! @brief Reset the counter and publish a zero output payload.
      *  @param CurrentSimNanos [ns] Time at which the module is reset.
+     *  @note The sampleConfigVector configuration is preserved.
      */
     void Reset(uint64_t CurrentSimNanos) override;
     /*! @brief Add the update counter to the first component of the optional input vector.
@@ -48,19 +49,29 @@ public:
 
     BSKLogger bskLogger;                               //!< BSK Logging
 
-    /** setter for `dummy` property */
-    void setDummy(double value);
-    /** getter for `dummy` property */
-    double getDummy() const {return this->dummy;}
-    /** setter for `dumVector` property */
-    void setDumVector(std::array<double, 3> value);
-    /** getter for `dumVector` property */
-    std::array<double, 3> getDumVector() const {return this->dumVector;}
+    /*! @brief Demonstrate scalar assignment and validation using the runtime counter.
+     *  @param value [-] Positive counter value.
+     *  @note Reset() always clears the counter, including after this setter is used.
+     */
+    void setUpdateCounter(double value);
+    /*! @brief Read the runtime counter, for example for variable logging.
+     *  @return [-] Current counter value.
+     */
+    double getUpdateCounter() const {return this->updateCounter;}
+    /*! @brief Set the sample configuration vector used for variable logging.
+     *  @param value [-] Sample vector with positive components.
+     *  @note Reset() preserves this vector. The vector is unused by the output calculation.
+     */
+    void setSampleConfigVector(std::array<double, 3> value);
+    /*! @brief Read the sample configuration vector.
+     *  @return [-] Current sample vector.
+     */
+    std::array<double, 3> getSampleConfigVector() const {return this->sampleConfigVector;}
 
 private:
 
-    double dummy = {};                                 //!< [units] sample module variable declaration
-    std::array<double, 3> dumVector = {};              //!< [units] sample vector variable
+    double updateCounter = {};                       //!< [-] Runtime counter; Reset clears it and UpdateState increments it.
+    std::array<double, 3> sampleConfigVector = {};     //!< [-] Sample configuration for logging; retained by Reset and unused by UpdateState.
 
 };
 

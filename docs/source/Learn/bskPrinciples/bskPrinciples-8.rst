@@ -32,8 +32,8 @@ To disable a single task, this is done with the :ref:`SimulationBaseClass` metho
 .. code-block::
 
     (.venv) source/codeSamples % python bsk-8.py
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
-    BSK_INFORMATION: Variable dummy set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
+    BSK_INFORMATION: Variable updateCounter set to 0.000000 in reset.
     BSK_INFORMATION: C Module ID 1 ran Update at 0.000000s
     BSK_INFORMATION: C++ Module ID 2 ran Update at 0.000000s
     all tasks disabled
@@ -45,5 +45,3 @@ To disable a single task, this is done with the :ref:`SimulationBaseClass` metho
     BSK executed a single simulation step
     BSK_INFORMATION: C Module ID 1 ran Update at 4.000000s
     BSK executed a single simulation step
-
-

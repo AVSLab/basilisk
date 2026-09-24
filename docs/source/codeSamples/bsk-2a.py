@@ -39,16 +39,16 @@ def run():
     mod1 = cModuleTemplate.cModuleTemplate()
     mod1.ModelTag = "cModule1"
     scSim.AddModelToTask("dynamicsTask", mod1)
-    mod1.dummy = -10
-    print(mod1.dummy)
+    mod1.updateCounter = -10  # [-]
+    print(mod1.updateCounter)
 
     #  initialize Simulation:
     scSim.InitializeSimulation()
-    print(mod1.dummy)
+    print(mod1.updateCounter)
 
     # perform a single Update on all modules
     scSim.TotalSim.SingleStepProcesses()
-    print(mod1.dummy)
+    print(mod1.updateCounter)
 
     return
 

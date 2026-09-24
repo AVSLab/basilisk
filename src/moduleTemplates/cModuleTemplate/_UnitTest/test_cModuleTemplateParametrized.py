@@ -98,7 +98,7 @@ def test_module(show_plots, param1, param2, accuracy):
     Here discuss what parameters are being checked.  For example, in this file we are checking the values of the
     variables
 
-    - ``dummy``
+    - ``updateCounter``
     - ``dataVector[3]``
 
     **Figure Discussion**
@@ -145,9 +145,9 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Initialize the test module configuration data
-    module.dummy = 1                              # update module parameter with required values
-    module.dumVector = [1., 2., 3.]
+    # InitializeSimulation() clears updateCounter and preserves sampleConfigVector.
+    module.updateCounter = 1  # [-] Runtime counter
+    module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -160,7 +160,7 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
     dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
-    variableName = "dummy"                              # name the module variable to be logged
+    variableName = "updateCounter"                              # name the module variable to be logged
     moduleLog = module.logger(variableName)
     unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
@@ -226,14 +226,14 @@ def fswModuleTestFunction(show_plots, param1, param2, accuracy):
             testMessages.append("FAILED: " + module.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
-    dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
+    counter_true = [1.0, 2.0, 3.0, 1.0, 2.0]
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, dataLog.dataVector,
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
     variableState = np.transpose(variableState)[1]
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
-                                                                     accuracy, "dummy parameter",
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(counter_true, variableState,
+                                                                     accuracy, "updateCounter parameter",
                                                                      testFailCount, testMessages)
 
     # Note that we can continue to step the simulation however we feel like.

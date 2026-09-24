@@ -69,8 +69,8 @@ def test_cMsgRecorderReadsLiveMessage():
 
     recorded = np.array(rec.dataVector)
 
-    # With no input message linked, cModuleTemplate writes dataVector = [dummy, 0, 0]
-    # where dummy increments by 1 each step (reset to 0). So the first component must
+    # With no input message linked, cModuleTemplate writes dataVector = [updateCounter, 0, 0]
+    # where updateCounter increments by 1 each step (reset to 0). So the first component must
     # be the strictly increasing series 1, 2, 3, ... matching what the module wrote.
     firstComponent = recorded[:, 0]
     expected = np.arange(1, len(firstComponent) + 1, dtype=float)

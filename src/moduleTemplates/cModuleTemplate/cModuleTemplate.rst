@@ -280,22 +280,43 @@ User Guide
 This section contains information directed specifically to users. It contains clear descriptions of what inputs
 are needed and what effect they have. It should also help the user be able to use the model for the first time.
 
-Add sample code as needed.  For example, to specify that the module variables ``dummy`` and ``dumVector`` must
-be setup first, you can include python formatted code block using::
+.. _moduleTemplateVariableRoles:
+
+Configuration and Runtime State
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Configuration holds values supplied by the user, while runtime state holds values the module updates
+as the simulation runs. The C configuration structure contains both kinds of data; all its members
+are public. The sample variables in the C and C++ templates have these roles:
+
+- ``updateCounter`` is a dimensionless runtime counter. ``Reset()`` clears it, including any value assigned
+  before ``InitializeSimulation()``. Each update increments it and adds it to the first component
+  of the input vector to form the output. The C++ setter demonstrates scalar validation and access.
+- ``sampleConfigVector`` is a dimensionless sample configuration vector used to demonstrate assignment and
+  variable logging. Resets and updates preserve it, and it does not affect the output calculation.
+  Python-created modules default this vector to zero; the C++ setter requires positive components
+  when used.
+- ``inputVector`` is scratch storage for the current input. Each update overwrites it with the
+  connected input vector or zeros if the optional input is disconnected. C stores it in the
+  module structure; C++ uses a local array.
+
+See :ref:`bskPrinciples-6` for an example of recording the counter and the sample vector.
+
+Add sample code as needed. For example, demonstrate assignment to the sample variables with a
+Python code block using::
 
     .. code-block:: python
         :linenos:
 
-        module.dummy = 1
-        module.dumVector = [1., 2., 3.]
+        module.updateCounter = 1  # [-] Runtime counter; Reset() clears this value.
+        module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging.
 
 to show:
 
 .. code-block:: python
     :linenos:
 
-    module.dummy = 1
-    module.dumVector = [1., 2., 3.]
+    module.updateCounter = 1  # [-] Runtime counter; Reset() clears this value.
+    module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging.
 
 More information of including code blocks can be found `here <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block>`_.
 

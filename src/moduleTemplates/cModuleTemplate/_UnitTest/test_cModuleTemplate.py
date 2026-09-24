@@ -56,7 +56,7 @@ def test_module(show_plots):     # update "module" in this function name to refl
     Here discuss what parameters are being checked.  For example, in this file we are checking the values of the
     variables
 
-    - ``dummy``
+    - ``updateCounter``
     - ``dataVector[3]``
 
     **General Documentation Comments**
@@ -100,9 +100,9 @@ def fswModuleTestFunction(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, module)
 
-    # Initialize the test module configuration data
-    module.dummy = 1                              # update module parameter with required values
-    module.dumVector = [1., 2., 3.]
+    # InitializeSimulation() clears updateCounter and preserves sampleConfigVector.
+    module.updateCounter = 1  # [-] Runtime counter
+    module.sampleConfigVector = [1., 2., 3.]  # [-] Sample configuration for logging
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -113,7 +113,7 @@ def fswModuleTestFunction(show_plots):
     # Setup logging on the test module output message so that we get all the writes to it
     dataLog = module.dataOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
-    variableName = "dummy"                              # name the module variable to be logged
+    variableName = "updateCounter"                              # name the module variable to be logged
     moduleLog = module.logger(variableName)
     unitTestSim.AddModelToTask(unitTaskName, moduleLog)
 
@@ -156,7 +156,7 @@ def fswModuleTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
+    counter_true = [1.0, 2.0, 3.0, 1.0, 2.0]
     variableStateNoTime = np.transpose(variableState)[1]
     for i in range(0, len(trueVector)):
         # check a vector values
@@ -168,7 +168,7 @@ def fswModuleTestFunction(show_plots):
                                 "sec\n")
 
         # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableStateNoTime[i], dummyTrue[i], accuracy):
+        if not unitTestSupport.isDoubleEqual(variableStateNoTime[i], counter_true[i], accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + module.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +

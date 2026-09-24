@@ -37,9 +37,9 @@ CppModuleTemplate::~CppModuleTemplate()
  */
 void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 {
-    /*! - reset any required variables */
-    this->dummy = 0.0;
-    bskLogger.bskLog(BSK_INFORMATION, "Variable dummy set to %f in reset.",this->dummy);
+    /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
+    this->updateCounter = 0.0;
+    bskLogger.bskLog(BSK_INFORMATION, "Variable updateCounter set to %f in reset.",this->updateCounter);
 
     /* zero output message on reset */
     CModuleTemplateMsgPayload outMsgBuffer={};       /*!< local output message copy */
@@ -65,8 +65,8 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 
     // Sample math: copy the input vector and add the counter to its first component.
     v3Copy(inputVector, outMsgBuffer.dataVector);
-    this->dummy += 1.0;  // [-]
-    outMsgBuffer.dataVector[0] += this->dummy;
+    this->updateCounter += 1.0;  // [-]
+    outMsgBuffer.dataVector[0] += this->updateCounter;
 
     /*! - Write the module output message */
     this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
@@ -77,23 +77,23 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 
 }
 
-void CppModuleTemplate::setDummy(double value)
+void CppModuleTemplate::setUpdateCounter(double value)
 {
     // check that value is in acceptable range
     if (value > 0) {
-        this->dummy = value;
+        this->updateCounter = value;
     } else {
-        bskLogger.bskError("CppModuleTemplate: dummy variable must be strictly positive, you tried to set %f", value);
+        bskLogger.bskError("CppModuleTemplate: updateCounter variable must be strictly positive, you tried to set %f", value);
     }
 }
 
-void CppModuleTemplate::setDumVector(std::array<double, 3> value)
+void CppModuleTemplate::setSampleConfigVector(std::array<double, 3> value)
 {
     // check that value is in acceptable range
     for (size_t i = 0; i < value.size(); i++) {
         if (value[i] <= 0.0) {
-            bskLogger.bskError("CppModuleTemplate: dumVariable variables must be strictly positive");
+            bskLogger.bskError("CppModuleTemplate: sampleConfigVector components must be strictly positive");
         }
     }
-    this->dumVector = value;
+    this->sampleConfigVector = value;
 }

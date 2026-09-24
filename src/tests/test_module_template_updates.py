@@ -27,23 +27,23 @@ from Basilisk.utilities import SimulationBaseClass
 @pytest.mark.parametrize("module_type", ["C", "C++"])
 @pytest.mark.parametrize("connect_input", [False, True])
 def test_template_updates_and_resets(module_type, connect_input):
-    """Preserve outputs, counters, input data, and timestamps across lifecycle calls.
+    """Preserve outputs, logged variables, and timestamps across lifecycle calls.
 
     Exercise both templates with and without the optional input connected.
     Change the input between updates, reset after two updates, and disconnect
     before the last update to check that prior payloads are never reused.
+    Record the counter and sample vector to check variable access and confirm
+    that the sample configuration survives resets and updates.
     """
+    sample_config_vector = [2.0, 3.0, 4.0]  # [-]
     if module_type == "C":
         module = cModuleTemplate.cModuleTemplate()
-        module.dummy = 9.0  # [-]
-
-        def get_counter():
-            """Read the C template's public sample counter."""
-            return module.dummy
+        module.updateCounter = 9.0  # [-]
+        module.sampleConfigVector = sample_config_vector
     else:
         module = cppModuleTemplate.CppModuleTemplate()
-        module.setDummy(9.0)  # [-]
-        get_counter = module.getDummy
+        module.setUpdateCounter(9.0)  # [-]
+        module.setSampleConfigVector(sample_config_vector)
 
     # Attach the framework logger before exercising lifecycle methods directly.
     simulation = SimulationBaseClass.SimBaseClass()
@@ -58,16 +58,16 @@ def test_template_updates_and_resets(module_type, connect_input):
         module.dataInMsg.subscribeTo(input_message)
 
     recorder = module.dataOutMsg.recorder()
+    variable_log = module.logger(["updateCounter", "sampleConfigVector"])
     module.SelfInit()
-    counters = []
 
     module.Reset(10)  # [ns]
     recorder.UpdateState(10)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(10)  # [ns]
 
     module.UpdateState(20)  # [ns]
     recorder.UpdateState(20)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(20)  # [ns]
     np.testing.assert_array_equal(input_message.read().dataVector, [1.0, -0.5, 0.7])
     if module_type == "C":
         expected_input = [1.0, -0.5, 0.7] if connect_input else [0.0, 0.0, 0.0]  # [-]
@@ -77,27 +77,27 @@ def test_template_updates_and_resets(module_type, connect_input):
     input_message.write(input_payload)
     module.UpdateState(30)  # [ns]
     recorder.UpdateState(30)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(30)  # [ns]
     if module_type == "C":
         expected_input = [-3.0, 4.0, -5.0] if connect_input else [0.0, 0.0, 0.0]  # [-]
         np.testing.assert_array_equal(module.inputVector, expected_input)
 
     module.Reset(40)  # [ns]
     recorder.UpdateState(40)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(40)  # [ns]
     if module_type == "C":
         # Reset preserves the stored input vector, as in the original template.
         np.testing.assert_array_equal(module.inputVector, expected_input)
 
     module.UpdateState(50)  # [ns]
     recorder.UpdateState(50)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(50)  # [ns]
     np.testing.assert_array_equal(input_message.read().dataVector, [-3.0, 4.0, -5.0])
 
     module.dataInMsg.unsubscribe()
     module.UpdateState(60)  # [ns]
     recorder.UpdateState(60)  # [ns]
-    counters.append(get_counter())
+    variable_log.UpdateState(60)  # [ns]
     if module_type == "C":
         np.testing.assert_array_equal(module.inputVector, [0.0, 0.0, 0.0])
 
@@ -121,7 +121,13 @@ def test_template_updates_and_resets(module_type, connect_input):
         ]  # [-]
 
     np.testing.assert_array_equal(recorder.dataVector, expected_output)
-    np.testing.assert_array_equal(counters, [0.0, 1.0, 2.0, 0.0, 1.0, 2.0])
+    np.testing.assert_array_equal(
+        variable_log.updateCounter, [0.0, 1.0, 2.0, 0.0, 1.0, 2.0]
+    )
+    np.testing.assert_array_equal(
+        variable_log.sampleConfigVector, [sample_config_vector] * 6
+    )
     expected_times = [10, 20, 30, 40, 50, 60]  # [ns]
     np.testing.assert_array_equal(recorder.times(), expected_times)
     np.testing.assert_array_equal(recorder.timesWritten(), expected_times)
+    np.testing.assert_array_equal(variable_log.times(), expected_times)
