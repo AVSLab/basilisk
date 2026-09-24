@@ -1,0 +1,1 @@
+- Simplified :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` updates by removing a redundant temporary vector while retaining the linear-algebra examples, configuration interfaces, and simulation behavior.

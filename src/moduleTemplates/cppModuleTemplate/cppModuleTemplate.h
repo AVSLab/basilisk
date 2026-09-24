@@ -26,15 +26,22 @@
 #include "architecture/messaging/messaging.h"
 
 #include <array>
+#include <stdint.h>
 
 /*! @brief basic Basilisk C++ module class */
 class CppModuleTemplate: public SysModel {
 public:
     CppModuleTemplate();
-    ~CppModuleTemplate();
+    ~CppModuleTemplate() override;
 
-    void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);
+    /*! @brief Reset the counter and publish a zero output payload.
+     *  @param CurrentSimNanos [ns] Time at which the module is reset.
+     */
+    void Reset(uint64_t CurrentSimNanos) override;
+    /*! @brief Add the update counter to the first component of the optional input vector.
+     *  @param CurrentSimNanos [ns] Time at which the module is updated.
+     */
+    void UpdateState(uint64_t CurrentSimNanos) override;
 
     Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
     ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg

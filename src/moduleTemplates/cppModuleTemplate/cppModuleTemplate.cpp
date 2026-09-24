@@ -17,7 +17,6 @@
 
  */
 #include "moduleTemplates/cppModuleTemplate/cppModuleTemplate.h"
-#include <iostream>
 #include "architecture/utilities/linearAlgebra.h"
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -48,18 +47,14 @@ void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 }
 
 
-/*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
-
- */
 void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 {
-    double Lr[3];                                   /*!< [unit] variable description */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    // Zero the output buffer each update to avoid publishing uninitialized fields.
+    CModuleTemplateMsgPayload outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
     CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
-    double  inputVector[3];
+    double inputVector[3];                       /*!< [-] sample input vector */
 
-    // always zero the output buffer first
-    outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
+    // Use a zero vector when the optional input is not connected.
     v3SetZero(inputVector);
 
     /*! - Read the optional input messages */
@@ -68,15 +63,12 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
         v3Copy(inMsgBuffer.dataVector, inputVector);
     }
 
-    /*! - Add the module specific code */
-    v3Copy(inputVector, Lr);
-    this->dummy += 1.0;
-    Lr[0] += this->dummy;
+    // Sample math: copy the input vector and add the counter to its first component.
+    v3Copy(inputVector, outMsgBuffer.dataVector);
+    this->dummy += 1.0;  // [-]
+    outMsgBuffer.dataVector[0] += this->dummy;
 
-    /*! - store the output message */
-    v3Copy(Lr, outMsgBuffer.dataVector);
-
-    /*! - write the module output message */
+    /*! - Write the module output message */
     this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
 
     /* this logging statement is not typically required.  It is done here to see in the
