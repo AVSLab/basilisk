@@ -39,7 +39,8 @@ fn reader_header_queries_use_the_c_message() {
     let payload = CModuleTemplateMsg {
         dataVector: [1.0, 2.0, 3.0],
     };
-    unsafe { CModuleTemplateMsg::__write(&payload, &mut source, 7, 1_000) };
+    let first_written_at_ns = 1_000; // [ns]
+    unsafe { CModuleTemplateMsg::__write(&payload, &mut source, 7, first_written_at_ns) };
 
     let mut reader = MsgReader::<CModuleTemplateMsg>::default();
     // SAFETY: `reader` is transparent over `CModuleTemplateMsg_C`, and
@@ -60,7 +61,7 @@ fn reader_header_queries_use_the_c_message() {
         reader
             .time_written(&context)
             .expect("subscribed source must be queryable"),
-        1_000
+        first_written_at_ns
     );
     assert_eq!(
         reader
@@ -74,6 +75,34 @@ fn reader_header_queries_use_the_c_message() {
             .expect("written source must be readable")
             .dataVector,
         [1.0, 2.0, 3.0]
+    );
+
+    let revised = CModuleTemplateMsg {
+        dataVector: [4.0, 5.0, 6.0],
+    };
+    let revised_written_at_ns = 2_500; // [ns]
+    unsafe { CModuleTemplateMsg::__write(&revised, &mut source, 9, revised_written_at_ns) };
+    assert!(reader
+        .is_written(&context)
+        .expect("republished source must stay written"));
+    assert_eq!(
+        reader
+            .time_written(&context)
+            .expect("republished source must be queryable"),
+        revised_written_at_ns
+    );
+    assert_eq!(
+        reader
+            .module_id(&context)
+            .expect("republished source must expose its module ID"),
+        9
+    );
+    assert_eq!(
+        reader
+            .read(&context)
+            .expect("republished source must be readable")
+            .dataVector,
+        [4.0, 5.0, 6.0]
     );
 
     let mut unpublished = CModuleTemplateMsg_C::default();

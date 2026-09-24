@@ -22,12 +22,16 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(link_cmsg)");
     let manifest_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
     let repository = manifest_dir.join("../../../../..");
-    let archive = repository.join("dist3/Basilisk/libcMsgCInterface.a");
+    let directory = repository.join("dist3/Basilisk");
+    // MSVC writes `cMsgCInterface.lib`. Unix static archives use the `lib` prefix and `.a`.
+    let file_name = if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+        "cMsgCInterface.lib"
+    } else {
+        "libcMsgCInterface.a"
+    };
+    let archive = directory.join(file_name);
     println!("cargo:rerun-if-changed={}", archive.display());
     if archive.is_file() {
-        let directory = archive
-            .parent()
-            .expect("archive path includes its directory");
         println!("cargo:rustc-cfg=link_cmsg");
         println!("cargo:rustc-link-search=native={}", directory.display());
         println!("cargo:rustc-link-lib=static=cMsgCInterface");
