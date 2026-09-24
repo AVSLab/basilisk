@@ -117,19 +117,20 @@ def test_destination_paths_generate_valid_imports(draft, relative_path):
 
 @pytest.mark.parametrize("automatic", [False, True])
 def test_existing_module_is_replaced_only_after_generation(draft, monkeypatch, automatic):
-    """Keep existing files throughout rendering, then publish the complete draft."""
+    """Keep existing files throughout staged writing, then publish the complete draft."""
     marker = _existing_work(draft)
     draft.generator.cleanBuild = automatic
     monkeypatch.setattr("builtins.input", lambda prompt: "y")
-    original_create_test = draft.generator.createTestFile
+    original_write_files = draft.generator._write_files
 
-    def check_existing_work(module_type):
-        """Inspect the destination during the final generation step."""
+    def check_existing_work(files):
+        """Inspect the destination before and after writing the completed draft."""
         assert marker.read_bytes() == b"Keep this module work.\n"
         assert Path.cwd() == draft.caller
-        original_create_test(module_type)
+        original_write_files(files)
+        assert marker.read_bytes() == b"Keep this module work.\n"
 
-    monkeypatch.setattr(draft.generator, "createTestFile", check_existing_work)
+    monkeypatch.setattr(draft.generator, "_write_files", check_existing_work)
     draft.create()
 
     assert not marker.exists()
@@ -189,15 +190,41 @@ def test_c_module_rejects_cpp_message_before_overwrite(draft):
 
 @pytest.mark.parametrize("already_exists", [False, True])
 def test_rendering_failure_preserves_destination(draft, monkeypatch, already_exists):
-    """Discard partial draft files while preserving the original destination."""
+    """Fail before staging when the final renderer rejects the draft."""
     marker = _existing_work(draft) if already_exists else None
     draft.generator.cleanBuild = True
 
-    def fail_test_file(module_type):
-        """Simulate a write failure after earlier draft files were generated."""
-        raise OSError("test file write failed")
+    def fail_test_rendering(module_type):
+        """Simulate a rendering error before any files are written."""
+        assert draft.generator._output_path is None
+        raise ValueError("test rendering failed")
 
-    monkeypatch.setattr(draft.generator, "createTestFile", fail_test_file)
+    monkeypatch.setattr(draft.generator, "_render_test", fail_test_rendering)
+    with pytest.raises(ValueError, match="test rendering failed"):
+        draft.create()
+
+    if marker is not None:
+        assert marker.read_bytes() == b"Keep this module work.\n"
+        assert list(draft.destination.iterdir()) == [marker]
+    assert list(draft.destination.parent.iterdir()) == ([draft.destination] if already_exists else [])
+    assert Path.cwd() == draft.caller
+
+
+@pytest.mark.parametrize("already_exists", [False, True])
+def test_write_failure_preserves_destination(draft, monkeypatch, already_exists):
+    """Discard partially written staged files while preserving existing work."""
+    marker = _existing_work(draft) if already_exists else None
+    draft.generator.cleanBuild = True
+    original_write_text = Path.write_text
+
+    def fail_test_write(path, content, *args, **kwargs):
+        """Reject the final file after the native sources have been written."""
+        if path.name == f"test_{draft.generator.moduleName}.py":
+            assert (draft.generator._output_path / f"{draft.generator.moduleName}.h").is_file()
+            raise OSError("test file write failed")
+        return original_write_text(path, content, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", fail_test_write)
     with pytest.raises(OSError, match="test file write failed"):
         draft.create()
 
@@ -206,6 +233,36 @@ def test_rendering_failure_preserves_destination(draft, monkeypatch, already_exi
         assert list(draft.destination.iterdir()) == [marker]
     assert list(draft.destination.parent.iterdir()) == ([draft.destination] if already_exists else [])
     assert Path.cwd() == draft.caller
+
+
+def test_rendering_is_independent_of_filesystem_and_call_order(draft, monkeypatch, capsys):
+    """Render from prepared configuration without a destination or earlier renders."""
+    generator = draft.generator
+    generator.modulePathRelSrc = Path("fswAlgorithms") / "missingDirectory"
+    generator._licenseText = "Example license.\n"
+    generator.verbose = True
+    module_type = "C" if draft.extension == ".c" else "C++"
+
+    def reject_filesystem_access(*args, **kwargs):
+        """Fail if configuration preparation or rendering touches the filesystem."""
+        raise AssertionError("Unexpected filesystem access")
+
+    with monkeypatch.context() as isolated:
+        for method in ("open", "mkdir", "resolve", "exists", "is_dir"):
+            isolated.setattr(Path, method, reject_filesystem_access)
+        generator._validate_specification(module_type)
+        prepared_state = generator.__dict__.copy()
+        test_text = generator._render_test(module_type)
+        files = generator._render_module(module_type)
+        assert generator.__dict__ == prepared_state
+
+    name = generator.moduleName
+    assert files[Path("_UnitTest") / f"test_{name}.py"] == test_text
+    assert f"from Basilisk.fswAlgorithms import {name} as module_under_test" in test_text
+    class_name = name if module_type == "C" else "DraftExample"
+    assert f"module = module_under_test.{class_name}()" in test_text
+    assert capsys.readouterr().out == ""
+    assert not draft.destination.exists()
 
 
 def test_failed_installation_restores_existing_module(draft, monkeypatch):
