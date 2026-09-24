@@ -317,6 +317,70 @@ def test_omm_supported_physical_metadata(tmp_path, capsys, encoding, ephemeris_t
 
 
 @pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("value,expected_code,expected_name", [
+    ("U", "U", "Unclassified"),
+    (" u ", "U", "Unclassified"),
+    ("C", "C", "Classified"),
+    (" c ", "C", "Classified"),
+    ("S", "S", "Secret"),
+    (" s ", "S", "Secret"),
+    (None, "U", "Unclassified"),
+    ("", "U", "Unclassified"),
+    (" ", "U", "Unclassified"),
+])
+def test_omm_classification_is_normalized(
+    tmp_path, monkeypatch, capsys, encoding, value, expected_code, expected_name
+):
+    """Supported classifications and defaults reach SGP4 as a single uppercase code."""
+    fields = dict(_OMM_FIELDS)
+    if value is None:
+        del fields["CLASSIFICATION_TYPE"]
+    else:
+        fields["CLASSIFICATION_TYPE"] = value
+    path = _WRITERS[encoding](tmp_path / f"classification.{encoding}", [fields])
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_codes = []
+
+    def initialize_with_normalized_classification(satellite, sgp4_fields):
+        """Check the classification passed to SGP4 without requiring a particular backend."""
+        assert sgp4_fields["CLASSIFICATION_TYPE"] == expected_code
+        initialized_codes.append(sgp4_fields["CLASSIFICATION_TYPE"])
+        return initialize(satellite, sgp4_fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_with_normalized_classification)
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert records[0].classification == expected_name
+    assert initialized_codes == [expected_code]
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("value", ["UNCLASSIFIED", "UC", "X", "U C", "\u03a9", "\u017f"])
+def test_omm_invalid_classification_is_skipped(tmp_path, monkeypatch, capsys, encoding, value):
+    """Unsupported classification strings never reach SGP4; later records survive."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, "CLASSIFICATION_TYPE", value)
+
+
+@pytest.mark.parametrize("value", [True, False, 1, 1.0, ["U"], {"code": "U"}])
+def test_omm_json_invalid_classification_type_is_skipped(tmp_path, monkeypatch, capsys, value):
+    """JSON booleans, numbers, and containers cannot become classification codes."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, "json", "CLASSIFICATION_TYPE", value)
+
+
+def test_omm_json_null_classification_defaults(tmp_path, capsys):
+    """A null optional JSON classification retains the existing unclassified default."""
+    path = _writeJson(tmp_path / "null-classification.json", [dict(_OMM_FIELDS, CLASSIFICATION_TYPE=None)])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert records[0].classification == "Unclassified"
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
 def test_omm_each_encoding_parses(tmp_path, encoding):
     """Every CelesTrak OMM encoding is detected and parsed into one populated record."""
     path = _WRITERS[encoding](tmp_path / f"iss.{encoding}", [_OMM_FIELDS])
