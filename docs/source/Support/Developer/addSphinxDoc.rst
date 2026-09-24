@@ -22,6 +22,10 @@ Assuming you want to document a Basilisk module called `genericModule`.  This me
 
 Simply add the desired module documentation as ``genericModule.rst`` to this folder.  The :ref:`cModuleTemplate` has a sample module documentation file that you can copy into your folder.  This content will be parsed ahead of the module function descriptions.  When running ``cmake`` the ``genericModule.rst`` file should be included in the IDE such as Xcode if the module is a C++ module.  The ``*.rst`` is not shown in the IDE if it is a C-module. Rust module documentation follows the same ``<moduleName>.rst`` convention; see :ref:`rustModules`.
 
+For the standard module sections and RST authoring examples, see :ref:`makingModules-3`.
+The :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` pages demonstrate documentation of
+an implemented calculation, message interfaces, reset behavior, and runnable Python usage.
+
 
 Module Type Labels
 ------------------

@@ -7,8 +7,9 @@ sample C and C++ modules, as well as two modules which are auto-generated using 
 script found in ``src/utilities/makeDraftModule.py``.
 
 A module folder can contain a series of related module folders.  By adding a ``*.rst`` file to this folder the purpose of a folder can be documented.  The ``*.rst`` file name should be the same as the parent folder.
-Note that the :ref:`cModuleTemplate` has an expanded module documentation file that discusses in detail
-what can be included, and how RST can be used to include math, figures, citations, links, tables, etc.
+The :ref:`cModuleTemplate` and :ref:`cppModuleTemplate` documentation pages describe the sample
+calculation and include runnable Python examples. The :ref:`makingModules-3` tutorial explains
+how to document a module with RST, including math, figures, citations, links, tables, and code blocks.
 
 The sub-folder called ``_GeneralModuleFiles`` contains support ``*.c/h`` files that are used by all modules.  As a minimum, a file is required that defines the Module specific output message type
 
@@ -42,7 +43,8 @@ To use the C or C++ template module:
     - add any needed ``*.h`` inclusions at the top.
     - edit the  Update() routine introductory comment to describe what this module does
 
-- edit the ``*.rst`` file to document this module
+- edit the ``*.rst`` file to document the implemented behavior, assumptions, and usage;
+  see :ref:`makingModules-3` for the standard sections and authoring examples
 
 - in the ``_UnitTest`` folder,
 
@@ -71,6 +73,7 @@ Basilisk module code.  You can
 
 The script will create the basic draft module support code that will compile and run.  The ``Reset()`` method
 already checks if the input messages are connected (assuming they are all required), and ``Update()`` method
-provides sample code the creates buffer variables for the input and output messages, reads in the input messages,
-and write to the output messages.  The unit test already loads up the module, creates blank input message copies
-that are subscribed to the module, creates recorder modules for each output message, etc.
+provides sample code that creates buffer variables for the input and output messages, reads in the input messages,
+and writes to the output messages. The generated smoke test connects blank inputs and checks scheduled
+execution and output publication. The RST draft includes the standard section outline and links to
+:ref:`makingModules-3`; complete its descriptions and add numerical test assertions with the algorithm.
