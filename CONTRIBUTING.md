@@ -52,6 +52,43 @@ All AI-assisted contributions must be reviewed and validated by the human contri
 
 When disclosure of AI-assisted development is required by a sponsor, contract, institution, or applicable policy, that disclosure should be made in the pull request or other appropriate project record rather than through Git authorship metadata.
 
+### AI-Assisted Code Review
+
+Maintainers may selectively use agentic AI tools, such as Codex or Claude Code, to
+assist with code review under the policy above. Reviews are requested using a
+maintainer's configured tools and are not guaranteed for every pull request. They
+may be run locally or through an external integration; account requirements and
+available triggers depend on that setup. Contributors do not need an AI account or
+subscription to submit contributions or respond to review comments. To request
+additional review, leave a comment on the pull request.
+
+[AGENTS.md](AGENTS.md) contains repository-specific instructions for agents assisting
+with development and review. Its presence alone does not initiate a review or define
+a GitHub Actions workflow. If you use an AI coding tool, ask it to read AGENTS.md
+before making or reviewing changes.
+
+Human reviewers evaluate findings and remain responsible for approval and merge
+decisions. AI-assisted review does not replace required tests, CI, or human
+approvals. Contributors should address review comments or explain why a proposed
+change is inappropriate; disagreements and deferrals are resolved with the reviewer.
+A maintainer may post AI-assisted findings under their own GitHub account; a
+configured integration may post through a bot account.
+
+#### Review Priority Labels
+
+Comments from human or AI-assisted reviewers may use these priority labels:
+
+| Label | Meaning |
+| --- | --- |
+| P0 | Critical issue requiring immediate attention |
+| P1 | High-priority issue |
+| P2 | Normal-priority actionable issue |
+| P3 | Lower-priority issue |
+
+These labels describe priority; they do not identify an automated review or determine
+merge approval. Reviewers should explicitly label optional, nonblocking suggestions.
+A lower priority does not waive a repository requirement.
+
 ## Coding Conventions
 
 A [coding conventions](https://avslab.github.io/basilisk/Support/Developer/CodingGuidlines.html) document exists to
