@@ -543,6 +543,83 @@ def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     assert [d.satName for d in ommDataList] == ["ISS (ZARYA)"]
 
 
+@pytest.mark.parametrize("omitted_blocks,missing_field", [
+    (("metadata",), "CENTER_NAME"),
+    (("data",), "EPOCH"),
+    (("metadata", "data"), "EPOCH"),
+])
+def test_omm_xml_incomplete_segments_preserve_record_numbers(
+    tmp_path, monkeypatch, capsys, omitted_blocks, missing_field
+):
+    """Incomplete XML segments are reported without shifting later diagnostics."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    incomplete = {name: value for name, value in broken.items() if name != "MEAN_MOTION"}
+    second = dict(_OMM_FIELDS, OBJECT_NAME="SECOND-SAT", NORAD_CAT_ID="25545")
+    path = _writeXml(tmp_path / "mixed.xml", [broken, _OMM_FIELDS, incomplete, second])
+    tree = ET.parse(path)
+    first_segment = tree.find(".//segment")
+    for block in omitted_blocks:
+        first_segment.remove(first_segment.find(block))
+    tree.write(path, encoding="utf-8")
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_names = []
+    expected_names = [_OMM_FIELDS["OBJECT_NAME"], second["OBJECT_NAME"]]
+
+    def initialize_valid_record(satellite, fields):
+        """Fail if a malformed XML record reaches SGP4."""
+        assert fields["OBJECT_NAME"] in expected_names
+        initialized_names.append(fields["OBJECT_NAME"])
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == expected_names
+    assert initialized_names == expected_names
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 2
+    assert f"skipped OMM record 1 in {path}" in warnings[0]
+    assert missing_field in warnings[0]
+    assert f"skipped OMM record 3 in {path}" in warnings[1]
+    assert "MEAN_MOTION" in warnings[1]
+
+
+def test_omm_xml_all_incomplete_segments_are_reported(tmp_path, capsys):
+    """A file of incomplete segments returns no records and warns for each segment."""
+    path = _writeXml(tmp_path / "incomplete.xml", [_OMM_FIELDS] * 3)
+    tree = ET.parse(path)
+    omitted_blocks = [("metadata",), ("data",), ("metadata", "data")]
+    for segment, blocks in zip(tree.findall(".//segment"), omitted_blocks):
+        for block in blocks:
+            segment.remove(segment.find(block))
+    tree.write(path, encoding="utf-8")
+
+    assert ommHandling.satOmm2elem(str(path)) == []
+
+    warnings = capsys.readouterr().out.splitlines()
+    assert len(warnings) == 3
+    for record_number, warning in enumerate(warnings, start=1):
+        assert f"skipped OMM record {record_number} in {path}" in warning
+        assert "required" in warning
+
+
+def test_omm_xml_without_segments_raises(tmp_path):
+    """An XML document containing no segments remains a file-level failure."""
+    path = _writeXml(tmp_path / "empty.xml", [])
+
+    with pytest.raises(ValueError, match="found no OMM records"):
+        ommHandling.satOmm2elem(str(path))
+
+
+def test_omm_invalid_xml_syntax_raises(tmp_path):
+    """Invalid XML syntax remains a file-level failure."""
+    path = tmp_path / "truncated.xml"
+    path.write_text("<ndm><omm><segment>")
+
+    with pytest.raises(ET.ParseError):
+        ommHandling.satOmm2elem(str(path))
+
+
 @pytest.mark.parametrize("invalid_entry", [
     None, 42, 1.5, True, "not-an-object", [], [["OBJECT_NAME", "BROKEN-SAT"]],
 ])
