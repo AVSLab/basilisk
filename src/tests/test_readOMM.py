@@ -249,6 +249,171 @@ def test_omm_bad_record_is_skipped_not_fatal(tmp_path):
     assert [d.satName for d in ommDataList] == ["ISS (ZARYA)"]
 
 
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("field_name", [
+    "MEAN_MOTION", "ECCENTRICITY", "INCLINATION", "RA_OF_ASC_NODE",
+    "ARG_OF_PERICENTER", "MEAN_ANOMALY", "BSTAR", "MEAN_MOTION_DOT",
+    "MEAN_MOTION_DDOT", "EPHEMERIS_TYPE", "ELEMENT_SET_NO", "REV_AT_EPOCH",
+])
+@pytest.mark.parametrize("value", ["nan", "inf", "-inf", "1e309", "not-a-number"])
+def test_omm_invalid_numeric_record_is_skipped(
+    tmp_path, monkeypatch, capsys, encoding, field_name, value
+):
+    """Invalid numbers are rejected before SGP4 while subsequent records survive."""
+    _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("field_name,value", [
+    ("MEAN_MOTION", "0"),  # [rev/day]
+    ("MEAN_MOTION", "-1"),  # [rev/day]
+    ("ECCENTRICITY", "-0.1"),  # [-]
+    ("ECCENTRICITY", "1"),  # [-]
+    ("INCLINATION", "-1"),  # [deg]
+    ("INCLINATION", "180.1"),  # [deg]
+    ("RA_OF_ASC_NODE", "-1"),  # [deg]
+    ("RA_OF_ASC_NODE", "360.1"),  # [deg]
+    ("ARG_OF_PERICENTER", "-1"),  # [deg]
+    ("ARG_OF_PERICENTER", "360.1"),  # [deg]
+    ("MEAN_ANOMALY", "-1"),  # [deg]
+    ("MEAN_ANOMALY", "360.1"),  # [deg]
+    ("EPHEMERIS_TYPE", "-1"),
+    ("EPHEMERIS_TYPE", "1.5"),
+    ("ELEMENT_SET_NO", "-1"),
+    ("ELEMENT_SET_NO", "1.5"),
+    ("REV_AT_EPOCH", "-1"),
+    ("REV_AT_EPOCH", "1.5"),
+])
+def test_omm_out_of_range_record_is_skipped(
+    tmp_path, monkeypatch, capsys, encoding, field_name, value
+):
+    """Invalid orbital ranges and integer metadata do not reach SGP4."""
+    _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
+
+
+def _check_invalid_numeric_record(tmp_path, monkeypatch, capsys, encoding, field_name, value):
+    """Check record recovery and verify that SGP4 only receives the valid record."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    broken[field_name] = value
+    path = _WRITERS[encoding](tmp_path / f"invalid-number.{encoding}", [broken, _OMM_FIELDS])
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_names = []
+
+    def initialize_valid_record(satellite, fields):
+        """Fail if invalid input reaches the external library."""
+        assert fields["OBJECT_NAME"] == _OMM_FIELDS["OBJECT_NAME"]
+        initialized_names.append(fields["OBJECT_NAME"])
+        return initialize(satellite, fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_valid_record)
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    assert initialized_names == [_OMM_FIELDS["OBJECT_NAME"]]
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert field_name in warning
+
+
+@pytest.mark.parametrize("field_name,value", [
+    ("ECCENTRICITY", "0"),  # [-]
+    ("INCLINATION", "0"),  # [deg]
+    ("INCLINATION", "180"),  # [deg]
+    ("RA_OF_ASC_NODE", "0"),  # [deg]
+    ("RA_OF_ASC_NODE", "360"),  # [deg]
+    ("ARG_OF_PERICENTER", "0"),  # [deg]
+    ("ARG_OF_PERICENTER", "360"),  # [deg]
+    ("MEAN_ANOMALY", "0"),  # [deg]
+    ("MEAN_ANOMALY", "360"),  # [deg]
+    ("BSTAR", "-0.00016717"),  # [1/Earth radii]
+    ("MEAN_MOTION_DOT", "-0.00002182"),  # [rev/day^2]
+    ("MEAN_MOTION_DDOT", "-0.00000001"),  # [rev/day^3]
+    ("ELEMENT_SET_NO", "0"),
+    ("REV_AT_EPOCH", "0"),
+])
+def test_omm_valid_numeric_boundaries(tmp_path, capsys, field_name, value):
+    """Valid endpoints and signed drag terms remain accepted by the reader."""
+    fields = dict(_OMM_FIELDS)
+    fields[field_name] = value
+    path = _writeKvn(tmp_path / "boundary.kvn", [fields])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert all(np.isfinite(getattr(records[0].oe, name))
+               for name in ("a", "e", "i", "Omega", "omega", "f"))
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("mean_motion", ["5e-324", "1e-300", "1e308"])  # [rev/day]
+def test_omm_sgp4_numeric_failure_is_skipped(tmp_path, monkeypatch, capsys, mean_motion):
+    """Finite inputs outside the backend's numerical capacity do not abort the file."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT", MEAN_MOTION=mean_motion)
+    path = _writeKvn(tmp_path / "extreme-motion.kvn", [broken, _OMM_FIELDS])
+    monkeypatch.setattr(ommHandling, "Satrec", PythonSatrec)
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert "SGP4" in warning
+    assert "BROKEN-SAT" in warning
+
+
+@pytest.mark.parametrize("field_name,attribute", [
+    ("ELEMENT_SET_NO", "elemSetNo"), ("REV_AT_EPOCH", "revAtEpoch"),
+])
+def test_omm_integer_metadata_is_exact(tmp_path, monkeypatch, field_name, attribute):
+    """Integer metadata must not be rounded through a floating-point conversion."""
+    value = 9007199254740993
+    fields = dict(_OMM_FIELDS)
+    fields[field_name] = str(value)
+    path = _writeKvn(tmp_path / "integer-metadata.kvn", [fields])
+    # Exercise precision independently of platform-specific C integer widths.
+    monkeypatch.setattr(ommHandling, "Satrec", PythonSatrec)
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert getattr(records[0], attribute) == value
+
+
+@pytest.mark.parametrize("component", ["position", "velocity"])
+@pytest.mark.parametrize("value", [
+    float("nan"), float("inf"), -float("inf"),
+    1e308,  # [km] for position, [km/s] for velocity; overflows in SI units
+])
+def test_omm_nonfinite_sgp4_state_is_skipped(tmp_path, monkeypatch, capsys, component, value):
+    """Non-finite states or overflow during SI conversion must not reach orbitalMotion."""
+    broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
+    path = _writeKvn(tmp_path / "invalid-state.kvn", [broken, _OMM_FIELDS])
+    sgp4 = PythonSatrec.sgp4
+    propagated_count = 0
+
+    def propagate_with_invalid_first_state(satellite, jd, fraction):
+        """Corrupt only the first state even though SGP4 reports success."""
+        nonlocal propagated_count
+        error, position, velocity = sgp4(satellite, jd, fraction)
+        propagated_count += 1
+        if propagated_count == 1:
+            assert error == 0
+            position, velocity = list(position), list(velocity)
+            state_vector = position if component == "position" else velocity
+            state_vector[0] = value  # [km] for position, [km/s] for velocity
+        return error, position, velocity
+
+    monkeypatch.setattr(ommHandling, "Satrec", PythonSatrec)
+    monkeypatch.setattr(PythonSatrec, "sgp4", propagate_with_invalid_first_state)
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert [record.satName for record in records] == [_OMM_FIELDS["OBJECT_NAME"]]
+    warning = capsys.readouterr().out
+    assert "skipped OMM record 1" in warning
+    assert "non-finite" in warning
+    assert "BROKEN-SAT" in warning
+
+
 def test_omm_unknown_format_raises(tmp_path):
     """A file that is none of the four encodings is reported clearly."""
     path = tmp_path / "junk.txt"
