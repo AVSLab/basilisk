@@ -22,6 +22,7 @@
 #   Creation Date: September 16, 2026
 #
 
+import datetime as dt
 import json
 import xml.etree.ElementTree as ET
 
@@ -438,6 +439,59 @@ def test_omm_epoch_formats(tmp_path, epochStr, expectedSecond):
 
     assert len(ommDataList) == 1
     assert ommDataList[0].ommEpoch.second == expectedSecond
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("epoch_string,normalized_epoch", [
+    ("2026-09-10T12:00:30.1234567", "2026-09-10T12:00:30.123456"),
+    ("2026-253T12:00:30.1234567", "2026-09-10T12:00:30.123456"),
+    ("2026-09-10T12:00:30.123456789Z", "2026-09-10T12:00:30.123456"),
+    ("2026-253T12:00:30.000000001Z", "2026-09-10T12:00:30.000000"),
+    ("2026-09-10T12:00:30.123456789123456789", "2026-09-10T12:00:30.123456"),
+    ("2026-253T12:00:30.000000000", "2026-09-10T12:00:30.000000"),
+    ("2026-12-31T23:59:59.999999999Z", "2026-12-31T23:59:59.999999"),
+    ("2026-365T23:59:59.999999999", "2026-12-31T23:59:59.999999"),
+])
+def test_omm_additional_epoch_fraction_digits(
+    tmp_path, monkeypatch, capsys, encoding, epoch_string, normalized_epoch
+):
+    """Long epoch fractions truncate consistently to microseconds through propagation."""
+    fields = dict(_OMM_FIELDS, EPOCH=epoch_string)
+    reference_fields = dict(_OMM_FIELDS, EPOCH=normalized_epoch)
+    path = _WRITERS[encoding](tmp_path / f"fraction.{encoding}", [fields])
+    reference_path = _WRITERS[encoding](tmp_path / f"reference.{encoding}", [reference_fields])
+    initialize = ommHandling.sgp4omm.initialize
+    initialized_epochs = []
+
+    def initialize_at_normalized_epoch(satellite, sgp4_fields):
+        """Capture the epoch actually passed to the SGP4 initializer."""
+        initialized_epochs.append(sgp4_fields["EPOCH"])
+        return initialize(satellite, sgp4_fields)
+
+    monkeypatch.setattr(ommHandling.sgp4omm, "initialize", initialize_at_normalized_epoch)
+    records = ommHandling.satOmm2elem(str(path))
+    reference = ommHandling.satOmm2elem(str(reference_path))[0]
+
+    assert len(records) == 1
+    assert records[0].ommEpoch == dt.datetime.fromisoformat(normalized_epoch)
+    assert initialized_epochs == [normalized_epoch, normalized_epoch]
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(records[0].oe, name) == getattr(reference.oe, name)
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "json", "csv", "xml"])
+@pytest.mark.parametrize("epoch_string", [
+    "2026-09-10T12:00:30.1234567junk",
+    "2026-253T12:00:30.123456789badZ",
+    "2026-09-10T12:00:30.1234567.89",
+    "2026-253T12:00:30.1234567+00:00",
+    "2026-09-10T12:00:30.1234567 extra",
+    "2026-253T12:00:30.123456\u0667",
+])
+def test_omm_malformed_epoch_fraction_is_skipped(tmp_path, monkeypatch, capsys, encoding, epoch_string):
+    """Discarded fraction digits cannot hide invalid suffixes; later records survive."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, "EPOCH", epoch_string)
 
 
 def test_omm_bad_record_is_skipped_not_fatal(tmp_path):

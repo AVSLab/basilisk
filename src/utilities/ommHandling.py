@@ -309,10 +309,18 @@ def _parseOmmEpoch(epochStr: str) -> dt.datetime:
     """
     Parse an OMM ISO-8601 epoch, with or without fractional seconds or a trailing "Z".
 
+    Additional fractional digits are truncated to microseconds, matching the
+    precision of ``datetime`` and the ``sgp4.omm.initialize`` input.
+
     :param epochStr: the raw ``EPOCH`` field
     :return: the epoch as a datetime
     """
     cleaned = epochStr.strip().rstrip("Zz")
+    whole_seconds, separator, fraction = cleaned.partition(".")
+    # Validate the entire fraction before trimming so malformed suffixes cannot disappear.
+    if separator and fraction.isascii() and fraction.isdecimal():
+        cleaned = f"{whole_seconds}.{fraction[:6]}"
+
     for epochFormat in ("%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"):
         try:
             return dt.datetime.strptime(cleaned, epochFormat)
@@ -574,6 +582,10 @@ def satOmm2elem(omm_path: str) -> list:
     The encoding (XML, JSON, CSV or KVN) is detected from the file contents. Catalog numbers,
     including nine-digit OMM IDs, are preserved in ``noradID`` without being constrained by
     SGP4's internal identifier storage.
+
+    Calendar-date and day-of-year epochs accept arbitrary fractional-second digits.
+    Digits beyond microsecond precision are truncated consistently for ``ommEpoch``,
+    SGP4 initialization and propagation, and frame conversion.
 
     Only Earth-centered, TEME, UTC, SGP4 records with ephemeris type 0 (CelesTrak
     default) or 2 (SGP4) are supported. JSON and CSV records may omit
