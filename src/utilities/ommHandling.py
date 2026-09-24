@@ -310,10 +310,12 @@ def _parseOmmEpoch(epochStr: str) -> dt.datetime:
     Parse an OMM ISO-8601 epoch, with or without fractional seconds or a trailing "Z".
 
     Additional fractional digits are truncated to microseconds, matching the
-    precision of ``datetime`` and the ``sgp4.omm.initialize`` input.
+    precision of ``datetime`` and the ``sgp4.omm.initialize`` input. Day-of-year
+    dates must fall within the stated calendar year.
 
     :param epochStr: the raw ``EPOCH`` field
     :return: the epoch as a datetime
+    :raises ValueError: if the epoch is malformed or its date is invalid
     """
     cleaned = epochStr.strip().rstrip("Zz")
     whole_seconds, separator, fraction = cleaned.partition(".")
@@ -330,9 +332,12 @@ def _parseOmmEpoch(epochStr: str) -> dt.datetime:
     # CCSDS also permits a day-of-year form, e.g. "2026-259T12:00:00.000"
     for epochFormat in ("%Y-%jT%H:%M:%S.%f", "%Y-%jT%H:%M:%S"):
         try:
-            return dt.datetime.strptime(cleaned, epochFormat)
+            epoch = dt.datetime.strptime(cleaned, epochFormat)
         except ValueError:
             continue
+        # strptime rolls day 366 of a non-leap year into the following year.
+        if epoch.year == int(cleaned[:4]):
+            return epoch
 
     raise ValueError(f"satOmm2elem() could not parse the OMM EPOCH field: {epochStr!r}")
 
