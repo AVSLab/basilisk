@@ -23,6 +23,7 @@
 #
 
 import json
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import pytest
@@ -112,6 +113,100 @@ def _writeXml(path, fieldSets):
 
 
 _WRITERS = {"kvn": _writeKvn, "json": _writeJson, "csv": _writeCsv, "xml": _writeXml}
+
+
+def _write_omm_with_units(path, encoding, field_sets, unit_sets):
+    """Add KVN annotations or XML attributes to selected numeric fields."""
+    if encoding == "kvn":
+        annotated = []
+        for fields, units in zip(field_sets, unit_sets):
+            annotated.append({name: f"{value} [{units[name]}]" if name in units else value
+                              for name, value in fields.items()})
+        return _writeKvn(path, annotated)
+
+    _writeXml(path, field_sets)
+    tree = ET.parse(path)
+    for segment, units in zip(tree.findall(".//segment"), unit_sets):
+        for name, unit in units.items():
+            segment.find(f".//{name}").set("units", unit)
+    tree.write(path, encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "xml"])
+@pytest.mark.parametrize("bstar_unit", ["1/ER", "1/[Earth radii]"])
+def test_omm_supported_units(tmp_path, capsys, encoding, bstar_unit):
+    """CCSDS unit declarations preserve the orbit and retained mean elements."""
+    units = {
+        "MEAN_MOTION": "rev/day",
+        "INCLINATION": "deg",
+        "RA_OF_ASC_NODE": "deg",
+        "ARG_OF_PERICENTER": "deg",
+        "MEAN_ANOMALY": "deg",
+        "BSTAR": bstar_unit,
+        "MEAN_MOTION_DOT": "rev/day**2",
+        "MEAN_MOTION_DDOT": "rev/day**3",
+    }
+    path = _write_omm_with_units(tmp_path / f"units.{encoding}", encoding, [_OMM_FIELDS], [units])
+    reference_path = _WRITERS[encoding](tmp_path / f"reference.{encoding}", [_OMM_FIELDS])
+
+    records = ommHandling.satOmm2elem(str(path))
+    reference = ommHandling.satOmm2elem(str(reference_path))[0]
+
+    assert len(records) == 1
+    for name in ("a", "e", "i", "Omega", "omega", "f"):
+        assert getattr(records[0].oe, name) == getattr(reference.oe, name)
+    for name in ("meanMotion", "nDot", "nDotDot", "bStar"):
+        assert getattr(records[0], name) == getattr(reference, name)
+    assert capsys.readouterr().out == ""
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "xml"])
+@pytest.mark.parametrize("field_name,unit", [
+    ("MEAN_MOTION", "rad/s"),
+    ("INCLINATION", "rad"),
+    ("RA_OF_ASC_NODE", "rad"),
+    ("ARG_OF_PERICENTER", "rad"),
+    ("MEAN_ANOMALY", "rad"),
+    ("BSTAR", "1/km"),
+    ("MEAN_MOTION_DOT", "rev/day"),
+    ("MEAN_MOTION_DDOT", "rev/day**2"),
+    ("ECCENTRICITY", "n/a"),
+    ("NORAD_CAT_ID", "km"),
+    ("EPHEMERIS_TYPE", "km"),
+    ("ELEMENT_SET_NO", "km"),
+    ("REV_AT_EPOCH", "km"),
+    ("INCLINATION", "DEG"),
+    ("INCLINATION", "unknown"),
+    ("INCLINATION", ""),
+])
+def test_omm_unsupported_units_are_skipped(tmp_path, monkeypatch, capsys, encoding, field_name, unit):
+    """Incompatible, unknown, or empty units never reach SGP4; later records survive."""
+    warning = _check_invalid_record(
+        tmp_path, monkeypatch, capsys, encoding, field_name, _OMM_FIELDS[field_name], units=unit
+    )
+    assert "units" in warning
+    assert repr(unit) in warning
+
+
+@pytest.mark.parametrize("encoding", ["kvn", "xml"])
+@pytest.mark.parametrize("unit", ["1/km", "1/ER"])
+def test_omm_units_without_numeric_value_are_skipped(tmp_path, monkeypatch, capsys, encoding, unit):
+    """An annotation without a number cannot silently select an optional default."""
+    _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, "BSTAR", "", units=unit)
+
+
+@pytest.mark.parametrize("name", ["SATELLITE [TEST]", "SATELLITE [deg]", "123 [km]", "[TEST]"])
+def test_omm_kvn_preserves_bracketed_names(tmp_path, capsys, name):
+    """Brackets in textual metadata are not interpreted as numeric unit declarations."""
+    path = _writeKvn(tmp_path / "bracketed-name.kvn", [dict(_OMM_FIELDS, OBJECT_NAME=name)])
+
+    records = ommHandling.satOmm2elem(str(path))
+
+    assert len(records) == 1
+    assert records[0].satName == name
+    assert capsys.readouterr().out == ""
+
 
 _PHYSICAL_METADATA_FIELDS = ("CENTER_NAME", "REF_FRAME", "TIME_SYSTEM", "MEAN_ELEMENT_THEORY")
 
@@ -473,11 +568,15 @@ def test_omm_out_of_range_record_is_skipped(
     _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value)
 
 
-def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value):
+def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, value, units=None):
     """Check record recovery and verify that SGP4 only receives the valid record."""
     broken = dict(_OMM_FIELDS, OBJECT_NAME="BROKEN-SAT")
     broken[field_name] = value
-    path = _WRITERS[encoding](tmp_path / f"invalid-record.{encoding}", [broken, _OMM_FIELDS])
+    path = tmp_path / f"invalid-record.{encoding}"
+    if units is None:
+        _WRITERS[encoding](path, [broken, _OMM_FIELDS])
+    else:
+        _write_omm_with_units(path, encoding, [broken, _OMM_FIELDS], [{field_name: units}, {}])
     initialize = ommHandling.sgp4omm.initialize
     initialized_names = []
 
@@ -495,6 +594,7 @@ def _check_invalid_record(tmp_path, monkeypatch, capsys, encoding, field_name, v
     warning = capsys.readouterr().out
     assert "skipped OMM record 1" in warning
     assert field_name in warning
+    return warning
 
 
 @pytest.mark.parametrize("field_name,value", [
