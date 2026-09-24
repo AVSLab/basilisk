@@ -29,6 +29,13 @@ Version |release|
   the old names are no longer available. ``Reset()`` still clears the counter and
   preserves the sample configuration vector, which is used for logging examples.
 
+- GitHub issue 1573: Rust input ``MsgReader`` ports exposed ``is_linked`` but not
+  whether the subscribed source had been written, when it was written, or which
+  module wrote it. Readers now provide ``is_written``, ``time_written`` in
+  nanoseconds, and ``module_id``, following the subscribed source header. A
+  linked message that has never been published reports unwritten, time zero,
+  and an error for the module ID. Output writers do not expose these queries.
+
 - Incremental native builds could retain an old version in
   ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.
   CMake now tracks that file and reads the current source version instead of

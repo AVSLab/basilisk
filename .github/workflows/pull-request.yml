@@ -114,6 +114,18 @@ jobs:
         run: |
           ctest --output-on-failure
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) { exit 1 }
+      - name: Test Rust workspace
+        shell: pwsh
+        run: |
+          if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+            Invoke-WebRequest https://win.rustup.rs/x86_64 -OutFile rustup-init.exe
+            .\rustup-init.exe -y --profile minimal --default-toolchain stable
+            $env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"
+          }
+          cargo test --workspace --all-features --locked --manifest-path src/Cargo.toml
+          if ($LastExitCode -ne 0) { exit $LastExitCode }
+          cargo test -p bsk-build --no-default-features --locked --manifest-path src/Cargo.toml
+          if ($LastExitCode -ne 0) { exit $LastExitCode }
 
   build-macos:
     runs-on: macos-26

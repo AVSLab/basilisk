@@ -1,0 +1,1 @@
+- GitHub issue 1573: Rust ``MsgReader`` ports now expose ``is_written``, ``time_written`` (nanoseconds), and ``module_id`` for the subscribed source message.
