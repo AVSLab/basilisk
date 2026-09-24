@@ -45,7 +45,9 @@ def test_range(show_plots):
     1. Computes range correctly by evaluating slantRange;
     2. Tests whether elevation is correctly evaluated;
     3. Tests whether range limits impact access.
-    4. Tests whether multiple spacecraft are supported in parallel
+    4. Tests whether multiple spacecraft are supported in parallel;
+    5. Checks that unmodeled illumination and glare outputs remain zero for
+       every spacecraft at every recorded time step.
 
     :return:
     """
@@ -101,6 +103,11 @@ def test_range(show_plots):
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+
+    # Illumination and glare are not computed by this module.
+    for access_log in (dataLog0, dataLog1, dataLog2):
+        for field_name in ("hasIllumination", "sunIncidenceAngle", "scViewAngle", "hasGlare", "glareFactor"):
+            np.testing.assert_array_equal(getattr(access_log, field_name), 0)
 
     # Get the logged data
     sc1_access = dataLog0.hasAccess

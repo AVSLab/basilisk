@@ -100,7 +100,7 @@ void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
     /* expand the buffer vector */
-    AccessMsgPayload accMsg;
+    AccessMsgPayload accMsg{};
     this->accessMsgBuffer.push_back(accMsg);
 }
 
