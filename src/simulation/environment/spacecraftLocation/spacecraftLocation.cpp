@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
 /*! @brief Creates an instance of the SpacecraftLocation class
 
@@ -218,6 +219,8 @@ SpacecraftLocation::computeAccess()
 
     const double surfaceNormalTolerance = 1e-3; // [-]
     const double vectorNormTolerance = 1e-12; // [m]
+    // Allow for roundoff in normalization, reflection, and dot products.
+    const double glareTolerance = 16.0 * std::numeric_limits<double>::epsilon(); // [-]
     const bool hasSurfaceNormal = this->aHat_B.norm() > surfaceNormalTolerance;
     Eigen::Vector3d aHat_N;
     Eigen::Vector3d sunHat_L_N;
@@ -322,7 +325,7 @@ SpacecraftLocation::computeAccess()
                     glareFactor = std::clamp(reflectedSunHat_N.dot(scViewHat_L_N), 0.0, 1.0);
                 }
                 this->accessMsgBuffer.at(c).glareFactor = glareFactor;
-                if (hasFrontFacingGeometry && glareFactor >= this->glareThreshold) {
+                if (hasFrontFacingGeometry && glareFactor + glareTolerance >= this->glareThreshold) {
                     this->accessMsgBuffer.at(c).hasGlare = 1;
                     if (this->useGlareConstraint) {
                         this->accessMsgBuffer.at(c).hasAccess = 0;

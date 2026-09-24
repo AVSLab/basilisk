@@ -408,6 +408,103 @@ def test_spacecraftLocationGlare(
 
 
 @pytest.mark.parametrize(
+    "incidence_angle",
+    np.deg2rad([0.0, 2.0, 25.0, 43.0, 65.0, 89.0]),  # [rad]
+)
+@pytest.mark.parametrize(
+    "sigma_BN", [[0.0, 0.0, 0.0], [0.1, -0.2, 0.3]],  # [-]
+)
+@pytest.mark.parametrize("use_glare_constraint", [False, True])
+@pytest.mark.parametrize(
+    "view_offset, glare_threshold, expected_glare",
+    [  # Viewing offset [rad], glare threshold [-], expected glare flag.
+        pytest.param(0.0, 1.0, 1, id="exact_reflection"),
+        pytest.param(1.0e-6, 1.0, 0, id="near_exact_reflection"),
+        pytest.param(np.arccos(0.95), 0.95, 1, id="threshold_boundary"),
+        pytest.param(np.arccos(0.95) + 1.0e-6, 0.95, 0, id="below_threshold"),
+    ],
+)
+def test_spacecraft_location_glare_roundoff(
+        incidence_angle, sigma_BN, use_glare_constraint,
+        view_offset, glare_threshold, expected_glare):
+    """Verify glare thresholds at and just outside exact reflection geometry.
+
+    Validation Test Description
+    ---------------------------
+    Construct the Sun direction and its ideal mirror reflection in the body
+    frame, then rotate both into the inertial frame about an offset surface
+    point. Shift the observer by a known angle from the ideal reflection.
+
+    Test Parameter Discussion
+    -------------------------
+    Incidence angles span normal through nearly grazing illumination, with
+    identity and nonzero spacecraft attitudes. The cases exercise exact
+    reflection at threshold one, the default threshold boundary, and views
+    one microradian beyond each boundary. Glare rejection is enabled and
+    disabled independently.
+
+    Expected Results
+    ----------------
+    The glare factor equals the cosine of the reflected-ray viewing offset.
+    Roundoff must not prevent boundary views from being classified as glare.
+    Nearby views outside the boundary retain access, and detected glare only
+    prevents access when the constraint is enabled.
+    """
+    module = spacecraftLocation.SpacecraftLocation()
+    module.rEquator = 1.0  # [m]
+    module.aHat_B = [1.0, 0.0, 0.0]  # [-]
+    location_offset_B = np.array([2.0, -3.0, 1.0])  # [m]
+    module.r_LB_B = location_offset_B
+    module.theta = np.pi  # [rad]
+    module.glareThreshold = glare_threshold
+    module.useGlareConstraint = use_glare_constraint
+
+    primary_position_N = np.array([100.0, 200.0, -300.0])  # [m]
+    primary_payload = messaging.SCStatesMsgPayload()
+    primary_payload.r_BN_N = primary_position_N
+    primary_payload.sigma_BN = sigma_BN
+    primary_msg = messaging.SCStatesMsg().write(primary_payload)
+    module.primaryScStateInMsg.subscribeTo(primary_msg)
+
+    dcm_NB = rbk.MRP2C(sigma_BN).T
+    location_position_N = primary_position_N + dcm_NB @ location_offset_B
+    sun_direction_B = np.array([
+        np.cos(incidence_angle), np.sin(incidence_angle), 0.0,
+    ])
+    sun_distance = 1.0e6  # [m]
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = (
+        location_position_N + sun_distance * (dcm_NB @ sun_direction_B)
+    )
+    sun_msg = messaging.SpicePlanetStateMsg().write(sun_payload)
+    module.sunInMsg.subscribeTo(sun_msg)
+
+    view_direction_B = np.array([
+        np.cos(incidence_angle - view_offset),
+        -np.sin(incidence_angle - view_offset),
+        0.0,
+    ])
+    viewing_distance = 1.0e3  # [m]
+    other_payload = messaging.SCStatesMsgPayload()
+    other_payload.r_BN_N = (
+        location_position_N + viewing_distance * (dcm_NB @ view_direction_B)
+    )
+    other_msg = messaging.SCStatesMsg().write(other_payload)
+    module.addSpacecraftToModel(other_msg)
+
+    module.Reset(0)
+    module.UpdateState(0)
+    access_msg = module.accessOutMsgs[0].read()
+
+    np.testing.assert_allclose(
+        access_msg.glareFactor, np.cos(view_offset), rtol=0.0, atol=2.0e-14,
+    )
+    assert access_msg.hasGlare == expected_glare
+    expected_access = int(not (use_glare_constraint and expected_glare))
+    assert access_msg.hasAccess == expected_access
+
+
+@pytest.mark.parametrize(
     "viewAngle, viewAngleLimit, connectSun, expectedAccess",
     [
         (np.pi / 6, np.pi / 4, False, 1),  # [rad], [rad], [-]
