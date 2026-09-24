@@ -252,6 +252,9 @@ def _parseOmmXml(text: str) -> list:
     """
     Parse the XML (CCSDS NDM) encoding.
 
+    Retain the available fields of every segment, including those missing metadata
+    or data, so per-record validation reports their original positions in the file.
+
     :param text: full text of the XML file
     :return: list of raw field dictionaries retaining numeric unit declarations
     """
@@ -260,11 +263,11 @@ def _parseOmmXml(text: str) -> list:
     for segment in root.findall(".//segment"):
         metadata = segment.find("metadata")
         data = segment.find("data")
-        if metadata is None or data is None:
-            continue
 
         fields = {}
-        blocks = [metadata, data.find("meanElements"), data.find("tleParameters")]
+        blocks = [metadata]
+        if data is not None:
+            blocks.extend([data.find("meanElements"), data.find("tleParameters")])
         for block in blocks:
             if block is None:
                 continue
