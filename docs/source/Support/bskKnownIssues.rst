@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
+  components of the final-acceleration constraint by reading uninitialized
+  constraint-vector entries. All three components now use the correct constraint
+  row. This is fixed in the current version.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.
