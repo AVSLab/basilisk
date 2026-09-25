@@ -20,9 +20,7 @@
 #include "facetedSpacecraftProjectedArea.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
-FacetedSpacecraftProjectedArea::~FacetedSpacecraftProjectedArea() {
-    for (auto* msg : this->facetProjectedAreaOutMsgs) { delete msg; }
-}
+FacetedSpacecraftProjectedArea::~FacetedSpacecraftProjectedArea() = default;
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
@@ -205,16 +203,17 @@ void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets) {
     this->numFacets = numFacets;
 
     // Release old output messages if this setter is called multiple times
-    for (auto* msg : this->facetProjectedAreaOutMsgs) { delete msg; }
     this->facetElementBodyInMsgs.clear();
     this->facetProjectedAreaOutMsgs.clear();
+    this->ownedFacetProjectedAreaOutMsgs.clear();
     this->facetElementBodyInMsgs.reserve(this->numFacets);
     this->facetProjectedAreaOutMsgs.reserve(this->numFacets);
 
     // Push back facet message vectors
     for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
         this->facetElementBodyInMsgs.push_back(ReadFunctor<FacetElementBodyMsgPayload>{});
-        this->facetProjectedAreaOutMsgs.push_back(new Message<ProjectedAreaMsgPayload>());
+        this->ownedFacetProjectedAreaOutMsgs.push_back(std::make_unique<Message<ProjectedAreaMsgPayload>>());
+        this->facetProjectedAreaOutMsgs.push_back(this->ownedFacetProjectedAreaOutMsgs.back().get());
     }
 }
 

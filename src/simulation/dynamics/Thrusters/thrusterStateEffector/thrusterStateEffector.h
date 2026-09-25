@@ -141,6 +141,9 @@ private:
 
     double prevCommandTime;                       //!< [s] Time for previous valid thruster firing
     static uint64_t effectorID;    //!< [] ID number of this panel
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<THROutputMsgPayload>>> ownedThrusterOutMsgs; //!< Storage for thrusterOutMsgs.
 };
 
 

@@ -314,3 +314,37 @@ if(BUILD_TESTING AND EXISTS "${recorder_copy_contract_test_source}")
     gtest_discover_tests(test_recorder_copy_contract)
   endif()
 endif()
+
+if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_outputMessageOwnership.cpp")
+  # Compile module implementations directly: the production targets are Python extensions.
+  add_executable(test_outputMessageOwnership
+    _UnitTest/test_outputMessageOwnership.cpp
+    ${CMAKE_SOURCE_DIR}/fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.cpp
+    ${CMAKE_SOURCE_DIR}/fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.cpp
+    ${CMAKE_SOURCE_DIR}/fswAlgorithms/effectorInterfaces/thrJointCompensation/thrJointCompensation.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/deviceInterface/facetedSpacecraftModel/facetedSpacecraftModel.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/deviceInterface/facetedSpacecraftProjectedArea/facetedSpacecraftProjectedArea.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/ZeroWindModel/zeroWindModel.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/groundMapping/groundMapping.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/magneticFieldCenteredDipole/magneticFieldCenteredDipole.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/spaceWeatherData/spaceWeatherData.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/vizard/dataFileToViz/dataFileToViz.cpp)
+  target_link_libraries(test_outputMessageOwnership PRIVATE GTest::gtest_main architectureLib dynamicsLib environmentLib)
+
+  if(WIN32)
+    add_custom_command(TARGET test_outputMessageOwnership POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              $<TARGET_RUNTIME_DLLS:test_outputMessageOwnership>
+              $<TARGET_FILE_DIR:test_outputMessageOwnership>
+      COMMAND_EXPAND_LISTS)
+  endif()
+  if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" AND CMAKE_GENERATOR STREQUAL "Xcode")
+    gtest_discover_tests(test_outputMessageOwnership DISCOVERY_MODE PRE_TEST)
+  else()
+    gtest_discover_tests(test_outputMessageOwnership)
+  endif()
+endif()

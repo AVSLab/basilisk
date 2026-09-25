@@ -171,6 +171,9 @@ public:
      */
     void setLargeTorqueThreshold(double val) { largeTorqueThreshold = val; }
 
+private:
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<RWConfigLogMsgPayload>>> ownedRwOutMsgs; //!< Storage for rwOutMsgs.
 };
 
 

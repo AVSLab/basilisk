@@ -20,6 +20,8 @@
 #ifndef STRIP_LOCATION_H
 #define STRIP_LOCATION_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -101,5 +103,8 @@ private:
     double lengthCentralLine; //!< [m] length of the central line
     double lengthCentralLineUpdated; //!< [m] updated length of the central line taking into account the pre-imaging time
     uint64_t OldSimNanos; //!< [ns] previous currentSimNanos
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AccessMsgPayload>>> ownedAccessOutMsgs; //!< Storage for accessOutMsgs.
 };
 #endif /* StripLocation */

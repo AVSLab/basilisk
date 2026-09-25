@@ -57,13 +57,7 @@ MagneticFieldBase::MagneticFieldBase()
 /*! Destructor.
 
  */
-MagneticFieldBase::~MagneticFieldBase()
-{
-    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
-        delete this->envOutMsgs.at(c);
-    }
-    return;
-}
+MagneticFieldBase::~MagneticFieldBase() = default;
 
 /*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
 
@@ -75,9 +69,8 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<MagneticFieldMsgPayload> *msg;
-    msg = new Message<MagneticFieldMsgPayload>;
-    this->envOutMsgs.push_back(msg);
+    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<MagneticFieldMsgPayload>>());
+    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
 
     /* create buffer message copies*/
     MagneticFieldMsgPayload msgMagBuffer;

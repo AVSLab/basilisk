@@ -22,9 +22,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <cassert>
 
-FacetedSpacecraftModel::~FacetedSpacecraftModel() {
-    for (auto* msg : this->facetElementBodyOutMsgs) { delete msg; }
-}
+FacetedSpacecraftModel::~FacetedSpacecraftModel() = default;
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
@@ -202,16 +200,17 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     this->numFacets = numFacets;
 
     // Release old output messages if this setter is called multiple times
-    for (auto* msg : this->facetElementBodyOutMsgs) { delete msg; }
     this->facetElementInMsgs.clear();
     this->facetElementBodyOutMsgs.clear();
+    this->ownedFacetElementBodyOutMsgs.clear();
     this->facetElementInMsgs.reserve(this->numFacets);
     this->facetElementBodyOutMsgs.reserve(this->numFacets);
 
     // Push back facet message vectors
     for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
         this->facetElementInMsgs.push_back(ReadFunctor<FacetElementMsgPayload>{});
-        this->facetElementBodyOutMsgs.push_back(new Message<FacetElementBodyMsgPayload>());
+        this->ownedFacetElementBodyOutMsgs.push_back(std::make_unique<Message<FacetElementBodyMsgPayload>>());
+        this->facetElementBodyOutMsgs.push_back(this->ownedFacetElementBodyOutMsgs.back().get());
     }
 
     // Set the articulated facet input messages to the pending input message list

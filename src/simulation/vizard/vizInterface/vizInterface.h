@@ -19,6 +19,10 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
+#include <string>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include "utilities/vizProtobuffer/vizMessage.pb.h"
 #include <vector>
 #include <fstream>
@@ -116,6 +120,8 @@ private:
     void receiveUserInput(uint64_t CurrentSimNanos);        //!< request user input from Vizard, save as
     void requestImage(size_t camCounter, uint64_t CurrentSimNanos);  //!< request image from Vizard and store it in output img msg
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<CameraImageMsgPayload>>> ownedOpnavImageOutMsgs; //!< Storage for opnavImageOutMsgs.
 };
 
 #endif /* VIZ_INTERFACE_H */

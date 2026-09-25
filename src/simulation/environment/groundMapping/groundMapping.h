@@ -21,6 +21,8 @@
 #ifndef GROUNDMAPPING_H
 #define GROUNDMAPPING_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -89,6 +91,9 @@ private:
     Eigen::Vector3d r_BP_N; //!< [m] Inertial position of the body frame wrt the planet
     Eigen::Matrix3d dcm_NB;  //!< DCM from the body frame to the inertial frame
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<GroundStateMsgPayload>>> ownedCurrentGroundStateOutMsgs; //!< Storage for currentGroundStateOutMsgs.
+    std::vector<std::unique_ptr<Message<AccessMsgPayload>>> ownedAccessOutMsgs; //!< Storage for accessOutMsgs.
 };
 
 

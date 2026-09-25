@@ -25,12 +25,7 @@ EphemerisConverter::EphemerisConverter()
 {
 }
 
-EphemerisConverter::~EphemerisConverter()
-{
-    for (long unsigned int c=0; c<this->ephemOutMsgs.size(); c++) {
-        delete this->ephemOutMsgs.at(c);
-    }
-}
+EphemerisConverter::~EphemerisConverter() = default;
 
 /*! Reset the module to origina configuration values.
 
@@ -51,9 +46,8 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
     this->spiceInMsgs.push_back(tmpMsg->addSubscriber());
 
     /* setup output corresponding message */
-    Message<EphemerisMsgPayload> *msg;
-    msg = new Message<EphemerisMsgPayload>;
-    this->ephemOutMsgs.push_back(msg);
+    this->ownedEphemOutMsgs.push_back(std::make_unique<Message<EphemerisMsgPayload>>());
+    this->ephemOutMsgs.push_back(this->ownedEphemOutMsgs.back().get());
 
 
     /* update input and output buffers*/

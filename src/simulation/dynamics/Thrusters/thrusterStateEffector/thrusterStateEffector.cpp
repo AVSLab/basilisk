@@ -59,15 +59,7 @@ ThrusterStateEffector::ThrusterStateEffector()
 uint64_t ThrusterStateEffector::effectorID = 1;
 
 /*! The destructor. */
-ThrusterStateEffector::~ThrusterStateEffector()
-{
-    // Free memory to avoid errors
-    for (long unsigned int c=0; c<this->thrusterOutMsgs.size(); c++) {
-        delete this->thrusterOutMsgs.at(c);
-    }
-
-    return;
-}
+ThrusterStateEffector::~ThrusterStateEffector() = default;
 
 /*! This method is used to reset the module.
  *
@@ -287,9 +279,8 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload>* msg;
-    msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(msg);
+    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
+    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
 
     // Set the initial condition
     double state = 0.0;
@@ -319,9 +310,8 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload>* msg;
-    msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(msg);
+    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
+    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
 
     // Set the initial condition
     double state = 0.0;

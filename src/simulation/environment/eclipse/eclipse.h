@@ -20,6 +20,9 @@
 #ifndef Eclipse_H
 #define Eclipse_H
 
+#include <string>
+#include <cstdint>
+#include <memory>
 #include <vector>
 #include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -65,6 +68,8 @@ private:
     double computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<EclipseMsgPayload>>> ownedEclipseOutMsgs; //!< Storage for eclipseOutMsgs.
 };
 
 

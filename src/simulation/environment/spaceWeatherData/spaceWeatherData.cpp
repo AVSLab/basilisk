@@ -126,18 +126,14 @@ int findHeaderIndex(const std::vector<std::string>& headerColumns, const std::st
 SpaceWeatherData::SpaceWeatherData()
 {
     for (uint64_t msgIndex = 0U; msgIndex < numSwMessages; msgIndex++) {
-        this->swDataOutMsgs.push_back(new Message<SwDataMsgPayload>());
+        this->ownedSwDataOutMsgs.push_back(std::make_unique<Message<SwDataMsgPayload>>());
+        this->swDataOutMsgs.push_back(this->ownedSwDataOutMsgs.back().get());
     }
 }
 
 /*! Destructor. Frees every output message owned by this module.
 */
-SpaceWeatherData::~SpaceWeatherData()
-{
-    for (auto* outputMsg : this->swDataOutMsgs) {
-        delete outputMsg;
-    }
-}
+SpaceWeatherData::~SpaceWeatherData() = default;
 
 /*! Reset the module to its initial state.
 

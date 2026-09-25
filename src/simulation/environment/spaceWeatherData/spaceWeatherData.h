@@ -20,6 +20,7 @@
 #ifndef MSIS_SPACE_WEATHER_H
 #define MSIS_SPACE_WEATHER_H
 
+#include <memory>
 #include <array>
 #include <cstdint>
 #include <string>
@@ -73,6 +74,9 @@ private:
     static DailySpaceWeather parseWeatherLine(const std::string& line,
                                               const std::vector<std::string>& headerColumns,
                                               bool& parseOk);
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SwDataMsgPayload>>> ownedSwDataOutMsgs; //!< Storage for swDataOutMsgs.
 };
 
 #endif

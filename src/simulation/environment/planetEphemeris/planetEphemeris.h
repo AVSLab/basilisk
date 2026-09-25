@@ -20,6 +20,8 @@
 #ifndef planetEphemeris_H
 #define planetEphemeris_H
 
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -62,6 +64,9 @@ private:
     double epochTime;                           //!< [s] time of provided planet ephemeris epoch
     int computeAttitudeFlag;                    //!< -- flag indicating whether planet orientation is provided
     int zeroBaseIndex = -1;                     //!< -- index of the body selected as the translational origin
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>> ownedPlanetOutMsgs; //!< Storage for planetOutMsgs.
 };
 
 

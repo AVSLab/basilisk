@@ -22,6 +22,7 @@
 #define VSCMGSTATEEFFECTOR_H
 
 #include <cstddef>
+#include <memory>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -131,6 +132,8 @@ private:
 	StateData *gammasState;                     //!< [rad] CMG gimbal angle
 	StateData *gammaDotsState;                  //!< [rad/s] CMG gimbal angle rate
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<VSCMGConfigMsgPayload>>> ownedVscmgOutMsgs; //!< Storage for vscmgOutMsgs.
 };
 
 

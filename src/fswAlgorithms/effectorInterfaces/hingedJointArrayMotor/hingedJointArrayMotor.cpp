@@ -312,5 +312,6 @@ void HingedJointArrayMotor::addHingedJoint()
     this->jointStateDotsInMsgs.push_back(ReadFunctor<ScalarJointStateMsgPayload>());
 
     // add a new output message for the new hinged joint
-    this->motorTorquesOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
+    this->ownedMotorTorquesOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
+    this->motorTorquesOutMsgs.push_back(this->ownedMotorTorquesOutMsgs.back().get());
 }

@@ -26,6 +26,13 @@
 /*! This is the constructor, setting variables to default values */
 SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
 {
+    for (size_t bodyIndex = 0; bodyIndex < 2; ++bodyIndex) {
+        this->ownedSpinningBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
+        this->spinningBodyOutMsgs.push_back(this->ownedSpinningBodyOutMsgs.back().get());
+        this->ownedSpinningBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+        this->spinningBodyConfigLogOutMsgs.push_back(this->ownedSpinningBodyConfigLogOutMsgs.back().get());
+    }
+
     // Zero the mass props and mass prop rates contributions
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B.fill(0.0);
@@ -72,9 +79,7 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
 uint64_t SpinningBodyTwoDOFStateEffector::effectorID = 1;
 
 /*! This is the destructor, nothing to report here */
-SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector()
-{
-}
+SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector() = default;
 
 /*! This method validates the module configuration when the scheduler resets the model.
 

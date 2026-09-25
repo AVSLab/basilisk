@@ -20,6 +20,8 @@
 #ifndef FACETED_SPACECRAFT_MODEL_H
 #define FACETED_SPACECRAFT_MODEL_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -66,6 +68,9 @@ private:
     std::vector<Eigen::Vector3d> facetR_CopB_BList;  //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
     std::vector<Eigen::Vector3d> facetNHat_BList;  //!< [-] List of facet normal vectors expressed in hub B frame components
     std::vector<Eigen::Vector3d> facetRotHat_BList;  //!< [-] List of facet rotation axes expressed in hub B frame components
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<FacetElementBodyMsgPayload>>> ownedFacetElementBodyOutMsgs; //!< Storage for facetElementBodyOutMsgs.
 };
 
 #endif

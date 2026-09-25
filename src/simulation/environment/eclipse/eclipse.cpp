@@ -29,13 +29,7 @@ Eclipse::Eclipse()
     return;
 }
 
-Eclipse::~Eclipse()
-{
-    for (long unsigned int c=0; c<this->eclipseOutMsgs.size(); c++) {
-        delete this->eclipseOutMsgs.at(c);
-    }
-    return;
-}
+Eclipse::~Eclipse() = default;
 
 
 
@@ -231,9 +225,8 @@ void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<EclipseMsgPayload> *msg;
-    msg = new Message<EclipseMsgPayload>;
-    this->eclipseOutMsgs.push_back(msg);
+    this->ownedEclipseOutMsgs.push_back(std::make_unique<Message<EclipseMsgPayload>>());
+    this->eclipseOutMsgs.push_back(this->ownedEclipseOutMsgs.back().get());
 
     /* expand the sc state buffer vector */
     SCStatesMsgPayload scMsg;

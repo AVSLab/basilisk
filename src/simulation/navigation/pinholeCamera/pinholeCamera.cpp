@@ -40,13 +40,7 @@ PinholeCamera::PinholeCamera()
 /*! Empty destructor method.
 
  */
-PinholeCamera::~PinholeCamera()
-{
-    for (long unsigned int i = 0; i < this->landmarkOutMsgs.size(); i++){
-        delete this->landmarkOutMsgs.at(i);
-    }
-    return;
-}
+PinholeCamera::~PinholeCamera() = default;
 
 
 /*! Resets the module.*/
@@ -78,9 +72,8 @@ void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal){
     this->nL_P.push_back(normal);
 
     /* Create buffer output messages */
-    Message<LandmarkMsgPayload> *msg;
-    msg = new Message<LandmarkMsgPayload>;
-    this->landmarkOutMsgs.push_back(msg);
+    this->ownedLandmarkOutMsgs.push_back(std::make_unique<Message<LandmarkMsgPayload>>());
+    this->landmarkOutMsgs.push_back(this->ownedLandmarkOutMsgs.back().get());
 
     /* Expand the landmark buffer vectors */
     LandmarkMsgPayload lmkMsg;

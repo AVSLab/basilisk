@@ -21,6 +21,10 @@
 #ifndef HINGEDJOINTARRAYMOTOR_H
 #define HINGEDJOINTARRAYMOTOR_H
 
+#include <unordered_map>
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/MJJointReactionsMsgPayload.h"
@@ -88,6 +92,9 @@ private:
     bool treeInfoInitialized = false;   //!< flag indicating if tree info has been initialized
     int numKinematicTrees = 0; //!< number of kinematic trees in the system
     std::unordered_map<int, TreeInfo> treeMap; //!< map from kinematic tree index to tree info
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>> ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
 };
 
 

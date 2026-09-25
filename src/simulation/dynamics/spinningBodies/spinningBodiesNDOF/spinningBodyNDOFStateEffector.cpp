@@ -41,13 +41,7 @@ SpinningBodyNDOFStateEffector::SpinningBodyNDOFStateEffector()
 
 uint64_t SpinningBodyNDOFStateEffector::effectorID = 1;
 
-SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector()
-{
-    for (size_t c = 0; c < this->spinningBodyOutMsgs.size(); c++) {
-        delete this->spinningBodyOutMsgs.at(c);
-        delete this->spinningBodyConfigLogOutMsgs.at(c);
-    }
-}
+SpinningBodyNDOFStateEffector::~SpinningBodyNDOFStateEffector() = default;
 
 /*! Validate the module configuration when the scheduler resets the model.
 
@@ -164,8 +158,10 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     spinningBodyVec.push_back(newBody);
     this->numberOfDegreesOfFreedom++;
 
-    this->spinningBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
-    this->spinningBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
+    this->ownedSpinningBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+    this->spinningBodyConfigLogOutMsgs.push_back(this->ownedSpinningBodyConfigLogOutMsgs.back().get());
+    this->ownedSpinningBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
+    this->spinningBodyOutMsgs.push_back(this->ownedSpinningBodyOutMsgs.back().get());
     this->spinningBodyRefInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
 
     this->ATheta.conservativeResize(this->ATheta.rows()+1, 3);

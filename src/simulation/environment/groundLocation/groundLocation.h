@@ -21,6 +21,8 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -81,6 +83,9 @@ private:
     Eigen::Vector3d rhat_LP_N;//!< [-] Surface normal vector from the target location in inertial coordinates.
     Eigen::Vector3d r_LN_N; //!< [m] Ground Location position vector relative to inertial frame origin in inertial coordinates.
     Eigen::Vector3d r_North_N; //!<[-] Inertial 3rd axis, defined internally as "North".
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AccessMsgPayload>>> ownedAccessOutMsgs; //!< Storage for accessOutMsgs.
 };
 
 

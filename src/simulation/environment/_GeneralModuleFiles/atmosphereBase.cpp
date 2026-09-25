@@ -62,13 +62,7 @@ AtmosphereBase::AtmosphereBase()
 /*! Destructor.
 
  */
-AtmosphereBase::~AtmosphereBase()
-{
-    for (long unsigned int c=0; c<this->envOutMsgs.size(); c++) {
-        delete this->envOutMsgs.at(c);
-    }
-    return;
-}
+AtmosphereBase::~AtmosphereBase() = default;
 
 /*! Adds the spacecraft message to a vector of sc messages and automatically creates the corresponding output message.
 
@@ -80,9 +74,8 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AtmoPropsMsgPayload> *msg;
-    msg = new Message<AtmoPropsMsgPayload>;
-    this->envOutMsgs.push_back(msg);
+    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<AtmoPropsMsgPayload>>());
+    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
 
     /* create buffer message copies*/
     AtmoPropsMsgPayload msgAtmoBuffer;

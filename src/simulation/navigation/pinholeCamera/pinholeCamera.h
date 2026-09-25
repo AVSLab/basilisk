@@ -21,6 +21,8 @@
 #ifndef PINHOLE_CAMERA_H
 #define PINHOLE_CAMERA_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -101,6 +103,9 @@ private:
     Eigen::Vector3d e_SP_P; //!< [-] current unit-vector pointing from planet to Sun in planet frame
     Eigen::Vector3d eC_C; //!< [-] focal direction unit-vector in camera frame
     Eigen::Vector3d eC_P; //!< [-] focal direction unit-vector in planet frame
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<LandmarkMsgPayload>>> ownedLandmarkOutMsgs; //!< Storage for landmarkOutMsgs.
 };
 
 #endif

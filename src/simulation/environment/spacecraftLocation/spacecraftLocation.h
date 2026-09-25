@@ -20,6 +20,8 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
+#include <cstdint>
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 #include <string>
@@ -84,6 +86,9 @@ class SpacecraftLocation : public SysModel
     Eigen::Vector3d r_BN_N; //!< primary spacecraft relative to inertial
     double zScale;          //!< ration of rEquator over rPolar, used for affine scaling to turn ellipsoid to sphere
     Eigen::Vector3d r_HN_N; //!< [m] sun position in inertial frame
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AccessMsgPayload>>> ownedAccessOutMsgs; //!< Storage for accessOutMsgs.
 };
 
 #endif /* GroundLocation */
