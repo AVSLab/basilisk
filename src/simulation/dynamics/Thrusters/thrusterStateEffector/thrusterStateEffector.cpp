@@ -353,7 +353,7 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
 void ThrusterStateEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
-    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
 }
 
 /*! This method allows the thruster state effector to register its state kappa with the dyn param manager

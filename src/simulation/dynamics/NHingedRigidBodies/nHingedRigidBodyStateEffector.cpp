@@ -147,10 +147,10 @@ void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 
     this->inertialPositionProperty =
-      states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
+      states.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty =
-      states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+      states.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
 
     return;
 }

@@ -19,6 +19,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -57,6 +58,15 @@ sigma_P0M = rbk.PRV2MRP(prv_P0M)
 prescribed_ang_accel_max = 0.5 * macros.D2R  # [rad/s^2]
 
 sim_time = 15.0  # [s]
+
+
+@pytest.fixture(autouse=True)
+def check_state_link_warnings(capfd):
+    """Check that each branching simulation links only available dynamics states."""
+    yield
+    captured = capfd.readouterr()
+    assert "You requested this non-existent state name:" not in captured.out + captured.err
+
 
 def test_prescribed_branching_spinning_body_one_dof(show_plots):
     r"""

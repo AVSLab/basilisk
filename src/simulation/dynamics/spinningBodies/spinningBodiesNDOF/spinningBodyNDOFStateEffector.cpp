@@ -258,21 +258,15 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     }
 }
 
-void SpinningBodyNDOFStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-}
-
 /*! @brief Link the required dynamics states.
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
 void SpinningBodyNDOFStateEffector::linkInStates(DynParamManager& states)
 {
-    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
+    this->inertialVelocityProperty = states.getPropertyReference("v_BN_N");
+    this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
 }
 
 /*! @brief Register the effector dynamics states.

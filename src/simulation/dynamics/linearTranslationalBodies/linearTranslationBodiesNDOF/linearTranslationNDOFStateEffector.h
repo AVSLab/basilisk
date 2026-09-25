@@ -24,6 +24,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include <Eigen/Dense>
@@ -240,7 +241,6 @@ private:
                                       Eigen::Vector3d& rotAngMomPntCContr_B,
                                       double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;
-    void prependSpacecraftNameToStates() override;
     void validateConfiguration();
     void checkBodyConfiguration();
     void checkJointMassMatrix();

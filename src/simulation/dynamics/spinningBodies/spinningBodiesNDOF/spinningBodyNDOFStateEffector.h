@@ -230,7 +230,6 @@ private:
                                       Eigen::Vector3d& rotAngMomPntCContr_B,
                                       double& rotEnergyContr,
                                       Eigen::Vector3d omega_BN_B) override;
-    void prependSpacecraftNameToStates() override;
 
     void readInputMessages();
     void computeSpinningBodyInertialStates();

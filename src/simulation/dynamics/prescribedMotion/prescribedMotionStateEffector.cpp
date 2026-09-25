@@ -54,7 +54,6 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->rPrimeEpoch_PM_M.setZero();
     this->omegaEpoch_PM_P.setZero();
 
-    this->spacecraftName = "prescribedObject";
     this->nameOfsigma_PMState = "prescribedObjectsigma_PM" + std::to_string(this->effectorID);
 
     // Set the property names
@@ -599,9 +598,6 @@ void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffe
     this->assignStateParamNames<StateEffector *>(newStateEffector);
 
     this->stateEffectors.push_back(newStateEffector);
-
-    // Give the stateEffector the name of the prescribed object it is attached to
-    newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
 }
 
 /*! @brief Set the effector mass after validating it, preserving the previous value on failure.

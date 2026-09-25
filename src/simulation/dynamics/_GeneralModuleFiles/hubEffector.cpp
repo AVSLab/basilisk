@@ -97,19 +97,7 @@ void HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
  */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->g_N = statesIn.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
-    return;
-}
-
-void HubEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + this->nameOfHubPosition;
-    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubVelocity;
-    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + this->nameOfHubSigma;
-    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + this->nameOfHubOmega;
-    this->nameOfHubGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubGravVelocity;
-    this->nameOfBcGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfBcGravVelocity;
-
+    this->g_N = statesIn.getPropertyReference("g_N");
     return;
 }
 
