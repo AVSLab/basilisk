@@ -1,0 +1,1 @@
+- Removed the deprecated ``spacecraftSystem`` module, including ``SpacecraftSystem``, ``SpacecraftUnit``, and ``DockingData``, after its one-year deprecation period. Use :ref:`spacecraft` with :ref:`constraintDynamicEffector` to connect spacecraft; see :ref:`scenarioConstrainedDynamics`.

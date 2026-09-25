@@ -85,7 +85,6 @@ private:
     double cTheta;                  //!< term needed for Backsubstitution
 
     // Vector quantities
-    Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from primary body frame P origin to Hinge location.  If a single spacecraft body is modeled than P is the same as B
     Eigen::Vector3d omega_PN_S;      //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d sHat1_P;         //!< unit direction vector for the first axis of the S frame
     Eigen::Vector3d sHat2_P;         //!< unit direction vector for the second axis of the S frame
@@ -96,7 +95,6 @@ private:
     Eigen::Vector3d omega_BN_B{0.0, 0.0, 0.0};  //!< Hub/Inertial angular velocity vector in B frame components
 
     // Matrix quantities
-    Eigen::Matrix3d dcm_HP;          //!< DCM from primary body frame to hinge frame
     Eigen::Matrix3d dcm_SH;          //!< DCM from hinge to hinged rigid body frame, S
     Eigen::Matrix3d dcm_SP;          //!< DCM from body to S frame
     Eigen::Matrix3d rTilde_HP_P;     //!< Tilde matrix of rHB_B
