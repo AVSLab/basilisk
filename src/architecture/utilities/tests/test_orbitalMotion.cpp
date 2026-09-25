@@ -22,7 +22,9 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "unitTestComparators.h"
+#include <cmath>
 #include <gtest/gtest.h>
+#include <limits>
 #include <tuple>
 
 
@@ -70,6 +72,21 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_tuple(34000.0, 400.3),
                 std::make_tuple(35000.0, 500.3))
                 );
+
+/** @brief Check that non-finite and out-of-range altitudes return NaN. */
+TEST(OrbitalMotion, debyeLengthInvalidAltitudes) {
+    const double invalidAltitudes[] = {  // [km]
+        199.0,
+        35001.0,
+        std::numeric_limits<double>::infinity(),
+        -std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::quiet_NaN()
+    };
+    for (double altitude : invalidAltitudes) {
+        SCOPED_TRACE(altitude);
+        EXPECT_TRUE(std::isnan(debyeLength(altitude)));
+    }
+}
 
 TEST(OrbitalMotion, atmosphericDrag) {
     double check[3];

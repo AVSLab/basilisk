@@ -608,14 +608,10 @@ double atmosphericDensity(double alt)
 }
 
 /*!
- * Purpose: This program computes the Debye Length length for a given
- *   altitude and is valid for altitudes ranging
- *   from 200 km to GEO (35000km).  However, all values above
- *   1000 km are HIGHLY speculative at this point.
- * Inputs:
- *   alt = altitude in km
- * Outputs:
- *   debye = debye length given in m
+ * @brief Compute the Debye length for a given altitude.
+ * @param alt Altitude [km], valid from 200 km through 35000 km.
+ * @return Debye length [m], or NaN if alt is non-finite or outside the valid range.
+ * @note Values above 1000 km are highly speculative.
  */
 double debyeLength(double alt)
 {
@@ -641,7 +637,7 @@ double debyeLength(double alt)
     } else if((alt > 30000.0) && (alt <= 35000.0)) {
         debyedist = 0.1 * alt - 2999.7;
         return debyedist;
-    } else if((alt < 200.0) || (alt > 35000.0)) {
+    } else if(!isfinite(alt) || (alt < 200.0) || (alt > 35000.0)) {
         BSK_PRINT(MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
         debyedist = nan("");
         return debyedist;
