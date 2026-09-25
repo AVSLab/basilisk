@@ -62,7 +62,7 @@ public:
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d r_BP_P;                //!< position vector of the spacecraft mody frame origin B relative to the primary spacecraft body frame P.  This is used in the SpacecraftSystem module where multiple spacecraft hubs can be a single spacecraft
+    Eigen::Vector3d r_BP_P;                //!< [m] Position of body frame origin B relative to parent frame origin P, expressed in P
     Eigen::Matrix3d dcm_BP;                //!< DCM of the spacecraft body frame B relative to primary spacecraft body frame P
 
     /** setter for `stateNameOfPosition` property */
