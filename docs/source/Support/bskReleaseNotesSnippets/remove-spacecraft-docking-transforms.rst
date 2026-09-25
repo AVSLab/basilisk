@@ -1,0 +1,1 @@
+- Removed the obsolete ``StateEffector.receiveMotherSpacecraftData()`` method and its ``r_BP_P`` and ``dcm_BP`` fields following the removal of ``SpacecraftSystem``. Hub and hinged-body calculations now use their configured body-frame geometry directly; prescribed-motion transformations remain supported.

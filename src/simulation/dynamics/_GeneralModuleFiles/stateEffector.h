@@ -20,6 +20,8 @@
 #ifndef STATE_EFFECTOR_H
 #define STATE_EFFECTOR_H
 
+#include <cstdint>
+#include <string>
 #include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
@@ -62,8 +64,6 @@ public:
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d r_BP_P;                //!< [m] Position of body frame origin B relative to parent frame origin P, expressed in P
-    Eigen::Matrix3d dcm_BP;                //!< DCM of the spacecraft body frame B relative to primary spacecraft body frame P
 
     /** setter for `stateNameOfPosition` property */
     void setStateNameOfPosition(std::string value);
@@ -166,7 +166,6 @@ public:
     virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates();
-    virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP); //!< class method
 
 protected:
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
