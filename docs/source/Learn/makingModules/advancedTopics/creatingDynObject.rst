@@ -53,3 +53,33 @@ scenarios as with the spacecraft example.  See the discussion in :ref:`bskPrinci
 Basilisk modules that inherit from the ``DynamicObject`` class can be linked.  If linked,
 then the associated modules' ordinary differential equations (ODEs) are integrated
 simultaneously.
+
+Integrator ownership
+--------------------
+
+A ``DynamicObject`` owns its active integrator through a C++ ``std::unique_ptr``.
+In Python, use ``setIntegrator()`` or assign the ``integrator`` attribute:
+
+.. code-block:: python
+
+    scObject.setIntegrator(svIntegrators.svIntegratorRK4(scObject))
+
+Both entry points transfer ownership to the dynamics object, so the Python
+integrator variable may go out of scope before the simulation runs. Existing
+scripts that call ``integrator.this.disown()`` or set ``integrator.thisown = False``
+before installation remain supported; manual disowning is no longer necessary.
+Replacing the integrator destroys the previous one and preserves the primary object's
+list of synchronized dynamics objects. Passing the active integrator again is
+a no-op. A newly supplied integrator that is rejected is destroyed; its Python
+proxy must not be reused.
+
+The ``integrator`` attribute and ``getIntegrator()`` return borrowed access to
+the active integrator. That access is valid only until the integrator is
+replaced or its owning dynamics object is destroyed. Synchronized dynamics
+objects are retained by their owning Python primary.
+
+Custom C++ dynamics classes should install an integrator with
+``setIntegrator(new svIntegratorRK4(this))``. The owning ``integrator`` member
+is private; use ``getIntegrator()`` when a borrowed raw pointer is required,
+and do not manually delete the owned integrator. Compiled extensions must be
+rebuilt against extension ABI version 3.

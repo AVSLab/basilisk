@@ -46,6 +46,15 @@ Version |release|
   constraint-vector entries. All three components now use the correct constraint
   row. This is fixed in the current version.
 
+- GitHub issue 282: Passing the active integrator back to ``setIntegrator()``
+  could delete it and leave the dynamics object with a dangling pointer. The
+  operation is now a no-op, and persistent integrator ownership uses
+  ``std::unique_ptr``. Python ``integrator`` attribute assignment now transfers
+  ownership through the same setter. Explicitly disowning a newly constructed
+  Python integrator before installation remains supported. Custom C++ dynamics
+  classes must replace direct owning-member assignments with ``setIntegrator()``;
+  see :ref:`creatingDynObject`.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.
