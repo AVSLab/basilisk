@@ -649,7 +649,8 @@ double debyeLength(double alt)
 
     /* Interpolation of data */
     for(i = 0; i < N_DEBYE_PARAMETERS - 1; i++) {
-        if(X[i + 1] > alt) {
+        /* Include the upper endpoint to keep the final table lookup in bounds. */
+        if(X[i + 1] >= alt) {
             break;
         }
     }
