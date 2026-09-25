@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
+- GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
+  components of the final-acceleration constraint by reading uninitialized
+  constraint-vector entries. All three components now use the correct constraint
+  row. This is fixed in the current version.
+
 - Incremental native builds could retain an old version in
   ``Basilisk.getBuildInfo()`` after ``docs/source/bskVersion.txt`` changed.
   CMake now tracks that file and reads the current source version instead of

@@ -1,0 +1,1 @@
+- Fixed ``BSpline.approximate()`` ignoring final-acceleration components because of incorrect constraint-vector indexing (GitHub issue 1563).
