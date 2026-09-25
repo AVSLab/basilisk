@@ -46,6 +46,9 @@ Version |release|
   CMake now tracks that file and reads the current source version instead of
   Conan's cached version. Running ``ninja -j 12`` in an existing build directory
   applies the fix and refreshes the metadata without a clean build.
+- :ref:`spacecraftLocation` formed its Sun direction from the inertial origin and its viewing direction from the
+  primary spacecraft center instead of the configured body-fixed location. Illumination and viewing angles for
+  translated or offset locations are corrected in the current version (issue #864).
 
 - GitHub issue 1393: The :ref:`constraintDynamicEffector` applied its constraint force and torque
   regardless of the device status message, which gated only the load filtering and the output
