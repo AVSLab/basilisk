@@ -64,11 +64,22 @@ uint64_t
 GaussMarkov::deriveSecondarySeed(uint64_t baseSeed)
 {
     constexpr uint64_t secondaryStreamDiscriminator = 0x9E3779B97F4A7C15ULL;
-    const uint64_t candidateSeed = baseSeed ^ secondaryStreamDiscriminator;
-    std::minstd_rand primaryGenerator(static_cast<std::minstd_rand::result_type>(baseSeed));
-    std::minstd_rand secondaryGenerator(static_cast<std::minstd_rand::result_type>(candidateSeed));
-    if (primaryGenerator == secondaryGenerator) {
-        return static_cast<uint64_t>(primaryGenerator());
+    // Keep the secondary seed representable by both 32-bit and 64-bit engine result types.
+    constexpr uint64_t seedWidthMask = 0xFFFFFFFFULL;
+    const uint64_t normalizedBaseSeed = baseSeed & seedWidthMask;
+    uint64_t candidateSeed = (baseSeed ^ secondaryStreamDiscriminator) & seedWidthMask;
+
+    // Primary seeding retains all bits when minstd_rand::result_type is 64 bits.
+    // Compare both possible primary states with a fixed-width engine so every platform
+    // chooses the same secondary seed without changing the existing primary streams.
+    using SeedComparisonGenerator = std::linear_congruential_engine<uint64_t,
+        std::minstd_rand::multiplier, std::minstd_rand::increment, std::minstd_rand::modulus>;
+    const SeedComparisonGenerator primaryGenerator32(normalizedBaseSeed);
+    const SeedComparisonGenerator primaryGenerator64(baseSeed);
+    SeedComparisonGenerator secondaryGenerator(candidateSeed);
+    while (secondaryGenerator == primaryGenerator32 || secondaryGenerator == primaryGenerator64) {
+        // The full-period engine leaves either forbidden state within at most two draws.
+        candidateSeed = secondaryGenerator();
     }
     return candidateSeed;
 }

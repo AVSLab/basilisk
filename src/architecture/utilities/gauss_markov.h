@@ -44,11 +44,21 @@ public:
 
     /*! @brief Derive a seed for a secondary @c std::minstd_rand stream.
 
-        A fixed stream discriminator separates the seed values. The normalized
-        engine states are compared explicitly, with a deterministic fallback
-        if the candidate aliases @c baseSeed. This includes the special case
-        where @c std::minstd_rand normalizes seeds zero and one to the same
-        initial state.
+        A fixed stream discriminator separates the seed values. The candidate
+        engine state is compared with the primary states obtained from both the
+        low 32 bits and the full 64 bits of @c baseSeed. If either state aliases,
+        the secondary engine advances until it differs from both primary states.
+        This includes the special case where @c std::minstd_rand normalizes
+        seeds zero and one to the same initial state.
+
+        The returned seed is normalized to 32 bits. @c std::minstd_rand::result_type
+        is @c std::uint_fast32_t, whose width is implementation defined, so an
+        unmasked seed would select a different secondary stream depending on the
+        standard library the simulation was built against.
+
+        @note Primary seeding is unchanged. A base seed above 32 bits may still
+        select different primary streams on platforms with different engine
+        result widths; the derived secondary stream remains distinct from both.
 
         @param baseSeed Seed used by the primary random stream.
         @return Seed for a distinct, repeatable secondary random stream.
