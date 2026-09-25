@@ -1,0 +1,2 @@
+- Fixed out-of-bounds table reads in the C ``debyeLength()`` utility for altitudes from 2,000 km through 30,000 km (GitHub issue 1581).
+- Fixed out-of-bounds table reads for NaN altitude inputs to the C ``debyeLength()`` utility; these inputs now produce an error diagnostic and return NaN.
