@@ -19,6 +19,14 @@
 #ifndef VIZ_DATAFILETOVIZ_H
 #define VIZ_DATAFILETOVIZ_H
 
+#include <string>
+#include <sstream>
+#include "architecture/msgPayloadDefC/RWConfigLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+#include <cstdint>
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -82,6 +90,11 @@ private:
     std::vector <double> rwUMaxList;            //!< [N] vector of RW maximum motor torque values values
     int numRW = 0;                              //!< -- number of RWs across all spacecraft
     int numThr = 0;                             //!< -- number of Thrusters across all spacecraft
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedScStateOutMsgs; //!< Storage for scStateOutMsgs.
+    std::vector<std::unique_ptr<Message<THROutputMsgPayload>>> ownedThrScOutMsgs; //!< Storage for thrScOutMsgs.
+    std::vector<std::unique_ptr<Message<RWConfigLogMsgPayload>>> ownedRwScOutMsgs; //!< Storage for rwScOutMsgs.
 };
 
 #endif /* VIZ_DATAFILETOVIZ_H */

@@ -46,10 +46,6 @@ DataFileToViz::~DataFileToViz()
         bskLogger.bskLog(BSK_INFORMATION, "DataFileToViz:\nclosed the file: %s.", this->dataFileName.c_str());
     }
 
-    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
-
     return;
 }
 
@@ -141,9 +137,8 @@ void DataFileToViz::setNumOfSatellites(int numSat)
 {
     for (int i=0; i<numSat; i++) {
         /* create output message */
-        Message<SCStatesMsgPayload> *msg;
-        msg = new Message<SCStatesMsgPayload>;
-        this->scStateOutMsgs.push_back(msg);
+        this->ownedScStateOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+        this->scStateOutMsgs.push_back(this->ownedScStateOutMsgs.back().get());
     }
 }
 
@@ -187,9 +182,8 @@ void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, 
             // loop over the number of thrusters in this cluster and create an output message
             for (int i=0; i<numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
-                Message<THROutputMsgPayload> *msg;
-                msg = new Message<THROutputMsgPayload>;
-                vecMsgs.push_back(msg);
+                this->ownedThrScOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
+                vecMsgs.push_back(this->ownedThrScOutMsgs.back().get());
             }
             this->numThr += numThrPerCluster[thrClusterCount];
         }
@@ -208,9 +202,8 @@ void DataFileToViz::appendNumOfRWs(int numRW)
     std::vector <Message<RWConfigLogMsgPayload>*> vecMsgs;
     for (int i=0; i<numRW; i++) {
         /* create output message */
-        Message<RWConfigLogMsgPayload> *msg;
-        msg = new Message<RWConfigLogMsgPayload>;
-        vecMsgs.push_back(msg);
+        this->ownedRwScOutMsgs.push_back(std::make_unique<Message<RWConfigLogMsgPayload>>());
+        vecMsgs.push_back(this->ownedRwScOutMsgs.back().get());
     }
     // update total number of RWs
     this->numRW += numRW;

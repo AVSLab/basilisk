@@ -603,18 +603,6 @@ SpiceInterface::SpiceInterface()
  that was allocated in the constructor*/
 SpiceInterface::~SpiceInterface()
 {
-    for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
-        delete this->planetStateOutMsgs.at(c);
-    }
-    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
-    for (long unsigned int c=0; c<this->attRefStateOutMsgs.size(); c++) {
-        delete this->attRefStateOutMsgs.at(c);
-    }
-    for (long unsigned int c=0; c<this->transRefStateOutMsgs.size(); c++) {
-        delete this->transRefStateOutMsgs.at(c);
-    }
     delete [] this->spiceBuffer;
 }
 
@@ -857,16 +845,13 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     std::vector<std::string>::iterator it;
 
     /* clear the planet state message and payload vectors */
-    for (long unsigned int c=0; c<this->planetStateOutMsgs.size(); c++) {
-        delete this->planetStateOutMsgs.at(c);
-    }
     this->planetStateOutMsgs.clear();
+    this->ownedPlanetStateOutMsgs.clear();
     this->planetData.clear();
 
     for (it = planetNames.begin(); it != planetNames.end(); it++) {
-        Message<SpicePlanetStateMsgPayload> *spiceOutMsg;
-        spiceOutMsg = new Message<SpicePlanetStateMsgPayload>;
-        this->planetStateOutMsgs.push_back(spiceOutMsg);
+        this->ownedPlanetStateOutMsgs.push_back(std::make_unique<Message<SpicePlanetStateMsgPayload>>());
+        this->planetStateOutMsgs.push_back(this->ownedPlanetStateOutMsgs.back().get());
 
         SpicePlanetStateMsgPayload newPlanet = {};
         m33SetIdentity(newPlanet.J20002Pfix);
@@ -893,33 +878,24 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
     SpiceInt frmCode;
 
     /* clear the spacecraft state message and payload vectors */
-    for (long unsigned int c=0; c<this->scStateOutMsgs.size(); c++) {
-        delete this->scStateOutMsgs.at(c);
-    }
-    for (long unsigned int c=0; c<this->attRefStateOutMsgs.size(); c++) {
-        delete this->attRefStateOutMsgs.at(c);
-    }
-    for (long unsigned int c=0; c<this->transRefStateOutMsgs.size(); c++) {
-        delete this->transRefStateOutMsgs.at(c);
-    }
     this->scStateOutMsgs.clear();
+    this->ownedScStateOutMsgs.clear();
     this->attRefStateOutMsgs.clear();
+    this->ownedAttRefStateOutMsgs.clear();
     this->transRefStateOutMsgs.clear();
+    this->ownedTransRefStateOutMsgs.clear();
     this->scData.clear();
 
     for (it = spacecraftNames.begin(); it != spacecraftNames.end(); it++) {
         /* append to spacecraft related output messages */
-        Message<SCStatesMsgPayload> *scStateOutMsg;
-        scStateOutMsg = new Message<SCStatesMsgPayload>;
-        this->scStateOutMsgs.push_back(scStateOutMsg);
+        this->ownedScStateOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+        this->scStateOutMsgs.push_back(this->ownedScStateOutMsgs.back().get());
 
-        Message<AttRefMsgPayload> *attRefOutMsg;
-        attRefOutMsg = new Message<AttRefMsgPayload>;
-        this->attRefStateOutMsgs.push_back(attRefOutMsg);
+        this->ownedAttRefStateOutMsgs.push_back(std::make_unique<Message<AttRefMsgPayload>>());
+        this->attRefStateOutMsgs.push_back(this->ownedAttRefStateOutMsgs.back().get());
 
-        Message<TransRefMsgPayload> *transRefOutMsg;
-        transRefOutMsg = new Message<TransRefMsgPayload>;
-        this->transRefStateOutMsgs.push_back(transRefOutMsg);
+        this->ownedTransRefStateOutMsgs.push_back(std::make_unique<Message<TransRefMsgPayload>>());
+        this->transRefStateOutMsgs.push_back(this->ownedTransRefStateOutMsgs.back().get());
 
         SpicePlanetStateMsgPayload newSpacecraft = {};
         m33SetIdentity(newSpacecraft.J20002Pfix);

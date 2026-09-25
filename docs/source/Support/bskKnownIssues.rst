@@ -61,6 +61,14 @@ Version |release|
   or changing assignments. See :ref:`bskThreadOwnership` for configuration and
   C++ migration details.
 
+- GitHub issue 282: Dynamically allocated output messages now use private
+  ``std::unique_ptr`` storage, preserving the public message-vector interfaces.
+  This fixes missing cleanup in the two-axis spinning-body effector, joint
+  controllers, thruster on-time converter, and the nested wheel/thruster outputs
+  of ``DataFileToViz``. Partially constructed output collections are also cleaned
+  up when allocation fails. See :ref:`bskOutputMessageOwnership` for the ownership
+  and reconfiguration contract.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.

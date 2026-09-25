@@ -21,6 +21,9 @@
 #define ALBEDO_H
 
 
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include <Eigen/Dense>
 #include <string>
 
@@ -100,6 +103,9 @@ private:
     std::vector<double> SfluxAtInstrument;      //!< [W/m^2] solar flux at instrument (last-planet value)
     std::vector<double> AfluxAtInstrumentMax;   //!< [-] Albedo flux ratio at instrument
     std::vector<double> AfluxAtInstrument;      //!< [W/m^2] Albedo flux at instrument
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AlbedoMsgPayload>>> ownedAlbOutMsgs; //!< Storage for albOutMsgs.
 };
 
 #endif /* ALBEDO_H */

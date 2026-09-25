@@ -49,13 +49,7 @@ GroundLocation::GroundLocation()
 /*! Empty destructor method.
 
  */
-GroundLocation::~GroundLocation()
-{
-    for (long unsigned int c=0; c<this->accessOutMsgs.size(); c++) {
-        delete this->accessOutMsgs.at(c);
-    }
-    return;
-}
+GroundLocation::~GroundLocation() = default;
 
 /*! Resets the internal position to the specified initial position.*/
 void GroundLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
@@ -102,9 +96,8 @@ void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    Message<AccessMsgPayload> *msg;
-    msg = new Message<AccessMsgPayload>;
-    this->accessOutMsgs.push_back(msg);
+    this->ownedAccessOutMsgs.push_back(std::make_unique<Message<AccessMsgPayload>>());
+    this->accessOutMsgs.push_back(this->ownedAccessOutMsgs.back().get());
 
     /* expand the buffer vector */
     AccessMsgPayload accMsg;

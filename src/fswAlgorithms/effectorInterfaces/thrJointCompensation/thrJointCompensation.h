@@ -21,6 +21,11 @@
 #ifndef THRJOINTCOMPENSATION_H
 #define THRJOINTCOMPENSATION_H
 
+#include <unordered_map>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefCpp/THRArmConfigMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.h"
@@ -103,6 +108,9 @@ private:
         std::vector<double> dcm_C0P;
     };
     ArmKinematicsConfig kinCfg;      //!< struct holding the information from the static armConfigInMsg
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>> ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
 };
 
 

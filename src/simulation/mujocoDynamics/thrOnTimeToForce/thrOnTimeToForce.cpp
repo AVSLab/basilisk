@@ -103,5 +103,6 @@ void ThrOnTimeToForce::setThrMag(const std::vector<double>& value)
 void ThrOnTimeToForce::addThruster()
 {
     ++this->numThr;
-    this->thrusterForceOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
+    this->ownedThrusterForceOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
+    this->thrusterForceOutMsgs.push_back(this->ownedThrusterForceOutMsgs.back().get());
 }

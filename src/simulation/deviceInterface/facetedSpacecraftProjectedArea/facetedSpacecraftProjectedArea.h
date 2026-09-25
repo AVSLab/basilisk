@@ -20,6 +20,8 @@
 #ifndef FACETED_SPACECRAFT_PROJECTED_AREA_H
 #define FACETED_SPACECRAFT_PROJECTED_AREA_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
@@ -66,6 +68,9 @@ private:
     std::vector<double> facetProjectedAreaList{};  //!< [m^2] List of facet projected areas
     double totalProjectedArea{};  //!< [m^2] Total projected area for all facets
     double surfaceArea{};  //!< [m^2] Total surface area of all facets
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<ProjectedAreaMsgPayload>>> ownedFacetProjectedAreaOutMsgs; //!< Storage for facetProjectedAreaOutMsgs.
 };
 
 #endif

@@ -21,6 +21,8 @@
 #ifndef MAPPINGINSTRUMENT_H
 #define MAPPINGINSTRUMENT_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -52,6 +54,8 @@ private:
     std::vector<std::string> mappingPoints;
     std::vector<DataNodeUsageMsgPayload> dataNodeOutMsgBuffer;                  //!< buffer of data node output data
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<DataNodeUsageMsgPayload>>> ownedDataNodeOutMsgs; //!< Storage for dataNodeOutMsgs.
 };
 
 #endif //BASILISK_MAPPINGINSTRUMENT_H

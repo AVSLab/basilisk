@@ -21,6 +21,8 @@
 #ifndef MSMFORCETORQUE_H
 #define MSMFORCETORQUE_H
 
+#include <cstdint>
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/VoltMsgPayload.h"
@@ -65,6 +67,11 @@ private:
     std::vector<double> volt;                                   //!< [V] input voltage for each spacecrat object
     std::vector<Eigen::Vector3d> r_BN_NList;                    //!< [m] list of inertial satellite position vectors
     std::vector<Eigen::MRPd> sigma_BNList;                      //!< [m] list of satellite MRP orientations
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<CmdTorqueBodyMsgPayload>>> ownedETorqueOutMsgs; //!< Storage for eTorqueOutMsgs.
+    std::vector<std::unique_ptr<Message<CmdForceInertialMsgPayload>>> ownedEForceOutMsgs; //!< Storage for eForceOutMsgs.
+    std::vector<std::unique_ptr<Message<ChargeMsmMsgPayload>>> ownedChargeMsmOutMsgs; //!< Storage for chargeMsmOutMsgs.
 };
 
 

@@ -21,6 +21,10 @@
 #ifndef JOINTMOTIONCOMPENSATOR_H
 #define JOINTMOTIONCOMPENSATOR_H
 
+#include <unordered_map>
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/msgPayloadDefCpp/MJSysMassMatrixMsgPayload.h"
 #include "architecture/msgPayloadDefCpp/MJJointReactionsMsgPayload.h"
@@ -78,6 +82,8 @@ private:
     }; //< struct to hold info about each kinematic tree
     std::unordered_map<int, TreeInfo> treeMap;  //!< map holding tree info for each kinematic tree
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>> ownedHubTorqueOutMsgs; //!< Storage for hubTorqueOutMsgs.
 };
 
 

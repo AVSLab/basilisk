@@ -244,6 +244,10 @@ private:
     void computeCThetaStar(Eigen::VectorXd& CThetaStar, const Eigen::Vector3d& g_N);
     void computeBackSubMatrices(BackSubMatrices& backSubContr) const;
     void computeBackSubVectors(BackSubMatrices& backSubContr) const;
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>> ownedSpinningBodyOutMsgs; //!< Storage for spinningBodyOutMsgs.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedSpinningBodyConfigLogOutMsgs; //!< Storage for spinningBodyConfigLogOutMsgs.
 };
 
 #endif /* SPINNING_BODY_N_DOF_STATE_EFFECTOR_H */

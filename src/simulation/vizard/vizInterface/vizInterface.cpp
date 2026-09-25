@@ -100,10 +100,6 @@ VizInterface::VizInterface()
  */
 VizInterface::~VizInterface()
 {
-    for (size_t c=0; c<this->opnavImageOutMsgs.size(); c++) {
-        delete this->opnavImageOutMsgs.at(c);
-    }
-
     for (size_t c=0; c<this->bskImagePtrs.size(); c++) {
         free(this->bskImagePtrs.at(c));
         this->bskImagePtrs.at(c) = NULL;
@@ -1384,9 +1380,8 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
     this->cameraConfigBuffers.push_back(tmpCamConfigMsg);
 
     /* create output message */
-    Message<CameraImageMsgPayload> *msg;
-    msg = new Message<CameraImageMsgPayload>;
-    this->opnavImageOutMsgs.push_back(msg);
+    this->ownedOpnavImageOutMsgs.push_back(std::make_unique<Message<CameraImageMsgPayload>>());
+    this->opnavImageOutMsgs.push_back(this->ownedOpnavImageOutMsgs.back().get());
 
     /* create image pointer */
     void *imgPtr = NULL;

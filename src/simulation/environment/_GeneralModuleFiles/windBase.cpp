@@ -38,12 +38,7 @@ WindBase::WindBase()
     this->epochDateTime.tm_isdst = -1;
 }
 
-WindBase::~WindBase()
-{
-    for (auto* msg : this->envOutMsgs) {
-        delete msg;
-    }
-}
+WindBase::~WindBase() = default;
 
 void WindBase::Reset(uint64_t CurrentSimNanos)
 {
@@ -198,9 +193,8 @@ void WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     //! - create output message
-    Message<WindMsgPayload> *msg;
-    msg = new Message<WindMsgPayload>;
-    this->envOutMsgs.push_back(msg);
+    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<WindMsgPayload>>());
+    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
 }
 
 void WindBase::UpdateState(uint64_t CurrentSimNanos)

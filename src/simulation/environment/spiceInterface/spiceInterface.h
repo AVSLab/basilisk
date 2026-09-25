@@ -20,6 +20,7 @@
 #ifndef SpiceInterface_H
 #define SpiceInterface_H
 
+#include <cstdint>
 #include <vector>
 #include <map>
 #include <filesystem>
@@ -278,6 +279,12 @@ private:
 
     //! Increment this planet's position (isPosition=true) or orientation SPICE-query tally.
     void countSpiceQuery(const std::string& planetName, bool isPosition);
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>> ownedPlanetStateOutMsgs; //!< Storage for planetStateOutMsgs.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedScStateOutMsgs; //!< Storage for scStateOutMsgs.
+    std::vector<std::unique_ptr<Message<AttRefMsgPayload>>> ownedAttRefStateOutMsgs; //!< Storage for attRefStateOutMsgs.
+    std::vector<std::unique_ptr<Message<TransRefMsgPayload>>> ownedTransRefStateOutMsgs; //!< Storage for transRefStateOutMsgs.
 };
 
 

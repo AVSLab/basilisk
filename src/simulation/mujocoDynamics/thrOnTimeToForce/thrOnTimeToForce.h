@@ -20,6 +20,8 @@
 #ifndef THR_ON_TIME_TO_FORCE_H
 #define THR_ON_TIME_TO_FORCE_H
 
+#include <cstddef>
+#include <memory>
 #include <cstdint>
 #include <vector>
 
@@ -68,6 +70,9 @@ private:
     std::vector<double> firingTimeRemaining;      //!< [s] remaining commanded firing time for each thruster
     uint64_t prevCommandWriteNanos;                //!< [ns] last processed command message time stamp
     double previousUpdateTimeSec;                  //!< [s] previous module update time
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>> ownedThrusterForceOutMsgs; //!< Storage for thrusterForceOutMsgs.
 };
 
 

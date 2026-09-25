@@ -20,6 +20,8 @@
 #ifndef EPHEMERIS_CONVERTER_H
 #define EPHEMERIS_CONVERTER_H
 
+#include <cstdint>
+#include <memory>
 #include <vector>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -35,7 +37,7 @@ class EphemerisConverter: public SysModel {
 public:
     EphemerisConverter();
     ~EphemerisConverter();
-    
+
     void UpdateState(uint64_t CurrentSimNanos);
     void Reset(uint64_t CurrentSimNanos);
     void readInputMessages();                       //!< class method
@@ -51,6 +53,9 @@ public:
 private:
     std::vector<EphemerisMsgPayload> ephemOutBuffers;       //!< output message buffers
     std::vector<SpicePlanetStateMsgPayload> spiceInBuffers; //!< spice input message copies
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<EphemerisMsgPayload>>> ownedEphemOutMsgs; //!< Storage for ephemOutMsgs.
 };
 
 

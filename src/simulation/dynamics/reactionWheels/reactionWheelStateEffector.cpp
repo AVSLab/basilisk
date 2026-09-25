@@ -39,20 +39,7 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 }
 
 
-ReactionWheelStateEffector::~ReactionWheelStateEffector()
-{
-    // Clear output messages vector
-    for (unsigned int i = 0; i < this->rwOutMsgs.size(); i++) {
-        if (this->rwOutMsgs[i]) {
-            delete this->rwOutMsgs[i];
-            this->rwOutMsgs[i] = nullptr;
-        }
-    }
-    rwOutMsgs.clear();
-
-    // Clear reaction wheel data vector - these are owned by SWIG
-    ReactionWheelData.clear();
-}
+ReactionWheelStateEffector::~ReactionWheelStateEffector() = default;
 
 /*! @brief Link the required dynamics states.
  *
@@ -533,9 +520,8 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
     this->ReactionWheelData.push_back(NewRW);
 
     /* add a RW state log output message for this wheel */
-    Message<RWConfigLogMsgPayload> *msg;
-    msg = new Message<RWConfigLogMsgPayload>;
-    this->rwOutMsgs.push_back(msg);
+    this->ownedRwOutMsgs.push_back(std::make_unique<Message<RWConfigLogMsgPayload>>());
+    this->rwOutMsgs.push_back(this->ownedRwOutMsgs.back().get());
 }
 
 

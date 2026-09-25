@@ -74,14 +74,7 @@ double validateAndClampAlphaEB(double alphaEB, unsigned int spacecraftIndex, BSK
 SpacecraftChargingEquilibrium::SpacecraftChargingEquilibrium() = default;
 
 /*! Module Destructor */
-SpacecraftChargingEquilibrium::~SpacecraftChargingEquilibrium()
-{
-    /* free up output message objects */
-    for (long unsigned int c=0; c<this->voltOutMsgs.size(); c++) {
-        delete this->voltOutMsgs.at(c);
-        delete this->currentsOutMsgs.at(c);
-    }
-}
+SpacecraftChargingEquilibrium::~SpacecraftChargingEquilibrium() = default;
 
 void SpacecraftChargingEquilibrium::setEnableDebugPrints(bool enabled)
 {
@@ -600,13 +593,11 @@ void SpacecraftChargingEquilibrium::addSpacecraft(Message<SCStatesMsgPayload> *t
     this->sigma_BNList.push_back(zeroMRP);
 
     // Create output message objects.
-    Message<VoltMsgPayload> *msgVolt;
-    msgVolt = new Message<VoltMsgPayload>;
-    this->voltOutMsgs.push_back(msgVolt);
+    this->ownedVoltOutMsgs.push_back(std::make_unique<Message<VoltMsgPayload>>());
+    this->voltOutMsgs.push_back(this->ownedVoltOutMsgs.back().get());
 
-    Message<ScChargingCurrentsMsgPayload> *msgCurrent;
-    msgCurrent = new Message<ScChargingCurrentsMsgPayload>;
-    this->currentsOutMsgs.push_back(msgCurrent);
+    this->ownedCurrentsOutMsgs.push_back(std::make_unique<Message<ScChargingCurrentsMsgPayload>>());
+    this->currentsOutMsgs.push_back(this->ownedCurrentsOutMsgs.back().get());
 }
 
 /*!  Read in the input messages

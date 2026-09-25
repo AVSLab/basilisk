@@ -20,6 +20,8 @@
 #ifndef SPACECRAFT_CHARGING_EQUILIBRIUM_H
 #define SPACECRAFT_CHARGING_EQUILIBRIUM_H
 
+#include <cstdint>
+#include <memory>
 #include <functional>
 #include <limits>
 #include <string>
@@ -206,6 +208,10 @@ private:
     double rootSolveUpperBound = 400000.0;                                       //!< [V] upper bracket for bisection equilibrium solve
     double servicerSolveAccuracy = 1e-6;                                         //!< [V] bisection tolerance for servicer equilibrium
     double targetSolveAccuracy = 1e-8;                                           //!< [V] bisection tolerance for target equilibrium
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<VoltMsgPayload>>> ownedVoltOutMsgs; //!< Storage for voltOutMsgs.
+    std::vector<std::unique_ptr<Message<ScChargingCurrentsMsgPayload>>> ownedCurrentsOutMsgs; //!< Storage for currentsOutMsgs.
 };
 
 #endif

@@ -228,9 +228,12 @@ void JointMotionCompensator::addSpacecraft()
     this->numSpacecraft ++;
 
     // add an output message for each principal axis of the new spacecraft
-    this->hubTorqueOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
-    this->hubTorqueOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
-    this->hubTorqueOutMsgs.push_back(new Message<SingleActuatorMsgPayload>());
+    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
+    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
+    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
+    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
+    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
+    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
 }
 
 void JointMotionCompensator::addHingedJoint()

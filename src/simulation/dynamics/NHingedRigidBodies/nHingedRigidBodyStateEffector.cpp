@@ -43,15 +43,7 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
 uint64_t NHingedRigidBodyStateEffector::effectorID = 1;
 
 /*! This is the destructor, releasing the per panel output messages */
-NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
-{
-    for (size_t c = 0; c < this->nHingedRigidBodyOutMsgs.size(); c++) {
-        delete this->nHingedRigidBodyOutMsgs.at(c);
-        delete this->nHingedRigidBodyConfigLogOutMsgs.at(c);
-    }
-
-    return;
-}
+NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector() = default;
 
 /*! This method appends a panel to the chain along with its output messages
 
@@ -62,8 +54,10 @@ NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 {
     this->requireMutableTopology("NHingedRigidBodyStateEffector::addHingedPanel");
     this->PanelVec.push_back(NewPanel);
-    this->nHingedRigidBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
-    this->nHingedRigidBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
+    this->ownedNHingedRigidBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
+    this->nHingedRigidBodyOutMsgs.push_back(this->ownedNHingedRigidBodyOutMsgs.back().get());
+    this->ownedNHingedRigidBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+    this->nHingedRigidBodyConfigLogOutMsgs.push_back(this->ownedNHingedRigidBodyConfigLogOutMsgs.back().get());
 
     const std::string panelSuffix = this->propertyNameIndex + "_" + std::to_string(this->PanelVec.size());
     HingedPanel& panel = this->PanelVec.back();

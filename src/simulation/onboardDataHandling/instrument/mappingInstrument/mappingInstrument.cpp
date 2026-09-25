@@ -28,12 +28,7 @@ MappingInstrument::MappingInstrument()
 }
 
 /*! Module Destructor */
-MappingInstrument::~MappingInstrument()
-{
-    for (long unsigned int c = 0; c < this->dataNodeOutMsgs.size(); c++) {
-        delete this->dataNodeOutMsgs.at(c);
-    }
-}
+MappingInstrument::~MappingInstrument() = default;
 
 /*! This method is used to reset the module. The nodeBaudRate is checked for a non-zero value.
  @param CurrentSimNanos
@@ -102,9 +97,8 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->accessInMsgs.push_back(tmpAccessMsg->addSubscriber());
 
     /* Create buffer output messages */
-    Message<DataNodeUsageMsgPayload> *msg;
-    msg = new Message<DataNodeUsageMsgPayload>;
-    this->dataNodeOutMsgs.push_back(msg);
+    this->ownedDataNodeOutMsgs.push_back(std::make_unique<Message<DataNodeUsageMsgPayload>>());
+    this->dataNodeOutMsgs.push_back(this->ownedDataNodeOutMsgs.back().get());
 
     /* Expand the data node usage buffer vectors */
     this->dataNodeOutMsgBuffer.push_back(dataNodeUsageMsg);

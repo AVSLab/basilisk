@@ -20,6 +20,7 @@
 #ifndef DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define DUAL_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
+#include <memory>
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -170,6 +171,10 @@ private:
     };
 
     void validateConfiguration(); //!< Validate panel masses and the configured hinge-frame DCM
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>> ownedDualHingedRigidBodyOutMsgs; //!< Storage for dualHingedRigidBodyOutMsgs.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedDualHingedRigidBodyConfigLogOutMsgs; //!< Storage for dualHingedRigidBodyConfigLogOutMsgs.
 };
 
 

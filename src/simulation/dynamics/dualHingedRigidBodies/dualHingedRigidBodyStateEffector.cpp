@@ -70,13 +70,11 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfInertialAngVelocityProperty2 = "DualHingedRigidBodyStateEffectorInertialAngVelocity2" + std::to_string(this->effectorID);
     this->effectorID++;
 
-    Message<HingedRigidBodyMsgPayload> *panelMsg;
-    Message<SCStatesMsgPayload> *scMsg;
     for (int c = 0; c < 2; c++) {
-        panelMsg = new Message<HingedRigidBodyMsgPayload>;
-        this->dualHingedRigidBodyOutMsgs.push_back(panelMsg);
-        scMsg = new Message<SCStatesMsgPayload>;
-        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(scMsg);
+        this->ownedDualHingedRigidBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
+        this->dualHingedRigidBodyOutMsgs.push_back(this->ownedDualHingedRigidBodyOutMsgs.back().get());
+        this->ownedDualHingedRigidBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(this->ownedDualHingedRigidBodyConfigLogOutMsgs.back().get());
     }
 
     this->ModelTag = "";
@@ -86,15 +84,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 
 uint64_t DualHingedRigidBodyStateEffector::effectorID = 1;
 
-DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
-{
-    for (size_t c = 0; c < 2; c++) {
-        delete this->dualHingedRigidBodyOutMsgs.at(c);
-        delete this->dualHingedRigidBodyConfigLogOutMsgs.at(c);
-    }
-
-    return;
-}
+DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector() = default;
 
 
 /*! @brief Validate configuration without changing integrated states or commands.

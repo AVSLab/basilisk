@@ -43,13 +43,7 @@ LinearTranslationNDOFStateEffector::LinearTranslationNDOFStateEffector()
 uint64_t LinearTranslationNDOFStateEffector::effectorID = 1;
 
 /*! This is the destructor, releasing the per body output messages */
-LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector()
-{
-    for (size_t c = 0; c < this->translatingBodyOutMsgs.size(); c++) {
-        delete this->translatingBodyOutMsgs.at(c);
-        delete this->translatingBodyConfigLogOutMsgs.at(c);
-    }
-}
+LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector() = default;
 
 void TranslatingBody::setMass(double mass) {
     if (std::isfinite(mass) && mass >= 0.0)
@@ -104,8 +98,10 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     this->N++;
 
     // Create the output vectors
-    this->translatingBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
-    this->translatingBodyOutMsgs.push_back(new Message<LinearTranslationRigidBodyMsgPayload>);
+    this->ownedTranslatingBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
+    this->translatingBodyConfigLogOutMsgs.push_back(this->ownedTranslatingBodyConfigLogOutMsgs.back().get());
+    this->ownedTranslatingBodyOutMsgs.push_back(std::make_unique<Message<LinearTranslationRigidBodyMsgPayload>>());
+    this->translatingBodyOutMsgs.push_back(this->ownedTranslatingBodyOutMsgs.back().get());
     this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
 
     // resize A B and C

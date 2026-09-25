@@ -245,6 +245,10 @@ private:
     void checkBodyConfiguration();
     void checkJointMassMatrix();
     void computeTranslatingBodyInertialStates();
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<LinearTranslationRigidBodyMsgPayload>>> ownedTranslatingBodyOutMsgs; //!< Storage for translatingBodyOutMsgs.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedTranslatingBodyConfigLogOutMsgs; //!< Storage for translatingBodyConfigLogOutMsgs.
 };
 
 #endif /* LINEAR_TRANSLATION_N_DOF_STATE_EFFECTOR_H */

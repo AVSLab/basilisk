@@ -20,6 +20,7 @@
 #ifndef N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define N_HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
+#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
@@ -157,6 +158,10 @@ public:
 private:
     void validateConfiguration();      //!< Validate panel masses, uniformity, and the configured hinge-frame DCM
     void computePanelInertialStates(); //!< Method for computing the panel states relative to the inertial frame
+
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>> ownedNHingedRigidBodyOutMsgs; //!< Storage for nHingedRigidBodyOutMsgs.
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedNHingedRigidBodyConfigLogOutMsgs; //!< Storage for nHingedRigidBodyConfigLogOutMsgs.
 };
 
 

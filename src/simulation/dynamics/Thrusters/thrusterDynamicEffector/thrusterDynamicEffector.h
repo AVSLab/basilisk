@@ -98,6 +98,8 @@ private:
 
     uint64_t prevCommandTime;                       //!< Time for previous valid thruster firing
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<THROutputMsgPayload>>> ownedThrusterOutMsgs; //!< Storage for thrusterOutMsgs.
 };
 
 

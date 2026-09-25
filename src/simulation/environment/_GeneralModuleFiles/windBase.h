@@ -20,6 +20,9 @@
 #ifndef WIND_BASE_H
 #define WIND_BASE_H
 
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include <Eigen/Dense>
 #include <time.h>
 
@@ -181,6 +184,8 @@ private:
     Eigen::Vector3d planetOmega_N = {0.0, 0.0, OMEGA_EARTH};  //!< [rad/s] Planet angular velocity in inertial frame (default: Earth rotation rate)
     Eigen::Vector3d spiceOmega_N = {0.0, 0.0, 0.0};           //!< [rad/s] Planet angular velocity derived from SPICE DCM derivatives
 
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<WindMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };
 
 #endif /* WIND_BASE_H */

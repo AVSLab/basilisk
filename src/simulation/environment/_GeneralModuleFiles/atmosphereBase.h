@@ -19,6 +19,8 @@
 #ifndef BASILISK_ATMOSPHEREBASE_H
 #define BASILISK_ATMOSPHEREBASE_H
 
+#include <cstdint>
+#include <memory>
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -72,6 +74,10 @@ protected:
     std::vector<SCStatesMsgPayload> scStates;  //!< vector of the spacecraft state messages
     SpicePlanetStateMsgPayload planetState; //!< planet state message
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
+
+private:
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };
 
 

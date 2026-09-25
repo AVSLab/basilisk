@@ -47,13 +47,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
 }
 
 /*! The destructor. */
-ThrusterDynamicEffector::~ThrusterDynamicEffector()
-{
-    for (long unsigned int c=0; c<this->thrusterOutMsgs.size(); c++) {
-        delete this->thrusterOutMsgs.at(c);
-    }
-    return;
-}
+ThrusterDynamicEffector::~ThrusterDynamicEffector() = default;
 
 
 /*! This method is used to reset the module.
@@ -405,9 +399,8 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload>* msg;
-    msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(msg);
+    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
+    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
 
     // Push back an empty message
     ReadFunctor<SCStatesMsgPayload> emptyReadFunctor;
@@ -431,9 +424,8 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    Message<THROutputMsgPayload>* msg;
-    msg = new Message<THROutputMsgPayload>;
-    this->thrusterOutMsgs.push_back(msg);
+    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
+    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
 
     // Save the incoming body message
     this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());

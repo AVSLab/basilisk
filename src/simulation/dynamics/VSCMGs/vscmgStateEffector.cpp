@@ -59,13 +59,7 @@ VSCMGStateEffector::VSCMGStateEffector()
 }
 
 
-VSCMGStateEffector::~VSCMGStateEffector()
-{
-    for (long unsigned int c=0; c<this->vscmgOutMsgs.size(); c++) {
-        delete this->vscmgOutMsgs.at(c);
-    }
-    return;
-}
+VSCMGStateEffector::~VSCMGStateEffector() = default;
 
 /*! @brief Link the required dynamics states.
  *
@@ -951,7 +945,6 @@ void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
     this->VSCMGData.push_back(*NewVSCMG);
 
     /* add a VSCMG output message for this device */
-    Message<VSCMGConfigMsgPayload> *msg;
-    msg = new Message<VSCMGConfigMsgPayload>;
-    this->vscmgOutMsgs.push_back(msg);
+    this->ownedVscmgOutMsgs.push_back(std::make_unique<Message<VSCMGConfigMsgPayload>>());
+    this->vscmgOutMsgs.push_back(this->ownedVscmgOutMsgs.back().get());
 }
