@@ -57,8 +57,6 @@ typedef struct {
 /*! @brief state effector class */
 class StateEffector {
 public:
-    std::string nameOfSpacecraftAttachedTo="";//!< class variable
-    std::string parentSpacecraftName="";   //!< name of the spacecraft the state effector is attached to
     EffectorMassProps effProps;            //!< stateEffectors instantiation of effector mass props
     Eigen::VectorXd stateDerivContribution; //!< stateEffector contribution to another stateEffector to prevent double-counting
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
@@ -165,7 +163,6 @@ public:
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
     virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
-    virtual void prependSpacecraftNameToStates();
 
 protected:
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector

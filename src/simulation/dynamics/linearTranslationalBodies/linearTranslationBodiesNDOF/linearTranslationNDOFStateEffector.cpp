@@ -201,22 +201,15 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
     }
 }
 
-/*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
-void LinearTranslationNDOFStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfRhoState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoState;
-    this->nameOfRhoDotState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoDotState;
-}
-
 /*! This method allows the TB state effector to have access to the hub states and gravity
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
 void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& states)
 {
-    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "r_BN_N");
-    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "v_BN_N");
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
+    this->inertialVelocityProperty = states.getPropertyReference("v_BN_N");
+    this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
 }
 
 /*! This method runs every configuration check. Spacecraft initialization always reaches it through

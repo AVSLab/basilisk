@@ -149,7 +149,10 @@ void LinearTranslationOneDOFStateEffector::linkInStates(DynParamManager& states)
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    // Prescribed attachments use the linked attitude property instead of a hub attitude state.
+    if (this->prescribedAttitudeProperty == nullptr) {
+        this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
+    }
     this->g_N = states.getPropertyReference("g_N");
 }
 

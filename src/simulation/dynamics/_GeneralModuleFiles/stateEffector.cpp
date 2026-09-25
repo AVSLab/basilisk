@@ -37,7 +37,6 @@ StateEffector::StateEffector()
     // - set force and torques equal to zero
     this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();
 
-    this->nameOfSpacecraftAttachedTo = "";
     return;
 }
 
@@ -115,12 +114,6 @@ void StateEffector::addDynamicEffector(DynamicEffector * newDynamicEffector [[ma
 void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties [[maybe_unused]])
 {
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
-}
-
-/*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
-void StateEffector::prependSpacecraftNameToStates()
-{
-    return;
 }
 
 void StateEffector::setStateNameOfPosition(std::string value)

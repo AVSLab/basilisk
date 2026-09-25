@@ -18,16 +18,13 @@ Version |release|
   NaN altitudes could also trigger an out-of-bounds read; they now produce an
   error diagnostic and return NaN before interpolation.
 
-- Removed the obsolete ``StateEffector.receiveMotherSpacecraftData()`` method
-  and its ``r_BP_P`` and ``dcm_BP`` fields, which supported the retired
-  ``SpacecraftSystem`` docking model. Configure hub and hinge geometry in the
-  owning body frame; use :ref:`constraintDynamicEffector` to connect spacecraft.
-  The separate ``PrescribedMotionStateEffector`` transformations remain supported.
-
-- The deprecated ``Basilisk.simulation.spacecraftSystem`` module has been removed,
-  including ``SpacecraftSystem``, ``SpacecraftUnit``, and ``DockingData``. Use
-  :ref:`spacecraft` for each spacecraft and :ref:`constraintDynamicEffector` to
-  connect them. See :ref:`scenarioConstrainedDynamics` for a working example.
+- The deprecated ``Basilisk.simulation.spacecraftSystem`` module and its
+  supporting effector APIs have been removed. Use :ref:`spacecraft` with
+  :ref:`constraintDynamicEffector` for connected spacecraft; see
+  :ref:`scenarioConstrainedDynamics` for a working example. API migration details
+  are listed in the :ref:`release notes <bsk-release-current>`. The supported
+  prescribed-motion branches also no longer emit a missing-state warning when
+  looking up an unused hub-attitude state during initialization.
 
 - GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
   components of the final-acceleration constraint by reading uninitialized

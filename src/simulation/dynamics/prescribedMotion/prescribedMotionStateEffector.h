@@ -169,7 +169,6 @@ private:
     StateData *sigma_PMState;                           //!< MRP attitude of frame P relative to frame M
 
     // Parameters required for effector branching
-    std::string spacecraftName;                         //!< Name of prescribed object used for effector branching
     std::vector<StateEffector*> stateEffectors;         //!< Vector of attached state effectors
 
     Eigen::MatrixXd* r_PB_B;                            //!< [m] Position of point P relative to point B in B frame components

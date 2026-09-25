@@ -64,7 +64,6 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< Add contributions to energy and momentum
     void modifyStates(double integTime); //!< Method to switch MRPs
-    void prependSpacecraftNameToStates(); //!< class method
     void matchGravitytoVelocityState(Eigen::Vector3d v_CN_N); //!< method to set the gravity velocity to base velocity
     /**
      * @brief Validate finite hub configuration before initializing dynamics.

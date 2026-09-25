@@ -153,13 +153,6 @@ void SpinningBodyOneDOFStateEffector::writeOutputStateMessages(uint64_t CurrentC
     }
 }
 
-/*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
-void SpinningBodyOneDOFStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-}
-
 /*! This method allows the SB state effector to have access to the hub states and gravity
  *
  * @param[in] states Dynamic parameter manager containing the required states.
@@ -172,7 +165,10 @@ void SpinningBodyOneDOFStateEffector::linkInStates(DynParamManager& states)
     // Get access to properties needed for dynamic coupling (Hub or prescribed)
     this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
     this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    // Prescribed attachments use the linked attitude property instead of a hub attitude state.
+    if (this->prescribedAttitudeProperty == nullptr) {
+        this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
+    }
 }
 
 /*! This method is used to link prescribed motion properties

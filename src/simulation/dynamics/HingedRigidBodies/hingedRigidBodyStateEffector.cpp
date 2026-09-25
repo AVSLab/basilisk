@@ -116,14 +116,6 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
 }
 
-void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-
-    return;
-}
-
 /*! This method allows the HRB state effector to have access to the hub states and gravity
  *
  * @param[in] states Dynamic parameter manager containing the required states.
@@ -131,15 +123,12 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
-    this->c_B = states.getPropertyReference(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
-    this->cPrime_B = states.getPropertyReference(tmpMsgName);
+    this->c_B = states.getPropertyReference("centerOfMassSC");
+    this->cPrime_B = states.getPropertyReference("centerOfMassPrimeSC");
 
-    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
+    this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
 
     return;
 }

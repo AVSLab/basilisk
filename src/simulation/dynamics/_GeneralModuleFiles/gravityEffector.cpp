@@ -173,15 +173,6 @@ void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
     }
 }
 
-void GravityEffector::prependSpacecraftNameToStates()
-{
-    this->inertialPositionPropName =
-        this->nameOfSpacecraftAttachedTo + this->inertialPositionPropName;
-    this->inertialVelocityPropName =
-        this->nameOfSpacecraftAttachedTo + this->inertialVelocityPropName;
-    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + this->vehicleGravityPropName;
-}
-
 void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     static const Eigen::Vector3d zeroVector3d = Eigen::Vector3d::Zero();

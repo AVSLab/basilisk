@@ -126,16 +126,6 @@ void DualHingedRigidBodyStateEffector::validateConfiguration()
     }
 }
 
-void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfTheta1State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1State;
-    this->nameOfTheta1DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1DotState;
-    this->nameOfTheta2State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2State;
-    this->nameOfTheta2DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2DotState;
-
-    return;
-}
-
 
 /*! @brief Link the required dynamics states.
  *
@@ -144,12 +134,12 @@ void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
-    this->g_N = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + "g_N");
+    this->g_N = states.getPropertyReference("g_N");
 
-    this->inertialPositionProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialPosition);
-    this->inertialVelocityProperty = states.getPropertyReference(this->nameOfSpacecraftAttachedTo + this->propName_inertialVelocity);
-    this->v_BN_NState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfVelocity);
-    this->hubSigmaState = states.getStateObject(this->nameOfSpacecraftAttachedTo + this->stateNameOfSigma);
+    this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
+    this->inertialVelocityProperty = states.getPropertyReference(this->propName_inertialVelocity);
+    this->v_BN_NState = states.getStateObject(this->stateNameOfVelocity);
+    this->hubSigmaState = states.getStateObject(this->stateNameOfSigma);
 
     return;
 }

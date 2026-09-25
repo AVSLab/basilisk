@@ -57,12 +57,10 @@ from typing import Optional, Union
 %immutable GravityEffector::systemTimeCorrPropName;
 %immutable GravityEffector::inertialPositionPropName;
 %immutable GravityEffector::inertialVelocityPropName;
-%immutable GravityEffector::nameOfSpacecraftAttachedTo;
 
 // Methods that users do not need / should not be calling
 %ignore GravityEffector::updateInertialPosAndVel;
 %ignore GravityEffector::updateEnergyContributions;
-%ignore GravityEffector::prependSpacecraftNameToStates;
 
 %pythonappend GravBodyData::GravBodyData() %{
     object.__setattr__(self, "_pyGravityModel", None) # Enable setting _pyGravityModel
