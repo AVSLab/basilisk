@@ -22,11 +22,14 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/bskSemaphore.h"
 #include "architecture/system_model/sys_process.h"
+#include <atomic>
 #include <condition_variable>
-#include <iostream>
+#include <cstddef>
+#include <exception>
+#include <memory>
 #include <mutex>
 #include <stdint.h>
-#include <set>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -36,7 +39,8 @@ class SimThreadExecution
 public:
     SimThreadExecution()=default;
     explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
-    ~SimThreadExecution()=default;   //!< Destructor for given sim thread
+    /** @brief Request shutdown and join the worker before destroying its state. */
+    ~SimThreadExecution();
     void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Method to update a new simulation stop time
     void clearProcessList() {processList.clear();}  //!< clear the process list
     void selfInitProcesses() const;
@@ -64,7 +68,7 @@ public:
     uint64_t stopThreadNanos=0;   //!< Current stop conditions for the thread
     int64_t stopThreadPriority=-1; //!< Current stop priority for thread
     uint64_t threadID=0;          //!< Identifier for thread
-    std::thread *threadContext=nullptr; //!< std::thread data for concurrent execution
+    std::thread threadContext; //!< Owned worker, joined before this execution record is destroyed
     int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
     bool selfInitNow{};              //!< Flag requesting self init
     bool crossInitNow{};             //!< Flag requesting cross-init
@@ -73,7 +77,7 @@ public:
     //!
 private:
     bool threadRunning{};            //!< Flag that will allow for easy concurrent locking
-    bool terminateThread{};          //!< Flag that indicates that it is time to take thread down
+    std::atomic<bool> terminateThread{false}; //!< Shutdown request shared by the parent and worker
     BSKSemaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
     BSKSemaphore selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
     std::vector<SysProcess*> processList;  //!< List of processes associated with thread
@@ -86,7 +90,11 @@ class SimModel
 {
 public:
     SimModel();  //!< The SimModel constructor
-    ~SimModel();  //!< SimModel destructorS
+    SimModel(const SimModel&) = delete;
+    SimModel& operator=(const SimModel&) = delete;
+    SimModel(SimModel&&) = delete;
+    SimModel& operator=(SimModel&&) = delete;
+    ~SimModel();  //!< Stop and join all owned workers
 
     void selfInitSimulation();  //!< Method to initialize all added Tasks
     void resetInitSimulation() const;  //!< Method to reset all added tasks
@@ -96,7 +104,14 @@ public:
     void addProcessToThread(SysProcess *newProc, size_t threadSel);
     void ResetSimulation();  //!< Reset simulation back to zero
     void clearProcsFromThreads() const;
+    /** @brief Stop and join existing workers, then replace the thread pool.
+     * @param threadCount Number of worker records to allocate; must be positive.
+     * @note Processes are borrowed and remain available for reassignment.
+     */
     void resetThreads(uint64_t threadCount);
+    /** @brief Stop and join all workers and release their execution records.
+     * @note Safe to call repeatedly, including before workers have been started.
+     */
     void deleteThreads();
     void assignRemainingProcs();
     uint64_t getThreadCount() const {return threadList.size();} //!< returns the number of threads used
@@ -104,7 +119,7 @@ public:
     BSKLogger bskLogger;                      //!< -- BSK Logging
 
     std::vector<SysProcess *> processList;  //!< -- List of processes we've created
-    std::vector<SimThreadExecution*> threadList{};  //!< -- Array of threads that we're running on
+    std::vector<std::unique_ptr<SimThreadExecution>> threadList; //!< Owned worker execution records
     std::string SimulationName;  //!< -- Identifier for Sim
     uint64_t CurrentNanos=0;  //!< [ns] Current sim time
     uint64_t NextTaskTime=0;  //!< [ns] time for the next Task

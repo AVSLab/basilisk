@@ -19,6 +19,8 @@
 
 #include "sim_model.h"
 #include <iostream>
+#include <memory>
+#include <utility>
 
 void activateNewThread(void *threadData)
 {
@@ -32,6 +34,9 @@ void activateNewThread(void *threadData)
         while(theThread->threadValid())
         {
             theThread->lockThread();
+            if (!theThread->threadValid()) {
+                break;
+            }
             if(theThread->selfInitNow){
                 theThread->selfInitProcesses();
                 theThread->selfInitNow = false;
@@ -61,6 +66,15 @@ SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSim
     currentThreadNanos(currentSimNanos), threadID(threadIdent)
 {
 
+}
+
+SimThreadExecution::~SimThreadExecution()
+{
+    this->killThread();
+    this->unlockThread();
+    if (this->threadContext.joinable()) {
+        this->threadContext.join();
+    }
 }
 
 /*! This method provides a synchronization mechanism for the "child" thread
@@ -238,11 +252,10 @@ void SimThreadExecution::addNewProcess(SysProcess* newProc) {
 SimModel::SimModel()
 {
     //Default to single-threaded runtime
-    auto *newThread = new SimThreadExecution(0, 0);
-    this->threadList.push_back(newThread);
+    this->threadList.push_back(std::make_unique<SimThreadExecution>());
 }
 
-/*! Nothing to destroy really */
+/*! Stop workers before destroying the simulation's other members. */
 SimModel::~SimModel()
 {
     this->deleteThreads();
@@ -256,7 +269,7 @@ SimModel::~SimModel()
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     std::cout << std::flush;
-    for(auto const* simThread : this->threadList)
+    for(auto const& simThread : this->threadList)
     {
         simThread->moveProcessMessages();
     }
@@ -435,42 +448,29 @@ void SimModel::clearProcsFromThreads() const {
 
 }
 
-/*! This method provides an easy mechanism for allowing the user to change the
-    number of concurrent threads that will be executing in a given simulation.
-    You tell the method how many threads you want in the system, it clears out
-    any existing thread data, and then allocates fresh threads for the runtime.
- @param threadCount number of threads
- */
 void SimModel::resetThreads(uint64_t threadCount)
 {
-
-    this->clearProcsFromThreads();
-    this->deleteThreads();
-    this->threadList.clear();
-    for(uint64_t i=0; i<threadCount; i++)
-    {
-        auto *newThread = new SimThreadExecution(0, 0);
-        this->threadList.push_back(newThread);
+    if (threadCount == 0) {
+        this->bskLogger.bskError("The simulation must have at least one thread");
     }
-
+    // Allocate first so a failed allocation leaves the existing pool intact.
+    std::vector<std::unique_ptr<SimThreadExecution>> newThreads;
+    for (uint64_t i = 0; i < threadCount; i++) {
+        newThreads.push_back(std::make_unique<SimThreadExecution>(i));
+    }
+    this->deleteThreads();
+    // Workers must finish using borrowed processes before their assignments change.
+    this->clearProcsFromThreads();
+    this->threadList = std::move(newThreads);
 }
 
-/*! This method walks through all of the child threads that have been created in
-    the system, detaches them from the architecture, and then cleans up any
-    memory that has been allocated to them in the architecture.  It just ensures
-    clean shutdown of any existing runtime stuff.
- */
 void SimModel::deleteThreads() {
     for(auto const& simThread : this->threadList)
     {
         simThread->killThread();
         simThread->unlockThread();
-        if(simThread->threadContext && simThread->threadContext->joinable()) {
-            simThread->threadContext->join();
-            delete simThread->threadContext;
-        }
-        delete simThread;
     }
+    // Request shutdown of every worker before joining any of them.
     this->threadList.clear();
 }
 
@@ -481,31 +481,28 @@ void SimModel::deleteThreads() {
 
  */
 void SimModel::assignRemainingProcs() {
+    if (this->threadList.empty()) {
+        this->bskLogger.bskError("Call resetThreads() before assigning processes to a deleted thread pool");
+    }
+    for (auto const& simThread : this->threadList) {
+        if (simThread->threadContext.joinable()) {
+            this->bskLogger.bskError("Call resetThreads() before starting simulation threads again");
+        }
+    }
 
-    std::vector<SysProcess *>::iterator it;
-    std::vector<SimThreadExecution*>::iterator thrIt;
-    for(it=this->processList.begin(), thrIt=threadList.begin(); it!= this->processList.end(); it++, thrIt++)
-    {
-        if(thrIt == threadList.end())
-        {
-            thrIt = threadList.begin();
-        }
-        if((*it)->getProcessControlStatus()) {
-            thrIt--; //Didn't get a thread to add, so roll back
-        }
-        else
-        {
-            (*thrIt)->addNewProcess((*it));
+    std::size_t threadIndex = 0;
+    for (auto* process : this->processList) {
+        if (!process->getProcessControlStatus()) {
+            this->threadList[threadIndex]->addNewProcess(process);
+            threadIndex = (threadIndex + 1) % this->threadList.size();
         }
     }
     for(auto const& simThread : this->threadList)
     {
-        it=this->processList.begin();
-        simThread->nextProcPriority = (*it)->processPriority;
+        simThread->nextProcPriority = this->processList.empty() ? -1 : this->processList.front()->processPriority;
         simThread->NextTaskTime = 0;
         simThread->CurrentNanos = 0;
-        //simThread->lockThread();
-        simThread->threadContext = new std::thread(activateNewThread, simThread);
+        simThread->threadContext = std::thread(activateNewThread, simThread.get());
     }
     for(auto const& simThread : this->threadList)
     {
