@@ -165,7 +165,6 @@ public:
     virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
     virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
-    virtual void prependSpacecraftNameToStates();
 
 protected:
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector

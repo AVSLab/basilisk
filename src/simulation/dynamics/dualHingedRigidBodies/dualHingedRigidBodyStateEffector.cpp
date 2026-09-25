@@ -126,16 +126,6 @@ void DualHingedRigidBodyStateEffector::validateConfiguration()
     }
 }
 
-void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfTheta1State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1State;
-    this->nameOfTheta1DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1DotState;
-    this->nameOfTheta2State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2State;
-    this->nameOfTheta2DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2DotState;
-
-    return;
-}
-
 
 /*! @brief Link the required dynamics states.
  *

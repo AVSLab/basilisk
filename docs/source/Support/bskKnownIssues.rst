@@ -14,6 +14,13 @@ Version |release|
   NaN altitudes could also trigger an out-of-bounds read; they now produce an
   error diagnostic and return NaN before interpolation.
 
+- Removed the obsolete ``prependSpacecraftNameToStates()`` hooks from the
+  state and gravity effectors, along with
+  ``GravityEffector.nameOfSpacecraftAttachedTo``. Remove calls and overrides
+  of these hooks from custom effectors. Ordinary spacecraft retain their
+  separate state managers. ``StateEffector.nameOfSpacecraftAttachedTo`` remains
+  available for prescribed-motion attachments.
+
 - Removed the obsolete ``StateEffector.receiveMotherSpacecraftData()`` method
   and its ``r_BP_P`` and ``dcm_BP`` fields, which supported the retired
   ``SpacecraftSystem`` docking model. Configure hub and hinge geometry in the

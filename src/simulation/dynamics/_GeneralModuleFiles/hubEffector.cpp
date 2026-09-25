@@ -101,18 +101,6 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
     return;
 }
 
-void HubEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + this->nameOfHubPosition;
-    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubVelocity;
-    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + this->nameOfHubSigma;
-    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + this->nameOfHubOmega;
-    this->nameOfHubGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubGravVelocity;
-    this->nameOfBcGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfBcGravVelocity;
-
-    return;
-}
-
 /*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.

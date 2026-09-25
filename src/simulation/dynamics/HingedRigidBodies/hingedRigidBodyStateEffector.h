@@ -143,7 +143,6 @@ public:
     void updateEffectorMassProps(double integTime) override;  //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override; //!< Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B) override;  //!< Force and torque on s/c due to HRBs
-    void prependSpacecraftNameToStates() override; //!< class method
 
 private:
     void validateConfiguration(); //!< Validate mass and the configured hinge-frame DCM
