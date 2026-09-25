@@ -1,0 +1,54 @@
+CCSDS_OMM_VERS = 2.0
+COMMENT Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+COMMENT Distributed under the ISC license used by Basilisk.
+COMMENT Synthetic teaching data; names, catalog numbers and launch identifiers are fictitious.
+COMMENT Both records share an epoch so they can initialize one simulation at time zero.
+CREATION_DATE = 2026-09-24T00:00:00
+ORIGINATOR = BASILISK EXAMPLE
+OBJECT_NAME = DEMO CIRCULAR
+OBJECT_ID = 2026-000A
+CENTER_NAME = EARTH
+REF_FRAME = TEME
+TIME_SYSTEM = UTC
+MEAN_ELEMENT_THEORY = SGP4
+EPOCH = 2026-09-24T00:00:00.000000
+MEAN_MOTION = 14.8 [rev/day]
+ECCENTRICITY = 0.001
+INCLINATION = 51.6 [deg]
+RA_OF_ASC_NODE = 30.0 [deg]
+ARG_OF_PERICENTER = 40.0 [deg]
+MEAN_ANOMALY = 10.0 [deg]
+EPHEMERIS_TYPE = 2
+CLASSIFICATION_TYPE = U
+NORAD_CAT_ID = 999000001
+ELEMENT_SET_NO = 1
+REV_AT_EPOCH = 0
+BSTAR = 0.0 [1/ER]
+MEAN_MOTION_DOT = 0.0 [rev/day**2]
+MEAN_MOTION_DDOT = 0.0 [rev/day**3]
+
+CCSDS_OMM_VERS = 2.0
+COMMENT Synthetic teaching data; this eccentric orbit makes altitude and speed changes visible.
+CREATION_DATE = 2026-09-24T00:00:00
+ORIGINATOR = BASILISK EXAMPLE
+OBJECT_NAME = DEMO ECCENTRIC
+OBJECT_ID = 2026-000B
+CENTER_NAME = EARTH
+REF_FRAME = TEME
+TIME_SYSTEM = UTC
+MEAN_ELEMENT_THEORY = SGP4
+EPOCH = 2026-09-24T00:00:00.000000
+MEAN_MOTION = 13.8 [rev/day]
+ECCENTRICITY = 0.05
+INCLINATION = 97.5 [deg]
+RA_OF_ASC_NODE = 120.0 [deg]
+ARG_OF_PERICENTER = 70.0 [deg]
+MEAN_ANOMALY = 20.0 [deg]
+EPHEMERIS_TYPE = 2
+CLASSIFICATION_TYPE = U
+NORAD_CAT_ID = 999000002
+ELEMENT_SET_NO = 1
+REV_AT_EPOCH = 0
+BSTAR = 0.0 [1/ER]
+MEAN_MOTION_DOT = 0.0 [rev/day**2]
+MEAN_MOTION_DDOT = 0.0 [rev/day**3]
