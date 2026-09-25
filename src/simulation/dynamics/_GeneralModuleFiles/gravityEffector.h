@@ -21,7 +21,10 @@
 #define GRAVITY_DYN_EFFECTOR_H
 
 #include "dynamicEffector.h"
+#include "dynParamManager.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <cstdint>
+#include <string>
 #include <vector>
 #include <Eigen/Dense>
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
@@ -145,12 +148,6 @@ public:
     /** Adds a `GravBodyData` associated with this effector */
     void addGravBody(std::shared_ptr<GravBodyData> gravBody);
 
-    /** Called to modify property names to prepend them by the string stored in nameOfSpacecraftAttachedTo
-     *
-     * This can be used to make property names unique between different `GravityEffector` in a simulation
-     * with multiple dynamic objects.
-    */
-    void prependSpacecraftNameToStates();
 
 private:
     /**
@@ -170,7 +167,6 @@ public:
     std::string systemTimeCorrPropName = "systemTime"; /**< [-] Name of the correlation between times */
     std::string inertialPositionPropName = "r_BN_N";   /**< [-] Name of the inertial position property */
     std::string inertialVelocityPropName = "v_BN_N";   /**< [-] Name of the inertial velocity property */
-    std::string nameOfSpacecraftAttachedTo = "";       /**< [-] Name of the s/c this gravity model is attached to */
 
     Message<SpicePlanetStateMsgPayload> centralBodyOutMsg; /**< central planet body state output message */
 

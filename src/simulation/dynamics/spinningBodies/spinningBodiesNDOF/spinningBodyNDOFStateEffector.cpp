@@ -258,12 +258,6 @@ void SpinningBodyNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
     }
 }
 
-void SpinningBodyNDOFStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-}
-
 /*! @brief Link the required dynamics states.
  *
  * @param[in] states Dynamic parameter manager containing the required states.

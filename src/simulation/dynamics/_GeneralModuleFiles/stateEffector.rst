@@ -37,9 +37,7 @@ also used as the dynamics rates.
 Dynamics-rate overrides are currently supported only for effectors attached
 directly to :ref:`spacecraft`. ``PrescribedMotionStateEffector`` rejects
 variable-mass nested effectors rather than silently applying incomplete
-variable-mass bookkeeping. The legacy ``SpacecraftSystem`` does not consume
-this override contract and provides no runtime guard for it; use
-:ref:`spacecraft` for effectors that provide dynamics-rate overrides.
+variable-mass bookkeeping.
 
 The dynamics-only center-of-mass-rate quantity follows the quotient rule on
 the retained mass properties,

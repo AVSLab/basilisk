@@ -21,6 +21,10 @@
 #define SPINNING_BODY_ONE_DOF_STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
@@ -80,7 +84,6 @@ public:
     void updateEffectorMassProps(double integTime) override;         //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d& rotAngMomPntCContr_B,
                                       double& rotEnergyContr, Eigen::Vector3d omega_BN_B) override;         //!< Method for computing energy and momentum for SBs
-    void prependSpacecraftNameToStates() override;                   //!< Method used for multiple spacecraft
     void computeSpinningBodyInertialStates();               //!< Method for computing the SB's states
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr) override;  //!< Method for adding coupling contributions for state effector branching on prescribed motion
 

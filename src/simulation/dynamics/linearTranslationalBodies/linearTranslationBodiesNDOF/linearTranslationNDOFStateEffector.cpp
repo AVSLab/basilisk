@@ -201,13 +201,6 @@ void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t Curre
     }
 }
 
-/*! This method prepends the name of the spacecraft for multi-spacecraft simulations.*/
-void LinearTranslationNDOFStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfRhoState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoState;
-    this->nameOfRhoDotState = this->nameOfSpacecraftAttachedTo + this->nameOfRhoDotState;
-}
-
 /*! This method allows the TB state effector to have access to the hub states and gravity
  *
  * @param[in] states Dynamic parameter manager containing the required states.

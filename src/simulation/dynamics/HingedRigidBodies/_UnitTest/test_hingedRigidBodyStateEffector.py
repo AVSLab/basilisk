@@ -20,7 +20,6 @@ import inspect
 import os
 
 import numpy
-import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -38,9 +37,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import pythonVariableLogger
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
-from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
-from Basilisk.utilities import deprecated
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -48,30 +45,23 @@ from Basilisk.utilities import deprecated
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("useScPlus", [True])
-def test_hingedRigidBodyMotorTorque(show_plots, useScPlus):
+def test_hingedRigidBodyMotorTorque(show_plots):
     """Module Unit Test"""
-    [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots, useScPlus)
+    [testResults, testMessage] = hingedRigidBodyMotorTorque(show_plots)
     assert testResults < 1, testMessage
 
 
-def hingedRigidBodyMotorTorque(show_plots, useScPlus):
+def hingedRigidBodyMotorTorque(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    if useScPlus:
-        scObject = spacecraft.Spacecraft()
-        scObject.ModelTag = "spacecraftBody"
-    else:
-        scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.ModelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -118,34 +108,26 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.ModelTag = "panel2"
 
     # Add panels to spaceCraft
-    scObjectPrimary = scObject
-    if not useScPlus:
-        scObjectPrimary = scObject.primaryCentralSpacecraft
-
-    scObjectPrimary.addStateEffector(unitTestSim.panel1)
-    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObjectPrimary.hub.mHub = 750.0
-    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]  # [m]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg m^2]
 
     # Set the initial values for the states
-    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    if not useScPlus:
-        scStateMsg = scObject.primaryCentralSpacecraft.scStateOutMsg
-    else:
-        scStateMsg = scObject.scStateOutMsg
-    dataLog = scStateMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     dataPanel1 = unitTestSim.panel1.hingedRigidBodyOutMsg.recorder()
     dataPanel2 = unitTestSim.panel2.hingedRigidBodyOutMsg.recorder()
     dataPanel1Log = unitTestSim.panel1.hingedRigidBodyConfigLogOutMsg.recorder()
@@ -156,12 +138,7 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, dataPanel1Log)
     unitTestSim.AddModelToTask(unitTaskName, dataPanel2Log)
 
-    if useScPlus:
-        scLog = scObject.logger("totRotAngMomPntC_N")
-    else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+    scLog = scObject.logger("totRotAngMomPntC_N")
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
@@ -296,17 +273,22 @@ def hingedRigidBodyMotorTorque(show_plots, useScPlus):
     return [testFailCount, ''.join(testMessages)]
 
 
+def test_hinged_rigid_body_lagrangian(show_plots):
+    """Compare spacecraft and hinge motion with an independent planar model."""
+    test_results, test_message = hingedRigidBodyLagrangVsBasilisk(show_plots)
+    assert test_results == 0, test_message
+
+
 def hingedRigidBodyLagrangVsBasilisk(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftSystem.SpacecraftSystem()
+    scObject = spacecraft.Spacecraft()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -347,8 +329,8 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
-    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define force and torque
     momentArm1_B = numpy.array([0.05, 0.0, 0.0])
@@ -363,31 +345,31 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
-    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
+    scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
-    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # [m]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg m^2]
 
     # Set the initial values for the states
-    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObject.primaryCentralSpacecraft.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
     stateLog = pythonVariableLogger.PythonVariableLogger({
-        "theta1": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState(),
-        "theta2": lambda _: scObject.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState(),
+        "theta1": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel1.nameOfThetaState).getState(),
+        "theta2": lambda _: scObject.dynManager.getStateObject(unitTestSim.panel2.nameOfThetaState).getState(),
     })
     unitTestSim.AddModelToTask(unitTaskName, stateLog)
 
@@ -427,31 +409,38 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     rOut_BN_N = dataLog.r_BN_N
     sigmaOut_BN = dataLog.sigma_BN
+    for trajectory_name, trajectory in (
+        ("Basilisk position", rOut_BN_N),
+        ("Basilisk attitude", sigmaOut_BN),
+        ("Basilisk hinge 1 angle", theta1Out[:, 1]),
+        ("Basilisk hinge 2 angle", theta2Out[:, 1]),
+    ):
+        assert numpy.isfinite(trajectory).all(), f"{trajectory_name} trajectory contains non-finite values"
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,2])
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
-    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
+    planar_spacecraft = spacecraftClass()
+    planar_spacecraft.hub.mass = scObject.hub.mHub
+    planar_spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
-    spacecraft.panel1.mass = unitTestSim.panel1.mass
-    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
-    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
-    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
-    spacecraft.panel1.thetaH = 0.0
-    spacecraft.panel1.d = unitTestSim.panel1.d
-    spacecraft.panel1.k = unitTestSim.panel1.k
-    spacecraft.panel1.c = unitTestSim.panel1.c
+    planar_spacecraft.panel1.mass = unitTestSim.panel1.mass
+    planar_spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
+    planar_spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    planar_spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    planar_spacecraft.panel1.thetaH = 0.0  # [rad]
+    planar_spacecraft.panel1.d = unitTestSim.panel1.d
+    planar_spacecraft.panel1.k = unitTestSim.panel1.k
+    planar_spacecraft.panel1.c = unitTestSim.panel1.c
     # Define variables for panel2
-    spacecraft.panel2.mass = unitTestSim.panel2.mass
-    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
-    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
-    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
-    spacecraft.panel2.thetaH = numpy.pi
-    spacecraft.panel2.d = unitTestSim.panel2.d
-    spacecraft.panel2.k = unitTestSim.panel2.k
-    spacecraft.panel2.c = unitTestSim.panel2.c
+    planar_spacecraft.panel2.mass = unitTestSim.panel2.mass
+    planar_spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
+    planar_spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    planar_spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    planar_spacecraft.panel2.thetaH = numpy.pi  # [rad]
+    planar_spacecraft.panel2.d = unitTestSim.panel2.d
+    planar_spacecraft.panel2.k = unitTestSim.panel2.k
+    planar_spacecraft.panel2.c = unitTestSim.panel2.c
 
     # Define initial conditions of the sim
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
@@ -463,23 +452,25 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     X[:,0] = x0
     for j in range (1,(len(time))):
         if time[j-1] < force1OffTime:
-            spacecraft.xThrust_B = force1_B[0]
-            spacecraft.yThrust_B = force1_B[1]
-            spacecraft.Torque = torque1_B[2]
+            planar_spacecraft.xThrust_B = force1_B[0]
+            planar_spacecraft.yThrust_B = force1_B[1]
+            planar_spacecraft.Torque = torque1_B[2]
         elif time[j-1] >= force2OnTime and time[j-1] < force2OffTime:
-            spacecraft.xThrust_B = force2_B[0]
-            spacecraft.yThrust_B = force2_B[1]
-            spacecraft.Torque = torque2_B[2]
+            planar_spacecraft.xThrust_B = force2_B[0]
+            planar_spacecraft.yThrust_B = force2_B[1]
+            planar_spacecraft.Torque = torque2_B[2]
         else:
-            spacecraft.xThrust_B = 0.0
-            spacecraft.yThrust_B = 0.0
-            spacecraft.Torque = 0.0
-        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+            planar_spacecraft.xThrust_B = 0.0  # [N]
+            planar_spacecraft.yThrust_B = 0.0  # [N]
+            planar_spacecraft.Torque = 0.0  # [N m]
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], planar_spacecraft)
+
+    assert numpy.isfinite(X).all(), "Lagrangian reference trajectory contains non-finite values"
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[:,0]),'-r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,0]-rOut_BN_N[0,0]),'-r',label = "Basilisk")
     plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('x position (m)')
@@ -492,7 +483,7 @@ def hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[:,1]),'r',label = "Basilisk")
+    plt.plot(dataLog.times()*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'r',label = "Basilisk")
     plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
     plt.xlabel('time (s)')
     plt.ylabel('y position (m)')
@@ -745,4 +736,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    hingedRigidBodyMotorTorque(True, True)
+    hingedRigidBodyMotorTorque(True)

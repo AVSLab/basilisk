@@ -1,0 +1,1 @@
+- Removed the unused ``prependSpacecraftNameToStates()`` hooks from state and gravity effectors and the obsolete ``GravityEffector.nameOfSpacecraftAttachedTo`` field. These supported the retired ``SpacecraftSystem`` shared state manager; remove calls and overrides in custom effectors. Attachment naming used by prescribed-motion effectors remains supported.

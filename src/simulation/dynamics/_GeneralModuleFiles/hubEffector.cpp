@@ -101,18 +101,6 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
     return;
 }
 
-void HubEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + this->nameOfHubPosition;
-    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubVelocity;
-    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + this->nameOfHubSigma;
-    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + this->nameOfHubOmega;
-    this->nameOfHubGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfHubGravVelocity;
-    this->nameOfBcGravVelocity = this->nameOfSpacecraftAttachedTo + this->nameOfBcGravVelocity;
-
-    return;
-}
-
 /*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
@@ -178,16 +166,12 @@ void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
     // - Give the mass to mass props
     this->effProps.mEff = this->mHub;
 
-    // - Provide information about multi-spacecraft origin if needed
-    this->r_BcP_P = this->r_BP_P + this->dcm_BP.transpose()*(this->r_BcB_B);
-    this->IHubPntBc_P = this->dcm_BP.transpose()*this->IHubPntBc_B*this->dcm_BP;
-
     // - Give inertia of hub about point B to mass props
-    this->effProps.IEffPntB_B = this->IHubPntBc_P
-                                           + this->mHub*eigenTilde(this->r_BcP_P)*eigenTilde(this->r_BcP_P).transpose();
+    this->effProps.IEffPntB_B = this->IHubPntBc_B
+                                           + this->mHub*eigenTilde(this->r_BcB_B)*eigenTilde(this->r_BcB_B).transpose();
 
     // - Give position of center of mass of hub with respect to point B to mass props
-    this->effProps.rEff_CB_B = this->r_BcP_P;
+    this->effProps.rEff_CB_B = this->r_BcB_B;
 
     // - Zero body derivatives for position and inertia;
     this->effProps.rEffPrime_CB_B.setZero();
@@ -298,11 +282,11 @@ void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]]
 
     //  - Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDot_BcB_B;
-    rDot_BcB_B = omegaLocal_BN_B.cross(r_BcP_P);
-    rotAngMomPntCContr_B = IHubPntBc_P*omegaLocal_BN_B + mHub*r_BcP_P.cross(rDot_BcB_B);
+    rDot_BcB_B = omegaLocal_BN_B.cross(r_BcB_B);
+    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*r_BcB_B.cross(rDot_BcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_P*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
+    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
 
     return;
 }

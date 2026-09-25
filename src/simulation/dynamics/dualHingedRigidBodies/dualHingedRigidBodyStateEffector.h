@@ -58,7 +58,6 @@ public:
 
 private:
     void computePanelInertialStates();
-    void prependSpacecraftNameToStates() override; //!< class method used for multiple spacecraft
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
@@ -100,9 +99,7 @@ public:
 
 private:
     static uint64_t effectorID;        //!< [] ID number of this panel
-    Eigen::Vector3d r_H1P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 1 location.  If a single spacecraft body is modeled than P is the same as B
     Eigen::Vector3d r_H2P_P;          //!< [m] vector pointing from primary body frame P origin to Hinge 2 location
-    Eigen::Matrix3d dcm_H1P;          //!< DCM from primary body frame to hinge 1 frame
     double u1;                        //!< [N-m] motor torques on panel 1
     double u2;                        //!< [N-m] motor torques on panel 2
     Eigen::Matrix3d rTildeH1B_B;      //!< [-] Tilde matrix of rHB_B

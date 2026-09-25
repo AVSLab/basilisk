@@ -64,7 +64,6 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< Add contributions to energy and momentum
     void modifyStates(double integTime); //!< Method to switch MRPs
-    void prependSpacecraftNameToStates(); //!< class method
     void matchGravitytoVelocityState(Eigen::Vector3d v_CN_N); //!< method to set the gravity velocity to base velocity
     /**
      * @brief Validate finite hub configuration before initializing dynamics.
@@ -74,8 +73,6 @@ public:
     void validateConfiguration(bool pointMassTranslationalOnly = false);
 
 private:
-    Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components
-    Eigen::Matrix3d IHubPntBc_P;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     StateData *posState;                 //!< [-] State data container for hub position
     StateData *velocityState;            //!< [-] State data container for hub velocity

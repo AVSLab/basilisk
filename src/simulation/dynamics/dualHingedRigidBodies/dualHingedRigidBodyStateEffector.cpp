@@ -126,16 +126,6 @@ void DualHingedRigidBodyStateEffector::validateConfiguration()
     }
 }
 
-void DualHingedRigidBodyStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfTheta1State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1State;
-    this->nameOfTheta1DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta1DotState;
-    this->nameOfTheta2State = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2State;
-    this->nameOfTheta2DotState = this->nameOfSpacecraftAttachedTo + this->nameOfTheta2DotState;
-
-    return;
-}
-
 
 /*! @brief Link the required dynamics states.
  *
@@ -237,10 +227,6 @@ void DualHingedRigidBodyStateEffector::registerProperties(DynParamManager& state
  */
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    // - Convert initial variables to mother craft frame relative information
-    this->r_H1P_P = this->r_BP_P + this->dcm_BP.transpose()*this->r_H1B_B;
-    this->dcm_H1P = this->dcm_H1B*this->dcm_BP;
-
     // - Give the mass of the hinged rigid body to the effProps mass
     this->effProps.mEff = this->mass1 + this->mass2;
 
@@ -253,7 +239,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     // - Next find the sHat unit vectors
     Eigen::Matrix3d dcmS1H1;
     dcmS1H1 = eigenM2(this->theta1);
-    this->dcm_S1P = dcmS1H1*this->dcm_H1P;
+    this->dcm_S1P = dcmS1H1*this->dcm_H1B;
     Eigen::Matrix3d dcmH2S1;
     dcmH2S1 = eigenM2(this->thetaH2S1);
     Eigen::Matrix3d dcmH2P;
@@ -267,9 +253,9 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     this->sHat21_P = this->dcm_S2P.row(0);
     this->sHat22_P = this->dcm_S2P.row(1);
     this->sHat23_P = this->dcm_S2P.row(2);
-    this->r_H2P_P = this->r_H1P_P - this->l1 * this->sHat11_P;
-    this->r_S1P_P = this->r_H1P_P - this->d1*this->sHat11_P;
-    this->r_S2P_P = this->r_H1P_P - this->l1*this->sHat11_P - this->d2*this->sHat21_P;
+    this->r_H2P_P = this->r_H1B_B - this->l1 * this->sHat11_P;
+    this->r_S1P_P = this->r_H1B_B - this->d1*this->sHat11_P;
+    this->r_S2P_P = this->r_H1B_B - this->l1*this->sHat11_P - this->d2*this->sHat21_P;
     this->effProps.rEff_CB_B = 1.0/this->effProps.mEff*(this->mass1*this->r_S1P_P + this->mass2*this->r_S2P_P);
 
     // - Find the inertia of the hinged rigid body about point B
@@ -429,7 +415,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                     + rotFactor1_P*this->matrixEDHRB.row(1)*this->vectorVDHRB)
                     + this->dcm_S1P.transpose()*attBodyTorquePntH1_S1
                     + this->dcm_S2P.transpose()*attBodyTorquePntH2_S2
-                    + this->r_H1P_P.cross(externalForcePan1_P)
+                    + this->r_H1B_B.cross(externalForcePan1_P)
                     + this->r_H2P_P.cross(externalForcePan2_P);
 
     return;
@@ -605,14 +591,14 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     this->r_SN_N[0] = Eigen::Vector3d(dcm_NP * this->r_S1P_P) + r_PN_N;
     this->r_SN_N[1] = Eigen::Vector3d(dcm_NP * this->r_S2P_P) + r_PN_N;
 
-    *this->r_HN_N[0] = Eigen::Vector3d(dcm_NP * this->r_H1P_P) + r_PN_N;
+    *this->r_HN_N[0] = Eigen::Vector3d(dcm_NP * this->r_H1B_B) + r_PN_N;
     *this->r_HN_N[1] = Eigen::Vector3d(dcm_NP * this->r_H2P_P) + r_PN_N;
 
     // inertial velocity vectors
     Eigen::Vector3d v_PN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty);
     Eigen::Vector3d omega_S1N_P = this->theta1Dot * this->sHat12_P + omega_PN_P;
     Eigen::Vector3d omega_S2N_P = this->theta2Dot * this->sHat22_P + omega_S1N_P;
-    Eigen::Vector3d rDot_H1P_P = omega_PN_P.cross(this->r_H1P_P);
+    Eigen::Vector3d rDot_H1P_P = omega_PN_P.cross(this->r_H1B_B);
     Eigen::Vector3d rDot_H2P_P = rDot_H1P_P + omega_S1N_P.cross( -this->l1 * this->sHat11_P);
 
     this->v_SN_N[0] = v_PN_N + Eigen::Vector3d(dcm_NP * (rDot_H1P_P

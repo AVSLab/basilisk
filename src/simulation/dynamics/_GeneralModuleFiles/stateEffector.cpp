@@ -38,8 +38,6 @@ StateEffector::StateEffector()
     this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();
 
     this->nameOfSpacecraftAttachedTo = "";
-    this->r_BP_P.setZero();
-    this->dcm_BP.setIdentity();
     return;
 }
 
@@ -53,14 +51,6 @@ StateEffector::~StateEffector()
  allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
 void StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    return;
-}
-
-void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP)
-{
-    this->r_BP_P = rSC_BP_P;
-    this->dcm_BP = dcmSC_BP;
-
     return;
 }
 
@@ -125,12 +115,6 @@ void StateEffector::addDynamicEffector(DynamicEffector * newDynamicEffector [[ma
 void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties [[maybe_unused]])
 {
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
-}
-
-/*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
-void StateEffector::prependSpacecraftNameToStates()
-{
-    return;
 }
 
 void StateEffector::setStateNameOfPosition(std::string value)

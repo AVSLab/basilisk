@@ -116,14 +116,6 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
 }
 
-void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
-{
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
-
-    return;
-}
-
 /*! This method allows the HRB state effector to have access to the hub states and gravity
  *
  * @param[in] states Dynamic parameter manager containing the required states.
@@ -207,10 +199,6 @@ void HingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
  */
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-    // - Convert initial variables to mother craft frame relative information
-    this->r_HP_P = this->r_BP_P + this->dcm_BP.transpose()*r_HB_B;
-    this->dcm_HP = this->dcm_HB*this->dcm_BP;
-
     // - Give the mass of the hinged rigid body to the effProps mass
     this->effProps.mEff = this->mass;
 
@@ -220,11 +208,11 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[ma
     this->thetaDot = this->thetaDotState->getStateReference()(0, 0);
     // - Next find the sHat unit vectors
     this->dcm_SH = eigenM2(this->theta);
-    this->dcm_SP = this->dcm_SH*this->dcm_HP;
+    this->dcm_SP = this->dcm_SH*this->dcm_HB;
     this->sHat1_P = this->dcm_SP.row(0);
     this->sHat2_P = this->dcm_SP.row(1);
     this->sHat3_P = this->dcm_SP.row(2);
-    this->r_SP_P = this->r_HP_P - this->d*this->sHat1_P;
+    this->r_SP_P = this->r_HB_B - this->d*this->sHat1_P;
     this->effProps.rEff_CB_B = this->r_SP_P;
 
     // - Find the inertia of the hinged rigid body about point B
@@ -303,10 +291,10 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     this->aTheta = -this->mass*this->d/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->sHat3_P;
 
     // - Define bTheta
-    this->rTilde_HP_P = eigenTilde(this->r_HP_P);
+    this->rTilde_HP_P = eigenTilde(this->r_HB_B);
     this->bTheta = -1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)
                       + this->mass*this->d*this->d)*this->sHat2_P
-                      + this->mass*this->d*this->r_HP_P.cross(this->sHat3_P));
+                      + this->mass*this->d*this->r_HB_B.cross(this->sHat3_P));
 
     // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_P;
@@ -314,7 +302,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(this->u -this->k*(this->theta-this->thetaRef) - this->c*(this->thetaDot-this->thetaDotRef)
                     + this->sHat2_P.dot(gravityTorquePntH_P + this->dcm_SP.transpose() * attBodyTorquePntS_S) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
-                              this->sHat3_P.dot(this->omegaLoc_PN_P.cross(this->omegaLoc_PN_P.cross(this->r_HP_P))));
+                              this->sHat3_P.dot(this->omegaLoc_PN_P.cross(this->omegaLoc_PN_P.cross(this->r_HB_B))));
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
@@ -333,7 +321,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
                             + this->cTheta*rotThetaFactor_P
                             + this->mass*this->d*this->thetaDot*this->thetaDot*this->r_SP_P.cross(this->sHat1_P))
                           + (this->dcm_SP.transpose() * attBodyTorquePntS_S)
-                          + this->r_HP_P.cross(this->dcm_SP.transpose() * attBodyForce_S);
+                          + this->r_HB_B.cross(this->dcm_SP.transpose() * attBodyForce_S);
 
     return;
 }
@@ -501,14 +489,14 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
     // inertial position vector
     this->r_SN_N = (dcm_NP * this->r_SP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
 
-    *this->r_HN_N = (dcm_NP * this->r_HP_P) + (Eigen::Vector3d)(*this->inertialPositionProperty);
+    *this->r_HN_N = (dcm_NP * this->r_HB_B) + (Eigen::Vector3d)(*this->inertialPositionProperty);
 
     // inertial velocity vector
     this->v_SN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
                   + dcm_NP * (this->rPrime_SP_P + omega_BN_B.cross(this->r_SP_P));
 
     *this->v_HN_N = (Eigen::Vector3d)(*this->inertialVelocityProperty)
-                  + dcm_NP * omega_BN_B.cross(this->r_HP_P);
+                  + dcm_NP * omega_BN_B.cross(this->r_HB_B);
 
     return;
 }
