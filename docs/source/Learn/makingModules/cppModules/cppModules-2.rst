@@ -87,3 +87,40 @@ The output message object has the following support methods:
 
 ``addAuthor()``
     Returns the message write functor, granting write access to this message object.
+
+
+.. _bskOutputMessageLifetime:
+
+Using a Vector of Output Messages
+---------------------------------
+
+With the :ref:`declarations in the module header <bskOutputMessageOwnership>`,
+each entry in ``moreOutMsgs`` points to a message owned by the module. Access
+its methods through the pointer. For example, inside ``UpdateState()``:
+
+.. code:: cpp
+
+    for (auto* outputMsg : this->moreOutMsgs) {
+        SomeMsgPayload outMsgBuffer = outputMsg->zeroMsgPayload;
+        // Populate outMsgBuffer with the values for this output.
+        outputMsg->write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
+    }
+
+Python simulations continue to use ``module.moreOutMsgs[index]``,
+``subscribeTo(...)``, and ``recorder()`` in the usual way. Keep the producing
+module alive while using its outputs; adding it to a simulation task provides
+that lifetime during execution. These output views do not transfer ownership
+and do not extend the native module's lifetime. Consumers must not delete the
+messages, set their Python ``thisown`` flag, or replace the module-managed vector
+entries with newly allocated messages.
+
+Adding outputs preserves existing message addresses. Configuration methods that
+replace entire collections, such as SPICE's ``addPlanetNames()`` and
+``addSpacecraftNames()`` and the facet-count setters, invalidate the old messages.
+Finish configuration before creating subscriptions and recorders, or recreate
+those connections after reconfiguration.
+
+The module's smart-pointer members release their messages automatically when
+the module is destroyed, including cleanup during failed construction. If a
+setup method throws an exception, discard the module and configure a fresh
+instance; its configuration vectors may be only partially populated.

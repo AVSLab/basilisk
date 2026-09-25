@@ -125,11 +125,40 @@ Note that the vector of input messages is defined as a public variable.  In cont
 vector of message definition structures (i.e. the message buffer variable) can be defined
 as a private variable as it is only used within the module and not accessed outside.
 
+.. _bskOutputMessageOwnership:
+
 Vector of Output Messages
 -------------------------
-To define a vector of output messages, we define a vector of message pointer using:
+For a variable number of output messages, declare a public vector of borrowed
+message pointers and a private vector of owning smart pointers. The public
+vector supports the existing C++ and Python message interfaces; the private
+``std::unique_ptr`` objects manage each message's lifetime.
 
 .. code:: cpp
 
+    #include <memory>
+    #include <vector>
+    #include "architecture/msgPayloadDefC/SomeMsgPayload.h"
+    #include "architecture/messaging/messaging.h"
+
+    // Inside the module class:
     public:
-        std::vector<Message<SomeMsgPayload>*> moreOutMsgs;      //!< variable description
+        void addMsgToModule(Message<SomeMsgPayload>* tmpMsg);
+        std::vector<Message<SomeMsgPayload>*> moreOutMsgs; //!< Borrowed output-message views.
+    private:
+        std::vector<std::unique_ptr<Message<SomeMsgPayload>>> ownedMoreOutMsgs; //!< Output-message storage.
+
+The module creates both entries through a public configuration method, as shown
+in :ref:`bskOutputMessageCreation`. Consumers use ``moreOutMsgs`` to connect to
+the outputs and leave ownership with the module. The private storage is not
+exposed through SWIG, so Python access such as ``module.moreOutMsgs[index]``
+remains available.
+
+Moving a smart pointer when its vector grows does not move the message it owns.
+Existing message addresses therefore remain stable when more outputs are added.
+See :ref:`bskOutputMessageLifetime` for subscription, recording, and
+reconfiguration requirements.
+
+Compiled C++ extensions using module classes converted to this storage pattern
+must be rebuilt for their updated layouts; the current ownership changes are
+part of SDK extension ABI version 3.
