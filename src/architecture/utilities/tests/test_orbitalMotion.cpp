@@ -23,6 +23,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "unitTestComparators.h"
 #include <gtest/gtest.h>
+#include <tuple>
 
 
 const double orbitalEnvironmentAccuracy = 1e-10;
@@ -40,21 +41,34 @@ TEST(OrbitalMotion, atmosphericDensity_2000km) {
     EXPECT_NEAR(result, 2.48885731828e-15, orbitalEnvironmentAccuracy);
 }
 
-class DebeyeLengthTests :public ::testing::TestWithParam<std::tuple<double, double>> {};
+class DebyeLengthTests : public ::testing::TestWithParam<std::tuple<double, double>> {};
 
-TEST_P(DebeyeLengthTests, checksDebeyeLengthAtAltitude) {
+/** @brief Check table interpolation and both boundaries of the constant Debye-length region. */
+TEST_P(DebyeLengthTests, checksDebyeLengthAtAltitude) {
     auto [altitude, expected] = GetParam();
     EXPECT_NEAR(expected, debyeLength(altitude), orbitalEnvironmentAccuracy);
 }
 
+// Each tuple contains altitude [km] and expected Debye length [m].
 INSTANTIATE_TEST_SUITE_P(
         OrbitalMotion,
-        DebeyeLengthTests,
+        DebyeLengthTests,
         ::testing::Values(
+                std::make_tuple(200.0, 0.00564),
+                std::make_tuple(225.0, 0.00478),
                 std::make_tuple(400.0, 0.00404),
                 std::make_tuple(1000.0, 0.0159),
+                std::make_tuple(1775.0, 0.03585),
+                std::make_tuple(1950.0, 0.0396),
+                std::make_tuple(1999.0, 0.0396),
+                std::make_tuple(2000.0, 0.0396),
+                std::make_tuple(2001.0, 0.0396),
                 std::make_tuple(10000.0, 0.0396),
-                std::make_tuple(34000.0, 400.30000000000018))
+                std::make_tuple(29999.0, 0.0396),
+                std::make_tuple(30000.0, 0.0396),
+                std::make_tuple(30001.0, 0.4),
+                std::make_tuple(34000.0, 400.3),
+                std::make_tuple(35000.0, 500.3))
                 );
 
 TEST(OrbitalMotion, atmosphericDrag) {
