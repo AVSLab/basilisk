@@ -2,10 +2,9 @@
 
 Advanced: Using ``DynamicObject`` Basilisk Modules
 ==================================================
-Basilisk modules such as :ref:`spacecraft` and :ref:`spacecraftSystem` are members of
-the ``DynamicObject`` class.  This means they still have the regular Basilisk ``Reset()`` and
-``UpdateState()`` methods, but they also have a state machine and integrator build in as these
-modules have to integrate internal ordinate differential equations (ODEs).
+Basilisk modules such as :ref:`spacecraft` inherit from the ``DynamicObject`` class.
+They have the regular Basilisk ``Reset()`` and ``UpdateState()`` methods, as well as
+an internal state manager and integrator for solving ordinary differential equations (ODEs).
 
 The ``DynamicObject`` class has the ability to integrate not just the ODEs of the one Basilisk module,
 but it is possible to synchronize the integration across multiple subclasses of ``DynamicObject``
