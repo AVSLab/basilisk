@@ -44,7 +44,7 @@ def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
     r"""
     **Validation Test Description**
 
-    This unit test script tests the capability of the BSpline function to correctly interpolate 
+    This unit test script tests the capability of the BSpline function to correctly interpolate
     a series of points in 3 dimensions.
     The coordinates of these 7 points are stored in 3 numpy arrays:
 
@@ -54,8 +54,8 @@ def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
 
     X3 = np.array([3, 2, 1, 2, 3, 4, 5]).
 
-    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``. 
-    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``. 
+    The input arrays are initialized through ``Input = BSpline.InputDataSet(X1, X2, X3)``.
+    The time tags at which each waypoint is to be hit are provided through ``Input.setT([0, 2, 3, 5, 7, 8, 10])``.
     Alternatively, it is possible to specify the average velocity norm through ``Input.setAvgXDot()``.
     The endpoint derivatives are specified through the methods:
 
@@ -69,8 +69,8 @@ def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
     The interpolation happens calling the method ``BSpline.interpolate(Input, N, P, Output)`` where:
 
     - N is the desired number of equally spaced data points in the interpolated function;
-    
-    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified, 
+
+    - P is the polynomial order of the B-Spline function. The order should be at least 3 when first-order derivatives are specified,
       and 5 when second-order derivatives are specified. The maximum oder is P = n + k - 1, with n being the number of waypoints and k
       being the number of endpoint derivatives that are being specified.
 
@@ -89,11 +89,11 @@ def test_BSpline(show_plots, P, XDot_flag, XDDot_flag, accuracy):
 
     **Description of Variables Being Tested**
 
-    This unit test checks the correctness of the interpolated function: 
+    This unit test checks the correctness of the interpolated function:
     - a check is performed on whether or not each waypoint is hit at the specified time;
     - when the derivatives are specified, it checks whether the starting point derivative actually matches the input derivative.
     """
-    
+
     # each test method requires a single assert method to be called
     [testResults, testMessage] = BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy)
     assert testResults < 1, testMessage
@@ -133,14 +133,14 @@ def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
                     testFailCount += 1
                     testMessages.append("FAILED: BSpline." + " Function of order {} failed coordinate #3 check at time t = {}".format(P,Input.T[j][0]))
     if XDot_flag:
-        if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and 
-                (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and 
+        if not ((abs(Output.XD1[0][0]-Input.XDot_0[0][0]) < accuracy) and
+                (abs(Output.XD2[0][0]-Input.XDot_0[1][0]) < accuracy) and
                 (abs(Output.XD3[0][0]-Input.XDot_0[2][0]) < accuracy)):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed first derivative at starting point".format(P))
     if XDDot_flag:
-        if not ((abs(Output.XDD1[0][0]-Input.XDDot_0[0][0]) < accuracy) and 
-                (abs(Output.XDD2[0][0]-Input.XDDot_0[1][0]) < accuracy) and 
+        if not ((abs(Output.XDD1[0][0]-Input.XDDot_0[0][0]) < accuracy) and
+                (abs(Output.XDD2[0][0]-Input.XDDot_0[1][0]) < accuracy) and
                 (abs(Output.XDD3[0][0]-Input.XDDot_0[2][0]) < accuracy)):
             testFailCount += 1
             testMessages.append("FAILED: BSpline." + " Function of order {} failed second derivative at starting point".format(P))
@@ -149,13 +149,74 @@ def BSplineTestFunction(P, XDot_flag, XDDot_flag, accuracy):
     return [testFailCount, ''.join(testMessages)]
 
 
+@pytest.mark.parametrize("start_derivative_order", [0, 1, 2])
+@pytest.mark.parametrize("end_derivative_order", [0, 1, 2])
+def test_approximate_endpoint_constraints(start_derivative_order, end_derivative_order):
+    """Check positions and requested derivatives at both approximation endpoints.
+
+    Each endpoint independently constrains position only, position and velocity,
+    or position, velocity, and acceleration. Distinct nonzero vector components
+    expose incorrect constraint-vector indexing, including GitHub issue 1563.
+    Nonuniform time tags also exercise derivative scaling by the total duration.
+
+    :param start_derivative_order: Highest derivative constrained at the start.
+    :param end_derivative_order: Highest derivative constrained at the end.
+    """
+    waypoints = np.array([
+        [0.0, 5.0, 3.0],
+        [1.0, 4.0, 2.0],
+        [2.0, 3.0, 1.0],
+        [3.0, 2.0, 2.0],
+        [4.0, 1.0, 3.0],
+        [5.0, 0.0, 4.0],
+        [6.0, 1.0, 5.0],
+    ])  # [m]
+    times = np.array([0.0, 2.0, 3.0, 5.0, 7.0, 8.0, 10.0])  # [s]
+    velocities = np.array([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]])  # [m/s]
+    accelerations = np.array([[0.01, 0.02, 0.03], [0.04, 0.05, 0.06]])  # [m/s^2]
+    position_accuracy = 1e-10  # [m]
+    velocity_accuracy = 1e-10  # [m/s]
+    acceleration_accuracy = 1e-10  # [m/s^2]
+
+    spline_input = BSpline.InputDataSet(*waypoints.T)
+    spline_input.setT(times)
+    if start_derivative_order >= 1:
+        spline_input.setXDot_0(velocities[0])
+    if start_derivative_order == 2:
+        spline_input.setXDDot_0(accelerations[0])
+    if end_derivative_order >= 1:
+        spline_input.setXDot_N(velocities[1])
+    if end_derivative_order == 2:
+        spline_input.setXDDot_N(accelerations[1])
+
+    output = BSpline.OutputDataSet()
+    BSpline.approximate(spline_input, 101, 6, 4, output)
+    positions = np.column_stack((output.X1, output.X2, output.X3))
+    first_derivatives = np.column_stack((output.XD1, output.XD2, output.XD3))
+    second_derivatives = np.column_stack((output.XDD1, output.XDD2, output.XDD3))
+
+    np.testing.assert_allclose(
+        positions[[0, -1]], waypoints[[0, -1]], rtol=0, atol=position_accuracy
+    )
+    for endpoint, derivative_order in enumerate((start_derivative_order, end_derivative_order)):
+        sample = 0 if endpoint == 0 else -1
+        if derivative_order >= 1:
+            np.testing.assert_allclose(
+                first_derivatives[sample], velocities[endpoint], rtol=0, atol=velocity_accuracy
+            )
+        if derivative_order == 2:
+            np.testing.assert_allclose(
+                second_derivatives[sample], accelerations[endpoint], rtol=0, atol=acceleration_accuracy
+            )
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     BSplineTestFunction(
-        5,        # polynomial order 
+        5,        # polynomial order
         True,    # XDot_flag
         False,    # XDDot_flag
-        1e-6)     
+        1e-6)
