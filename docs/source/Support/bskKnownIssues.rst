@@ -55,6 +55,12 @@ Version |release|
   classes must replace direct owning-member assignments with ``setIntegrator()``;
   see :ref:`creatingDynObject`.
 
+- GitHub issue 282: Resetting simulation threads could clear process assignments
+  while a worker was still using them, and shutdown requests used an unsynchronized
+  flag. Worker ownership now guarantees stop and join before releasing thread state
+  or changing assignments. See :ref:`bskThreadOwnership` for configuration and
+  C++ migration details.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.

@@ -79,4 +79,7 @@ namespace std {
 %ignore SysModel::operator=(const SysModel &);
 %include "sys_model.h"
 %include "sys_process.h"
+// Thread ownership stays inside C++; Python configures the pool through SimModel methods.
+%ignore SimModel::threadList;
+%ignore SimThreadExecution::threadContext;
 %include "sim_model.h"
