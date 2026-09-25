@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1581: The C ``debyeLength()`` utility could read beyond its lookup
+  arrays for altitudes from 2,000 km through 30,000 km, producing undefined
+  results such as NaN. The interval search now includes the final table endpoint
+  and returns the intended constant value of 0.0396 m throughout this range.
+  NaN altitudes could also trigger an out-of-bounds read; they now produce an
+  error diagnostic and return NaN before interpolation.
+
 - GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
   components of the final-acceleration constraint by reading uninitialized
   constraint-vector entries. All three components now use the correct constraint
