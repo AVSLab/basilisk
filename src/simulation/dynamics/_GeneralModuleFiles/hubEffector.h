@@ -74,8 +74,6 @@ public:
     void validateConfiguration(bool pointMassTranslationalOnly = false);
 
 private:
-    Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components
-    Eigen::Matrix3d IHubPntBc_P;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     StateData *posState;                 //!< [-] State data container for hub position
     StateData *velocityState;            //!< [-] State data container for hub velocity

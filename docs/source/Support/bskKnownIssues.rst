@@ -14,6 +14,17 @@ Version |release|
   NaN altitudes could also trigger an out-of-bounds read; they now produce an
   error diagnostic and return NaN before interpolation.
 
+- Removed the obsolete ``StateEffector.receiveMotherSpacecraftData()`` method
+  and its ``r_BP_P`` and ``dcm_BP`` fields, which supported the retired
+  ``SpacecraftSystem`` docking model. Configure hub and hinge geometry in the
+  owning body frame; use :ref:`constraintDynamicEffector` to connect spacecraft.
+  The separate ``PrescribedMotionStateEffector`` transformations remain supported.
+
+- The deprecated ``Basilisk.simulation.spacecraftSystem`` module has been removed,
+  including ``SpacecraftSystem``, ``SpacecraftUnit``, and ``DockingData``. Use
+  :ref:`spacecraft` for each spacecraft and :ref:`constraintDynamicEffector` to
+  connect them. See :ref:`scenarioConstrainedDynamics` for a working example.
+
 - GitHub issue 1563: ``BSpline.approximate()`` could ignore the second and third
   components of the final-acceleration constraint by reading uninitialized
   constraint-vector entries. All three components now use the correct constraint
@@ -336,7 +347,7 @@ Version 2.11.0 (July 7, 2026)
   Configurations that set these members explicitly (all shipped examples and tests do) were unaffected.
 - BSK-469: The spacecraft hub properties were not validated, so a zero hub mass or a singular hub
   inertia tensor silently produced ``NaN`` states, and a negative hub mass silently reversed the
-  translational response to applied forces. :ref:`spacecraft` and :ref:`spacecraftSystem` now verify
+  translational response to applied forces. :ref:`spacecraft` and ``spacecraftSystem`` now verify
   on reset that ``mHub`` is strictly positive and ``IHubPntBc_B`` is symmetric positive definite.
   This is fixed in the current version.
 - Extension-generated custom messages using ``bsk_generate_messages(GENERATE_C_INTERFACE)`` could fail to subscribe
