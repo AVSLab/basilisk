@@ -516,9 +516,9 @@ void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet
         MD(constraintIndex,K-1) = NN2[Q-2];
         MD(constraintIndex,K)   = NN2[Q-1];
         MD(constraintIndex,K+1) = NN2[Q];
-        T1[K-1] = Input.XDDot_N[0] * pow(Ttot,2);
-        T2[K]   = Input.XDDot_N[1] * pow(Ttot,2);
-        T3[K+1] = Input.XDDot_N[2] * pow(Ttot,2);
+        T1[constraintIndex] = Input.XDDot_N[0] * pow(Ttot,2);
+        T2[constraintIndex] = Input.XDDot_N[1] * pow(Ttot,2);
+        T3[constraintIndex] = Input.XDDot_N[2] * pow(Ttot,2);
     }
     // constrain first derivative at ending point
     if (Input.XDot_N_flag == true) {
