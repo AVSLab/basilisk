@@ -63,10 +63,71 @@ how to run it, as well as testing.
 
 Module Testing
 ^^^^^^^^^^^^^^
-The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Basilisk gives identical results to a planar Lagrangian dynamical system created independently.
+Seven dynamics scenarios use the regular :ref:`spacecraft` module with two hinged panels.
+The five cases in :ref:`test_hingedRigidBodyDynamics` cover conservation and analytical
+response calculations:
 
-The document :download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
-contains a more detailed discussion of the testing, as well as the expected results.
+#. **Gravity without damping:** orbital energy, orbital angular momentum, rotational
+   energy, and rotational angular momentum remain constant.
+#. **Free flight without damping:** the same four quantities remain constant.
+#. **Free flight with damping:** orbital energy and both angular momenta remain constant.
+   Rotational energy decreases, and its loss agrees with the integrated hinge damping power.
+#. **Steady-state deflection:** under constant force, both damped hinge angles approach
+   the nonlinear static torque-balance solution. Angles and rates are checked throughout
+   the final settling window.
+#. **Frequency and amplitude:** a constant force is applied and then removed. Periods
+   and peak deflections are measured directly from both Basilisk hinge output messages
+   during the forced and free phases and compared with an independent small-angle solution.
+   Every maximum and minimum is checked, and the required number of extrema follows
+   from the phase duration and analytical period. Full angle and rate histories are
+   also compared, including the final partial cycle, to detect fading or stalled motion.
+
+These tests reject incomplete recordings and non-finite hinge states. Conservation is
+checked over the full recorded histories with errors normalized by the initial magnitude
+and a tolerance of ``1e-10``. The damped energy loss agrees with the integrated damping
+power to a relative tolerance of ``1e-6``. Steady-state angles and rates use absolute
+tolerances of ``1e-6`` rad and ``1e-6`` rad/s, respectively. Frequency and amplitude
+comparisons allow a relative error of 0.5% for the small-angle approximation and sampled
+peak times. Full-history angle and rate errors are bounded by 0.5% of the analytical
+amplitude and peak rate, respectively, so the tolerance remains meaningful at zero crossings.
+
+For the symmetric planar force-response cases, the total spacecraft mass is :math:`M`,
+each panel has mass :math:`m`, hinge-to-center-of-mass distance :math:`d`, center-of-mass
+inertia :math:`I_{yy}` about an axis parallel to the hinge axis, and spring constant
+:math:`k`. The static balance is
+
+.. math::
+
+    k\theta_{\mathrm{ss}} + m d \frac{F}{M}\cos\theta_{\mathrm{ss}} = 0.
+
+Eliminating hub translation from the linearized equations gives
+
+.. math::
+
+    J_{\mathrm{eff}} = I_{yy} + m d^2 - \frac{2 (m d)^2}{M},
+    \qquad
+    \omega = \sqrt{\frac{k}{J_{\mathrm{eff}}}}.
+
+Starting from rest, the forced response is
+:math:`\theta(t) = \theta_{\mathrm{ss,lin}}(1-\cos\omega t)`, where
+:math:`\theta_{\mathrm{ss,lin}} = -m d F/(M k)`. After thrust ends at :math:`t_{\mathrm{off}}`,
+the predicted free amplitude is
+:math:`\sqrt{\theta(t_{\mathrm{off}})^2 + (\dot\theta(t_{\mathrm{off}})/\omega)^2}`.
+The reference values come from these equations and the prescribed force duration;
+the measured periods and amplitudes come from Basilisk, not the independent Lagrangian trajectory.
+
+The remaining two cases are in :ref:`test_hingedRigidBodyStateEffector`:
+
+- **Motor torque:** applies a hinge motor torque and checks system rotational angular
+  momentum, stationary center-of-mass position, and the initial panel configuration messages.
+- **Lagrangian comparison:** compares spacecraft translation, attitude, and both hinge
+  angles at selected checkpoints against an independently integrated planar model, using
+  an absolute tolerance of ``1e-10`` in meters or radians as applicable.
+
+The separate :ref:`test_hingedRigidBodyDefaultConfig` test checks the default identity
+inertia tensor and hinge-frame rotation matrix. The
+:download:`PDF Description </../../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf>`
+provides additional analytical background; the executable tests above define the current coverage.
 
 User Guide
 ----------

@@ -34,10 +34,7 @@ from Basilisk.simulation import spacecraft
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-from Basilisk.utilities import pythonVariableLogger
-from Basilisk.simulation import spacecraftSystem
 from Basilisk.architecture import messaging
-from Basilisk.utilities import deprecated
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False, 'NoGravity'),
@@ -261,30 +258,23 @@ def dualHingedRigidBodyTest(show_plots, useFlag, testCase):
     return [testFailCount, ''.join(testMessages)]
 
 
-@pytest.mark.parametrize("useScPlus", [True])
-def test_dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
+def test_dualHingedRigidBodyMotorTorque(show_plots):
     """Module Unit Test"""
-    [testResults, testMessage] = dualHingedRigidBodyMotorTorque(show_plots, useScPlus)
+    [testResults, testMessage] = dualHingedRigidBodyMotorTorque(show_plots)
     assert testResults < 1, testMessage
 
 
-def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
+def dualHingedRigidBodyMotorTorque(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    deprecated.filterwarnings("ignore", "SpacecraftSystem.SpacecraftSystem")
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    if useScPlus:
-        scObject = spacecraft.Spacecraft()
-        scObject.ModelTag = "spacecraftBody"
-    else:
-        scObject = spacecraftSystem.SpacecraftSystem()
-        scObject.ModelTag = "spacecraftBody"
-        scObject.primaryCentralSpacecraft.spacecraftName = scObject.ModelTag
+    scObject = spacecraft.Spacecraft()
+    scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -351,30 +341,26 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.panel2.theta2DotInit = 0.0
 
     # Add panels to spaceCraft
-    scObjectPrimary = scObject
-    if not useScPlus:
-        scObjectPrimary = scObject.primaryCentralSpacecraft
-
-    scObjectPrimary.addStateEffector(unitTestSim.panel1)
-    scObjectPrimary.addStateEffector(unitTestSim.panel2)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObjectPrimary.hub.mHub = 750.0
-    scObjectPrimary.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObjectPrimary.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 750.0  # [kg]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]  # [m]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]  # [kg m^2]
 
     # Set the initial values for the states
-    scObjectPrimary.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObjectPrimary.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    dataLog = scObjectPrimary.scStateOutMsg.recorder()
+    dataLog = scObject.scStateOutMsg.recorder()
     dataPanel10Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[0].recorder()
     dataPanel11Log = unitTestSim.panel1.dualHingedRigidBodyOutMsgs[1].recorder()
     dataPanel20Log = unitTestSim.panel2.dualHingedRigidBodyOutMsgs[0].recorder()
@@ -389,12 +375,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
     unitTestSim.AddModelToTask(unitTaskName, data10Log)
     unitTestSim.AddModelToTask(unitTaskName, data21Log)
 
-    if useScPlus:
-        scLog = scObject.logger(["totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
-    else:
-        scLog = pythonVariableLogger.PythonVariableLogger({
-            "totRotAngMomPntC_N": lambda _: scObject.primaryCentralSpacecraft.totRotAngMomPntC_N
-        })
+    scLog = scObject.logger(["totRotAngMomPntC_N", "totOrbEnergy", "totRotEnergy"])
     unitTestSim.AddModelToTask(unitTaskName, scLog)
 
     unitTestSim.InitializeSimulation()
@@ -423,13 +404,12 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
     # Momentum is blind to a missing motor reaction, energy is not. Motor power is torque times
     # the relative hinge rate, and with no dampers it must match the mechanical energy change.
-    if useScPlus:
-        motorPower = (motorMsgData.motorTorque[0] * numpy.array(dataPanel10Log.thetaDot)
-                      + motorMsgData.motorTorque[1] * numpy.array(dataPanel11Log.thetaDot))
-        dt = numpy.diff(dataPanel10Log.times()) * macros.NANO2SEC
-        motorWork = numpy.sum(0.5 * (motorPower[1:] + motorPower[:-1]) * dt)
-        totalEnergy = numpy.array(scLog.totOrbEnergy) + numpy.array(scLog.totRotEnergy)
-        deltaEnergy = totalEnergy[-1] - totalEnergy[0]
+    motorPower = (motorMsgData.motorTorque[0] * numpy.array(dataPanel10Log.thetaDot)
+                  + motorMsgData.motorTorque[1] * numpy.array(dataPanel11Log.thetaDot))
+    dt = numpy.diff(dataPanel10Log.times()) * macros.NANO2SEC
+    motorWork = numpy.sum(0.5 * (motorPower[1:] + motorPower[:-1]) * dt)
+    totalEnergy = numpy.array(scLog.totOrbEnergy) + numpy.array(scLog.totRotEnergy)
+    deltaEnergy = totalEnergy[-1] - totalEnergy[0]
 
     # Get the last sigma and position
     dataPos = [rOut_CN_N[-1]]
@@ -502,7 +482,7 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
             testMessages.append("FAILED:  Hinged Rigid Body integrated test failed position test")
 
     # tolerance is set by the trapezoid error on the work integral at this 10 ms step
-    if useScPlus and abs(deltaEnergy - motorWork) > 1e-5 * abs(motorWork):
+    if abs(deltaEnergy - motorWork) > 1e-5 * abs(motorWork):
         testFailCount += 1
         testMessages.append("FAILED: Dual Hinged Rigid Body motor torque energy work balance, "
                             "dE = %.6f J but the motors did %.6f J of work" % (deltaEnergy, motorWork))
@@ -552,4 +532,4 @@ def dualHingedRigidBodyMotorTorque(show_plots, useScPlus):
 
 if __name__ == "__main__":
     dualHingedRigidBodyTest(True, False, 'NoGravity')
-    # dualHingedRigidBodyMotorTorque(True, True)
+    # dualHingedRigidBodyMotorTorque(True)
