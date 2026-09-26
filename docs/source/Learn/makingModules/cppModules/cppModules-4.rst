@@ -72,3 +72,45 @@ as well as vectors of input messages. Assume the message is of type ``SomeMsg``.
     %template(SomeMsgInMsgsVector) std::vector<ReadFunctor<SomeMsgPayload>>;
 
 These message definitions can all be access via ``messaging`` package.
+
+.. _bskModuleInputMessageLifetime:
+
+Retaining Sources in Configuration Methods
+------------------------------------------
+
+Python ``subscribeTo()`` and ``addSubscriber()`` calls retain the source message
+through the native reader. A C++ configuration method that calls
+``tmpMsg->addSubscriber()`` internally does not pass through those Python
+wrappers. Its SWIG interface must attach the source reference to the reader that
+the method stores.
+
+For the :ref:`addMsgToModule() example <bskOutputMessageCreation>`, place the
+following hook before including the module header:
+
+.. code-block:: cpp
+
+    %include "std_vector.i"
+    %pythonappend SomeModule::addMsgToModule %{
+        self.moreInMsgs[-1]._install_keepalive(tmpMsg)
+    %}
+    %include "someModule.h"
+
+This example assumes that each successful call appends exactly one reader.
+Use the argument name declared in the header. If a method stores several input
+readers, attach each source to its corresponding reader. The hook runs only after
+the C++ method returns successfully; discard a partially configured module if
+setup throws an exception.
+
+The reference belongs to the native ``ReadFunctor``, so it survives vector growth
+and reader copies. Unsubscribing, replacing the subscription, or destroying the
+last reader releases the source. This avoids retaining old messages for the
+entire lifetime of the module.
+
+The updated spacecraft-input methods in the atmosphere, magnetic-field, wind,
+eclipse, location, charging, MSM, and formation-barycenter models use this pattern,
+as do ``Eclipse.addPlanetToModel()`` and
+``EphemerisConverter.addSpiceInputMsg()``. Their Python call signatures are
+unchanged. A standalone Python-owned source can leave local scope after these
+calls. For an output message owned by another module, keep that producing module
+alive as described in :ref:`bskOutputMessageLifetime`. Direct C++ callers remain
+responsible for the lifetime of their borrowed message sources.

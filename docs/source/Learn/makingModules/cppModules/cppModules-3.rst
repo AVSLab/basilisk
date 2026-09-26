@@ -127,6 +127,9 @@ eclipse output message for each spacecraft state input added to the module.
 ``std::make_unique`` and the private owner vector manage allocation and cleanup;
 the public vector holds borrowed pointers. No manual deletion loop is needed.
 See :ref:`bskOutputMessageLifetime` for lifetime and setup-failure behavior.
+The SWIG interface also needs the source-retention hook described in
+:ref:`bskModuleInputMessageLifetime` so that standalone Python input messages
+remain alive while these readers use them.
 
 Setters
 -------

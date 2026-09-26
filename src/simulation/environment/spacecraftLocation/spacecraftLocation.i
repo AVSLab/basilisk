@@ -36,6 +36,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "std_vector.i"
 
 %include "sys_model.i"
+// Retain the Python source on the native reader created inside C++.
+%pythonappend SpacecraftLocation::addSpacecraftToModel %{
+    self.scStateInMsgs[-1]._install_keepalive(tmpScMsg)
+%}
 %include "spacecraftLocation.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

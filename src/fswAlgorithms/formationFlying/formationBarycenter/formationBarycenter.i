@@ -30,9 +30,15 @@
     from Basilisk.architecture.swig_common_model import *
 %}
 %include "std_string.i"
+%include "std_vector.i"
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
+// Retain both Python sources on the native readers created inside C++.
+%pythonappend FormationBarycenter::addSpacecraftToModel %{
+    self.scNavInMsgs[-1]._install_keepalive(tmpScNavMsg)
+    self.scPayloadInMsgs[-1]._install_keepalive(tmpScPayloadMsg)
+%}
 %include "formationBarycenter.h"
 
 %include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
