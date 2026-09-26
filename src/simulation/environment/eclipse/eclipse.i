@@ -31,6 +31,13 @@ from Basilisk.architecture.swig_common_model import *
 
 %include "std_string.i"
 %include "sys_model.i"
+// Retain each Python source on the native reader created inside C++.
+%pythonappend Eclipse::addSpacecraftToModel %{
+    self.positionInMsgs[-1]._install_keepalive(tmpScMsg)
+%}
+%pythonappend Eclipse::addPlanetToModel %{
+    self.planetInMsgs[-1]._install_keepalive(tmpSpMsg)
+%}
 %include "eclipse.h"
 %include "swig_conly_data.i"
 %include "std_vector.i"

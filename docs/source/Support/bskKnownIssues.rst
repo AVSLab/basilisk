@@ -69,6 +69,15 @@ Version |release|
   up when allocation fails. See :ref:`bskOutputMessageOwnership` for the ownership
   and reconfiguration contract.
 
+- GitHub issue 282: Spacecraft-input configuration methods in the atmosphere,
+  magnetic-field, wind, eclipse, location, charging, MSM, and formation-barycenter
+  models could retain pointers to standalone Python messages after those messages
+  were collected. These methods, along with ``Eclipse.addPlanetToModel()`` and
+  ``EphemerisConverter.addSpiceInputMsg()``, now retain each source through its
+  native reader and release it on unsubscribe, replacement, or reader destruction.
+  Module-owned outputs still require their producing module to remain alive.
+  See :ref:`bskModuleInputMessageLifetime`.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.

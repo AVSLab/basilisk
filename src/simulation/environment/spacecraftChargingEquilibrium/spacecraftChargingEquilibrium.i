@@ -33,6 +33,10 @@
 %include "swig_eigen.i"
 
 %include "sys_model.i"
+// Retain the Python source on the native reader created inside C++.
+%pythonappend SpacecraftChargingEquilibrium::addSpacecraft %{
+    self.scStateInMsgs[-1]._install_keepalive(tmpScMsg)
+%}
 %include "spacecraftChargingEquilibrium.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"

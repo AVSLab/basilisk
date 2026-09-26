@@ -36,6 +36,10 @@ import Basilisk.architecture.messaging.WindMsgPayload
 %include "swig_eigen.i"
 
 %include "sys_model.i"
+// Retain the Python source on the native reader created inside C++.
+%pythonappend WindBase::addSpacecraftToModel %{
+    self.scStateInMsgs[-1]._install_keepalive(tmpScMsg)
+%}
 %include "simulation/environment/_GeneralModuleFiles/windBase.h"
 %include "zeroWindModel.h"
 

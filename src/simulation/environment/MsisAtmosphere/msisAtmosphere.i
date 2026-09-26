@@ -35,6 +35,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "std_vector.i"
 %include "swig_conly_data.i"
+// Retain the Python source on the native reader created inside C++.
+%pythonappend AtmosphereBase::addSpacecraftToModel %{
+    self.scStateInMsgs[-1]._install_keepalive(tmpScMsg)
+%}
 %include "simulation/environment/_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
