@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_arrayMotorTorqueToSingleActuators:
+
+arrayMotorTorqueToSingleActuators
+=================================
+
+:doc:`Module documentation <arrayMotorTorqueToSingleActuators>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

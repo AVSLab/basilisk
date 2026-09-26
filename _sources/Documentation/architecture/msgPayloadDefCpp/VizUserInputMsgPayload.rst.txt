@@ -1,0 +1,10 @@
+.. _VizUserInputMsgPayload:
+
+VizUserInputMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VizUserInputMsgPayload.h
+   :project: msgPayloadDefCpp
+

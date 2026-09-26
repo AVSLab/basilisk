@@ -1,0 +1,10 @@
+.. _RateCmdMsgPayload:
+
+RateCmdMsgPayload
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RateCmdMsgPayload.h
+   :project: msgPayloadDefC
+

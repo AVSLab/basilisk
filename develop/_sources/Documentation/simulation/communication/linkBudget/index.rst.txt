@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_linkBudget:
+
+linkBudget
+==========
+
+:doc:`Module documentation <linkBudget>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

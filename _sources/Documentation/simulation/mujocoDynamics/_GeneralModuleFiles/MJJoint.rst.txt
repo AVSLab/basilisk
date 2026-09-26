@@ -1,0 +1,10 @@
+.. _MJJoint:
+
+MJJoint
+=======
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJJoint.h
+   :project: _GeneralModuleFiles6
+

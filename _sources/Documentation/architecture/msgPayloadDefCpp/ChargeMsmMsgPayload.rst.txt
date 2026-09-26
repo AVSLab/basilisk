@@ -1,0 +1,10 @@
+.. _ChargeMsmMsgPayload:
+
+ChargeMsmMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ChargeMsmMsgPayload.h
+   :project: msgPayloadDefCpp
+

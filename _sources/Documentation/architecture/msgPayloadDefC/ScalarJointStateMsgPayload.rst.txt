@@ -1,0 +1,10 @@
+.. _ScalarJointStateMsgPayload:
+
+ScalarJointStateMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ScalarJointStateMsgPayload.h
+   :project: msgPayloadDefC
+

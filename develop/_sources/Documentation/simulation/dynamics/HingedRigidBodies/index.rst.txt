@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_HingedRigidBodies:
+
+HingedRigidBodies
+=================
+
+:doc:`Module documentation <hingedRigidBodyStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

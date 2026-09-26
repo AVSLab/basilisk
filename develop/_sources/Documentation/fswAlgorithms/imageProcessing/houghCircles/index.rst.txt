@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_houghCircles:
+
+houghCircles
+============
+
+:doc:`Module documentation <houghCircles>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

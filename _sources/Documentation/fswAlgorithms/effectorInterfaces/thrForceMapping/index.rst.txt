@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrForceMapping:
+
+thrForceMapping
+===============
+
+:doc:`Module documentation <thrForceMapping>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,10 @@
+.. _LinearTranslationRigidBodyMsgPayload:
+
+LinearTranslationRigidBodyMsgPayload
+====================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: LinearTranslationRigidBodyMsgPayload.h
+   :project: msgPayloadDefC
+

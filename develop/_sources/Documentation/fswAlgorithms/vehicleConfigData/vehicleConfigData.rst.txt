@@ -1,0 +1,10 @@
+.. _vehicleConfigData:
+
+:module-type:`C` Module: vehicleConfigData
+==========================================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: vehicleConfigData.h
+   :project: vehicleConfigData
+

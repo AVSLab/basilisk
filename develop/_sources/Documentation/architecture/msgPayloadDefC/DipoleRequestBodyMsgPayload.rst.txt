@@ -1,0 +1,10 @@
+.. _DipoleRequestBodyMsgPayload:
+
+DipoleRequestBodyMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DipoleRequestBodyMsgPayload.h
+   :project: msgPayloadDefC
+

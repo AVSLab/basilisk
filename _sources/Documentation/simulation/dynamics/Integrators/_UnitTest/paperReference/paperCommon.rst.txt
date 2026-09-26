@@ -1,0 +1,15 @@
+.. _paperCommon:
+
+paperCommon
+===========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: paperCommon
+   :members:
+   :show-inheritance:
+

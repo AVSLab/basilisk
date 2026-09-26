@@ -1,0 +1,10 @@
+.. _VSCMGArrayConfigMsgPayload:
+
+VSCMGArrayConfigMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VSCMGArrayConfigMsgPayload.h
+   :project: msgPayloadDefC
+

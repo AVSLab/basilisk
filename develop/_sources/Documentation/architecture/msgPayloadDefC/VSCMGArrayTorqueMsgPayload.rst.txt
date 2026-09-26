@@ -1,0 +1,10 @@
+.. _VSCMGArrayTorqueMsgPayload:
+
+VSCMGArrayTorqueMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VSCMGArrayTorqueMsgPayload.h
+   :project: msgPayloadDefC
+

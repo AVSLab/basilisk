@@ -1,0 +1,10 @@
+.. _gauss_markov:
+
+gauss_markov
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: gauss_markov.h
+   :project: utilities
+

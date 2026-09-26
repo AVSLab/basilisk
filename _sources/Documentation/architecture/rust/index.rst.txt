@@ -1,0 +1,23 @@
+.. _Folder_rust:
+
+rust
+====
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+   gen_rust_utilities
+   generate_rust_licenses
+.. toctree::
+   :maxdepth: 1
+   :caption: Directories:
+
+   _UnitTest/index
+   bsk_build/index
+   bsk_macros/index
+   bsk_messages/index
+   bsk_utilities/index
+   licenses/index

@@ -1,0 +1,10 @@
+.. _AntennaLogMsgPayload:
+
+AntennaLogMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AntennaLogMsgPayload.h
+   :project: msgPayloadDefC
+

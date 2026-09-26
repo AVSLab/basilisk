@@ -1,0 +1,57 @@
+.. _svIntegratorRK4:
+
+:module-type:`C++` Module: svIntegratorRK4
+==========================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`_UnitTestDynamics <_UnitTestDynamics/index>`
+   * :doc:`BodyToHubInfo <BodyToHubInfo>`
+   * :doc:`extendedStateVector <extendedStateVector>`
+   * :doc:`fuelSlosh <fuelSlosh>`
+   * :doc:`gravityModel <gravityModel>`
+   * :doc:`interpolator <interpolator>`
+   * :doc:`pointMassGravityModel <pointMassGravityModel>`
+   * :doc:`RWConfigPayload <RWConfigPayload>`
+   * :doc:`stateVecStochasticIntegrator <stateVecStochasticIntegrator>`
+   * :doc:`stochasticNoiseGenerator <stochasticNoiseGenerator>`
+   * :doc:`stochasticRKIntegratorBase <stochasticRKIntegratorBase>`
+   * :doc:`stochasticWeakRandomVariables <stochasticWeakRandomVariables>`
+   * :doc:`svIntegratorAdaptiveRungeKutta <svIntegratorAdaptiveRungeKutta>`
+   * :doc:`svIntegratorRungeKutta <svIntegratorRungeKutta>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRA <svIntegratorStrongStochasticRungeKuttaSRA>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRI <svIntegratorStrongStochasticRungeKuttaSRI>`
+   * :doc:`svIntegratorWeakSIESME <svIntegratorWeakSIESME>`
+   * :doc:`THROperation <THROperation>`
+   * :doc:`THRSimConfig <THRSimConfig>`
+   * :doc:`THRTimePair <THRTimePair>`
+
+
+RK4 integrator. It only implements the method integrate() to advance one time step.
+
+The module
+:download:`PDF Description </../../src/simulation/dynamics/Integrators/_Documentation/Basilisk-Integrators20170724.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+
+
+
+
+
+
+
+
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svIntegratorRK4.h
+   :project: _GeneralModuleFiles4
+

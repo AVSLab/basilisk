@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_magneticFieldCenteredDipole:
+
+magneticFieldCenteredDipole
+===========================
+
+:doc:`Module documentation <magneticFieldCenteredDipole>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

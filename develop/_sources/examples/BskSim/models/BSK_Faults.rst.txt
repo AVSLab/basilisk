@@ -1,0 +1,15 @@
+.. _BSK_Faults:
+
+BSK_Faults
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: BSK_Faults
+   :members:
+   :show-inheritance:
+

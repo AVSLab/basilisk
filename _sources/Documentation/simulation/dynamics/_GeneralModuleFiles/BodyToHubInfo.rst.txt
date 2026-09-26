@@ -1,0 +1,10 @@
+.. _BodyToHubInfo:
+
+BodyToHubInfo
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: BodyToHubInfo.h
+   :project: _GeneralModuleFiles4
+

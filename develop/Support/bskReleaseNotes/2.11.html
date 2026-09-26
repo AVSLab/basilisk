@@ -1,0 +1,367 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.11 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.10 Release Notes" href="2.10.html" />
+    <link rel="prev" title="Version 2.12 Release Notes" href="2.12.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.11 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.11.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-11-release-notes">
+<h1>Version 2.11 Release Notes<a class="headerlink" href="#version-2-11-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-11-0-july-7-2026">
+<span id="bsk-release-2-11-0"></span><h2>Version 2.11.0 (July 7, 2026)<a class="headerlink" href="#version-2-11-0-july-7-2026" title="Link to this heading"></a></h2>
+<section id="compatibility-and-migration">
+<h3>Compatibility and migration<a class="headerlink" href="#compatibility-and-migration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Split off the <code class="docutils literal notranslate"><span class="pre">opNav</span></code> build from the core BSK distribution wheels to reduce the wheel file size to be less than 100Mb.
+Updated documentation to discuss how to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> install with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> modules.</p></li>
+<li><p>Deprecated <cite>AU2KM</cite> in favor of <cite>AU</cite> and added <cite>AU2M</cite> for astronomical unit in meters in <cite>astroConstants.h</cite>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MeanRevertingNoise</span></code> abstract base class moved to <code class="docutils literal notranslate"><span class="pre">mujocoDynamics/_GeneralModuleFiles</span></code>; importable as <code class="docutils literal notranslate"><span class="pre">MJMeanRevertingNoise</span></code> for Python subclassing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">StochasticAtmDensity</span></code> is now a standalone BSK module (<code class="docutils literal notranslate"><span class="pre">MJStochasticAtmDensity</span></code>) in its own folder</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">StochasticDragCoeff</span></code> is now a standalone BSK module (<code class="docutils literal notranslate"><span class="pre">MJStochasticDragCoeff</span></code>) in its own folder</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PIDControllers</span></code> folder renamed to <code class="docutils literal notranslate"><span class="pre">JointPIDController</span></code>; SWIG module renamed to <code class="docutils literal notranslate"><span class="pre">MJJointPIDController</span></code></p></li>
+<li><p>Scenario simulation, plotting, data-shaping, and Eigen conversion helpers now live in the pytest-free <a class="reference internal" href="../../Documentation/utilities/simHelpers.html#simhelpers"><span class="std std-ref">simHelpers</span></a> module while remaining available from <code class="docutils literal notranslate"><span class="pre">unitTestSupport</span></code> as deprecated compatibility wrappers, so example scenarios no longer require the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> package just to import or run.</p></li>
+<li><p>Changed <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> to hold its tank model via a <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code> instead of a raw pointer (issue #282). The model is created in Python and handed to the tank through <code class="docutils literal notranslate"><span class="pre">setTankModel()</span></code>; previously, dropping the Python reference left a dangling C++ pointer (undefined behaviour). The tank now co-owns the model, so it stays valid for the life of the simulation. C++ code calling <code class="docutils literal notranslate"><span class="pre">FuelTank::setTankModel()</span></code> must now pass a <code class="docutils literal notranslate"><span class="pre">std::shared_ptr&lt;FuelTankModel&gt;</span></code>; Python usage is unchanged.</p></li>
+<li><p>Fixed a latent double-free (issue #643). Several simulation modules own dynamically-allocated output messages that are freed in their destructors, but inherited the compiler-generated copy operations. Copying such a module shallow-copied the raw message pointers, so two instances would each free the same messages. <code class="docutils literal notranslate"><span class="pre">SysModel</span></code>-derived modules are now non-copyable by default, while message recorders keep explicit copy-construction support for value-returning recorder APIs.</p></li>
+<li><p>Changed message recorders to store their recorded message and time history in <code class="docutils literal notranslate"><span class="pre">std::deque</span></code> rather than <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. This removes the periodic <code class="docutils literal notranslate"><span class="pre">UpdateState</span></code> timing spikes that previously occurred at power-of-two record counts and grew with recording length, which could disrupt soft real-time and hardware-in-the-loop simulations. The Python recorder interface is unchanged. As a consequence, the C++ <code class="docutils literal notranslate"><span class="pre">Recorder</span></code> accessors changed: <code class="docutils literal notranslate"><span class="pre">times()</span></code> and <code class="docutils literal notranslate"><span class="pre">timesWritten()</span></code> now return a copied <code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">long</span> <span class="pre">long&gt;</span></code> (previously a <code class="docutils literal notranslate"><span class="pre">std::vector&lt;uint64_t&gt;&amp;</span></code> reference), and <code class="docutils literal notranslate"><span class="pre">record()</span></code> now returns a <code class="docutils literal notranslate"><span class="pre">std::deque&lt;messageType&gt;&amp;</span></code>. C++ callers relying on the old reference return types must adapt; a new <code class="docutils literal notranslate"><span class="pre">recordList()</span></code> accessor returns the recorded-payload history as a copied <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>.</p></li>
+<li><p>Added setter and getter methods for <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> configuration variables and deprecated direct Python access to <code class="docutils literal notranslate"><span class="pre">nameOfMassState</span></code>, <code class="docutils literal notranslate"><span class="pre">dcm_TB</span></code>, <code class="docutils literal notranslate"><span class="pre">r_TB_B</span></code>, <code class="docutils literal notranslate"><span class="pre">updateOnly</span></code>, and <code class="docutils literal notranslate"><span class="pre">fuelLeakRate</span></code>.</p></li>
+<li><p>Removed the standalone MuJoCo <code class="docutils literal notranslate"><span class="pre">replay</span></code> visualization tool, the <code class="docutils literal notranslate"><span class="pre">mujoco.visualize</span></code> helper, and the <code class="docutils literal notranslate"><span class="pre">--mujocoReplay</span></code> build option. MuJoCo <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> simulations are now visualized through <a class="reference internal" href="../../Vizard/Vizard.html#vizard"><span class="std std-ref">Vizard</span></a> via <code class="docutils literal notranslate"><span class="pre">enableUnityVisualization</span></code>, so the separate replay utility is no longer needed.</p></li>
+<li><p>Moved <code class="docutils literal notranslate"><span class="pre">jointThrAllocation</span></code> into the standard <code class="docutils literal notranslate"><span class="pre">Basilisk.fswAlgorithms</span></code> import path.</p></li>
+<li><p>Moved <code class="docutils literal notranslate"><span class="pre">stateMerge</span></code> into the standard <code class="docutils literal notranslate"><span class="pre">Basilisk.simulation</span></code> import path.</p></li>
+<li><p>Moved <code class="docutils literal notranslate"><span class="pre">thrFiringRound</span></code> into the standard <code class="docutils literal notranslate"><span class="pre">Basilisk.fswAlgorithms</span></code> import path.</p></li>
+</ul>
+</section>
+<section id="build-installation-and-ci">
+<h3>Build, installation, and CI<a class="headerlink" href="#build-installation-and-ci" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">Nightly</span> <span class="pre">Wheels</span></code> GitHub Actions workflow so gh-pages history trimming uses a full <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> checkout and no longer fails after sparse <code class="docutils literal notranslate"><span class="pre">develop</span></code> checkout.</p></li>
+<li><p>Added release-guide instructions to manually run <code class="docutils literal notranslate"><span class="pre">Nightly</span> <span class="pre">Wheels</span></code> via <code class="docutils literal notranslate"><span class="pre">workflow_dispatch</span></code> after merging the next beta branch to republish the nightly package index.</p></li>
+<li><p>Fixed Linux wheels to include the MuJoCo runtime and SWIG bindings. <code class="docutils literal notranslate"><span class="pre">CONAN_ARGS</span></code> was set in the wheel build workflow but never reached the manylinux container, so MuJoCo was silently disabled on Linux while macOS and Windows shipped the full payload. Added <code class="docutils literal notranslate"><span class="pre">environment-pass</span></code> to the cibuildwheel Linux configuration so the option propagates.</p></li>
+<li><p>Fixed nightly wheel builds on <code class="docutils literal notranslate"><span class="pre">macos-26</span></code> and <code class="docutils literal notranslate"><span class="pre">windows-2025-vs2026</span></code> runners. Conan 2.23.0 did not recognise apple-clang 21 or Visual Studio 2026. This would cause macOS builds to abort and Windows builds to fall back to MinGW gcc.</p></li>
+<li><p>Aligned the <code class="docutils literal notranslate"><span class="pre">cmake</span></code>, <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>, <code class="docutils literal notranslate"><span class="pre">setuptools-scm</span></code>, and <code class="docutils literal notranslate"><span class="pre">packaging</span></code> upper bounds in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> with <code class="docutils literal notranslate"><span class="pre">requirements_dev.txt</span></code>.</p></li>
+<li><p>Removed <code class="docutils literal notranslate"><span class="pre">--mujocoReplay</span> <span class="pre">True</span></code> from wheel build <code class="docutils literal notranslate"><span class="pre">CONAN_ARGS</span></code> in <code class="docutils literal notranslate"><span class="pre">publish-wheels.yml</span></code> and <code class="docutils literal notranslate"><span class="pre">nightly-wheels.yml</span></code>. The replay binary is not packaged into wheels and building it inside the manylinux container requires X11 devel packages that are not present there.</p></li>
+<li><p>Fixed a build issue where modifying a single message payload header triggered a near-full recompile of unrelated translation units. The auto-generated payload equality used by <code class="docutils literal notranslate"><span class="pre">recordOnChange()</span></code> is no longer aggregated into a global umbrella header pulled in through <code class="docutils literal notranslate"><span class="pre">messaging.h</span></code>. Now, each payload’s <code class="docutils literal notranslate"><span class="pre">PayloadEqualityTraits</span></code> is included only in that payload’s own SWIG module.</p></li>
+<li><p>Updated the development requirements to allow Conan 2.28.1.</p></li>
+<li><p>Hardened CI builds by configuring short Conan network retries for third-party source downloads.</p></li>
+<li><p>Added a Conan source backup URL so CI can fall back to mirrored third-party source archives.</p></li>
+<li><p>Updated Python requirement version caps to include the latest dependency releases.</p></li>
+<li><p>Pinned pull request and wheel CI runners to macOS 26, Ubuntu 24.04, and Windows 2025 with Visual Studio 2026.</p></li>
+<li><p>Updated CI sccache setup to use a Node.js 24-compatible GitHub Action release.</p></li>
+<li><p>Made CI builds continue without <code class="docutils literal notranslate"><span class="pre">sccache</span></code> when compiler-cache setup is unavailable.</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">fswDefinitions.h</span></code> so it can be included on macOS without a <code class="docutils literal notranslate"><span class="pre">boolean_t</span></code> typedef redefinition error. On Apple platforms, <code class="docutils literal notranslate"><span class="pre">boolean_t</span></code> is now sourced from <code class="docutils literal notranslate"><span class="pre">&lt;mach/boolean.h&gt;</span></code> (which defines it idempotently) instead of redefining it as an enum that conflicts with the system type.</p></li>
+<li><p>Fixed Linux and Windows wheel builds by configuring Conan system package installation inside cibuildwheel’s manylinux containers, disabling unused OpenCV Wayland support, and matching the PR Windows build’s Ninja generator.</p></li>
+<li><p>Distributed Linux and Windows wheels now have OpenCV and MuJoCo support included as well.</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">libclang</span></code> not being available to cmake on macOS and Windows CI runners by installing it via <code class="docutils literal notranslate"><span class="pre">CIBW_BEFORE_BUILD</span></code> in the shared setup action, resolving nightly and release wheel build failures on those platforms.</p></li>
+<li><p>Added Slack failure notifications for the Nightly Wheels workflow.</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">publish-wheels</span></code> CI workflow to route release candidate tags (<code class="docutils literal notranslate"><span class="pre">v*rc*</span></code>) to TestPyPI instead of PyPI.</p></li>
+<li><p>Added a manual <code class="docutils literal notranslate"><span class="pre">workflow_dispatch</span></code> trigger so wheels can be published from the GitHub UI without requiring a tag push.</p></li>
+<li><p>Added packaging support for pure Python BSK modules under <code class="docutils literal notranslate"><span class="pre">src/fswAlgorithms</span></code> and <code class="docutils literal notranslate"><span class="pre">src/simulation</span></code>, and for Python support files under <code class="docutils literal notranslate"><span class="pre">src/architecture</span></code>.</p></li>
+<li><p>Raised the supported SWIG 4.x build requirement to 4.4.1, providing SWIG ABI 5 support between BSK and BSK extensions.</p></li>
+</ul>
+</section>
+<section id="simulation-framework-and-module-development">
+<h3>Simulation framework and module development<a class="headerlink" href="#simulation-framework-and-module-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Replaced SWIG XML-based message payload struct parsing with a libclang-backed metadata pipeline that generates JSON for <cite>*Payload.h</cite> definitions.</p></li>
+<li><p>Improved generated payload Python bindings with typed keyword-only constructors, typed properties, and a <cite>__fields__</cite> classmethod derived from header metadata.</p></li>
+<li><p>Added a compile-time guard to the generated C message structs ensuring the payload immediately follows the message header with no padding. The C message read path (used by message recorders and C-to-C subscriptions) relies on this layout via pointer arithmetic; the guard turns any future layout change into a build error instead of a silent mis-read (issue #338).</p></li>
+<li><p>Fixed SWIG memory leaks (issue #422) where several modules exposed C++ members without a destructor visible to SWIG, so reading them from Python leaked an un-destructed proxy (<code class="docutils literal notranslate"><span class="pre">swig/python</span> <span class="pre">detected</span> <span class="pre">a</span> <span class="pre">memory</span> <span class="pre">leak</span> <span class="pre">of</span> <span class="pre">type</span> <span class="pre">...</span></code>). Internal-only members are now private or hidden with <code class="docutils literal notranslate"><span class="pre">%ignore</span></code>, and public value-type members now include the required Eigen, STL, enum, and BSpline wrapper support. This clears the leak on <code class="docutils literal notranslate"><span class="pre">dynParamManager</span></code> and its dependent modules (<code class="docutils literal notranslate"><span class="pre">spacecraft</span></code> and the state/dynamic effectors), the thruster modules, <code class="docutils literal notranslate"><span class="pre">imuSensor</span></code>, <code class="docutils literal notranslate"><span class="pre">smallBodyNavEKF</span></code>, <code class="docutils literal notranslate"><span class="pre">sphericalHarmonicsGravityModel</span></code>, <code class="docutils literal notranslate"><span class="pre">dataFileToViz</span></code>, <code class="docutils literal notranslate"><span class="pre">constrainedAttitudeManeuver</span></code>, <code class="docutils literal notranslate"><span class="pre">linkBudget</span></code>, <code class="docutils literal notranslate"><span class="pre">ReactionWheelPower</span></code>, <code class="docutils literal notranslate"><span class="pre">motorThermal</span></code> and <code class="docutils literal notranslate"><span class="pre">simpleInstrument</span></code>.</p></li>
+<li><p>Added a regression test that instantiates affected modules and wrapped data classes, and fails if SWIG reports a member leak.</p></li>
+<li><p>Generated message bindings now resolve peer message classes from their own module, fixing custom extension messages built with <code class="docutils literal notranslate"><span class="pre">bsk_generate_messages(GENERATE_C_INTERFACE)</span></code> outside <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.messaging</span></code>.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">NumbaModel</span></code> to support Basilisk modules written in Python whose <code class="docutils literal notranslate"><span class="pre">UpdateStateImpl</span></code> methods are JIT-compiled with Numba for near-C execution speed.</p></li>
+<li><p>Added zero-copy payload dtype metadata and raw message-pointer accessors to support efficient NumPy and Numba views of Basilisk message data.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">StatefulNumbaModel</span></code> to combine Numba-compiled Python modules with <code class="docutils literal notranslate"><span class="pre">StatefulSysModel</span></code> continuous-time state registration and integration in MuJoCo <code class="docutils literal notranslate"><span class="pre">MJScene</span></code> dynamics.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">RigidBodyKinematicsNumba</span></code> as an <code class="docutils literal notranslate"><span class="pre">njit</span></code>-compatible rigid-body kinematics utility library for use inside compiled Numba kernels.</p></li>
+<li><p>Added the <a class="reference internal" href="../../Learn/makingModules/numbaModules.html#numbamodules"><span class="std std-ref">Making Numba Modules</span></a> user guide together with <a class="reference internal" href="../../examples/scenarioAttitudePointingNumba.html#scenarioattitudepointingnumba"><span class="std std-ref">scenarioAttitudePointingNumba</span></a>, <a class="reference internal" href="../../examples/scenarioAttitudeFeedbackNumba.html#scenarioattitudefeedbacknumba"><span class="std std-ref">scenarioAttitudeFeedbackNumba</span></a>, and <a class="reference internal" href="../../examples/scenarioBenchmarkNumba.html#scenariobenchmarknumba"><span class="std std-ref">scenarioBenchmarkNumba</span></a> examples to demonstrate the new Numba-based module workflow.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BSKLogger</span></code> now flushes <code class="docutils literal notranslate"><span class="pre">stdout</span></code> after emitting warning-level (and higher) messages, so warnings are not lost or reordered when output is redirected to a file or pipe (and are observable to test harnesses).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">BSKLogger::bskError()</span></code> as a non-returning C++ fatal logging method, with safe Python and C fatal logging wrappers, while preserving existing <code class="docutils literal notranslate"><span class="pre">bskLog(BSK_ERROR,</span> <span class="pre">...)</span></code> behavior.</p></li>
+<li><p>Added Pythonic <code class="docutils literal notranslate"><span class="pre">BSKLogger</span></code> convenience methods <code class="docutils literal notranslate"><span class="pre">debug()</span></code>, <code class="docutils literal notranslate"><span class="pre">info()</span></code>, <code class="docutils literal notranslate"><span class="pre">warning()</span></code>, and <code class="docutils literal notranslate"><span class="pre">error()</span></code> to <code class="docutils literal notranslate"><span class="pre">bskLogging</span></code>.</p></li>
+<li><p>Added a <code class="docutils literal notranslate"><span class="pre">setLevel()</span></code> alias for <code class="docutils literal notranslate"><span class="pre">setLogLevel()</span></code>.</p></li>
+<li><p>Added a <code class="docutils literal notranslate"><span class="pre">LogLevel</span></code> <code class="docutils literal notranslate"><span class="pre">IntEnum</span></code>, and short log-level aliases (ex. <code class="docutils literal notranslate"><span class="pre">bskLogging.WARNING</span></code>) that mirror Python’s standard <code class="docutils literal notranslate"><span class="pre">logging</span></code> module naming.</p></li>
+<li><p>Fixed Monte Carlo nested dispersion paths and randomized <code class="docutils literal notranslate"><span class="pre">RNGSeed</span></code> application.</p></li>
+<li><p>Tuned <a class="reference internal" href="../../examples/scenarioMonteCarloAttRW.html#scenariomontecarloattrw"><span class="std std-ref">scenarioMonteCarloAttRW</span></a> dispersions to show subtler run-to-run variations without saturated response.</p></li>
+<li><p>Added reusable Eigen validation helpers <code class="docutils literal notranslate"><span class="pre">eigenIsRotationMatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">eigenIsUnitVector</span></code>, and <code class="docutils literal notranslate"><span class="pre">eigenIsValidInertiaMatrix</span></code> in <code class="docutils literal notranslate"><span class="pre">avsEigenSupport</span></code> for use in module configuration checks.</p></li>
+<li><p>Fixed a memory leak in <a class="reference internal" href="../../Documentation/utilities/simHelpers.html#simhelpers"><span class="std std-ref">simHelpers</span></a> <code class="docutils literal notranslate"><span class="pre">timeStringToGregorianUTCMsg</span></code>. The SWIG-allocated scratch
+<code class="docutils literal notranslate"><span class="pre">doubleArray</span></code> used to receive the <code class="docutils literal notranslate"><span class="pre">str2et_c</span></code> result was never released (about 32 bytes leaked per
+call); it is now freed with <code class="docutils literal notranslate"><span class="pre">delete_doubleArray</span></code> once the value has been read (issue #548).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">SimulationBaseClass</span></code> helpers to extract and visualize Basilisk module message connections, including stand-alone source messages supplied through <code class="docutils literal notranslate"><span class="pre">extraMessages</span></code>, optional recorder module filtering, and Matplotlib or Graphviz rendering.  The Graphviz renderer supports compact vertical or horizontal layouts.  The new <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-5a.html#bskprinciples-5a"><span class="std std-ref">Visualizing Message Connections</span></a> tutorial explains the available options.</p></li>
+<li><p>Fixed several BSK modules to deallocate dynamically allocated output message objects with C++ <code class="docutils literal notranslate"><span class="pre">delete</span></code>.</p></li>
+<li><p>Made <code class="docutils literal notranslate"><span class="pre">StateData::setDerivative</span></code> virtual and added a <code class="docutils literal notranslate"><span class="pre">StateData::perComponentErrorControl</span></code> flag, so a state can both customize how its derivative is interpreted and request that an adaptive integrator measure its truncation error per scalar component (used by the MuJoCo bulk position and velocity states).</p></li>
+</ul>
+</section>
+<section id="spacecraft-dynamics-and-effectors">
+<h3>Spacecraft dynamics and effectors<a class="headerlink" href="#spacecraft-dynamics-and-effectors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">thrusterData</span></code> attribute of <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">C++ Module: thrusterDynamicEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> being returned to Python as an opaque object. After <code class="docutils literal notranslate"><span class="pre">THRSimConfig</span></code> became a shared pointer, the SWIG interface no longer wrapped <code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::shared_ptr&lt;THRSimConfig&gt;&gt;</span></code>, so <code class="docutils literal notranslate"><span class="pre">thrusterData</span></code> could not be indexed or iterated. It is now exposed as an iterable list of <code class="docutils literal notranslate"><span class="pre">THRSimConfig</span></code> objects.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/simulation/dynamics/facetedSRPEffector/facetedSRPEffector.html#facetedsrpeffector"><span class="std std-ref">C++ Module: facetedSRPEffector</span></a> module to compute the aggregate force and torque acting on the spacecraft due to impinging photons from the Sun. Unlike the original <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> module, this new module (1) requires the facet data to be externally projected into the spacecraft body frame, (2) expects the facet sunlit projected areas to be provided externally; it does not compute projected area internally, and (3) does not read facet articulation-angle messages directly.</p></li>
+<li><p>Fixed a reaction wheel unit error in <a class="reference internal" href="../../examples/scenarioAttitudeConstrainedManeuver.html#scenarioattitudeconstrainedmaneuver"><span class="std std-ref">scenarioAttitudeConstrainedManeuver</span></a> and <a class="reference internal" href="../../examples/scenarioAttitudeConstraintViolation.html#scenarioattitudeconstraintviolation"><span class="std std-ref">scenarioAttitudeConstraintViolation</span></a>. The <code class="docutils literal notranslate"><span class="pre">maxSpeed</span></code> value was pre-converted to rad/s before being passed to <code class="docutils literal notranslate"><span class="pre">rwFactory.create()</span></code>, which already expects <code class="docutils literal notranslate"><span class="pre">Omega_max</span></code> in RPM and converts internally. The double conversion set the wheel saturation speed about an order of magnitude too low, and since the derived wheel inertia is <code class="docutils literal notranslate"><span class="pre">maxMomentum</span> <span class="pre">/</span> <span class="pre">Omega_max</span></code> it came out about an order of magnitude too high; <code class="docutils literal notranslate"><span class="pre">maxSpeed</span></code> is now passed in RPM as expected.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a>, <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">C++ Module: spinningBodyTwoDOFStateEffector</span></a>, and <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a> now validate in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> that each user-provided DCM is a proper rotation matrix and that each inertia tensor is symmetric and positive definite (the inertia check is skipped for massless bodies), raising a descriptive error when the configuration is inconsistent (issue #469).</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a> constructors that
+called <code class="docutils literal notranslate"><span class="pre">Eigen</span></code>’s static <code class="docutils literal notranslate"><span class="pre">Identity()</span></code> factory as a statement and discarded the result, leaving the
+default <code class="docutils literal notranslate"><span class="pre">dcm_HB</span></code> (and <code class="docutils literal notranslate"><span class="pre">IPntS_S</span></code> for the single hinged effector) uninitialized instead of identity
+(issue #469).</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraftSystem/spacecraftSystem.html#spacecraftsystem"><span class="std std-ref">C++ Module: spacecraftSystem</span></a> now validate the user-supplied hub configuration on
+reset: the hub mass <code class="docutils literal notranslate"><span class="pre">mHub</span></code> must be strictly positive and the hub inertia tensor <code class="docutils literal notranslate"><span class="pre">IHubPntBc_B</span></code>
+must be symmetric and positive definite, raising a descriptive error when the configuration is
+inconsistent (issue #469). Previously a zero hub mass or singular hub inertia silently produced
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> states, and a negative hub mass silently reversed the translational response to applied
+forces.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> reporting <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for <code class="docutils literal notranslate"><span class="pre">nonConservativeAccelpntB_B</span></code> on the first integration step. The body-frame non-conservative acceleration divides the accumulated velocity change by the integration time step, which is zero on the first step; it is now set to zero when the time step is zero, matching the existing guard used for <code class="docutils literal notranslate"><span class="pre">omegaDot_BN_B</span></code>.</p></li>
+<li><p>Add the <code class="docutils literal notranslate"><span class="pre">fuelLeakRate</span></code> parameter to the <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> module to simulate fuel leaks that cause a loss of fuel mass without imparting momentum.</p></li>
+<li><p>Add the <code class="docutils literal notranslate"><span class="pre">MassFlowRateMsgPayload</span></code> C message type and optional <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> <code class="docutils literal notranslate"><span class="pre">fuelLeakRateInMsg</span></code> input to override the configured leak rate.</p></li>
+<li><p>Stop <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> leak depletion when the available tank propellant reaches zero and log a <code class="docutils literal notranslate"><span class="pre">BSK_WARNING</span></code>.</p></li>
+<li><p>Fixed N-DoF getter assertions in <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a>.</p></li>
+<li><p>Improved the runtime performance of <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> by computing the degree-of-freedom mass-matrix inverse once per <code class="docutils literal notranslate"><span class="pre">updateContributions</span></code> call instead of three times. Results are numerically identical; the speedup grows with the number of degrees of freedom.</p></li>
+</ul>
+</section>
+<section id="environment-gravity-and-ephemerides">
+<h3>Environment, gravity, and ephemerides<a class="headerlink" href="#environment-gravity-and-ephemerides" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added Earth Radiation Pressure model with <a class="reference internal" href="../../Documentation/simulation/environment/earthRadiationModel/earthRadiationModel.html#earthradiationmodel"><span class="std std-ref">C++ Module: earthRadiationModel</span></a> module.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/environment/_GeneralModuleFiles/planetRadiationBase.html#planetradiationbase"><span class="std std-ref">C++ Module: planetRadiationBase</span></a> base class for planet radiation models and albedo.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/simulation/environment/albedo/albedo.html#albedo"><span class="std std-ref">C++ Module: albedo</span></a> module to use new planetRadiationBase.</p></li>
+<li><p>Added regression coverage for albedo and eclipse in <code class="docutils literal notranslate"><span class="pre">test_albedo.py</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/gravityEffector.html#gravityeffector"><span class="std std-ref">C++ Module: gravityEffector</span></a> now logs a <code class="docutils literal notranslate"><span class="pre">BSK_WARNING</span></code> in <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> when a gravity body uses an orientation-dependent gravity model – a spherical-harmonic field with tesseral/sectoral terms (order <span class="math notranslate nohighlight">\(\ge 1\)</span>), or a polyhedral shape model – but has no planet-orientation message connected. Without one the planet is silently treated as non-rotating, so the orientation-dependent terms no longer average out and produce spurious secular drift in eccentricity and inclination (issue #1352).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">GravityModel::dependsOnOrientation()</span></code>, overridden by <code class="docutils literal notranslate"><span class="pre">SphericalHarmonicsGravityModel</span></code> (true when any retained coefficient of order <span class="math notranslate nohighlight">\(\ge 1\)</span> is non-zero) and by <code class="docutils literal notranslate"><span class="pre">PolyhedralGravityModel</span></code> (always true).</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/scenarioOrbitConsistencyVerification.html#scenarioorbitconsistencyverification"><span class="std std-ref">scenarioOrbitConsistencyVerification</span></a>, which propagates a sun-synchronous LEO orbit under the GGM03S field with and without a connected planet-orientation message and shows that supplying Earth rotation keeps the eccentricity and inclination bounded, recovering consistency with external propagators (Orekit, GMAT, SpOCK).</p></li>
+<li><p>Documented in <a class="reference internal" href="../../examples/scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a> that spherical-harmonic fields with tesseral terms require a planet-orientation message to be physically correct.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/simulation/environment/spacecraftChargingDynamics/spacecraftChargingDynamics.html#spacecraftchargingdynamics"><span class="std std-ref">C++ Module: spacecraftChargingDynamics</span></a> module which integrates the electric potential of two spacecraft (a servicer and a target) in a plasma environment using a first order ordinary differential equation for each spacecraft. The charging model includes plasma electron current, plasma ion current, photoelectric current, and an optional electron beam current.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/simulation/environment/spaceWeatherData/spaceWeatherData.html#spaceweatherdata"><span class="std std-ref">C++ Module: spaceWeatherData</span></a> C++ module that loads CelesTrak space-weather CSV data and publishes the 23-message weather set required by <a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a>.</p></li>
+</ul>
+</section>
+<section id="sensors-and-flight-software">
+<h3>Sensors and flight software<a class="headerlink" href="#sensors-and-flight-software" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Refactored the <a class="reference internal" href="../../Documentation/simulation/thermal/motorThermal/motorThermal.html#motorthermal"><span class="std std-ref">C++ Module: motorThermal</span></a> unit test to validate the module against analytically derived temperatures instead of a stored vector of regression “truth” values. The test now drives the module with a stand-alone reaction wheel state message and isolates each term of the heat balance (dissipation, motor power inefficiency, and friction) in separate scenarios, comparing the recorded temperatures to the closed-form heat-balance recurrence.</p></li>
+<li><p>Fixed the post-fit residual dimension in <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.html#sunlinesekf"><span class="std std-ref">C Module: sunlineSEKF</span></a> and <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.html#okeefeekf"><span class="std std-ref">C Module: okeefeEKF</span></a>. The residual term
+<code class="docutils literal notranslate"><span class="pre">Hx</span> <span class="pre">=</span> <span class="pre">measMat</span> <span class="pre">*</span> <span class="pre">x</span></code> used the full <code class="docutils literal notranslate"><span class="pre">SKF_N_STATES</span></code> width instead of the reduced state width each filter
+actually carries (<code class="docutils literal notranslate"><span class="pre">EKF_N_STATES_SWITCH</span></code> for the SEKF, <code class="docutils literal notranslate"><span class="pre">SKF_N_STATES_HALF</span></code> for okeefe), so the multiply
+strode the measurement matrix across the wrong row width and over-read the state-error vector, corrupting
+the reported <code class="docutils literal notranslate"><span class="pre">postFitRes</span></code> during the convergence transient. The state and covariance estimates were
+unaffected (issue #1353).</p></li>
+<li><p>Updated the <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrFiringRound/thrFiringRound.html#thrfiringround"><span class="std std-ref">Python Module: thrFiringRound</span></a> module to include an optional minimum fire time setting.</p></li>
+<li><p>Fixed camera module to properly process and publish images loaded from the filename parameter, ensuring they follow the same processing pipeline as images from imageInMsg.</p></li>
+<li><p>Updated the <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.html#hingedjointarraymotor"><span class="std std-ref">C++ Module: hingedJointArrayMotor</span></a> module to perform full tracking control.</p></li>
+<li><p>Added the <a class="reference internal" href="../../Documentation/simulation/deviceInterface/jointArrayRefProfiler/jointArrayRefProfiler.html#jointarrayrefprofiler"><span class="std std-ref">C++ Module: jointArrayRefProfiler</span></a> device-interface module to generate low-pass or time-profiled joint angle, rate, and acceleration references from scalar joint state inputs and a desired joint-array command.</p></li>
+<li><p>Fixed variable semantic mismatch in InertialUKF where <code class="docutils literal notranslate"><span class="pre">wheelAccel</span></code> stored torque units; renamed
+to <code class="docutils literal notranslate"><span class="pre">wheelTorque</span></code> to correctly reflect the stored physical quantity.</p></li>
+<li><p>Fixed the use of a static vector between the hub center of mass and the system center of mass in <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/jointThrAllocation.html#jointthrallocation"><span class="std std-ref">Python Module: jointThrAllocation</span></a>. The vector is now computed from the current articulated-arm configuration, which corrects the thruster mapping and resulting optimization solution for a given set of joint angles.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/communication/downlinkHandling/downlinkHandling.html#downlinkhandling"><span class="std std-ref">C++ Module: downlinkHandling</span></a> with a validated configuration interface (setters/getters), finite-value guards, and bounded outputs to prevent non-physical downlink rates.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.html#downlinkhandlingmsgpayload"><span class="std std-ref">DownlinkHandlingMsgPayload</span></a> diagnostics and dedicated unit-test coverage for equation parity, receiver-path selection, storage-limited behavior, and invalid-input handling.</p></li>
+<li><p>Improved storage-target selection robustness across connected storage status messages and aligned module documentation with implemented behavior and validation interface.</p></li>
+<li><p>Fixed the camera module to release its retained image output buffer on destruction.</p></li>
+<li><p>Fixed camera PNG encoding option handling for OpenCV 4.13 compatibility in OpNav image processing.</p></li>
+<li><p>Fixed typo in <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/attTrackingError/attTrackingError.html#atttrackingerror"><span class="std std-ref">C Module: attTrackingError</span></a> documentation</p></li>
+</ul>
+</section>
+<section id="mujoco-and-stochastic-integration">
+<h3>MuJoCo and stochastic integration<a class="headerlink" href="#mujoco-and-stochastic-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">.rst</span></code> documentation pages for <code class="docutils literal notranslate"><span class="pre">NBodyGravity</span></code>, <code class="docutils literal notranslate"><span class="pre">JointPIDController</span></code>, <code class="docutils literal notranslate"><span class="pre">StochasticAtmDensity</span></code>, and <code class="docutils literal notranslate"><span class="pre">StochasticDragCoeff</span></code></p></li>
+<li><p>Fixed the <code class="docutils literal notranslate"><span class="pre">&lt;body&gt;_com</span></code> site in <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> bodies reporting the body frame origin instead of the true center of mass. MuJoCo latches a site’s frame alignment at compile time, so the center-of-mass site (created at the body origin) ignored the later center-of-mass offset, producing incorrect <code class="docutils literal notranslate"><span class="pre">_com</span></code> state messages and an off-center-of-mass gravity force that spuriously torqued hinge-rooted bodies such as deploying panels.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> body inertia not rescaling when the body mass changes. The mass-proportional inertia update divided by the already-updated mass, making the scale factor always one, so the inertia tensor never tracked mass changes.</p></li>
+<li><p>Improved MuJoCo adaptive-integration error control without growing the integrated state count. A <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> integrates exactly four bulk states regardless of how many bodies or joints it contains: the whole position vector (<code class="docutils literal notranslate"><span class="pre">qpos</span></code>), the whole velocity vector (<code class="docutils literal notranslate"><span class="pre">qvel</span></code>), the actuator state, and one mass entry per body. The bulk position and velocity states opt into per-component adaptive error control (see <code class="docutils literal notranslate"><span class="pre">StateData::perComponentErrorControl</span></code>), so each degree of freedom is scaled by its own magnitude. This fixes cases where orbital translation magnitudes dominated the unified state norm and let stiff hinge dynamics drift unflagged, while keeping the per-stage integrator bookkeeping independent of model size.</p></li>
+<li><p>Added the <code class="docutils literal notranslate"><span class="pre">MJScene.highOrderAttitudeIntegration</span></code> flag (default <code class="docutils literal notranslate"><span class="pre">False</span></code>). When enabled, free- and ball-joint orientation quaternions are integrated as a four-component quaternion rate evaluated per integrator substep, so the attitude inherits the integrator’s full order (for example fourth order with RK4) and an adaptive integrator’s tolerance controls the attitude error. By default the quaternion is still advanced by a single exponential map of the stage-averaged body rate, which is second-order accurate on SO(3) regardless of the integrator and reproduces MuJoCo’s own native RK4 attitude stepping.</p></li>
+<li><p>Updated the MuJoCo dynamics wrapper to use MuJoCo 3.7 element-name APIs when reading and writing spec object names.</p></li>
+<li><p>Improved MuJoCo orbital free-body propagation and adaptive integrator handling for gravity-driven scenes, including reusable state-specific tolerance controls and safer Python/C++ integrator ownership transfer.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../examples/scenarioRoboticArm.html#scenarioroboticarm"><span class="std std-ref">scenarioRoboticArm</span></a> and <a class="reference internal" href="../../examples/scenarioFlexiblePanel.html#scenarioflexiblepanel"><span class="std std-ref">scenarioFlexiblePanel</span></a> where standalone reference messages created inside setup helper functions were garbage collected before the simulation ran. In <a class="reference internal" href="../../examples/scenarioRoboticArm.html#scenarioroboticarm"><span class="std std-ref">scenarioRoboticArm</span></a> this left every robotic-arm joint stuck at zero; in <a class="reference internal" href="../../examples/scenarioFlexiblePanel.html#scenarioflexiblepanel"><span class="std std-ref">scenarioFlexiblePanel</span></a> the attitude controller read an unwritten vehicle-configuration message. The messages are now retained on the simulation object, following the guidance in <a class="reference internal" href="../bskKnownIssues.html#bskknownissues"><span class="std std-ref">Basilisk Known Issues</span></a> (issue #1107).</p></li>
+<li><p>Added an integrated test for <a class="reference internal" href="../../examples/scenarioRoboticArm.html#scenarioroboticarm"><span class="std std-ref">scenarioRoboticArm</span></a> that verifies each joint reaches its commanded angle.</p></li>
+</ul>
+</section>
+<section id="visualization-and-data-handling">
+<h3>Visualization and data handling<a class="headerlink" href="#visualization-and-data-handling" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/vizard/dataFileToViz/dataFileToViz.html#datafiletoviz"><span class="std std-ref">C++ Module: dataFileToViz</span></a> and <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> SWIG wrapper compatibility so shared Vizard thruster configuration types work regardless of import order.</p></li>
+<li><p>Fixed the Vizard interface to release retained image output buffers on destruction.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> Vizard support to <a class="reference internal" href="../../Documentation/utilities/vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a>, including Python body and geom introspection, MuJoCo body hierarchy discovery, multiple spacecraft roots, and automatic Vizard model generation from supported MuJoCo geoms.</p></li>
+<li><p>Expanded MuJoCo example Vizard coverage with a new <a class="reference internal" href="../../examples/mujoco/scenarioMJSceneVizard.html#scenariomjscenevizard"><span class="std std-ref">scenarioMJSceneVizard</span></a> example and visualization support for planets, thruster plumes, asteroid custom models, textured geometry, and deployed multi-body spacecraft.</p></li>
+<li><p>Updated message recorders so <code class="docutils literal notranslate"><span class="pre">updateTimeInterval()</span></code> reschedules the next recording opportunity when the minimum update time is changed between simulation runs.</p></li>
+<li><p>Added a message recorder mode to record only when message payload content changes after the minimum update time has elapsed.</p></li>
+<li><p>Added explicit errors when change-only recording is requested for payload types without supported equality comparison.</p></li>
+<li><p>Added shallow metadata comparison support for <code class="docutils literal notranslate"><span class="pre">CameraImageMsgPayload</span></code> without comparing pointed-to image bytes.</p></li>
+<li><p>Added support-data backup URLs and shorter retries for externally hosted downloads used by CI.</p></li>
+<li><p>Added retry hardening for Basilisk support data downloads.</p></li>
+<li><p>Added Vizard plume placement for thrusters mounted on a non-hub body. <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">C++ Module: thrusterDynamicEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> now expose a <code class="docutils literal notranslate"><span class="pre">r_PcP_P</span></code> member, and <a class="reference internal" href="../../Documentation/utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a>’s <code class="docutils literal notranslate"><span class="pre">addToSpacecraftSubcomponent</span></code> accepts a <code class="docutils literal notranslate"><span class="pre">r_PcP_P</span></code> argument.</p></li>
+<li><p>Added support for Vizard 2.4.0 features</p></li>
+<li><p>Added instructions on how to build Vizard from source code</p></li>
+</ul>
+</section>
+<section id="documentation-examples-and-validation">
+<h3>Documentation, examples, and validation<a class="headerlink" href="#documentation-examples-and-validation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added the <code class="docutils literal notranslate"><span class="pre">bsk-module-io</span></code> Sphinx directive to generate module I/O diagrams and tables from RST.</p></li>
+<li><p>Added C, C++, and Python type labels to generated BSK module documentation pages.</p></li>
+<li><p>Updated the C and C++ module templates and draft module generator to use generated module I/O diagrams and tables.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.12.html" class="btn btn-neutral float-left" title="Version 2.12 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.10.html" class="btn btn-neutral float-right" title="Version 2.10 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

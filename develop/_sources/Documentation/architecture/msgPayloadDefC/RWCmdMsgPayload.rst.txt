@@ -1,0 +1,10 @@
+.. _RWCmdMsgPayload:
+
+RWCmdMsgPayload
+===============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWCmdMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,10 @@
+.. _THROutputMsgPayload:
+
+THROutputMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THROutputMsgPayload.h
+   :project: msgPayloadDefCpp
+

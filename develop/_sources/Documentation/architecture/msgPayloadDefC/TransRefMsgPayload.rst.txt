@@ -1,0 +1,10 @@
+.. _TransRefMsgPayload:
+
+TransRefMsgPayload
+==================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: TransRefMsgPayload.h
+   :project: msgPayloadDefC
+

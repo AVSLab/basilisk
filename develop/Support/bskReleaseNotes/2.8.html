@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.8 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.7 Release Notes" href="2.7.html" />
+    <link rel="prev" title="Version 2.9 Release Notes" href="2.9.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.8 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.8.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-8-release-notes">
+<h1>Version 2.8 Release Notes<a class="headerlink" href="#version-2-8-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-8-0-august-30-2025">
+<span id="bsk-release-2-8-0"></span><h2>Version 2.8.0 (August 30, 2025)<a class="headerlink" href="#version-2-8-0-august-30-2025" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Marked the use of python 3.8 as deprecated</p></li>
+<li><p>Support for <code class="docutils literal notranslate"><span class="pre">opNavMode</span></code> flag within vizSupport was removed, as its deprecation period ended</p></li>
+<li><p>Demo video was added to <a class="reference internal" href="../../examples/scenarioQuadMaps.html#scenarioquadmaps"><span class="std std-ref">scenarioQuadMaps</span></a> documentation</p></li>
+<li><p>Pinned python dependencies to avoid issues with new package versions.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/simulation/dynamics/VSCMGs/vscmgStateEffector.html#vscmgstateeffector"><span class="std std-ref">C++ Module: vscmgStateEffector</span></a> documentation.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/vscmgGimbalRateServo/vscmgGimbalRateServo.html#vscmggimbalrateservo"><span class="std std-ref">C++ Module: vscmgGimbalRateServo</span></a> module that computes the VSCMG wheel motor torque and gimbal motor torque.</p></li>
+<li><p>Added a new <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/vscmgVelocitySteering/vscmgVelocitySteering.html#vscmgvelocitysteering"><span class="std std-ref">C++ Module: vscmgVelocitySteering</span></a> module that computes the desired VSCMG wheel accelerations and gimbal rates.</p></li>
+<li><p>Added a new github workflow job <code class="docutils literal notranslate"><span class="pre">canary</span></code> to routinely check the compatibility of latest python dependencies with python 3.13 on the latest mac-os.</p></li>
+<li><p>Deprecated <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraftSystem/spacecraftSystem.html#spacecraftsystem"><span class="std std-ref">C++ Module: spacecraftSystem</span></a>.  It was never completed and we have other ways to connect spacecraft components</p></li>
+<li><p>Allow event conditions and effects to be defined by functions. This is preferred over the old string-based method, as it
+enables the use of arbitrary packages and objects in events and allows for event code to be parsed by IDE tools.</p></li>
+<li><p>Add a sun message input and <code class="docutils literal notranslate"><span class="pre">theta_solar</span></code> threshold to <a class="reference internal" href="../../Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#spacecraftlocation"><span class="std std-ref">C++ Module: spacecraftLocation</span></a>.</p></li>
+<li><p>Fixed an issue where DynamicObject classes computed time steps by differencing double values rather
+than <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> values in nanoseconds.  This could cause micro drifts in the integration process.  See
+<a class="reference external" href="https://github.com/AVSLab/basilisk/issues/993">Issue 993</a> for more info on this issue.  Now the time step is computed
+using <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> time values and then converted to a double.</p></li>
+<li><p>Enhance how <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> values are converted to doubles.  BSK now warns if the time value is large enough such
+that the conversion method has a loss of precision in this process.</p></li>
+<li><p>Support including an eclipse message in <a class="reference internal" href="../../Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#spacecraftlocation"><span class="std std-ref">C++ Module: spacecraftLocation</span></a> to more accurately determine illumination.</p></li>
+<li><p>Fixed an issue where the <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/spaceToGroundTransmitter/spaceToGroundTransmitter.html#spacetogroundtransmitter"><span class="std std-ref">C++ Module: spaceToGroundTransmitter</span></a> would check for the amount of data remaining in a different partition than the one being downlinked.</p></li>
+<li><p>Fixed an issue where a high baud rate prevented the <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/spaceToGroundTransmitter/spaceToGroundTransmitter.html#spacetogroundtransmitter"><span class="std std-ref">C++ Module: spaceToGroundTransmitter</span></a> from downlinking data from the <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/storageUnit/simpleStorageUnit.html#simplestorageunit"><span class="std std-ref">C++ Module: simpleStorageUnit</span></a> or <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/storageUnit/partitionedStorageUnit.html#partitionedstorageunit"><span class="std std-ref">C++ Module: partitionedStorageUnit</span></a>.</p></li>
+<li><p>Updated default Windows compiler to be <code class="docutils literal notranslate"><span class="pre">Visual</span> <span class="pre">Studio</span> <span class="pre">17</span> <span class="pre">2022</span></code>.  The CI test build now occurs on Windows 11.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you still want to use Visual Studio 16, then be sure to set the generator
+using <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span> <span class="pre">--generator</span> <span class="pre">&quot;Visual</span> <span class="pre">Studio</span> <span class="pre">16</span> <span class="pre">2019</span></code></p>
+</div>
+</li>
+<li><p>Improve reading speed of recorded messages by about 75%.</p></li>
+<li><p>Added support for Vizard 2.3.0</p></li>
+<li><p>Adds support for updating noise parameters in <a class="reference internal" href="../../Documentation/simulation/navigation/simpleNav/simpleNav.html#simplenav"><span class="std std-ref">C++ Module: simpleNav</span></a> during simulation</p></li>
+<li><p>Redirected MuJoCo errors and warnings to <a class="reference internal" href="../../Documentation/architecture/utilities/bskLogging.html#bsklogging"><span class="std std-ref">bskLogging</span></a> instead of printing to file.</p></li>
+<li><p>Update <a class="reference internal" href="../../Documentation/utilities/vizSupport.html#vizsupport"><span class="std std-ref">vizSupport</span></a>  for the <code class="docutils literal notranslate"><span class="pre">saveFile</span></code> argument to take an explicit
+file path and file name and not auto-generate the <code class="docutils literal notranslate"><span class="pre">_VizFiles</span></code> sub-folder.  This provides the
+user more direct control where and how the simulation data is saved.</p></li>
+<li><p>Support calling <code class="docutils literal notranslate"><span class="pre">unsubscribe</span></code> on input messages.</p></li>
+<li><p>Fixed an issue where the <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/forceTorqueThrForceMapping/forceTorqueThrForceMapping.html#forcetorquethrforcemapping"><span class="std std-ref">C Module: forceTorqueThrForceMapping</span></a> module’s Reset() function did not zero all thruster settings correctly.</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">canary</span></code> workflow to run on all pull requests to the develop branch, providing feedback on compatibility with latest dependencies.</p></li>
+<li><p>Added links to published paper in <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/oneAxisSolarArrayPoint/oneAxisSolarArrayPoint.html#oneaxissolararraypoint"><span class="std std-ref">C Module: oneAxisSolarArrayPoint</span></a> documentation.</p></li>
+<li><p>Converted RW data structures in <code class="docutils literal notranslate"><span class="pre">reactionWheelStateEffector</span></code> to shared pointers instead of raw pointers.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">BSKLogger</span></code> now raises a <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> (<code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.bskLogging.BasiliskError</span></code>)
+if something is logged at <code class="docutils literal notranslate"><span class="pre">BSK_ERROR</span></code> level. Certain errors are reduced to <code class="docutils literal notranslate"><span class="pre">BSK_WARNING</span></code> to reflect
+the new behavior.</p></li>
+<li><p>Improve reading speed of recorded messages by 1-4 orders of magnitude.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is a breaking change, see list of known issues for details. Please report any issues
+(at buildtime or runtime) with recorders for custom payloads.</p>
+</div>
+</li>
+<li><p>Support initialization of fields in the constructor of message payloads (in Python).</p></li>
+<li><p>Improve string representation of message payloads (in Python).</p></li>
+<li><p>Add support for pretty-printing message payloads (in Python).</p></li>
+<li><p>Updated documentation and all scenarios to use new payload constructor format.</p></li>
+<li><p>Add <a class="reference internal" href="../../examples/mujoco/scenarioBranchingPanels.html#scenariobranchingpanels"><span class="std std-ref">scenarioBranchingPanels</span></a>, which showcases a branching solar array configuration, staged deployment,
+and joint locking when panels are stowed or fully deployed.</p></li>
+<li><p>Bugfix: joint velocity not being reported correctly in <code class="docutils literal notranslate"><span class="pre">MJScalarJoint</span></code>.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">addJointSingleActuator</span></code> to <code class="docutils literal notranslate"><span class="pre">MJScene</span></code>. This can be used to add actuators acting on joints
+to a MuJoCo-based simulation (e.g. motors that produce torque).</p></li>
+<li><p>Add method to scalar joints class to get to the equality constraint object that can be used to constrain
+the joint to a specific value (<code class="docutils literal notranslate"><span class="pre">MJScalarJoint::getConstrainedEquality</span></code>).</p></li>
+<li><p>Add methods <code class="docutils literal notranslate"><span class="pre">setSolref</span></code> and <code class="docutils literal notranslate"><span class="pre">setSolimp</span></code> to <code class="docutils literal notranslate"><span class="pre">MJEquality</span></code> to enable control of the solver parameters
+that control how the equalities are enforced in MuJoCo.</p></li>
+<li><p>Add PID controller models for <code class="docutils literal notranslate"><span class="pre">MJScene</span></code>. Currently implemented <code class="docutils literal notranslate"><span class="pre">JointPIDController</span></code>, which can read the state
+of a joint and output a torque to act on said joint to achieve a desired angle and angular velocity.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.9.html" class="btn btn-neutral float-left" title="Version 2.9 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.7.html" class="btn btn-neutral float-right" title="Version 2.7 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

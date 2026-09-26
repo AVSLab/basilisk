@@ -1,0 +1,10 @@
+.. _svIntegratorAdaptiveRungeKutta:
+
+svIntegratorAdaptiveRungeKutta
+==============================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svIntegratorAdaptiveRungeKutta.h
+   :project: _GeneralModuleFiles4
+

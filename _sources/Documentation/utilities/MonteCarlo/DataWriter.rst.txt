@@ -1,0 +1,15 @@
+.. _DataWriter:
+
+DataWriter
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: DataWriter
+   :members:
+   :show-inheritance:
+

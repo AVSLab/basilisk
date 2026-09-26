@@ -1,0 +1,15 @@
+.. _test_scanningInstrumentController:
+
+test_scanningInstrumentController
+=================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_scanningInstrumentController
+   :members:
+   :show-inheritance:
+

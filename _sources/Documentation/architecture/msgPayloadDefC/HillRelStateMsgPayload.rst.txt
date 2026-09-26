@@ -1,0 +1,10 @@
+.. _HillRelStateMsgPayload:
+
+HillRelStateMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: HillRelStateMsgPayload.h
+   :project: msgPayloadDefC
+

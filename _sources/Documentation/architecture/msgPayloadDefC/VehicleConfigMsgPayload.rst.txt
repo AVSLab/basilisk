@@ -1,0 +1,10 @@
+.. _VehicleConfigMsgPayload:
+
+VehicleConfigMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: VehicleConfigMsgPayload.h
+   :project: msgPayloadDefC
+

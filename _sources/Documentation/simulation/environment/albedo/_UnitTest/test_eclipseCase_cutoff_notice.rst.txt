@@ -1,0 +1,15 @@
+.. _test_eclipseCase_cutoff_notice:
+
+test_eclipseCase_cutoff_notice
+==============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_eclipseCase_cutoff_notice
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_waypointReference:
+
+waypointReference
+=================
+
+:doc:`Module documentation <waypointReference>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

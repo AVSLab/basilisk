@@ -1,0 +1,10 @@
+.. _SingleActuatorMsgPayload:
+
+SingleActuatorMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SingleActuatorMsgPayload.h
+   :project: msgPayloadDefC
+
