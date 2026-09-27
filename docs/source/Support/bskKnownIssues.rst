@@ -55,6 +55,16 @@ Version |release|
   classes must replace direct owning-member assignments with ``setIntegrator()``;
   see :ref:`creatingDynObject`.
 
+- GitHub issue 282: Synchronized dynamics could retain a dangling pointer after a
+  secondary was destroyed, or leave a surviving secondary marked as synchronized
+  after its primary was destroyed. Python connections now retain their supplied
+  secondary objects, and native destruction removes synchronization links in
+  either order. Repeated connections are harmless; invalid self, nested, or
+  competing-primary connections now raise ``BasiliskError``. Python calls through
+  borrowed primary proxies are rejected before changing connections; use the
+  owning primary object so retention survives temporary aliases. See
+  :ref:`bskSynchronizedDynamicsLifetime`.
+
 - GitHub issue 282: Resetting simulation threads could clear process assignments
   while a worker was still using them, and shutdown requests used an unsynchronized
   flag. Worker ownership now guarantees stop and join before releasing thread state

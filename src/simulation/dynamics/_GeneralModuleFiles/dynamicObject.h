@@ -121,7 +121,9 @@ class DynamicObject : public SysModel {
      * @param dynPtr Secondary object; must be independent, non-null, and different from this object.
      * @note Repeating an existing connection is a no-op. Configure new connections
      * before the first integration step and outside dynamics callbacks.
-     * Python retains the secondary; native connections are removed during destruction.
+     * Python calls require an owning primary proxy and retain the supplied secondary
+     * for its lifetime. Borrowed primary proxies are rejected before creating a
+     * connection. Native connections are removed during destruction.
      */
     void syncDynamicsIntegration(DynamicObject* dynPtr);
 

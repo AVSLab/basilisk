@@ -75,11 +75,20 @@ proxy must not be reused.
 
 The ``integrator`` attribute and ``getIntegrator()`` return borrowed access to
 the active integrator. That access is valid only until the integrator is
-replaced or its owning dynamics object is destroyed. Synchronized dynamics
-objects are retained by their owning Python primary.
+replaced or its owning dynamics object is destroyed. Python synchronization
+connections retain their supplied secondary objects; see
+:ref:`bskSynchronizedDynamicsLifetime` for the lifetime and configuration contract.
 
 Custom C++ dynamics classes should install an integrator with
 ``setIntegrator(new svIntegratorRK4(this))``. The owning ``integrator`` member
 is private; use ``getIntegrator()`` when a borrowed raw pointer is required,
 and do not manually delete the owned integrator. Compiled extensions must be
 rebuilt against extension ABI version 3.
+
+Create synchronization links through ``syncDynamicsIntegration()`` before the
+first integration step. The ``DynamicObject`` base destructor removes these links
+when either object is destroyed. It does not delete borrowed C++ dynamics objects.
+Use ``getIntegrationOwner()`` to inspect a connection and ``getDynamics()`` to
+inspect an integrator's group. Once synchronization is configured, use
+``setIntegrator()`` for replacements so that the new integrator receives the
+existing group.

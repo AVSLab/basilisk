@@ -58,6 +58,16 @@
 // Keep Python-owned secondaries alive without making them own the primary.
 // All references stay visible to Python's garbage collector. Retain distinct
 // proxies too: a borrowed alias must not replace an existing owning proxy.
+// A borrowed primary proxy can disappear while the native primary is still alive,
+// so reject it before C++ creates a connection whose retention would be temporary.
+%pythonprepend DynamicObject::syncDynamicsIntegration %{
+    if not self.thisown:
+        from Basilisk.architecture.bskLogging import BasiliskError
+        raise BasiliskError(
+            "Configure synchronized dynamics through the owning Python primary object; "
+            "borrowed primary proxies cannot retain connections"
+        )
+%}
 %pythonappend DynamicObject::syncDynamicsIntegration %{
     synchronized_dynamics = getattr(self, "_bsk_synced_dynamics", None)
     if synchronized_dynamics is None:
