@@ -25,8 +25,11 @@ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado Bould
 #include <string>
 #include <vector>
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
 #include "architecture/msgPayloadDefC/DownlinkHandlingMsgPayload.h"
 #include "architecture/msgPayloadDefC/LinkBudgetMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/DataStorageStatusMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
 #include "simulation/communication/_GeneralModuleFiles/AntennaDefinitions.h"
 #include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
@@ -59,6 +62,15 @@ class DownlinkHandling : public DataNodeBase
      *  @return ``true`` if the message was added, ``false`` otherwise
      */
     bool addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg);
+
+    /*! @brief Register a storage-status reader, preserving its source retention.
+     *  @param tmpStorageUnitMsg Source message used to detect duplicate registrations
+     *  @param reader Reader subscribed to tmpStorageUnitMsg
+     *  @return True if added, false if already registered
+     *  @note A null source or a reader subscribed to a different source is rejected with BSK_ERROR.
+     */
+    bool addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg,
+                                 ReadFunctor<DataStorageStatusMsgPayload> reader);
 
     /*! @brief Set requested raw channel bit rate.
      *  @param bitRateRequest Requested bit rate [bit/s], must be finite and :math:`\ge 0`

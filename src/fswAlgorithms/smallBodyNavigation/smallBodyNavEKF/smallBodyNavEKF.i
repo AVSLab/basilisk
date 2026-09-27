@@ -34,6 +34,11 @@
 %include "swig_eigen.i"
 
 %include "sys_model.i"
+// Retain the source before C++ stores the private reader.
+%rename(_addThrusterReader) SmallBodyNavEKF::addThrusterToFilter(ReadFunctor<THROutputMsgPayload>);
+%pythonprepend SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg) %{
+    return self._addThrusterReader(tmpThrusterMsg.addSubscriber())
+%}
 %include "smallBodyNavEKF.h"
 
 %include "architecture/msgPayloadDefC/NavTransMsgPayload.h"

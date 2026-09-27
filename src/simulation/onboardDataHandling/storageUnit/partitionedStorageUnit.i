@@ -40,6 +40,10 @@ from Basilisk.architecture.swig_common_model import *
 %include "stdint.i"
 %include "simulation/onboardDataHandling/storageUnit/storageUnitInt64Typemaps.swg"
 
+// Retain each Python source on the native reader created inside C++.
+%pythonappend DataStorageUnitBase::addDataNodeToModel %{
+    self.nodeDataUseInMsgs[-1]._install_keepalive(tmpNodeMsg)
+%}
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 %include "partitionedStorageUnit.h"
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"

@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
@@ -71,6 +72,10 @@ public:
                   double diffuseCoeff,
                   double specularCoeff);                                                 //!< Method for adding facets to the spacecraft geometry structure
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);                //!< Method for adding articulated facets to the spacecraft geometry structure
+    /** @brief Add an articulated-facet reader, preserving its source retention.
+     * @param reader Input reader containing facet articulation angle data
+     */
+    void addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader);
     void ReadMessages();                                                                 //!< Method to read input messages
 
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;                                    //!< Sun spice ephemeris input message

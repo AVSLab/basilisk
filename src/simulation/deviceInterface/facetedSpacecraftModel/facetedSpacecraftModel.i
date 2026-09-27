@@ -36,6 +36,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
+// Install retention before C++ copies the reader into pending and active lists.
+%rename(_addArticulatedFacetReader) FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload>);
+%pythonprepend FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) %{
+    return self._addArticulatedFacetReader(tmpMsg.addSubscriber())
+%}
 %include "facetedSpacecraftModel.h"
 
 %include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"

@@ -41,6 +41,16 @@ namespace std {
 }
 
 %include "simulation/environment/_GeneralModuleFiles/planetRadiationBase.h"
+// Match the vector type name used by other PlanetRadiationBase wrappers.
+%template(PlanetEntryVector) std::vector<PlanetEntry, std::allocator<PlanetEntry>>;
+
+// Retain the source in the reader nested inside the new planet entry.
+%pythonappend Albedo::addPlanetandAlbedoAverageModel %{
+    self.planets[-1].planetMsg._install_keepalive(args[0])
+%}
+%pythonappend Albedo::addPlanetandAlbedoDataModel %{
+    self.planets[-1].planetMsg._install_keepalive(msg)
+%}
 %include "albedo.h"
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsg_C;

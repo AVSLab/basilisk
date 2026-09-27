@@ -31,6 +31,12 @@ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado Bould
 %include "sys_model.i"
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+// Pass an already-retaining reader into private storage; preserve duplicate checks.
+%rename(_addStorageUnitReader) DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>*, ReadFunctor<DataStorageStatusMsgPayload>);
+%pythonprepend DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg) %{
+    if tmpStorageUnitMsg is not None:
+        return self._addStorageUnitReader(tmpStorageUnitMsg, tmpStorageUnitMsg.addSubscriber())
+%}
 %include "downlinkHandling.h"
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
