@@ -1,0 +1,1 @@
+- Added :ref:`bskPrinciples-multiSim` and a runnable example explaining constructor-generated effector state names, object and Python-process lifetimes, and custom names for repeatable lookups across simulation builds.
