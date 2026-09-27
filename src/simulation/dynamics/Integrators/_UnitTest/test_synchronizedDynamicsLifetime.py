@@ -70,6 +70,52 @@ def test_primary_retains_secondary(constructor, replace_integrator):
     assert secondary_ref() is None
 
 
+def test_disowned_primary_rejects_connection(constructor):
+    """Reject a primary without Python ownership before retaining or linking its secondary."""
+    primary = constructor()
+    secondary = constructor()
+    secondary_ref = weakref.ref(secondary)
+    primary.thisown = False
+    try:
+        with pytest.raises(BasiliskError, match="owning Python primary object"):
+            primary.syncDynamicsIntegration(secondary)
+    finally:
+        primary.thisown = True
+
+    assert not secondary.isDynamicsSynced
+    assert not hasattr(primary, "_bsk_synced_dynamics")
+    del secondary
+    gc.collect()
+    assert secondary_ref() is None
+
+
+@pytest.mark.skipif(not MUJOCO_ENABLED, reason="Requires Basilisk built with --mujoco True")
+@pytest.mark.parametrize("already_connected", [False, True])
+def test_borrowed_scene_alias_preserves_connection_state(already_connected):
+    """Reject a temporary scene alias without changing an existing owner's connections."""
+    primary = mujoco.MJScene('<mujoco><worldbody><body name="probe"/></worldbody></mujoco>')
+    secondary = spacecraft.Spacecraft()
+    primary_ref, secondary_ref = weakref.ref(primary), weakref.ref(secondary)
+    if already_connected:
+        primary.syncDynamicsIntegration(secondary)
+
+    alias = primary.getBody("probe").getScene()
+    assert int(alias.this) == int(primary.this)
+    assert not alias.thisown
+    with pytest.raises(BasiliskError, match="owning Python primary object"):
+        alias.syncDynamicsIntegration(secondary)
+    assert secondary.isDynamicsSynced == already_connected
+
+    del alias, secondary
+    gc.collect()
+    assert (secondary_ref() is not None) == already_connected
+    assert primary_ref() is primary
+    del primary
+    gc.collect()
+    assert primary_ref() is None
+    assert secondary_ref() is None
+
+
 def test_surviving_secondary_can_be_reused(constructor):
     """Destroying a primary releases the synchronized flag on a surviving object."""
     primary = constructor()

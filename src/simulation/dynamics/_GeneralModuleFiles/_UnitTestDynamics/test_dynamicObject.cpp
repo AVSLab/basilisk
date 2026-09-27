@@ -63,6 +63,16 @@ public:
     }
 };
 
+class FailingSynchronizedObject : public TestDynamicObject {
+public:
+    FailingSynchronizedObject(DynamicObject& primary, int& destructions)
+    {
+        this->setIntegrator(new CountingIntegrator(this, destructions));
+        primary.syncDynamicsIntegration(this);
+        throw std::runtime_error("Construction failed after synchronizing dynamics");
+    }
+};
+
 } // namespace
 
 /** @brief Replacement and owner destruction each release exactly one integrator. */
@@ -207,4 +217,135 @@ TEST(DynamicObjectOwnership, ConstructionFailure)
     int destructions = 0;
     EXPECT_THROW({ FailingDynamicObject object(destructions); }, std::runtime_error);
     EXPECT_EQ(destructions, 1);
+}
+
+/** @brief A destroyed secondary is removed while other synchronized objects remain usable. */
+TEST(SynchronizedDynamicsLifetime, SecondaryDestructionUnlinks)
+{
+    int destructions = 0;
+    TestDynamicObject primary;
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    auto first = std::make_unique<TestDynamicObject>();
+    TestDynamicObject second;
+    first->setIntegrator(new CountingIntegrator(first.get(), destructions));
+    second.setIntegrator(new CountingIntegrator(&second, destructions));
+    primary.syncDynamicsIntegration(first.get());
+    primary.syncDynamicsIntegration(&second);
+    first.reset();
+    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &second}));
+    primary.integrateState(0);
+    EXPECT_EQ(second.preCalls, 1);
+    EXPECT_EQ(second.postCalls, 1);
+}
+
+/** @brief A surviving secondary can integrate independently or join another primary. */
+TEST(SynchronizedDynamicsLifetime, PrimaryDestructionDetaches)
+{
+    int destructions = 0;
+    TestDynamicObject secondary;
+    secondary.setIntegrator(new CountingIntegrator(&secondary, destructions));
+    auto primary = std::make_unique<TestDynamicObject>();
+    primary->setIntegrator(new CountingIntegrator(primary.get(), destructions));
+    primary->syncDynamicsIntegration(&secondary);
+    primary.reset();
+    ASSERT_FALSE((secondary.getIntegrationOwner() != nullptr));
+    secondary.integrateState(0);
+    EXPECT_EQ(secondary.preCalls, 1);
+
+    TestDynamicObject replacement;
+    replacement.setIntegrator(new CountingIntegrator(&replacement, destructions));
+    secondary.setIntegrator(new CountingIntegrator(&secondary, destructions));
+    replacement.syncDynamicsIntegration(&secondary);
+    replacement.integrateState(0);
+    EXPECT_EQ(secondary.preCalls, 2);
+}
+
+/** @brief Repeating a connection does not advance the secondary more than once. */
+TEST(SynchronizedDynamicsLifetime, RepeatedConnectionIsNoOp)
+{
+    int destructions = 0;
+    TestDynamicObject primary;
+    TestDynamicObject secondary;
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    secondary.setIntegrator(new CountingIntegrator(&secondary, destructions));
+    primary.syncDynamicsIntegration(&secondary);
+    primary.syncDynamicsIntegration(&secondary);
+    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
+    primary.integrateState(0);
+    EXPECT_EQ(secondary.preCalls, 1);
+    EXPECT_EQ(secondary.postCalls, 1);
+}
+
+/** @brief Integrator replacement preserves the links used to remove expired secondaries. */
+TEST(SynchronizedDynamicsLifetime, ReplacementPreservesUnlinking)
+{
+    int destructions = 0;
+    TestDynamicObject primary;
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    auto secondary = std::make_unique<TestDynamicObject>();
+    secondary->setIntegrator(new CountingIntegrator(secondary.get(), destructions));
+    primary.syncDynamicsIntegration(secondary.get());
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    secondary.reset();
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary}));
+}
+
+/** @brief A rejected null replacement preserves links until either owner is destroyed. */
+TEST(SynchronizedDynamicsLifetime, CleanupAfterRejectedReplacement)
+{
+    for (bool primaryFirst : {false, true}) {
+        int destructions = 0;
+        auto primary = std::make_unique<TestDynamicObject>();
+        auto secondary = std::make_unique<TestDynamicObject>();
+        primary->setIntegrator(new CountingIntegrator(primary.get(), destructions));
+        secondary->setIntegrator(new CountingIntegrator(secondary.get(), destructions));
+        primary->syncDynamicsIntegration(secondary.get());
+        EXPECT_THROW(primary->setIntegrator(nullptr), BasiliskError);
+        if (primaryFirst) {
+            primary.reset();
+            EXPECT_FALSE((secondary->getIntegrationOwner() != nullptr));
+            secondary.reset();
+        } else {
+            secondary.reset();
+            primary.reset();
+        }
+        EXPECT_EQ(destructions, 2);
+    }
+}
+
+/** @brief Invalid group changes are rejected before any connection is modified. */
+TEST(SynchronizedDynamicsLifetime, RejectInvalidConnections)
+{
+    int destructions = 0;
+    TestDynamicObject primary;
+    TestDynamicObject secondary;
+    TestDynamicObject other;
+    TestDynamicObject unconfigured;
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    secondary.setIntegrator(new CountingIntegrator(&secondary, destructions));
+    other.setIntegrator(new CountingIntegrator(&other, destructions));
+    EXPECT_THROW(unconfigured.syncDynamicsIntegration(&secondary), BasiliskError);
+    EXPECT_THROW(primary.syncDynamicsIntegration(&unconfigured), BasiliskError);
+    EXPECT_THROW(primary.syncDynamicsIntegration(nullptr), BasiliskError);
+    EXPECT_THROW(primary.syncDynamicsIntegration(&primary), BasiliskError);
+    primary.syncDynamicsIntegration(&secondary);
+    EXPECT_THROW(other.syncDynamicsIntegration(&secondary), BasiliskError);
+    EXPECT_THROW(secondary.syncDynamicsIntegration(&other), BasiliskError);
+    EXPECT_THROW(other.syncDynamicsIntegration(&primary), BasiliskError);
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
+    EXPECT_EQ(secondary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&secondary}));
+    EXPECT_EQ(other.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&other}));
+    EXPECT_FALSE((primary.getIntegrationOwner() != nullptr));
+    EXPECT_TRUE((secondary.getIntegrationOwner() != nullptr));
+    EXPECT_FALSE((other.getIntegrationOwner() != nullptr));
+}
+
+/** @brief Constructor failure removes a secondary connected during its construction. */
+TEST(SynchronizedDynamicsLifetime, ConstructionFailureUnlinks)
+{
+    int destructions = 0;
+    TestDynamicObject primary;
+    primary.setIntegrator(new CountingIntegrator(&primary, destructions));
+    EXPECT_THROW({ FailingSynchronizedObject secondary(primary, destructions); }, std::runtime_error);
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary}));
 }
