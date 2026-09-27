@@ -115,29 +115,48 @@ void FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model) {
     this->fuelTankModel = model;
 }
 
-/*! Attach a fuel slosh particle to the tank
+/*! @brief Attach a fuel slosh particle to the tank.
  *
  * @param[in] particle Fuel-slosh particle to attach.
+ * @note The particle must be non-null. Python retains the supplied object for
+ * the tank's lifetime; C++ callers must keep the borrowed particle alive.
  */
 void FuelTank::pushFuelSloshParticle(FuelSlosh *particle) {
+    if (!particle) {
+        this->bskLogger.bskError("FuelTank: fuel-slosh connections require a non-null particle");
+    }
     // Add a fuel slosh particle to the vector of fuel slosh particles
     this->fuelSloshParticles.push_back(particle);
 }
 
-/*! Attach a thruster dynamic effector to the tank
+/*! @brief Attach a thruster dynamic effector to the tank.
  *
  * @param[in] dynEff Thruster dynamic effector to attach.
+ * @note The effector must be non-null and setTankModel() must be called first.
+ * Python retains the supplied object for the tank's lifetime; C++ callers
+ * must keep the borrowed effector alive.
  */
 void FuelTank::addThrusterSet(ThrusterDynamicEffector *dynEff) {
+    if (!dynEff) {
+        this->bskLogger.bskError("FuelTank: thruster connections require a non-null effector");
+    }
+    if (!this->fuelTankModel) {
+        this->bskLogger.bskError("FuelTank: call setTankModel() before attaching a dynamic thruster effector");
+    }
     thrDynEffectors.push_back(dynEff);
     dynEff->fuelMass = this->fuelTankModel->propMassInit;
 }
 
-/*! Attach a thruster state effector to the tank
+/*! @brief Attach a thruster state effector to the tank.
  *
  * @param[in] stateEff Thruster state effector to attach.
+ * @note The effector must be non-null. Python retains the supplied object for
+ * the tank's lifetime; C++ callers must keep the borrowed effector alive.
  */
 void FuelTank::addThrusterSet(ThrusterStateEffector *stateEff) {
+    if (!stateEff) {
+        this->bskLogger.bskError("FuelTank: thruster connections require a non-null effector");
+    }
     thrStateEffectors.push_back(stateEff);
 }
 
