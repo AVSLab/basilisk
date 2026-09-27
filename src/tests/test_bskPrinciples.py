@@ -33,6 +33,7 @@ import inspect
 import os
 import sys
 
+import numpy as np
 import pytest
 from Basilisk.architecture import bskLogging
 from Basilisk.utilities import simHelpers
@@ -80,6 +81,29 @@ def test_scenarioBskPrinciples(show_plots, bskScript):
     # this check below just makes sure no sub-test failures were found
 
     assert testFailCount < 1, testMessages
+
+
+def test_effector_state_naming_sample():
+    """Repeated builds preserve custom names and retrieve the recorded states."""
+    sample = importlib.import_module("bsk-multiSim")
+    results = sample.run_cases()
+    automatic_first, automatic_second, custom_first, custom_second = results
+
+    automatic_names = [
+        {name for panel_names in result["names"] for name in panel_names}
+        for result in (automatic_first, automatic_second)
+    ]
+    assert automatic_names[0].isdisjoint(automatic_names[1])
+    expected = (("leftPanelAngle", "leftPanelRate"), ("rightPanelAngle", "rightPanelRate"))
+    assert custom_first["names"] == custom_second["names"] == expected
+    for result in results:
+        assert result["names_before"] == result["names"]
+        assert len({name for pair in result["names"] for name in pair}) == 4
+        assert np.all(np.isfinite(result["states"]))
+        np.testing.assert_allclose(result["states"], result["messages"], rtol=0.0, atol=1e-13)
+        np.testing.assert_allclose(result["states"], automatic_first["states"], rtol=0.0, atol=1e-13)
+        initial_angles = np.array([0.1, 0.2])  # [rad]
+        assert np.all(np.abs(result["states"][:, 0] - initial_angles) > 1e-4)  # [rad]
 
 
 if __name__ == "__main__":
