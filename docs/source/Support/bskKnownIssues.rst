@@ -88,6 +88,13 @@ Version |release|
   Module-owned outputs still require their producing module to remain alive.
   See :ref:`bskModuleInputMessageLifetime`.
 
+- GitHub issue 282: Fuel tanks could keep dangling pointers to thruster effectors
+  and fuel-slosh particles created in a local Python scope. ``addThrusterSet()``
+  and ``pushFuelSloshParticle()`` now retain their supplied Python objects until
+  the tank is destroyed. Null connections, and dynamic-thruster connections made
+  before ``setTankModel()``, now raise ``BasiliskError``. C++ callers must still
+  keep borrowed effectors alive. See :ref:`fuelTank`.
+
 - GitHub issue 281: The C and C++ template documentation now explains the implemented
   calculation, optional inputs, reset behavior, and runnable usage. General RST authoring
   examples previously embedded in :ref:`cModuleTemplate` are now in :ref:`makingModules-3`.

@@ -93,3 +93,26 @@ report their allocated component rates during the same mass-property assembly.
     fuelTankEffector.pushFuelSloshParticle(sloshParticle)
     spacecraftObject.addStateEffector(fuelTankEffector)
     spacecraftObject.addStateEffector(sloshParticle)
+
+Connection Lifetimes
+~~~~~~~~~~~~~~~~~~~~
+
+In Python, ``addThrusterSet()`` retains the supplied thruster effector, for both
+dynamic and state effectors. ``pushFuelSloshParticle()`` retains the supplied
+slosh particle. These objects can leave local scope without being destroyed
+while the tank still uses them. The references are released when the tank is
+destroyed; objects still referenced elsewhere remain usable. ``setTankModel()``
+already shares ownership of its tank model.
+
+These connections do not schedule or initialize effectors. Continue to attach
+them to the spacecraft and simulation tasks as required, including the tank-first
+registration order for slosh particles described above. Use the connection
+methods rather than assigning the underlying pointer lists directly.
+
+Passing ``None`` to either connection method raises ``BasiliskError``. A dynamic
+thruster connection also requires ``setTankModel()`` first, because the connection
+initializes the thruster's fuel mass from that model.
+
+C++ connections remain borrowed: callers must keep connected effectors alive
+while the tank uses them. Retaining a borrowed Python proxy does not extend the
+lifetime of an object owned externally in C++.
