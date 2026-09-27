@@ -48,6 +48,16 @@ namespace std {
 %default_bsk_exception(catch (const std::exception& error) {
     SWIG_exception(SWIG_RuntimeError, error.what());
 });
+// Retain attached-body sources before C++ stores their private readers.
+%rename(_addThrusterReader) ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig>, ReadFunctor<SCStatesMsgPayload>);
+%pythonprepend ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig>) %{
+    if len(args) == 2:
+        return self._addThrusterReader(args[0], args[1].addSubscriber())
+%}
+%pythonprepend ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig>, Message<SCStatesMsgPayload>*) %{
+    if len(args) == 2:
+        return self._addThrusterReader(args[0], args[1].addSubscriber())
+%}
 %include "thrusterStateEffector.h"
 
 %include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"

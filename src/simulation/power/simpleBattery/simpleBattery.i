@@ -31,9 +31,14 @@ from Basilisk.architecture.swig_common_model import *
 %}
 
 %include "std_string.i"
+%include "std_vector.i"
 %include "swig_eigen.i"
 
 %include "sys_model.i"
+// Retain each Python source on the native reader created inside C++.
+%pythonappend PowerStorageBase::addPowerNodeToModel %{
+    self.nodePowerUseInMsgs[-1]._install_keepalive(tmpNodeMsg)
+%}
 %include "../_GeneralModuleFiles/powerStorageBase.h"
 %include "simpleBattery.h"
 %include "swig_conly_data.i"

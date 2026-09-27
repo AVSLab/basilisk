@@ -85,6 +85,11 @@ Version |release|
   were collected. These methods, along with ``Eclipse.addPlanetToModel()`` and
   ``EphemerisConverter.addSpiceInputMsg()``, now retain each source through its
   native reader and release it on unsubscribe, replacement, or reader destruction.
+  The same protection now covers power and data storage, transmitters, downlink
+  handling, mapping instruments, simple-antenna and albedo planet inputs,
+  articulated facets, thruster attached-body inputs, small-body navigation
+  thruster inputs, and Vizard camera configuration messages. Pending and copied
+  readers retain their sources until the last connected copy is released.
   Module-owned outputs still require their producing module to remain alive.
   See :ref:`bskModuleInputMessageLifetime`.
 

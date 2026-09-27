@@ -306,6 +306,11 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
  */
 void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
+    this->addThruster(newThruster, bodyStateMsg->addSubscriber());
+}
+
+void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, ReadFunctor<SCStatesMsgPayload> bodyStateReader)
+{
     this->requireMutableTopology("ThrusterStateEffector::addThruster");
     this->thrusterData.push_back(newThruster);
 
@@ -318,7 +323,7 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->kappaInit.push_back(state);
 
     // Save the incoming body message
-    this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
+    this->attachedBodyInMsgs.push_back(bodyStateReader);
 
     // Add space for the conversion from body to hub and populate it with default values
     BodyToHubInfo attachedBodyToHub;

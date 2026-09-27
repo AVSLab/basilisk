@@ -366,7 +366,7 @@ def test_facetSRPFacetCountValidation(numFacets, numArticulatedFacets, numArticu
 
     angleMsgData = messaging.HingedRigidBodyMsgPayload()
     angleMsgData.theta = macros.D2R * 10.0  # [rad]
-    angleMsgs = []  # the effector only stores a subscriber, so the messages must outlive this scope
+    angleMsgs = []
     for _ in range(numArticulationMsgs):
         angleMsgs.append(messaging.HingedRigidBodyMsg().write(angleMsgData))
         srpEffector.addArticulatedFacet(angleMsgs[-1])
@@ -433,7 +433,7 @@ def test_facetSRPPartialArticulationRead():
 
         angleMsgData = messaging.HingedRigidBodyMsgPayload()
         angleMsgData.theta = macros.D2R * 90.0  # [rad]
-        angleMsgs = []  # the effector only stores a subscriber, so the messages must outlive this scope
+        angleMsgs = []
         for index in range(numArticulatedFacets):
             msg = messaging.HingedRigidBodyMsg()
             if index > 0 or writeFirstMessage:

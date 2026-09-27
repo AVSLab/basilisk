@@ -59,7 +59,16 @@ DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>*
     if (tmpStorageUnitMsg == nullptr) {
         bskLogger.bskError("DownlinkHandling.addStorageUnitToDownlink: null message pointer.");
     }
+    return this->addStorageUnitToDownlink(tmpStorageUnitMsg, tmpStorageUnitMsg->addSubscriber());
+}
 
+bool
+DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg,
+                                          ReadFunctor<DataStorageStatusMsgPayload> reader)
+{
+    if (tmpStorageUnitMsg == nullptr || !reader.isSubscribedTo(tmpStorageUnitMsg)) {
+        bskLogger.bskError("DownlinkHandling.addStorageUnitToDownlink: reader must subscribe to the source message.");
+    }
     for (auto* msgPtr : this->storageUnitMsgPtrs) {
         if (msgPtr == tmpStorageUnitMsg) {
             bskLogger.bskLog(BSK_WARNING,
@@ -69,7 +78,7 @@ DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>*
     }
 
     this->storageUnitMsgPtrs.push_back(tmpStorageUnitMsg);
-    this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
+    this->storageUnitInMsgs.push_back(reader);
     return true;
 }
 

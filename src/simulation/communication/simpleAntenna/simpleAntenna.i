@@ -42,6 +42,10 @@
 %rename(_configureBrightnessFile) SimpleAntenna::configureBrightnessFile;
 %rename(_setUseHaslamMap) SimpleAntenna::setUseHaslamMap;
 
+// Retain each Python source on the native reader created inside C++.
+%pythonappend SimpleAntenna::addPlanetToModel %{
+    self.planetInMsgs[-1]._install_keepalive(tmpSpMsg)
+%}
 %include "simpleAntenna.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"

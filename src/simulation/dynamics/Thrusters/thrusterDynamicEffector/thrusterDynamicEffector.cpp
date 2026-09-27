@@ -421,6 +421,11 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
  */
 void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
 {
+    this->addThruster(newThruster, bodyStateMsg->addSubscriber());
+}
+
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, ReadFunctor<SCStatesMsgPayload> bodyStateReader)
+{
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
@@ -428,7 +433,7 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
     this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
 
     // Save the incoming body message
-    this->attachedBodyInMsgs.push_back(bodyStateMsg->addSubscriber());
+    this->attachedBodyInMsgs.push_back(bodyStateReader);
 
     // Add space for the conversion from body to hub and populate it with default values
     BodyToHubInfo attachedBodyToHub;

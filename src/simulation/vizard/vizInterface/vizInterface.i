@@ -60,6 +60,10 @@ namespace std {
     %template(VizEventReplyVector) vector<VizEventReply, allocator<VizEventReply> >;
 }
 
+// Retain each Python source on the native reader created inside C++.
+%pythonappend VizInterface::addCamMsgToModule %{
+    self.cameraConfInMsgs[-1]._install_keepalive(tmpMsg)
+%}
 %include "vizInterface.h"
 %include "simulation/vizard/_GeneralModuleFiles/vizStructures.h"
 

@@ -100,8 +100,11 @@ void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 */
 void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg){
-    this->thrusterInMsgs.push_back(tmpThrusterMsg->addSubscriber());
-    return;
+    this->addThrusterToFilter(tmpThrusterMsg->addSubscriber());
+}
+
+void SmallBodyNavEKF::addThrusterToFilter(ReadFunctor<THROutputMsgPayload> reader){
+    this->thrusterInMsgs.push_back(reader);
 }
 
 /*! This method is used to read the input messages.

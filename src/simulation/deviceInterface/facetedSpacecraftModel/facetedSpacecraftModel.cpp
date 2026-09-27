@@ -177,9 +177,12 @@ articulatedFacetDataInMsgs input messages.
 void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
     // Safety check
     assert(tmpMsg != nullptr && "addArticulatedFacet() received null msg pointer");
+    this->addArticulatedFacet(tmpMsg->addSubscriber());
+}
 
+void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader) {
     // Store the request regardless of adder/setter call order
-    this->articulatedFacetRequestInMsgs.push_back(tmpMsg->addSubscriber());
+    this->articulatedFacetRequestInMsgs.push_back(reader);
 
     // Keep active input message list in sync when facets are already configured
     if (this->numFacets > 0) {

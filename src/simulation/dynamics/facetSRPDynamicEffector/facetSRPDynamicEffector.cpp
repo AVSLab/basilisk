@@ -94,7 +94,11 @@ articulatedFacetDataInMsgs input messages.
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
 void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
-    this->articulatedFacetDataInMsgs.push_back(tmpMsg->addSubscriber());
+    this->addArticulatedFacet(tmpMsg->addSubscriber());
+}
+
+void FacetSRPDynamicEffector::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader) {
+    this->articulatedFacetDataInMsgs.push_back(reader);
 }
 
 /*! This is the constructor, marking the effector as attachable to a state effector */

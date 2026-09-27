@@ -30,6 +30,13 @@
 %include "carrays.i"
 %include "sys_model.i"
 %include "../_GeneralModuleFiles/dataNodeBase.h"
+// Retain each Python source on the native reader created inside C++.
+%pythonappend SpaceToGroundTransmitter::addStorageUnitToTransmitter %{
+    self.storageUnitInMsgs[-1]._install_keepalive(tmpStorageUnitMsg)
+%}
+%pythonappend SpaceToGroundTransmitter::addAccessMsgToTransmitter %{
+    self.groundLocationAccessInMsgs[-1]._install_keepalive(tmpAccessMsg)
+%}
 %include "spaceToGroundTransmitter.h"
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"

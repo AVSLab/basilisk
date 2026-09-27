@@ -57,6 +57,11 @@ public:
     void Reset(uint64_t CurrentSimNanos) override;
     void addThruster(std::shared_ptr<THRSimConfig> newThruster);
     void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg);
+    /** @brief Add a thruster with an attached-body reader, preserving source retention.
+     * @param newThruster Thruster configuration to add
+     * @param bodyStateReader State reader for the body carrying the thruster
+     */
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster, ReadFunctor<SCStatesMsgPayload> bodyStateReader);
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();

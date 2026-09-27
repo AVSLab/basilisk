@@ -40,6 +40,10 @@ public:
     void UpdateState(uint64_t callTime) override;  //!< Update method
     void writeOutputMessages(uint64_t callTime);  //!< Method to write output messages
     void addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg);  //!< Method required to add articulated facets
+    /** @brief Add an articulated-facet reader, preserving retention in pending and active copies.
+     * @param reader Input reader containing facet articulation angle data
+     */
+    void addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader);
     void setNumTotalFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
     uint64_t getNumTotalFacets() const;  //!< Getter method for total number of spacecraft facets
 

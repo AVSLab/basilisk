@@ -38,6 +38,11 @@ from Basilisk.architecture.swig_common_model import *
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+// Retain the Python source before C++ stores the reader privately.
+%rename(_addArticulatedFacetReader) FacetSRPDynamicEffector::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload>);
+%pythonprepend FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) %{
+    return self._addArticulatedFacetReader(tmpMsg.addSubscriber())
+%}
 %include "facetSRPDynamicEffector.h"
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"

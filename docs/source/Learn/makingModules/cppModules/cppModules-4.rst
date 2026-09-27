@@ -101,16 +101,43 @@ readers, attach each source to its corresponding reader. The hook runs only afte
 the C++ method returns successfully; discard a partially configured module if
 setup throws an exception.
 
+For private reader storage, or methods that copy the reader during configuration,
+add a C++ overload accepting a ``ReadFunctor<SomeMsgPayload>``. Store that reader
+by value, and have the original message-pointer overload delegate to it using
+``tmpMsg->addSubscriber()``. The Python entry point can then create a reader that
+already retains its source:
+
+.. code-block:: cpp
+
+    %rename(_addMsgReader) SomeModule::addMsgToModule(ReadFunctor<SomeMsgPayload>);
+    %pythonprepend SomeModule::addMsgToModule(Message<SomeMsgPayload>* tmpMsg) %{
+        return self._addMsgReader(tmpMsg.addSubscriber())
+    %}
+    %include "someModule.h"
+
+This preserves the existing Python message argument and the native C++ pointer
+overload. The reader overload must preserve the original validation and return
+value. If registration rejects duplicates without appending a reader, do not use
+an unconditional ``[-1]`` hook: it would change the retention on a different
+subscription. See :ref:`downlinkHandling` for a reader overload that preserves
+duplicate detection.
+
 The reference belongs to the native ``ReadFunctor``, so it survives vector growth
 and reader copies. Unsubscribing, replacing the subscription, or destroying the
 last reader releases the source. This avoids retaining old messages for the
 entire lifetime of the module.
 
-The updated spacecraft-input methods in the atmosphere, magnetic-field, wind,
-eclipse, location, charging, MSM, and formation-barycenter models use this pattern,
-as do ``Eclipse.addPlanetToModel()`` and
-``EphemerisConverter.addSpiceInputMsg()``. Their Python call signatures are
-unchanged. A standalone Python-owned source can leave local scope after these
-calls. For an output message owned by another module, keep that producing module
-alive as described in :ref:`bskOutputMessageLifetime`. Direct C++ callers remain
-responsible for the lifetime of their borrowed message sources.
+In :ref:`facetedSpacecraftModel`, pending articulation readers are also retained
+for later reconfiguration. Unsubscribing an active reader leaves its pending
+copy connected; the source remains alive until all connected copies are released.
+
+The updated configuration methods cover spacecraft inputs in the atmosphere,
+magnetic-field, wind, eclipse, location, charging, MSM, and formation-barycenter
+models; planet inputs in eclipse, ephemeris conversion, albedo, and simple antenna
+models; power and data storage inputs; transmitter, downlink, and mapping inputs;
+articulated facets; thruster attached-body and small-body navigation inputs; and
+Vizard camera configuration inputs. Their Python call signatures are unchanged.
+A standalone Python-owned source can leave local scope after these calls. For
+an output message owned by another module, keep that producing module alive as
+described in :ref:`bskOutputMessageLifetime`. Direct C++ callers remain responsible
+for the lifetime of their borrowed message sources.

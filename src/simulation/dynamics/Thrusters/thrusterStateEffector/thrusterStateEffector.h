@@ -67,6 +67,11 @@ public:
 
     void addThruster(std::shared_ptr<THRSimConfig> newThruster); //!< Add a new thruster to the thruster set
     void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
+    /** @brief Add a thruster with an attached-body reader, preserving source retention.
+     * @param newThruster Thruster configuration to add
+     * @param bodyStateReader State reader for the body carrying the thruster
+     */
+    void addThruster(std::shared_ptr<THRSimConfig> newThruster, ReadFunctor<SCStatesMsgPayload> bodyStateReader);
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
     /**

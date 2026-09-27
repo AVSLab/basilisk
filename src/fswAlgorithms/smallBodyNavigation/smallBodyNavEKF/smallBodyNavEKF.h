@@ -21,6 +21,9 @@
 #ifndef SMALLBODYNAVEKF_H
 #define SMALLBODYNAVEKF_H
 
+#include <cstdint>
+#include <vector>
+#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "cMsgCInterface/NavTransMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
@@ -44,6 +47,10 @@ public:
     void Reset(uint64_t CurrentSimNanos);  //!< Resets module
     void UpdateState(uint64_t CurrentSimNanos);  //!< Updates state
     void addThrusterToFilter(Message<THROutputMsgPayload> *tmpThrusterMsg);  //!< Adds thruster message
+    /** @brief Add a thruster reader, preserving its source retention.
+     * @param reader Input reader containing thruster force and torque data
+     */
+    void addThrusterToFilter(ReadFunctor<THROutputMsgPayload> reader);
 
 private:
     static constexpr int stateSize = 12;

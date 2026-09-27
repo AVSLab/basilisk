@@ -44,6 +44,16 @@ namespace std {
 %include "sys_model.i"
 %include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+// Retain attached-body sources before C++ stores their private readers.
+%rename(_addThrusterReader) ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig>, ReadFunctor<SCStatesMsgPayload>);
+%pythonprepend ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig>) %{
+    if len(args) == 2:
+        return self._addThrusterReader(args[0], args[1].addSubscriber())
+%}
+%pythonprepend ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig>, Message<SCStatesMsgPayload>*) %{
+    if len(args) == 2:
+        return self._addThrusterReader(args[0], args[1].addSubscriber())
+%}
 %include "thrusterDynamicEffector.h"
 
 %include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"

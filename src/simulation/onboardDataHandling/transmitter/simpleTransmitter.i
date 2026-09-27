@@ -35,6 +35,10 @@
 %include "stdint.i"
 
 %include "simulation/onboardDataHandling/_GeneralModuleFiles/dataNodeBase.h"
+// Retain each Python source on the native reader created inside C++.
+%pythonappend SimpleTransmitter::addStorageUnitToTransmitter %{
+    self.storageUnitInMsgs[-1]._install_keepalive(tmpStorageUnitMsg)
+%}
 %include "simpleTransmitter.h"
 
 %include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"

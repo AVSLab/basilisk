@@ -33,6 +33,10 @@
 %include "swig_conly_data.i"
 %include "std_vector.i"
 %include "sys_model.i"
+// Retain each Python source on the native reader created inside C++.
+%pythonappend MappingInstrument::addMappingPoint %{
+    self.accessInMsgs[-1]._install_keepalive(tmpAccessMsg)
+%}
 %include "mappingInstrument.h"
 
 %include "architecture/msgPayloadDefC/AccessMsgPayload.h"
