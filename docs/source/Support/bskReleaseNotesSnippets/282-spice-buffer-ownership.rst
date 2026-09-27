@@ -1,0 +1,2 @@
+- SPICE scratch buffers now clean up automatically, including when spacecraft-name validation or allocation fails. ``SpiceInterface.spiceBuffer`` and ``charBufferSize`` are now private; remove direct access to these internal fields from custom code. Standard simulation configuration is unchanged.
+- ``SpiceInterface.getCurrentTimeString()`` now raises ``BasiliskError`` when the output format would produce a buffer too short for SPICE, including five- and six-character format strings.

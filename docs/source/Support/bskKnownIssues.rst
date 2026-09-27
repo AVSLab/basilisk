@@ -93,6 +93,14 @@ Version |release|
   Module-owned outputs still require their producing module to remain alive.
   See :ref:`bskModuleInputMessageLifetime`.
 
+- GitHub issue 282: SPICE scratch buffers could leak when spacecraft-name
+  validation or allocation raised an exception. Fixed-size arrays and an
+  automatically managed time-output buffer now guarantee cleanup. The internal
+  ``SpiceInterface.spiceBuffer`` and ``charBufferSize`` fields are now private;
+  custom code must remove direct access to them. Standard simulation configuration
+  is unchanged. Time-output formats that leave insufficient buffer capacity now
+  raise ``BasiliskError`` before calling SPICE.
+
 - GitHub issue 282: Fuel tanks could keep dangling pointers to thruster effectors
   and fuel-slosh particles created in a local Python scope. ``addThrusterSet()``
   and ``pushFuelSloshParticle()`` now retain their supplied Python objects until

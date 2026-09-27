@@ -331,9 +331,10 @@ if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_outputMe
     ${CMAKE_SOURCE_DIR}/simulation/environment/groundMapping/groundMapping.cpp
     ${CMAKE_SOURCE_DIR}/simulation/environment/magneticFieldCenteredDipole/magneticFieldCenteredDipole.cpp
     ${CMAKE_SOURCE_DIR}/simulation/environment/spaceWeatherData/spaceWeatherData.cpp
+    ${CMAKE_SOURCE_DIR}/simulation/environment/spiceInterface/spiceInterface.cpp
     ${CMAKE_SOURCE_DIR}/simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.cpp
     ${CMAKE_SOURCE_DIR}/simulation/vizard/dataFileToViz/dataFileToViz.cpp)
-  target_link_libraries(test_outputMessageOwnership PRIVATE GTest::gtest_main architectureLib dynamicsLib environmentLib)
+  target_link_libraries(test_outputMessageOwnership PRIVATE GTest::gtest_main architectureLib dynamicsLib environmentLib cspice::cspice)
 
   if(WIN32)
     add_custom_command(TARGET test_outputMessageOwnership POST_BUILD
