@@ -9,8 +9,10 @@
 #include <cstddef>
 #include <cstdlib>
 #include <new>
+#include <string>
 #include <utility>
 
+#include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.h"
 #include "fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.h"
 #include "fswAlgorithms/effectorInterfaces/thrJointCompensation/thrJointCompensation.h"
@@ -23,6 +25,7 @@
 #include "simulation/environment/groundMapping/groundMapping.h"
 #include "simulation/environment/magneticFieldCenteredDipole/magneticFieldCenteredDipole.h"
 #include "simulation/environment/spaceWeatherData/spaceWeatherData.h"
+#include "simulation/environment/spiceInterface/spiceInterface.h"
 #include "simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.h"
 #include "simulation/vizard/dataFileToViz/dataFileToViz.h"
 
@@ -187,6 +190,34 @@ TEST(OutputMessageOwnership, PairedEnvironmentOutputsUnwindAfterAllocationFailur
 TEST(OutputMessageOwnership, FixedEnvironmentOutputsUnwindAfterConstructorFailure)
 {
     expectCleanupAfterAllocationFailure([] { SpaceWeatherData model; });
+}
+
+TEST(SpiceBufferOwnership, RejectedSpacecraftNamesReleaseScratchStorage)
+{
+    // The error is raised after scratch storage and output messages have been allocated.
+    bool rejected = false;
+    expectCleanup([&rejected] {
+        SpiceInterface model;
+        try {
+            model.addSpacecraftNames({std::string(MAX_BODY_NAME_LENGTH, 'x')});
+        } catch (const BasiliskError&) {
+            rejected = true;
+        }
+    });
+    EXPECT_TRUE(rejected);
+}
+
+TEST(SpiceBufferOwnership, ConstructorUnwindsAfterAllocationFailure)
+{
+    expectCleanupAfterAllocationFailure([] { SpiceInterface model; });
+}
+
+TEST(SpiceBufferOwnership, SpacecraftSetupUnwindsAfterAllocationFailure)
+{
+    expectCleanupAfterAllocationFailure([] {
+        SpiceInterface model;
+        model.addSpacecraftNames({"EARTH", "MARS"});
+    });
 }
 
 TEST(OutputMessageOwnership, TwoAxisEffectorOutputsAreReleased)

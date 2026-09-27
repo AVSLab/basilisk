@@ -21,6 +21,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstdio>
+#include <limits>
 #include <sstream>
 #include "SpiceUsr.h"
 #include <string.h>
@@ -574,7 +575,6 @@ SpiceInterface::SpiceInterface()
 {
     SPICEDataPath = "";
     SPICELoaded = false;
-    charBufferSize = 512;
     CallCounts = 0;
     J2000ETInit = 0;
     J2000Current = 0.0;
@@ -582,7 +582,6 @@ SpiceInterface::SpiceInterface()
     GPSSeconds = 0.0;
     GPSWeek = 0;
     GPSRollovers = 0;
-    spiceBuffer = new uint8_t[static_cast<size_t>(charBufferSize)];
     timeDataInit = false;
     JDGPSEpoch = 0.0;
     GPSEpochTime = "1980 January 6, 00:00:00.0";
@@ -599,12 +598,8 @@ SpiceInterface::SpiceInterface()
     return;
 }
 
-/*! The only needed activity in the destructor is to delete the spice I/O buffer
- that was allocated in the constructor*/
-SpiceInterface::~SpiceInterface()
-{
-    delete [] this->spiceBuffer;
-}
+// Defined here so SpiceReconstruction is complete when its owning pointer is destroyed.
+SpiceInterface::~SpiceInterface() = default;
 
 void SpiceInterface::clearKeeper()
 {
@@ -671,7 +666,7 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
     size_t c = 0;  // celestial object counter
     int autoFrame;  // flag to set the frame automatically
-    SpiceChar *name = new SpiceChar[static_cast<size_t>(this->charBufferSize)];
+    std::array<SpiceChar, charBufferSize> name{};
     SpiceBoolean frmFound;
     SpiceInt frmCode;
     for(planit = this->planetData.begin(); planit != planetData.end(); planit++)
@@ -688,12 +683,11 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
         }
         if (autoFrame > 0) {
             std::string planetFrame = planit->PlanetName;
-            cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
+            cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name.data(), &frmFound);
             planit->computeOrient = frmFound;  // set the flag to the Spice response on finding this frame
         }
         c++;
     }
-    delete [] name;
 
     //! - Zero the SPICE-query tallies so each run counts from its own Reset, seeding an entry for
     //!   every known planet. A planet present but never queried (e.g. a disabled channel) then reads
@@ -827,9 +821,8 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     this->J2000Current = this->J2000ETInit + static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
     //! - Compute the current Julian Date string and cast it over to the double
-    et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
-             (this->spiceBuffer));
-    std::string localString = reinterpret_cast<char*> (&this->spiceBuffer[3]);
+    et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, this->spiceBuffer.data());
+    std::string localString = this->spiceBuffer.data() + 3;
     this->julianDateCurrent = std::stod(localString);
     //! Get GPS and Planet data and then write the message outputs. Reconstruction is allowed only
     //! on the planet pass (the raw sim time drives the knot grid; the spacecraft pass stays exact).
@@ -873,7 +866,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     spacecraft state output messages and the vector of spacecraft state message payloads */
 void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames) {
     std::vector<std::string>::iterator it;
-    SpiceChar *name = new SpiceChar[static_cast<size_t>(this->charBufferSize)];
+    std::array<SpiceChar, charBufferSize> name{};
     SpiceBoolean frmFound;
     SpiceInt frmCode;
 
@@ -908,11 +901,10 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
         std::snprintf(newSpacecraft.PlanetName, sizeof(newSpacecraft.PlanetName), "%s", it->c_str());
 
         std::string planetFrame = *it;
-        cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name, &frmFound);
+        cnmfrm_c(planetFrame.c_str(), this->charBufferSize, &frmCode, name.data(), &frmFound);
         newSpacecraft.computeOrient = frmFound;
         this->scData.push_back(newSpacecraft);
     }
-    delete [] name;
 
     return;
 }
@@ -1132,22 +1124,20 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
 
 std::string SpiceInterface::getCurrentTimeString()
 {
-	char *spiceOutputBuffer;
-	int64_t allowedOutputLength;
+    // Preserve the existing output capacity, with room for a character and its terminator.
+    if (this->timeOutPicture.size() < 7) {
+        bskLogger.bskError("The output format string is not long enough. It must contain at least 7 characters. "
+                           "It is currently: %s", this->timeOutPicture.c_str());
+    }
+    const size_t allowedOutputLength = this->timeOutPicture.size() - 5;
+    if (allowedOutputLength > static_cast<size_t>(std::numeric_limits<SpiceInt>::max())) {
+        bskLogger.bskError("The output format string is too long for SPICE.");
+    }
 
-	allowedOutputLength = (int64_t)this->timeOutPicture.size() - 5;
-
-	if (allowedOutputLength < 0)
-	{
-        bskLogger.bskError("The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
-	}
-
-	spiceOutputBuffer = new char[static_cast<size_t>(allowedOutputLength)];
-	timout_c(this->J2000Current, this->timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
-		spiceOutputBuffer);
-	std::string returnTimeString = spiceOutputBuffer;
-	delete[] spiceOutputBuffer;
-	return(returnTimeString);
+    std::vector<SpiceChar> spiceOutputBuffer(allowedOutputLength);
+    timout_c(this->J2000Current, this->timeOutPicture.c_str(), static_cast<SpiceInt>(allowedOutputLength),
+             spiceOutputBuffer.data());
+    return std::string(spiceOutputBuffer.data());
 }
 
 std::mutex SpiceKernel::mutex;
