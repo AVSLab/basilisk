@@ -24,3 +24,4 @@ by writing a python script.
    bskPrinciples/bskPrinciples-10
    bskPrinciples/bskPrinciples-11
    bskPrinciples/bskPrinciples-12
+   bskPrinciples/bskPrinciples-multiSim
