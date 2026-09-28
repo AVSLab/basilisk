@@ -1,0 +1,1 @@
+- Fixed the ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py`` defining two of its four VSCMG gimbal frames with a left-handed ``gsHat0_B``/``gtHat0_B``/``ggHat_B`` axis set, which made ``InitializeSimulation()`` raise a ``BSK_ERROR``.
