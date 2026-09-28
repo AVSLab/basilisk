@@ -234,6 +234,7 @@ void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double 
     this->rebuildFastPathIfNeeded();
 
     const size_t n = this->fastStateList.size();
+    // Preserve the initial state in owning buffers while stages update the live states.
     for (size_t i = 0; i < n; i++) {
         this->fastY0[i] = this->fastStateList[i]->getStateReference();
     }
@@ -249,6 +250,7 @@ void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double 
         for (auto dynPtr : this->dynPtrs) {
             dynPtr->equationsOfMotion(timeToComputeK, timeStep);
         }
+        // Keep each stage's derivatives after the next equations-of-motion call overwrites them.
         for (size_t i = 0; i < n; i++) {
             this->fastK[stage][i] = this->fastStateList[i]->getStateDerivReference();
         }

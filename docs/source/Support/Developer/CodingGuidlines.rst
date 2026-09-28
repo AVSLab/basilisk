@@ -153,6 +153,56 @@ Common Usage Examples
 Modules
 -------
 
+C++ State Access
+~~~~~~~~~~~~~~~~
+
+For internal C++ reads of ``StateData``, prefer ``getStateReference()`` and
+``getStateDerivReference()`` to avoid copying a dynamically sized Eigen matrix.
+Bind a read-only view with ``const auto&`` or ``const Eigen::MatrixXd&``:
+
+.. code-block:: cpp
+
+    const auto& state = stateData->getStateReference();
+    const auto& stateDerivative = stateData->getStateDerivReference();
+
+Plain ``auto`` and ``const auto`` create owning copies of these matrices; they
+do not preserve the returned reference. Scalar reads, fixed-size Eigen values,
+and assignments into existing buffers can also use the reference accessors
+directly. Such assignments still copy values into the destination, but avoid
+an intermediate dynamically sized matrix returned by ``getState()`` or
+``getStateDeriv()``.
+
+Keep intentional copies when a caller needs a writable value, a snapshot that
+must survive later state updates, or an independently owned return value or
+message payload. Make ownership explicit with a copy-returning accessor, a
+concrete Eigen value type, or assignment into an owning buffer, and briefly
+explain the reason where it is not clear from the surrounding code:
+
+.. code-block:: cpp
+
+    // Preserve the initial value while subsequent integration stages update the state.
+    const Eigen::MatrixXd initialState = stateData->getState();
+
+    // Edit a local copy before publishing the updated state through the setter.
+    Eigen::MatrixXd updatedState = stateData->getState();
+    updatedState.setZero();
+    stateData->setState(updatedState);
+
+The copy-returning ``getState()`` and ``getStateDeriv()`` methods remain supported
+for these uses and are not deprecated. This guidance applies to internal C++
+code; it does not change Python access or public API ownership contracts.
+
+A reference is a live view, not a snapshot: later updates are visible through
+it, and it must not outlive its ``StateData`` object. Keep views local and check
+for intervening state updates, including those made by called functions. Do not
+retain raw data pointers, Eigen maps, blocks, or unevaluated expressions across
+updates that may resize the referenced storage. When a value must survive an
+update, evaluate it into an owning matrix or vector first. In particular,
+``auto`` applied to an Eigen expression can retain references to its operands
+instead of creating a snapshot. Use setters to publish changes and check Eigen
+expression aliasing before reading from and writing to the same storage; use
+``noalias()`` only when the source and destination cannot overlap.
+
 Messages
 ~~~~~~~~
 

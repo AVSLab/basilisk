@@ -2,3 +2,4 @@
 - Removed per-call heap allocations from :ref:`reactionWheelStateEffector`'s ``computeDerivatives`` by reusing sized member buffers instead of allocating new ``Eigen::MatrixXd`` values on every Runge-Kutta stage.
 - Replaced internal read-only state copies with reference reads across BSM effectors, :ref:`spacecraftChargingDynamics`, and MuJoCo scene, controller, noise, and linear-system modules. This removes temporary matrix allocations while preserving owning snapshots where needed; the copy-returning ``StateData::getState()`` and ``getStateDeriv()`` APIs and Python behavior remain unchanged.
 - Restored CMake's compiler-specific default Release optimization by removing the explicit ``-O2`` override in ``src/CMakeLists.txt`` (GitHub issue 1586).
+- Added :ref:`coding guidance <codingGuidelines>` for internal C++ state reference reads, intentional owning copies, reference lifetime, and Eigen aliasing; the copy-returning accessors remain supported without deprecation.

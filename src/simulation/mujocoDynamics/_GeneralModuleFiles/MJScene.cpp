@@ -558,6 +558,7 @@ Eigen::VectorXd
 MJScene::assembleFullQpos()
 {
     // The bulk position state already mirrors the contiguous mjData::qpos layout.
+    // The VectorXd return value copies the map into an owning snapshot.
     auto m = this->spec.getMujocoModel();
     return Eigen::Map<const Eigen::VectorXd>(this->qposState->state.data(), m->nq);
 }
@@ -565,6 +566,7 @@ MJScene::assembleFullQpos()
 Eigen::VectorXd
 MJScene::assembleFullQvel()
 {
+    // The VectorXd return value copies the map into an owning snapshot.
     auto m = this->spec.getMujocoModel();
     return Eigen::Map<const Eigen::VectorXd>(this->qvelState->state.data(), m->nv);
 }
@@ -578,6 +580,7 @@ MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
                                                this->assembleFullQvel(),
                                                {} };
     if (this->actState) {
+        // Copy into the payload's owning vector so later state updates cannot change this sample.
         stateOutMsgPayload.act = this->actState->getStateReference();
     }
 

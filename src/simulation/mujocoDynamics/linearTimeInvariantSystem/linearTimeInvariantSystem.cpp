@@ -362,6 +362,7 @@ LinearTimeInvariantSystem::getX()
             "LinearTimeInvariantSystem::getX: state has not been registered.");
         return Eigen::VectorXd();
     }
+    // The VectorXd return value owns a snapshot that survives later state updates.
     return xState->getStateReference();
 }
 
