@@ -175,7 +175,7 @@ def _cmake_target_is_available(cmake_command, build_directory, target_name):
 
 
 def test_dynamics_benchmark_smoke():
-    """Run each Python dynamics benchmark case with the smallest timing load."""
+    """Run all dynamics cases with default component counts and minimal timing."""
 
     benchmark_script = REPO_ROOT / "benchmarks" / "dynamics" / "benchmark_state_effectors.py"
     completed = _run(
@@ -190,8 +190,6 @@ def test_dynamics_benchmark_smoke():
             "1",
             "--warmup-steps",
             "0",
-            "--components",
-            "1",
             "--segments",
             "1",
         ],
