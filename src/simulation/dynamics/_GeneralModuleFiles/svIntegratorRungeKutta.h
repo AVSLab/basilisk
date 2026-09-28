@@ -131,18 +131,12 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
     /** Coefficients to be used in the method */
     const std::unique_ptr<RKCoefficients<numberStages>> coefficients;
 
-  private:
-    // --- Cached execution path used by integrate() ---
+  protected:
+    // --- Cached execution path shared by fixed-step and adaptive integration ---
     //
-    // The ExtendedStateVector-based helpers above (computeKCoefficients,
-    // propagateStateWithKVectors, computeDerivatives) are kept as-is because
-    // svIntegratorAdaptiveRungeKutta calls them directly. But integrate()
-    // itself does not need to go through ExtendedStateVector: every stage of
-    // a fixed-step RK method touches the exact same set of states in the
-    // exact same order, so the per-stage std::unordered_map (keyed on
-    // (dynObjIndex, stateName)) and its associated heap-allocated
-    // Eigen::MatrixXd values can be replaced with a flat vector of StateData
-    // pointers and scratch buffers that are reused every stage once sized.
+    // The ExtendedStateVector-based helpers remain available to subclasses.
+    // Both execution paths reuse an ordered list of StateData pointers and
+    // owning matrix buffers instead of rebuilding hashed state containers.
     // Buffers allocate on first use and may allocate again after changes to
     // the registered states or the dimensions of state and derivative matrices.
 
@@ -155,8 +149,8 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
      * would visit them in. */
     std::vector<StateData*> fastStateList;
 
-    /** Per-state copy of the state value at the start of the current
-     * integrate() call (i.e. "y0"), indexed like fastStateList. */
+    /** Per-state snapshot at the start of the current integration step or
+     * adaptive substep ("y0"), indexed like fastStateList. */
     std::vector<Eigen::MatrixXd> fastY0;
 
     /** Per-stage, per-state derivative ("k") values: fastK[stage][i] is the
@@ -182,6 +176,15 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
      * even when the cached pointers remain valid.
      */
     void rebuildFastPathIfNeeded();
+
+    /**
+     * @brief Evaluate all Runge-Kutta stages using the cached initial state.
+     * @param currentTime Start of this step or adaptive substep [s].
+     * @param timeStep Trial integration interval [s].
+     * @note Call rebuildFastPathIfNeeded() and fill fastY0 before using this helper.
+     * Stage matrices allocate on first use and after dimension changes.
+     */
+    void computeFastKCoefficients(double currentTime, double timeStep);
 
     /**
      * @brief Combine cached Runge-Kutta derivatives and propagate the states.
@@ -239,6 +242,17 @@ void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double 
         this->fastY0[i] = this->fastStateList[i]->getStateReference();
     }
 
+    this->computeFastKCoefficients(currentTime, timeStep);
+
+    // Final combination using the "b" coefficients, matching integrate()'s
+    // trailing propagateStateWithKVectors(..., bArray, numberStages) call.
+    this->fastPropagateStateWithKVectors(timeStep, this->coefficients->bArray, numberStages);
+}
+
+template <size_t numberStages>
+void svIntegratorRungeKutta<numberStages>::computeFastKCoefficients(double currentTime, double timeStep)
+{
+    const size_t n = this->fastStateList.size();
     for (size_t stage = 0; stage < numberStages; stage++) {
         double timeToComputeK = currentTime + this->coefficients->cArray.at(stage) * timeStep;
 
@@ -255,10 +269,6 @@ void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double 
             this->fastK[stage][i] = this->fastStateList[i]->getStateDerivReference();
         }
     }
-
-    // Final combination using the "b" coefficients, matching integrate()'s
-    // trailing propagateStateWithKVectors(..., bArray, numberStages) call.
-    this->fastPropagateStateWithKVectors(timeStep, this->coefficients->bArray, numberStages);
 }
 
 template <size_t numberStages>

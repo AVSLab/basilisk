@@ -23,11 +23,21 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/svIntegratorRungeKutta.h"
+#include "extendedStateVector.h"
+#include "stateData.h"
+#include <Eigen/Core>
+#include <algorithm>
 #include <cmath>
+#include <functional>
+#include <iterator>
 #include <memory>
 #include <optional>
-#include <stdint.h>
+#include <stddef.h>
+#include <stdexcept>
 #include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 /**
  * @brief Interface for integrators that support state-specific adaptive tolerances.
@@ -88,7 +98,13 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
                                    const RKAdaptiveCoefficients<numberStages>& coefficients,
                                    const double methodLargestOrder);
 
-    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep
+    /**
+     * @brief Integrate the associated dynamic objects to currentTime + timeStep.
+     * @param currentTime Start of the requested integration interval [s].
+     * @param timeStep Requested integration interval [s].
+     * @note Registered states and dynamic-object membership must remain stable
+     * during this call. Cached storage is reused across accepted and rejected
+     * trials; first use, layout changes, or dimension changes may allocate.
      */
     virtual void integrate(double currentTime, double timeStep) override;
 
@@ -249,6 +265,14 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
     double
     getTolerance(size_t dynamicObjectIndex, const std::string& stateName, double stateNorm) const;
 
+    /**
+     * @brief Resolve the tolerance using an existing state identity without copying its name.
+     * @param stateId Dynamic-object index and state-map key.
+     * @param stateNorm State magnitude in the state's units.
+     * @return Relative tolerance times stateNorm plus absolute tolerance.
+     */
+    double getTolerance(const ExtendedStateId& stateId, double stateNorm) const;
+
     /** The higher order of the two orders used in adaptive RK methods.
      *
      * For the RKF45 method, for example, methodLargestOrder should be 5.
@@ -268,6 +292,25 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
     /** Holds the maximum absolute truncation error allowed for specific states of specific dynamic
      * objects*/
     std::unordered_map<ExtendedStateId, double> dynObjectStateSpecificAbsTol;
+
+  private:
+    /** State identities aligned with fastStateList; refreshed at every integrate() call. */
+    std::vector<ExtendedStateId> fastStateIds;
+
+    /** Owning snapshots of the first embedded solution, retained while the second is computed. */
+    std::vector<Eigen::MatrixXd> fastEmbeddedState;
+
+    /** Owning truncation-error matrices, sized independently of derivative buffers. */
+    std::vector<Eigen::MatrixXd> fastError;
+
+    /**
+     * @brief Compare the live second embedded solution with fastEmbeddedState.
+     * @return Largest error-to-tolerance ratio across states or scalar components.
+     * @note Reads current tolerance settings and perComponentErrorControl flags on
+     * every trial, including rejected trials. Error matrices allocate on first use
+     * and may allocate after state dimension changes.
+     */
+    double computeFastMaxRelativeError();
 };
 
 template <size_t numberStages>
@@ -289,36 +332,41 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
 {
     double time = startingTime;
     double timeStep = desiredTimeStep;
-    ExtendedStateVector state = ExtendedStateVector::fromStates(this->dynPtrs);
-    typename svIntegratorRungeKutta<numberStages>::KCoefficientsValues kValues;
+    this->rebuildFastPathIfNeeded();
+    const size_t n = this->fastStateList.size();
+    this->fastStateIds.resize(n);
+    this->fastEmbeddedState.resize(n);
+    this->fastError.resize(n);
+
+    // Refresh identities even if state pointers did not change: object indices
+    // and state-map keys determine the most specific tolerance override.
+    size_t stateIndex = 0;
+    for (size_t objectIndex = 0; objectIndex < this->dynPtrs.size(); ++objectIndex) {
+        for (const auto& [stateName, stateData] :
+             this->dynPtrs[objectIndex]->dynManager.stateContainer.stateMap) {
+            this->fastStateIds[stateIndex].first = objectIndex;
+            this->fastStateIds[stateIndex].second = stateName;
+            // Keep the last accepted state intact while evaluating trial steps.
+            this->fastY0[stateIndex] = stateData->getStateReference();
+            ++stateIndex;
+        }
+    }
 
     auto castCoefficients =
         static_cast<RKAdaptiveCoefficients<numberStages>*>(this->coefficients.get());
 
     // Continue until we are done with the desired time step
     while (time < startingTime + desiredTimeStep) {
-        // Much like regular Runge Kutta, we compute the
-        // "k" coefficients
-        kValues = this->computeKCoefficients(time, timeStep, state);
+        this->computeFastKCoefficients(time, timeStep);
 
-        // Now we generate two solutions, one of low order and one of
-        // high order by using either the b or b* coefficients
-        ExtendedStateVector lowOrderNextStep =
-            this->propagateStateWithKVectors(timeStep,
-                                             state,
-                                             kValues,
-                                             castCoefficients->bArray,
-                                             numberStages);
-        ExtendedStateVector highOrderNextStep =
-            this->propagateStateWithKVectors(timeStep,
-                                             state,
-                                             kValues,
-                                             castCoefficients->bStarArray,
-                                             numberStages);
-
-        // For the adaptive RK, we also compute the maximum
-        // relationship between error and tolerance
-        double maxRelError = this->computeMaxRelativeError(timeStep, lowOrderNextStep, highOrderNextStep);
+        // Preserve the existing b/b* propagation order and virtual StateData
+        // propagation, including states whose derivative has a different shape.
+        this->fastPropagateStateWithKVectors(timeStep, castCoefficients->bArray, numberStages);
+        for (size_t i = 0; i < n; ++i) {
+            this->fastEmbeddedState[i] = this->fastStateList[i]->getStateReference();
+        }
+        this->fastPropagateStateWithKVectors(timeStep, castCoefficients->bStarArray, numberStages);
+        const double maxRelError = this->computeFastMaxRelativeError();
 
         // If maxRelError > 1, then we need a smaller time step,
         // so we should reject the current time step.
@@ -328,7 +376,9 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
         {
             // Advance time and set new state to the computed state
             time += timeStep;
-            state = std::move(highOrderNextStep);
+            for (size_t i = 0; i < n; ++i) {
+                this->fastY0[i] = this->fastStateList[i]->getStateReference();
+            }
         }
 
         // Regardless of accepting or not the step, we compute a new time step
@@ -342,7 +392,34 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrate(double startingTime
     }
 
     // Update the dynamic objects with the final state obtained
-    state.setStates(this->dynPtrs);
+    for (size_t i = 0; i < n; ++i) {
+        this->fastStateList[i]->setState(this->fastY0[i]);
+    }
+}
+
+template <size_t numberStages>
+double svIntegratorAdaptiveRungeKutta<numberStages>::computeFastMaxRelativeError()
+{
+    double maxRelativeError = 0.0; // [-]
+    for (size_t i = 0; i < this->fastStateList.size(); ++i) {
+        const StateData& data = *this->fastStateList[i];
+        const auto& state = data.getStateReference();
+        auto& error = this->fastError[i];
+        // Match the retained implementation's copy/subtract sequence and norm reduction.
+        error = state;
+        error -= this->fastEmbeddedState[i];
+        const auto& stateId = this->fastStateIds[i];
+        if (data.perComponentErrorControl) {
+            for (Eigen::Index component = 0; component < state.size(); ++component) {
+                const double tolerance = this->getTolerance(stateId, std::abs(state(component)));
+                maxRelativeError = std::max(maxRelativeError, std::abs(error(component)) / tolerance);
+            }
+        } else {
+            const double tolerance = this->getTolerance(stateId, state.norm());
+            maxRelativeError = std::max(maxRelativeError, error.norm() / tolerance);
+        }
+    }
+    return maxRelativeError;
 }
 
 template <size_t numberStages>
@@ -508,7 +585,7 @@ size_t svIntegratorAdaptiveRungeKutta<numberStages>::findDynamicObjectIndex(
         throw std::invalid_argument(
             "Given DynamicObject is not integrated by this integrator object");
     }
-    return std::distance(this->dynPtrs.begin(), it);
+    return static_cast<size_t>(std::distance(this->dynPtrs.begin(), it));
 }
 
 template <size_t numberStages>
@@ -516,8 +593,14 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::getTolerance(size_t dynamic
                                                                   const std::string& stateName,
                                                                   double stateNorm) const
 {
-    const ExtendedStateId id{dynamicObjectIndex, stateName};
+    return this->getTolerance(ExtendedStateId{dynamicObjectIndex, stateName}, stateNorm);
+}
 
+template <size_t numberStages>
+double svIntegratorAdaptiveRungeKutta<numberStages>::getTolerance(
+    const ExtendedStateId& id, double stateNorm) const
+{
+    const std::string& stateName = id.second;
     double relTol{this->relTol};
     double absTol{this->absTol};
 

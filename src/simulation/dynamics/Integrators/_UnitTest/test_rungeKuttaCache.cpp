@@ -21,18 +21,25 @@
 #include "simulation/dynamics/_GeneralModuleFiles/extendedStateVector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h"
+#include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
+#include "simulation/dynamics/Integrators/svIntegratorRKF45.h"
+#include "simulation/dynamics/Integrators/svIntegratorRKF78.h"
 
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <string>
+#include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -55,7 +62,7 @@ rk4Coefficients()
     return coefficients;
 }
 
-/** @brief Restore the pre-cache integration sequence using the retained adaptive-integrator helpers. */
+/** @brief Restore the pre-cache integration sequence using the retained map-based helpers. */
 template<std::size_t stages>
 class ReferenceIntegrator : public svIntegratorRungeKutta<stages>
 {
@@ -607,6 +614,427 @@ TEST(RungeKuttaCache, EmptyStateMapsMatchReference)
         model->dynManager.stateContainer.stateMap.clear();
     }
     comparison.repeatedSteps();
+}
+
+
+/** @brief Retain the pre-cache adaptive loop as an independent trial/acceptance reference. */
+template<typename Integrator>
+class ReferenceAdaptiveIntegrator : public Integrator
+{
+  public:
+    using Integrator::Integrator;
+    static constexpr std::size_t stages = std::tuple_size<typename Integrator::KCoefficientsValues>::value;
+
+    void integrate(double startingTime, double desiredTimeStep) override
+    {
+        double time = startingTime;
+        double timeStep = desiredTimeStep;
+        auto state = ExtendedStateVector::fromStates(this->dynPtrs);
+        const auto* coefficients = static_cast<const RKAdaptiveCoefficients<stages>*>(this->coefficients.get());
+        std::size_t trialCount = 0;
+        while (time < startingTime + desiredTimeStep) {
+            if (++trialCount > 10000) {
+                throw std::runtime_error("Reference adaptive integration did not converge");
+            }
+            const auto kValues = this->computeKCoefficients(time, timeStep, state);
+            const auto first = this->propagateStateWithKVectors(timeStep, state, kValues,
+                                                                coefficients->bArray, stages);
+            auto second = this->propagateStateWithKVectors(timeStep, state, kValues,
+                                                           coefficients->bStarArray, stages);
+            const double error = this->computeMaxRelativeError(timeStep, first, second);
+            if (error <= 1.0) {
+                time += timeStep;
+                state = std::move(second);
+            }
+            double nextStep = this->safetyFactorForNextStepSize * timeStep *
+                              std::pow(1.0 / error, 1.0 / this->methodLargestOrder);
+            nextStep = std::min(nextStep, timeStep * this->maximumFactorIncreaseForNextStepSize);
+            nextStep = std::max(nextStep, timeStep * this->minimumFactorDecreaseForNextStepSize);
+            timeStep = std::min(nextStep, startingTime + desiredTimeStep - time);
+        }
+        state.setStates(this->dynPtrs);
+    }
+};
+
+/**
+ * @brief Compare adaptive stages with floating-point contraction disabled by this test target.
+ *
+ * The separate test_adaptiveRungeKuttaAccuracy target enables contraction and
+ * checks analytic solutions without requiring identical adaptive trial sequences.
+ */
+template<typename Integrator>
+struct AdaptiveComparison
+{
+    AdaptiveComparison() : cached(&cachedPrimary), reference(&referencePrimary)
+    {
+        for (auto* primary : {&cachedPrimary, &referencePrimary}) {
+            addState(*primary, "scalar", makeValues(1, 1, 0.375)); // [-]
+            addState(*primary, "matrix", makeValues(2, 3, -0.5));  // [-]
+        }
+        for (auto* secondary : {&cachedSecondary, &referenceSecondary}) {
+            addState(*secondary, "scalar", makeValues(1, 1, -0.75)); // [-]
+            addState(*secondary, "matrix", makeValues(3, 2, 0.625)); // [-]
+        }
+        cachedPrimary.partner = &cachedSecondary;
+        cachedSecondary.partner = &cachedPrimary;
+        referencePrimary.partner = &referenceSecondary;
+        referenceSecondary.partner = &referencePrimary;
+        cached.dynPtrs.push_back(&cachedSecondary);
+        reference.dynPtrs.push_back(&referenceSecondary);
+    }
+
+    void step(double time, double duration)
+    {
+        for (auto* model : {&cachedPrimary, &cachedSecondary, &referencePrimary, &referenceSecondary}) {
+            model->samples.clear();
+        }
+        cached.integrate(time, duration);
+        reference.integrate(time, duration);
+        expectDynamicsMatch(cachedPrimary, referencePrimary);
+        expectDynamicsMatch(cachedSecondary, referenceSecondary);
+    }
+
+    TestDynamics cachedPrimary;
+    TestDynamics cachedSecondary;
+    TestDynamics referencePrimary;
+    TestDynamics referenceSecondary;
+    Integrator cached;
+    ReferenceAdaptiveIntegrator<Integrator> reference;
+};
+
+template<typename Integrator>
+class AdaptiveRungeKuttaCache : public testing::Test {};
+using AdaptiveMethods = testing::Types<svIntegratorRKF45, svIntegratorRKF78>;
+struct AdaptiveMethodNames
+{
+    template<typename Integrator>
+    static std::string GetName(int)
+    {
+        return std::is_same_v<Integrator, svIntegratorRKF45> ? "RKF45" : "RKF78";
+    }
+};
+TYPED_TEST_SUITE(AdaptiveRungeKuttaCache, AdaptiveMethods, AdaptiveMethodNames);
+
+/** @brief Match rejected trials, accepted substeps, final clipping, and repeated integrations. */
+TYPED_TEST(AdaptiveRungeKuttaCache, RejectedStepsMatchReference)
+{
+    AdaptiveComparison<TypeParam> comparison;
+    for (TypeParam* integrator : {&comparison.cached, static_cast<TypeParam*>(&comparison.reference)}) {
+        integrator->relTol = 1e-9; // [-]
+        integrator->absTol = 1e-11; // [-]
+    }
+    const double start = 0.25; // [s]
+    const double duration = 8.0; // [s]
+    comparison.step(start, duration);
+    constexpr auto stages = ReferenceAdaptiveIntegrator<TypeParam>::stages;
+    const auto& samples = comparison.cachedPrimary.samples;
+    ASSERT_GT(samples.size(), stages);
+    EXPECT_EQ(samples.size() % stages, 0U);
+    bool sawRejection = false;
+    for (std::size_t trial = stages; trial < samples.size(); trial += stages) {
+        if (samples[trial].time == samples[trial - stages].time) {
+            sawRejection = true;
+            EXPECT_LT(samples[trial].timeStep, samples[trial - stages].timeStep);
+        }
+    }
+    EXPECT_TRUE(sawRejection);
+    const auto& finalTrial = samples[samples.size() - stages];
+    EXPECT_DOUBLE_EQ(finalTrial.time + finalTrial.timeStep, start + duration);
+    comparison.step(start + duration, duration);
+    comparison.step(start + 2.0 * duration, 0.125); // [s]
+}
+
+/** @brief Read updated global, state, object-state, and componentwise tolerances after warmup. */
+TYPED_TEST(AdaptiveRungeKuttaCache, ToleranceChangesMatchReference)
+{
+    AdaptiveComparison<TypeParam> comparison;
+    comparison.step(0.0, 0.125); // [s]
+    for (TypeParam* integrator : {&comparison.cached, static_cast<TypeParam*>(&comparison.reference)}) {
+        integrator->relTol = 1e-7; // [-]
+        integrator->absTol = 1e-9; // [-]
+        integrator->setRelativeTolerance("matrix", 1e-8); // [-]
+        integrator->setAbsoluteTolerance("scalar", 1e-10); // [-]
+        integrator->setAbsoluteTolerance(*integrator->dynPtrs[1], "matrix", 1e-12); // [-]
+        integrator->setRelativeTolerance(*integrator->dynPtrs[0], "scalar", 0.0); // [-]
+    }
+    for (auto* model : {&comparison.cachedSecondary, &comparison.referenceSecondary}) {
+        model->dynManager.stateContainer.stateMap.at("matrix")->perComponentErrorControl = true;
+    }
+    comparison.step(0.125, 8.0); // [s]
+    // Direct public-field edits and switching back to norm control must also take effect.
+    for (TypeParam* integrator : {&comparison.cached, static_cast<TypeParam*>(&comparison.reference)}) {
+        integrator->relTol = 1e-5; // [-]
+        integrator->setRelativeTolerance("matrix", 1e-4); // [-]
+    }
+    for (auto* model : {&comparison.cachedSecondary, &comparison.referenceSecondary}) {
+        model->dynManager.stateContainer.stateMap.at("matrix")->perComponentErrorControl = false;
+    }
+    comparison.step(8.125, 8.0); // [s]
+}
+
+/** @brief Exercise cache invalidation independently for every live layout change. */
+TYPED_TEST(AdaptiveRungeKuttaCache, LayoutChangesMatchReference)
+{
+    const std::array changes{CacheChange::insertState, CacheChange::appendState, CacheChange::removeState,
+                            CacheChange::replaceState, CacheChange::resizeState, CacheChange::reshapeState,
+                            CacheChange::clearStates, CacheChange::resetValues, CacheChange::addObject,
+                            CacheChange::removeObject, CacheChange::reorderObjects};
+    for (const auto change : changes) {
+        SCOPED_TRACE(static_cast<int>(change));
+        AdaptiveComparison<TypeParam> comparison;
+        if (change == CacheChange::addObject) {
+            comparison.cached.dynPtrs.pop_back();
+            comparison.reference.dynPtrs.pop_back();
+        }
+        comparison.step(0.0, 0.125); // [s]
+        std::vector<std::unique_ptr<StateData>> retired;
+        for (auto* model : {&comparison.cachedPrimary, &comparison.referencePrimary}) {
+            auto& states = model->dynManager.stateContainer.stateMap;
+            switch (change) {
+                case CacheChange::insertState:
+                    addState(*model, "added", makeValues(4, 1, 0.25)); // [-]
+                    break;
+                case CacheChange::appendState:
+                    addState(*model, "zzAdded", makeValues(1, 4, -0.25)); // [-]
+                    break;
+                case CacheChange::removeState:
+                    retired.push_back(std::move(states.at("scalar")));
+                    states.erase("scalar");
+                    break;
+                case CacheChange::replaceState:
+                    retired.push_back(std::move(states.at("matrix")));
+                    states.at("matrix") = std::make_unique<StateData>("matrix", makeValues(2, 3, 0.875)); // [-]
+                    break;
+                case CacheChange::resizeState:
+                    states.at("matrix")->setState(makeValues(4, 1, -0.125)); // [-]
+                    break;
+                case CacheChange::reshapeState:
+                    states.at("matrix")->setState(makeValues(3, 2, 0.125)); // [-]
+                    break;
+                case CacheChange::clearStates:
+                    for (auto& entry : states) {
+                        retired.push_back(std::move(entry.second));
+                    }
+                    states.clear();
+                    break;
+                case CacheChange::resetValues:
+                    states.at("matrix")->setState(makeValues(2, 3, -0.875)); // [-]
+                    break;
+                default:
+                    break;
+            }
+        }
+        switch (change) {
+            case CacheChange::addObject:
+                comparison.cached.dynPtrs.push_back(&comparison.cachedSecondary);
+                comparison.reference.dynPtrs.push_back(&comparison.referenceSecondary);
+                break;
+            case CacheChange::removeObject:
+                comparison.cached.dynPtrs.pop_back();
+                comparison.reference.dynPtrs.pop_back();
+                break;
+            case CacheChange::reorderObjects:
+                std::reverse(comparison.cached.dynPtrs.begin(), comparison.cached.dynPtrs.end());
+                std::reverse(comparison.reference.dynPtrs.begin(), comparison.reference.dynPtrs.end());
+                break;
+            default:
+                break;
+        }
+        comparison.step(0.125, 2.0); // [s]
+        comparison.step(2.125, 2.0); // [s]
+    }
+}
+
+/** @brief Tolerance identities must refresh even when the ordered StateData pointer list is unchanged. */
+TYPED_TEST(AdaptiveRungeKuttaCache, ChangedNamesAndObjectIndicesMatchReference)
+{
+    AdaptiveComparison<TypeParam> comparison;
+    comparison.step(0.0, 0.125); // [s]
+    TestDynamics cachedEmpty;
+    TestDynamics referenceEmpty;
+    comparison.cached.dynPtrs.insert(comparison.cached.dynPtrs.begin(), &cachedEmpty);
+    comparison.reference.dynPtrs.insert(comparison.reference.dynPtrs.begin(), &referenceEmpty);
+    for (auto* model : {&comparison.cachedPrimary, &comparison.referencePrimary}) {
+        auto& states = model->dynManager.stateContainer.stateMap;
+        auto renamed = states.extract("matrix");
+        renamed.key() = "renamedMatrixWithLongNameToExerciseOwnedIdentityStorage";
+        states.insert(std::move(renamed));
+    }
+    for (TypeParam* integrator : {&comparison.cached, static_cast<TypeParam*>(&comparison.reference)}) {
+        integrator->setAbsoluteTolerance(*integrator->dynPtrs[1],
+            "renamedMatrixWithLongNameToExerciseOwnedIdentityStorage", 1e-12); // [-]
+        integrator->setRelativeTolerance(*integrator->dynPtrs[1],
+            "renamedMatrixWithLongNameToExerciseOwnedIdentityStorage", 0.0); // [-]
+    }
+    comparison.step(0.125, 8.0); // [s]
+    expectDynamicsMatch(cachedEmpty, referenceEmpty);
+}
+
+/** @brief Preserve virtual propagation and independent state/derivative buffer dimensions. */
+TYPED_TEST(AdaptiveRungeKuttaCache, DifferentDerivativeDimensionsMatchReference)
+{
+    AdaptiveComparison<TypeParam> comparison;
+    comparison.step(0.0, 0.125); // [s]
+    for (auto* model : {&comparison.cachedPrimary, &comparison.referencePrimary}) {
+        Eigen::MatrixXd initial(2, 1);
+        initial << 0.25, 0.5; // [-]
+        model->dynManager.stateContainer.stateMap.emplace("mapped", std::make_unique<MappedState>("mapped", initial));
+    }
+    comparison.step(0.125, 8.0); // [s]
+    comparison.step(8.125, 0.25); // [s]
+    const auto& cached = dynamic_cast<const MappedState&>(
+        *comparison.cachedPrimary.dynManager.stateContainer.stateMap.at("mapped"));
+    const auto& reference = dynamic_cast<const MappedState&>(
+        *comparison.referencePrimary.dynManager.stateContainer.stateMap.at("mapped"));
+    EXPECT_EQ(cached.propagationCalls, reference.propagationCalls);
+    EXPECT_EQ(cached.derivativeCalls, reference.derivativeCalls);
+    EXPECT_GT(cached.propagationCalls, 0U);
+    EXPECT_DOUBLE_EQ(cached.state(1, 0), 2.0 * cached.state(0, 0));
+}
+
+/** @brief Empty systems and nonpositive requested intervals preserve the existing no-op behavior. */
+TYPED_TEST(AdaptiveRungeKuttaCache, EmptyAndNonpositiveIntervalsMatchReference)
+{
+    AdaptiveComparison<TypeParam> comparison;
+    comparison.step(0.25, 0.0); // [s]
+    comparison.step(0.25, -0.125); // [s]
+    for (auto* model : {&comparison.cachedPrimary, &comparison.cachedSecondary,
+                        &comparison.referencePrimary, &comparison.referenceSecondary}) {
+        model->dynManager.stateContainer.stateMap.clear();
+    }
+    comparison.step(0.25, 0.5); // [s]
+}
+
+/** @brief Warm adaptive trials, including rejections, must reuse Eigen buffers after layout and shape changes. */
+TYPED_TEST(AdaptiveRungeKuttaCache, ReusesScratchMatricesAfterWarmup)
+{
+    AllocationFreeDynamics primary(2, 3);
+    AllocationFreeDynamics secondary(3, 2);
+    TypeParam integrator(&primary);
+    integrator.relTol = 1e-9; // [-]
+    integrator.absTol = 1e-11; // [-]
+    const auto runWithoutAllocations = [&]() {
+        EigenAllocationGuard guard;
+        integrator.integrate(0.0, 8.0); // [s]
+        integrator.integrate(8.0, 0.25); // [s]
+    };
+    integrator.integrate(0.0, 8.0); // [s]
+    runWithoutAllocations();
+    integrator.dynPtrs.push_back(&secondary);
+    integrator.integrate(0.0, 8.0); // [s]
+    runWithoutAllocations();
+    primary.value->setState(makeValues(4, 2, 0.375)); // [-]
+    integrator.integrate(0.0, 8.0); // [s]
+    runWithoutAllocations();
+    EXPECT_TRUE(primary.value->getStateReference().allFinite());
+    EXPECT_TRUE(secondary.value->getStateReference().allFinite());
+}
+
+/** @brief Preserve zero embedded weights, skipped nonfinite stages, negative weights, and zero-error step growth. */
+TEST(AdaptiveRungeKuttaCache, SparseAndZeroEmbeddedWeightsMatchReference)
+{
+    using Integrator = svIntegratorAdaptiveRungeKutta<3>;
+    for (int variant = 0; variant < 4; ++variant) {
+        SCOPED_TRACE(variant);
+        RKAdaptiveCoefficients<3> coefficients;
+        coefficients.bArray = {-0.25, 0.0, 1.25};
+        coefficients.bStarArray = coefficients.bArray;
+        coefficients.cArray = {0.0, 0.5, 1.0};
+        if (variant == 0) coefficients.bArray = {};
+        if (variant == 1) coefficients.bStarArray = {};
+        if (variant == 2) coefficients.bArray = coefficients.bStarArray = {};
+        if (variant == 3) coefficients.bArray = coefficients.bStarArray = {0.0, -0.25, 1.25};
+        TestDynamics cachedModel;
+        TestDynamics referenceModel;
+        for (auto* model : {&cachedModel, &referenceModel}) {
+            addState(*model, "value", makeValues(2, 3, 0.375)); // [-]
+            model->poisonFirstStage = variant == 3;
+        }
+        Integrator cached(&cachedModel, coefficients, 2.0);
+        ReferenceAdaptiveIntegrator<Integrator> reference(&referenceModel, coefficients, 2.0);
+        cached.absTol = reference.absTol = 1.0; // [-]
+        cached.integrate(0.0, 0.25); // [s]
+        reference.integrate(0.0, 0.25); // [s]
+        expectDynamicsMatch(cachedModel, referenceModel);
+    }
+}
+
+
+/** @brief Keep one large component constant while a small component decays independently. */
+class MixedScaleDynamics : public TestDynamics
+{
+  public:
+    void equationsOfMotion(double time, double step) override
+    {
+        TestDynamics::equationsOfMotion(time, step);
+        auto& data = *this->dynManager.stateContainer.stateMap.at("mixed");
+        const double decayRate = -1.0; // [1/s]
+        Eigen::Vector2d derivative{0.0, decayRate * data.getStateReference()(1)}; // [1/s]
+        data.setDerivative(derivative);
+    }
+};
+
+/** @brief Componentwise error control must protect small components hidden by a large vector norm. */
+TYPED_TEST(AdaptiveRungeKuttaCache, ComponentwiseControlResolvesSmallComponent)
+{
+    std::array<std::size_t, 2> evaluations{};
+    const double duration = 4.0; // [s]
+    for (int componentwise = 0; componentwise < 2; ++componentwise) {
+        MixedScaleDynamics cachedModel;
+        MixedScaleDynamics referenceModel;
+        for (auto* model : {&cachedModel, &referenceModel}) {
+            Eigen::MatrixXd initial(2, 1);
+            initial << 1e9, 1.0; // [-]
+            addState(*model, "mixed", initial);
+            model->dynManager.stateContainer.stateMap.at("mixed")->perComponentErrorControl = componentwise != 0;
+        }
+        TypeParam cached(&cachedModel);
+        ReferenceAdaptiveIntegrator<TypeParam> reference(&referenceModel);
+        cached.relTol = reference.relTol = 1e-7; // [-]
+        cached.absTol = reference.absTol = 1e-10; // [-]
+        cached.integrate(0.0, duration); // [s]
+        reference.integrate(0.0, duration); // [s]
+        expectDynamicsMatch(cachedModel, referenceModel);
+        evaluations[static_cast<std::size_t>(componentwise)] = cachedModel.samples.size();
+        if (componentwise) {
+            const auto& final = cachedModel.dynManager.stateContainer.stateMap.at("mixed")->getStateReference();
+            const double exact = std::exp(-duration); // [-], decay rate is 1/s
+            EXPECT_DOUBLE_EQ(final(0), 1e9);
+            EXPECT_NEAR(final(1), exact, 1e-5 * exact);
+        }
+    }
+    EXPECT_GT(evaluations[1], evaluations[0]);
+}
+
+/** @brief Expose tolerance resolution for checking independent relative and absolute override precedence. */
+template<typename Integrator>
+class ToleranceProbe : public Integrator
+{
+  public:
+    using Integrator::Integrator;
+    using Integrator::getTolerance;
+};
+
+/** @brief Absolute and relative settings independently select object-state, state, then global defaults. */
+TYPED_TEST(AdaptiveRungeKuttaCache, TolerancePrecedence)
+{
+    TestDynamics primary;
+    TestDynamics secondary;
+    ToleranceProbe<TypeParam> integrator(&primary);
+    integrator.dynPtrs.push_back(&secondary);
+    integrator.relTol = 0.25; // [-]
+    integrator.absTol = 0.125; // [-]
+    const double stateNorm = 2.0; // [-]
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({0, "value"}, stateNorm), 0.625);
+    integrator.setRelativeTolerance("value", 0.0625); // [-]
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({0, "value"}, stateNorm), 0.25);
+    integrator.setAbsoluteTolerance(primary, "value", 0.03125); // [-]
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({0, "value"}, stateNorm), 0.15625);
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({1, "value"}, stateNorm), 0.25);
+    integrator.setRelativeTolerance(primary, "value", 0.0); // [-]
+    integrator.setAbsoluteTolerance("value", 0.5); // [-]
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({0, "value"}, stateNorm), 0.03125);
+    EXPECT_DOUBLE_EQ(integrator.getTolerance({1, "value"}, stateNorm), 0.625);
 }
 
 } // namespace
