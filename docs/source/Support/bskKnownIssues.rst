@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
+  failed during initialization with two or more components because of left-handed gimbal frames.
+  The affected axes now form right-handed frames, fixing the benchmark in the current version.
+
 - GitHub issue 1581: The C ``debyeLength()`` utility could read beyond its lookup
   arrays for altitudes from 2,000 km through 30,000 km, producing undefined
   results such as NaN. The interval search now includes the final table endpoint
