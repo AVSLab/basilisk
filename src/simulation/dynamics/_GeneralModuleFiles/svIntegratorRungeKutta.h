@@ -24,9 +24,11 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "extendedStateVector.h"
+#include "stateData.h"
+#include <Eigen/Core>
 #include <array>
 #include <memory>
-#include <stdint.h>
+#include <stddef.h>
 #include <utility>
 #include <vector>
 
