@@ -15,6 +15,9 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """Regression checks for ordered stochastic increments on MuJoCo quaternions."""
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -31,17 +34,27 @@ if mujocoEnabled:
     from Basilisk.simulation import mujoco
 
 
+with Path(__file__).with_name("weakQuaternionReference.json").open(encoding="utf-8") as referenceFile:
+    weakReference = json.load(referenceFile)
+weakMethods = list(dict.fromkeys(case["method"] for case in weakReference["cases"]))
+weakQuaternions = {
+    (case["method"], case["highOrder"]): case["quaternions"] for case in weakReference["cases"]
+}
+
+
 @pytest.mark.parametrize("method", [
     "Mayurama", "EulerHeun", "RKMil", "SRIW1", "SOSRI", "SRA1", "SOSRA"
-])
+] + weakMethods)
 @pytest.mark.parametrize("highOrder", [False, True])
 def test_noiseQuaternionPropagation(highOrder, method):
     """Apply two body-axis noise rotations in source order in both attitude modes.
 
     The position state has seven components, while each diffusion has six.
-    For constant diffusion and zero drift, compare two steps against independent
-    ordered quaternion products. This checks propagation plumbing, not the
-    convergence order of these methods on a manifold.
+    For constant diffusion and zero drift, the strong methods are compared with
+    independent ordered quaternion products. Weak methods are compared with saved
+    outputs from commit 7436aaae5e, before stage-buffer reuse; their sequences of
+    noise rotations need not collapse to the strong-method update. This checks
+    propagation behavior, not convergence order on a manifold.
     """
     # Sphere radius [m], mass [kg], and zero gravitational acceleration [m/s^2].
     xml = """<mujoco><option gravity="0 0 0"/><worldbody>
@@ -97,6 +110,7 @@ def test_noiseQuaternionPropagation(highOrder, method):
             expected = np.concatenate(([scalar], vector))
         actual = np.asarray(position.getState()).reshape(-1)
         np.testing.assert_allclose(actual[:3], 0.0, rtol=0.0, atol=1e-14)
-        np.testing.assert_allclose(actual[3:], expected, rtol=0.0, atol=1e-14)
+        reference = weakQuaternions[(method, highOrder)][index] if method in weakMethods else expected
+        np.testing.assert_allclose(actual[3:], reference, rtol=0.0, atol=1e-14)
         assert np.linalg.norm(actual[3:]) == pytest.approx(1.0, abs=1e-14)
     assert noise.remaining() == 0

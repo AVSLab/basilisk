@@ -20,6 +20,18 @@
 #include "../_GeneralModuleFiles/stochasticWeakRandomVariables.h"
 
 #include <cmath>
+#include <cstddef>
+#include <stdexcept>
+#include <vector>
+
+namespace {
+// Preserve checked access for user-supplied variable-length tableau rows.
+const double* checkedWeights(const std::vector<double>& weights, size_t length)
+{
+    if (length > weights.size()) throw std::out_of_range("W2Ito coefficient row is shorter than the stage sum");
+    return weights.data();
+}
+} // namespace
 
 svStochasticIntegratorW2Ito::svStochasticIntegratorW2Ito(DynamicObject* dyn,
                                                          const W2ItoCoefficients& coefficients)
@@ -45,10 +57,8 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
 
     const W2ItoCoefficients& c = this->coefficients;
     const size_t s = c.numStages();
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+    const size_t m = prepareStageBuffers(s, s, 1, 3);
+    captureStates(0); // Preserve the initial state while callbacks evaluate later stages.
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const double h = timeStep;
@@ -66,7 +76,8 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
     const double eta1 = (m > 0) ? stochasticWeakRV::twoPoint(sample.dZ(0), 1.0) : 1.0;
     const double eta2 = (m > 1) ? stochasticWeakRV::twoPoint(sample.dZ(1), 1.0) : 0.0;
     const double xi = sqh * eta1;
-    Eigen::VectorXd _dW(noiseCount), Ikk(noiseCount);
+    auto& _dW = this->noiseBuffers[0];
+    auto& Ikk = this->noiseBuffers[1];
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         _dW(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
@@ -78,45 +89,36 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
         return 0.5 * (_dW(eigenL) + eta2 * _dW(eigenL)); // k > l
     };
 
-    // Stage function evaluations. f_H0[i] = f(H_i^(0)); g_Hk[k][i] = g_k(H_i^(k)).
-    std::vector<ExtendedStateVector> f_H0(s);
-    std::vector<std::vector<ExtendedStateVector>> g_Hk(m, std::vector<ExtendedStateVector>(s));
-
-    // Stage 0: H_0^(0) == H_0^(k) == x_n, so evaluate f and every g at the current state.
-    f_H0.at(0) = computeDerivatives(currentTime, timeStep);
-    {
-        std::vector<ExtendedStateVector> diffs = computeDiffusions(currentTime, timeStep, maps);
-        for (size_t k = 0; k < m; k++) g_Hk.at(k).at(0) = diffs.at(k);
-    }
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
 
     // Stages i = 1..s-1.
     for (size_t i = 1; i < s; i++) {
         // H_i^(0) = x_n + h*sum_{j<i} A0[i][j] f(H0[j]) + sum_k Ihat_k*sum_{j<i} B0[i][j] g_k(Hk[j])
-        currentState.setStates(dynPtrs);
-        scaledSum(c.A0.at(i), f_H0, i).setDerivatives(dynPtrs);
+        restoreStates(0);
+        applyDerivativeSum(checkedWeights(c.A0.at(i), i), i);
         for (size_t k = 0; k < m; k++) {
-            scaledSum(c.B0.at(i), g_Hk.at(k), i).setDiffusions(dynPtrs, maps.at(k));
+            applyDiffusionSum(k, checkedWeights(c.B0.at(i), i), i);
         }
         propagateStateWithCachedNoise(timeStep, _dW);
-        f_H0.at(i) = computeDerivatives(currentTime + c.c0(i) * timeStep, timeStep);
+        evaluateStageDerivatives(currentTime + c.c0(i) * timeStep, timeStep, i);
 
         // H_i^(k) = x_n + h*sum_{j<i} A1[i][j] f(H0[j]) + xi*sum_{j<i} B1[i][j] g_k(Hk[j])
         //               + sum_{l!=k} Ihat_(k,l)*sum_{j<i} B2[i][j] g_l(Hl[j])
         for (size_t k = 0; k < m; k++) {
-            currentState.setStates(dynPtrs);
-            scaledSum(c.A1.at(i), f_H0, i).setDerivatives(dynPtrs);
-            scaledSum(c.B1.at(i), g_Hk.at(k), i).setDiffusions(dynPtrs, maps.at(k));
+            restoreStates(0);
+            applyDerivativeSum(checkedWeights(c.A1.at(i), i), i);
+            applyDiffusionSum(k, checkedWeights(c.B1.at(i), i), i);
             for (size_t l = 0; l < m; l++) {
                 if (l == k) continue;
-                scaledSum(c.B2.at(i), g_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
+                applyDiffusionSum(l, checkedWeights(c.B2.at(i), i), i);
             }
-            Eigen::VectorXd step(noiseCount);
+            auto& step = this->noiseBuffers[2];
             for (size_t l = 0; l < m; l++) {
                 step(static_cast<Eigen::Index>(l)) = (l == k) ? xi : Ikl(k, l);
             }
             propagateStateWithCachedNoise(timeStep, step);
-            g_Hk.at(k).at(i) =
-                computeDiffusion(currentTime + c.c1(i) * timeStep, timeStep, maps.at(k));
+            evaluateStageDiffusion(currentTime + c.c1(i) * timeStep, timeStep, k, i);
         }
     }
 
@@ -124,14 +126,14 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
     //   y_{n+1} = x_n + h*sum_i alpha[i] f(H0[i])
     //                 + sum_k Ihat_k    * sum_i beta0[i] g_k(Hk[i])
     //                 + sum_k Ihat_(k,k)* sum_i beta1[i] g_k(Hk[i])
-    currentState.setStates(dynPtrs);
-    scaledSum(c.alpha, f_H0, s).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(checkedWeights(c.alpha, s), s);
     for (size_t k = 0; k < m; k++) {
-        scaledSum(c.beta0, g_Hk.at(k), s).setDiffusions(dynPtrs, maps.at(k));
+        applyDiffusionSum(k, checkedWeights(c.beta0, s), s);
     }
     propagateStateWithCachedNoise(timeStep, _dW);
     for (size_t k = 0; k < m; k++) {
-        scaledSum(c.beta1, g_Hk.at(k), s).setDiffusions(dynPtrs, maps.at(k));
+        applyDiffusionSum(k, checkedWeights(c.beta1, s), s);
     }
     propagateStateWithCachedNoise(0, Ikk);
 

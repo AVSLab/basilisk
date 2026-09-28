@@ -20,6 +20,7 @@
 #include "../_GeneralModuleFiles/stochasticWeakRandomVariables.h"
 
 #include <cmath>
+#include <array>
 
 svStochasticIntegratorRS::svStochasticIntegratorRS(DynamicObject* dynIn,
                                                    const RSCoefficients& coefficients)
@@ -80,9 +81,8 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     if (timeStep == 0) return;
 
     const RSCoefficients& c = this->coefficients;
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
+    const size_t m = prepareStageBuffers(4, 8, 1, 3);
+    captureStates(0); // Preserve the initial state while callbacks evaluate later stages.
     const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
@@ -93,12 +93,13 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     // ({+-sqrt(3h) w.p. 1/6, 0 w.p. 2/3}); Itilde[k], k=0..m-2, is two-point ({+-sqrt(h)
     // w.p. 1/2}). Only 2m-1 independent variables are used. Both are deterministic
     // functions of the Gaussian dW/dZ, so the prescribed-noise test harness drives them.
-    Eigen::VectorXd Ihat(noiseCount);
+    auto& Ihat = this->noiseBuffers[0];
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
     }
-    Eigen::VectorXd Itilde = Eigen::VectorXd::Zero(noiseCount); // index m-1 unused
+    auto& Itilde = this->noiseBuffers[1];
+    Itilde.setZero(); // index m-1 unused
     for (size_t k = 0; k + 1 < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         Itilde(eigenK) = stochasticWeakRV::twoPoint(sample.dZ(eigenK), sqh);
@@ -112,29 +113,10 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
         return -Ihat(eigenL) * Itilde(eigenK); // k < l
     };
 
-    // scaledSum4(coefRow, stages, upto): sum_j coefRow[j] * stages[j] over j < upto,
-    // returning a full ExtendedStateVector. Used for both f-stage and g-stage combinations.
-    auto scaledSum4 = [&](const std::array<double, 4>& row,
-                          const std::array<ExtendedStateVector, 4>& v,
-                          size_t upto) -> ExtendedStateVector {
-        ExtendedStateVector acc = v.at(0) * row.at(0);
-        for (size_t j = 1; j < upto; j++) {
-            if (row.at(j) != 0.0) acc += v.at(j) * row.at(j);
-        }
-        return acc;
-    };
-
-    // ---- Drift stages ----
-    // f_H0[i] = f(t_n + c0[i] h, H0[i]) ; H0 shared across noise sources.
-    // b_Hk[k][i] = b^k(t_n + c1[i] h, H^(k)_i) (source k's diffusion at its own stage state).
-    std::array<ExtendedStateVector, 4> f_H0;
-    std::vector<std::array<ExtendedStateVector, 4>> b_Hk(m);
-
-    f_H0.at(0) = computeDerivatives(currentTime, timeStep);
-    {
-        std::vector<ExtendedStateVector> g0 = computeDiffusions(currentTime, timeStep, maps);
-        for (size_t k = 0; k < m; k++) b_Hk.at(k).at(0) = g0.at(k);
-    }
+    // Stages 0..3 hold the primary diffusion evaluations.
+    // Stages 4..7 hold independent cross-noise evaluations.
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
 
     // A0/A1/A2 and B0/B1/B2/B3 rows as std::array for scaledSum helpers.
     auto row = [](double x0, double x1, double x2, double x3) {
@@ -157,27 +139,26 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     // Compute the drift and diffusion stages for i = 1, 2, 3 (i = 0 is x_n).
     for (size_t i = 1; i < 4; i++) {
         // H0[i] = x_n + h sum_j A0[i][j] f(H0[j]) + sum_l Ihat[l] sum_j B0[i][j] b^l(H^(l)_j)
-        currentState.setStates(dynPtrs);
-        scaledSum4(A0.at(i), f_H0, i).setDerivatives(dynPtrs);
+        restoreStates(0);
+        applyDerivativeSum(A0.at(i).data(), i);
         for (size_t l = 0; l < m; l++) {
-            scaledSum4(B0.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
+            applyDiffusionSum(l, B0.at(i).data(), i);
         }
         propagateStateWithCachedNoise(timeStep, Ihat);
-        f_H0.at(i) = computeDerivatives(currentTime + c0nodes.at(i) * timeStep, timeStep);
+        evaluateStageDerivatives(currentTime + c0nodes.at(i) * timeStep, timeStep, i);
 
         // H^(k)_i = x_n + h sum_j A1[i][j] f(H0[j])
         //               + Ihat[k] sum_j B1[i][j] b^k(H^(k)_j)
         //               + sum_{l!=k} Ihat[l] sum_j B3[i][j] b^l(H^(l)_j)
         for (size_t k = 0; k < m; k++) {
-            currentState.setStates(dynPtrs);
-            scaledSum4(A1.at(i), f_H0, i).setDerivatives(dynPtrs);
+            restoreStates(0);
+            applyDerivativeSum(A1.at(i).data(), i);
             for (size_t l = 0; l < m; l++) {
                 const std::array<double, 4>& brow = (l == k) ? B1.at(i) : B3.at(i);
-                scaledSum4(brow, b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
+                applyDiffusionSum(l, brow.data(), i);
             }
             propagateStateWithCachedNoise(timeStep, Ihat);
-            b_Hk.at(k).at(i) =
-                computeDiffusion(currentTime + c1nodes.at(i) * timeStep, timeStep, maps.at(k));
+            evaluateStageDiffusion(currentTime + c1nodes.at(i) * timeStep, timeStep, k, i);
         }
     }
 
@@ -185,27 +166,27 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     // Hhat^(k)_i = x_n + h sum_j A2[i][j] f(H0[j])
     //                  + sum_{l!=k} (Ihat2(k,l)/sqrt(h)) sum_j B2[i][j] b^l(H^(l)_j)
     // Only i where B2 has a nonzero row (i = 1, 2 for RS1/RS2) contribute. A2 = 0 here.
-    std::vector<std::array<ExtendedStateVector, 4>> b_Hhat(m);
     const std::array<std::array<double, 4>, 4> B2 = {
         row(0, 0, 0, 0), row(c.b221, 0, 0, 0), row(c.b231, 0, 0, 0), row(0, 0, 0, 0)};
     if (m > 1) {
         for (size_t k = 0; k < m; k++) {
             // stage 0 is x_n; b^k there was already computed as b_Hk[k][0].
-            b_Hhat.at(k).at(0) = b_Hk.at(k).at(0);
+            this->diffusionStages[4][k] = this->diffusionStages[0][k]; // Owned cross-stage snapshot.
             for (size_t i = 1; i < 4; i++) {
                 // Hhat^(k)_i = x_n + sum_{l!=k} (Ihat2(k,l)/sqrt(h)) sum_j B2[i][j] b^l(H^(l)_j).
                 // A2 = 0 (no drift term) and there is no l==k self term, so start from x_n
                 // and accumulate only the cross-noise (l != k) contributions. The pseudo-step
                 // for source k stays 0 (propagateState with timeStep 0 adds no drift).
-                currentState.setStates(dynPtrs);
-                Eigen::VectorXd step = Eigen::VectorXd::Zero(noiseCount);
+                restoreStates(0);
+                auto& step = this->noiseBuffers[2];
+                step.setZero();
                 for (size_t l = 0; l < m; l++) {
                     if (l == k) continue;
-                    scaledSum4(B2.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
+                    applyDiffusionSum(l, B2.at(i).data(), i);
                     step(static_cast<Eigen::Index>(l)) = Ihat2(k, l) / sqh;
                 }
                 propagateStateWithCachedNoise(0, step);
-                b_Hhat.at(k).at(i) = computeDiffusion(currentTime, timeStep, maps.at(k));
+                evaluateStageDiffusion(currentTime, timeStep, k, 4 + i);
             }
         }
     }
@@ -215,18 +196,18 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     //         + sum_i sum_k beta1[i] b^k(H^(k)_i) Ihat[k]
     //         + sum_i sum_k beta2[i] b^k(Hhat^(k)_i) sqrt(h)
     // Roessler's alpha already encodes the k4 = k1 reuse via the alpha vector below.
-    currentState.setStates(dynPtrs);
+    restoreStates(0);
     {
         const std::array<double, 4> alpha = {c.alpha1, c.alpha2, c.alpha3, c.alpha4};
         // f_H0[3] for RS1 has c0node 0 so equals f(x_n) = f_H0[0]; the alpha4 weight is
         // applied to f_H0[3] which was computed at node c0[3]=0, matching k4 = k1.
-        scaledSum4(alpha, f_H0, 4).setDerivatives(dynPtrs);
+        applyDerivativeSum(alpha.data(), 4);
     }
     // beta1 diffusion term (weighted by Ihat[k]).
     {
         const std::array<double, 4> beta1 = {c.beta11, c.beta12, c.beta13, c.beta14};
         for (size_t k = 0; k < m; k++) {
-            scaledSum4(beta1, b_Hk.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
+            applyDiffusionSum(k, beta1.data(), 4);
         }
         propagateStateWithCachedNoise(timeStep, Ihat);
     }
@@ -234,9 +215,9 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     if (m > 1) {
         const std::array<double, 4> beta2 = {0.0, c.beta22, c.beta23, 0.0};
         for (size_t k = 0; k < m; k++) {
-            scaledSum4(beta2, b_Hhat.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
+            applyDiffusionSum(k, beta2.data(), 4, 4);
         }
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = sqh;
         propagateStateWithCachedNoise(0, step);
     }

@@ -13,20 +13,28 @@ add_executable(test_stochasticRouting
     ../svStochasticIntegratorMayurama.cpp
     ../../_GeneralModuleFiles/stochasticRKIntegratorBase.cpp
     ../../_GeneralModuleFiles/stateVecStochasticIntegrator.cpp)
-add_executable(test_stochasticStrongCache
-    test_stochasticStrongCache.cpp
+add_executable(test_stochasticStageCache
+    test_stochasticStageCache.cpp
     ../svStochasticIntegratorEulerHeun.cpp
     ../svStochasticIntegratorRKMil.cpp
     ../svStochasticIntegratorSRIW1.cpp
     ../svStochasticIntegratorSOSRI.cpp
     ../svStochasticIntegratorSRA1.cpp
     ../svStochasticIntegratorSOSRA.cpp
+    ../svStochasticIntegratorW2Ito.cpp
+    ../svStochasticIntegratorW2Ito1.cpp
+    ../svStochasticIntegratorW2Ito2.cpp
+    ../svStochasticIntegratorDRI1.cpp
+    ../svStochasticIntegratorRS.cpp
+    ../svStochasticIntegratorSIESME.cpp
+    ../svStochasticIntegratorRDI1WM.cpp
+    ../../_GeneralModuleFiles/svIntegratorWeakSIESME.cpp
     ../../_GeneralModuleFiles/stochasticRKIntegratorBase.cpp)
-target_compile_definitions(test_stochasticStrongCache PRIVATE EIGEN_RUNTIME_NO_MALLOC)
+target_compile_definitions(test_stochasticStageCache PRIVATE EIGEN_RUNTIME_NO_MALLOC)
 if(MSVC)
-  target_compile_options(test_stochasticStrongCache PRIVATE /UNDEBUG)
+  target_compile_options(test_stochasticStageCache PRIVATE /UNDEBUG)
 else()
-  target_compile_options(test_stochasticStrongCache PRIVATE -UNDEBUG)
+  target_compile_options(test_stochasticStageCache PRIVATE -UNDEBUG)
 endif()
 
 # Check Eigen allocations in the header-defined integrator, including Release builds.
@@ -44,7 +52,7 @@ else()
   target_compile_options(test_adaptiveRungeKuttaAccuracy PRIVATE -ffp-contract=fast)
 endif()
 
-foreach(test_target IN ITEMS test_rungeKuttaCache test_adaptiveRungeKuttaAccuracy test_stochasticRouting test_stochasticStrongCache)
+foreach(test_target IN ITEMS test_rungeKuttaCache test_adaptiveRungeKuttaAccuracy test_stochasticRouting test_stochasticStageCache)
   target_link_libraries(${test_target} PRIVATE
       GTest::gtest_main dynamicsLib architectureLib ModuleIdGenerator)
 

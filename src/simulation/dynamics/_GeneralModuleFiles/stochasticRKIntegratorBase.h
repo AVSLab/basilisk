@@ -55,7 +55,7 @@
  *
  * State registration, object membership, noise counts, and shared-noise mappings
  * may change between integration calls but must remain stable during a call.
- * Routing buffers allocate on first use and after topology changes. Strong methods
+ * Routing buffers allocate on first use and after topology changes. Multistage methods
  * also reuse owned state, drift, and sparse diffusion stage buffers. Matrices resize
  * on assignment after dimension changes; their dimensions need not match each other.
  * Propagation uses the virtual StateData interface. The by-value propagation
@@ -103,12 +103,15 @@ protected:
      * @param diffusionCount Number of diffusion snapshots needed by the method.
      * @param snapshotCount Number of state snapshots needed by the method.
      * @param noiseVectorCount Number of per-source scratch vectors needed by the method.
+     * @param diffusionStagesPerSource Additional full diffusion snapshots per source
+     * for cross-noise stages. These are prepared only when more than one source exists.
      * @return Number of global noise sources.
      * @note Values are captured separately. Matrices resize on assignment, so state,
      * derivative, and diffusion dimensions may differ and may change between calls.
      */
     size_t prepareStageBuffers(size_t derivativeCount, size_t diffusionCount,
-                               size_t snapshotCount, size_t noiseVectorCount);
+                               size_t snapshotCount, size_t noiseVectorCount,
+                               size_t diffusionStagesPerSource = 0);
 
     /** @brief Capture the current states in an owned snapshot.
      * @param snapshot Index of the prepared state snapshot.
@@ -149,17 +152,22 @@ protected:
     /** @brief Form and publish a weighted derivative sum in reusable storage.
      * @param weights Array containing at least length coefficients.
      * @param length Number of stages to sum, greater than zero.
-     * @note Matches scaledSum(): multiply the first term even when its weight is
+     * @param skipZeroWeights Skip zero weights after the first term. Disable for
+     * recurrences that explicitly multiply every term, including zero times NaN.
+     * @note By default, matches scaledSum(): multiply the first term even when its weight is
      * zero; skip subsequent zero weights and accumulate the other terms in order.
      */
-    void applyDerivativeSum(const double* weights, size_t length);
+    void applyDerivativeSum(const double* weights, size_t length, bool skipZeroWeights = true);
     /** @brief Form and publish a weighted diffusion sum for one source.
      * @param source Global noise-source index.
      * @param weights Array containing at least length coefficients.
      * @param length Number of stages to sum, greater than zero.
+     * @param firstStage Index of the first diffusion snapshot in the sum.
+     * @param skipZeroWeights Skip zero weights after the first term.
      * @note Uses the same arithmetic ordering and zero-weight behavior as applyDerivativeSum().
      */
-    void applyDiffusionSum(size_t source, const double* weights, size_t length);
+    void applyDiffusionSum(size_t source, const double* weights, size_t length,
+                           size_t firstStage = 0, bool skipZeroWeights = true);
 
     std::vector<StateBuffer> stateSnapshots;      //!< Owned state snapshots for stage restoration.
     std::vector<StateBuffer> derivativeStages;    //!< Owned drift snapshots, indexed by stage.

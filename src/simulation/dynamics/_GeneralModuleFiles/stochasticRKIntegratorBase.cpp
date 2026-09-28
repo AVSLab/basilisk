@@ -147,9 +147,11 @@ std::vector<ExtendedStateVector> StochasticRKIntegratorBase::computeDiffusions(
 }
 
 size_t StochasticRKIntegratorBase::prepareStageBuffers(
-    size_t derivativeCount, size_t diffusionCount, size_t snapshotCount, size_t noiseVectorCount)
+    size_t derivativeCount, size_t diffusionCount, size_t snapshotCount, size_t noiseVectorCount,
+    size_t diffusionStagesPerSource)
 {
     const auto& maps = this->noiseIndexMaps();
+    if (maps.size() > 1) diffusionCount += diffusionStagesPerSource * maps.size();
     if (!this->stageBuffersValid || this->derivativeStages.size() != derivativeCount ||
         this->diffusionStages.size() != diffusionCount || this->stateSnapshots.size() != snapshotCount ||
         this->noiseBuffers.size() != noiseVectorCount) {
@@ -248,7 +250,7 @@ void StochasticRKIntegratorBase::applyStageDiffusion(size_t source, size_t stage
         targets[index].state->setDiffusion(buffer[index], targets[index].localIndex);
 }
 
-void StochasticRKIntegratorBase::applyDerivativeSum(const double* weights, size_t length)
+void StochasticRKIntegratorBase::applyDerivativeSum(const double* weights, size_t length, bool skipZeroWeights)
 {
     if (length == 0 || length > this->derivativeStages.size())
         throw std::invalid_argument("Derivative sum requires at least one prepared stage");
@@ -257,7 +259,7 @@ void StochasticRKIntegratorBase::applyDerivativeSum(const double* weights, size_
         auto& term = this->derivativeTerm[index];
         sum = this->derivativeStages[0][index] * weights[0];
         for (size_t stage = 1; stage < length; ++stage) {
-            if (weights[stage] == 0.0) continue;
+            if (skipZeroWeights && weights[stage] == 0.0) continue;
             // Retain the original separately evaluated product before addition.
             term = this->derivativeStages[stage][index] * weights[stage];
             sum += term;
@@ -267,18 +269,20 @@ void StochasticRKIntegratorBase::applyDerivativeSum(const double* weights, size_
         this->stateNoiseRouting[index].state->setDerivative(this->derivativeSum[index]);
 }
 
-void StochasticRKIntegratorBase::applyDiffusionSum(size_t source, const double* weights, size_t length)
+void StochasticRKIntegratorBase::applyDiffusionSum(
+    size_t source, const double* weights, size_t length, size_t firstStage, bool skipZeroWeights)
 {
-    if (length == 0 || length > this->diffusionStages.size())
+    if (length == 0 || firstStage >= this->diffusionStages.size() ||
+        length > this->diffusionStages.size() - firstStage)
         throw std::invalid_argument("Diffusion sum requires at least one prepared stage");
     const auto& targets = this->diffusionTargets.at(source);
     for (size_t index = 0; index < targets.size(); ++index) {
         auto& sum = this->diffusionSum[source][index];
         auto& term = this->diffusionTerm[source][index];
-        sum = this->diffusionStages[0][source][index] * weights[0];
+        sum = this->diffusionStages[firstStage][source][index] * weights[0];
         for (size_t stage = 1; stage < length; ++stage) {
-            if (weights[stage] == 0.0) continue;
-            term = this->diffusionStages[stage][source][index] * weights[stage];
+            if (skipZeroWeights && weights[stage] == 0.0) continue;
+            term = this->diffusionStages[firstStage + stage][source][index] * weights[stage];
             sum += term;
         }
     }

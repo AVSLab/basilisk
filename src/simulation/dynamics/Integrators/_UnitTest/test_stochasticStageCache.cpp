@@ -17,6 +17,7 @@
  */
 
 #include "stochasticStrongReference.h"
+#include "stochasticWeakReference.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include <Eigen/Core>
 #include <gtest/gtest.h>
@@ -118,7 +119,8 @@ public:
         for (size_t source = 0; source < increments.size(); ++source) {
             const double change = stateDiffusion[source](0, 0) * increments[source];
             // Separate affine transformations make source/propagation order observable.
-            state(0, 0) = (1.0 + 0.125 * change) * state(0, 0) + change;
+            const double sourceScale = 0.125 * static_cast<double>(source + 1);
+            state(0, 0) = (1.0 + sourceScale * change) * state(0, 0) + change;
         }
         state(1, 0) = 2.0 * state(0, 0);
     }
@@ -208,10 +210,25 @@ using Cases = ::testing::Types<
     Case<svStochasticIntegratorSRIW1, stochasticReference::SRI<svStochasticIntegratorSRIW1, 4>, false, 4>,
     Case<svStochasticIntegratorSOSRI, stochasticReference::SRI<svStochasticIntegratorSOSRI, 4>, false, 4>,
     Case<svStochasticIntegratorSRA1, stochasticReference::SRA<svStochasticIntegratorSRA1, 2>, true, 2>,
-    Case<svStochasticIntegratorSOSRA, stochasticReference::SRA<svStochasticIntegratorSOSRA, 3>, true, 3>>;
+    Case<svStochasticIntegratorSOSRA, stochasticReference::SRA<svStochasticIntegratorSOSRA, 3>, true, 3>,
+    Case<svStochasticIntegratorW2Ito1, stochasticWeakReference::W2Ito<svStochasticIntegratorW2Ito1>, false, 0>,
+    Case<svStochasticIntegratorW2Ito2, stochasticWeakReference::W2Ito<svStochasticIntegratorW2Ito2>, false, 0>,
+    Case<svStochasticIntegratorDRI1, stochasticWeakReference::DRI1<svStochasticIntegratorDRI1>, false, 0>,
+    Case<svStochasticIntegratorDRI1NM, stochasticWeakReference::DRI1<svStochasticIntegratorDRI1NM>, false, 0>,
+    Case<svStochasticIntegratorRI1, stochasticWeakReference::DRI1<svStochasticIntegratorRI1>, false, 0>,
+    Case<svStochasticIntegratorRI3, stochasticWeakReference::DRI1<svStochasticIntegratorRI3>, false, 0>,
+    Case<svStochasticIntegratorRI5, stochasticWeakReference::DRI1<svStochasticIntegratorRI5>, false, 0>,
+    Case<svStochasticIntegratorRI6, stochasticWeakReference::DRI1<svStochasticIntegratorRI6>, false, 0>,
+    Case<svStochasticIntegratorRS1, stochasticWeakReference::RS<svStochasticIntegratorRS1>, false, 4>,
+    Case<svStochasticIntegratorRS2, stochasticWeakReference::RS<svStochasticIntegratorRS2>, false, 4>,
+    Case<svStochasticIntegratorSIEA, stochasticWeakReference::SIESME<svStochasticIntegratorSIEA>, false, 2>,
+    Case<svStochasticIntegratorSMEA, stochasticWeakReference::SIESME<svStochasticIntegratorSMEA>, false, 2>,
+    Case<svStochasticIntegratorSIEB, stochasticWeakReference::SIESME<svStochasticIntegratorSIEB>, false, 2>,
+    Case<svStochasticIntegratorSMEB, stochasticWeakReference::SIESME<svStochasticIntegratorSMEB>, false, 2>,
+    Case<svStochasticIntegratorRDI1WM, stochasticWeakReference::RDI1WM<svStochasticIntegratorRDI1WM>, false, 2>>;
 
 template<class Configuration>
-class StrongStochasticCache : public ::testing::Test {
+class StochasticStageCache : public ::testing::Test {
 public:
     Dynamics currentModel, oldModel, currentPartner, oldPartner;
     typename Configuration::Current current{&currentModel};
@@ -258,9 +275,9 @@ public:
         time += step;
     }
 };
-TYPED_TEST_SUITE(StrongStochasticCache, Cases, );
+TYPED_TEST_SUITE(StochasticStageCache, Cases, );
 
-TYPED_TEST(StrongStochasticCache, StagesMatchWithCouplingSharedNoiseAndMultipleObjects)
+TYPED_TEST(StochasticStageCache, StagesMatchWithCouplingSharedNoiseAndMultipleObjects)
 {
     for (auto* model : {&this->currentModel, &this->oldModel, &this->currentPartner, &this->oldPartner}) {
         auto* first = model->add("a", 2, 2, 3);
@@ -277,7 +294,7 @@ TYPED_TEST(StrongStochasticCache, StagesMatchWithCouplingSharedNoiseAndMultipleO
     for (int step = 0; step < 20; ++step) this->compare();
 }
 
-TYPED_TEST(StrongStochasticCache, RebuildsAfterRegistrationSharingObjectAndShapeChanges)
+TYPED_TEST(StochasticStageCache, RebuildsAfterRegistrationSharingObjectAndShapeChanges)
 {
     this->compare(); // Empty objects, including the zero-source path.
     for (auto* model : {&this->currentModel, &this->oldModel}) model->add("a", 1, 2, 3);
@@ -331,7 +348,7 @@ TYPED_TEST(StrongStochasticCache, RebuildsAfterRegistrationSharingObjectAndShape
     this->compare();
 }
 
-TYPED_TEST(StrongStochasticCache, VirtualSettersPropagationAndUnequalDimensions)
+TYPED_TEST(StochasticStageCache, VirtualSettersPropagationAndUnequalDimensions)
 {
     auto* current = this->currentModel.addMapped();
     auto* old = this->oldModel.addMapped();
@@ -341,7 +358,7 @@ TYPED_TEST(StrongStochasticCache, VirtualSettersPropagationAndUnequalDimensions)
     EXPECT_GT(current->propagationCalls, 5u);
 }
 
-TYPED_TEST(StrongStochasticCache, ZeroStepReseedingAndGeneratorReplacement)
+TYPED_TEST(StochasticStageCache, ZeroStepReseedingAndGeneratorReplacement)
 {
     this->currentModel.add("a"); this->oldModel.add("a");
     this->current.integrate(0.0, 0.0); this->old.integrate(0.0, 0.0);
@@ -355,7 +372,7 @@ TYPED_TEST(StrongStochasticCache, ZeroStepReseedingAndGeneratorReplacement)
     this->compare();
 }
 
-TYPED_TEST(StrongStochasticCache, WarmStageStorageDoesNotAllocateEigenOrAdditionalCppBuffers)
+TYPED_TEST(StochasticStageCache, WarmStageStorageDoesNotAllocateEigenOrAdditionalCppBuffers)
 {
     this->currentModel.record = false;
     this->currentModel.add("long_state_name_one", 1);
@@ -373,6 +390,15 @@ TYPED_TEST(StrongStochasticCache, WarmStageStorageDoesNotAllocateEigenOrAddition
         size_t propagations;
         if constexpr (std::is_same_v<typename TypeParam::Current, svStochasticIntegratorEulerHeun>) propagations = 2;
         else if constexpr (std::is_same_v<typename TypeParam::Current, svStochasticIntegratorRKMil>) propagations = 4;
+        else if constexpr (std::is_base_of_v<svStochasticIntegratorW2Ito, typename TypeParam::Current>)
+            propagations = (std::is_same_v<typename TypeParam::Current, svStochasticIntegratorW2Ito1> ? 2 : 3) * (sources + 1) + 2;
+        else if constexpr (std::is_base_of_v<svStochasticIntegratorDRI1, typename TypeParam::Current>)
+            propagations = 5 + 2 * sources +
+                (sources > 1 && !this->current.nonMixing ? 2 * sources * sources : 0);
+        else if constexpr (std::is_base_of_v<svStochasticIntegratorRS, typename TypeParam::Current>)
+            propagations = 3 * (sources + 1) + 1 + (sources > 1 ? 3 * sources + 1 : 0);
+        else if constexpr (std::is_base_of_v<svIntegratorWeakSIESME, typename TypeParam::Current>) propagations = 6;
+        else if constexpr (std::is_same_v<typename TypeParam::Current, svStochasticIntegratorRDI1WM>) propagations = 2;
         else if constexpr (TypeParam::additive) propagations = TypeParam::stages + 1;
         else propagations = (TypeParam::stages - 1) * (sources + 1) + 4;
         {
@@ -381,6 +407,76 @@ TYPED_TEST(StrongStochasticCache, WarmStageStorageDoesNotAllocateEigenOrAddition
         }
         // One legacy by-value vector copy per noisy state and propagation call remains.
         EXPECT_EQ(allocationCounting::count, this->currentModel.entries.size() * propagations);
+    }
+}
+
+TYPED_TEST(StochasticStageCache, NoiseCountsChangeWithoutStateRegistration)
+{
+    this->currentModel.add("a", 0); this->oldModel.add("a", 0);
+    this->currentModel.add("b", 0); this->oldModel.add("b", 0);
+    for (size_t sources : {0u, 1u, 3u, 1u, 0u, 2u}) {
+        for (auto* model : {&this->currentModel, &this->oldModel}) {
+            model->entries[0].state->setNumNoiseSources(sources);
+            model->entries[1].state->setNumNoiseSources(sources);
+        }
+        this->compare();
+        this->compare(); // Reuse every newly prepared stage set.
+    }
+}
+
+using DRIModeCase = Case<svStochasticIntegratorDRI1,
+    stochasticWeakReference::DRI1<svStochasticIntegratorDRI1>, false, 3>;
+class DRIModeCache : public StochasticStageCache<DRIModeCase> {};
+
+TEST_F(DRIModeCache, RebuildsCrossStagesAfterModeChanges)
+{
+    currentModel.add("a", 2); oldModel.add("a", 2);
+    for (bool nonMixing : {false, true, false, true, false}) {
+        current.nonMixing = nonMixing; old.nonMixing = nonMixing;
+        compare();
+        compare();
+    }
+}
+
+/** @brief Expose the custom-tableau constructor without changing the recurrence. */
+class W2TableauProbe : public svStochasticIntegratorW2Ito {
+public:
+    W2TableauProbe(DynamicObject* model, const W2ItoCoefficients& tableau)
+        : svStochasticIntegratorW2Ito(model, tableau) {}
+};
+
+TEST(StochasticStageBuffers, W2RejectsShortRowsButAcceptsLowerTriangularPrefixes)
+{
+    W2ItoCoefficients tableau;
+    tableau.alpha = {0.5, 0.5};
+    tableau.beta0 = {1.0, 0.0};
+    tableau.beta1 = {0.0, 0.0};
+    // Only the prefix used by each stage is required, matching the retained method.
+    tableau.A0 = {{}, {1.0}};
+    tableau.A1 = tableau.B0 = tableau.B1 = tableau.B2 = {{}, {0.0}};
+    for (int malformed = -1; malformed < 7; ++malformed) {
+        auto coefficients = tableau;
+        switch (malformed) {
+        case 0: coefficients.A0[1].clear(); break;
+        case 1: coefficients.A1[1].clear(); break;
+        case 2: coefficients.B0[1].clear(); break;
+        case 3: coefficients.B1[1].clear(); break;
+        case 4: coefficients.B2[1].clear(); break;
+        case 5: coefficients.beta0.pop_back(); break;
+        case 6: coefficients.beta1.pop_back(); break;
+        }
+        Dynamics currentModel, oldModel;
+        currentModel.add("a", 2); oldModel.add("a", 2);
+        W2TableauProbe current(&currentModel, coefficients);
+        stochasticWeakReference::W2Ito<W2TableauProbe> old(&oldModel, coefficients);
+        const double step = 0.03125; // [s]
+        if (malformed < 0) {
+            EXPECT_NO_THROW(current.integrate(0.0, step));
+            EXPECT_NO_THROW(old.integrate(0.0, step));
+        } else {
+            EXPECT_THROW(current.integrate(0.0, step), std::out_of_range);
+            EXPECT_THROW(old.integrate(0.0, step), std::out_of_range);
+        }
     }
 }
 
@@ -396,7 +492,7 @@ public:
     void integrate(double, double) override {}
 };
 
-TEST(StrongStochasticSums, NegativeAndZeroWeightsPreserveFirstTermSemantics)
+TEST(StochasticStageSums, NegativeAndZeroWeightsPreserveFirstTermSemantics)
 {
     Dynamics model;
     auto* state = model.add("a");
@@ -412,6 +508,10 @@ TEST(StrongStochasticSums, NegativeAndZeroWeightsPreserveFirstTermSemantics)
     integrator.applyDiffusionSum(0, weights.data(), weights.size());
     EXPECT_DOUBLE_EQ(state->stateDeriv(0, 0), -2.0);
     EXPECT_DOUBLE_EQ(state->stateDiffusion[0](0, 0), -2.0);
+    integrator.applyDerivativeSum(weights.data(), weights.size(), false);
+    integrator.applyDiffusionSum(0, weights.data(), weights.size(), 0, false);
+    EXPECT_TRUE(std::isnan(state->stateDeriv(0, 0)));
+    EXPECT_TRUE(std::isnan(state->stateDiffusion[0](0, 0)));
     integrator.derivativeStages[0][0].setConstant(std::numeric_limits<double>::quiet_NaN());
     integrator.diffusionStages[0][0][0].setConstant(std::numeric_limits<double>::quiet_NaN());
     const std::array<double, 3> zero{};
@@ -421,7 +521,7 @@ TEST(StrongStochasticSums, NegativeAndZeroWeightsPreserveFirstTermSemantics)
     EXPECT_TRUE(std::isnan(state->stateDiffusion[0](0, 0)));
 }
 
-TEST(StrongStochasticBuffers, DiffusionReferenceIsLiveAndCopyRemainsIndependent)
+TEST(StochasticStageBuffers, DiffusionReferenceIsLiveAndCopyRemainsIndependent)
 {
     StateData state("value", Eigen::MatrixXd::Zero(1, 1));
     state.setNumNoiseSources(1);

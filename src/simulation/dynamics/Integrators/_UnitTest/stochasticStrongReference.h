@@ -41,6 +41,11 @@ namespace stochasticReference {
 class EulerHeun : public svStochasticIntegratorEulerHeun {
 public:
     using svStochasticIntegratorEulerHeun::svStochasticIntegratorEulerHeun;
+    /** @brief Advance the test dynamics using the retained reference recurrence.
+     * @param currentTime Start time of the integration step in seconds.
+     * @param timeStep Integration step duration in seconds; zero leaves the state
+     * unchanged and consumes no noise sample.
+     */
     void integrate(double currentTime, double timeStep) override
 {
     // A zero-duration step advances nothing and must not consume a noise sample.
@@ -88,6 +93,11 @@ public:
 class RKMil : public svStochasticIntegratorRKMil {
 public:
     using svStochasticIntegratorRKMil::svStochasticIntegratorRKMil;
+    /** @brief Advance the test dynamics using the retained reference recurrence.
+     * @param currentTime Start time of the integration step in seconds.
+     * @param timeStep Integration step duration in seconds; zero leaves the state
+     * unchanged and consumes no noise sample.
+     */
     void integrate(double currentTime, double timeStep) override
 {
     // A zero-duration step advances nothing and must not consume a noise sample.
@@ -168,6 +178,11 @@ template<class Integrator, size_t numberStages>
 class SRI : public Integrator {
 public:
     using Integrator::Integrator;
+    /** @brief Advance the test dynamics using the retained reference recurrence.
+     * @param currentTime Start time of the integration step in seconds.
+     * @param timeStep Integration step duration in seconds; zero leaves the state
+     * unchanged and consumes no noise sample.
+     */
     void integrate(double currentTime, double timeStep) override
 {
     // A zero-duration step advances nothing and must not consume a noise sample.
@@ -291,6 +306,11 @@ template<class Integrator, size_t numberStages>
 class SRA : public Integrator {
 public:
     using Integrator::Integrator;
+    /** @brief Advance the test dynamics using the retained reference recurrence.
+     * @param currentTime Start time of the integration step in seconds.
+     * @param timeStep Integration step duration in seconds; zero leaves the state
+     * unchanged and consumes no noise sample.
+     */
     void integrate(double currentTime, double timeStep) override
 {
     // A zero-duration step advances nothing and must not consume a noise sample.

@@ -33,40 +33,37 @@ void svStochasticIntegratorRDI1WM::integrate(double currentTime, double timeStep
 {
     if (timeStep == 0) return;
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+    const size_t m = prepareStageBuffers(2, 1, 1, 1);
+    captureStates(0); // Preserve the initial state while callbacks evaluate later stages.
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
 
     // Three-point distributed increment per noise source.
-    Eigen::VectorXd Ihat(noiseCount);
+    auto& Ihat = this->noiseBuffers[0];
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), timeStep);
     }
 
     // Stage 0.
-    ExtendedStateVector k1 = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> g1 = computeDiffusions(currentTime, timeStep, maps);
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
 
     // H02 = x_n + a021*k1*h + b021*g1*Ihat
-    currentState.setStates(dynPtrs);
-    (k1 * a021).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(&a021, 1);
     for (size_t k = 0; k < m; k++) {
-        (g1.at(k) * b021).setDiffusions(dynPtrs, maps.at(k));
+        applyDiffusionSum(k, &b021, 1);
     }
     propagateStateWithCachedNoise(timeStep, Ihat);
-    ExtendedStateVector k2 = computeDerivatives(currentTime + c02 * timeStep, timeStep);
+    evaluateStageDerivatives(currentTime + c02 * timeStep, timeStep, 1);
 
     // x_{n+1} = x_n + (alpha1*k1 + alpha2*k2)*h + beta11*g1*Ihat
-    currentState.setStates(dynPtrs);
-    ExtendedStateVector drift = k1 * alpha1;
-    drift += k2 * alpha2;
-    drift.setDerivatives(dynPtrs);
+    restoreStates(0);
+    const double driftWeights[] = {alpha1, alpha2};
+    applyDerivativeSum(driftWeights, 2, false);
     for (size_t k = 0; k < m; k++) {
-        (g1.at(k) * beta11).setDiffusions(dynPtrs, maps.at(k));
+        applyDiffusionSum(k, &beta11, 1);
     }
     propagateStateWithCachedNoise(timeStep, Ihat);
 

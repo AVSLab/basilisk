@@ -30,10 +30,8 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     if (timeStep == 0) return;
 
     const SIESMECoefficients& c = this->coefficients;
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
+    const size_t m = prepareStageBuffers(2, 3, 1, 3);
+    captureStates(0); // Preserve the initial state while callbacks evaluate later stages.
     const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
@@ -43,8 +41,8 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     const double sqh = std::sqrt(h);
 
     // Polynomial moments of the Gaussian increment (per noise source).
-    Eigen::VectorXd W2(noiseCount); // dW^2 / sqrt(h)
-    Eigen::VectorXd W3(noiseCount); // nu2 * dW^3 / h
+    auto& W2 = this->noiseBuffers[0]; // dW^2 / sqrt(h)
+    auto& W3 = this->noiseBuffers[1]; // nu2 * dW^3 / h
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         W2(eigenK) = dW(eigenK) * dW(eigenK) / sqh;
@@ -52,82 +50,79 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     }
 
     // --- Stage 0: k0 = f(x_n), g0 = g(x_n) ---
-    ExtendedStateVector k0 = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> g0 = computeDiffusions(currentTime, timeStep, maps);
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
 
     // --- k1 stage: state = x_n + lambda0*k0*h + g0.*(nu1*dW + W3); k1 = f(state, t+mu0*h) ---
-    currentState.setStates(dynPtrs);
-    (k0 * c.lambda0).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(&c.lambda0, 1);
     for (size_t k = 0; k < m; k++) {
-        g0.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 0);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.nu1 * dW(k) + W3(k);
         propagateStateWithCachedNoise(timeStep, step);
     }
-    ExtendedStateVector k1 = computeDerivatives(currentTime + c.mu0 * timeStep, timeStep);
+    evaluateStageDerivatives(currentTime + c.mu0 * timeStep, timeStep, 1);
 
     // --- g1 stage: state = x_n + lambdabar0*k0*h + g0.*(beta2*sqrt(h) + beta3*W2) ---
-    currentState.setStates(dynPtrs);
-    (k0 * c.lambdabar0).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(&c.lambdabar0, 1);
     for (size_t k = 0; k < m; k++) {
-        g0.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 0);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.beta2 * sqh + c.beta3 * W2(k);
         propagateStateWithCachedNoise(timeStep, step);
     }
-    std::vector<ExtendedStateVector> g1 =
-        computeDiffusions(currentTime + c.mubar0 * timeStep, timeStep, maps);
+    evaluateStageDiffusions(currentTime + c.mubar0 * timeStep, timeStep, 1);
 
     // --- g2 stage: state = x_n + lambdabar0*k0*h + g0.*(delta2*sqrt(h) + delta3*W2) ---
-    currentState.setStates(dynPtrs);
-    (k0 * c.lambdabar0).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(&c.lambdabar0, 1);
     for (size_t k = 0; k < m; k++) {
-        g0.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 0);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.delta2 * sqh + c.delta3 * W2(k);
         propagateStateWithCachedNoise(timeStep, step);
     }
-    std::vector<ExtendedStateVector> g2 =
-        computeDiffusions(currentTime + c.mubar0 * timeStep, timeStep, maps);
+    evaluateStageDiffusions(currentTime + c.mubar0 * timeStep, timeStep, 2);
 
     // --- State update ---
     // x_{n+1} = x_n + (alpha1*k0 + alpha2*k1)*h
     //               + gamma1*g0.*dW
     //               + (lambda1*dW + lambda2*sqrt(h) + lambda3*W2).*g1
     //               + (mu1*dW + mu2*sqrt(h) + mu3*W2).*g2
-    currentState.setStates(dynPtrs);
-    ExtendedStateVector drift = k0 * c.alpha1;
-    drift += k1 * c.alpha2;
-    drift.setDerivatives(dynPtrs);
+    restoreStates(0);
+    const double driftWeights[] = {c.alpha1, c.alpha2};
+    applyDerivativeSum(driftWeights, 2, false);
     for (size_t k = 0; k < m; k++) {
-        g0.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 0);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.gamma1 * dW(k);
         propagateStateWithCachedNoise(timeStep, step);
     }
     for (size_t k = 0; k < m; k++) {
-        g1.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 1);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) {
             step(k) = c.lambda1 * dW(k) + c.lambda2 * sqh + c.lambda3 * W2(k);
         }
         propagateStateWithCachedNoise(0, step);
     }
     for (size_t k = 0; k < m; k++) {
-        g2.at(k).setDiffusions(dynPtrs, maps.at(k));
+        applyStageDiffusion(k, 2);
     }
     {
-        Eigen::VectorXd step(noiseCount);
+        auto& step = this->noiseBuffers[2];
         for (Eigen::Index k = 0; k < noiseCount; k++) {
             step(k) = c.mu1 * dW(k) + c.mu2 * sqh + c.mu3 * W2(k);
         }

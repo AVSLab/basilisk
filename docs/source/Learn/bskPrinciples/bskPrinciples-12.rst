@@ -269,16 +269,24 @@ keep the state/noise topology stable throughout a step. Matrix dimensions may al
 change between calls, provided the state's propagation method supports the new
 state, derivative, and diffusion shapes.
 
-Routing buffers allocate on first use and after topology changes. Euler–Heun, RKMil,
-SRIW1/SOSRI, and SRA1/SOSRA also reuse owned state snapshots, drift and diffusion
+Routing buffers allocate on first use and after topology changes. All multistage
+native stochastic methods also reuse owned state snapshots, drift and diffusion
 stage matrices, weighted-sum buffers, and per-source scratch vectors. Diffusion
 storage is sparse: a source only stores matrices for the states it affects.
 These stage buffers allocate on first use and may allocate again after topology or
 matrix-dimension changes. Snapshots remain independent of later stage evaluations;
-live state references cannot replace them.
+live state references cannot replace them. This includes Euler–Heun, RKMil,
+SRIW1/SOSRI, SRA1/SOSRA, W2Ito, DRI/RI, RS, SIESME, and RDI1WM.
 
-The noise generator, the existing by-value virtual propagation interface, weak-method
-stage storage, and model callbacks can still allocate during a step.
+The DRI/RI methods also retain full diffusion snapshots for each cross-noise support
+point. Their storage grows with the number of noise sources and the total number
+of state/source associations. Changing ``DRI1.nonMixing`` between integration calls
+reconfigures this storage. RS keeps separate primary and cross-noise stage snapshots.
+The discrete random-variable transforms, zero-coefficient behavior, evaluation times,
+and order of virtual propagation calls remain unchanged.
+
+The noise generator, the existing by-value virtual propagation interface, and model
+callbacks can still allocate during a step.
 Euler–Maruyama evaluates ordinary states directly
 without temporary derivative or diffusion maps. For custom ``StateData`` subclasses,
 it retains the derivative snapshot and virtual setter writeback for compatibility.
