@@ -35,7 +35,7 @@ void InhomogeneousGeometricBrownianMotion::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // Current x
-    const Eigen::MatrixXd &x = xState->getState();
+    const Eigen::MatrixXd &x = xState->getStateReference();
     const double x0 = x(0, 0);
 
     // Drift: dx = (mu - x) / tau
@@ -57,7 +57,7 @@ double InhomogeneousGeometricBrownianMotion::getStateValue() const {
     if (!xState) {
         BSKLogger{}.bskError("InhomogeneousGeometricBrownianMotion: getStateValue before initialization");
     }
-    return xState->getState()(0, 0);
+    return xState->getStateReference()(0, 0);
 }
 
 void InhomogeneousGeometricBrownianMotion::setStateValue(double val) {

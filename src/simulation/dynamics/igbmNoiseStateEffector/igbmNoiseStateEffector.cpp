@@ -65,7 +65,7 @@ double IgbmNoiseStateEffector::getStateValue() const
     if (this->state == nullptr) {
         return this->stateInitSet ? this->stateInit : this->mean - 1.0;
     }
-    return this->state->getState()(0, 0);
+    return this->state->getStateReference()(0, 0);
 }
 
 void IgbmNoiseStateEffector::setStateValue(double val)
@@ -115,7 +115,7 @@ void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]
 
     // The factor X = 1 + delta follows dX = (mu - X)/tau dt + sigma X dW, so the
     // correction delta inherits d(delta) = (mu - 1 - delta)/tau dt + sigma (1+delta) dW.
-    const double factor = 1.0 + this->state->getState()(0, 0);
+    const double factor = 1.0 + this->state->getStateReference()(0, 0);
 
     Eigen::MatrixXd derivative(1, 1);
     derivative(0, 0) = (this->mean - factor) / this->timeConstant;

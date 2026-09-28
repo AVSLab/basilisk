@@ -123,9 +123,9 @@ void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], do
     }
 
     // Compute the sun direction unit vector in spacecraft body frame components
-    Eigen::MRPd sigma_BN(this->hubSigma->getState().data());
+    Eigen::MRPd sigma_BN(this->hubSigma->getStateReference().data());
     Eigen::Matrix3d dcm_BN = sigma_BN.toRotationMatrix().transpose();
-    Eigen::Vector3d r_BN_N = this->hubPosition->getState();
+    Eigen::Vector3d r_BN_N = this->hubPosition->getStateReference();
     Eigen::Vector3d r_SB_B = dcm_BN * (r_SN_N - r_BN_N);
 
     Eigen::Vector3d sunDirHat_B = Eigen::Vector3d::Zero();

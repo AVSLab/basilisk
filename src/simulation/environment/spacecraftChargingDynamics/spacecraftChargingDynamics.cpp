@@ -126,8 +126,8 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
 
 /*! Method to write module output messages. */
 void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
-    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
-    this->targetPotential = this->targetPotentialState->getState()(0, 0);
+    this->servicerPotential = this->servicerPotentialState->getStateReference()(0, 0);
+    this->targetPotential = this->targetPotentialState->getStateReference()(0, 0);
 
     // Write out the servicer output messages
     VoltMsgPayload servicerVoltageMsgBuffer;
@@ -184,8 +184,8 @@ void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
 
 /*! Method for the charging equations of motion */
 void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds [[maybe_unused]], double timeStep [[maybe_unused]]) {
-    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
-    this->targetPotential = this->targetPotentialState->getState()(0, 0);
+    this->servicerPotential = this->servicerPotentialState->getStateReference()(0, 0);
+    this->targetPotential = this->targetPotentialState->getStateReference()(0, 0);
 
     // Compute all currents acting on the spacecraft
     this->computeCurrents();

@@ -235,8 +235,8 @@ void ThrusterStateEffector::UpdateThrusterProperties()
     this->validateRegisteredCount();
     // Save hub variables
     Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
-    Eigen::Vector3d omega_BN_B = this->hubOmega->getState();
-    Eigen::MRPd sigma_BN(this->hubSigma->getState().data());
+    Eigen::Vector3d omega_BN_B = this->hubOmega->getStateReference();
+    Eigen::MRPd sigma_BN(this->hubSigma->getStateReference().data());
     Eigen::Matrix3d dcm_BN = (sigma_BN.toRotationMatrix()).transpose();
 
     // Define the variables related to which body the thruster is attached to. The F frame represents the platform body where the thruster attaches to

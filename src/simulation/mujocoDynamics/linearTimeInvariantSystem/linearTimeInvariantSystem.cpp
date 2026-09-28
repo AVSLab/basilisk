@@ -54,7 +54,7 @@ void LinearTimeInvariantSystem::UpdateState(uint64_t CurrentSimNanos)
     Eigen::VectorXd y = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(outputSize));
 
     if (xState && stateSize > 0) {
-        Eigen::VectorXd x = xState->getState();
+        const Eigen::MatrixXd& x = xState->getStateReference();
 
         if (static_cast<size_t>(x.size()) != stateSize) {
             bskLogger.bskLog(
@@ -362,7 +362,7 @@ LinearTimeInvariantSystem::getX()
             "LinearTimeInvariantSystem::getX: state has not been registered.");
         return Eigen::VectorXd();
     }
-    return xState->getState();
+    return xState->getStateReference();
 }
 
 void LinearTimeInvariantSystem::setX(const Eigen::VectorXd &xin)

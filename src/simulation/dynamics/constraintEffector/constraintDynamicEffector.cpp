@@ -429,10 +429,10 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
             const size_t parent2Index = static_cast<size_t>(parent2.idx);
             if (this->parent1.parentType == "hub") {
                 // - Collect states from parent spacecraft hub
-                r_B1N_N = this->hubPosition[parent1Index]->getState();
-                rDot_B1N_N = this->hubVelocity[parent1Index]->getState();
-                omega_B1N_B1 = this->hubOmega[parent1Index]->getState();
-                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1Index]->getState().data());
+                r_B1N_N = this->hubPosition[parent1Index]->getStateReference();
+                rDot_B1N_N = this->hubVelocity[parent1Index]->getStateReference();
+                omega_B1N_B1 = this->hubOmega[parent1Index]->getStateReference();
+                sigma_B1N = Eigen::MRPd(this->hubSigma[parent1Index]->getStateReference().data());
             } else if (this->parent1.parentType == "effector") {
                 // - Collect properties from parent effector
                 r_B1N_N = *this->inertialPositionProperty[parent1Index];
@@ -441,10 +441,10 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
                 sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1Index]->data());
             }
             if (this->parent2.parentType == "hub") {
-                r_B2N_N = this->hubPosition[parent2Index]->getState();
-                rDot_B2N_N = this->hubVelocity[parent2Index]->getState();
-                omega_B2N_B2 = this->hubOmega[parent2Index]->getState();
-                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2Index]->getState().data());
+                r_B2N_N = this->hubPosition[parent2Index]->getStateReference();
+                rDot_B2N_N = this->hubVelocity[parent2Index]->getStateReference();
+                omega_B2N_B2 = this->hubOmega[parent2Index]->getStateReference();
+                sigma_B2N = Eigen::MRPd(this->hubSigma[parent2Index]->getStateReference().data());
             } else if (this->parent2.parentType == "effector") {
                 r_B2N_N = *this->inertialPositionProperty[parent2Index];
                 rDot_B2N_N = *this->inertialVelocityProperty[parent2Index];

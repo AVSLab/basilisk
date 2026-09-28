@@ -384,6 +384,7 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
     for(auto& translatingBody: this->translatingBodyVec) {
         const size_t bodyIndex = static_cast<size_t>(i);
         if (translatingBody->isAxisLocked) {
+            // Keep a writable copy while applying the lock, then publish the updated state.
             auto rhoDotVector = this->rhoDotState->getState();
             rhoDotVector(i) = 0.0;
             this->rhoDotState->setState(rhoDotVector);

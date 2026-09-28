@@ -56,7 +56,7 @@ double MeanRevertingNoiseStateEffector::getStateValue() const
     if (this->state == nullptr) {
         return this->stateInit;
     }
-    return this->state->getState()(0, 0);
+    return this->state->getStateReference()(0, 0);
 }
 
 void MeanRevertingNoiseStateEffector::setStateValue(double val)
@@ -95,7 +95,7 @@ void MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[mayb
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");
     }
 
-    const double x = this->state->getState()(0, 0);
+    const double x = this->state->getStateReference()(0, 0);
 
     Eigen::MatrixXd derivative(1, 1);
     derivative(0, 0) = -x / this->timeConstant;

@@ -299,7 +299,7 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // The derivative of the bulk position is the bulk velocity.  The
     // MJQPosStateData consumes it directly (default mode) or expands the
     // quaternion blocks into four-component rates (high-order mode).
-    this->qposState->setDerivative(this->qvelState->getState());
+    this->qposState->setDerivative(this->qvelState->getStateReference());
 
     // The derivative of the bulk velocity is the computed acceleration.
     {
@@ -574,10 +574,12 @@ MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
     // The actuator state only exists when the model has actuator activation
     // states; otherwise report an empty vector.
-    Eigen::MatrixXd act = this->actState ? this->actState->getState() : Eigen::MatrixXd(0, 1);
     MJSceneStateMsgPayload stateOutMsgPayload{ this->assembleFullQpos(),
                                                this->assembleFullQvel(),
-                                               act };
+                                               {} };
+    if (this->actState) {
+        stateOutMsgPayload.act = this->actState->getStateReference();
+    }
 
     stateOutMsg.write(&stateOutMsgPayload, this->moduleID, CurrentSimNanos);
 }

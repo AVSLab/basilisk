@@ -134,10 +134,13 @@ protected:
  * exponential trajectory:
  * \code{.cpp}
  * void UpdateState(uint64_t CurrentSimNanos) override {
- *     auto x = this->xState->getState();
+ *     const auto& x = this->xState->getStateReference();
  *     this->xState->setDerivative( x );
  * }
  * \endcode
+ * @note getStateReference() provides a live read-only view while the StateData
+ * object exists. Use getState() when an owning snapshot must survive later state
+ * updates, and do not retain data pointers or Eigen expressions across a resize.
  */
 class StatefulSysModel : virtual public SysModel
 {

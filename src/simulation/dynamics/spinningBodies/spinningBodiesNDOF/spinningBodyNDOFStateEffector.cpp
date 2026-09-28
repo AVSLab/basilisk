@@ -379,6 +379,7 @@ void SpinningBodyNDOFStateEffector::computeAttitudeProperties(std::shared_ptr<Sp
     const Eigen::Index stateIndex = static_cast<Eigen::Index>(spinningBodyIndex);
     if (spinningBody->isAxisLocked)
     {
+        // Keep a writable copy while applying the lock, then publish the updated state.
         auto thetaDotVector = this->thetaDotState->getState();
         thetaDotVector(stateIndex) = 0.0;
         this->thetaDotState->setState(thetaDotVector);
