@@ -199,8 +199,8 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 
     // Size the computeDerivatives() scratch buffers once here rather than
     // heap-allocating them on every RK-stage call.
-    this->omegasDotBuf.resize(this->numRW, 1);
-    this->thetasDotBuf.resize(this->numRWJitter, 1);
+    this->omegasDotBuf.resize(static_cast<Eigen::Index>(this->numRW), 1);
+    this->thetasDotBuf.resize(static_cast<Eigen::Index>(this->numRWJitter), 1);
 }
 
 /*! @brief Update the effector mass properties.
