@@ -107,6 +107,11 @@ private:
 	StateData *thetasState;                                     //!< class variable
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 
+    //! [rad/s^2] Reusable derivative buffers for computeDerivatives(), sized once in
+    //! registerStates() instead of being heap-allocated on every RK-stage call.
+    Eigen::MatrixXd omegasDotBuf;
+    Eigen::MatrixXd thetasDotBuf;
+
     double maxWheelAcceleration = 1.0e6;    //!< [rad/s^2] Maximum allowed wheel acceleration to prevent numerical instability
     double largeTorqueThreshold = 10.0;     //!< [Nm] Threshold for warning about large torque with unlimited torque setting
 

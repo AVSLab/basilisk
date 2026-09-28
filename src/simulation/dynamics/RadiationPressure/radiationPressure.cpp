@@ -123,7 +123,7 @@ void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], do
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-    Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getState();
+    Eigen::Vector3d r_N = (Eigen::Vector3d)this->hubR_N->getStateReference();
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d rSunB_N = sun_r_N - r_N;
 
@@ -133,7 +133,7 @@ void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], do
     }
     else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_NB;
-        sigmaLocal_NB = (Eigen::Vector3d)this->hubSigma->getState();
+        sigmaLocal_NB = (Eigen::Vector3d)this->hubSigma->getStateReference();
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
         Eigen::Vector3d rSunB_B = dcmLocal_BN * rSunB_N;
         this->computeLookupModel(rSunB_B);

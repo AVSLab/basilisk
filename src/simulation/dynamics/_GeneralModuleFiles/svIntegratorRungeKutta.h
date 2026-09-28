@@ -28,6 +28,7 @@
 #include <memory>
 #include <stdint.h>
 #include <utility>
+#include <vector>
 
 
 /**
@@ -127,6 +128,65 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
     // coefficients is stored as a pointer to support polymorphism
     /** Coefficients to be used in the method */
     const std::unique_ptr<RKCoefficients<numberStages>> coefficients;
+
+  private:
+    // --- Allocation-free execution path used by integrate() ---
+    //
+    // The ExtendedStateVector-based helpers above (computeKCoefficients,
+    // propagateStateWithKVectors, computeDerivatives) are kept as-is because
+    // svIntegratorAdaptiveRungeKutta calls them directly. But integrate()
+    // itself does not need to go through ExtendedStateVector: every stage of
+    // a fixed-step RK method touches the exact same set of states in the
+    // exact same order, so the per-stage std::unordered_map (keyed on
+    // (dynObjIndex, stateName)) and its associated heap-allocated
+    // Eigen::MatrixXd values can be replaced with a flat vector of StateData
+    // pointers and pre-sized scratch buffers that are reused every stage.
+
+    /** True once fastStateList/fastY0/fastK/fastAcc have been built for the
+     * current set of registered states. */
+    bool fastPathValid = false;
+
+    /** Flat list of every StateData* across all dynPtrs, in the same
+     * (dynPtrs index, stateMap order) sequence ExtendedStateVector::fromStates
+     * would visit them in. */
+    std::vector<StateData*> fastStateList;
+
+    /** Per-state copy of the state value at the start of the current
+     * integrate() call (i.e. "y0"), indexed like fastStateList. */
+    std::vector<Eigen::MatrixXd> fastY0;
+
+    /** Per-stage, per-state derivative ("k") values: fastK[stage][i] is the
+     * state derivative of state i computed at RK stage `stage`. */
+    std::array<std::vector<Eigen::MatrixXd>, numberStages> fastK;
+
+    /** Scratch buffer for the weighted sum of fastK values, indexed like
+     * fastStateList. Reused (not reallocated) across every call. */
+    std::vector<Eigen::MatrixXd> fastAcc;
+
+    /** Rebuilds fastStateList and (re)sizes fastY0/fastK/fastAcc unless the
+     * cached pointers still match, in order, every StateData* currently
+     * registered across dynPtrs. The check walks the live state maps once,
+     * with no allocations. */
+    void rebuildFastPathIfNeeded();
+
+    /**
+     * Allocation-free equivalent of propagateStateWithKVectors(): for every
+     * state i, accumulates
+     *
+     *     fastAcc[i] = coefficients[0]*fastK[0][i] + ... + coefficients[maxStage-1]*fastK[maxStage-1][i]
+     *
+     * then sets every state to fastY0[i]. If any coefficient was nonzero, also
+     * sets the derivative to the accumulated value and propagates every
+     * dynPtr's state vector by timeStep (mirroring
+     * propagateStateWithKVectors's setStates/setDerivatives/propagateStateVector
+     * sequence); otherwise the state is left at fastY0[i], matching
+     * propagateStateWithKVectors's "derivative.empty()" early return.
+     *
+     * Returns whether any coefficient was nonzero.
+     */
+    bool fastPropagateStateWithKVectors(double timeStep,
+                                        const std::array<double, numberStages>& coefficients,
+                                        size_t maxStage);
 };
 
 template <size_t numberStages>
@@ -149,14 +209,110 @@ svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(
 template <size_t numberStages>
 void svIntegratorRungeKutta<numberStages>::integrate(double currentTime, double timeStep)
 {
-    ExtendedStateVector currentState = ExtendedStateVector::fromStates(this->dynPtrs);
-    KCoefficientsValues kValues = this->computeKCoefficients(currentTime, timeStep, currentState);
-    ExtendedStateVector nextState = this->propagateStateWithKVectors(timeStep,
-                                                                     currentState,
-                                                                     kValues,
-                                                                     this->coefficients->bArray,
-                                                                     numberStages);
-    nextState.setStates(this->dynPtrs);
+    this->rebuildFastPathIfNeeded();
+
+    const size_t n = this->fastStateList.size();
+    for (size_t i = 0; i < n; i++) {
+        this->fastY0[i] = this->fastStateList[i]->getStateReference();
+    }
+
+    for (size_t stage = 0; stage < numberStages; stage++) {
+        double timeToComputeK = currentTime + this->coefficients->cArray.at(stage) * timeStep;
+
+        // Set every state to y0 + dt * (sum of already-computed k's weighted by
+        // this stage's "a" row), matching computeKCoefficients's use of
+        // propagateStateWithKVectors(..., aMatrix.at(stageIndex), stageIndex).
+        this->fastPropagateStateWithKVectors(timeStep, this->coefficients->aMatrix.at(stage), stage);
+
+        for (auto dynPtr : this->dynPtrs) {
+            dynPtr->equationsOfMotion(timeToComputeK, timeStep);
+        }
+        for (size_t i = 0; i < n; i++) {
+            this->fastK[stage][i] = this->fastStateList[i]->getStateDerivReference();
+        }
+    }
+
+    // Final combination using the "b" coefficients, matching integrate()'s
+    // trailing propagateStateWithKVectors(..., bArray, numberStages) call.
+    this->fastPropagateStateWithKVectors(timeStep, this->coefficients->bArray, numberStages);
+}
+
+template <size_t numberStages>
+void svIntegratorRungeKutta<numberStages>::rebuildFastPathIfNeeded()
+{
+    size_t totalStates = 0;
+    bool cacheMatches = this->fastPathValid;
+    for (const auto* dynPtr : this->dynPtrs) {
+        for (auto&& [stateName, stateData] : dynPtr->dynManager.stateContainer.stateMap) {
+            if (cacheMatches && (totalStates >= this->fastStateList.size()
+                                 || this->fastStateList[totalStates] != stateData.get())) {
+                cacheMatches = false;
+            }
+            totalStates++;
+        }
+    }
+
+    if (cacheMatches && this->fastStateList.size() == totalStates) {
+        return;
+    }
+
+    this->fastStateList.clear();
+    this->fastStateList.reserve(totalStates);
+    for (const auto* dynPtr : this->dynPtrs) {
+        for (auto&& [stateName, stateData] : dynPtr->dynManager.stateContainer.stateMap) {
+            this->fastStateList.push_back(stateData.get());
+        }
+    }
+
+    this->fastY0.assign(totalStates, Eigen::MatrixXd());
+    this->fastAcc.assign(totalStates, Eigen::MatrixXd());
+    for (size_t stage = 0; stage < numberStages; stage++) {
+        this->fastK.at(stage).assign(totalStates, Eigen::MatrixXd());
+    }
+
+    this->fastPathValid = true;
+}
+
+template <size_t numberStages>
+bool svIntegratorRungeKutta<numberStages>::fastPropagateStateWithKVectors(
+    double timeStep,
+    const std::array<double, numberStages>& coefficients,
+    size_t maxStage)
+{
+    const size_t n = this->fastStateList.size();
+
+    bool any = false;
+    for (size_t stageIndex = 0; stageIndex < maxStage; stageIndex++) {
+        double coeff = coefficients.at(stageIndex);
+        if (coeff == 0) continue;
+
+        if (!any) {
+            for (size_t i = 0; i < n; i++) {
+                this->fastAcc[i] = this->fastK[stageIndex][i] * coeff;
+            }
+        }
+        else {
+            for (size_t i = 0; i < n; i++) {
+                this->fastAcc[i] += this->fastK[stageIndex][i] * coeff;
+            }
+        }
+        any = true;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        this->fastStateList[i]->setState(this->fastY0[i]);
+    }
+
+    if (any) {
+        for (size_t i = 0; i < n; i++) {
+            this->fastStateList[i]->setDerivative(this->fastAcc[i]);
+        }
+        for (auto dynPtr : this->dynPtrs) {
+            dynPtr->dynManager.propagateStateVector(timeStep);
+        }
+    }
+
+    return any;
 }
 
 template <size_t numberStages>

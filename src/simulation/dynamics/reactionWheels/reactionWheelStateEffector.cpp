@@ -196,6 +196,11 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         this->thetasState->setState(thetasForZeroing);
     }
     this->registeredWheelLayout = wheelLayout;
+
+    // Size the computeDerivatives() scratch buffers once here rather than
+    // heap-allocating them on every RK-stage call.
+    this->omegasDotBuf.resize(this->numRW, 1);
+    this->thetasDotBuf.resize(this->numRWJitter, 1);
 }
 
 /*! @brief Update the effector mass properties.
@@ -412,8 +417,10 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
 void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     this->validateRegisteredLayout();
-	Eigen::MatrixXd OmegasDot(this->numRW,1);
-    Eigen::MatrixXd thetasDot(this->numRWJitter,1);
+    // Reuse fixed-size member buffers instead of heap-allocating a fresh MatrixXd on
+    // every RK-stage call (registerStates() sizes these to numRW/numRWJitter).
+    Eigen::MatrixXd& OmegasDot = this->omegasDotBuf;
+    Eigen::MatrixXd& thetasDot = this->thetasDotBuf;
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
