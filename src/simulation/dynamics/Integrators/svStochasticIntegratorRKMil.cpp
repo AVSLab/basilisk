@@ -47,7 +47,7 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
     currentState.setStates(dynPtrs);
     f.setDerivatives(dynPtrs);
     // Zero pseudo-time steps: K carries no noise contribution.
-    propagateState(timeStep, Eigen::VectorXd::Zero(noiseCount), stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(timeStep, Eigen::VectorXd::Zero(noiseCount));
     const ExtendedStateVector K = ExtendedStateVector::fromStates(dynPtrs);
 
     // --- uTilde = K + sqrt(h) * sum_k L_k  (support point for the finite difference) ---
@@ -59,7 +59,7 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
     for (size_t k = 0; k < m; k++) {
         L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(0.0, sqh * Eigen::VectorXd::Ones(noiseCount), stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(0.0, sqh * Eigen::VectorXd::Ones(noiseCount));
 
     // --- gTilde_k = g_k(uTilde);  ggprime_k = (gTilde_k - L_k) / sqrt(h) ---
     std::vector<ExtendedStateVector> gTilde =
@@ -84,13 +84,13 @@ void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
     for (size_t k = 0; k < m; k++) {
         L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(0.0, dW, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(0.0, dW);
 
     // Add the Milstein correction term.
     for (size_t k = 0; k < m; k++) {
         ggprime.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(0.0, milStep, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(0.0, milStep);
 
     // The dynPtrs now hold x_{n+1}.
 }

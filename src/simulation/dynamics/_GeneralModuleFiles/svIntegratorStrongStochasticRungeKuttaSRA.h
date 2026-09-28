@@ -24,6 +24,11 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 #include "extendedStateVector.h"
+#include "stochasticNoiseGenerator.h"
+
+#include <Eigen/Core>
+#include <cstddef>
+#include <utility>
 
 #include <array>
 #include <cmath>
@@ -185,7 +190,7 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double c
             scaledSum(coefficients.B0.at(i), g_Hk.at(k), i)
                 .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
         }
-        propagateState(timeStep, chi2, stateIdToNoiseIndexMaps);
+        propagateStateWithCachedNoise(timeStep, chi2);
 
         f_H0.at(i) = computeDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep);
         // Diffusion is state-independent, but must be sampled at the stage time c1[i].
@@ -206,13 +211,13 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double c
         scaledSum(coefficients.beta1, g_Hk.at(k), numberStages)
             .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(timeStep, dW);
 
     for (size_t k = 0; k < m; k++) {
         scaledSum(coefficients.beta2, g_Hk.at(k), numberStages)
             .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(0, chi2, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(0, chi2);
 
     // The dynPtrs now hold y_{n+1}.
 }

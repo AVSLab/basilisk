@@ -261,6 +261,22 @@ reproducible studies you can inject a specific increment sequence with a
         prescribed.pushStep(list(dW))
     integratorObject.setNoiseGenerator(prescribed)
 
+The native methods reuse noise-source routing and per-state increment buffers.
+Routing is checked at the start of each nonzero integration step and rebuilt when
+the dynamic objects, registered state names or objects, noise counts, or shared-noise
+registrations change. Make these changes between integration calls; callbacks must
+keep the state/noise topology stable throughout a step. Matrix dimensions may also
+change between calls, provided the state's propagation method supports the new
+state, derivative, and diffusion shapes.
+
+Routing buffers allocate on first use and after topology changes. The noise generator,
+the existing by-value virtual propagation interface, and higher-order stage storage
+can still allocate during a step. Euler–Maruyama evaluates ordinary states directly
+without temporary derivative or diffusion maps. For custom ``StateData`` subclasses,
+it retains the derivative snapshot and virtual setter writeback for compatibility.
+Noise draws, source ordering, and virtual state propagation are preserved. A
+zero-duration integration call consumes no random sample.
+
 .. note::
 
     As with deterministic integration, if several ``DynamicObject`` instances are

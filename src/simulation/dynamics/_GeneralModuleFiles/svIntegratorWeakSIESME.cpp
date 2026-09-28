@@ -64,7 +64,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     {
         Eigen::VectorXd step(noiseCount);
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.nu1 * dW(k) + W3(k);
-        propagateState(timeStep, step, maps);
+        propagateStateWithCachedNoise(timeStep, step);
     }
     ExtendedStateVector k1 = computeDerivatives(currentTime + c.mu0 * timeStep, timeStep);
 
@@ -77,7 +77,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     {
         Eigen::VectorXd step(noiseCount);
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.beta2 * sqh + c.beta3 * W2(k);
-        propagateState(timeStep, step, maps);
+        propagateStateWithCachedNoise(timeStep, step);
     }
     std::vector<ExtendedStateVector> g1 =
         computeDiffusions(currentTime + c.mubar0 * timeStep, timeStep, maps);
@@ -91,7 +91,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     {
         Eigen::VectorXd step(noiseCount);
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.delta2 * sqh + c.delta3 * W2(k);
-        propagateState(timeStep, step, maps);
+        propagateStateWithCachedNoise(timeStep, step);
     }
     std::vector<ExtendedStateVector> g2 =
         computeDiffusions(currentTime + c.mubar0 * timeStep, timeStep, maps);
@@ -111,7 +111,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
     {
         Eigen::VectorXd step(noiseCount);
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = c.gamma1 * dW(k);
-        propagateState(timeStep, step, maps);
+        propagateStateWithCachedNoise(timeStep, step);
     }
     for (size_t k = 0; k < m; k++) {
         g1.at(k).setDiffusions(dynPtrs, maps.at(k));
@@ -121,7 +121,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         for (Eigen::Index k = 0; k < noiseCount; k++) {
             step(k) = c.lambda1 * dW(k) + c.lambda2 * sqh + c.lambda3 * W2(k);
         }
-        propagateState(0, step, maps);
+        propagateStateWithCachedNoise(0, step);
     }
     for (size_t k = 0; k < m; k++) {
         g2.at(k).setDiffusions(dynPtrs, maps.at(k));
@@ -131,7 +131,7 @@ void svIntegratorWeakSIESME::integrate(double currentTime, double timeStep)
         for (Eigen::Index k = 0; k < noiseCount; k++) {
             step(k) = c.mu1 * dW(k) + c.mu2 * sqh + c.mu3 * W2(k);
         }
-        propagateState(0, step, maps);
+        propagateStateWithCachedNoise(0, step);
     }
 
     // The dynPtrs now hold x_{n+1}.

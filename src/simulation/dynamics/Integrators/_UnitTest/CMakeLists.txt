@@ -8,6 +8,11 @@ add_executable(test_adaptiveRungeKuttaAccuracy
     test_adaptiveRungeKuttaAccuracy.cpp
     ../svIntegratorRKF45.cpp
     ../svIntegratorRKF78.cpp)
+add_executable(test_stochasticRouting
+    test_stochasticRouting.cpp
+    ../svStochasticIntegratorMayurama.cpp
+    ../../_GeneralModuleFiles/stochasticRKIntegratorBase.cpp
+    ../../_GeneralModuleFiles/stateVecStochasticIntegrator.cpp)
 
 # Check Eigen allocations in the header-defined integrator, including Release builds.
 target_compile_definitions(test_rungeKuttaCache PRIVATE EIGEN_RUNTIME_NO_MALLOC)
@@ -24,7 +29,7 @@ else()
   target_compile_options(test_adaptiveRungeKuttaAccuracy PRIVATE -ffp-contract=fast)
 endif()
 
-foreach(test_target IN ITEMS test_rungeKuttaCache test_adaptiveRungeKuttaAccuracy)
+foreach(test_target IN ITEMS test_rungeKuttaCache test_adaptiveRungeKuttaAccuracy test_stochasticRouting)
   target_link_libraries(${test_target} PRIVATE
       GTest::gtest_main dynamicsLib architectureLib ModuleIdGenerator)
 

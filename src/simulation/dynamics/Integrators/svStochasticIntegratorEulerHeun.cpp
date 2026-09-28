@@ -43,7 +43,7 @@ void svStochasticIntegratorEulerHeun::integrate(double currentTime, double timeS
     for (size_t k = 0; k < m; k++) {
         g1.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(timeStep, dW);
 
     // --- Corrector evaluations at (t_{n+1}, xBar): f2, g2 ---
     ExtendedStateVector f2 = computeDerivatives(currentTime + timeStep, timeStep);
@@ -56,7 +56,7 @@ void svStochasticIntegratorEulerHeun::integrate(double currentTime, double timeS
     for (size_t k = 0; k < m; k++) {
         ((g1.at(k) += g2.at(k)) * 0.5).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
     }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
+    propagateStateWithCachedNoise(timeStep, dW);
 
     // The dynPtrs now hold x_{n+1}.
 }

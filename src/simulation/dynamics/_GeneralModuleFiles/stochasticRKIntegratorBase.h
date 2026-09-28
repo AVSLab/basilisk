@@ -21,11 +21,18 @@
 #define stochasticRKIntegratorBase_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
+#include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
 #include "../_GeneralModuleFiles/extendedStateVector.h"
 #include "../_GeneralModuleFiles/stochasticNoiseGenerator.h"
 
+#include <Eigen/Core>
+#include <cstddef>
 #include <memory>
+#include <string>
+#include <utility>
+#include <unordered_map>
 #include <vector>
 
 /**
@@ -40,11 +47,18 @@
  *    source, replaceable by a prescribed-replay generator for tests), plus the
  *    ``setRNGSeed`` / ``setNoiseGenerator`` accessors;
  *  - the pointwise stage-evaluation helpers ``computeDerivatives`` / ``computeDiffusion``
- *    / ``computeDiffusions`` (set the stage state, call the dynamic objects'
+ *    / ``computeDiffusions`` (call the dynamic objects'
  *    ``equationsOfMotion`` / ``equationsOfMotionDiffusion``, and gather the result);
- *  - a cached view of ``getStateIdToNoiseIndexMaps()`` (``noiseIndexMaps()``), whose
- *    state/noise topology is invariant during a run, so it is built once instead of
- *    every step.
+ *  - cached noise-index maps and per-state increment buffers, refreshed by
+ *    ``noiseIndexMaps()`` at the start of each nonzero integration step and reused
+ *    by ``propagateStateWithCachedNoise()`` at each stage.
+ *
+ * State registration, object membership, noise counts, and shared-noise mappings
+ * may change between integration calls but must remain stable during a call.
+ * Routing buffers allocate on first use and after topology changes. Matrix shapes
+ * are not cached: propagation reads the current state, derivative, and diffusion
+ * storage through the virtual StateData interface. The by-value propagation
+ * argument and noise generator can still allocate on each call.
  *
  * Every native stochastic integrator derives from this base. Methods that need only the
  * Wiener increment (Euler-Maruyama, Euler-Heun, RKMil) simply ignore the second increment
@@ -78,11 +92,29 @@ public:
         std::make_shared<RandomGaussianNoiseGenerator>();
 
 protected:
-    /** Returns the (cached) state-id -> noise-index maps. The topology is fixed for the
-     * run, so it is computed once on first use and reused thereafter. */
+    /** @brief Refresh routing at the integration boundary and return the source maps.
+     * @return Source maps, valid until the next routing rebuild or integrator destruction.
+     * @note Call once before evaluating a nonzero integration step. State/noise
+     * topology must remain stable until the step finishes.
+     */
     const std::vector<StateIdToIndexMap>& noiseIndexMaps();
 
-    /** Computes f at the current state/time (sets states, calls equationsOfMotion). */
+    /** @brief Propagate using the routing prepared by noiseIndexMaps().
+     * @param timeStep Drift time step in seconds; zero still applies noise increments.
+     * @param pseudoTimeSteps Increment for each global source, in source-map order.
+     * @note Preserves state order and virtual propagation. The public map-taking
+     * StateVecStochasticIntegrator::propagateState() remains available for arbitrary maps.
+     */
+    void propagateStateWithCachedNoise(double timeStep, const Eigen::VectorXd& pseudoTimeSteps);
+
+    /** @brief Evaluate Euler drift, retaining virtual setter writeback for derived states.
+     * @param time Evaluation time in seconds.
+     * @param timeStep Integration step in seconds.
+     * @note Requires noiseIndexMaps() to have prepared the current state layout.
+     */
+    void computeEulerDerivatives(double time, double timeStep);
+
+    /** Computes f at the current state/time by calling equationsOfMotion(). */
     ExtendedStateVector computeDerivatives(double time, double timeStep);
 
     /** Computes g for a single noise source at the current state/time. */
@@ -95,8 +127,31 @@ protected:
                       const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps);
 
 private:
+    /** @brief Routing and reusable increments for one state, in propagation order. */
+    struct StateNoiseRouting {
+        StateData* state;                  //!< State owner of the local noise channels.
+        std::string name;                  //!< Registration key used to detect renaming.
+        std::vector<size_t> sourceIndices; //!< Global source for each local channel.
+        std::vector<double> increments;    //!< Reused local pseudo-time steps.
+    };
+
+    /** @brief Object metadata used to detect changes without dereferencing old state pointers. */
+    struct ObjectNoiseLayout {
+        DynamicObject* object;                        //!< Object at this position in dynPtrs.
+        size_t stateCount;                            //!< Number of registered states.
+        std::unordered_map<std::pair<std::string, size_t>, size_t> sharedNoiseMap; //!< Snapshot of source sharing.
+    };
+
+    /** @brief Check the live registration against the prepared routing. */
+    bool noiseLayoutMatches() const;
+
+    /** @brief Rebuild source maps, state routing, and local increment buffers together. */
+    void rebuildNoiseRouting();
+
     /** Cached noise-index maps (empty until first noiseIndexMaps() call). */
     std::vector<StateIdToIndexMap> cachedNoiseIndexMaps;
+    std::vector<StateNoiseRouting> stateNoiseRouting; //!< Ordered routing for all states.
+    std::vector<ObjectNoiseLayout> objectNoiseLayouts; //!< Object and sharing snapshots.
     bool noiseIndexMapsCached = false;
 };
 

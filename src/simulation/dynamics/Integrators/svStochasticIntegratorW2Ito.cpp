@@ -97,7 +97,7 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
         for (size_t k = 0; k < m; k++) {
             scaledSum(c.B0.at(i), g_Hk.at(k), i).setDiffusions(dynPtrs, maps.at(k));
         }
-        propagateState(timeStep, _dW, maps);
+        propagateStateWithCachedNoise(timeStep, _dW);
         f_H0.at(i) = computeDerivatives(currentTime + c.c0(i) * timeStep, timeStep);
 
         // H_i^(k) = x_n + h*sum_{j<i} A1[i][j] f(H0[j]) + xi*sum_{j<i} B1[i][j] g_k(Hk[j])
@@ -114,7 +114,7 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
             for (size_t l = 0; l < m; l++) {
                 step(static_cast<Eigen::Index>(l)) = (l == k) ? xi : Ikl(k, l);
             }
-            propagateState(timeStep, step, maps);
+            propagateStateWithCachedNoise(timeStep, step);
             g_Hk.at(k).at(i) =
                 computeDiffusion(currentTime + c.c1(i) * timeStep, timeStep, maps.at(k));
         }
@@ -129,11 +129,11 @@ void svStochasticIntegratorW2Ito::integrate(double currentTime, double timeStep)
     for (size_t k = 0; k < m; k++) {
         scaledSum(c.beta0, g_Hk.at(k), s).setDiffusions(dynPtrs, maps.at(k));
     }
-    propagateState(timeStep, _dW, maps);
+    propagateStateWithCachedNoise(timeStep, _dW);
     for (size_t k = 0; k < m; k++) {
         scaledSum(c.beta1, g_Hk.at(k), s).setDiffusions(dynPtrs, maps.at(k));
     }
-    propagateState(0, Ikk, maps);
+    propagateStateWithCachedNoise(0, Ikk);
 
     // The dynPtrs now hold x_{n+1}.
 }

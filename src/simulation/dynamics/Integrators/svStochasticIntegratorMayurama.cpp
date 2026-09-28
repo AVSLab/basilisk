@@ -32,12 +32,12 @@ void svStochasticIntegratorMayurama::integrate(double currentTime, double timeSt
 
     // f and g are evaluated at the current state x_n (the dynPtrs already hold it), then
     // x_{n+1} = x_n + f*h + sum_k g_k * dW_k.
-    computeDerivatives(currentTime, timeStep).setDerivatives(dynPtrs);
-    std::vector<ExtendedStateVector> g = computeDiffusions(currentTime, timeStep, maps);
-    for (size_t k = 0; k < m; k++) {
-        g.at(k).setDiffusions(dynPtrs, maps.at(k));
+    computeEulerDerivatives(currentTime, timeStep);
+    // Diffusion setters are nonvirtual; their values are already in the live states.
+    for (auto* object : dynPtrs) {
+        object->equationsOfMotionDiffusion(currentTime, timeStep);
     }
-    propagateState(timeStep, sample.dW, maps);
+    propagateStateWithCachedNoise(timeStep, sample.dW);
 
     // The dynPtrs now hold x_{n+1}.
 }

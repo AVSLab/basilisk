@@ -57,7 +57,7 @@ void svStochasticIntegratorRDI1WM::integrate(double currentTime, double timeStep
     for (size_t k = 0; k < m; k++) {
         (g1.at(k) * b021).setDiffusions(dynPtrs, maps.at(k));
     }
-    propagateState(timeStep, Ihat, maps);
+    propagateStateWithCachedNoise(timeStep, Ihat);
     ExtendedStateVector k2 = computeDerivatives(currentTime + c02 * timeStep, timeStep);
 
     // x_{n+1} = x_n + (alpha1*k1 + alpha2*k2)*h + beta11*g1*Ihat
@@ -68,7 +68,7 @@ void svStochasticIntegratorRDI1WM::integrate(double currentTime, double timeStep
     for (size_t k = 0; k < m; k++) {
         (g1.at(k) * beta11).setDiffusions(dynPtrs, maps.at(k));
     }
-    propagateState(timeStep, Ihat, maps);
+    propagateStateWithCachedNoise(timeStep, Ihat);
 
     // The dynPtrs now hold x_{n+1}.
 }

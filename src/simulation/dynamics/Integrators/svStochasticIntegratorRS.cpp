@@ -162,7 +162,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
         for (size_t l = 0; l < m; l++) {
             scaledSum4(B0.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
         }
-        propagateState(timeStep, Ihat, maps);
+        propagateStateWithCachedNoise(timeStep, Ihat);
         f_H0.at(i) = computeDerivatives(currentTime + c0nodes.at(i) * timeStep, timeStep);
 
         // H^(k)_i = x_n + h sum_j A1[i][j] f(H0[j])
@@ -175,7 +175,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
                 const std::array<double, 4>& brow = (l == k) ? B1.at(i) : B3.at(i);
                 scaledSum4(brow, b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
             }
-            propagateState(timeStep, Ihat, maps);
+            propagateStateWithCachedNoise(timeStep, Ihat);
             b_Hk.at(k).at(i) =
                 computeDiffusion(currentTime + c1nodes.at(i) * timeStep, timeStep, maps.at(k));
         }
@@ -204,7 +204,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
                     scaledSum4(B2.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
                     step(static_cast<Eigen::Index>(l)) = Ihat2(k, l) / sqh;
                 }
-                propagateState(0, step, maps);
+                propagateStateWithCachedNoise(0, step);
                 b_Hhat.at(k).at(i) = computeDiffusion(currentTime, timeStep, maps.at(k));
             }
         }
@@ -228,7 +228,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
         for (size_t k = 0; k < m; k++) {
             scaledSum4(beta1, b_Hk.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
         }
-        propagateState(timeStep, Ihat, maps);
+        propagateStateWithCachedNoise(timeStep, Ihat);
     }
     // beta2 diffusion term (weighted by sqrt(h)), using the cross-noise stage diffusions.
     if (m > 1) {
@@ -238,7 +238,7 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
         }
         Eigen::VectorXd step(noiseCount);
         for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = sqh;
-        propagateState(0, step, maps);
+        propagateStateWithCachedNoise(0, step);
     }
 
     // The dynPtrs now hold x_{n+1}.

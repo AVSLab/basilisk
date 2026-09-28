@@ -11,6 +11,12 @@ Version |release|
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
 
+- Stochastic integrators previously retained the noise-source mapping from their
+  first integration step, requiring a fixed state/noise topology for the run.
+  Native methods now refresh that mapping when registration or source sharing
+  changes between integration calls. Topology changes during a step remain
+  unsupported.
+
 - GitHub issue 1586: The Release build configuration appended an explicit
   ``-O2`` flag, overriding ``-O3`` in default GCC and Clang builds. The override
   has been removed so Release builds use CMake's compiler-specific default
