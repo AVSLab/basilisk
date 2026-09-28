@@ -136,7 +136,9 @@ Or from the ``src`` directory:
    ../.venv/bin/pytest -q ../benchmarks/tests
 
 The Python smoke test runs the dynamics benchmark with one integration step, one
-trial, no warmup, one component, and one segment.  The C++ smoke test builds and runs
+trial, no warmup, the default component count, and one segment. Keeping the default
+component count exercises every device configured by the default benchmark, including
+all VSCMG axis sets. The C++ smoke test builds and runs
 the ``benchmark_smoke_tests`` CMake target, which executes the Eigen versus
 ``linearAlgebra`` benchmark in ``--smoke`` mode with capped iteration counts.  The
 C++ smoke test requires an already configured ``dist3`` build directory that includes
