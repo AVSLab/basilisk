@@ -269,9 +269,17 @@ keep the state/noise topology stable throughout a step. Matrix dimensions may al
 change between calls, provided the state's propagation method supports the new
 state, derivative, and diffusion shapes.
 
-Routing buffers allocate on first use and after topology changes. The noise generator,
-the existing by-value virtual propagation interface, and higher-order stage storage
-can still allocate during a step. Euler–Maruyama evaluates ordinary states directly
+Routing buffers allocate on first use and after topology changes. Euler–Heun, RKMil,
+SRIW1/SOSRI, and SRA1/SOSRA also reuse owned state snapshots, drift and diffusion
+stage matrices, weighted-sum buffers, and per-source scratch vectors. Diffusion
+storage is sparse: a source only stores matrices for the states it affects.
+These stage buffers allocate on first use and may allocate again after topology or
+matrix-dimension changes. Snapshots remain independent of later stage evaluations;
+live state references cannot replace them.
+
+The noise generator, the existing by-value virtual propagation interface, weak-method
+stage storage, and model callbacks can still allocate during a step.
+Euler–Maruyama evaluates ordinary states directly
 without temporary derivative or diffusion maps. For custom ``StateData`` subclasses,
 it retains the derivative snapshot and virtual setter writeback for compatibility.
 Noise draws, source ordering, and virtual state propagation are preserved. A

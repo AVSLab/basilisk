@@ -156,8 +156,9 @@ Modules
 C++ State Access
 ~~~~~~~~~~~~~~~~
 
-For internal C++ reads of ``StateData``, prefer ``getStateReference()`` and
-``getStateDerivReference()`` to avoid copying a dynamically sized Eigen matrix.
+For internal C++ reads of ``StateData``, prefer ``getStateReference()``,
+``getStateDerivReference()``, and ``getStateDiffusionReference(index)`` to avoid
+copying a dynamically sized Eigen matrix.
 Bind a read-only view with ``const auto&`` or ``const Eigen::MatrixXd&``:
 
 .. code-block:: cpp
@@ -188,13 +189,15 @@ explain the reason where it is not clear from the surrounding code:
     updatedState.setZero();
     stateData->setState(updatedState);
 
-The copy-returning ``getState()`` and ``getStateDeriv()`` methods remain supported
+The copy-returning ``getState()``, ``getStateDeriv()``, and ``getStateDiffusion(index)`` methods remain supported
 for these uses and are not deprecated. This guidance applies to internal C++
 code; it does not change Python access or public API ownership contracts.
 
 A reference is a live view, not a snapshot: later updates are visible through
 it, and it must not outlive its ``StateData`` object. Keep views local and check
-for intervening state updates, including those made by called functions. Do not
+for intervening state updates, including those made by called functions.
+Diffusion references must also be reacquired after resizing the noise-source
+container. Do not
 retain raw data pointers, Eigen maps, blocks, or unevaluated expressions across
 updates that may resize the referenced storage. When a value must survive an
 update, evaluate it into an owning matrix or vector first. In particular,

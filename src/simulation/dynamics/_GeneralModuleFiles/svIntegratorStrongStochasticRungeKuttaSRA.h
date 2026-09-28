@@ -150,18 +150,15 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double c
     // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
     if (timeStep == 0) return;
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+    const size_t m = prepareStageBuffers(numberStages, numberStages, 1, 1);
+    captureStates(0); // Preserve y_n while the live states advance through the stages.
 
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const Eigen::VectorXd& dW = sample.dW;
     const Eigen::VectorXd& dZ = sample.dZ;
 
     const double sqrt3 = std::sqrt(3.0);
-    Eigen::VectorXd chi2(noiseCount); // I_(1,0)/h
+    auto& chi2 = this->noiseBuffers[0]; // I_(1,0)/h
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         chi2(eigenK) = (dW(eigenK) + dZ(eigenK) / sqrt3) / 2.0;
@@ -169,53 +166,36 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double c
 
     // f_H0[i]     = f(t_n + c0[i] h, H0[i])
     // g_Hk[k][i]  = g_k(t_n + c1[i] h)   (state independent, but evaluated at the stage time)
-    std::array<ExtendedStateVector, numberStages> f_H0;
-    std::vector<std::array<ExtendedStateVector, numberStages>> g_Hk(m);
 
     // i = 0: H0[0] == y_n
-    f_H0.at(0) = computeDerivatives(currentTime + coefficients.c0.at(0) * timeStep, timeStep);
-    {
-        std::vector<ExtendedStateVector> diffs = computeDiffusions(
-            currentTime + coefficients.c1.at(0) * timeStep, timeStep, stateIdToNoiseIndexMaps);
-        for (size_t k = 0; k < m; k++) {
-            g_Hk.at(k).at(0) = std::move(diffs.at(k));
-        }
-    }
+    evaluateStageDerivatives(currentTime + coefficients.c0.at(0) * timeStep, timeStep, 0);
+    evaluateStageDiffusions(currentTime + coefficients.c1.at(0) * timeStep, timeStep, 0);
 
     for (size_t i = 1; i < numberStages; i++) {
         // H0[i] = y_n + h sum_j A0[i][j] f(H0[j]) + sum_k chi2[k] sum_j B0[i][j] g_k(t_n + c1[j] h)
-        currentState.setStates(dynPtrs);
-        scaledSum(coefficients.A0.at(i), f_H0, i).setDerivatives(dynPtrs);
+        restoreStates(0);
+        applyDerivativeSum(coefficients.A0.at(i).data(), i);
         for (size_t k = 0; k < m; k++) {
-            scaledSum(coefficients.B0.at(i), g_Hk.at(k), i)
-                .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+            applyDiffusionSum(k, coefficients.B0.at(i).data(), i);
         }
         propagateStateWithCachedNoise(timeStep, chi2);
 
-        f_H0.at(i) = computeDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep);
+        evaluateStageDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep, i);
         // Diffusion is state-independent, but must be sampled at the stage time c1[i].
-        {
-            std::vector<ExtendedStateVector> diffs = computeDiffusions(
-                currentTime + coefficients.c1.at(i) * timeStep, timeStep, stateIdToNoiseIndexMaps);
-            for (size_t k = 0; k < m; k++) {
-                g_Hk.at(k).at(i) = std::move(diffs.at(k));
-            }
-        }
+        evaluateStageDiffusions(currentTime + coefficients.c1.at(i) * timeStep, timeStep, i);
     }
 
     // y_{n+1} = y_n + h sum_i alpha[i] f(H0[i])
     //               + sum_k [ (beta1 . g_k) dW[k] + (beta2 . g_k) chi2[k] ]
-    currentState.setStates(dynPtrs);
-    scaledSum(coefficients.alpha, f_H0, numberStages).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(coefficients.alpha.data(), numberStages);
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta1, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta1.data(), numberStages);
     }
     propagateStateWithCachedNoise(timeStep, dW);
 
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta2, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta2.data(), numberStages);
     }
     propagateStateWithCachedNoise(0, chi2);
 

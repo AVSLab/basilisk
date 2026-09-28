@@ -20,8 +20,11 @@
 #ifndef STATE_DATA_H
 #define STATE_DATA_H
 #include <Eigen/Dense>
+#include <cstddef>
 #include <memory>
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include "architecture/utilities/bskLogging.h"
 
 /** @brief Represents a physical state, which has a name, a value, and a derivative. */
@@ -142,6 +145,15 @@ public:
      * This must be less than the number of noise sources.
     */
     Eigen::MatrixXd getStateDiffusion(size_t index) const { return stateDiffusion.at(index); }
+
+    /** @brief Retrieve a read-only view of one current diffusion matrix.
+     * @param index Local noise-source index, less than getNumNoiseSources().
+     * @return Reference to the diffusion matrix, without making a copy.
+     * @note Updates to this matrix are visible through the reference. It must not
+     * outlive the state or a resize of its noise-source container. Copy into an
+     * owning buffer when preserving a diffusion value across stage evaluations.
+     */
+    const Eigen::MatrixXd& getStateDiffusionReference(size_t index) const { return stateDiffusion.at(index); }
 
     /** Returns the name of the state */
     std::string getName() const { return stateName; }

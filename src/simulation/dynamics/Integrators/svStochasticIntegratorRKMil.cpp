@@ -22,75 +22,54 @@
 
 void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
+    // Initialization must not consume a noise sample.
     if (timeStep == 0) return;
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
+    const size_t noiseCount = prepareStageBuffers(2, 2, 2, 2);
+    captureStates(0);
+    const GaussianNoiseSample sample = this->rvGenerator->generate(noiseCount, timeStep);
+    const double sqh = std::sqrt(timeStep);
+    auto& pseudoStep = this->noiseBuffers[0];
+    auto& milStep = this->noiseBuffers[1];
 
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0); // L = g(x_n)
 
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-    const Eigen::VectorXd& dW = sample.dW;
+    // K = x_n + h*f; preserve it independently of the later support point.
+    restoreStates(0);
+    applyStageDerivatives(0);
+    pseudoStep.setZero();
+    propagateStateWithCachedNoise(timeStep, pseudoStep);
+    captureStates(1);
 
-    const double h = timeStep;
-    const double sqh = std::sqrt(h);
+    // uTilde = K + sqrt(h)*sum_k L_k. Multiplication by zero retains the
+    // original behavior for non-finite derivatives as well as ordinary values.
+    restoreStates(1);
+    for (size_t index = 0; index < this->derivativeStages[0].size(); ++index)
+        this->derivativeStages[1][index] = this->derivativeStages[0][index] * 0.0;
+    applyStageDerivatives(1);
+    for (size_t source = 0; source < noiseCount; ++source) applyStageDiffusion(source, 0);
+    pseudoStep.setConstant(sqh);
+    propagateStateWithCachedNoise(0.0, pseudoStep);
 
-    // --- Evaluate f and g at x_n ---
-    ExtendedStateVector f = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> L =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-
-    // --- K = x_n + h * f (drift-only Euler predictor) ---
-    currentState.setStates(dynPtrs);
-    f.setDerivatives(dynPtrs);
-    // Zero pseudo-time steps: K carries no noise contribution.
-    propagateStateWithCachedNoise(timeStep, Eigen::VectorXd::Zero(noiseCount));
-    const ExtendedStateVector K = ExtendedStateVector::fromStates(dynPtrs);
-
-    // --- uTilde = K + sqrt(h) * sum_k L_k  (support point for the finite difference) ---
-    // (drift is not re-applied here; timeStep passed to propagateState multiplies the
-    // derivative, so we set the derivative to zero and drive purely with the noise term.)
-    K.setStates(dynPtrs);
-    ExtendedStateVector zeroDeriv = f * 0.0;
-    zeroDeriv.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+    // Reuse gTilde storage for ggprime = (gTilde - L)/sqrt(h).
+    evaluateStageDiffusions(currentTime, timeStep, 1);
+    for (size_t source = 0; source < noiseCount; ++source) {
+        auto& correction = this->diffusionStages[1][source];
+        const auto& initial = this->diffusionStages[0][source];
+        for (size_t index = 0; index < correction.size(); ++index) {
+            correction[index] -= initial[index];
+            correction[index] *= 1.0 / sqh;
+        }
     }
-    propagateStateWithCachedNoise(0.0, sqh * Eigen::VectorXd::Ones(noiseCount));
+    for (Eigen::Index source = 0; source < milStep.size(); ++source)
+        milStep(source) = (sample.dW(source) * sample.dW(source) - timeStep) / 2.0;
 
-    // --- gTilde_k = g_k(uTilde);  ggprime_k = (gTilde_k - L_k) / sqrt(h) ---
-    std::vector<ExtendedStateVector> gTilde =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-    std::vector<ExtendedStateVector> ggprime;
-    ggprime.reserve(m);
-    for (size_t k = 0; k < m; k++) {
-        ggprime.push_back((gTilde.at(k) - L.at(k)) * (1.0 / sqh));
-    }
-
-    // --- x_{n+1} = K + sum_k L_k dW_k + sum_k ggprime_k (dW_k^2 - h)/2 ---
-    // Milstein pseudo-time step for the ggprime term.
-    Eigen::VectorXd milStep(noiseCount);
-    for (size_t k = 0; k < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        milStep(eigenK) = (dW(eigenK) * dW(eigenK) - h) / 2.0;
-    }
-
-    // Start from K, add the L*dW term (drift set to zero so it is not double-counted).
-    K.setStates(dynPtrs);
-    zeroDeriv.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-    }
-    propagateStateWithCachedNoise(0.0, dW);
-
-    // Add the Milstein correction term.
-    for (size_t k = 0; k < m; k++) {
-        ggprime.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-    }
+    // Preserve the two sequential virtual propagations, including on manifolds.
+    restoreStates(1);
+    applyStageDerivatives(1);
+    for (size_t source = 0; source < noiseCount; ++source) applyStageDiffusion(source, 0);
+    propagateStateWithCachedNoise(0.0, sample.dW);
+    for (size_t source = 0; source < noiseCount; ++source) applyStageDiffusion(source, 1);
     propagateStateWithCachedNoise(0.0, milStep);
-
-    // The dynPtrs now hold x_{n+1}.
 }

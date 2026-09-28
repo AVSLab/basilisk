@@ -175,14 +175,9 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
     // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
     if (timeStep == 0) return;
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
+    const size_t m = prepareStageBuffers(numberStages, numberStages, 1, 4);
+    captureStates(0); // Preserve y_n while the live states advance through the stages.
 
-    // Map (ExtendedStateId -> local noise index) for each of the m noise sources (cached).
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
-
-    // Draw the random variables for this step (needs dW and dZ per noise source).
     const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const Eigen::VectorXd& dW = sample.dW;
     const Eigen::VectorXd& dZ = sample.dZ;
@@ -192,9 +187,9 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
     const double sqrt3 = std::sqrt(3.0);
 
     // Iterated-integral approximations, one entry per noise source.
-    Eigen::VectorXd chi1(noiseCount); // I_(1,1)/sqrt(h)
-    Eigen::VectorXd chi2(noiseCount); // I_(1,0)/h
-    Eigen::VectorXd chi3(noiseCount); // I_(1,1,1)/h
+    auto& chi1 = this->noiseBuffers[0]; // I_(1,1)/sqrt(h)
+    auto& chi2 = this->noiseBuffers[1]; // I_(1,0)/h
+    auto& chi3 = this->noiseBuffers[2]; // I_(1,1,1)/h
     for (size_t k = 0; k < m; k++) {
         const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
         chi1(eigenK) = (dW(eigenK) * dW(eigenK) - h) / (2.0 * sqh);
@@ -206,49 +201,38 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
 
     // f_H0[i]      = f(t_n + c0[i] h, H0[i])                  for i = 0..s-1
     // g_Hk[k][i]   = g_k(t_n + c1[i] h, H1[i] for source k)   for i = 0..s-1; k = 0..m-1
-    std::array<ExtendedStateVector, numberStages> f_H0;
-    std::vector<std::array<ExtendedStateVector, numberStages>> g_Hk(m);
 
     // i = 0: H0[0] == H1[0] == y_n (all A/B rows are strictly lower triangular).
-    f_H0.at(0) = computeDerivatives(currentTime, timeStep);
-    {
-        std::vector<ExtendedStateVector> diffs =
-            computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-        for (size_t k = 0; k < m; k++) {
-            g_Hk.at(k).at(0) = std::move(diffs.at(k));
-        }
-    }
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
 
     // Remaining stages.
     for (size_t i = 1; i < numberStages; i++) {
         // --- H0[i] (drift stage, shared across noise sources) ---
         // H0[i] = y_n + h sum_j A0[i][j] f(H0[j]) + sum_k chi2[k] sum_j B0[i][j] g_k(H1[j])
-        currentState.setStates(dynPtrs);
-        scaledSum(coefficients.A0.at(i), f_H0, i).setDerivatives(dynPtrs);
+        restoreStates(0);
+        applyDerivativeSum(coefficients.A0.at(i).data(), i);
         for (size_t k = 0; k < m; k++) {
-            scaledSum(coefficients.B0.at(i), g_Hk.at(k), i)
-                .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+            applyDiffusionSum(k, coefficients.B0.at(i).data(), i);
         }
         // pseudo time step for the diffusion term is chi2[k]
         propagateStateWithCachedNoise(timeStep, chi2);
-        f_H0.at(i) = computeDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep);
+        evaluateStageDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep, i);
 
         // --- H1[i] (diffusion stage, one per noise source k) ---
         // H1[i] = y_n + h sum_j A1[i][j] f(H0[j]) + sqrt(h) sum_j B1[i][j] g_k(H1[j])
         for (size_t k = 0; k < m; k++) {
-            currentState.setStates(dynPtrs);
-            scaledSum(coefficients.A1.at(i), f_H0, i).setDerivatives(dynPtrs);
-            scaledSum(coefficients.B1.at(i), g_Hk.at(k), i)
-                .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+            restoreStates(0);
+            applyDerivativeSum(coefficients.A1.at(i).data(), i);
+            applyDiffusionSum(k, coefficients.B1.at(i).data(), i);
 
             // Only noise source k participates (pseudo step sqrt(h)); all others zero.
-            Eigen::VectorXd pseudoTimeStep = Eigen::VectorXd::Zero(noiseCount);
+            auto& pseudoTimeStep = this->noiseBuffers[3];
+            pseudoTimeStep.setZero();
             pseudoTimeStep(static_cast<Eigen::Index>(k)) = sqh;
             propagateStateWithCachedNoise(timeStep, pseudoTimeStep);
 
-            g_Hk.at(k).at(i) =
-                computeDiffusion(currentTime + coefficients.c1.at(i) * timeStep, timeStep,
-                                 stateIdToNoiseIndexMaps.at(k));  // single-source diffusion
+            evaluateStageDiffusion(currentTime + coefficients.c1.at(i) * timeStep, timeStep, k, i);
         }
     }
 
@@ -258,29 +242,25 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrate(double c
     //                        + (beta3 . g_Hk[k]) chi2[k] + (beta4 . g_Hk[k]) chi3[k] ]
     // We accumulate the four diffusion contributions with four propagateState calls
     // (each with h = 0 except the first, so the drift is only counted once).
-    currentState.setStates(dynPtrs);
-    scaledSum(coefficients.alpha, f_H0, numberStages).setDerivatives(dynPtrs);
+    restoreStates(0);
+    applyDerivativeSum(coefficients.alpha.data(), numberStages);
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta1, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta1.data(), numberStages);
     }
     propagateStateWithCachedNoise(timeStep, dW);
 
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta2, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta2.data(), numberStages);
     }
     propagateStateWithCachedNoise(0, chi1);
 
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta3, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta3.data(), numberStages);
     }
     propagateStateWithCachedNoise(0, chi2);
 
     for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta4, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        applyDiffusionSum(k, coefficients.beta4.data(), numberStages);
     }
     propagateStateWithCachedNoise(0, chi3);
 

@@ -20,43 +20,39 @@
 
 void svStochasticIntegratorEulerHeun::integrate(double currentTime, double timeStep)
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
+    // Initialization must not consume a noise sample.
     if (timeStep == 0) return;
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
+    const size_t noiseCount = prepareStageBuffers(2, 2, 1, 0);
+    captureStates(0);
+    const GaussianNoiseSample sample = this->rvGenerator->generate(noiseCount, timeStep);
 
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
+    // Predictor at (t_n, x_n), with owned drift and diffusion snapshots.
+    evaluateStageDerivatives(currentTime, timeStep, 0);
+    evaluateStageDiffusions(currentTime, timeStep, 0);
+    restoreStates(0);
+    applyStageDerivatives(0);
+    for (size_t source = 0; source < noiseCount; ++source) applyStageDiffusion(source, 0);
+    propagateStateWithCachedNoise(timeStep, sample.dW);
 
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-    const Eigen::VectorXd& dW = sample.dW;
-
-    // --- Predictor at (t_n, x_n): f1, g1 ---
-    ExtendedStateVector f1 = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> g1 =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-
-    // xBar = x_n + h * f1 + sum_k g1_k * dW_k
-    currentState.setStates(dynPtrs);
-    f1.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        g1.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+    // Corrector at (t_{n+1}, xBar).
+    evaluateStageDerivatives(currentTime + timeStep, timeStep, 1);
+    evaluateStageDiffusions(currentTime + timeStep, timeStep, 1);
+    restoreStates(0);
+    // Preserve (first + second) * 0.5 rather than distributing the multiplication.
+    for (size_t index = 0; index < this->derivativeStages[0].size(); ++index) {
+        this->derivativeStages[0][index] += this->derivativeStages[1][index];
+        this->derivativeStages[0][index] *= 0.5;
     }
-    propagateStateWithCachedNoise(timeStep, dW);
-
-    // --- Corrector evaluations at (t_{n+1}, xBar): f2, g2 ---
-    ExtendedStateVector f2 = computeDerivatives(currentTime + timeStep, timeStep);
-    std::vector<ExtendedStateVector> g2 =
-        computeDiffusions(currentTime + timeStep, timeStep, stateIdToNoiseIndexMaps);
-
-    // x_{n+1} = x_n + (h/2)(f1+f2) + sum_k (dW_k/2)(g1_k+g2_k)
-    currentState.setStates(dynPtrs);
-    ((f1 += f2) * 0.5).setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        ((g1.at(k) += g2.at(k)) * 0.5).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+    applyStageDerivatives(0);
+    for (size_t source = 0; source < noiseCount; ++source) {
+        auto& first = this->diffusionStages[0][source];
+        const auto& second = this->diffusionStages[1][source];
+        for (size_t index = 0; index < first.size(); ++index) {
+            first[index] += second[index];
+            first[index] *= 0.5;
+        }
+        applyStageDiffusion(source, 0);
     }
-    propagateStateWithCachedNoise(timeStep, dW);
-
-    // The dynPtrs now hold x_{n+1}.
+    propagateStateWithCachedNoise(timeStep, sample.dW);
 }

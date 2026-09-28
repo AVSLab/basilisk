@@ -85,6 +85,7 @@ void StochasticRKIntegratorBase::rebuildNoiseRouting()
     this->stateNoiseRouting = std::move(routing);
     this->objectNoiseLayouts = std::move(layouts);
     this->noiseIndexMapsCached = true;
+    this->stageBuffersValid = false;
 }
 
 void StochasticRKIntegratorBase::propagateStateWithCachedNoise(
@@ -143,4 +144,144 @@ std::vector<ExtendedStateVector> StochasticRKIntegratorBase::computeDiffusions(
         dynPtr->equationsOfMotionDiffusion(time, timeStep);
     }
     return ExtendedStateVector::fromStateDiffusions(this->dynPtrs, stateIdToNoiseIndexMaps);
+}
+
+size_t StochasticRKIntegratorBase::prepareStageBuffers(
+    size_t derivativeCount, size_t diffusionCount, size_t snapshotCount, size_t noiseVectorCount)
+{
+    const auto& maps = this->noiseIndexMaps();
+    if (!this->stageBuffersValid || this->derivativeStages.size() != derivativeCount ||
+        this->diffusionStages.size() != diffusionCount || this->stateSnapshots.size() != snapshotCount ||
+        this->noiseBuffers.size() != noiseVectorCount) {
+        // Keep the validity flag false if allocation fails during preparation.
+        this->stageBuffersValid = false;
+        this->diffusionTargets.clear();
+        this->diffusionTargets.resize(maps.size());
+        for (size_t source = 0; source < maps.size(); ++source) {
+            auto& targets = this->diffusionTargets[source];
+            targets.reserve(maps[source].size());
+            for (const auto& [id, localIndex] : maps[source]) {
+                targets.push_back({this->dynPtrs.at(id.first)->dynManager.stateContainer.stateMap.at(id.second).get(),
+                                   localIndex});
+            }
+        }
+        const size_t stateCount = this->stateNoiseRouting.size();
+        this->stateSnapshots.resize(snapshotCount);
+        for (auto& snapshot : this->stateSnapshots) snapshot.resize(stateCount);
+        this->derivativeStages.resize(derivativeCount);
+        for (auto& stage : this->derivativeStages) stage.resize(stateCount);
+        this->derivativeSum.resize(stateCount);
+        this->derivativeTerm.resize(stateCount);
+        this->diffusionStages.resize(diffusionCount);
+        for (auto& stage : this->diffusionStages) {
+            stage.resize(maps.size());
+            for (size_t source = 0; source < maps.size(); ++source) stage[source].resize(maps[source].size());
+        }
+        this->diffusionSum.resize(maps.size());
+        this->diffusionTerm.resize(maps.size());
+        for (size_t source = 0; source < maps.size(); ++source) {
+            this->diffusionSum[source].resize(maps[source].size());
+            this->diffusionTerm[source].resize(maps[source].size());
+        }
+        this->noiseBuffers.resize(noiseVectorCount);
+        for (auto& buffer : this->noiseBuffers) buffer.resize(static_cast<Eigen::Index>(maps.size()));
+        this->stageBuffersValid = true;
+    }
+    return maps.size();
+}
+
+void StochasticRKIntegratorBase::captureStates(size_t snapshot)
+{
+    auto& buffer = this->stateSnapshots.at(snapshot);
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index)
+        buffer[index] = this->stateNoiseRouting[index].state->getStateReference();
+}
+
+void StochasticRKIntegratorBase::restoreStates(size_t snapshot)
+{
+    const auto& buffer = this->stateSnapshots.at(snapshot);
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index)
+        this->stateNoiseRouting[index].state->setState(buffer[index]);
+}
+
+void StochasticRKIntegratorBase::evaluateStageDerivatives(double time, double timeStep, size_t stage)
+{
+    for (auto* object : this->dynPtrs) object->equationsOfMotion(time, timeStep);
+    auto& buffer = this->derivativeStages.at(stage);
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index)
+        buffer[index] = this->stateNoiseRouting[index].state->getStateDerivReference();
+}
+
+void StochasticRKIntegratorBase::captureStageDiffusion(size_t source, size_t stage)
+{
+    const auto& targets = this->diffusionTargets.at(source);
+    auto& buffer = this->diffusionStages.at(stage).at(source);
+    for (size_t index = 0; index < targets.size(); ++index)
+        buffer[index] = targets[index].state->getStateDiffusionReference(targets[index].localIndex);
+}
+
+void StochasticRKIntegratorBase::evaluateStageDiffusions(double time, double timeStep, size_t stage)
+{
+    for (auto* object : this->dynPtrs) object->equationsOfMotionDiffusion(time, timeStep);
+    for (size_t source = 0; source < this->diffusionTargets.size(); ++source)
+        this->captureStageDiffusion(source, stage);
+}
+
+void StochasticRKIntegratorBase::evaluateStageDiffusion(double time, double timeStep, size_t source, size_t stage)
+{
+    for (auto* object : this->dynPtrs) object->equationsOfMotionDiffusion(time, timeStep);
+    this->captureStageDiffusion(source, stage);
+}
+
+void StochasticRKIntegratorBase::applyStageDerivatives(size_t stage)
+{
+    const auto& buffer = this->derivativeStages.at(stage);
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index)
+        this->stateNoiseRouting[index].state->setDerivative(buffer[index]);
+}
+
+void StochasticRKIntegratorBase::applyStageDiffusion(size_t source, size_t stage)
+{
+    const auto& buffer = this->diffusionStages.at(stage).at(source);
+    const auto& targets = this->diffusionTargets.at(source);
+    for (size_t index = 0; index < targets.size(); ++index)
+        targets[index].state->setDiffusion(buffer[index], targets[index].localIndex);
+}
+
+void StochasticRKIntegratorBase::applyDerivativeSum(const double* weights, size_t length)
+{
+    if (length == 0 || length > this->derivativeStages.size())
+        throw std::invalid_argument("Derivative sum requires at least one prepared stage");
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index) {
+        auto& sum = this->derivativeSum[index];
+        auto& term = this->derivativeTerm[index];
+        sum = this->derivativeStages[0][index] * weights[0];
+        for (size_t stage = 1; stage < length; ++stage) {
+            if (weights[stage] == 0.0) continue;
+            // Retain the original separately evaluated product before addition.
+            term = this->derivativeStages[stage][index] * weights[stage];
+            sum += term;
+        }
+    }
+    for (size_t index = 0; index < this->stateNoiseRouting.size(); ++index)
+        this->stateNoiseRouting[index].state->setDerivative(this->derivativeSum[index]);
+}
+
+void StochasticRKIntegratorBase::applyDiffusionSum(size_t source, const double* weights, size_t length)
+{
+    if (length == 0 || length > this->diffusionStages.size())
+        throw std::invalid_argument("Diffusion sum requires at least one prepared stage");
+    const auto& targets = this->diffusionTargets.at(source);
+    for (size_t index = 0; index < targets.size(); ++index) {
+        auto& sum = this->diffusionSum[source][index];
+        auto& term = this->diffusionTerm[source][index];
+        sum = this->diffusionStages[0][source][index] * weights[0];
+        for (size_t stage = 1; stage < length; ++stage) {
+            if (weights[stage] == 0.0) continue;
+            term = this->diffusionStages[stage][source][index] * weights[stage];
+            sum += term;
+        }
+    }
+    for (size_t index = 0; index < targets.size(); ++index)
+        targets[index].state->setDiffusion(this->diffusionSum[source][index], targets[index].localIndex);
 }

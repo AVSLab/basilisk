@@ -19,6 +19,7 @@ import numpy as np
 import pytest
 
 from Basilisk import hasBuildFeature
+from Basilisk.architecture import sysModel
 from Basilisk.simulation import svIntegrators
 from Basilisk.utilities import SimulationBaseClass, macros
 
@@ -30,12 +31,17 @@ if mujocoEnabled:
     from Basilisk.simulation import mujoco
 
 
+@pytest.mark.parametrize("method", [
+    "Mayurama", "EulerHeun", "RKMil", "SRIW1", "SOSRI", "SRA1", "SOSRA"
+])
 @pytest.mark.parametrize("highOrder", [False, True])
-def test_eulerNoiseQuaternionPropagation(highOrder):
+def test_noiseQuaternionPropagation(highOrder, method):
     """Apply two body-axis noise rotations in source order in both attitude modes.
 
     The position state has seven components, while each diffusion has six.
-    Compare two Euler steps against independent ordered quaternion products.
+    For constant diffusion and zero drift, compare two steps against independent
+    ordered quaternion products. This checks propagation plumbing, not the
+    convergence order of these methods on a manifold.
     """
     # Sphere radius [m], mass [kg], and zero gravitational acceleration [m/s^2].
     xml = """<mujoco><option gravity="0 0 0"/><worldbody>
@@ -48,17 +54,26 @@ def test_eulerNoiseQuaternionPropagation(highOrder):
     scene = mujoco.MJScene(xml)
     scene.highOrderAttitudeIntegration = highOrder
     simulation.AddModelToTask("task", scene)
-    integrator = svIntegrators.svStochasticIntegratorMayurama(scene)
+    angularDiffusion = [0.4, 0.7]  # [rad/sqrt(s)], body x and y axes
+
+    class FixedDiffusion(sysModel.SysModel):
+        """Republish the physical diffusion after each stage changes live storage."""
+
+        def UpdateState(self, currentSimNanos):
+            """Restore both constant diffusion columns for the current evaluation."""
+            for source, amplitude in enumerate(angularDiffusion):
+                diffusion = np.zeros((6, 1))
+                diffusion[3 + source, 0] = amplitude
+                position.setDiffusion(diffusion.tolist(), source)
+
+    writer = FixedDiffusion()
+    scene.AddModelToDiffusionDynamicsTask(writer)
+    integrator = getattr(svIntegrators, "svStochasticIntegrator" + method)(scene)
     scene.setIntegrator(integrator)
     simulation.InitializeSimulation()
 
     position = scene.dynManager.getStateObject("mujocoQpos")
     position.setNumNoiseSources(2)
-    angularDiffusion = [0.4, 0.7]  # [rad/sqrt(s)], body x and y axes
-    for source, amplitude in enumerate(angularDiffusion):
-        diffusion = np.zeros((6, 1))
-        diffusion[3 + source, 0] = amplitude
-        position.setDiffusion(diffusion.tolist(), source)
 
     noise = svIntegrators.PrescribedGaussianNoiseGenerator()
     increments = [[0.3, -0.2], [-0.15, 0.4]]  # [sqrt(s)]
