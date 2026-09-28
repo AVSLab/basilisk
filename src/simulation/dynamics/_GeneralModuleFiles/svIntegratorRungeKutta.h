@@ -132,7 +132,7 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
     const std::unique_ptr<RKCoefficients<numberStages>> coefficients;
 
   private:
-    // --- Allocation-free execution path used by integrate() ---
+    // --- Cached execution path used by integrate() ---
     //
     // The ExtendedStateVector-based helpers above (computeKCoefficients,
     // propagateStateWithKVectors, computeDerivatives) are kept as-is because
@@ -142,7 +142,9 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
     // exact same order, so the per-stage std::unordered_map (keyed on
     // (dynObjIndex, stateName)) and its associated heap-allocated
     // Eigen::MatrixXd values can be replaced with a flat vector of StateData
-    // pointers and pre-sized scratch buffers that are reused every stage.
+    // pointers and scratch buffers that are reused every stage once sized.
+    // Buffers allocate on first use and may allocate again after changes to
+    // the registered states or the dimensions of state and derivative matrices.
 
     /** True once fastStateList/fastY0/fastK/fastAcc have been built for the
      * current set of registered states. */
@@ -161,30 +163,48 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
      * state derivative of state i computed at RK stage `stage`. */
     std::array<std::vector<Eigen::MatrixXd>, numberStages> fastK;
 
-    /** Scratch buffer for the weighted sum of fastK values, indexed like
-     * fastStateList. Reused (not reallocated) across every call. */
+    /**
+     * @brief Scratch buffers for the weighted sum of fastK values, indexed like fastStateList.
+     * @note Storage is allocated on first use and reused while the layout of registered
+     * states and derivative dimensions remain unchanged. Later changes may allocate again.
+     */
     std::vector<Eigen::MatrixXd> fastAcc;
 
-    /** Rebuilds fastStateList and (re)sizes fastY0/fastK/fastAcc unless the
-     * cached pointers still match, in order, every StateData* currently
-     * registered across dynPtrs. The check walks the live state maps once,
-     * with no allocations. */
+    /**
+     * @brief Refresh cached state pointers and scratch buffers when the layout of registered states changes.
+     *
+     * The validation walk compares every StateData pointer in order and does not
+     * allocate. Initial setup or a change to that ordered list resets the matrix
+     * buffers and can allocate vector storage. Matrix dimensions are established by
+     * later assignments during integration.
+     *
+     * @note State or derivative dimension changes can require new matrix allocations
+     * even when the cached pointers remain valid.
+     */
     void rebuildFastPathIfNeeded();
 
     /**
-     * Allocation-free equivalent of propagateStateWithKVectors(): for every
-     * state i, accumulates
+     * @brief Combine cached Runge-Kutta derivatives and propagate the states.
      *
+     * For every state i, accumulates
+     * @code
      *     fastAcc[i] = coefficients[0]*fastK[0][i] + ... + coefficients[maxStage-1]*fastK[maxStage-1][i]
+     * @endcode
      *
-     * then sets every state to fastY0[i]. If any coefficient was nonzero, also
+     * Then sets every state to fastY0[i]. If any coefficient was nonzero, also
      * sets the derivative to the accumulated value and propagates every
      * dynPtr's state vector by timeStep (mirroring
      * propagateStateWithKVectors's setStates/setDerivatives/propagateStateVector
      * sequence); otherwise the state is left at fastY0[i], matching
      * propagateStateWithKVectors's "derivative.empty()" early return.
      *
-     * Returns whether any coefficient was nonzero.
+     * @param timeStep Integration interval [s].
+     * @param coefficients Weights applied to the cached stage derivatives.
+     * @param maxStage Number of leading stage weights to combine.
+     * @return Whether any of the included coefficients was nonzero.
+     * @note Accumulator matrices allocate on the first nonzero combination and may
+     * allocate again after changes to the registered states or derivative dimensions. StateData derivative
+     * setters and propagation methods can allocate independently of these buffers.
      */
     bool fastPropagateStateWithKVectors(double timeStep,
                                         const std::array<double, numberStages>& coefficients,

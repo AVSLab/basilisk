@@ -11,6 +11,11 @@ Version |release|
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
 
+- GitHub issue 1586: The Release build configuration appended an explicit
+  ``-O2`` flag, overriding ``-O3`` in default GCC and Clang builds. The override
+  has been removed so Release builds use CMake's compiler-specific default
+  optimization, including ``/O2`` for MSVC. This is fixed in the current version.
+
 - GitHub issue 1581: The C ``debyeLength()`` utility could read beyond its lookup
   arrays for altitudes from 2,000 km through 30,000 km, producing undefined
   results such as NaN. The interval search now includes the final table endpoint
