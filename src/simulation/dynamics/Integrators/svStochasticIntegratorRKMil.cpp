@@ -18,79 +18,145 @@
  */
 #include "svStochasticIntegratorRKMil.h"
 
+#include "../_GeneralModuleFiles/stateData.h"
+
+#include <algorithm>
 #include <cmath>
 
-void svStochasticIntegratorRKMil::integrate(double currentTime, double timeStep)
+/** @brief Method workspace allocated after state binding. */
+struct svStochasticIntegratorRKMil::FlatStorage
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
-    if (timeStep == 0) return;
+    Eigen::VectorXd drift; ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd zeroDrift; ///< Zero drift for candidates perturbed only by diffusion.
+    Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
+    Eigen::VectorXd ggPrime; ///< Packed diffusion directional-derivative approximation for the Milstein correction.
+    Eigen::VectorXd kState; ///< Diffusion support state used to estimate the Milstein correction.
+    Eigen::VectorXd intermediateState; ///< Scratch candidate for composing the final update.
+    Eigen::VectorXd zeroPseudoSteps; ///< Zero noise weights for a drift-only candidate.
+    Eigen::VectorXd supportPseudoSteps; ///< Noise weights used to construct diffusion support states.
+    Eigen::VectorXd milsteinPseudoSteps; ///< Per-source weights for the Milstein correction.
+};
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
+svStochasticIntegratorRKMil::svStochasticIntegratorRKMil(DynamicObject* dynIn)
+  : StochasticRKIntegratorBase(dynIn)
+{
+}
 
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+svStochasticIntegratorRKMil::~svStochasticIntegratorRKMil() noexcept = default;
 
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-    const Eigen::VectorXd& dW = sample.dW;
+void
+svStochasticIntegratorRKMil::bindFlatStorage()
+{
+    auto storage = std::make_unique<FlatStorage>();
+    const auto stateSize = this->stochasticAcceptedState().size();
+    const auto derivativeSize = this->stochasticPackedDerivatives().size();
+    const auto diffusionSize = this->stochasticPackedDiffusions().size();
+    const auto noiseSize = static_cast<Eigen::Index>(this->globalNoiseCount());
+    storage->drift.resize(derivativeSize);
+    storage->zeroDrift.resize(derivativeSize);
+    storage->firstDiffusions.resize(diffusionSize);
+    storage->ggPrime.resize(diffusionSize);
+    storage->kState.resize(stateSize);
+    storage->intermediateState.resize(stateSize);
+    storage->zeroPseudoSteps.resize(noiseSize);
+    storage->zeroPseudoSteps.setZero();
+    storage->supportPseudoSteps.resize(noiseSize);
+    storage->milsteinPseudoSteps.resize(noiseSize);
+    this->flatStorage = std::move(storage);
+}
+
+void
+svStochasticIntegratorRKMil::applyCandidate(const Eigen::VectorXd& base,
+                                            const Eigen::VectorXd& drift,
+                                            double timeStep,
+                                            const Eigen::VectorXd& diffusions,
+                                            const Eigen::VectorXd& pseudoSteps,
+                                            Eigen::VectorXd& output)
+{
+    const auto& localNoiseSlots = this->stochasticLocalNoiseSlots();
+    const auto& packedOffsets = this->stochasticLocalNoisePackedOffsets();
+    for (const auto& descriptor : this->stochasticStateDescriptors()) {
+        auto state = descriptor.stateView(output);
+        // Keep the common Euclidean update inline for small state records.
+        if (descriptor.usesEuclideanUpdate()) {
+            state = descriptor.stateView(base) + descriptor.derivativeView(drift) * timeStep;
+            for (size_t localNoiseIndex = 0; localNoiseIndex < descriptor.noiseCount; ++localNoiseIndex) {
+                const size_t localIndex = descriptor.localNoiseOffset + localNoiseIndex;
+                const size_t globalSlot = localNoiseSlots.at(localIndex);
+                const size_t offset = packedOffsets.at(localIndex);
+                state +=
+                  descriptor.diffusionView(diffusions, offset) * pseudoSteps(static_cast<Eigen::Index>(globalSlot));
+            }
+        } else {
+            this->buildStochasticDriftCandidate(
+              descriptor, descriptor.stateView(base), descriptor.derivativeView(drift), timeStep, state);
+            this->applyStochasticNoiseInLocalOrder(
+              descriptor, state, diffusions, pseudoSteps, 0, this->globalNoiseCount());
+        }
+        std::copy_n(state.data(), descriptor.stateCount, descriptor.state->stateView().data());
+    }
+}
+
+void
+svStochasticIntegratorRKMil::integrateImpl(double currentTime, double timeStep)
+{
+    if (timeStep == 0.0) {
+        return;
+    }
 
     const double h = timeStep;
     const double sqh = std::sqrt(h);
 
-    // --- Evaluate f and g at x_n ---
-    ExtendedStateVector f = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> L =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
+    this->gatherStochasticStates();
+    this->generateWienerNoise(timeStep);
+    this->flatStorage->supportPseudoSteps.setConstant(sqh);
 
-    // --- K = x_n + h * f (drift-only Euler predictor) ---
-    currentState.setStates(dynPtrs);
-    f.setDerivatives(dynPtrs);
-    // Zero pseudo-time steps: K carries no noise contribution.
-    propagateState(timeStep, Eigen::VectorXd::Zero(noiseCount), stateIdToNoiseIndexMaps);
-    const ExtendedStateVector K = ExtendedStateVector::fromStates(dynPtrs);
+    try {
+        this->evaluateDerivatives(currentTime, timeStep);
+        this->gatherStochasticDerivatives(this->flatStorage->drift);
+        this->evaluateDiffusions(currentTime, timeStep);
+        this->gatherStochasticDiffusions(this->flatStorage->firstDiffusions);
 
-    // --- uTilde = K + sqrt(h) * sum_k L_k  (support point for the finite difference) ---
-    // (drift is not re-applied here; timeStep passed to propagateState multiplies the
-    // derivative, so we set the derivative to zero and drive purely with the noise term.)
-    K.setStates(dynPtrs);
-    ExtendedStateVector zeroDeriv = f * 0.0;
-    zeroDeriv.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        this->applyCandidate(this->stochasticAcceptedState(),
+                             this->flatStorage->drift,
+                             h,
+                             this->flatStorage->firstDiffusions,
+                             this->flatStorage->zeroPseudoSteps,
+                             this->flatStorage->kState);
+
+        // Retain multiplication for nonfinite and signed-zero behavior.
+        this->flatStorage->zeroDrift = this->flatStorage->drift * 0.0;
+        this->applyCandidate(this->flatStorage->kState,
+                             this->flatStorage->zeroDrift,
+                             0.0,
+                             this->flatStorage->firstDiffusions,
+                             this->flatStorage->supportPseudoSteps,
+                             this->flatStorage->intermediateState);
+
+        this->evaluateDiffusions(currentTime, timeStep);
+        this->gatherStochasticDiffusions(this->flatStorage->ggPrime);
+        const double inverseSqh = 1.0 / sqh;
+        this->flatStorage->ggPrime = (this->flatStorage->ggPrime - this->flatStorage->firstDiffusions) * inverseSqh;
+
+        for (Eigen::Index index = 0; index < this->flatDW().size(); ++index) {
+            const double increment = this->flatDW()(index);
+            this->flatStorage->milsteinPseudoSteps(index) = (increment * increment - h) / 2.0;
+        }
+
+        this->applyCandidate(this->flatStorage->kState,
+                             this->flatStorage->zeroDrift,
+                             0.0,
+                             this->flatStorage->firstDiffusions,
+                             this->flatDW(),
+                             this->flatStorage->intermediateState);
+        this->applyCandidate(this->flatStorage->intermediateState,
+                             this->flatStorage->zeroDrift,
+                             0.0,
+                             this->flatStorage->ggPrime,
+                             this->flatStorage->milsteinPseudoSteps,
+                             this->flatStorage->kState);
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
     }
-    propagateState(0.0, sqh * Eigen::VectorXd::Ones(noiseCount), stateIdToNoiseIndexMaps);
-
-    // --- gTilde_k = g_k(uTilde);  ggprime_k = (gTilde_k - L_k) / sqrt(h) ---
-    std::vector<ExtendedStateVector> gTilde =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-    std::vector<ExtendedStateVector> ggprime;
-    ggprime.reserve(m);
-    for (size_t k = 0; k < m; k++) {
-        ggprime.push_back((gTilde.at(k) - L.at(k)) * (1.0 / sqh));
-    }
-
-    // --- x_{n+1} = K + sum_k L_k dW_k + sum_k ggprime_k (dW_k^2 - h)/2 ---
-    // Milstein pseudo-time step for the ggprime term.
-    Eigen::VectorXd milStep(noiseCount);
-    for (size_t k = 0; k < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        milStep(eigenK) = (dW(eigenK) * dW(eigenK) - h) / 2.0;
-    }
-
-    // Start from K, add the L*dW term (drift set to zero so it is not double-counted).
-    K.setStates(dynPtrs);
-    zeroDeriv.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        L.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-    }
-    propagateState(0.0, dW, stateIdToNoiseIndexMaps);
-
-    // Add the Milstein correction term.
-    for (size_t k = 0; k < m; k++) {
-        ggprime.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-    }
-    propagateState(0.0, milStep, stateIdToNoiseIndexMaps);
-
-    // The dynPtrs now hold x_{n+1}.
 }

@@ -21,9 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define svStochasticIntegratorMayurama_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "../_GeneralModuleFiles/extendedStateVector.h"
 
 /** The 1-weak 1-strong order Euler-Mayurama stochastic integrator.
  *
@@ -40,9 +38,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * \f]
  *
  * where the Wiener increments \f$\Delta W_i \sim N(0,h)\f$ are supplied by the shared
- * pluggable noise generator (see StochasticRKIntegratorBase). Euler-Mayurama uses only
- * the Wiener increment ``dW``; the second increment ``dZ`` drawn for the higher-order
- * methods is ignored.
+ * pluggable noise generator (see StochasticRKIntegratorBase). Euler-Mayurama
+ * requests only the Wiener increment ``dW``.
  *
  * @warning Stochastic integration is in beta.
  */
@@ -52,8 +49,9 @@ public:
     /** Uses same constructor as StochasticRKIntegratorBase */
     using StochasticRKIntegratorBase::StochasticRKIntegratorBase;
 
-    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+  protected:
+    /** Performs one flat Euler-Maruyama integration step. */
+    void integrateImpl(double currentTime, double timeStep) override;
 };
 
 #endif // svStochasticIntegratorMayurama_h

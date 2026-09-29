@@ -18,26 +18,30 @@
  */
 #include "svStochasticIntegratorMayurama.h"
 
-void svStochasticIntegratorMayurama::integrate(double currentTime, double timeStep)
+void
+svStochasticIntegratorMayurama::integrateImpl(double currentTime, double timeStep)
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
-    if (timeStep == 0) return;
-
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
-
-    // Euler-Mayurama uses only the Wiener increment dW as the per-source pseudo-step.
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-
-    // f and g are evaluated at the current state x_n (the dynPtrs already hold it), then
-    // x_{n+1} = x_n + f*h + sum_k g_k * dW_k.
-    computeDerivatives(currentTime, timeStep).setDerivatives(dynPtrs);
-    std::vector<ExtendedStateVector> g = computeDiffusions(currentTime, timeStep, maps);
-    for (size_t k = 0; k < m; k++) {
-        g.at(k).setDiffusions(dynPtrs, maps.at(k));
+    // Initialization binds topology and scratch but consumes no random sample.
+    if (timeStep == 0.0) {
+        return;
     }
-    propagateState(timeStep, sample.dW, maps);
 
-    // The dynPtrs now hold x_{n+1}.
+    this->gatherStochasticStates();
+    this->generateWienerNoise(timeStep);
+
+    try {
+        this->evaluateDerivatives(currentTime, timeStep);
+        this->gatherStochasticDerivatives();
+
+        this->evaluateDiffusions(currentTime, timeStep);
+        if (this->stochasticUpdatesAreAllEuclidean()) {
+            this->advanceEuclideanEulerMaruyama(timeStep, this->flatDW());
+        } else {
+            this->gatherStochasticDiffusions();
+            this->buildEulerMaruyamaCandidate(timeStep, this->flatDW());
+        }
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
+    }
 }

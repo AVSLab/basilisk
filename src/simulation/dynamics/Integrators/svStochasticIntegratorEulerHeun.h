@@ -21,9 +21,7 @@
 #define svStochasticIntegratorEulerHeun_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "../_GeneralModuleFiles/extendedStateVector.h"
 
 #include <memory>
 
@@ -53,10 +51,25 @@
  */
 class svStochasticIntegratorEulerHeun : public StochasticRKIntegratorBase {
 public:
-    using StochasticRKIntegratorBase::StochasticRKIntegratorBase;
+  /** @brief Construct the numerical method for the supplied dynamics object.
+   * @param dynIn Dynamics object that will own this integrator.
+   */
+  explicit svStochasticIntegratorEulerHeun(DynamicObject* dynIn);
 
-    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+  ~svStochasticIntegratorEulerHeun() noexcept override;
+
+protected:
+  /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
+  void integrateImpl(double currentTime, double timeStep) override;
+
+private:
+  struct FlatStorage;
+
+  void bindStochasticMethodStorage() override { this->bindFlatStorage(); }
+
+  void bindFlatStorage();
+
+  std::unique_ptr<FlatStorage> flatStorage;
 };
 
 #endif /* svStochasticIntegratorEulerHeun_h */
