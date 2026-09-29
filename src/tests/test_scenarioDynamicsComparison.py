@@ -866,9 +866,9 @@ def test_variable_mass_native_pendulum_damping_conserves_momentum(axis):
     simulation.InitializeSimulation()
 
     ball = scene.getBody("child").getBallJoint()
-    qvelState = scene.dynManager.getStateObject("mujocoQvel")
+    qvelState = ball.getVelocityState()
     qvel = np.asarray(qvelState.getState()).reshape(-1)
-    qvel[ball.getQvelAdr() + axis] = initialRate  # [rad/s]
+    qvel[axis] = initialRate  # [rad/s]
     qvelState.setState(qvel.reshape(-1, 1))
 
     simulation.ConfigureStopTime(macros.sec2nano(finalTime))
@@ -960,9 +960,9 @@ def test_variable_mass_native_damping_in_rotated_anisotropic_system():
     simulation.InitializeSimulation()
 
     ball = scene.getBody("child").getBallJoint()
-    qvelState = scene.dynManager.getStateObject("mujocoQvel")
+    qvelState = ball.getVelocityState()
     qvel = np.asarray(qvelState.getState()).reshape(-1)
-    qvel[ball.getQvelAdr():ball.getQvelAdr() + 3] = initialRelativeRate
+    qvel[:] = initialRelativeRate
     qvelState.setState(qvel.reshape(-1, 1))
 
     simulation.ConfigureStopTime(macros.sec2nano(finalTime))

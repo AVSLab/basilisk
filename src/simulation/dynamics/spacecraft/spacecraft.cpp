@@ -43,7 +43,7 @@ Spacecraft::Spacecraft()
     this->dvAccum_CN_N.setZero();
 
     // - Set integrator as RK4 by default
-    this->integrator = new svIntegratorRK4(this);
+    this->setIntegrator(new svIntegratorRK4(this));
 }
 
 /*! This is the destructor, nothing to report here */
@@ -65,27 +65,32 @@ void Spacecraft::Reset(uint64_t CurrentSimNanos)
 
     this->gravField.Reset(CurrentSimNanos);
     // - Call method for initializing the dynamics of spacecraft
-    this->initializeDynamics();
+    this->registerDynamics();
 
-    // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be defined relative to a planet
-    this->gravField.updateInertialPosAndVel(this->hubR_N->getStateReference(), this->hubV_N->getStateReference());
+    // compute initial spacecraft states relative to inertial frame, taking into account initial sc states might be
+    // defined relative to a planet
+    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
     this->writeOutputStateMessages(CurrentSimNanos);
     // - Loop over stateEffectors to call writeOutputStateMessages and write initial state output messages
     std::vector<StateEffector*>::iterator it;
-    for(it = this->states.begin(); it != this->states.end(); it++)
-    {
+    for (it = this->states.begin(); it != this->states.end(); it++) {
         // - Call writeOutputStateMessages for stateEffectors
         (*it)->writeOutputStateMessages(CurrentSimNanos);
     }
 
     this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
+    for (StateEffector* stateEffector : this->states) {
+        stateEffector->freezeTopology();
+    }
+
 }
 
 
 /*! This method attaches a stateEffector to the dynamicObject */
 void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 {
+    this->requireMutableTopology("Spacecraft::addStateEffector");
     this->assignStateParamNames<StateEffector *>(newStateEffector);
 
     this->states.push_back(newStateEffector);
@@ -111,7 +116,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     if (this->pointMassTranslationalOnly && this->hubSigma == nullptr) {
         sigmaLocal_BN = Eigen::MRPd(this->hub.sigma_BNInit);
     } else {
-        sigmaLocal_BN = Eigen::MRPd(this->hubSigma->getStateReference().data());
+        sigmaLocal_BN = Eigen::MRPd(this->hubSigma->stateView().data());
     }
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB*(*this->c_B);
@@ -122,8 +127,8 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
         eigenVector3d2CArray(this->hub.sigma_BNInit, stateOut.sigma_BN);
         eigenVector3d2CArray(this->hub.omega_BN_BInit, stateOut.omega_BN_B);
     } else {
-        eigenMatrixXd2CArray(this->hubSigma->getStateReference(), stateOut.sigma_BN);
-        eigenMatrixXd2CArray(this->hubOmega_BN_B->getStateReference(), stateOut.omega_BN_B);
+        eigenMatrixXd2CArray(this->hubSigma->stateView(), stateOut.sigma_BN);
+        eigenMatrixXd2CArray(this->hubOmega_BN_B->stateView(), stateOut.omega_BN_B);
     }
     eigenMatrixXd2CArray(this->dvAccum_CN_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
@@ -138,7 +143,7 @@ void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
     massStateOut = this->scMassOutMsg.zeroMsgPayload;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
+    eigenMatrixXd2CArray(*this->ISCPntB_B, (double*)massStateOut.ISC_PntB_B);
     this->scMassOutMsg.write(&massStateOut, this->moduleID, clockTime);
 }
 
@@ -188,8 +193,8 @@ void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
     // If set, read in and prescribe attitude reference motion
     readOptionalRefMsg();
 
-    Eigen::Vector3d rLocal_BN_N = this->hubR_N->getStateReference();
-    Eigen::Vector3d vLocal_BN_N = this->hubV_N->getStateReference();
+    Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
+    Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
     this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
 
     // - Write the state of the vehicle into messages
@@ -236,7 +241,8 @@ void Spacecraft::linkInStates(DynParamManager& statesIn)
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
  stateEffectors, and the hub, initialize gravity, and initialize the sim with the initial conditions specified in python
  for the simulation */
-void Spacecraft::initializeDynamics()
+void
+Spacecraft::registerDynamics()
 {
     // - Spacecraft initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
@@ -285,6 +291,8 @@ void Spacecraft::initializeDynamics()
         (*stateIt)->registerStates(this->dynManager);
     }
 
+    this->dynManager.finalizeStates();
+
     // - Link in states for the Spacecraft, gravity and the hub
     this->linkInStates(this->dynManager);
     this->gravField.linkInStates(this->dynManager);
@@ -301,13 +309,13 @@ void Spacecraft::initializeDynamics()
     if (!this->pointMassTranslationalOnly) {
         // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
         // - Pulling the state from the hub at this time gives us r_CN_N
-        Eigen::Vector3d rInit_BN_N = this->hubR_N->getStateReference();
-        Eigen::MRPd sigma_BN(this->hubSigma->getStateReference().data());
+        Eigen::Vector3d rInit_BN_N = this->hubR_N->stateView();
+        Eigen::MRPd sigma_BN(this->hubSigma->stateView().data());
         Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
         // - Substract off the center mass to leave r_BN_N
         rInit_BN_N -= dcm_NB*(*this->c_B);
         // - Subtract off cDot_B to get v_BN_N
-        Eigen::Vector3d vInit_BN_N = this->hubV_N->getStateReference();
+        Eigen::Vector3d vInit_BN_N = this->hubV_N->stateView();
         vInit_BN_N -= dcm_NB*(*this->cDot_B);
         // - Finally set the translational states r_BN_N and v_BN_N with the corrections
         this->hubR_N->setState(rInit_BN_N);
@@ -393,7 +401,7 @@ void Spacecraft::updateSCMassProps(double time)
     (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0)
                                              - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0);
     this->cPrimeEffectorDynamics_B /= (*this->m_SC)(0,0);
-    Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getStateReference();
+    Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->stateView();
     Eigen::Vector3d cLocal_B = (*this->c_B);
     (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
 }
@@ -417,8 +425,8 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     (*this->sysTime) << (double) integTimeNanos, integTimeSeconds;
 
     if (this->pointMassTranslationalOnly) {
-        Eigen::Vector3d rLocal_BN_N = this->hubR_N->getStateReference();
-        Eigen::Vector3d vLocal_BN_N = this->hubV_N->getStateReference();
+        Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
+        Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
 
         this->gravField.computeGravityField(rLocal_BN_N, vLocal_BN_N);
 
@@ -435,7 +443,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         Eigen::MRPd sigmaLocal_BN;
         sigmaLocal_BN = this->hub.sigma_BNInit;
         if (this->hubSigma != nullptr) {
-            sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getStateReference();
+            sigmaLocal_BN = (Eigen::Vector3d)this->hubSigma->stateView();
             this->hubSigma->setDerivative(Eigen::Vector3d::Zero());
         }
         if (this->hubOmega_BN_B != nullptr) {
@@ -451,8 +459,8 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     }
 
     if (this->useHubOnlyFastPath()) {
-        Eigen::Vector3d rLocal_BN_N = this->hubR_N->getStateReference();
-        Eigen::Vector3d vLocal_BN_N = this->hubV_N->getStateReference();
+        Eigen::Vector3d rLocal_BN_N = this->hubR_N->stateView();
+        Eigen::Vector3d vLocal_BN_N = this->hubV_N->stateView();
 
         this->gravField.computeGravityField(rLocal_BN_N, vLocal_BN_N);
 
@@ -490,21 +498,20 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->updateSCMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
-    Eigen::MRPd sigmaBNLoc(this->hubSigma->getStateReference().data());
+    Eigen::MRPd sigmaBNLoc(this->hubSigma->stateView().data());
     Eigen::Matrix3d dcm_NB;
     Eigen::Vector3d cLocal_N;
 
-    Eigen::Vector3d omegaState = this->hubOmega_BN_B->getStateReference();
+    Eigen::Vector3d omegaState = this->hubOmega_BN_B->stateView();
     dcm_NB = sigmaBNLoc.toRotationMatrix();
     cLocal_N = dcm_NB*(*this->c_B);
-    Eigen::Vector3d rLocal_CN_N = this->hubR_N->getStateReference() + dcm_NB*(*this->c_B);
-    Eigen::Vector3d vLocal_CN_N = this->hubV_N->getStateReference() + dcm_NB*(*this->cDot_B);
+    Eigen::Vector3d rLocal_CN_N = this->hubR_N->stateView() + dcm_NB * (*this->c_B);
+    Eigen::Vector3d vLocal_CN_N = this->hubV_N->stateView() + dcm_NB * (*this->cDot_B);
 
     this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - refresh so effectors publish inertial properties at the current substep
-    this->gravField.updateInertialPosAndVel(this->hubR_N->getStateReference(),
-                                            this->hubV_N->getStateReference());
+    this->gravField.updateInertialPosAndVel(this->hubR_N->stateView(), this->hubV_N->stateView());
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -586,13 +593,11 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    this->hub.computeDerivatives(integTimeSeconds,
-                                 this->hubV_N->getStateDerivReference(),
-                                 this->hubOmega_BN_B->getStateDerivReference(),
-                                 sigmaBNLoc);
+    this->hub.computeDerivatives(
+      integTimeSeconds, this->hubV_N->derivativeView(), this->hubOmega_BN_B->derivativeView(), sigmaBNLoc);
 
-    Eigen::Vector3d hubVDeriv = this->hubV_N->getStateDerivReference();
-    Eigen::Vector3d hubOmegaDeriv = this->hubOmega_BN_B->getStateDerivReference();
+    Eigen::Vector3d hubVDeriv = this->hubV_N->derivativeView();
+    Eigen::Vector3d hubOmegaDeriv = this->hubOmega_BN_B->derivativeView();
 
     // - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
@@ -616,14 +621,14 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos) {
     }
 
     // - Find v_CN_N before integration for accumulated DV
-    Eigen::Vector3d oldV_BN_N = this->hubV_N->getStateReference();  // - V_BN_N before integration
+    Eigen::Vector3d oldV_BN_N = this->hubV_N->stateView(); // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
-    this->oldOmega_BN_B = this->hubOmega_BN_B->getStateReference();
+    this->oldOmega_BN_B = this->hubOmega_BN_B->stateView();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
-    oldSigma_BN = Eigen::MRPd(this->hubSigma->getStateReference().data());
+    oldSigma_BN = Eigen::MRPd(this->hubSigma->stateView().data());
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
@@ -648,35 +653,33 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
     this->updateSCMassProps(integrateToThisTime);
 
     // - Find v_CN_N after the integration for accumulated DV
-    Eigen::Vector3d newV_BN_N = this->hubV_N->getStateReference(); // - V_BN_N after integration
+    Eigen::Vector3d newV_BN_N = this->hubV_N->stateView(); // - V_BN_N after integration
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
-    Eigen::MRPd newSigma_BN(this->hubSigma->getStateReference().data());    // - Sigma_BN after integration
+    Eigen::MRPd newSigma_BN(this->hubSigma->stateView().data()); // - Sigma_BN after integration
     // - Get center of mass, v_BN_N and dcm_NB
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
 
     // - Find accumulated DV of the center of mass in the body frame
-    this->dvAccum_CN_B += newDcm_NB.transpose()*(newV_CN_N -
-                                              this->BcGravVelocity->getStateReference());
+    this->dvAccum_CN_B += newDcm_NB.transpose() * (newV_CN_N - this->BcGravVelocity->stateView());
 
     // - Find the accumulated DV of the body frame in the body frame
-    this->dvAccum_BN_B += newDcm_NB.transpose()*(newV_BN_N -
-                                                 this->hubGravVelocity->getStateReference());
+    this->dvAccum_BN_B += newDcm_NB.transpose() * (newV_BN_N - this->hubGravVelocity->stateView());
 
     // - Find the accumulated DV of the center of mass in the inertial frame
-    this->dvAccum_CN_N += newV_CN_N - this->BcGravVelocity->getStateReference();
+    this->dvAccum_CN_N += newV_CN_N - this->BcGravVelocity->stateView();
 
     // - non-conservative acceleration of the body frame in the body frame
     if (fabs(this->timeStep) > 1e-10) {
-        this->nonConservativeAccelpntB_B = (newDcm_NB.transpose()*(newV_BN_N -
-                                                                   this->hubGravVelocity->getStateReference()))/this->timeStep;
+        this->nonConservativeAccelpntB_B =
+          (newDcm_NB.transpose() * (newV_BN_N - this->hubGravVelocity->stateView())) / this->timeStep;
     } else {
         this->nonConservativeAccelpntB_B = {0., 0., 0.};
     }
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
-    newOmega_BN_B = this->hubOmega_BN_B->getStateReference();
+    newOmega_BN_B = this->hubOmega_BN_B->stateView();
     if (fabs(this->timeStep) > 1e-10) {
         this->omegaDot_BN_B = (newOmega_BN_B - this->oldOmega_BN_B)/this->timeStep; //angular acceleration of B wrt N in the Body frame
     } else {
@@ -706,9 +709,9 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos) {
 void Spacecraft::computeEnergyMomentum(double time)
 {
     // - Grab values from state Manager
-    Eigen::Vector3d rLocal_BN_N = hubR_N->getStateReference();
-    Eigen::Vector3d rDotLocal_BN_N = hubV_N->getStateReference();
-    Eigen::MRPd sigmaLocal_BN(hubSigma->getStateReference().data());
+    Eigen::Vector3d rLocal_BN_N = hubR_N->stateView();
+    Eigen::Vector3d rDotLocal_BN_N = hubV_N->stateView();
+    Eigen::MRPd sigmaLocal_BN(hubSigma->stateView().data());
 
     // - Find DCM's
     Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
@@ -733,7 +736,8 @@ void Spacecraft::computeEnergyMomentum(double time)
     this->rotEnergyContr = 0.0;
 
     // - Get the hubs contribution
-    this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->getStateReference());
+    this->hub.updateEnergyMomContributions(
+      time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -746,7 +750,8 @@ void Spacecraft::computeEnergyMomentum(double time)
         this->rotEnergyContr = 0.0;
 
         // - Call energy and momentum calulations for stateEffectors
-        (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->getStateReference());
+        (*it)->updateEnergyMomContributions(
+          time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }
@@ -760,7 +765,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;
-    Eigen::Vector3d rLocal_CN_N = this->hubR_N->getStateReference() + dcmLocal_NB*(*this->c_B);
+    Eigen::Vector3d rLocal_CN_N = this->hubR_N->stateView() + dcmLocal_NB * (*this->c_B);
     gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr);
     this->totOrbEnergy += (*this->m_SC)(0,0)*this->orbPotentialEnergyContr;
 
