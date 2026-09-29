@@ -33,9 +33,16 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
+%default_bsk_exception(catch (const std::exception& error) {
+    SWIG_exception(SWIG_RuntimeError, error.what());
+});
+%pythonappend VSCMGStateEffector::getVSCMGAt %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
 %include "vscmgStateEffector.h"
 
 %include "architecture/msgPayloadDefC/VSCMGCmdMsgPayload.h"
@@ -49,8 +56,27 @@ struct VSCMGArrayTorqueMsg_C;
 %include "architecture/utilities/macroDefinitions.h"
 
 %include "std_vector.i"
+namespace std {
+    %template(VSCMGConfigVector) vector<VSCMGConfigMsgPayload>;
+}
 
 %pythoncode %{
+def _vscmg_data(self):
+    return GuardedConfigSequence(
+        self,
+        self.getVSCMGCount,
+        self.getVSCMGAt,
+        self.setVSCMGAt,
+        self.AddVSCMG,
+    )
+
+def _set_vscmg_data(self, values):
+    _vscmg_data(self).replace(values)
+
+VSCMGStateEffector.VSCMGData = property(
+    _vscmg_data,
+    _set_vscmg_data,
+)
 import sys
 protectAllClasses(sys.modules[__name__])
 %}

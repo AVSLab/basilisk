@@ -21,7 +21,9 @@
 #define STATE_EFFECTOR_H
 
 #include <cstdint>
+#include <stdexcept>
 #include <string>
+
 #include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
@@ -164,7 +166,19 @@ public:
     virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
 
-protected:
+    /** Commit dimension-defining collections after successful registration. */
+    virtual void freezeTopology() noexcept { this->topologyFrozen = true; }
+
+  protected:
+    /** Reject collection mutations after this effector has registered states. */
+    void requireMutableTopology(const char* operation) const
+    {
+        if (this->topologyFrozen) {
+            throw std::logic_error(std::string(operation) + " cannot change a state effector after state registration");
+        }
+    }
+
+    bool topologyFrozen = false;                                    //!< whether state dimensions are frozen
     std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
     std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
     std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude

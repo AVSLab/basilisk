@@ -16,6 +16,9 @@
 
 """Check effector dimensions before attachment, reset, and runtime native accesses."""
 
+import subprocess
+import sys
+
 import numpy as np
 import pytest
 
@@ -313,8 +316,9 @@ def test_registered_device_addition(kind, initial_count):
     sim, parent = attach(effector, state=True)
     sim.InitializeSimulation()
     state = parent.dynManager.getStateObject(state_name)
-    before = np.asarray(state.getState()).copy()
-    with pytest.raises(BasiliskError, match="cannot add .* after state registration"):
+    assert (state is None) == (initial_count == 0)
+    before = np.asarray(state.getState()).copy() if state is not None else None
+    with pytest.raises(RuntimeError, match="after state registration"):
         if kind == "wheel":
             effector.addReactionWheel(config)
         elif kind == "body_thruster":
@@ -326,7 +330,8 @@ def test_registered_device_addition(kind, initial_count):
         assert len(effector.kappaInit) == len(effector.thrusterOutMsgs) == initial_count
     else:
         assert len(effector.rwOutMsgs) == initial_count
-    np.testing.assert_array_equal(state.getState(), before)
+    if state is not None:
+        np.testing.assert_array_equal(state.getState(), before)
     sim.ConfigureStopTime(macros.sec2nano(0.02))  # [ns]
     sim.ExecuteSimulation()
 
@@ -335,7 +340,7 @@ def test_registered_device_addition(kind, initial_count):
 @pytest.mark.parametrize("change", ["append", "remove"])
 @pytest.mark.parametrize("path", ["reset", "input", "output", "dynamics"])
 def test_registered_device_count_mutation(kind, change, path):
-    """Catch public-vector changes before Reset, messages, or an attached-only dynamics step."""
+    """Reject collection resizing immediately and leave every runtime path usable."""
     effector, vector_name, state_name = state_devices(kind, 1 if change == "append" else 2)
     sim, parent = attach(effector, state=True)
     sim.InitializeSimulation()
@@ -343,23 +348,20 @@ def test_registered_device_count_mutation(kind, change, path):
     before = np.asarray(state.getState()).copy()
     devices = getattr(effector, vector_name)
     if change == "append":
-        devices.push_back(devices[0])
-        if kind == "thruster":
-            effector.kappaInit.push_back(0.0)
+        with pytest.raises(RuntimeError, match="after state registration"):
+            devices.append(devices[0])
     else:
-        devices.pop_back()
-        if kind == "thruster":
-            effector.kappaInit.pop_back()
-    with pytest.raises(BasiliskError, match="count cannot change after state registration"):
-        if path == "reset":
-            effector.Reset(0)
-        elif path == "input":
-            effector.ReadInputs()
-        elif path == "output":
-            effector.writeOutputStateMessages(0)
-        else:
-            sim.ConfigureStopTime(macros.sec2nano(0.02))  # [ns]
-            sim.ExecuteSimulation()
+        with pytest.raises(ValueError, match="cannot change configuration collection size"):
+            devices.replace(list(devices)[:-1])
+    if path == "reset":
+        effector.Reset(0)
+    elif path == "input":
+        effector.ReadInputs()
+    elif path == "output":
+        effector.writeOutputStateMessages(0)
+    else:
+        sim.ConfigureStopTime(macros.sec2nano(0.02))  # [ns]
+        sim.ExecuteSimulation()
     np.testing.assert_array_equal(state.getState(), before)
 
 
@@ -378,7 +380,7 @@ def test_registered_wheel_angle_layout(change, path):
     )
     if change == "swap_angles":
         effector.ReactionWheelData[1].RWModel = reactionWheelStateEffector.JitterSimple
-    with pytest.raises(BasiliskError, match="jitter-state allocation cannot change"):
+    with pytest.raises(BasiliskError, match="wheel models cannot change"):
         if path == "reset":
             effector.Reset(0)
         elif path == "log_output":
@@ -386,6 +388,27 @@ def test_registered_wheel_angle_layout(change, path):
         else:
             sim.ConfigureStopTime(macros.sec2nano(0.02))  # [ns]
             sim.ExecuteSimulation()
+
+
+def test_spinning_body_generated_names_do_not_collide():
+    """Register both effector types with fresh counters and overlapping decimal IDs."""
+    code = """
+from Basilisk.simulation import dynParamManager, spinningBodyOneDOFStateEffector, spinningBodyTwoDOFStateEffector
+one_axis = [spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector() for _ in range(22)]
+two_axis = spinningBodyTwoDOFStateEffector.SpinningBodyTwoDOFStateEffector()
+for effector in one_axis:
+    effector.sHat_S = [1.0, 0.0, 0.0]
+two_axis.s1Hat_S1 = [1.0, 0.0, 0.0]
+two_axis.s2Hat_S2 = [0.0, 1.0, 0.0]
+manager = dynParamManager.DynParamManager()
+for effector in [*one_axis, two_axis]:
+    effector.registerStates(manager)
+manager.finalizeStates()
+names = [effector.nameOfInertialPositionProperty for effector in one_axis]
+names += [two_axis.nameOfInertialPositionProperty1, two_axis.nameOfInertialPositionProperty2]
+assert len(names) == len(set(names))
+"""
+    subprocess.run([sys.executable, "-c", code], check=True, text=True)
 
 
 @pytest.mark.parametrize("counter", ["numRW", "numRWJitter"])
