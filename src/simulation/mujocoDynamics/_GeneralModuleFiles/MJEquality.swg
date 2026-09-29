@@ -25,6 +25,16 @@
 %include "MJObject.swg"
 %template_mujoco_object(mjsEquality)
 
+// Retain the owner on borrowed results using the generated Python methods.
+%pythonappend MJEquality::getScene %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+%pythonappend MJEquality::getSpec %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+
 %ignore MJEquality::MJEquality;
 %ignore MJEquality::configure;
 

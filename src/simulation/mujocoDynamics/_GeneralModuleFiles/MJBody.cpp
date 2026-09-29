@@ -21,6 +21,7 @@
 #include "MJScene.h"
 #include "MJSpec.h"
 
+#include <cmath>
 #include <stdexcept>
 #include <type_traits>
 #include <unordered_map>
@@ -82,13 +83,15 @@ MJBody::MJBody(mjsBody* body, MJSpec& spec)
         {
         case mjJNT_HINGE:
         case mjJNT_SLIDE:
-            this->scalarJoints.emplace_back(mjsjoint, *this);
+            this->orderedJoints.push_back(&this->scalarJoints.emplace_back(mjsjoint, *this));
             break;
         case mjJNT_BALL:
             this->ballJoint.emplace(mjsjoint, *this);
+            this->orderedJoints.push_back(&this->ballJoint.value());
             break;
         case mjJNT_FREE:
             this->freeJoint.emplace(mjsjoint, *this);
+            this->orderedJoints.push_back(&this->freeJoint.value());
             break;
         default:
             throw std::runtime_error("Unknown joint type."); // should not happen unless MuJoCo adds new joint
@@ -97,44 +100,30 @@ MJBody::MJBody(mjsBody* body, MJSpec& spec)
 
 }
 
-void MJBody::configure(const mjModel* mujocoModel)
+void
+MJBody::configure(mjModel* mujocoModel)
 {
     MJObject::configure(mujocoModel);
-
-    for (auto&& joint : this->scalarJoints) {
+    for (auto& joint : this->scalarJoints) {
         joint.configure(mujocoModel);
     }
-    if (this->ballJoint.has_value()) {
+    if (this->ballJoint) {
         this->ballJoint->configure(mujocoModel);
     }
-    if (this->freeJoint.has_value()) {
+    if (this->freeJoint) {
         this->freeJoint->configure(mujocoModel);
     }
-
-    for (auto&& site : this->sites) {
+    for (auto& site : this->sites) {
         site.configure(mujocoModel);
     }
-
-    // Move the _com site to the body CoM (body_ipos, known only post-compile).
     auto& com = this->getCenterOfMass();
-    auto bodyId = this->getId();
-    auto siteId = com.getId();
-    Eigen::Vector3d ipos =
-        Eigen::Map<const Eigen::Vector3d>(mujocoModel->body_ipos + 3 * bodyId);
-    com.setPositionRelativeToBody(ipos);
-
-    // A site created at the origin latches to SAMEFRAME_BODY, which ignores
-    // site_pos and pins site_xpos to the body origin. Force one recompile so it
-    // re-latches to SAMEFRAME_BODYROT and tracks the CoM (body frame orientation
-    // preserved). Skip when the CoM is at the origin (already correct; avoids a
-    // recompile loop, as configure() runs inside recompileIfNeeded()).
-    if (mujocoModel->site_sameframe[siteId] == mjSAMEFRAME_BODY && ipos.norm() > 1e-9) {
+    const Eigen::Vector3d position(mujocoModel->body_ipos + 3 * this->getId());
+    com.commitPositionRelativeToBody(position, mujocoModel);
+    // A site compiled at the body origin ignores site_pos until it is recompiled
+    // with a nonzero offset. Request that update once for an offset center of mass.
+    if (mujocoModel->site_sameframe[com.getId()] == mjSAMEFRAME_BODY && position.norm() > 1e-9) { // [m]
         this->getSpec().markAsNeedingToRecompileModel();
     }
-
-    // Seed this body's entry of the scene's bulk mass state from the model.
-    this->getSpec().getScene().getMassState()->state(static_cast<Eigen::Index>(this->getId())) =
-        mujocoModel->body_mass[this->getId()];
 }
 
 MJSite& MJBody::getSite(const std::string& name)
@@ -168,7 +157,6 @@ MJBallJoint& MJBody::getBallJoint()
     }
     return this->ballJoint.value();
 }
-
 
 MJFreeJoint & MJBody::getFreeJoint()
 {
@@ -251,31 +239,63 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
     }
 }
 
+void
+MJBody::registerJointPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+{
+    for (MJJoint* joint : this->orderedJoints) {
+        joint->registerPositionStates(registerer, highOrderAttitude);
+    }
+}
+
+void
+MJBody::registerJointVelocityStates(DynParamRegisterer registerer)
+{
+    for (MJJoint* joint : this->orderedJoints) {
+        joint->registerVelocityStates(registerer);
+    }
+}
+
+void
+MJBody::setJointPositionDerivativesFromMujoco(const mjData* data)
+{
+    for (MJJoint* joint : this->orderedJoints) {
+        joint->setPositionDerivativeFromMujoco(data);
+    }
+}
+
+void
+MJBody::validateJointStateLayout(const double* qposBase, const double* qvelBase) const
+{
+    for (const MJJoint* joint : this->orderedJoints) {
+        joint->validateStateLayout(qposBase, qvelBase);
+    }
+}
+
 double MJBody::getMass()
 {
     // This body's mass lives at its body id in the scene's bulk mass state.
-    return this->getSpec().getScene().getMassState()->state(static_cast<Eigen::Index>(this->getId()));
+    return this->getSpec().getScene().getMassState()->stateView()(static_cast<Eigen::Index>(this->getId()));
 }
 
-void MJBody::updateMujocoModelFromMassProps(mjModel* m)
+void
+MJBody::applyPrevalidatedMass(mjModel* model, double newMass) noexcept
 {
-    double oldMass = m->body_mass[this->getId()];
-    double newMass = this->getMass();
-    auto diff = abs(oldMass - newMass);
-    if (diff > 10 * std::numeric_limits<double>::epsilon()) {
-
+    const double oldMass = model->body_mass[this->getId()];
+    constexpr double massEpsilon = 10.0 * std::numeric_limits<double>::epsilon();
+    const double diff = std::abs(oldMass - newMass);
+    if (diff > massEpsilon) {
         // Compute the ratio before overwriting body_mass (else it would be 1.0).
         // Shape is fixed, so inertia scales linearly with mass.
-        double massRatio = newMass / oldMass;
+        const double massRatio = newMass / oldMass;
 
         // Update the mass in the mjModel AND mjsBody
-        m->body_mass[this->getId()] = newMass;
+        model->body_mass[this->getId()] = newMass;
         this->mjsObject->mass = newMass;
 
         // Update the inertia in the mjModel AND mjsBody
         for (size_t i = 0; i < 3; i++) {
-            m->body_inertia[3 * this->getId() + i] *= massRatio;
-            this->mjsObject->inertia[i] = m->body_inertia[3 * this->getId() + i];
+            model->body_inertia[3 * this->getId() + i] *= massRatio;
+            this->mjsObject->inertia[i] = model->body_inertia[3 * this->getId() + i];
         }
 
         this->getSpec().getScene().markMujocoModelConstAsStale();
@@ -288,8 +308,8 @@ void MJBody::updateMassPropsDerivative()
     if (this->derivativeMassPropertiesInMsg.isLinked()) {
         auto deriv = this->derivativeMassPropertiesInMsg();
         // Write into this body's entry of the bulk mass state derivative.
-        this->getSpec().getScene().getMassState()->stateDeriv(static_cast<Eigen::Index>(this->getId())) =
-            deriv.massSC;
+        this->getSpec().getScene().getMassState()->derivativeView()(static_cast<Eigen::Index>(this->getId())) =
+          deriv.massSC;
     }
 }
 
@@ -307,12 +327,11 @@ void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Ei
         this->getSpec().getScene().bskLogger.bskError("Tried to create site '%s' twice for body '%s'", name.c_str(), this->name.c_str());
     }
 
+    spec.markAsNeedingToRecompileModel();
     auto mjssite = mjs_addSite(this->mjsObject, 0);
     MJBasilisk::detail::setSpecObjectName(mjssite, name);
 
     auto& site = this->sites.emplace_back(mjssite, *this);
-
-    spec.markAsNeedingToRecompileModel(); // Any updates to the 'structure' (i.e. new elements), we need to recompile
 
     site.setPositionRelativeToBody(position);
     site.setAttitudeRelativeToBody(attitude);

@@ -24,11 +24,21 @@
 %include "MJObject.swg"
 %template_mujoco_object(mjsSite)
 
+// Retain the owner on borrowed results using the generated Python methods.
+%pythonappend MJSite::getBody %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+
 %ignore MJSite::MJSite;
 %ignore MJSite::setPositionRelativeToBody;
+%ignore MJSite::commitPositionRelativeToBody;
 %ignore MJSite::writeFwdKinematicsMessage;
 
+
 %include "MJSite.h"
+
+
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 struct SCStatesMsgPayload_C;

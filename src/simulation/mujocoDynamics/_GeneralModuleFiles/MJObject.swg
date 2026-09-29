@@ -21,7 +21,9 @@
 
 %ignore MJObject<type>::MJObject;
 %ignore MJObject<type>::getId;
-%ignore MJObject<type>::configure;
+%ignore MJObject<type>::stageConfiguration;
+%ignore MJObject<type>::commitConfiguration;
+%ignore MJObject<type>::discardStagedConfiguration;
 
 %include "MJObject.h"
 %template(_MJObject_ ## type) MJObject<type>;

@@ -45,8 +45,14 @@ class MJScene;
  * The `MJSpec` class manages a pair of MuJoCo models and data objects, for which it supports
  * recompilation.
  *
- * This class keeps tracks of Basilisk wrappers for the MuJoCo bodies, actuators, and
- * equalities of an `MJScene`.
+ * This class owns the compiled model/data pair and tracks Basilisk wrappers for the
+ * bodies, actuators, and equalities of an MJScene. Recompilation prepares a candidate
+ * model, validates established state and runtime layouts, copies runtime values, and
+ * updates wrapper bindings after replacing the model. Configuration errors propagate
+ * without restoring the previous wrapper bindings.
+ *
+ * NoRecompileGuard keeps borrowed model/data pointers stable during scene callbacks.
+ * Model initialization uses the compiled result and updates state values directly.
  */
 class MJSpec
 {
@@ -56,7 +62,7 @@ public:
      *
      * Disables automatic recompilation of the MuJoCo model during its lifetime.
      * Can be used when one wants to take one or several actions that would normally
-     * trigger a model recompilation, but for efficiency recompilation is supressed
+     * trigger a model recompilation, but for efficiency recompilation is suppressed
      * until a later moment.
      */
     struct NoRecompileGuard {
@@ -71,10 +77,15 @@ public:
             spec.shouldRecompileWhenAsked = false;
         }
 
+        NoRecompileGuard(const NoRecompileGuard&) = delete;
+        NoRecompileGuard& operator=(const NoRecompileGuard&) = delete;
+        NoRecompileGuard(NoRecompileGuard&&) = delete;
+        NoRecompileGuard& operator=(NoRecompileGuard&&) = delete;
+
         /**
          * @brief Restores the previous recompilation flag state.
          */
-        ~NoRecompileGuard() { spec.shouldRecompileWhenAsked = prevShouldRecompileWhenAsked; }
+        ~NoRecompileGuard() noexcept { spec.shouldRecompileWhenAsked = prevShouldRecompileWhenAsked; }
 
         MJSpec& spec; ///< Reference to the `MJSpec` object.
         bool prevShouldRecompileWhenAsked; ///< Previous state of recompilation flag.
@@ -106,7 +117,7 @@ public:
      * @brief Declares that the `mjModel` should recompiled because
      * we performed an action that rendered the current `mjModel` stale.
      */
-    void markAsNeedingToRecompileModel() { this->shouldRecompile = true; }
+    void markAsNeedingToRecompileModel();
 
     /**
      * @brief Retrieves the MuJoCo model (`mjModel` object).
@@ -127,7 +138,7 @@ public:
      *
      * @return Pointer to the MuJoCo specification.
      */
-    mjSpec* getMujocoSpec() { return this->spec.get(); }
+    mjSpec* getMujocoSpec();
 
     /**
      * @brief Recompiles the model if needed.
@@ -135,6 +146,24 @@ public:
      * @return True if recompilation occurred, false otherwise.
      */
     bool recompileIfNeeded();
+
+    /**
+     * @brief Recompile until configuration no longer requests another pass.
+     */
+    void recompileUntilStable();
+
+    /**
+     * @brief Return whether the specification has uncompiled model changes.
+     */
+    bool hasPendingModelChanges() const noexcept { return this->shouldRecompile; }
+
+    /**
+     * @brief Compile all pending specification changes and configure wrappers.
+     *
+     * This completes before MJScene registers states, so all
+     * registered dimensions and qpos policy topology come from the final model.
+     */
+    void configureForStateRegistration();
 
     /**
      * @brief Configures all bodies, actuators, and equalities with
@@ -299,9 +328,9 @@ protected:
     bool shouldRecompileWhenAsked = true;
 
 protected:
-    void loadBodies(); ///< Load bodies in spec into MJBody
-    void loadActuators(); ///< Load actuators in spec into MJActuator
-    void loadEqualities(); ///< Load equalities in spec into MJEquality
+  void loadBodies();     ///< Load bodies in spec into MJBody
+  void loadActuators();  ///< Load actuators in spec into MJActuator
+  void loadEqualities(); ///< Load equalities in spec into MJEquality
 
 protected:
     /**
@@ -417,6 +446,7 @@ inline T& MJSpec::addCompositeActuator(const std::string& name, const std::strin
     if ((this->hasActuator(name)))
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
 
+    this->markAsNeedingToRecompileModel();
     std::unordered_map<std::string, MJActuatorObject> existingActuators;
     this->actuators.emplace_back(createActuator<T>(name, site, existingActuators));
 

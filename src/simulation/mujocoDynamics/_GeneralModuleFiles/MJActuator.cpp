@@ -21,46 +21,46 @@
 
 void MJActuatorObject::updateCtrl(mjData* data, double value) { data->ctrl[this->getId()] = value; }
 
-void MJActuator::configure(const mjModel* model)
+void
+MJActuator::configure(const mjModel* model)
 {
-    for (auto&& sub : subActuators)
+    for (auto& sub : this->subActuators) {
         sub.configure(model);
-}
-
-void MJActuator::updateCtrl(mjData* data)
-{
-    auto values = readControlMessages();
-    for (size_t i = 0; i < this->subActuators.size(); i++)
-    {
-        this->subActuators.at(i).updateCtrl(data, values.at(i));
     }
 }
 
-std::vector<double> MJSingleActuator::readControlMessages()
+void
+MJSingleActuator::updateCtrl(mjData* data)
 {
-    return actuatorInMsg.isLinked() ? std::vector{actuatorInMsg().input} : std::vector{0.};
+    const double value = this->actuatorInMsg.isLinked() ? this->actuatorInMsg().input : 0.0;
+    this->subActuators[0].updateCtrl(data, value);
 }
 
-std::vector<double> MJForceActuator::readControlMessages()
+void
+MJForceActuator::updateCtrl(mjData* data)
 {
-    auto fInMsg = forceInMsg.isLinked() ? forceInMsg() : forceInMsg.zeroMsgPayload;
-    return {fInMsg.force_S[0], fInMsg.force_S[1], fInMsg.force_S[2]};
+    const auto input = this->forceInMsg.isLinked() ? this->forceInMsg() : this->forceInMsg.zeroMsgPayload;
+    for (size_t index = 0; index < 3; ++index) {
+        this->subActuators[index].updateCtrl(data, input.force_S[index]);
+    }
 }
 
-std::vector<double> MJTorqueActuator::readControlMessages()
+void
+MJTorqueActuator::updateCtrl(mjData* data)
 {
-    auto tInMsg = torqueInMsg.isLinked() ? torqueInMsg() : torqueInMsg.zeroMsgPayload;
-    return {tInMsg.torque_S[0], tInMsg.torque_S[1], tInMsg.torque_S[2]};
+    const auto input = this->torqueInMsg.isLinked() ? this->torqueInMsg() : this->torqueInMsg.zeroMsgPayload;
+    for (size_t index = 0; index < 3; ++index) {
+        this->subActuators[index].updateCtrl(data, input.torque_S[index]);
+    }
 }
 
-std::vector<double> MJForceTorqueActuator::readControlMessages()
+void
+MJForceTorqueActuator::updateCtrl(mjData* data)
 {
-    auto fInMsg = forceInMsg.isLinked() ? forceInMsg() : forceInMsg.zeroMsgPayload;
-    auto tInMsg = torqueInMsg.isLinked() ? torqueInMsg() : torqueInMsg.zeroMsgPayload;
-    return {fInMsg.force_S[0],
-            fInMsg.force_S[1],
-            fInMsg.force_S[2],
-            tInMsg.torque_S[0],
-            tInMsg.torque_S[1],
-            tInMsg.torque_S[2]};
+    const auto force = this->forceInMsg.isLinked() ? this->forceInMsg() : this->forceInMsg.zeroMsgPayload;
+    const auto torque = this->torqueInMsg.isLinked() ? this->torqueInMsg() : this->torqueInMsg.zeroMsgPayload;
+    for (size_t index = 0; index < 3; ++index) {
+        this->subActuators[index].updateCtrl(data, force.force_S[index]);
+        this->subActuators[index + 3].updateCtrl(data, torque.torque_S[index]);
+    }
 }

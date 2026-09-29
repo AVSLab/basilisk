@@ -23,13 +23,6 @@
 #include <string>
 #include <vector>
 
-// SWIG defines the SWIG macro when parsing - guard the mujoco header so the
-// simplified SWIG preprocessor never sees it.  The struct itself is visible to
-// both C++ (with the real mjGEOM_NONE default) and SWIG (with a plain 0).
-#ifndef SWIG
-#  include <mujoco/mujoco.h>
-#endif
-
 /**
  * @brief Describes the geometry (shape, size, position, orientation, color) of a single
  * MuJoCo geom, suitable for visualization.
@@ -40,11 +33,7 @@
  */
 struct MJGeomInfo {
     std::string bodyName;                              ///< Name of the body this geom belongs to.
-#ifndef SWIG
-    int type = mjGEOM_NONE;                            ///< MuJoCo geom type (mjtGeom value).
-#else
     int type = 0;                                      ///< MuJoCo geom type (mjtGeom value).
-#endif
     std::vector<double> size = std::vector<double>(3); ///< Size parameters (3 elements).
     std::vector<double> pos  = std::vector<double>(3); ///< Position in body frame (3 elements).
     std::vector<double> quat = std::vector<double>(4); ///< Quaternion in body frame (4 elements: w, x, y, z).
