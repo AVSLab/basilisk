@@ -17,169 +17,311 @@
 
  */
 
+/** @file stateData.h
+ * @brief State declarations, update-policy contract, and borrowed matrix access.
+ */
+
 #ifndef STATE_DATA_H
 #define STATE_DATA_H
-#include <Eigen/Dense>
-#include <memory>
-#include <stdint.h>
-#include "architecture/utilities/bskLogging.h"
 
-/** @brief Represents a physical state, which has a name, a value, and a derivative. */
-class StateData
+#include <Eigen/Dense>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
+/** @brief Shape of a matrix stored by the dynamics state registry. */
+struct MatrixShape
+{
+    uint32_t rows = 0; ///< Number of matrix rows.
+    uint32_t cols = 0; ///< Number of matrix columns.
+
+    /** @brief Compare two matrix shapes. */
+    bool operator==(const MatrixShape& other) const noexcept
+    {
+        return this->rows == other.rows && this->cols == other.cols;
+    }
+
+    /** @brief Compare two matrix shapes. */
+    bool operator!=(const MatrixShape& other) const noexcept { return !(*this == other); }
+};
+
+/** @brief Adaptive-integrator error scaling associated with a state. */
+enum class ErrorControlMode
+{
+    WholeState,   ///< Compare the norm of the state error against one state-level threshold.
+    PerComponent ///< Compare each scalar error against its own scaled threshold.
+};
+
+/** @brief Kind of update applied when a state is propagated. */
+enum class StateUpdateKind
+{
+    Euclidean, ///< State, drift, and diffusion share a shape and use ordinary addition.
+    Special    ///< An immutable StateUpdatePolicy defines drift and noise updates.
+};
+
+/** @brief Writable column-major matrix alias; does not own or extend storage lifetime. */
+using MutableMatrixView = Eigen::Map<Eigen::MatrixXd, Eigen::Unaligned>;
+/** @brief Read-only column-major matrix alias; does not own or extend storage lifetime. */
+using ConstMatrixView = Eigen::Map<const Eigen::MatrixXd, Eigen::Unaligned>;
+
+/** @brief Immutable topology supplied when a state is registered. */
+struct StateSpec
+{
+    MatrixShape state;            ///< Shape of the stored physical state.
+    MatrixShape derivative;       ///< Shape of drift returned by the equations of motion.
+    MatrixShape diffusionTangent; ///< Shape of one local noise tangent, even when no noise is registered.
+    size_t noiseCount = 0;        ///< Number of local sources; shared declarations may map them to global sources.
+    ErrorControlMode errorControl = ErrorControlMode::WholeState; ///< Adaptive error-scaling convention.
+    StateUpdateKind updateKind = StateUpdateKind::Euclidean;      ///< Selects ordinary addition or policy dispatch.
+
+    /** @brief Compare two state specifications. */
+    bool operator==(const StateSpec& other) const noexcept
+    {
+        return this->state == other.state && this->derivative == other.derivative &&
+               this->diffusionTangent == other.diffusionTangent && this->noiseCount == other.noiseCount &&
+               this->errorControl == other.errorControl && this->updateKind == other.updateKind;
+    }
+
+    /** @brief Compare two state specifications. */
+    bool operator!=(const StateSpec& other) const noexcept { return !(*this == other); }
+};
+
+/**
+ * @brief Defines propagation when a state's representation requires more than vector addition.
+ *
+ * The registry owns the policy; handles and integrators borrow it. Configuration is
+ * immutable after registration, and topologyEquals() compares configuration by value
+ * when a repeated Reset presents a replacement policy. A policy has no stage storage:
+ * the integrator combines derivatives before calling it.
+ *
+ * Implementations must fully write drift output and apply noise increments in place.
+ * Noise calls arrive in state-local source order, which matters for noncommuting updates.
+ * Use the supplied views without resizing, retaining them, or changing registration.
+ */
+class StateUpdatePolicy
 {
 public:
-    Eigen::MatrixXd state;       //!< [-] State value storage
-    Eigen::MatrixXd stateDeriv;  //!< [-] State derivative value storage
-    std::vector<Eigen::MatrixXd> stateDiffusion; //!< [-] State diffusion value storage
-    const std::string stateName; //!< [-] Name of the state
-    BSKLogger bskLogger;         //!< -- BSK Logging
+  virtual ~StateUpdatePolicy() = default;
 
-    /** [-] Whether an adaptive integrator should measure this state's relative
-     * truncation error per scalar component instead of over the whole vector.
-     *
-     * The default (``false``) compares the L2 norm of the state's error against
-     * a tolerance built from the L2 norm of the whole state, which is the right
-     * choice when every component of the state is the same physical quantity
-     * (e.g. a position in metres).  When a single state instead bundles
-     * quantities of very different scales (e.g. the MuJoCo bulk position state,
-     * which mixes orbital translation in metres with order-unity attitude
-     * quaternion components), the whole-vector norm lets the large component
-     * swamp the small one and loosen its effective tolerance.  Setting this flag
-     * makes the integrator scale each component by its own magnitude instead. */
-    bool perComponentErrorControl = false;
+  /** @brief Compare immutable policy topology by value. */
+  virtual bool topologyEquals(const StateUpdatePolicy& other) const = 0;
 
-public:
-    /** Creates a new state with the given name and set's the initial state.
-     *
-     * The state derivative will be resized to the same size as the state and zero'd.
-     */
-    StateData(std::string inName, const Eigen::MatrixXd& newState);
+  /** @brief Validate that a state specification is supported by this policy. */
+  virtual void validate(const StateSpec& spec) const = 0;
 
-    /** Clone constructor for polymorphic class */
-    virtual std::unique_ptr<StateData> clone() const;
+  /** @brief Construct one drift candidate from a base state and combined drift.
+   * @param base State at the start of this candidate update.
+   * @param combinedDrift Weighted drift in the declared derivative shape.
+   * @param timeStep Drift multiplier in seconds.
+   * @param output Destination in the declared state shape; must be fully written.
+   */
+  virtual void buildDriftCandidate(ConstMatrixView base,
+                                   ConstMatrixView combinedDrift,
+                                   double timeStep,
+                                   MutableMatrixView output) const = 0;
 
-    /** Destructor */
-    virtual ~StateData() = default;
+  /** @brief Apply one diffusion-tangent increment to a candidate state.
+   * @param state Candidate to update in place.
+   * @param diffusionTangent One combined tangent in the declared diffusion shape.
+   * @param pseudoStep Method-provided multiplier for this tangent, often a Wiener increment.
+   */
+  virtual void applyNoiseIncrement(MutableMatrixView state,
+                                   ConstMatrixView diffusionTangent,
+                                   double pseudoStep) const = 0;
+};
 
-    /** Sets the number of noise sources for this state.
+class StateRegistry;
+
+/**
+ * @brief Stable borrowed handle to one registry-owned state and its drift and diffusion.
+ *
+ * Obtain handles from DynParamManager during registration and retain them for model
+ * callbacks. Values begin in temporary matrices; the first finalization redirects
+ * handles into contiguous buffers. Reacquire views after that allocation. Later resets
+ * update live values in place and preserve both handle and buffer addresses.
+ *
+ * The manager must outlive native handles and views. Python wrappers retain the
+ * owning manager. Copying getters return independent snapshots of current values.
+ */
+class StateData
+{
+  public:
+    StateData(const StateData&) = delete;
+    StateData& operator=(const StateData&) = delete;
+    StateData(StateData&&) = delete;
+    StateData& operator=(StateData&&) = delete;
+
+    /** @brief Return the number of local noise sources, before shared-source grouping. */
+    size_t getNumNoiseSources() const;
+
+    /** @brief Set the registration-time number of independent noise sources.
      *
-     * This is used for stochastic dynamics, where the
-     * evolutions of the state are driven by a set of independent
-     * noise sources:
-     *
-     * \f[
-     *  dx = f(t,x)\,dt + g_0(t,x)\,dW_0 + g_1(t,x)\,dW_1 + \cdots + g_{n-1}(t,x)\,dW_{n-1}
-     * \f]
-     *
-     * where \f$dW_i\f$ are independent Wiener processes. The number of
-     * noise sources is equal to the number of diffusion matrices
-     * that are used to drive the stochastic dynamics (n above).
-     *
-     * @param numSources The number of noise sources
+     * This deprecated compatibility API may establish the count during the
+     * initial registration. Once topology is established, only the
+     * already-established value is accepted.
      */
     void setNumNoiseSources(size_t numSources);
 
-    /** Get how many independent sources of noise drive the dynamics
-     * of this state.
+    /** @brief Set the state value, requiring an exact shape match. */
+    void setState(Eigen::Ref<const Eigen::MatrixXd> newState);
+
+    /** @brief Set the derivative value, requiring an exact shape match. */
+    void setDerivative(Eigen::Ref<const Eigen::MatrixXd> newDeriv);
+
+    /** @brief Return a mutable borrowed view of the active state storage.
      *
-     * Any number greater than zero indicates that this state
-     * is driven by a stochastic differential equation.
+     * The view aliases the manager buffer active when it is acquired. Do not
+     * retain it across the first finalizeStates(); reacquire it after storage
+     * allocation. Later resets preserve its address.
      */
-    size_t getNumNoiseSources() const;
+    MutableMatrixView stateView()
+    {
+        return MutableMatrixView(this->activeState, this->viewStateShape.rows, this->viewStateShape.cols);
+    }
 
-    /** Updates the value of the state */
-    void setState(const Eigen::MatrixXd& newState);
-
-    /** Updates the derivative of the value of the state */
-    virtual void setDerivative(const Eigen::MatrixXd& newDeriv);
-
-    /** Updates the diffusion of the value of the state.
+    /** @brief Return a constant borrowed view of the active state storage.
      *
-     * This is used for stochastic dynamics, where the
-     * evolutions of the state are driven by a set of independent
-     * noise sources:
-     *
-     * \f[
-     *  dx = f(t,x)\,dt + g_0(t,x)\,dW_0 + g_1(t,x)\,dW_1 + \cdots + g_{n-1}(t,x)\,dW_{n-1}
-     * \f]
-     *
-     * where \f$dW_i\f$ are independent Wiener processes. The diffusion
-     * matrices are used to drive the stochastic dynamics (\f$g_i\f$ above).
-     *
-     * @param newDiffusion The new diffusion matrix
-     * @param index The index of the diffusion matrix to update.
-     * This must be less than the number of noise sources.
-    */
-    void setDiffusion(const Eigen::MatrixXd& newDiffusion, size_t index);
-
-    /** Retrieves a copy of the current state */
-    Eigen::MatrixXd getState() const { return state; }
-
-    /** Retrieves a constant reference to the current state.
-     *
-     * Unlike getState(), this method does not create a copy. Subsequent state updates
-     * are visible through the returned reference, which must not outlive this object.
-     *
-     * @return Constant reference to the current state
+     * The view follows the same storage-lifetime restrictions as the mutable
+     * stateView().
      */
-    const Eigen::MatrixXd& getStateReference() const { return state; }
+    ConstMatrixView stateView() const
+    {
+        return ConstMatrixView(this->activeState, this->viewStateShape.rows, this->viewStateShape.cols);
+    }
 
-    /** Retrieves a copy of the current state derivative */
-    Eigen::MatrixXd getStateDeriv() const { return stateDeriv; }
+    /** @brief Deprecated alias for stateView() on a constant state handle. */
+    [[deprecated("use stateView()")]]
+    ConstMatrixView getStateReference() const
+    {
+        return this->stateView();
+    }
 
-    /** Retrieves a constant reference to the current state derivative.
+    /** @brief Return a mutable borrowed view of active derivative storage.
      *
-     * Unlike getStateDeriv(), this method does not create a copy. Subsequent derivative
-     * updates are visible through the returned reference, which must not outlive this object.
-     *
-     * @return Constant reference to the current state derivative
+     * The view aliases the manager buffer active when it is acquired and must
+     * be reacquired after the first finalization.
      */
-    const Eigen::MatrixXd& getStateDerivReference() const { return stateDeriv; }
+    MutableMatrixView derivativeView()
+    {
+        return MutableMatrixView(
+          this->activeDerivative, this->viewDerivativeShape.rows, this->viewDerivativeShape.cols);
+    }
 
-    /** Retrieves a copy of the current state diffusion
+    /** @brief Return a constant borrowed view of active derivative storage.
      *
-     * @param index The index of the diffusion matrix to retrieve.
-     * This must be less than the number of noise sources.
-    */
-    Eigen::MatrixXd getStateDiffusion(size_t index) const { return stateDiffusion.at(index); }
-
-    /** Returns the name of the state */
-    std::string getName() const { return stateName; }
-
-    /** Returns the row-size of the state */
-    uint32_t getRowSize() const { return ((uint32_t)state.innerSize()); }
-
-    /** Returns the column-size of the state */
-    uint32_t getColumnSize() const { return ((uint32_t)state.outerSize()); }
-
-    /** Returns the row-size of the derivative of the state */
-    uint32_t getDerivativeRowSize() const { return ((uint32_t)stateDeriv.innerSize()); }
-
-    /** Returns the column-size of the derivative of the state */
-    uint32_t getDerivativeColumnSize() const { return ((uint32_t)stateDeriv.outerSize()); }
-
-    /** Multiples the state by a scalar */
-    void scaleState(double scaleFactor);
-
-    /** Adds the values of the other state to this state */
-    void addState(const StateData& other);
-
-    /**
-     * @brief Propagates the state over a time step.
-     *
-     * This method integrates the position state using the state derivative
-     * over the given time step::
-     *
-     * \f[
-     *   x \mathrel{+}= f(t,x)\,h + g_0(t,x)\,\mathrm{pseudoStep}[0] + g_1(t,x)\,\mathrm{pseudoStep}[1] + \cdots
-     * \f]
-     *
-     * @param h The time step for propagation.
-     * @param pseudoStep For states driven by stochastic dynamics, this
-     * represents the random pseudotimestep. The length of this input must
-     * match the number of noise sources of this state (``getNumNoiseSources()``)
+     * The view follows the same storage-lifetime restrictions as the mutable
+     * derivativeView().
      */
-    virtual void propagateState(double h, std::vector<double> pseudoStep = {});
+    ConstMatrixView derivativeView() const
+    {
+        return ConstMatrixView(this->activeDerivative, this->viewDerivativeShape.rows, this->viewDerivativeShape.cols);
+    }
+
+    /** @brief Deprecated alias for derivativeView() on a constant state handle. */
+    [[deprecated("use derivativeView()")]]
+    ConstMatrixView getStateDerivReference() const
+    {
+        return this->derivativeView();
+    }
+
+    /** @brief Return a mutable borrowed view of one diffusion tangent.
+     *
+     * The view aliases the manager buffer active when it is acquired and must
+     * be reacquired after the first finalization.
+     */
+    MutableMatrixView diffusionView(size_t localNoiseIndex);
+
+    /** @brief Return a constant borrowed view of one diffusion tangent.
+     *
+     * The view follows the same storage-lifetime restrictions as the mutable
+     * diffusionView().
+     */
+    ConstMatrixView diffusionView(size_t localNoiseIndex) const;
+
+    /** @brief Return the live state-buffer pointer.
+     *
+     * Raw access is valid only while the owning manager is finalized.
+     */
+    double* stateData();
+
+    /** @brief Return the live derivative-buffer pointer. */
+    double* derivativeData();
+
+    /** @brief Return one live diffusion-buffer pointer. */
+    double* diffusionData(size_t localNoiseIndex);
+
+    /** @brief Set one diffusion tangent, requiring an exact shape match.
+     *
+     * @param newDiffusion New diffusion tangent.
+     * @param index Local noise-source index.
+     */
+    void setDiffusion(Eigen::Ref<const Eigen::MatrixXd> newDiffusion, size_t index);
+
+    /** @brief Return a copy of the active state value. */
+    Eigen::MatrixXd getState() const;
+
+    /** @brief Return a copy of the active derivative value. */
+    Eigen::MatrixXd getStateDeriv() const;
+
+    /** @brief Return a copy of one active diffusion tangent. */
+    Eigen::MatrixXd getStateDiffusion(size_t index) const;
+
+    /** @brief Return the state name. */
+    std::string getName() const;
+
+    /** @brief Return whether adaptive error is measured per scalar component. */
+    bool usesPerComponentErrorControl() const;
+
+    /** @brief Return the state shape. */
+    MatrixShape stateShape() const;
+
+    /** @brief Return the derivative shape. */
+    MatrixShape derivativeShape() const;
+
+    /** @brief Return the diffusion tangent shape. */
+    MatrixShape diffusionShape() const;
+
+    /** @brief Return the state row count. */
+    uint32_t getRowSize() const { return this->stateShape().rows; }
+
+    /** @brief Return the state column count. */
+    uint32_t getColumnSize() const { return this->stateShape().cols; }
+
+    /** @brief Return the derivative row count. */
+    uint32_t getDerivativeRowSize() const { return this->derivativeShape().rows; }
+
+    /** @brief Return the derivative column count. */
+    uint32_t getDerivativeColumnSize() const { return this->derivativeShape().cols; }
+
+    /** @brief Return the diffusion tangent row count. */
+    uint32_t getDiffusionRowSize() const { return this->diffusionShape().rows; }
+
+    /** @brief Return the diffusion tangent column count. */
+    uint32_t getDiffusionColumnSize() const { return this->diffusionShape().cols; }
+
+  private:
+    friend class StateRegistry;
+    friend struct std::default_delete<StateData>;
+
+    /** @brief Create a stable handle for a registry slot and cache its immutable view shapes. */
+    StateData(StateRegistry* owner, size_t slot, const StateSpec& spec);
+    ~StateData() = default;
+
+    /** @brief Rebind borrowed views when the manager changes the active buffer. */
+    void bindStateViews(double* state, double* derivative) noexcept
+    {
+        this->activeState = state;
+        this->activeDerivative = derivative;
+    }
+
+    StateRegistry* owner = nullptr; //!< Registry owning this handle's metadata and storage
+    size_t slot = 0;                  //!< Stable registration slot
+    double* activeState = nullptr;    //!< Active seed or buffer state storage
+    double* activeDerivative = nullptr; //!< Active seed or buffer derivative storage
+    const MatrixShape viewStateShape;      ///< Immutable shape cached for inline state maps.
+    const MatrixShape viewDerivativeShape; ///< Immutable shape cached for inline derivative maps.
 };
 
 #endif /* STATE_DATA_H */
