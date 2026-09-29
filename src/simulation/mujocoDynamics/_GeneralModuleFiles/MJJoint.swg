@@ -24,14 +24,69 @@
 %include "MJObject.swg"
 %template_mujoco_object(mjsJoint)
 
+// Retain the owner on borrowed results using the generated Python methods.
+%pythonappend MJJoint::getBody %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+%pythonappend MJScalarJoint::getConstrainedEquality %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScalarJoint::getPositionState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScalarJoint::getVelocityState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBallJoint::getPositionState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBallJoint::getVelocityState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJFreeJoint::getTranslationPositionState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJFreeJoint::getTranslationVelocityState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJFreeJoint::getAttitudeState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJFreeJoint::getAttitudeRateState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+
 %ignore MJJoint::MJJoint;
+%ignore MJJoint::stageConfiguration;
+%ignore MJJoint::commitConfiguration;
+%ignore MJJoint::discardStagedConfiguration;
+%ignore MJJoint::registerPositionStates;
+%ignore MJJoint::registerVelocityStates;
+%ignore MJJoint::setPositionDerivativeFromMujoco;
+%ignore MJJoint::clearStateHandles;
+%ignore MJJoint::validateStateLayout;
 
 %ignore MJScalarJoint::MJScalarJoint;
-%ignore MJScalarJoint::configure;
+%ignore MJScalarJoint::stageConfiguration;
+%ignore MJScalarJoint::commitConfiguration;
+%ignore MJScalarJoint::discardStagedConfiguration;
 %ignore MJScalarJoint::updateConstrainedEquality;
 %ignore MJScalarJoint::writeJointStateMessage;
 
+
 %include "MJJoint.h"
+
+
 
 %include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
 struct ScalarJointStateMsgPayload_C;

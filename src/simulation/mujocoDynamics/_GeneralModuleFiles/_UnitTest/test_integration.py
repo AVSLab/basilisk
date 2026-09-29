@@ -157,6 +157,26 @@ SPHERE_XML = """
 </mujoco>
 """
 
+FILTERED_ACTUATOR_XML = """
+<mujoco>
+  <worldbody>
+    <body name="body">
+      <joint name="slide" type="slide"/>
+      <geom type="sphere" size="1" mass="1"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <general
+      name="filtered"
+      joint="slide"
+      dyntype="filter"
+      dynprm="2"
+      gear="1"
+    />
+  </actuator>
+</mujoco>
+"""
+
 
 def _runFreeSpin(highOrder, dt, tf, omega):
     """Integrate the torque-free sphere from an initial body rate and return the
@@ -223,14 +243,59 @@ def test_quaternionStaysNormalized(highOrder):
 def test_repeatedResetSucceeds():
     """A scene can be reset more than once. ``test_sat.xml`` has nq != nv (free
     joint plus hinges), so the bulk states must be registered at their compiled
-    sizes for a second reset to succeed."""
+    sizes for a second reset to succeed. The cached output payload must retain
+    the active topology across both resets."""
     scene = mujoco.MJScene.fromFile(XML_PATH)
     integ = svIntegrators.svIntegratorRK4(scene)
     scene.setIntegrator(integ)
     _hold = [integ]
 
     scene.Reset(0)
+    first_output = scene.stateOutMsg.read()
     scene.Reset(0)  # must not raise
+    second_output = scene.stateOutMsg.read()
+
+    assert len(first_output.qpos) == len(second_output.qpos) == 9
+    assert len(first_output.qvel) == len(second_output.qvel) == 8
+    assert len(first_output.act) == len(second_output.act) == 0
+    np.testing.assert_allclose(second_output.qpos, first_output.qpos)
+    np.testing.assert_allclose(second_output.qvel, first_output.qvel)
+
+
+def test_repeated_reset_preserves_mass_and_activation_states():
+    """Repeated reset retains state values instead of reseeding from MuJoCo."""
+    scene = mujoco.MJScene(FILTERED_ACTUATOR_XML)
+    scene.Reset(0)
+    act_state = scene.getActState()
+    mass_state = scene.getMassState()
+    assert act_state is not None
+
+    act_state.setState([[0.75]])
+    mass_state.setState([[0.0], [2.5]])
+    scene.Reset(macros.sec2nano(3.0))
+
+    np.testing.assert_allclose(act_state.getState(), [[0.75]])
+    np.testing.assert_allclose(mass_state.getState(), [[0.0], [2.5]])
+    output = scene.stateOutMsg.read()
+    np.testing.assert_allclose(output.act, [[0.75]])
+
+
+@pytest.mark.parametrize(
+    "invalid_masses",
+    (
+        [[np.nan], [1.0]],
+        [[1.0], [1.0]],
+        [[0.0], [0.0]],
+    ),
+)
+def test_reset_rejects_invalid_or_irreversible_mass_states(invalid_masses):
+    scene = mujoco.MJScene(FILTERED_ACTUATOR_XML)
+    scene.Reset(0)
+    mass_state = scene.getMassState()
+    mass_state.setState(invalid_masses)
+
+    with pytest.raises(RuntimeError, match="mass"):
+        scene.Reset(0)
 
 
 if __name__ == "__main__":

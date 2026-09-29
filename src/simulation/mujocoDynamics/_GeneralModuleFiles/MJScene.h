@@ -20,11 +20,12 @@
 #ifndef MJSCENE_H
 #define MJSCENE_H
 
+#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
+#include <array>
 #include <memory>
-#include <stdexcept>
 #include <mujoco/mujoco.h>
+#include <stdexcept>
 
-#include "MJQPosStateData.h"
 #include "MJSpec.h"
 #include "MJUtils.h"
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
@@ -33,6 +34,8 @@
 
 #include <vector>
 
+class MJFwdKinematics;
+
 /**
  * @brief Represents a dynamic object that solves multi-body dynamics through MuJoCo.
  *
@@ -40,6 +43,16 @@
  * by joints, allowing forces and torques to act at specific points or joints.
  * The state of the system is advanced in time through integration, with forward
  * kinematics transforming joint states into body positions and orientations.
+ *
+ * Reset registers joint positions, joint velocities, mass, activation, and task-model
+ * states in the common DynParamManager. Checked buffer segments connect joint storage
+ * to MuJoCo qpos/qvel arrays. Quaternion records use an immutable update policy chosen
+ * before topology is finalized. Integrators only see that state contract.
+ *
+ * Before a dynamics callback, the scene copies the candidate state to MuJoCo and
+ * refreshes required model quantities. Tasks then evaluate drift or diffusion.
+ * Scene mutation and recompilation are blocked while raw model/data pointers are in
+ * use. MJSpec replaces compiled model/data and then updates wrapper bindings.
  */
 class MJScene : public DynamicObject
 {
@@ -434,22 +447,17 @@ public:
     void AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority);
 
     /**
-     * @brief Calls `SelfInit` on all system models in the dynamics task.
+     * @brief Calls `SelfInit` once on each model in either dynamics task.
      */
     void SelfInit() override;
 
     /**
-     * @brief Calls `Reset` on all system models in the dynamics task and
-     * calls `initializeDynamics`.
+     * @brief Registers dynamics state and calls `Reset` once on each model in
+     * either dynamics task.
      *
      * @param CurrentSimNanos The current simulation time in nanoseconds.
      */
     void Reset(uint64_t CurrentSimNanos) override;
-
-    /**
-     * @brief Registers the dynamic states and recompiles the MuJoCo model.
-     */
-    void initializeDynamics() override;
 
     /**
      * @brief Integrates the dynamics up to the given time and writes output messages.
@@ -610,22 +618,6 @@ public:
     StateData* getActState();
 
     /**
-     * @brief Retrieves the bulk position state data (the entire `qpos` vector),
-     * or `nullptr` if not yet initialized.
-     *
-     * Joints address their own slice of this state through their `qposAdr`.
-     */
-    MJQPosStateData* getQposState();
-
-    /**
-     * @brief Retrieves the bulk velocity state data (the entire `qvel` vector),
-     * or `nullptr` if not yet initialized.
-     *
-     * Joints address their own slice of this state through their `qvelAdr`.
-     */
-    StateData* getQvelState();
-
-    /**
      * @brief Retrieves the bulk mass state data (one entry per body), or
      * `nullptr` if not yet initialized.
      *
@@ -670,7 +662,11 @@ public:
      * integrator's tolerance controls the attitude error. The result no longer
      * bit-matches MuJoCo's native stepper. Set before `InitializeSimulation`.
      */
-    bool highOrderAttitudeIntegration = false;
+    /** Select the qpos attitude policy before state topology is finalized. */
+    void setHighOrderAttitudeIntegration(bool enabled);
+
+    /** Return the configured qpos attitude policy mode. */
+    bool getHighOrderAttitudeIntegration() const noexcept;
 
     Message<MJSceneStateMsgPayload> stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
@@ -689,6 +685,34 @@ protected:
      */
     void updateMujocoArraysFromStates();
 
+    /** Copy state buffers into already-compiled MuJoCo arrays. */
+    void copyMujocoArraysFromStates(mjModel* model, mjData* data);
+
+    /** Copy states and refresh mass-dependent MuJoCo constants. */
+    void synchronizeMujocoFromStates(mjModel* model, mjData* data);
+
+    /** Validate the complete bulk mass state before mutating MuJoCo. */
+    void validateMujocoMassStates(const mjModel* model) const;
+
+    /** Register MuJoCo-owned joint, mass, and activation state records. */
+    std::array<size_t, 2> registerMujocoStates(const mjModel* model, bool highOrderAttitude);
+
+    /** Register states requested by models on either dynamics task. */
+    void registerTaskModelStates();
+
+    /** Bind finalized joint buffer segments and seed or restore MuJoCo arrays. */
+    void bindMujocoStateSegments(mjModel* model,
+                                 mjData* data,
+                                 bool topologyAlreadyFinalized,
+                                 bool highOrderAttitude,
+                                 const std::array<size_t, 2>& jointSlots);
+
+    /** Reset each distinct model once and advance both task schedules. */
+    void resetTaskModels(uint64_t currentSimNanos);
+
+    /** Configure adaptive tolerances associated with MuJoCo state semantics. */
+    void configureAdaptiveStateTolerances();
+
     /**
      * @brief Writes the values of the position, velocity, and actuators states to the `stateOutMsg` messages.
      *
@@ -696,7 +720,62 @@ protected:
      */
     void writeOutputStateMessages(uint64_t CurrentSimNanos);
 
-protected:
+    /** Write output using dimensions captured from the active compiled model. */
+    void writeOutputStateMessages(uint64_t currentSimNanos, int nq, int nv, int na);
+
+    /** Size staging output storage without mutating the published message. */
+    void prepareOutputStateMessageStorage(int nq, int nv, int na);
+
+    /** Fill already-sized pending output storage from finalized states. */
+    void populateOutputStateMessagePayload(int nq, int nv, int na);
+
+    /** Publish the already-prepared state payload. */
+    void publishOutputStateMessage(uint64_t currentSimNanos);
+
+  private:
+    friend class MJSpec;
+    friend class MJFwdKinematics;
+
+    /** @brief Committed dimensions and joint kinds that a recompiled model must preserve.
+     * These dimensions and addresses must match the fixed state layout.
+     */
+    struct MujocoTopology
+    {
+        bool registered = false; ///< True after the first complete scene Reset.
+        bool highOrderAttitude = false; ///< Quaternion derivative/policy mode captured at registration.
+        int nq = 0; ///< Stored joint-position scalars.
+        int nv = 0; ///< Joint-velocity scalars.
+        int na = 0; ///< Actuator activation scalars.
+        int nbody = 0; ///< Body count, including the world body.
+        std::vector<int> jointTypes; ///< Joint kinds in compiled model order.
+
+        /** @brief Capture model dimensions and the selected quaternion policy. */
+        static MujocoTopology capture(const mjModel& model, bool highOrderAttitude);
+        /** @brief Check dimensions and joint kinds without allocating. */
+        bool matches(const mjModel& model) const noexcept;
+    };
+
+    /** Reject scene/spec topology changes while raw MuJoCo pointers are held. */
+    void requireSceneMutationAllowed(const char* operation) const;
+
+    /**
+     * Copy changed joint states into MuJoCo and refresh position/velocity
+     * quantities. Returns whether a refresh was performed.
+     */
+    bool updateForwardKinematicsFromStates(mjModel* model, mjData* data);
+
+    /** Register and bind state storage against an already compiled model. */
+    void registerAndBindDynamicsState(mjModel* model, mjData* data, bool topologyAlreadyFinalized);
+
+    bool highOrderAttitudeIntegration = false; ///< Requested quaternion policy, fixed with state topology.
+    bool sceneMutationBlocked = false; ///< Blocks mutation while callbacks borrow scene/model pointers.
+    MJSceneStateMsgPayload outputStateMessagePayload; ///< Reusable pending payload, filled before publication.
+    MujocoTopology modelTopology; ///< Accepted MuJoCo layout checked before replacement compilation commits.
+
+    /** @brief Check a candidate compiled model against finalized state topology. */
+    bool modelTopologyMatches(const mjModel& candidate) const;
+
+  protected:
     MJSpec spec; ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
     bool mjModelConstStale = false; ///< Flag indicating stale model constants.
     bool forwardKinematicsStale = true; ///< Flag indicating stale forward kinematics.
@@ -706,13 +785,12 @@ protected:
     SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
     std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
-    // A MuJoCo scene integrates exactly these four bulk states regardless of the
-    // number of bodies or joints it contains.  Joints and bodies address their
-    // own slices.
-    MJQPosStateData* qposState = nullptr; ///< Bulk position state (entire `qpos`).
-    StateData* qvelState = nullptr;       ///< Bulk velocity state (entire `qvel`).
     StateData* massState = nullptr;       ///< Bulk mass state (one entry per body).
     StateData* actState = nullptr;        ///< Bulk actuator state (entire `act`).
+    StateBufferSegment jointQposStateSegment;      ///< Joint-bound qpos buffer span.
+    StateBufferSegment jointQvelStateSegment;      ///< Joint-bound qvel buffer span.
+    StateBufferSegment jointQposDerivativeSegment; ///< Native qpos tangent span.
+    StateBufferSegment jointQvelDerivativeSegment; ///< Joint qacc output span.
 };
 
 #endif

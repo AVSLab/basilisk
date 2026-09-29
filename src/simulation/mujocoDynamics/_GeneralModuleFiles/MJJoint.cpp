@@ -20,8 +20,12 @@
 #include "MJJoint.h"
 
 #include "MJBody.h"
+#include "MJQuaternionStatePolicy.h"
 #include "MJScene.h"
 #include "MJSpec.h"
+
+#include <algorithm>
+#include <memory>
 
 namespace
 {
@@ -43,19 +47,75 @@ mjsEquality* createConstrainedEquality(const std::string& jointName,
 
     return mjsequality;
 }
+
+StateSpec
+euclideanVectorSpec(uint32_t rows)
+{
+    StateSpec spec;
+    spec.state = { rows, 1 };
+    spec.derivative = spec.state;
+    spec.diffusionTangent = spec.state;
+    spec.errorControl = ErrorControlMode::PerComponent;
+    return spec;
+}
+
+StateData*
+registerQuaternionState(DynParamRegisterer registerer, const std::string& name, bool highOrder)
+{
+    StateSpec spec;
+    spec.state = { 4, 1 };
+    spec.derivative = { highOrder ? 4U : 3U, 1 };
+    spec.diffusionTangent = { 3, 1 };
+    spec.errorControl = ErrorControlMode::PerComponent;
+    spec.updateKind = StateUpdateKind::Special;
+    if (highOrder) {
+        return registerer.registerState(name, spec, std::make_unique<MJHighOrderQuaternionStatePolicy>());
+    }
+    return registerer.registerState(name, spec, std::make_unique<MJNativeQuaternionStatePolicy>());
+}
+
+Eigen::Matrix<double, 4, 1>
+quaternionRate(ConstMatrixView quaternion, const double* angularVelocity)
+{
+    const double w = quaternion(0);
+    const double x = quaternion(1);
+    const double y = quaternion(2);
+    const double z = quaternion(3);
+    const double wx = angularVelocity[0];
+    const double wy = angularVelocity[1];
+    const double wz = angularVelocity[2];
+
+    Eigen::Matrix<double, 4, 1> result;
+    result(0) = 0.5 * (-x * wx - y * wy - z * wz);
+    result(1) = 0.5 * (w * wx + y * wz - z * wy);
+    result(2) = 0.5 * (w * wy - x * wz + z * wx);
+    result(3) = 0.5 * (w * wz + x * wy - y * wx);
+    return result;
+}
+
+void
+setQuaternionDerivative(StateData& quaternion, const double* angularVelocity)
+{
+    auto derivative = quaternion.derivativeView();
+    if (derivative.rows() == 3) {
+        std::copy_n(angularVelocity, 3, derivative.data());
+    } else {
+        derivative = quaternionRate(static_cast<const StateData&>(quaternion).stateView(), angularVelocity);
+    }
+}
 } // namespace
 
-void MJJoint::configure(const mjModel* m)
+void
+MJJoint::configure(const mjModel* model)
 {
-    MJObject::configure(m);
-
-    this->qposAdr = m->jnt_qposadr[this->getId()];
-    this->qvelAdr = m->jnt_dofadr[this->getId()];
+    MJObject::configure(model);
+    this->qposAdr = model->jnt_qposadr[this->getId()];
+    this->qvelAdr = model->jnt_dofadr[this->getId()];
 }
 
 void MJJoint::checkInitialized() const
 {
-    if (!this->qposAdr.has_value()) {
+    if (!this->qposAdr.has_value() || !this->statesRegistered) {
         body.getSpec().getScene().bskLogger.bskError("Tried to manipulate joint state before the joint was configured.");
     }
 }
@@ -70,13 +130,15 @@ MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
         createConstrainedEquality(name, body.getSpec().getMujocoSpec()),
         body.getSpec()
     )
-{}
+{
+    body.getSpec().markAsNeedingToRecompileModel();
+}
 
 Eigen::Vector3d MJScalarJoint::getAxis() const
 {
     checkInitialized();
     const auto m = this->body.getSpec().getMujocoModel();
-    return Eigen::Vector3d(m->jnt_axis + (this->qposAdr.value() * 3));
+    return Eigen::Vector3d(m->jnt_axis + (this->getId() * 3));
 }
 
 bool MJScalarJoint::isHinge() const
@@ -84,10 +146,11 @@ bool MJScalarJoint::isHinge() const
     return this->mjsObject->type == mjJNT_HINGE;
 }
 
-void MJScalarJoint::configure(const mjModel* m)
+void
+MJScalarJoint::configure(const mjModel* model)
 {
-    MJJoint::configure(m);
-    this->constrainedEquality.configure(m);
+    MJJoint::configure(model);
+    this->constrainedEquality.configure(model);
 }
 
 void MJScalarJoint::updateConstrainedEquality()
@@ -106,57 +169,152 @@ void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
     auto& scene = body.getSpec().getScene();
 
     ScalarJointStateMsgPayload stateOutMsgPayload;
-    stateOutMsgPayload.state =
-        scene.getQposState()->state(static_cast<Eigen::Index>(this->qposAdr.value()));
+    stateOutMsgPayload.state = this->qposState->stateView()(0);
     this->stateOutMsg.write(&stateOutMsgPayload, scene.moduleID, CurrentSimNanos);
 
     ScalarJointStateMsgPayload stateDotOutMsgPayload;
-    stateDotOutMsgPayload.state =
-        scene.getQvelState()->state(static_cast<Eigen::Index>(this->qvelAdr.value()));
+    stateDotOutMsgPayload.state = this->qvelState->stateView()(0);
     this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, CurrentSimNanos);
+}
+
+void
+MJScalarJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+{
+    (void)highOrderAttitude;
+    this->qposState = registerer.registerState("joint_" + this->name + "_qpos", euclideanVectorSpec(1));
+}
+
+void
+MJScalarJoint::registerVelocityStates(DynParamRegisterer registerer)
+{
+    this->qvelState = registerer.registerState("joint_" + this->name + "_qvel", euclideanVectorSpec(1));
+    this->statesRegistered = true;
+}
+
+void
+MJScalarJoint::setPositionDerivativeFromMujoco(const mjData* data)
+{
+    this->qposState->derivativeView()(0) = data->qvel[this->qvelAdr.value()];
+}
+
+void
+MJScalarJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+{
+    if (this->qposState->stateData() != qposBase + this->qposAdr.value() ||
+        this->qvelState->stateData() != qvelBase + this->qvelAdr.value()) {
+        throw std::logic_error("Joint-bound state layout does not match MuJoCo addresses for scalar joint '" +
+                               this->name + "'.");
+    }
 }
 
 void MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
-    this->body.getSpec().getScene().getQposState()->state(
-        static_cast<Eigen::Index>(this->qposAdr.value())) = value;
+    this->qposState->stateView()(0) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
-    this->body.getSpec().getScene().getQvelState()->state(
-        static_cast<Eigen::Index>(this->qvelAdr.value())) = value;
+    this->qvelState->stateView()(0) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-MJSingleJointEquality
+MJSingleJointEquality&
 MJScalarJoint::getConstrainedEquality()
 {
     return this->constrainedEquality;
 }
 
 // ---------------------------------------------------------------------------
+// MJBallJoint
+// ---------------------------------------------------------------------------
+
+void
+MJBallJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+{
+    this->qposState = registerQuaternionState(registerer, "joint_" + this->name + "_qpos", highOrderAttitude);
+}
+
+void
+MJBallJoint::registerVelocityStates(DynParamRegisterer registerer)
+{
+    this->qvelState = registerer.registerState("joint_" + this->name + "_qvel", euclideanVectorSpec(3));
+    this->statesRegistered = true;
+}
+
+void
+MJBallJoint::setPositionDerivativeFromMujoco(const mjData* data)
+{
+    const auto qvelAddress = this->qvelAdr.value();
+    setQuaternionDerivative(*this->qposState, data->qvel + qvelAddress);
+}
+
+void
+MJBallJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+{
+    if (this->qposState->stateData() != qposBase + this->qposAdr.value() ||
+        this->qvelState->stateData() != qvelBase + this->qvelAdr.value()) {
+        throw std::logic_error("Joint-bound state layout does not match MuJoCo addresses for ball joint '" +
+                               this->name + "'.");
+    }
+}
+
+// ---------------------------------------------------------------------------
 // MJFreeJoint
 // ---------------------------------------------------------------------------
+
+void
+MJFreeJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+{
+    const std::string prefix = "joint_" + this->name;
+    this->qposTranslationState = registerer.registerState(prefix + "_qposTranslation", euclideanVectorSpec(3));
+    this->qposAttitudeState = registerQuaternionState(registerer, prefix + "_qposAttitude", highOrderAttitude);
+}
+
+void
+MJFreeJoint::registerVelocityStates(DynParamRegisterer registerer)
+{
+    const std::string prefix = "joint_" + this->name;
+    this->qvelTranslationState = registerer.registerState(prefix + "_qvelTranslation", euclideanVectorSpec(3));
+    this->qvelAttitudeState = registerer.registerState(prefix + "_qvelAttitude", euclideanVectorSpec(3));
+    this->statesRegistered = true;
+}
+
+void
+MJFreeJoint::setPositionDerivativeFromMujoco(const mjData* data)
+{
+    const auto qvelAddress = this->qvelAdr.value();
+    std::copy_n(data->qvel + qvelAddress, 3, this->qposTranslationState->derivativeView().data());
+    setQuaternionDerivative(*this->qposAttitudeState, data->qvel + qvelAddress + 3);
+}
+
+void
+MJFreeJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+{
+    const auto qposAddress = this->qposAdr.value();
+    const auto qvelAddress = this->qvelAdr.value();
+    if (this->qposTranslationState->stateData() != qposBase + qposAddress ||
+        this->qposAttitudeState->stateData() != qposBase + qposAddress + 3 ||
+        this->qvelTranslationState->stateData() != qvelBase + qvelAddress ||
+        this->qvelAttitudeState->stateData() != qvelBase + qvelAddress + 3) {
+        throw std::logic_error("Joint-bound state layout does not match MuJoCo addresses for free joint '" +
+                               this->name + "'.");
+    }
+}
 
 void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
-    auto& qpos = this->body.getSpec().getScene().getQposState()->state;
-    const Eigen::Index i = static_cast<Eigen::Index>(this->qposAdr.value());
-    qpos.middleRows(i, 3) = position;
+    this->qposTranslationState->stateView() = position;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
-    auto& qvel = this->body.getSpec().getScene().getQvelState()->state;
-    const Eigen::Index i = static_cast<Eigen::Index>(this->qvelAdr.value());
-    qvel.middleRows(i, 3) = velocity;
+    this->qvelTranslationState->stateView() = velocity;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
@@ -165,22 +323,18 @@ void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
     checkInitialized();
     auto mat  = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
-    auto& qpos = this->body.getSpec().getScene().getQposState()->state;
-    const Eigen::Index i = static_cast<Eigen::Index>(this->qposAdr.value());
-    // The free joint quaternion is stored three entries after the translation.
-    qpos(i + 3) = quat.w();
-    qpos(i + 4) = quat.x();
-    qpos(i + 5) = quat.y();
-    qpos(i + 6) = quat.z();
+    auto qpos = this->qposAttitudeState->stateView();
+    qpos(0) = quat.w();
+    qpos(1) = quat.x();
+    qpos(2) = quat.y();
+    qpos(3) = quat.z();
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
 void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
-    auto& qvel = this->body.getSpec().getScene().getQvelState()->state;
-    const Eigen::Index i = static_cast<Eigen::Index>(this->qvelAdr.value());
-    qvel.middleRows(i + 3, 3) = attitudeRate;
+    this->qvelAttitudeState->stateView() = attitudeRate;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
