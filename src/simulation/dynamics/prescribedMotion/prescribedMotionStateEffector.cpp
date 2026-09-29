@@ -215,7 +215,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
     this->r_PM_M = this->rEpoch_PM_M + (this->rPrimeEpoch_PM_M * dt) + (0.5 * this->rPrimePrime_PM_M * dt * dt);
     this->rPrime_PM_M = this->rPrimeEpoch_PM_M + (this->rPrimePrime_PM_M * dt);
     this->omega_PM_P = this->omegaEpoch_PM_P + (this->omegaPrime_PM_P * dt);
-    this->sigma_PM = Eigen::MRPd(this->sigma_PMState->getStateReference().data());
+    this->sigma_PM = Eigen::MRPd(this->sigma_PMState->stateView().data());
 
     // Give the mass of the prescribed body to the effProps mass
     this->effProps.mEff = this->mass;
@@ -433,7 +433,7 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
                                                        Eigen::Vector3d omegaDot_BN_B,
                                                        Eigen::MRPd sigma_BN)
 {
-    Eigen::MRPd sigma_PM_loc(this->sigma_PMState->getStateReference().data());
+    Eigen::MRPd sigma_PM_loc(this->sigma_PMState->stateView().data());
     this->sigma_PMState->setDerivative(0.25*sigma_PM_loc.Bmat()*this->omega_PM_P);
 
     // Loop through attached state effectors for compute derivatives
@@ -595,9 +595,19 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
  */
 void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
 {
+    this->requireMutableTopology("PrescribedMotionStateEffector::addStateEffector");
     this->assignStateParamNames<StateEffector *>(newStateEffector);
 
     this->stateEffectors.push_back(newStateEffector);
+}
+
+void
+PrescribedMotionStateEffector::freezeTopology() noexcept
+{
+    for (StateEffector* stateEffector : this->stateEffectors) {
+        stateEffector->freezeTopology();
+    }
+    StateEffector::freezeTopology();
 }
 
 /*! @brief Set the effector mass after validating it, preserving the previous value on failure.

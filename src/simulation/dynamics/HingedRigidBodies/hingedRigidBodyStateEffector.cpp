@@ -201,8 +201,8 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[ma
 
     // - Find hinged rigid bodies' position with respect to point B
     // - First need to grab current states
-    this->theta = this->thetaState->getStateReference()(0, 0);
-    this->thetaDot = this->thetaDotState->getStateReference()(0, 0);
+    this->theta = this->thetaState->stateView()(0, 0);
+    this->thetaDot = this->thetaDotState->stateView()(0, 0);
     // - Next find the sHat unit vectors
     this->dcm_SH = eigenM2(this->theta);
     this->dcm_SP = this->dcm_SH*this->dcm_HB;
@@ -347,7 +347,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_u
 
     // - Compute Derivatives
     // - First is trivial
-    this->thetaState->setDerivative(thetaDotState->getStateReference());
+    this->thetaState->setDerivative(thetaDotState->stateView());
     // - Second, a little more involved
     Eigen::MatrixXd thetaDDot(1,1);
     thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_PN_P) + this->bTheta.dot(omegaDot_BN_B) + this->cTheta;
@@ -425,7 +425,7 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
 
     // - Get thetaDDot from last integrator call
     double thetaDDotLocal;
-    thetaDDotLocal = thetaDotState->getStateDerivReference()(0, 0);
+    thetaDDotLocal = thetaDotState->derivativeView()(0, 0);
 
     // - Calculate force that the HRB is applying to the spacecraft
     this->forceOnBody_B = -(this->mass*this->d*this->sHat3_P*thetaDDotLocal + this->mass*this->d*this->thetaDot

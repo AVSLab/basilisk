@@ -41,7 +41,7 @@ from Basilisk.architecture.swig_common_model import *
 %shared_ptr(SpinningBody)
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "spinningBodyNDOFStateEffector.h"
 

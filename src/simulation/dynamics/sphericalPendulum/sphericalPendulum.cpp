@@ -146,10 +146,10 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
 {
 
     // - Grab phi and theta from state manager and define r_PcB_B
-	this->phi = this->phiState->getStateReference()(0,0);
-	this->theta = this->thetaState->getStateReference()(0,0);
+    this->phi = this->phiState->stateView()(0, 0);
+    this->theta = this->thetaState->stateView()(0, 0);
 
-	// maintain phi and theta between 0 and 2pi
+    // maintain phi and theta between 0 and 2pi
 	if (this->phi>2*M_PI) {
 		this->phi=this->phi-2*M_PI;
 		Eigen::MatrixXd phiInitMatrix(1,1);
@@ -187,9 +187,9 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
 	this->l_B=dcm_B_P0*l_P0;
 
 	this->r_PcB_B = this->d + this->l_B;
-	this->massFSP = this->massState->getStateReference()(0, 0);
+    this->massFSP = this->massState->stateView()(0, 0);
 
-	// - Update the effectors mass
+    // - Update the effectors mass
 	this->effProps.mEff = this->massFSP;
 	this->effProps.mEffDot = this->fuelMassDot;
 	this->effProps.mEffDotDynamics =
@@ -201,10 +201,10 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
 	this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
 	// - Grab phiDot and thetaDot from the stateManager and define rPrime_PcB_B
-	this->phiDot=this->phiDotState->getStateReference()(0,0);
-	this->thetaDot=this->thetaDotState->getStateReference()(0,0);
+    this->phiDot = this->phiDotState->stateView()(0, 0);
+    this->thetaDot = this->thetaDotState->stateView()(0, 0);
 
-	// define the derivative of l in P0 frame
+    // define the derivative of l in P0 frame
 	this->lPrime_P0 << this->pendulumRadius*(-this->phiDot*sin(this->phi)*cos(this->theta)-this->thetaDot*cos(this->phi)*sin(this->theta)),
     		this->pendulumRadius*(this->phiDot*cos(this->phi)*cos(this->theta)-this->thetaDot*sin(this->phi)*sin(this->theta)),
     		-this->pendulumRadius*(this->thetaDot*cos(this->theta));
@@ -385,10 +385,10 @@ void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]], Ei
 	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
 	// - Set the derivative of l to lDot
-	this->phiState->setDerivative(this->phiDotState->getStateReference());
-	this->thetaState->setDerivative(this->thetaDotState->getStateReference());
+    this->phiState->setDerivative(this->phiDotState->stateView());
+    this->thetaState->setDerivative(this->thetaDotState->stateView());
 
-	// - Compute lDDot
+    // - Compute lDDot
 	Eigen::MatrixXd phi_conv(1,1);
 	Eigen::MatrixXd theta_conv(1,1);
     Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;

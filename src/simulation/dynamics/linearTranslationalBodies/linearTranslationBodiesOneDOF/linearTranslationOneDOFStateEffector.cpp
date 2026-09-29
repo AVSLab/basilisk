@@ -281,8 +281,8 @@ void LinearTranslationOneDOFStateEffector::writeOutputStateMessages(uint64_t Cur
  */
 void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-	this->rho = this->rhoState->getStateReference()(0,0);
-    this->rhoDot = this->rhoDotState->getStateReference()(0, 0);
+    this->rho = this->rhoState->stateView()(0, 0);
+    this->rhoDot = this->rhoDotState->stateView()(0, 0);
 
     if (this->isAxisLocked)
     {
@@ -409,7 +409,7 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
     // Collect hub states
-    Eigen::Vector3d omega_BN_B = this->hubOmega->getStateReference();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->stateView();
     Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
 
     // Prescribed motion translation coupling contributions
@@ -483,7 +483,7 @@ void LinearTranslationOneDOFStateEffector::computeDerivatives(double integTime [
 	Eigen::Vector3d rDDot_BN_B = dcm_BN * rDDot_BN_N;
     rhoDDot(0,0) = this->aRho.dot(rDDot_BN_B) + this->bRho.dot(omegaDot_BN_B) + this->cRho;
 	this->rhoDotState->setDerivative(rhoDDot);
-    this->rhoState->setDerivative(this->rhoDotState->getStateReference());
+    this->rhoState->setDerivative(this->rhoDotState->stateView());
 }
 
 /*! @brief Update the effector energy and momentum contributions.
@@ -518,7 +518,7 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
-        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
         this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
     }
 

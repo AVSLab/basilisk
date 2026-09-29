@@ -98,6 +98,7 @@ void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unu
  * @param[in] newBody Translating-body configuration to add.
  */
 void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody) {
+    this->requireMutableTopology("LinearTranslationNDOFStateEffector::addTranslatingBody");
     // Pushback new body
     translatingBodyVec.push_back(newBody);
     this->N++;
@@ -385,8 +386,8 @@ void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTim
         this->effProps.mEff += translatingBody->mass;
 
         // Grab current states
-        translatingBody->rho = this->rhoState->getStateReference()(i, 0);
-        translatingBody->rhoDot = this->rhoDotState->getStateReference()(i, 0);
+        translatingBody->rho = this->rhoState->stateView()(i, 0);
+        translatingBody->rhoDot = this->rhoDotState->stateView()(i, 0);
 
         // Write the translating axis in B frame
         if (i == 0) {
@@ -662,7 +663,7 @@ void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[m
 
     // Compute rho and rhoDot derivatives
     Eigen::VectorXd rhoDDot = this->ARho * rDDotLocal_BN_B + this->BRho * omegaDot_BN_B + this->CRho;
-    this->rhoState->setDerivative(this->rhoDotState->getStateReference());
+    this->rhoState->setDerivative(this->rhoDotState->stateView());
     this->rhoDotState->setDerivative(rhoDDot);
 }
 

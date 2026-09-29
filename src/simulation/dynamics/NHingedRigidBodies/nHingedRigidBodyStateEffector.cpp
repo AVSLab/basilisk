@@ -60,6 +60,7 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 void
 NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 {
+    this->requireMutableTopology("NHingedRigidBodyStateEffector::addHingedPanel");
     this->PanelVec.push_back(NewPanel);
     this->nHingedRigidBodyOutMsgs.push_back(new Message<HingedRigidBodyMsgPayload>);
     this->nHingedRigidBodyConfigLogOutMsgs.push_back(new Message<SCStatesMsgPayload>);
@@ -300,8 +301,8 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
     Eigen::Vector3d sum_rPrimeH;
     sum_rPrimeH.setZero();
 
-    const Eigen::MatrixXd& thetaVector = this->thetaState->getStateReference();
-    const Eigen::MatrixXd& thetaDotVector = this->thetaDotState->getStateReference();
+    const auto thetaVector = this->thetaState->stateView();
+    const auto thetaDotVector = this->thetaDotState->stateView();
     std::vector<HingedPanel>::iterator PanelIt;
     int it = 0;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
@@ -694,7 +695,7 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_
         i += 1;
     }
     // - First is trivial
-    this->thetaState->setDerivative(this->thetaDotState->getStateReference());
+    this->thetaState->setDerivative(this->thetaDotState->stateView());
     // - Second, a little more involved
     this->thetaDotState->setDerivative(thetaDDot);
 
