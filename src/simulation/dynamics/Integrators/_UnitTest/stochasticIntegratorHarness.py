@@ -37,6 +37,18 @@ from Basilisk.simulation import svIntegrators
 from Basilisk.simulation import dynParamManager
 
 
+def _scalarStochasticSpec(noiseCount: int):
+    shape = dynParamManager.MatrixShape()
+    shape.rows = 1
+    shape.cols = 1
+    spec = dynParamManager.StateSpec()
+    spec.state = shape
+    spec.derivative = shape
+    spec.diffusionTangent = shape
+    spec.noiseCount = noiseCount
+    return spec
+
+
 def buildPrescribedNoiseSim(case: dict, integratorClassName: str,
                             f: Callable, gCols: List[Callable]):
     """Build a MuJoCo simulation that replays a reference case's prescribed noise.
@@ -65,8 +77,9 @@ def buildPrescribedNoiseSim(case: dict, integratorClassName: str,
         def registerStates(self, registerer: StatefulSysModel.DynParamRegisterer):
             self.states: List[dynParamManager.StateData] = []
             for i in range(n):
-                self.states.append(registerer.registerState(1, 1, f"y{i + 1}"))
-                self.states[-1].setNumNoiseSources(m)
+                self.states.append(registerer.registerStateSpec(
+                    f"y{i + 1}", _scalarStochasticSpec(m)
+                ))
                 self.states[-1].setState([[x0[i]]])
             # Every noise source is shared across all states, so source k drives every
             # state through the k-th diffusion column (supports non-diagonal noise).
