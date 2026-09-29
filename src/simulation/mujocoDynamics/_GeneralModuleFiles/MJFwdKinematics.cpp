@@ -25,18 +25,13 @@
 
 #include <iostream>
 
-void MJFwdKinematics::fwdKinematics(MJScene& scene, uint64_t CurrentSimNanos)
+void
+MJFwdKinematics::fwdKinematics(MJScene& scene, uint64_t CurrentSimNanos)
 {
-    if (!scene.areKinematicsStale()) return;
-
     mjModel* model = scene.getMujocoModel();
     mjData* data = scene.getMujocoData();
 
-    // Compute the forward kinematics, which will update the
-    // accelerations and actuator state derivatives
-    // position-dependent
-    mj_fwdPosition(model, data);
-    mj_fwdVelocity(model, data);
-
-    scene.writeFwdKinematicsMessages(CurrentSimNanos);
+    if (scene.updateForwardKinematicsFromStates(model, data)) {
+        scene.writeFwdKinematicsMessages(CurrentSimNanos);
+    }
 }

@@ -17,6 +17,7 @@
 
  */
 
+#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
 #include "MJScene.h"
 
 #include "MJFwdKinematics.h"
@@ -26,6 +27,8 @@
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRK4.h"
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <functional>
@@ -37,11 +40,63 @@
 using MJBasilisk::detail::logAndThrow;
 using MJBasilisk::detail::checkedMjtSizeCast;
 
+namespace {
+struct MujocoStateSegments
+{
+    StateBufferSegment qposState;
+    StateBufferSegment qvelState;
+    StateBufferSegment qposDerivative;
+    StateBufferSegment qvelDerivative;
+};
+
+class ScopedFlag
+{
+  public:
+    explicit ScopedFlag(bool& flag) noexcept
+      : flag(flag)
+      , previous(flag)
+    {
+        flag = true;
+    }
+
+    ScopedFlag(const ScopedFlag&) = delete;
+    ScopedFlag& operator=(const ScopedFlag&) = delete;
+
+    ~ScopedFlag() noexcept { this->flag = this->previous; }
+
+  private:
+    bool& flag;
+    bool previous;
+};
+
+template<typename Callback>
+void
+forEachUniqueTaskModel(SysModelTask& dynamicsTask, SysModelTask& diffusionTask, Callback&& callback)
+{
+    std::unordered_set<SysModel*> visited;
+    visited.reserve(dynamicsTask.TaskModels.size() + diffusionTask.TaskModels.size());
+    std::vector<SysModel*> models;
+    models.reserve(dynamicsTask.TaskModels.size() + diffusionTask.TaskModels.size());
+    auto collectTask = [&visited, &models](const SysModelTask& task) {
+        for (const auto& modelPair : task.TaskModels) {
+            if (visited.emplace(modelPair.ModelPtr).second) {
+                models.push_back(modelPair.ModelPtr);
+            }
+        }
+    };
+    collectTask(dynamicsTask);
+    collectTask(diffusionTask);
+    for (SysModel* model : models) {
+        callback(model);
+    }
+}
+}
+
 MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
   : spec(*this, xml, files)
 {
     this->AddFwdKinematicsToDynamicsTask(MJScene::FWD_KINEMATICS_PRIORITY);
-    this->integrator = new svIntegratorRK4(this);
+    this->setIntegrator(new svIntegratorRK4(this));
 
     // Replace default MuJoCo error/warning handling with our own
     mju_user_error = MJBasilisk::detail::logMujocoError;
@@ -59,12 +114,17 @@ MJScene::fromFile(const std::string& fileName)
 void
 MJScene::AddModelToDynamicsTask(SysModel* model, int32_t priority)
 {
+    this->requireSceneMutationAllowed("MJScene::AddModelToDynamicsTask");
+    if (dynamic_cast<StatefulSysModel*>(model) != nullptr) {
+        this->requireMutableTopology("MJScene::AddModelToDynamicsTask");
+    }
     this->dynamicsTask.AddNewObject(model, priority);
 }
 
 void
 MJScene::AddFwdKinematicsToDynamicsTask(int32_t priority)
 {
+    this->requireSceneMutationAllowed("MJScene::AddFwdKinematicsToDynamicsTask");
     this->ownedSysModel.emplace_back(std::make_unique<MJFwdKinematics>(*this));
     this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size() - 1);
     this->AddModelToDynamicsTask(this->ownedSysModel.back().get(), priority);
@@ -73,12 +133,17 @@ MJScene::AddFwdKinematicsToDynamicsTask(int32_t priority)
 void
 MJScene::AddModelToDiffusionDynamicsTask(SysModel* model, int32_t priority)
 {
+    this->requireSceneMutationAllowed("MJScene::AddModelToDiffusionDynamicsTask");
+    if (dynamic_cast<StatefulSysModel*>(model) != nullptr) {
+        this->requireMutableTopology("MJScene::AddModelToDiffusionDynamicsTask");
+    }
     this->dynamicsDiffusionTask.AddNewObject(model, priority);
 }
 
 void
 MJScene::AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority)
 {
+    this->requireSceneMutationAllowed("MJScene::AddFwdKinematicsToDiffusionDynamicsTask");
     this->ownedSysModel.emplace_back(std::make_unique<MJFwdKinematics>(*this));
     this->ownedSysModel.back()->ModelTag = "FwdKinematics" + std::to_string(this->ownedSysModel.size() - 1);
     this->AddModelToDiffusionDynamicsTask(this->ownedSysModel.back().get(), priority);
@@ -87,113 +152,187 @@ MJScene::AddFwdKinematicsToDiffusionDynamicsTask(int32_t priority)
 void
 MJScene::SelfInit()
 {
-    this->dynamicsTask.SelfInitTaskList();
-    this->dynamicsDiffusionTask.SelfInitTaskList();
+    ScopedFlag mutationGuard(this->sceneMutationBlocked);
+    forEachUniqueTaskModel(this->dynamicsTask, this->dynamicsDiffusionTask, [](SysModel* model) { model->SelfInit(); });
 }
 
 void
 MJScene::Reset(uint64_t CurrentSimNanos)
 {
+    this->requireSceneMutationAllowed("MJScene::Reset");
+    this->spec.configureForStateRegistration();
+    ScopedFlag mutationGuard(this->sceneMutationBlocked);
+    MJSpec::NoRecompileGuard recompileGuard(this->spec);
+    mjModel* model = this->spec.getMujocoModel();
+    mjData* data = this->spec.getMujocoData();
+    const bool topologyAlreadyFinalized = this->dynManager.statesAreFinalized();
+    if (!this->modelTopology.registered) {
+        this->modelTopology = MujocoTopology::capture(*model, this->highOrderAttitudeIntegration);
+    }
+    this->prepareOutputStateMessageStorage(model->nq, model->nv, model->na);
+
     this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
+    this->timeBeforeNanos = CurrentSimNanos;
     this->firstDynamicsCall = true;
-    this->initializeDynamics();
+    this->registerAndBindDynamicsState(model, data, topologyAlreadyFinalized);
+    if (topologyAlreadyFinalized) {
+        this->synchronizeMujocoFromStates(model, data);
+    }
     this->dynamicsTask.TaskName = "Dynamics:" + this->ModelTag;
-    this->dynamicsTask.ResetTaskList(CurrentSimNanos);
     this->dynamicsDiffusionTask.TaskName = "DiffusionDynamics:" + this->ModelTag;
-    this->dynamicsDiffusionTask.ResetTaskList(CurrentSimNanos);
-    this->writeOutputStateMessages(CurrentSimNanos);
+    this->resetTaskModels(CurrentSimNanos);
+    if (this->spec.hasPendingModelChanges()) {
+        throw std::logic_error("Configure MuJoCo specification changes before Reset.");
+    }
+    this->populateOutputStateMessagePayload(model->nq, model->nv, model->na);
+    this->synchronizeMujocoFromStates(model, data);
+    data->time = static_cast<double>(CurrentSimNanos) * NANO2SEC;
+    this->publishOutputStateMessage(CurrentSimNanos);
 }
 
 void
-MJScene::initializeDynamics()
+MJScene::registerAndBindDynamicsState(mjModel* model, mjData* data, bool topologyAlreadyFinalized)
 {
-    // A MuJoCo scene integrates a small, fixed set of bulk states regardless of
-    // how many bodies or joints it contains: the whole position vector (qpos),
-    // the whole velocity vector (qvel), one mass entry per body, and the actuator
-    // state (act, only when the model has actuator activation states). Joints and
-    // bodies address their own slices of these. States are registered at the
-    // compiled model dimensions so a repeated Reset re-registers them at a
-    // matching size.
-    mjModel* model = this->spec.getMujocoModel();
-    const auto nq = checkedMjtSizeCast<uint32_t>(model->nq, "nq");
-    const auto nv = checkedMjtSizeCast<uint32_t>(model->nv, "nv");
-    const auto nbody = checkedMjtSizeCast<uint32_t>(model->nbody, "nbody");
-    const auto na = checkedMjtSizeCast<uint32_t>(model->na, "na");
-    this->qposState = this->dynManager.registerState<MJQPosStateData>(nq, 1, "mujocoQpos");
-    this->qvelState = this->dynManager.registerState(nv, 1, "mujocoQvel");
-    this->massState = this->dynManager.registerState(nbody, 1, "mujocoMass");
-    if (na > 0) {
-        this->actState = this->dynManager.registerState(na, 1, "mujocoAct");
-    }
+    const bool requestedHighOrder = this->highOrderAttitudeIntegration;
+    const std::array<size_t, 2> jointSlots = this->registerMujocoStates(model, requestedHighOrder);
+    this->registerTaskModelStates();
 
-    // The bulk position state advances quaternion blocks on SO(3).
-    this->qposState->highOrderIntegration = this->highOrderAttitudeIntegration;
-
-    // qpos and qvel bundle degrees of freedom of very different magnitudes
-    // (e.g. orbital translation alongside attitude quaternion components), so the
-    // adaptive integrator scales their truncation error per component. The
-    // homogeneous act and mass states keep the default whole-vector measure.
-    this->qposState->perComponentErrorControl = true;
-    this->qvelState->perComponentErrorControl = true;
-
-    bool recompiled = this->spec.recompileIfNeeded();
-    if (!recompiled) {
-        this->spec.configure();
-    }
-
-    // Seed the bulk states from mjData once, here rather than in configure():
-    // configure() also runs on mid-simulation recompiles, where re-seeding would
-    // discard state the user set on the stale model. body_mass includes the world
-    // body's entry at index 0, which no MJBody owns.
-    mjData* data = this->spec.getMujocoData();
-    std::copy_n(data->qpos, model->nq, this->qposState->state.data());
-    std::copy_n(data->qvel, model->nv, this->qvelState->state.data());
-    std::copy_n(model->body_mass, model->nbody, this->massState->state.data());
-    if (this->actState) {
-        std::copy_n(data->act, model->na, this->actState->state.data());
-    }
-
-    // Register the states of the models in the dynamics task
-    std::unordered_set<StatefulSysModel*> alreadyRegisteredModels;
-    auto registerStatesOnSysModel = [this, &alreadyRegisteredModels](SysModel* sysModelPtr) {
-        if (auto statefulSysModelPtr = dynamic_cast<StatefulSysModel*>(sysModelPtr)) {
-            // Don't registerStates in a model twice!
-            if (alreadyRegisteredModels.count(statefulSysModelPtr) > 0)
-                return;
-
-            statefulSysModelPtr->registerStates(
-              DynParamRegisterer(this->dynManager,
-                                 sysModelPtr->ModelTag.empty()
-                                   ? std::string("model")
-                                   : sysModelPtr->ModelTag + "_" + std::to_string(sysModelPtr->moduleID) + "_"));
-
-            alreadyRegisteredModels.emplace(statefulSysModelPtr);
+    if (!topologyAlreadyFinalized) {
+        this->massState->setState(
+          Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(model->body_mass, model->nbody));
+        if (this->actState) {
+            this->actState->setState(Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(data->act, model->na));
         }
+    }
+    this->massState->setDerivative(Eigen::MatrixXd::Zero(model->nbody, 1));
+
+    this->dynManager.finalizeStates();
+    this->bindMujocoStateSegments(model, data, topologyAlreadyFinalized, requestedHighOrder, jointSlots);
+    this->configureAdaptiveStateTolerances();
+}
+
+std::array<size_t, 2>
+MJScene::registerMujocoStates(const mjModel* model, bool highOrderAttitude)
+{
+    constexpr size_t qposSlot = 0;
+    constexpr size_t qvelSlot = 1;
+    std::array<size_t, 2> jointSlots{};
+    auto euclideanSpec = [](uint32_t rows, ErrorControlMode errorControl) {
+        StateSpec result;
+        result.state = { rows, 1 };
+        result.derivative = result.state;
+        result.diffusionTangent = result.state;
+        result.errorControl = errorControl;
+        return result;
     };
 
-    for (auto [_, sysModelPtr] : this->dynamicsTask.TaskModels) {
-        registerStatesOnSysModel(sysModelPtr);
-    }
-    for (auto [_, sysModelPtr] : this->dynamicsDiffusionTask.TaskModels) {
-        registerStatesOnSysModel(sysModelPtr);
-    }
-
-    // If an adaptive integrator is advancing a free-joint body, zero the
-    // relative tolerance on the bulk qpos/qvel states. At orbital position and
-    // velocity scales, the default relative tolerance can permit absolute
-    // errors large enough to destabilize stiff appendage dynamics. This holds
-    // regardless of how the body's gravity is applied (e.g. NBodyGravity).
-    bool hasFreeBody = false;
+    jointSlots[qposSlot] = 0;
     for (auto&& body : this->spec.getBodies()) {
-        if (body.isFree()) {
-            hasFreeBody = true;
-            break;
+        body.registerJointPositionStates(DynParamRegisterer(this->dynManager, "body_" + body.getName() + "_"),
+                                         highOrderAttitude);
+    }
+    jointSlots[qvelSlot] = this->dynManager.getStateRegistry().getStateCount();
+    if (this->dynManager.statesAreFinalized()) {
+        const auto& layouts = this->dynManager.getStateRegistry().getStateLayouts();
+        jointSlots[qvelSlot] = 0;
+        while (jointSlots[qvelSlot] < layouts.size() &&
+               layouts[jointSlots[qvelSlot]].stateOffset < static_cast<size_t>(model->nq)) {
+            ++jointSlots[qvelSlot];
         }
     }
-    auto* adaptiveIntegrator = dynamic_cast<StateVecAdaptiveIntegrator*>(this->integrator);
-    if (adaptiveIntegrator && hasFreeBody) {
-        adaptiveIntegrator->setRelativeTolerance("mujocoQpos", 0.0);
-        adaptiveIntegrator->setRelativeTolerance("mujocoQvel", 0.0);
+    for (auto&& body : this->spec.getBodies()) {
+        body.registerJointVelocityStates(DynParamRegisterer(this->dynManager, "body_" + body.getName() + "_"));
+    }
+    this->massState = this->dynManager.registerState(
+      "mujocoMass", euclideanSpec(static_cast<uint32_t>(model->nbody), ErrorControlMode::WholeState));
+    this->actState = nullptr;
+    if (model->na > 0) {
+        this->actState = this->dynManager.registerState(
+          "mujocoAct", euclideanSpec(static_cast<uint32_t>(model->na), ErrorControlMode::WholeState));
+    }
+    return jointSlots;
+}
+
+void
+MJScene::registerTaskModelStates()
+{
+    forEachUniqueTaskModel(this->dynamicsTask, this->dynamicsDiffusionTask, [this](SysModel* model) {
+        auto* statefulModel = dynamic_cast<StatefulSysModel*>(model);
+        if (statefulModel == nullptr) {
+            return;
+        }
+        const std::string prefix = (model->ModelTag.empty() ? std::string("model") : model->ModelTag) + "_" +
+                                   std::to_string(model->moduleID) + "_";
+        statefulModel->registerStates(DynParamRegisterer(this->dynManager, prefix));
+    });
+}
+
+void
+MJScene::bindMujocoStateSegments(mjModel* model,
+                                 mjData* data,
+                                 bool topologyAlreadyFinalized,
+                                 bool highOrderAttitude,
+                                 const std::array<size_t, 2>& jointSlots)
+{
+    constexpr size_t qposSlot = 0;
+    constexpr size_t qvelSlot = 1;
+    MujocoStateSegments segments;
+    if (model->nq > 0) {
+        const auto& layouts = this->dynManager.getStateRegistry().getStateLayouts();
+        if (jointSlots[qposSlot] >= layouts.size() || jointSlots[qvelSlot] >= layouts.size()) {
+            throw std::logic_error("MuJoCo joint record boundaries are outside the state layout.");
+        }
+        const size_t qposOffset = layouts[jointSlots[qposSlot]].stateOffset;
+        if (layouts[jointSlots[qvelSlot]].stateOffset != qposOffset + static_cast<size_t>(model->nq)) {
+            throw std::logic_error("MuJoCo joint records do not match the captured qpos/qvel spans.");
+        }
+        segments.qposState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qposSlot], model->nq);
+        segments.qvelState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qvelSlot], model->nv);
+        segments.qvelDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qvelSlot], model->nv);
+        if (!highOrderAttitude) {
+            segments.qposDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qposSlot], model->nv);
+        }
+        double* qposData = this->dynManager.getStateRegistry().stateSegmentData(segments.qposState);
+        double* qvelData = this->dynManager.getStateRegistry().stateSegmentData(segments.qvelState);
+        if (!topologyAlreadyFinalized) {
+            std::copy_n(data->qpos, model->nq, qposData);
+            std::copy_n(data->qvel, model->nv, qvelData);
+        }
+        for (const auto& body : this->spec.getBodies()) {
+            body.validateJointStateLayout(qposData, qvelData);
+        }
+    }
+    this->jointQposStateSegment = segments.qposState;
+    this->jointQvelStateSegment = segments.qvelState;
+    this->jointQposDerivativeSegment = segments.qposDerivative;
+    this->jointQvelDerivativeSegment = segments.qvelDerivative;
+}
+
+void
+MJScene::resetTaskModels(uint64_t currentSimNanos)
+{
+    forEachUniqueTaskModel(this->dynamicsTask, this->dynamicsDiffusionTask, [currentSimNanos](SysModel* model) {
+        model->Reset(currentSimNanos);
+    });
+    this->dynamicsTask.NextStartTime = currentSimNanos;
+    this->dynamicsTask.NextPickupTime = currentSimNanos + this->dynamicsTask.TaskPeriod;
+    this->dynamicsDiffusionTask.NextStartTime = currentSimNanos;
+    this->dynamicsDiffusionTask.NextPickupTime = currentSimNanos + this->dynamicsDiffusionTask.TaskPeriod;
+}
+
+void
+MJScene::configureAdaptiveStateTolerances()
+{
+    auto* adaptiveIntegrator = dynamic_cast<StateVecAdaptiveIntegrator*>(this->getIntegrator());
+    if (adaptiveIntegrator) {
+        for (auto&& body : this->spec.getBodies()) {
+            if (!body.isFree()) {
+                continue;
+            }
+            auto& joint = body.getFreeJoint();
+            adaptiveIntegrator->setRelativeTolerance(joint.getTranslationPositionState()->getName(), 0.0);
+            adaptiveIntegrator->setRelativeTolerance(joint.getTranslationVelocityState()->getName(), 0.0);
+        }
     }
 }
 
@@ -213,50 +352,34 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
 
     // Make sure the model is compiled
-    this->spec.recompileIfNeeded();
+    this->spec.recompileUntilStable();
+    ScopedFlag mutationGuard(this->sceneMutationBlocked);
+    MJSpec::NoRecompileGuard recompileGuard(this->spec);
 
     // recompileIfNeeded() above is the only thing that can invalidate these, so cache
     // them for the rest of the call rather than re-fetching through the accessors.
     mjModel* model = this->spec.getMujocoModel();
     mjData* data = this->spec.getMujocoData();
 
-    // Copy data from Basilisk state objects to MuJoCo structs
-    updateMujocoArraysFromStates();
+    // Copy data from Basilisk state objects to MuJoCo structs and refresh
+    // constants affected by evolving mass states.
+    this->synchronizeMujocoFromStates(model, data);
 
     // Keep MuJoCo's internal time in sync with the Basilisk simulation time so
     // diagnostics and MuJoCo warnings report the correct timestamp.
-    this->spec.getMujocoData()->time = t;
+    data->time = t;
 
     // On the first dynamics call, zero the CTRL array to prevent NaN/uninitialized
     // actuator commands from triggering instability at t=0.
     if (this->firstDynamicsCall) {
-        auto m = this->spec.getMujocoModel();
-        auto d = this->spec.getMujocoData();
-        for (int i = 0; i < m->nu; ++i) {
-            d->ctrl[i] = 0.0;
+        for (int i = 0; i < model->nu; ++i) {
+            data->ctrl[i] = 0.0;
         }
         this->firstDynamicsCall = false;
     }
 
     for (auto&& body : this->spec.getBodies()) {
-        // The mass of bodies is stored as a state, which may evolve in time.
-        // Mujoco expects mass properties to be stored in mjModel, so we need
-        // to update the mjModel with the mass properties of the bodies.
-        body.updateMujocoModelFromMassProps(model);
-
         body.writeStateDependentOutputMessages(nanos);
-    }
-
-    // Mujoco models cache certain computations that depend on values that are
-    // supposed to be constant during mujoco simulations (like body mass). However,
-    // we need to alter some of them, in which case we need to update the 'constants'.
-    if (areMujocoModelConstStale()) {
-        mj_setConst(model, data);
-
-        // mj_setConst overwrites qpos with the reference pose; restore the integrator
-        // state (and re-flag kinematics stale) before anything downstream reads qpos.
-        updateMujocoArraysFromStates();
-        this->mjModelConstStale = false;
     }
 
     // Execute the dynamics task!
@@ -266,13 +389,9 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // These messages can then be read by the rest of modules.
     this->dynamicsTask.ExecuteTaskList(nanos);
 
-    // If the kinematics became stale while running dynamics modules, refresh
-    // MuJoCo's cached position/velocity quantities before actuator, equality,
-    // and acceleration calculations read them.
-    if (areKinematicsStale()) {
-        mj_fwdPosition(model, data);
-        mj_fwdVelocity(model, data);
-    }
+    // Refresh after task callbacks, including direct StateData writes that
+    // cannot mark the scene's explicit stale flag.
+    this->updateForwardKinematicsFromStates(model, data);
 
     // Update the ctrl array in mjData from the inputs in the actuators
     for (auto&& actuator : this->spec.getActuators()) {
@@ -296,21 +415,23 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
                                         "s in MJScene with ID: " + std::to_string(moduleID));
     }
 
-    // The derivative of the bulk position is the bulk velocity.  The
-    // MJQPosStateData consumes it directly (default mode) or expands the
-    // quaternion blocks into four-component rates (high-order mode).
-    this->qposState->setDerivative(this->qvelState->getState());
-
-    // The derivative of the bulk velocity is the computed acceleration.
-    {
-        auto qvelDeriv = this->qvelState->stateDeriv.data();
-        std::copy_n(data->qacc, model->nv, qvelDeriv);
+    if (model->nv > 0) {
+        double* qvelDerivativeData = this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQvelDerivativeSegment);
+        std::copy_n(data->qacc, model->nv, qvelDerivativeData);
+        if (this->modelTopology.highOrderAttitude) {
+            for (auto&& body : this->spec.getBodies()) {
+                body.setJointPositionDerivativesFromMujoco(data);
+            }
+        } else {
+            double* qposDerivativeData = this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQposDerivativeSegment);
+            std::copy_n(data->qvel, model->nv, qposDerivativeData);
+        }
     }
 
     // Also copy the derivative of the actuator states, if we have them
     if (model->na > 0) {
-        auto actDeriv = this->actState->stateDeriv.data();
-        std::copy_n(data->act_dot, model->na, actDeriv);
+        auto actDeriv = this->actState->derivativeView();
+        std::copy_n(data->act_dot, model->na, actDeriv.data());
     }
 
     // Update the derivative of the body mass property states (into the bulk
@@ -324,6 +445,15 @@ void
 MJScene::equationsOfMotionDiffusion(double t, double timeStep [[maybe_unused]])
 {
     auto nanos = static_cast<uint64_t>(t * SEC2NANO);
+    this->spec.recompileUntilStable();
+    ScopedFlag mutationGuard(this->sceneMutationBlocked);
+    MJSpec::NoRecompileGuard recompileGuard(this->spec);
+
+    mjModel* model = this->spec.getMujocoModel();
+    mjData* data = this->spec.getMujocoData();
+    this->synchronizeMujocoFromStates(model, data);
+    data->time = t;
+
     this->dynamicsDiffusionTask.ExecuteTaskList(nanos);
 }
 
@@ -361,7 +491,6 @@ MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)
     for (auto&& body : this->spec.getBodies()) {
         body.writeFwdKinematicsMessages(this->spec.getMujocoModel(), this->spec.getMujocoData(), CurrentSimNanos);
     }
-    this->forwardKinematicsStale = false;
 }
 
 void
@@ -387,11 +516,11 @@ MJScene::getActState()
     return this->actState;
 }
 
-MJQPosStateData* MJScene::getQposState() { return this->qposState; }
-
-StateData* MJScene::getQvelState() { return this->qvelState; }
-
-StateData* MJScene::getMassState() { return this->massState; }
+StateData*
+MJScene::getMassState()
+{
+    return this->massState;
+}
 
 void
 MJScene::printMujocoModelDebugInfo(const std::string& path)
@@ -537,47 +666,218 @@ MJScene::addForceTorqueActuator(const std::string& name, const MJSite& site)
     return this->addForceTorqueActuator(name, site.getName());
 }
 
+bool
+MJScene::modelTopologyMatches(const mjModel& candidate) const
+{
+    return this->modelTopology.matches(candidate);
+}
+
+MJScene::MujocoTopology
+MJScene::MujocoTopology::capture(const mjModel& model, bool highOrderAttitude)
+{
+    MujocoTopology result;
+    result.registered = true;
+    result.highOrderAttitude = highOrderAttitude;
+    result.nq = model.nq;
+    result.nv = model.nv;
+    result.na = model.na;
+    result.nbody = model.nbody;
+    result.jointTypes.assign(model.jnt_type, model.jnt_type + model.njnt);
+    return result;
+}
+
+bool
+MJScene::MujocoTopology::matches(const mjModel& model) const noexcept
+{
+    if (!this->registered) {
+        return true;
+    }
+    if (model.nq != this->nq || model.nv != this->nv || model.na != this->na || model.nbody != this->nbody ||
+        model.njnt != static_cast<int>(this->jointTypes.size())) {
+        return false;
+    }
+    for (int joint = 0; joint < model.njnt; ++joint) {
+        const size_t index = static_cast<size_t>(joint);
+        if (model.jnt_type[joint] != this->jointTypes[index]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void
+MJScene::setHighOrderAttitudeIntegration(bool enabled)
+{
+    if (enabled == this->highOrderAttitudeIntegration) {
+        return;
+    }
+    this->requireMutableTopology("Changing MuJoCo attitude integration mode");
+    this->highOrderAttitudeIntegration = enabled;
+}
+
+bool
+MJScene::getHighOrderAttitudeIntegration() const noexcept
+{
+    return this->highOrderAttitudeIntegration;
+}
+
 void
 MJScene::updateMujocoArraysFromStates()
 {
-    auto mujocoModel = this->getMujocoModel();
-    auto mujocoData  = this->getMujocoData();
+    this->copyMujocoArraysFromStates(this->getMujocoModel(), this->getMujocoData());
+}
 
-    // Copy the bulk position/velocity states straight into mjData.
-    std::copy_n(this->qposState->state.data(), mujocoModel->nq, mujocoData->qpos);
-    std::copy_n(this->qvelState->state.data(), mujocoModel->nv, mujocoData->qvel);
-
-    if (mujocoModel->na > 0) {
-        std::copy_n(this->actState->state.data(), mujocoModel->na, mujocoData->act);
+void
+MJScene::copyMujocoArraysFromStates(mjModel* model, mjData* data)
+{
+    if (model->nq > 0) {
+        const double* qposData = this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment);
+        const double* qvelData = this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment);
+        std::copy_n(qposData, model->nq, data->qpos);
+        std::copy_n(qvelData, model->nv, data->qvel);
     }
 
-    markKinematicsAsStale();
+    if (model->na > 0) {
+        std::copy_n(this->actState->stateView().data(), model->na, data->act);
+    }
+
+    this->forwardKinematicsStale = true;
+}
+
+bool
+MJScene::updateForwardKinematicsFromStates(mjModel* model, mjData* data)
+{
+    const double* qposData = model->nq > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment) : nullptr;
+    const double* qvelData = model->nv > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment) : nullptr;
+    const bool qposChanged = model->nq > 0 && !std::equal(qposData, qposData + model->nq, data->qpos);
+    const bool qvelChanged = model->nv > 0 && !std::equal(qvelData, qvelData + model->nv, data->qvel);
+
+    if (!this->forwardKinematicsStale && !qposChanged && !qvelChanged) {
+        return false;
+    }
+
+    if (qposChanged) {
+        std::copy_n(qposData, model->nq, data->qpos);
+    }
+    if (qvelChanged) {
+        std::copy_n(qvelData, model->nv, data->qvel);
+    }
+    mj_fwdPosition(model, data);
+    mj_fwdVelocity(model, data);
+    this->forwardKinematicsStale = false;
+    return true;
+}
+
+void
+MJScene::synchronizeMujocoFromStates(mjModel* model, mjData* data)
+{
+    this->validateMujocoMassStates(model);
+    const auto masses = this->massState->stateView();
+    for (auto&& body : this->spec.getBodies()) {
+        body.applyPrevalidatedMass(model, masses(body.getId()));
+    }
+    if (this->areMujocoModelConstStale()) {
+        mj_setConst(model, data);
+        this->mjModelConstStale = false;
+    }
+    // mj_setConst restores the reference pose, so publish the retained state
+    // only after mass-dependent constants are current.
+    this->copyMujocoArraysFromStates(model, data);
+}
+
+void
+MJScene::requireSceneMutationAllowed(const char* operation) const
+{
+    if (this->sceneMutationBlocked) {
+        throw std::logic_error(std::string(operation) + " cannot run from an MJScene reset or dynamics callback");
+    }
+}
+
+void
+MJScene::validateMujocoMassStates(const mjModel* model) const
+{
+    const auto masses = this->massState->stateView();
+    if (masses.size() != model->nbody || !std::isfinite(masses(0)) || masses(0) != 0.0) {
+        throw std::invalid_argument("The MuJoCo world-body mass state must remain finite and zero.");
+    }
+
+    constexpr double massEpsilon = 10.0 * std::numeric_limits<double>::epsilon();
+    for (int bodyId = 1; bodyId < model->nbody; ++bodyId) {
+        const double oldMass = model->body_mass[bodyId];
+        const double newMass = masses(bodyId);
+        if (!std::isfinite(newMass) || newMass < 0.0) {
+            throw std::invalid_argument("MuJoCo body mass states must be finite and nonnegative.");
+        }
+        if (std::abs(oldMass - newMass) > massEpsilon && (oldMass <= massEpsilon || newMass <= massEpsilon)) {
+            throw std::invalid_argument("Runtime MuJoCo mass updates cannot transition a body to or "
+                                        "from zero mass because no reversible inertia scaling exists.");
+        }
+    }
 }
 
 Eigen::VectorXd
 MJScene::assembleFullQpos()
 {
-    // The bulk position state already mirrors the contiguous mjData::qpos layout.
-    auto m = this->spec.getMujocoModel();
-    return Eigen::Map<const Eigen::VectorXd>(this->qposState->state.data(), m->nq);
+    auto* model = this->getMujocoModel();
+    if (model->nq == 0) {
+        return Eigen::VectorXd(0);
+    }
+    return Eigen::Map<const Eigen::VectorXd>(this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment), model->nq);
 }
 
 Eigen::VectorXd
 MJScene::assembleFullQvel()
 {
-    auto m = this->spec.getMujocoModel();
-    return Eigen::Map<const Eigen::VectorXd>(this->qvelState->state.data(), m->nv);
+    auto* model = this->getMujocoModel();
+    if (model->nv == 0) {
+        return Eigen::VectorXd(0);
+    }
+    return Eigen::Map<const Eigen::VectorXd>(this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment), model->nv);
 }
 
 void
 MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
-    // The actuator state only exists when the model has actuator activation
-    // states; otherwise report an empty vector.
-    Eigen::MatrixXd act = this->actState ? this->actState->getState() : Eigen::MatrixXd(0, 1);
-    MJSceneStateMsgPayload stateOutMsgPayload{ this->assembleFullQpos(),
-                                               this->assembleFullQvel(),
-                                               act };
+    this->writeOutputStateMessages(
+      CurrentSimNanos, this->modelTopology.nq, this->modelTopology.nv, this->modelTopology.na);
+}
 
-    stateOutMsg.write(&stateOutMsgPayload, this->moduleID, CurrentSimNanos);
+void
+MJScene::writeOutputStateMessages(uint64_t currentSimNanos, int nq, int nv, int na)
+{
+    this->prepareOutputStateMessageStorage(nq, nv, na);
+    this->populateOutputStateMessagePayload(nq, nv, na);
+    this->publishOutputStateMessage(currentSimNanos);
+}
+
+void
+MJScene::prepareOutputStateMessageStorage(int nq, int nv, int na)
+{
+    this->outputStateMessagePayload.qpos.resize(nq);
+    this->outputStateMessagePayload.qvel.resize(nv);
+    this->outputStateMessagePayload.act.resize(na);
+}
+
+void
+MJScene::populateOutputStateMessagePayload(int nq, int nv, int na)
+{
+    if (nq > 0) {
+        std::copy_n(this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment),
+                    nq,
+                    this->outputStateMessagePayload.qpos.data());
+    }
+    if (nv > 0) {
+        std::copy_n(this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment),
+                    nv,
+                    this->outputStateMessagePayload.qvel.data());
+    }
+    if (na > 0) {
+        std::copy_n(this->actState->stateView().data(), na, this->outputStateMessagePayload.act.data());
+    }
+}
+
+void
+MJScene::publishOutputStateMessage(uint64_t currentSimNanos)
+{
+    this->stateOutMsg.write(&this->outputStateMessagePayload, this->moduleID, currentSimNanos);
 }

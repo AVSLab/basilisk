@@ -51,8 +51,8 @@ constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsJoint>()
 /**
  * @brief Represents a MuJoCo joint.
  *
- * Each joint owns its own `StateData` for position and velocity (one or more,
- * depending on joint type).
+ * Each joint exposes its manager-owned `StateData` records for position and
+ * velocity (one or more, depending on joint type).
  */
 class MJJoint : public MJObject<mjsJoint>
 {
@@ -91,7 +91,19 @@ public:
      */
     void configure(const mjModel* m);
 
-protected:
+    /** Register this joint's position records. */
+    virtual void registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude) = 0;
+
+    /** Register this joint's velocity records. */
+    virtual void registerVelocityStates(DynParamRegisterer registerer) = 0;
+
+    /** Extract this joint's derivatives from MuJoCo velocity/acceleration. */
+    virtual void setPositionDerivativeFromMujoco(const mjData* data) = 0;
+
+    /** Validate that joint-bound records occupy their MuJoCo array positions. */
+    virtual void validateStateLayout(const double* qposBase, const double* qvelBase) const = 0;
+
+  protected:
     /**
      * @brief Checks if the joint has been properly initialized.
      *
@@ -110,6 +122,7 @@ protected:
 
     std::optional<size_t> qposAdr; ///< Address for position in the state vector.
     std::optional<size_t> qvelAdr; ///< Address for velocity in the state vector.
+    bool statesRegistered = false; ///< True when the joint has its position and velocity handles.
 };
 
 /**
@@ -119,7 +132,7 @@ protected:
  * degree-of-freedom joints, both linear and angular. The position and velocity
  * of this joint can be set.
  *
- * Owns a 1x1 `StateData` for position and a 1x1 `StateData` for velocity.
+ * Exposes manager-owned 1x1 `StateData` records for position and velocity.
  *
  * If `constrainedStateInMsg` is linked, the value in this message will be read
  * and applied to an `MJSingleJointEquality` such that the joint is constrained
@@ -188,7 +201,7 @@ public:
      *
      * @return The MJSingleJointEquality object for this joint.
      */
-    MJSingleJointEquality getConstrainedEquality();
+    MJSingleJointEquality& getConstrainedEquality();
 
     /**
      * @brief Configures the scalar joint within the given MuJoCo model.
@@ -212,29 +225,54 @@ public:
      */
     void writeJointStateMessage(uint64_t CurrentSimNanos);
 
-public:
+    void registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude) override;
+    void registerVelocityStates(DynParamRegisterer registerer) override;
+    void setPositionDerivativeFromMujoco(const mjData* data) override;
+    void validateStateLayout(const double* qposBase, const double* qvelBase) const override;
+
+    /** @brief Borrow the joint position state; null before registration. */
+    StateData* getPositionState() const noexcept { return this->qposState; }
+    /** @brief Borrow the joint velocity state; null before registration. */
+    StateData* getVelocityState() const noexcept { return this->qvelState; }
+
+  public:
     Message<ScalarJointStateMsgPayload> stateOutMsg; ///< Message to output joint position state.
     Message<ScalarJointStateMsgPayload> stateDotOutMsg; ///< Message to output joint velocity state.
 
     ReadFunctor<ScalarJointStateMsgPayload> constrainedStateInMsg; ///< Functor to read constrained state input.
 
 protected:
-    /** An equality used to enforce a specific state for the joint. */
-    MJSingleJointEquality constrainedEquality;
+  StateData* qposState = nullptr; ///< Scalar position state.
+  StateData* qvelState = nullptr; ///< Scalar velocity state.
+
+  /** An equality used to enforce a specific state for the joint. */
+  MJSingleJointEquality constrainedEquality;
 };
 
 /**
  * @brief Represents a ball joint in MuJoCo.
  *
- * The joint's orientation quaternion and body angular velocity live in the
- * scene's bulk `qpos`/`qvel` states at this joint's address.  Not fully
- * supported elsewhere yet.
+ * Exposes manager-owned quaternion and angular-velocity records.
  */
 class MJBallJoint : public MJJoint
 {
 public:
     /** Use constructor from MJJoint */
     using MJJoint::MJJoint;
+
+    void registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude) override;
+    void registerVelocityStates(DynParamRegisterer registerer) override;
+    void setPositionDerivativeFromMujoco(const mjData* data) override;
+    void validateStateLayout(const double* qposBase, const double* qvelBase) const override;
+
+    /** @brief Borrow the joint position state; null before registration. */
+    StateData* getPositionState() const noexcept { return this->qposState; }
+    /** @brief Borrow the joint velocity state; null before registration. */
+    StateData* getVelocityState() const noexcept { return this->qvelState; }
+
+  protected:
+    StateData* qposState = nullptr; ///< Quaternion in MuJoCo w,x,y,z order.
+    StateData* qvelState = nullptr; ///< Body angular velocity.
 };
 
 /**
@@ -244,9 +282,9 @@ public:
  * translational and three rotational degrees of freedom, including setting position,
  * velocity, attitude, and attitude rate.
  *
- * The joint's translation, orientation quaternion, translational velocity and
- * body angular velocity all live in the scene's bulk `qpos`/`qvel` states at
- * this joint's address.
+ * Exposes separate manager-owned translation, quaternion, linear-velocity,
+ * and angular-velocity records so adaptive tolerances can distinguish orbital
+ * and attitude scales.
  */
 class MJFreeJoint : public MJJoint
 {
@@ -283,6 +321,20 @@ public:
      */
     void setAttitudeRate(const Eigen::Vector3d& attitudeRate);
 
+    void registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude) override;
+    void registerVelocityStates(DynParamRegisterer registerer) override;
+    void setPositionDerivativeFromMujoco(const mjData* data) override;
+    void validateStateLayout(const double* qposBase, const double* qvelBase) const override;
+
+    /** @brief Borrow the translation state in meters; null before registration. */
+    StateData* getTranslationPositionState() const noexcept { return this->qposTranslationState; }
+    /** @brief Borrow the translation velocity in meters per second; null before registration. */
+    StateData* getTranslationVelocityState() const noexcept { return this->qvelTranslationState; }
+    /** @brief Borrow the quaternion state in MuJoCo order; null before registration. */
+    StateData* getAttitudeState() const noexcept { return this->qposAttitudeState; }
+    /** @brief Borrow angular velocity in radians per second; null before registration. */
+    StateData* getAttitudeRateState() const noexcept { return this->qvelAttitudeState; }
+
     /**
      * @brief Reads the translational velocity directly from a MuJoCo data struct.
      *
@@ -316,6 +368,12 @@ public:
      * restore the original value afterward.
      */
     void setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos);
+
+  protected:
+    StateData* qposTranslationState = nullptr; ///< Borrowed three-component position state in meters.
+    StateData* qposAttitudeState = nullptr; ///< Borrowed quaternion state in MuJoCo w,x,y,z order.
+    StateData* qvelTranslationState = nullptr; ///< Borrowed three-component velocity state in meters per second.
+    StateData* qvelAttitudeState = nullptr; ///< Borrowed three-component angular velocity state in radians per second.
 };
 
 #endif

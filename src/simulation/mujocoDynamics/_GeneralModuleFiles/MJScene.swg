@@ -30,15 +30,74 @@ from typing import List
 %template() std::vector<std::string>;
 %template(MJDoubleVector) std::vector<double>;
 
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObjectImport.swg"
 %include "MJGeomInfo.h"
+
+// MJScene exposes an existing fixed-size gear-vector API.
+EIGEN_MAT_WRAP(Eigen::Vector6d, 159)
+
+// Retain the owner on borrowed results using the generated Python methods.
+%pythonappend MJScene::getBody %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getSite %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getEquality %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getSingleActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getForceActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getTorqueActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getForceTorqueActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::addJointSingleActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::addSingleActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::addForceActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::addTorqueActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::addForceTorqueActuator %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getActState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJScene::getMassState %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
 
 %ignore MJScene::fromFile;
 
 %ignore MJScene::SelfInit;
-%ignore MJScene::Reset;
-%ignore MJScene::initializeDynamics;
 %ignore MJScene::UpdateState;
 %ignore MJScene::equationsOfMotion;
 %ignore MJScene::preIntegration;
@@ -52,6 +111,7 @@ from typing import List
 %ignore MJScene::areMujocoModelConstStale;
 %ignore MJScene::markMujocoModelConstAsStale;
 
+
 %extend MJScene
 {
 %pythoncode %{
@@ -62,7 +122,23 @@ from typing import List
 %}
 }
 
+// Included base interfaces reset %exception. MJScene::Reset must translate
+// director and registration failures instead of allowing them to leave Python.
+MUJOCO_BSK_EXCEPTION_POLICY
+
 %include "MJScene.h"
 %template(MJGeomInfoVector) std::vector<MJGeomInfo>;
+
+%pythoncode %{
+MJScene.highOrderAttitudeIntegration = property(
+    MJScene.getHighOrderAttitudeIntegration,
+    MJScene.setHighOrderAttitudeIntegration,
+)
+
+# simIncludeGravBody retains its task model here. Declare the slot before the
+# inherited protected-attribute policy is applied to instances.
+MJScene._gravBodyFactoryNBodyGravity = None
+MJScene._vizGravBodies = None
+%}
 
 %include "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"
