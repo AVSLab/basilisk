@@ -18,45 +18,82 @@
  */
 #include "svStochasticIntegratorEulerHeun.h"
 
-void svStochasticIntegratorEulerHeun::integrate(double currentTime, double timeStep)
+#include "../_GeneralModuleFiles/stateData.h"
+
+/** @brief Method workspace allocated after state binding. */
+struct svStochasticIntegratorEulerHeun::FlatStorage
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
-    if (timeStep == 0) return;
+    Eigen::VectorXd firstDrift; ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
+};
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
+svStochasticIntegratorEulerHeun::svStochasticIntegratorEulerHeun(DynamicObject* dynIn)
+  : StochasticRKIntegratorBase(dynIn)
+{
+}
 
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
+svStochasticIntegratorEulerHeun::~svStochasticIntegratorEulerHeun() noexcept = default;
 
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-    const Eigen::VectorXd& dW = sample.dW;
+void
+svStochasticIntegratorEulerHeun::bindFlatStorage()
+{
+    auto storage = std::make_unique<FlatStorage>();
+    storage->firstDrift.resize(this->stochasticPackedDerivatives().size());
+    storage->firstDiffusions.resize(this->stochasticPackedDiffusions().size());
+    this->flatStorage = std::move(storage);
+}
 
-    // --- Predictor at (t_n, x_n): f1, g1 ---
-    ExtendedStateVector f1 = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> g1 =
-        computeDiffusions(currentTime, timeStep, stateIdToNoiseIndexMaps);
-
-    // xBar = x_n + h * f1 + sum_k g1_k * dW_k
-    currentState.setStates(dynPtrs);
-    f1.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        g1.at(k).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+void
+svStochasticIntegratorEulerHeun::integrateImpl(double currentTime, double timeStep)
+{
+    if (timeStep == 0.0) {
+        return;
     }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
 
-    // --- Corrector evaluations at (t_{n+1}, xBar): f2, g2 ---
-    ExtendedStateVector f2 = computeDerivatives(currentTime + timeStep, timeStep);
-    std::vector<ExtendedStateVector> g2 =
-        computeDiffusions(currentTime + timeStep, timeStep, stateIdToNoiseIndexMaps);
+    this->gatherStochasticStates();
+    this->generateWienerNoise(timeStep);
 
-    // x_{n+1} = x_n + (h/2)(f1+f2) + sum_k (dW_k/2)(g1_k+g2_k)
-    currentState.setStates(dynPtrs);
-    ((f1 += f2) * 0.5).setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        ((g1.at(k) += g2.at(k)) * 0.5).setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+    try {
+        this->evaluateDerivatives(currentTime, timeStep);
+        this->gatherStochasticDerivatives(this->flatStorage->firstDrift);
+        this->evaluateDiffusions(currentTime, timeStep);
+        this->gatherStochasticDiffusions(this->flatStorage->firstDiffusions);
+
+        this->buildStochasticCandidate(this->stochasticAcceptedState(),
+                                       this->flatStorage->firstDrift,
+                                       timeStep,
+                                       this->flatStorage->firstDiffusions,
+                                       this->flatDW());
+
+        this->evaluateDerivatives(currentTime + timeStep, timeStep);
+        for (const auto& descriptor : this->stochasticStateDescriptors()) {
+            Eigen::Map<Eigen::MatrixXd> firstDrift(this->flatStorage->firstDrift.data() + descriptor.derivativeOffset,
+                                                   descriptor.derivativeRows,
+                                                   descriptor.derivativeColumns);
+            firstDrift += descriptor.state->derivativeView();
+            firstDrift *= 0.5;
+        }
+
+        this->evaluateDiffusions(currentTime + timeStep, timeStep);
+        const auto& packedOffsets = this->stochasticLocalNoisePackedOffsets();
+        for (const auto& descriptor : this->stochasticStateDescriptors()) {
+            for (size_t localNoiseIndex = 0; localNoiseIndex < descriptor.noiseCount; ++localNoiseIndex) {
+                const size_t offset = packedOffsets.at(descriptor.localNoiseOffset + localNoiseIndex);
+                Eigen::Map<Eigen::MatrixXd> firstDiffusion(this->flatStorage->firstDiffusions.data() + offset,
+                                                           descriptor.diffusionRows,
+                                                           descriptor.diffusionColumns);
+                firstDiffusion += descriptor.state->diffusionView(localNoiseIndex);
+                firstDiffusion *= 0.5;
+            }
+        }
+
+        this->buildStochasticCandidate(this->stochasticAcceptedState(),
+                                       this->flatStorage->firstDrift,
+                                       timeStep,
+                                       this->flatStorage->firstDiffusions,
+                                       this->flatDW());
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
     }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
-
-    // The dynPtrs now hold x_{n+1}.
 }
