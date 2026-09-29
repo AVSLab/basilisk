@@ -17,6 +17,7 @@
 
  */
 #include "svStochasticIntegratorRDI1WM.h"
+#include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/stochasticWeakRandomVariables.h"
 
 // Coefficients for the RDI1WM tableau.
@@ -29,46 +30,118 @@ constexpr double c02 = 2.0 / 3.0;
 constexpr double beta11 = 1.0;
 } // namespace
 
-void svStochasticIntegratorRDI1WM::integrate(double currentTime, double timeStep)
+/** @brief Method workspace allocated after state binding. */
+struct svStochasticIntegratorRDI1WM::FlatStorage
 {
-    if (timeStep == 0) return;
+    Eigen::VectorXd firstDrift; ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd secondDrift; ///< Drift evaluated at the method's second stage.
+    Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
+    Eigen::VectorXd combinedDrift; ///< Weighted combination of the method's drift stages.
+    Eigen::VectorXd scaledDrift; ///< Scratch for a scaled drift contribution.
+    Eigen::VectorXd scaledDiffusions; ///< Packed scratch for scaled diffusion contributions.
+    Eigen::VectorXd threePointIncrements; ///< Discrete weak increments derived from Gaussian Wiener samples.
+};
 
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
+svStochasticIntegratorRDI1WM::svStochasticIntegratorRDI1WM(DynamicObject* dynIn)
+  : StochasticRKIntegratorBase(dynIn)
+{
+}
 
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
+svStochasticIntegratorRDI1WM::~svStochasticIntegratorRDI1WM() noexcept = default;
 
-    // Three-point distributed increment per noise source.
-    Eigen::VectorXd Ihat(noiseCount);
-    for (size_t k = 0; k < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), timeStep);
+void
+svStochasticIntegratorRDI1WM::bindFlatStorage()
+{
+    auto storage = std::make_unique<FlatStorage>();
+    const auto derivativeSize = this->stochasticPackedDerivatives().size();
+    const auto diffusionSize = this->stochasticPackedDiffusions().size();
+    const auto noiseSize = static_cast<Eigen::Index>(this->globalNoiseCount());
+    storage->firstDrift.resize(derivativeSize);
+    storage->secondDrift.resize(derivativeSize);
+    storage->firstDiffusions.resize(diffusionSize);
+    storage->combinedDrift.resize(derivativeSize);
+    storage->scaledDrift.resize(derivativeSize);
+    storage->scaledDiffusions.resize(diffusionSize);
+    storage->threePointIncrements.resize(noiseSize);
+    this->flatStorage = std::move(storage);
+}
+
+void
+svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double timeStep)
+{
+    if (timeStep == 0.0) {
+        return;
     }
 
-    // Stage 0.
-    ExtendedStateVector k1 = computeDerivatives(currentTime, timeStep);
-    std::vector<ExtendedStateVector> g1 = computeDiffusions(currentTime, timeStep, maps);
-
-    // H02 = x_n + a021*k1*h + b021*g1*Ihat
-    currentState.setStates(dynPtrs);
-    (k1 * a021).setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        (g1.at(k) * b021).setDiffusions(dynPtrs, maps.at(k));
+    this->gatherStochasticStates();
+    this->generateWienerNoise(timeStep);
+    for (Eigen::Index index = 0; index < this->flatDW().size(); ++index) {
+        this->flatStorage->threePointIncrements(index) = stochasticWeakRV::threePoint(this->flatDW()(index), timeStep);
     }
-    propagateState(timeStep, Ihat, maps);
-    ExtendedStateVector k2 = computeDerivatives(currentTime + c02 * timeStep, timeStep);
 
-    // x_{n+1} = x_n + (alpha1*k1 + alpha2*k2)*h + beta11*g1*Ihat
-    currentState.setStates(dynPtrs);
-    ExtendedStateVector drift = k1 * alpha1;
-    drift += k2 * alpha2;
-    drift.setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        (g1.at(k) * beta11).setDiffusions(dynPtrs, maps.at(k));
+    try {
+        this->evaluateDerivatives(currentTime, timeStep);
+        this->gatherStochasticDerivatives(this->flatStorage->firstDrift);
+        this->evaluateDiffusions(currentTime, timeStep);
+        this->gatherStochasticDiffusions(this->flatStorage->firstDiffusions);
+
+        const auto& packedOffsets = this->stochasticLocalNoisePackedOffsets();
+        for (const auto& descriptor : this->stochasticStateDescriptors()) {
+            const auto derivativeOffset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
+            const auto derivativeCount = static_cast<Eigen::Index>(descriptor.derivativeCount);
+            this->flatStorage->scaledDrift.segment(derivativeOffset, derivativeCount) =
+              this->flatStorage->firstDrift.segment(derivativeOffset, derivativeCount) * a021;
+            for (size_t localNoiseIndex = 0; localNoiseIndex < descriptor.noiseCount; ++localNoiseIndex) {
+                const auto diffusionOffset =
+                  static_cast<Eigen::Index>(packedOffsets.at(descriptor.localNoiseOffset + localNoiseIndex));
+                const auto diffusionCount = static_cast<Eigen::Index>(descriptor.diffusionCount);
+                this->flatStorage->scaledDiffusions.segment(diffusionOffset, diffusionCount) =
+                  this->flatStorage->firstDiffusions.segment(diffusionOffset, diffusionCount) * b021;
+            }
+        }
+        this->buildStochasticCandidate(this->stochasticAcceptedState(),
+                                       this->flatStorage->scaledDrift,
+                                       timeStep,
+                                       this->flatStorage->scaledDiffusions,
+                                       this->flatStorage->threePointIncrements);
+
+        this->evaluateDerivatives(currentTime + c02 * timeStep, timeStep);
+        this->gatherStochasticDerivatives(this->flatStorage->secondDrift);
+
+        for (const auto& descriptor : this->stochasticStateDescriptors()) {
+            const auto offset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
+            Eigen::Map<const Eigen::MatrixXd> firstDrift(
+              this->flatStorage->firstDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+            Eigen::Map<const Eigen::MatrixXd> secondDrift(
+              this->flatStorage->secondDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+            Eigen::Map<Eigen::MatrixXd> combinedDrift(this->flatStorage->combinedDrift.data() + offset,
+                                                      descriptor.derivativeRows,
+                                                      descriptor.derivativeColumns);
+            Eigen::Map<Eigen::MatrixXd> scaledDrift(
+              this->flatStorage->scaledDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+            combinedDrift = firstDrift * alpha1;
+            scaledDrift = secondDrift * alpha2;
+            combinedDrift += scaledDrift;
+        }
+        for (const auto& descriptor : this->stochasticStateDescriptors()) {
+            for (size_t localNoiseIndex = 0; localNoiseIndex < descriptor.noiseCount; ++localNoiseIndex) {
+                const size_t offset = packedOffsets.at(descriptor.localNoiseOffset + localNoiseIndex);
+                Eigen::Map<Eigen::MatrixXd>(this->flatStorage->scaledDiffusions.data() + offset,
+                                            descriptor.diffusionRows,
+                                            descriptor.diffusionColumns) =
+                  Eigen::Map<const Eigen::MatrixXd>(this->flatStorage->firstDiffusions.data() + offset,
+                                                    descriptor.diffusionRows,
+                                                    descriptor.diffusionColumns) *
+                  beta11;
+            }
+        }
+        this->buildStochasticCandidate(this->stochasticAcceptedState(),
+                                       this->flatStorage->combinedDrift,
+                                       timeStep,
+                                       this->flatStorage->scaledDiffusions,
+                                       this->flatStorage->threePointIncrements);
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
     }
-    propagateState(timeStep, Ihat, maps);
-
-    // The dynPtrs now hold x_{n+1}.
 }

@@ -23,9 +23,7 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "../_GeneralModuleFiles/extendedStateVector.h"
 
-#include <memory>
 #include <vector>
 
 /** @brief Extended Butcher tableau for the Tang & Xiao weak-order-2 SRK family.
@@ -110,21 +108,57 @@ struct W2ItoCoefficients {
  * @warning Stochastic integration is in beta.
  */
 class svStochasticIntegratorW2Ito : public StochasticRKIntegratorBase {
-public:
+  protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+    void integrateImpl(double currentTime, double timeStep) override;
 
-protected:
     /** Constructor used by the concrete W2Ito methods, which supply their tableau. */
     svStochasticIntegratorW2Ito(DynamicObject* dyn, const W2ItoCoefficients& coefficients);
 
     /** The extended Butcher tableau of the specific W2Ito method. */
     const W2ItoCoefficients coefficients;
 
-    /** Returns sum_{j<length} factors[j]*vectors[j] (skipping zero factors). */
-    ExtendedStateVector scaledSum(const std::vector<double>& factors,
-                                  const std::vector<ExtendedStateVector>& vectors,
-                                  size_t length);
+    /** @brief Allocate the scratch required by this numerical method.
+     */
+    void bindStochasticMethodStorage() override { this->bindMethodStorage(); }
+
+    /** @brief Size method buffers from the bound state and noise dimensions once.
+     */
+    void bindMethodStorage();
+    /** @brief Copy live drift values into the selected stage column.
+     * @param stageIndex Zero-based stage column to read or write.
+     */
+    void gatherDerivativeStage(size_t stageIndex);
+    /** @brief Capture every independent noise source in the selected stage column.
+     * @param stageIndex Zero-based stage column to read or write.
+     */
+    void gatherAllDiffusionStages(size_t stageIndex);
+    /** @brief Capture the selected noise source in its packed rows of a stage column.
+     * @param globalNoiseIndex Independent noise-source index in the bound topology.
+     * @param stageIndex Zero-based stage column to read or write.
+     */
+    void gatherDiffusionStage(size_t globalNoiseIndex, size_t stageIndex);
+    /** @brief Combine the requested leading drift stages into combinedDerivative.
+     * @param factors Stage multipliers in evaluation order.
+     * @param length Number of leading stages to combine.
+     */
+    void combineDrifts(const std::vector<double>& factors, size_t length);
+    /** @brief Combine leading stages for one source into combinedDiffusion.
+     * @param globalNoiseIndex Independent noise-source index in the bound topology.
+     * @param factors Stage multipliers in evaluation order.
+     * @param length Number of leading stages to combine.
+     */
+    void combineDiffusion(size_t globalNoiseIndex, const std::vector<double>& factors, size_t length);
+
+    Eigen::VectorXd combinedDerivative; ///< Weighted drift combination used to build a candidate.
+    Eigen::VectorXd scaledDerivative; ///< Scratch for a scaled drift contribution.
+    Eigen::VectorXd combinedDiffusion; ///< Weighted diffusion contributions in packed noise-source order.
+    Eigen::VectorXd scaledDiffusion; ///< Scratch for a scaled diffusion contribution.
+    Eigen::MatrixXd derivativeStages; ///< Drift scalars by stage; each stage occupies one contiguous column.
+    Eigen::MatrixXd diffusionStages; ///< Packed diffusion scalars by stage, grouped by independent source.
+    Eigen::VectorXd weakDW; ///< Discrete weak-method increments indexed by independent source.
+    Eigen::VectorXd diagonalIntegral; ///< Diagonal iterated-integral terms indexed by independent source.
+    Eigen::VectorXd pseudoSteps; ///< Temporary per-source noise weights for candidate construction.
 };
 
 #endif /* svStochasticIntegratorW2Ito_h */

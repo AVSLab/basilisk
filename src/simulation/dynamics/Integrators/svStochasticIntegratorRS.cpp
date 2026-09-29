@@ -75,68 +75,59 @@ RSCoefficients svStochasticIntegratorRS2::getCoefficients()
     return c;
 }
 
-void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
+void
+svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep)
 {
-    if (timeStep == 0) return;
+    if (timeStep == 0.0) {
+        return;
+    }
 
+    this->gatherStochasticStates();
+    const size_t m = this->globalNoiseCount();
+    this->generateNoise(timeStep, m == 0 ? 0 : m - 1);
+
+    auto& workspace = this->flatWorkspace;
     const RSCoefficients& c = this->coefficients;
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-    const std::vector<StateIdToIndexMap>& maps = noiseIndexMaps();
-    const size_t m = maps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
-
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
     const double h = timeStep;
     const double sqh = std::sqrt(h);
-
-    // Random variables of Roessler (2007). Ihat[k], k=0..m-1, is three-point distributed
-    // ({+-sqrt(3h) w.p. 1/6, 0 w.p. 2/3}); Itilde[k], k=0..m-2, is two-point ({+-sqrt(h)
-    // w.p. 1/2}). Only 2m-1 independent variables are used. Both are deterministic
-    // functions of the Gaussian dW/dZ, so the prescribed-noise test harness drives them.
-    Eigen::VectorXd Ihat(noiseCount);
+    Eigen::VectorXd& Ihat = workspace.vector(0);
+    Eigen::VectorXd& Itilde = workspace.vector(1);
+    Eigen::VectorXd& pseudoStep = workspace.vector(2);
+    Eigen::VectorXd& sqrtStep = workspace.vector(3);
     for (size_t k = 0; k < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        Ihat(eigenK) = stochasticWeakRV::threePoint(sample.dW(eigenK), h);
+        Ihat(static_cast<Eigen::Index>(k)) =
+          stochasticWeakRV::threePoint(this->flatDW()(static_cast<Eigen::Index>(k)), h);
+        Itilde(static_cast<Eigen::Index>(k)) = 0.0;
+        sqrtStep(static_cast<Eigen::Index>(k)) = sqh;
     }
-    Eigen::VectorXd Itilde = Eigen::VectorXd::Zero(noiseCount); // index m-1 unused
     for (size_t k = 0; k + 1 < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        Itilde(eigenK) = stochasticWeakRV::twoPoint(sample.dZ(eigenK), sqh);
+        Itilde(static_cast<Eigen::Index>(k)) =
+          stochasticWeakRV::twoPoint(this->flatDZ()(static_cast<Eigen::Index>(k)), sqh);
     }
-    // Mixed iterated integral, eq. (5.2): Ihat2(k,l) = Ihat[k] Itilde[l] if l<k,
-    //                                                 -Ihat[l] Itilde[k] if k<l.
     auto Ihat2 = [&](size_t k, size_t l) -> double {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        const Eigen::Index eigenL = static_cast<Eigen::Index>(l);
-        if (l < k) return Ihat(eigenK) * Itilde(eigenL);
-        return -Ihat(eigenL) * Itilde(eigenK); // k < l
-    };
-
-    // scaledSum4(coefRow, stages, upto): sum_j coefRow[j] * stages[j] over j < upto,
-    // returning a full ExtendedStateVector. Used for both f-stage and g-stage combinations.
-    auto scaledSum4 = [&](const std::array<double, 4>& row,
-                          const std::array<ExtendedStateVector, 4>& v,
-                          size_t upto) -> ExtendedStateVector {
-        ExtendedStateVector acc = v.at(0) * row.at(0);
-        for (size_t j = 1; j < upto; j++) {
-            if (row.at(j) != 0.0) acc += v.at(j) * row.at(j);
+        if (l < k) {
+            return Ihat(static_cast<Eigen::Index>(k)) * Itilde(static_cast<Eigen::Index>(l));
         }
-        return acc;
+        return -Ihat(static_cast<Eigen::Index>(l)) * Itilde(static_cast<Eigen::Index>(k));
     };
 
-    // ---- Drift stages ----
-    // f_H0[i] = f(t_n + c0[i] h, H0[i]) ; H0 shared across noise sources.
-    // b_Hk[k][i] = b^k(t_n + c1[i] h, H^(k)_i) (source k's diffusion at its own stage state).
-    std::array<ExtendedStateVector, 4> f_H0;
-    std::vector<std::array<ExtendedStateVector, 4>> b_Hk(m);
+    auto evaluateDrift = [&](double time, size_t stage) {
+        this->evaluateDerivatives(time, timeStep);
+        workspace.captureDrift(stage);
+    };
+    auto evaluateAllDiffusions = [&](double time, size_t stage) {
+        this->evaluateDiffusions(time, timeStep);
+        workspace.captureAllDiffusions(stage);
+    };
+    auto evaluateDiffusion = [&](double time, size_t slot, size_t stage) {
+        this->evaluateDiffusions(time, timeStep);
+        workspace.captureDiffusion(slot, stage);
+    };
+    auto buildCandidate = [&](double driftStep, const Eigen::VectorXd& diffusionSteps) {
+        this->buildStochasticCandidate(
+          this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
+    };
 
-    f_H0.at(0) = computeDerivatives(currentTime, timeStep);
-    {
-        std::vector<ExtendedStateVector> g0 = computeDiffusions(currentTime, timeStep, maps);
-        for (size_t k = 0; k < m; k++) b_Hk.at(k).at(0) = g0.at(k);
-    }
-
-    // A0/A1/A2 and B0/B1/B2/B3 rows as std::array for scaledSum helpers.
     auto row = [](double x0, double x1, double x2, double x3) {
         return std::array<double, 4>{x0, x1, x2, x3};
     };
@@ -154,92 +145,84 @@ void svStochasticIntegratorRS::integrate(double currentTime, double timeStep)
     const std::array<double, 4> c0nodes = {0.0, c.c02, c.c03, 0.0};
     const std::array<double, 4> c1nodes = {0.0, 0.0, c.c13, c.c14};
 
-    // Compute the drift and diffusion stages for i = 1, 2, 3 (i = 0 is x_n).
-    for (size_t i = 1; i < 4; i++) {
-        // H0[i] = x_n + h sum_j A0[i][j] f(H0[j]) + sum_l Ihat[l] sum_j B0[i][j] b^l(H^(l)_j)
-        currentState.setStates(dynPtrs);
-        scaledSum4(A0.at(i), f_H0, i).setDerivatives(dynPtrs);
-        for (size_t l = 0; l < m; l++) {
-            scaledSum4(B0.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
-        }
-        propagateState(timeStep, Ihat, maps);
-        f_H0.at(i) = computeDerivatives(currentTime + c0nodes.at(i) * timeStep, timeStep);
+    try {
+        evaluateDrift(currentTime, 0);
+        evaluateAllDiffusions(currentTime, 0);
 
-        // H^(k)_i = x_n + h sum_j A1[i][j] f(H0[j])
-        //               + Ihat[k] sum_j B1[i][j] b^k(H^(k)_j)
-        //               + sum_{l!=k} Ihat[l] sum_j B3[i][j] b^l(H^(l)_j)
-        for (size_t k = 0; k < m; k++) {
-            currentState.setStates(dynPtrs);
-            scaledSum4(A1.at(i), f_H0, i).setDerivatives(dynPtrs);
+        for (size_t i = 1; i < 4; i++) {
+            workspace.writeDrift(A0.at(i), i);
             for (size_t l = 0; l < m; l++) {
-                const std::array<double, 4>& brow = (l == k) ? B1.at(i) : B3.at(i);
-                scaledSum4(brow, b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
+                workspace.writeDiffusion(l, B0.at(i), i);
             }
-            propagateState(timeStep, Ihat, maps);
-            b_Hk.at(k).at(i) =
-                computeDiffusion(currentTime + c1nodes.at(i) * timeStep, timeStep, maps.at(k));
-        }
-    }
+            buildCandidate(timeStep, Ihat);
+            evaluateDrift(currentTime + c0nodes.at(i) * timeStep, i);
 
-    // ---- Cross-noise stages Hhat^(k)_i and b^k(Hhat^(k)_i) (needed only for m > 1) ----
-    // Hhat^(k)_i = x_n + h sum_j A2[i][j] f(H0[j])
-    //                  + sum_{l!=k} (Ihat2(k,l)/sqrt(h)) sum_j B2[i][j] b^l(H^(l)_j)
-    // Only i where B2 has a nonzero row (i = 1, 2 for RS1/RS2) contribute. A2 = 0 here.
-    std::vector<std::array<ExtendedStateVector, 4>> b_Hhat(m);
-    const std::array<std::array<double, 4>, 4> B2 = {
-        row(0, 0, 0, 0), row(c.b221, 0, 0, 0), row(c.b231, 0, 0, 0), row(0, 0, 0, 0)};
-    if (m > 1) {
-        for (size_t k = 0; k < m; k++) {
-            // stage 0 is x_n; b^k there was already computed as b_Hk[k][0].
-            b_Hhat.at(k).at(0) = b_Hk.at(k).at(0);
-            for (size_t i = 1; i < 4; i++) {
-                // Hhat^(k)_i = x_n + sum_{l!=k} (Ihat2(k,l)/sqrt(h)) sum_j B2[i][j] b^l(H^(l)_j).
-                // A2 = 0 (no drift term) and there is no l==k self term, so start from x_n
-                // and accumulate only the cross-noise (l != k) contributions. The pseudo-step
-                // for source k stays 0 (propagateState with timeStep 0 adds no drift).
-                currentState.setStates(dynPtrs);
-                Eigen::VectorXd step = Eigen::VectorXd::Zero(noiseCount);
-                for (size_t l = 0; l < m; l++) {
-                    if (l == k) continue;
-                    scaledSum4(B2.at(i), b_Hk.at(l), i).setDiffusions(dynPtrs, maps.at(l));
-                    step(static_cast<Eigen::Index>(l)) = Ihat2(k, l) / sqh;
+            workspace.writeDrift(A1.at(i), i);
+            for (size_t l = 0; l < m; l++) {
+                workspace.writeDiffusion(l, B3.at(i), i);
+            }
+            for (size_t k = 0; k < m; k++) {
+                workspace.writeDiffusion(k, B1.at(i), i);
+                buildCandidate(timeStep, Ihat);
+                evaluateDiffusion(currentTime + c1nodes.at(i) * timeStep, k, i);
+                workspace.writeDiffusion(k, B3.at(i), i);
+            }
+        }
+
+        const std::array<std::array<double, 4>, 4> B2 = {
+            row(0, 0, 0, 0), row(c.b221, 0, 0, 0), row(c.b231, 0, 0, 0), row(0, 0, 0, 0)
+        };
+        if (m > 1) {
+            for (size_t k = 0; k < m; k++) {
+                workspace.copyDiffusion(k, 4, 0);
+                for (size_t i = 1; i < 4; i++) {
+                    pseudoStep(static_cast<Eigen::Index>(k)) = 0.0;
+                    for (size_t l = 0; l < m; l++) {
+                        if (l == k) {
+                            continue;
+                        }
+                        workspace.writeDiffusion(l, B2.at(i), i);
+                        pseudoStep(static_cast<Eigen::Index>(l)) = Ihat2(k, l) / sqh;
+                    }
+                    buildCandidate(0.0, pseudoStep);
+                    evaluateDiffusion(currentTime, k, 4 + i);
                 }
-                propagateState(0, step, maps);
-                b_Hhat.at(k).at(i) = computeDiffusion(currentTime, timeStep, maps.at(k));
             }
         }
-    }
 
-    // ---- State update, eq. (5.1) ----
-    // u = x_n + h sum_i (alpha[i]) f(H0[i])        [note alpha uses k1 for i=0 and i=3 in RS1]
-    //         + sum_i sum_k beta1[i] b^k(H^(k)_i) Ihat[k]
-    //         + sum_i sum_k beta2[i] b^k(Hhat^(k)_i) sqrt(h)
-    // Roessler's alpha already encodes the k4 = k1 reuse via the alpha vector below.
-    currentState.setStates(dynPtrs);
-    {
         const std::array<double, 4> alpha = {c.alpha1, c.alpha2, c.alpha3, c.alpha4};
-        // f_H0[3] for RS1 has c0node 0 so equals f(x_n) = f_H0[0]; the alpha4 weight is
-        // applied to f_H0[3] which was computed at node c0[3]=0, matching k4 = k1.
-        scaledSum4(alpha, f_H0, 4).setDerivatives(dynPtrs);
-    }
-    // beta1 diffusion term (weighted by Ihat[k]).
-    {
+        workspace.writeDrift(alpha, 4);
         const std::array<double, 4> beta1 = {c.beta11, c.beta12, c.beta13, c.beta14};
         for (size_t k = 0; k < m; k++) {
-            scaledSum4(beta1, b_Hk.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
+            workspace.writeDiffusion(k, beta1, 4);
         }
-        propagateState(timeStep, Ihat, maps);
-    }
-    // beta2 diffusion term (weighted by sqrt(h)), using the cross-noise stage diffusions.
-    if (m > 1) {
-        const std::array<double, 4> beta2 = {0.0, c.beta22, c.beta23, 0.0};
-        for (size_t k = 0; k < m; k++) {
-            scaledSum4(beta2, b_Hhat.at(k), 4).setDiffusions(dynPtrs, maps.at(k));
+        const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
+        if (coalesceFinalUpdate) {
+            this->beginAllEuclideanFinalCandidate(
+              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), Ihat);
+        } else {
+            buildCandidate(timeStep, Ihat);
         }
-        Eigen::VectorXd step(noiseCount);
-        for (Eigen::Index k = 0; k < noiseCount; k++) step(k) = sqh;
-        propagateState(0, step, maps);
-    }
 
-    // The dynPtrs now hold x_{n+1}.
+        if (m > 1) {
+            if (!coalesceFinalUpdate) {
+                this->acceptStochasticCandidate();
+            }
+            const std::array<double, 4> beta2 = { 0.0, c.beta22, c.beta23, 0.0 };
+            for (size_t k = 0; k < m; k++) {
+                workspace.writeDiffusion(k, beta2, 4, 4);
+            }
+            if (coalesceFinalUpdate) {
+                this->appendAllEuclideanFinalCandidate(workspace.drift(), 0.0, workspace.diffusions(), sqrtStep);
+            } else {
+                buildCandidate(0.0, sqrtStep);
+            }
+        }
+        if (coalesceFinalUpdate) {
+            this->commitAllEuclideanFinalCandidate();
+        }
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
+    }
 }

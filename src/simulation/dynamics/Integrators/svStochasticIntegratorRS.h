@@ -21,12 +21,11 @@
 #define svStochasticIntegratorRS_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/flatStochasticWorkspace.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "../_GeneralModuleFiles/extendedStateVector.h"
 
-#include <memory>
-#include <vector>
+#include <array>
+#include <cstddef>
 
 /** Coefficients for the Roessler-Stratonovich weak-order-2 methods RS1 / RS2. Names
  * follow the RS1 / RS2 tableau. */
@@ -72,12 +71,22 @@ public:
     /** Constructor taking the dynamic object and the RS coefficient tableau. */
     svStochasticIntegratorRS(DynamicObject* dynIn, const RSCoefficients& coefficients);
 
+  protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+    void integrateImpl(double currentTime, double timeStep) override;
 
-protected:
+    /** @brief Allocate the scratch required by this numerical method.
+     */
+    void bindStochasticMethodStorage() override
+    {
+        this->flatWorkspace.bind(
+          this->stochasticObjectDescriptors(), this->stochasticNoiseBindings(), this->stochasticNoiseSlots(), 4, 8, 4);
+    }
+
+
     /** RS coefficients. */
     const RSCoefficients coefficients;
+    FlatStochasticWorkspace flatWorkspace; ///< Owned stage and candidate buffers reused across time steps.
 };
 
 /** @brief RS1: Roessler-Stratonovich weak-order-2 method (deterministic order 2). */

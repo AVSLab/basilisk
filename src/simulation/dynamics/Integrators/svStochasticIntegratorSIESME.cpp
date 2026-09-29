@@ -18,12 +18,137 @@
  */
 #include "svStochasticIntegratorSIESME.h"
 
+#include <array>
 #include <cmath>
 
 // Coefficients for the SIEA/SMEA/SIEB/SMEB tableaux (Tocino & Vigo-Aguiar).
 
+svStochasticIntegratorSIESME::svStochasticIntegratorSIESME(DynamicObject* dyn, const SIESMECoefficients& coefficients)
+  : svIntegratorWeakSIESME(dyn, coefficients)
+{
+}
+
+void
+svStochasticIntegratorSIESME::integrateImpl(double currentTime, double timeStep)
+{
+    if (timeStep == 0.0) {
+        return;
+    }
+
+    auto& workspace = this->flatWorkspace;
+    this->gatherStochasticStates();
+    this->generateWienerNoise(timeStep);
+    const Eigen::VectorXd& dW = this->flatDW();
+
+    const SIESMECoefficients& c = this->coefficients;
+    const size_t m = this->globalNoiseCount();
+    const double h = timeStep;
+    const double sqh = std::sqrt(h);
+    Eigen::VectorXd& W2 = workspace.vector(0);
+    Eigen::VectorXd& W3 = workspace.vector(1);
+    Eigen::VectorXd& pseudoStep = workspace.vector(2);
+
+    for (size_t k = 0; k < m; ++k) {
+        const Eigen::Index index = static_cast<Eigen::Index>(k);
+        const double increment = dW(index);
+        W2(index) = increment * increment / sqh;
+        W3(index) = c.nu2 * increment * increment * increment / h;
+    }
+
+    auto evaluateDrift = [&](double time, size_t stage) {
+        this->evaluateDerivatives(time, timeStep);
+        workspace.captureDrift(stage);
+    };
+    auto evaluateDiffusions = [&](double time, size_t stage) {
+        this->evaluateDiffusions(time, timeStep);
+        workspace.captureAllDiffusions(stage);
+    };
+    auto buildCandidate = [&](double driftStep, const Eigen::VectorXd& diffusionSteps) {
+        this->buildStochasticCandidate(
+          this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
+    };
+
+    try {
+        evaluateDrift(currentTime, 0);
+        evaluateDiffusions(currentTime, 0);
+
+        workspace.writeDrift(std::array<double, 2>{ c.lambda0, 0.0 }, 1);
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 0);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.nu1 * dW(index) + W3(index);
+        }
+        buildCandidate(timeStep, pseudoStep);
+        evaluateDrift(currentTime + c.mu0 * timeStep, 1);
+
+        workspace.writeDrift(std::array<double, 2>{ c.lambdabar0, 0.0 }, 1);
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 0);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.beta2 * sqh + c.beta3 * W2(index);
+        }
+        buildCandidate(timeStep, pseudoStep);
+        evaluateDiffusions(currentTime + c.mubar0 * timeStep, 1);
+
+        workspace.writeDrift(std::array<double, 2>{ c.lambdabar0, 0.0 }, 1);
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 0);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.delta2 * sqh + c.delta3 * W2(index);
+        }
+        buildCandidate(timeStep, pseudoStep);
+        evaluateDiffusions(currentTime + c.mubar0 * timeStep, 2);
+
+        workspace.writeDrift(std::array<double, 2>{ c.alpha1, c.alpha2 }, 2);
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 0);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.gamma1 * dW(index);
+        }
+        const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
+        if (coalesceFinalUpdate) {
+            this->beginAllEuclideanFinalCandidate(
+              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), pseudoStep);
+        } else {
+            buildCandidate(timeStep, pseudoStep);
+        }
+
+        if (!coalesceFinalUpdate) {
+            this->acceptStochasticCandidate();
+        }
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 1);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.lambda1 * dW(index) + c.lambda2 * sqh + c.lambda3 * W2(index);
+        }
+        if (coalesceFinalUpdate) {
+            this->appendAllEuclideanFinalCandidate(workspace.drift(), 0.0, workspace.diffusions(), pseudoStep);
+        } else {
+            buildCandidate(0.0, pseudoStep);
+        }
+
+        if (!coalesceFinalUpdate) {
+            this->acceptStochasticCandidate();
+        }
+        for (size_t k = 0; k < m; ++k) {
+            workspace.writeDiffusionStage(k, 2);
+            const Eigen::Index index = static_cast<Eigen::Index>(k);
+            pseudoStep(index) = c.mu1 * dW(index) + c.mu2 * sqh + c.mu3 * W2(index);
+        }
+        if (coalesceFinalUpdate) {
+            this->appendAllEuclideanFinalCandidate(workspace.drift(), 0.0, workspace.diffusions(), pseudoStep);
+            this->commitAllEuclideanFinalCandidate();
+        } else {
+            buildCandidate(0.0, pseudoStep);
+        }
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
+    }
+}
+
 svStochasticIntegratorSIEA::svStochasticIntegratorSIEA(DynamicObject* dyn)
-    : svIntegratorWeakSIESME(dyn, svStochasticIntegratorSIEA::getCoefficients())
+  : svStochasticIntegratorSIESME(dyn, svStochasticIntegratorSIEA::getCoefficients())
 {}
 
 SIESMECoefficients svStochasticIntegratorSIEA::getCoefficients()
@@ -42,7 +167,7 @@ SIESMECoefficients svStochasticIntegratorSIEA::getCoefficients()
 }
 
 svStochasticIntegratorSMEA::svStochasticIntegratorSMEA(DynamicObject* dyn)
-    : svIntegratorWeakSIESME(dyn, svStochasticIntegratorSMEA::getCoefficients())
+  : svStochasticIntegratorSIESME(dyn, svStochasticIntegratorSMEA::getCoefficients())
 {}
 
 SIESMECoefficients svStochasticIntegratorSMEA::getCoefficients()
@@ -61,7 +186,7 @@ SIESMECoefficients svStochasticIntegratorSMEA::getCoefficients()
 }
 
 svStochasticIntegratorSIEB::svStochasticIntegratorSIEB(DynamicObject* dyn)
-    : svIntegratorWeakSIESME(dyn, svStochasticIntegratorSIEB::getCoefficients())
+  : svStochasticIntegratorSIESME(dyn, svStochasticIntegratorSIEB::getCoefficients())
 {}
 
 SIESMECoefficients svStochasticIntegratorSIEB::getCoefficients()
@@ -80,7 +205,7 @@ SIESMECoefficients svStochasticIntegratorSIEB::getCoefficients()
 }
 
 svStochasticIntegratorSMEB::svStochasticIntegratorSMEB(DynamicObject* dyn)
-    : svIntegratorWeakSIESME(dyn, svStochasticIntegratorSMEB::getCoefficients())
+  : svStochasticIntegratorSIESME(dyn, svStochasticIntegratorSMEB::getCoefficients())
 {}
 
 SIESMECoefficients svStochasticIntegratorSMEB::getCoefficients()
