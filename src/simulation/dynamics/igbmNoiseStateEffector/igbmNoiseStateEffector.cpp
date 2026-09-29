@@ -65,7 +65,7 @@ double IgbmNoiseStateEffector::getStateValue() const
     if (this->state == nullptr) {
         return this->stateInitSet ? this->stateInit : this->mean - 1.0;
     }
-    return this->state->getState()(0, 0);
+    return this->state->stateView()(0, 0);
 }
 
 void IgbmNoiseStateEffector::setStateValue(double val)
@@ -89,8 +89,12 @@ void IgbmNoiseStateEffector::setStateValue(double val)
 
 void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
 {
-    this->state = states.registerState(1, 1, this->nameOfState);
-    this->state->setNumNoiseSources(1);
+    StateSpec spec;
+    spec.state = { 1, 1 };
+    spec.derivative = spec.state;
+    spec.diffusionTangent = spec.state;
+    spec.noiseCount = 1;
+    this->state = states.registerState(this->nameOfState, spec);
 
     // Default the correction to mu - 1 (the factor 1 + delta at its mean level): the
     // factor's zero is degenerate for the multiplicative diffusion, so a
@@ -115,7 +119,7 @@ void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]
 
     // The factor X = 1 + delta follows dX = (mu - X)/tau dt + sigma X dW, so the
     // correction delta inherits d(delta) = (mu - 1 - delta)/tau dt + sigma (1+delta) dW.
-    const double factor = 1.0 + this->state->getState()(0, 0);
+    const double factor = 1.0 + this->state->stateView()(0, 0);
 
     Eigen::MatrixXd derivative(1, 1);
     derivative(0, 0) = (this->mean - factor) / this->timeConstant;

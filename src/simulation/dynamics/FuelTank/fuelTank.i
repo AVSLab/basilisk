@@ -36,7 +36,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_deprecated.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %deprecated_variable(
     FuelTank,

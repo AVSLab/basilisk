@@ -52,18 +52,20 @@ SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
     this->IPrimeS1PntSc1_B.setZero();
     this->IPrimeS2PntSc2_B.setZero();
 
-    this->nameOfTheta1State = "spinningBodyTheta1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta2State = "spinningBodyTheta2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfTheta2DotState = "spinningBodyTheta2Dot" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialPositionProperty1 = "spinningBodyInertialPosition1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialVelocityProperty1 = "spinningBodyInertialVelocity1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialAttitudeProperty1 = "spinningBodyInertialAttitude1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialAngVelocityProperty1 = "spinningBodyInertialAngVelocity1" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialPositionProperty2 = "spinningBodyInertialPosition2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialVelocityProperty2 = "spinningBodyInertialVelocity2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialAttitudeProperty2 = "spinningBodyInertialAttitude2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
-    this->nameOfInertialAngVelocityProperty2 = "spinningBodyInertialAngVelocity2" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
+    // Separate the axis and instance identifiers from single-axis effector names.
+    const std::string instance = "_" + std::to_string(SpinningBodyTwoDOFStateEffector::effectorID);
+    this->nameOfTheta1State = "spinningBodyTheta1" + instance;
+    this->nameOfTheta1DotState = "spinningBodyTheta1Dot" + instance;
+    this->nameOfTheta2State = "spinningBodyTheta2" + instance;
+    this->nameOfTheta2DotState = "spinningBodyTheta2Dot" + instance;
+    this->nameOfInertialPositionProperty1 = "spinningBodyInertialPosition1" + instance;
+    this->nameOfInertialVelocityProperty1 = "spinningBodyInertialVelocity1" + instance;
+    this->nameOfInertialAttitudeProperty1 = "spinningBodyInertialAttitude1" + instance;
+    this->nameOfInertialAngVelocityProperty1 = "spinningBodyInertialAngVelocity1" + instance;
+    this->nameOfInertialPositionProperty2 = "spinningBodyInertialPosition2" + instance;
+    this->nameOfInertialVelocityProperty2 = "spinningBodyInertialVelocity2" + instance;
+    this->nameOfInertialAttitudeProperty2 = "spinningBodyInertialAttitude2" + instance;
+    this->nameOfInertialAngVelocityProperty2 = "spinningBodyInertialAngVelocity2" + instance;
     SpinningBodyTwoDOFStateEffector::effectorID++;
 }
 
@@ -337,10 +339,10 @@ void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [
     }
 
     // Grab current states
-    this->theta1 = this->theta1State->getStateReference()(0, 0);
-    this->theta1Dot = this->theta1DotState->getStateReference()(0, 0);
-    this->theta2 = this->theta2State->getStateReference()(0, 0);
-    this->theta2Dot = this->theta2DotState->getStateReference()(0, 0);
+    this->theta1 = this->theta1State->stateView()(0, 0);
+    this->theta1Dot = this->theta1DotState->stateView()(0, 0);
+    this->theta2 = this->theta2State->stateView()(0, 0);
+    this->theta2Dot = this->theta2DotState->stateView()(0, 0);
 
     // Compute the DCM from both S frames to B frame
     double dcm_S0S[3][3];
@@ -608,7 +610,7 @@ void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Matrix3d dcm_PB = sigma_PB.toRotationMatrix().transpose();
 
     // Collect hub states
-    Eigen::Vector3d omega_BN_B = this->hubOmega->getStateReference();
+    Eigen::Vector3d omega_BN_B = this->hubOmega->stateView();
     Eigen::Vector3d omega_BN_P = dcm_PB * omega_BN_B;
 
     // Prescribed motion translation coupling contributions
@@ -743,9 +745,9 @@ void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[mayb
     // Compute theta and thetaDot derivatives
     Eigen::Vector2d thetaDDot;
     thetaDDot = this->ATheta * rDDotLocal_BN_B + this->BTheta * omegaDotLocal_BN_B + this->CTheta;
-    this->theta1State->setDerivative(this->theta1DotState->getStateReference());
+    this->theta1State->setDerivative(this->theta1DotState->stateView());
     this->theta1DotState->setDerivative(thetaDDot.row(0));
-    this->theta2State->setDerivative(this->theta2DotState->getStateReference());
+    this->theta2State->setDerivative(this->theta2DotState->stateView());
     this->theta2DotState->setDerivative(thetaDDot.row(1));
 }
 

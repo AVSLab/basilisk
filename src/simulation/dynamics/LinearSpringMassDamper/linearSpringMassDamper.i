@@ -37,7 +37,7 @@ from Basilisk.architecture.swig_common_model import *
 %include "stdint.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "linearSpringMassDamper.h"

@@ -88,6 +88,7 @@ public:
                                       Eigen::Vector3d omega_BN_B) override;    //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates();       //!< Method for computing the effector's states relative to the inertial frame
     void addStateEffector(StateEffector *newStateEffector);          //!< Method to attach a state effector to prescribed motion
+    void freezeTopology() noexcept override;
 
     ReadFunctor<PrescribedTranslationMsgPayload> prescribedTranslationInMsg;      //!< Input message for the effector's translational prescribed states
     ReadFunctor<PrescribedRotationMsgPayload> prescribedRotationInMsg;            //!< Input message for the effector's rotational prescribed states
