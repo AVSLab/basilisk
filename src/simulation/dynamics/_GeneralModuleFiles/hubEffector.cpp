@@ -114,8 +114,9 @@ void HubEffector::registerStates(DynParamManager& states)
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
     this->gravVelocityState = states.registerState(3, 1, this->nameOfHubGravVelocity);
     this->gravVelocityBcState = states.registerState(3, 1, this->nameOfBcGravVelocity);
-    /* - r_BN_N and v_BN_N of the hub is first set to r_CN_N and v_CN_N and then is corrected in spacecraft
-     initializeDynamics to incorporate the fact that point B and point C are not necessarily coincident */
+    /* - r_BN_N and v_BN_N are initialized from r_CN_N and v_CN_N, then
+     * corrected during spacecraft reset-time dynamics registration because
+     * points B and C are not necessarily coincident. */
     this->posState->setState(this->r_CN_NInit);
     this->velocityState->setState(this->v_CN_NInit);
     this->sigmaState->setState(this->sigma_BNInit);
@@ -197,8 +198,8 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::V
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
-    rDotLocal_BN_N = velocityState->getStateReference();
-    omegaLocal_BN_B = omegaState->getStateReference();
+    rDotLocal_BN_N = velocityState->stateView();
+    omegaLocal_BN_B = omegaState->stateView();
     gLocal_N = *this->g_N;
 
     // - Set kinematic derivative
@@ -243,10 +244,10 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
                                             const Eigen::Vector3d& forceExternal_B,
                                             const Eigen::Vector3d& torquePntB_B)
 {
-    Eigen::Vector3d rDotLocal_BN_N = this->velocityState->getStateReference();
+    Eigen::Vector3d rDotLocal_BN_N = this->velocityState->stateView();
     Eigen::MRPd sigmaLocal_BN;
-    sigmaLocal_BN = (Eigen::Vector3d) this->sigmaState->getStateReference();
-    Eigen::Vector3d omegaLocal_BN_B = this->omegaState->getStateReference();
+    sigmaLocal_BN = (Eigen::Vector3d)this->sigmaState->stateView();
+    Eigen::Vector3d omegaLocal_BN_B = this->omegaState->stateView();
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
 
     Eigen::Vector3d translationalAccel_N =
@@ -278,7 +279,7 @@ void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]]
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = omegaState->getStateReference();
+    omegaLocal_BN_B = omegaState->stateView();
 
     //  - Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDot_BcB_B;
@@ -298,7 +299,7 @@ void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]]
 void HubEffector::modifyStates(double integTime [[maybe_unused]])
 {
     // Lets switch those MRPs!!
-    Eigen::MRPd sigmaBNLoc(this->sigmaState->getStateReference().data());
+    Eigen::MRPd sigmaBNLoc(this->sigmaState->stateView().data());
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = sigmaBNLoc.shadow();
         this->sigmaState->setState(sigmaBNLoc.coeffs());
@@ -313,6 +314,6 @@ void HubEffector::modifyStates(double integTime [[maybe_unused]])
  */
 void HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
 {
-    this->gravVelocityState->setState(this->velocityState->getStateReference());
+    this->gravVelocityState->setState(this->velocityState->stateView());
     this->gravVelocityBcState->setState(v_CN_N);
 }

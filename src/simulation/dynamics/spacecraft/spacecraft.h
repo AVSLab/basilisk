@@ -67,8 +67,6 @@ public:
     HubEffector hub;                     //!< The spacecraft plus needs access to the spacecraft hub
     GravityEffector gravField;           //!< Gravity effector for gravitational field experienced by spacecraft
     bool pointMassTranslationalOnly = false; //!< -- If true, integrate only translational point-mass dynamics
-    std::vector<StateEffector*> states;               //!< Vector of state effectors attached to dynObject
-    std::vector<DynamicEffector*> dynEffectors;       //!< Vector of dynamic effectors attached to dynObject
     BSKLogger bskLogger;                      //!< BSK Logging
     Message<SCStatesMsgPayload> scStateOutMsg;      //!< spacecraft state output message
     Message<SCMassPropsMsgPayload> scMassOutMsg;    //!< spacecraft mass properties output message
@@ -76,7 +74,6 @@ public:
 public:
     Spacecraft();                    //!< Constructor
     ~Spacecraft();                   //!< Destructor
-    void initializeDynamics();           //!< This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< This method computes the total mass properties of the s/c
     void calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B);  //!< This method computes the force and torque from the stateEffectors
@@ -92,6 +89,8 @@ public:
     void postIntegration(uint64_t callTimeNanos) final;      //!< method to perform post-integration steps
 
 private:
+  std::vector<StateEffector*> states;         //!< Vector of state effectors attached to dynObject
+  std::vector<DynamicEffector*> dynEffectors; //!< Vector of dynamic effectors attached to dynObject
 
     template <typename Type>
     /** Assign the state engine state and parameter names to an effector */
@@ -150,6 +149,7 @@ private:
 
 
 private:
+  void registerDynamics();         //!< Register and link dynamics during Reset
     void readOptionalRefMsg();                  //!< Read the optional attitude or translational reference input message and set the reference states
     bool useHubOnlyFastPath() const;            //!< Return true if direct fixed-mass hub-only equations can be used
 };

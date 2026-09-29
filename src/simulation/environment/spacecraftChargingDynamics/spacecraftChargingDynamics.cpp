@@ -30,20 +30,24 @@ SpacecraftChargingDynamics::SpacecraftChargingDynamics() {
     this->nameOfTargetPotentialState = "targetPotential";
 
     // Set integrator as RK4
-    this->integrator = new svIntegratorRK4(this);
+    this->setIntegrator(new svIntegratorRK4(this));
 }
 
 /*! Reset method. */
 void SpacecraftChargingDynamics::Reset(uint64_t CurrentSimNanos) {
-    this->initializeDynamics();
+    this->registerDynamics();
     this->writeOutputStateMessages(CurrentSimNanos);
     this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
+
 }
 
-/*! Method to initialize dynamics. */
-void SpacecraftChargingDynamics::initializeDynamics() {
+/*! Register and initialize the dynamics state during Reset. */
+void
+SpacecraftChargingDynamics::registerDynamics()
+{
     this->registerStates(this->dynManager);
+    this->dynManager.finalizeStates();
 
     // Call equations of motion at time zero
     this->equationsOfMotion(0.0, 1.0);
@@ -126,8 +130,8 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
 
 /*! Method to write module output messages. */
 void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
-    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
-    this->targetPotential = this->targetPotentialState->getState()(0, 0);
+    this->servicerPotential = this->servicerPotentialState->stateView()(0, 0);
+    this->targetPotential = this->targetPotentialState->stateView()(0, 0);
 
     // Write out the servicer output messages
     VoltMsgPayload servicerVoltageMsgBuffer;
@@ -184,8 +188,8 @@ void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
 
 /*! Method for the charging equations of motion */
 void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds [[maybe_unused]], double timeStep [[maybe_unused]]) {
-    this->servicerPotential = this->servicerPotentialState->getState()(0, 0);
-    this->targetPotential = this->targetPotentialState->getState()(0, 0);
+    this->servicerPotential = this->servicerPotentialState->stateView()(0, 0);
+    this->targetPotential = this->targetPotentialState->stateView()(0, 0);
 
     // Compute all currents acting on the spacecraft
     this->computeCurrents();

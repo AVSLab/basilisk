@@ -38,9 +38,7 @@ class SpacecraftChargingDynamics : public DynamicObject{
 public:
     SpacecraftChargingDynamics();  //!< Constructor
     ~SpacecraftChargingDynamics() = default;  //!< Destructor
-    void initializeDynamics();  //!< Method to initialize dynamics
     void Reset(uint64_t CurrentSimNanos);  //!< Reset method
-    void registerStates(DynParamManager& states);  //!< Method to register states
     void writeOutputStateMessages(uint64_t clockTime);  //!< Method to write output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< Update method
     void equationsOfMotion(double integTimeSeconds, double timeStep);  //!< Method defining equations of motion
@@ -95,6 +93,9 @@ public:
     BSKLogger bskLogger;  //!< BSK Logging
 
 private:
+    void registerDynamics();
+    void registerStates(DynParamManager& states);
+
     double servicerPotentialInit{};  //!< [Volts] Initial servicer potential
     double targetPotentialInit{};  //!< [Volts] Initial target potential
     double servicerCapacitance{1e-9};  //!< [farads] Servicer capacitance

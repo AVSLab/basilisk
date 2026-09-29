@@ -36,11 +36,17 @@ from Basilisk.simulation.gravityEffector import GravBodyVector
 %include "swig_conly_data.i"
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-%include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynamicObjectImport.swg"
 %import  "simulation/dynamics/gravityEffector/gravityEffector.i"
+
+// Included interfaces can replace the active exception handler. Reassert it
+// before wrapping Spacecraft so topology guards become Python RuntimeError.
+%default_bsk_exception(catch (const std::exception& error) {
+    SWIG_exception(SWIG_RuntimeError, error.what());
+});
 %include "spacecraft.h"
 
 %include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
