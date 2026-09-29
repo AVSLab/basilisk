@@ -172,6 +172,7 @@ def test_StatefulNumbaDiffusion():
     """
     from Basilisk.simulation import svIntegrators
     from Basilisk.simulation import StatefulSysModel
+    from Basilisk.simulation import stateArchitecture
 
     theta = 0.5
     mu    = 0.0
@@ -180,6 +181,17 @@ def test_StatefulNumbaDiffusion():
     dt    = 0.1
     tf    = 1.0
     seed  = 42
+
+    def _stochastic_scalar_spec():
+        shape = stateArchitecture.MatrixShape()
+        shape.rows = 1
+        shape.cols = 1
+        spec = stateArchitecture.StateSpec()
+        spec.state = shape
+        spec.derivative = shape
+        spec.diffusionTangent = shape
+        spec.noiseCount = 1
+        return spec
 
     def _make_sim():
         scSim = SimulationBaseClass.SimBaseClass()
@@ -191,8 +203,7 @@ def test_StatefulNumbaDiffusion():
         intg = svIntegrators.svStochasticIntegratorMayurama(scene)
         intg.setRNGSeed(seed)
         scene.setIntegrator(intg)
-        # intg must be returned: scene stores only a raw C++ pointer, so Python
-        # would GC the integrator before the simulation runs without this.
+        # Return the integrator so the test can inspect its configured generator.
         return scSim, scene, intg
 
     # ---- Numba model: diffusion written via xStateDiffusion0 in cfunc ----
@@ -201,8 +212,9 @@ def test_StatefulNumbaDiffusion():
 
         def registerStates(self, registerer):
             """Register the scalar stochastic state and one noise source."""
-            self.xState = registerer.registerState(1, 1, "x")
-            self.xState.setNumNoiseSources(1)
+            self.xState = registerer.registerStateSpec(
+                "x", _stochastic_scalar_spec()
+            )
 
         @staticmethod
         def UpdateStateImpl(xState, xStateDeriv, xStateDiffusion0, memory):
@@ -230,8 +242,9 @@ def test_StatefulNumbaDiffusion():
 
         def registerStates(self, registerer):
             """Register the scalar stochastic state and one noise source."""
-            self.xState = registerer.registerState(1, 1, "x")
-            self.xState.setNumNoiseSources(1)
+            self.xState = registerer.registerStateSpec(
+                "x", _stochastic_scalar_spec()
+            )
 
         def UpdateState(self, CurrentSimNanos):
             """Update the OU drift and diffusion using the Python API."""

@@ -18,12 +18,19 @@
  */
 %module(directors="1",threads="1",package="Basilisk.simulation") StatefulSysModel
 
+// BSK_SWIG_RUNTIME_DEPENDS: stateArchitecture py_sys_model dynParamManager swig_common_model
+
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
 %{
    #include "StatefulSysModel.h"
 %}
+
+%ignore DynParamRegisterer::registerState(
+    std::string,
+    const StateSpec&,
+    std::unique_ptr<StateUpdatePolicy>);
 
 %pythoncode %{
 import sys
@@ -33,21 +40,24 @@ from Basilisk.simulation import stateArchitecture
 
 %include "architecture/utilities/bskLogging.h"
 %import "architecture/_GeneralModuleFiles/py_sys_model.i"
-%import "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 
 %feature("director") StatefulSysModel;
 %rename("_StatefulSysModelBase") StatefulSysModel;
-%include "StatefulSysModel.h"
-
-// We don't need to construct the DynParamRegisterer on the Python side
+%rename(registerStateSpec) DynParamRegisterer::registerState(std::string, const StateSpec&);
 %ignore DynParamRegisterer::DynParamRegisterer;
+
+// Imports and Eigen typemaps may reset %exception; keep this module's
+// std::exception translation explicit at the director boundary.
+%default_bsk_exception(catch (const std::exception& error) {
+    SWIG_exception(SWIG_RuntimeError, error.what());
+});
+%include "StatefulSysModel.h"
 
 // Current limitation of SWIG for complex templated types like
 // std::pair<const StateData*, size_t>, we need to declare these manually
 %traits_swigtype(StateData);
 %fragment(SWIG_Traits_frag(StateData));
-
-%template(registerState) DynParamRegisterer::registerState<StateData, true>;
 
 %extend DynParamRegisterer {
    // SWIG doesnt like const StateData& so we have to use const StateData* and convert
@@ -56,6 +66,9 @@ from Basilisk.simulation import stateArchitecture
       std::vector<std::pair<const StateData&, size_t>> refList;
       refList.reserve(list.size());
       for (const auto& p : list) {
+         if (p.first == nullptr) {
+            throw BasiliskError("registerSharedNoiseSource received a null StateData pointer.");
+         }
          refList.emplace_back(*p.first, p.second);
       }
       $self->registerSharedNoiseSource(refList);
@@ -66,7 +79,6 @@ from Basilisk.simulation import stateArchitecture
 
 %pythoncode %{
 from Basilisk.architecture.sysModel import SysModelMixin
-
 class StatefulSysModel(SysModelMixin, _StatefulSysModelBase):
     """Python wrapper for the C++ StatefulSysModel."""
 %}

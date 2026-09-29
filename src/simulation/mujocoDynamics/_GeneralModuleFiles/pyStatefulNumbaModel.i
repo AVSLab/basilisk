@@ -48,18 +48,18 @@ from Basilisk.architecture.swig_common_model import *
     $result = PyLong_FromUnsignedLongLong((unsigned long long)$1);
 }
 
-/* Free helper functions to access StateData's public Eigen data pointers.
+/* Free helper functions to access StateData's checked buffer pointers.
  * stateData.h is transitively included via statefulNumbaModel.h → StatefulSysModel.h
  * → dynParamManager.h → stateData.h, so StateData is already visible. */
 %inline %{
     uintptr_t getStateDataPtr(StateData* sd) {
-        return reinterpret_cast<uintptr_t>(sd->state.data());
+        return reinterpret_cast<uintptr_t>(sd->stateData());
     }
     uintptr_t getDerivDataPtr(StateData* sd) {
-        return reinterpret_cast<uintptr_t>(sd->stateDeriv.data());
+        return reinterpret_cast<uintptr_t>(sd->derivativeData());
     }
     uintptr_t getDiffusionDataPtr(StateData* sd, size_t index) {
-        return reinterpret_cast<uintptr_t>(sd->stateDiffusion.at(index).data());
+        return reinterpret_cast<uintptr_t>(sd->diffusionData(index));
     }
 %}
 
@@ -115,8 +115,8 @@ class StatefulNumbaModel(NumbaModel, _StatefulNumbaModel):
     '<name>StateDiffusionN'
         Writable diffusion matrix for the N-th noise source (N >= 0).
         Resolved from self.<name>State (same StateData*).
-        Type: float64[nRow, nCol] Fortran-order 2-D array.
-        Requires self.<name>State.setNumNoiseSources(N+1) in registerStates().
+        Its shape is the state's diffusionTangent shape.
+        Requires noiseCount >= N+1 in the StateSpec used by registerStates().
 
     States are registered in registerStates(), which is called by MJScene
     before Reset().  The Eigen MatrixXd backing store is column-major
@@ -138,6 +138,8 @@ class StatefulNumbaModel(NumbaModel, _StatefulNumbaModel):
                     f"before Reset()."
                 )
             ptr = getDerivDataPtr(stateObj)
+            nRow = stateObj.getDerivativeRowSize()
+            nCol = stateObj.getDerivativeColumnSize()
         elif 'StateDiffusion' in pName and pName.rsplit('StateDiffusion', 1)[-1].isdigit():
             parts = pName.rsplit('StateDiffusion', 1)
             attrName = parts[0] + 'State'      # "posStateDiffusion0" → "posState"
@@ -154,10 +156,12 @@ class StatefulNumbaModel(NumbaModel, _StatefulNumbaModel):
                 raise IndexError(
                     f"UpdateStateImpl parameter {pName!r}: diffusion index {diffIdx} is "
                     f"out of range. self.{attrName} has {stateObj.getNumNoiseSources()} "
-                    f"noise source(s). Call self.{attrName}.setNumNoiseSources(...) "
-                    f"in registerStates()."
+                    f"noise source(s). Set noiseCount in the StateSpec passed "
+                    f"to registerState()."
                 )
             ptr = getDiffusionDataPtr(stateObj, diffIdx)
+            nRow = stateObj.getDiffusionRowSize()
+            nCol = stateObj.getDiffusionColumnSize()
         elif pName.endswith('State'):
             attrName = pName                   # "posState" → "posState"
             stateObj = getattr(self, attrName, None)
@@ -169,11 +173,11 @@ class StatefulNumbaModel(NumbaModel, _StatefulNumbaModel):
                     f"before Reset()."
                 )
             ptr = getStateDataPtr(stateObj)
+            nRow = stateObj.getRowSize()
+            nCol = stateObj.getColumnSize()
         else:
             super()._nbmHandleExtraParam(pName, ctx)
             return
-        nRow = stateObj.getRowSize()
-        nCol = stateObj.getColumnSize()
         self.addUserPointer(ptr)
         ctx.preLines.append(
             f"    {pName} = nb.farray(allPtrs[_USER_BASE + {ctx.userIdx}], ({nRow}, {nCol}), np.float64)"
@@ -187,8 +191,8 @@ class StatefulNumbaModel(NumbaModel, _StatefulNumbaModel):
             "'<name>StateDeriv'         : writable derivative "
             "(float64[nRow, nCol] Fortran-order)",
             "'<name>StateDiffusionN'    : writable diffusion matrix for noise source N "
-            "(float64[nRow, nCol] Fortran-order; N >= 0; requires "
-            "setNumNoiseSources(N+1) in registerStates())",
+            "(Fortran-order diffusionTangent shape; N >= 0; requires "
+            "StateSpec.noiseCount >= N+1)",
         ] + super()._nbmValidParamPatterns()
 
     def registerStates(self, registerer):
