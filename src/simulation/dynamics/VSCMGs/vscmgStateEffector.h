@@ -65,8 +65,16 @@ public:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< [-] Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< [-] Method for each stateEffector to calculate derivatives
 
+    std::vector<VSCMGConfigMsgPayload> getVSCMGData() const { return this->VSCMGData; }
+    size_t getVSCMGCount() const { return this->VSCMGData.size(); }
+    VSCMGConfigMsgPayload* getVSCMGAt(size_t index) { return &this->VSCMGData.at(index); }
+    void setVSCMGAt(size_t index, const VSCMGConfigMsgPayload& vscmg)
+    {
+        this->requireMutableTopology("VSCMGStateEffector::setVSCMGAt");
+        this->VSCMGData.at(index) = vscmg;
+    }
+
 public:
-	std::vector<VSCMGConfigMsgPayload> VSCMGData; //!< [-] VSCMG data structure
     Eigen::MatrixXd *g_N; 						//!< [m/s^2] Gravitational acceleration in N frame components
 
     ReadFunctor<VSCMGArrayTorqueMsgPayload> cmdsInMsg;  //!< [-] motor torque command input message
@@ -84,6 +92,7 @@ public:
   BSKLogger bskLogger;                      //!< [-] BSK Logging
 
 private:
+  std::vector<VSCMGConfigMsgPayload> VSCMGData; //!< [-] VSCMG data structure
     /** @brief Validate and derive configuration without requiring linked states or clearing commands. */
     void initializeConfiguration();
     VSCMGArrayTorqueMsgPayload incomingCmdBuffer{}; //!< [-] One-time allocation for savings

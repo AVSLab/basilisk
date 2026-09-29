@@ -68,12 +68,19 @@ public:
     void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
+    std::vector<std::shared_ptr<THRSimConfig>> getThrusterData() const { return this->thrusterData; }
+    size_t getThrusterCount() const { return this->thrusterData.size(); }
+    std::shared_ptr<THRSimConfig> getThrusterAt(size_t index) const { return this->thrusterData.at(index); }
+    void setThrusterAt(size_t index, std::shared_ptr<THRSimConfig> thruster)
+    {
+        this->requireMutableTopology("ThrusterStateEffector::setThrusterAt");
+        this->thrusterData.at(index) = std::move(thruster);
+    }
 
 public:
     // Input and output messages
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< input message with thruster commands
     std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< output message vector for thruster data
-    std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< Thruster information
     std::vector<double> NewThrustCmds;             //!< Incoming thrust commands
 
     // State information
@@ -83,7 +90,7 @@ public:
     // State structures
 	StateData *hubSigma;        //!< pointer to hub attitude states
     StateData *hubOmega;        //!< pointer to hub angular velocity states
-    StateData* kappaState;      //!< state manager of theta for hinged rigid body
+    StateData* kappaState = nullptr;            //!< Registered thrust-factor state, absent for an empty effector.
     Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::Vector3d r_PcP_P;                    //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if thrusters attached to non-hub body)
 
@@ -93,6 +100,7 @@ public:
     double mDotTotal = 0.0;           //!< [kg/s] Current mass flow rate of thrusters
 
 private:
+  std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< Thruster information
     void validateConfiguration();  //!< Validate dimensions before accessing thruster data or commands
     void validateRegisteredCount();  //!< Reject changes to the number of registered thrust-factor states
     std::optional<std::size_t> registeredThrusterCount;  //!< Thruster count after successful state registration

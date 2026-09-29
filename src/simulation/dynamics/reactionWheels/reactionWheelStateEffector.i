@@ -39,11 +39,14 @@ namespace std {
 }
 
 %include "sys_model.i"
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 %include "simulation/dynamics/reactionWheels/reactionWheelSupport.h"
 %import "simulation/dynamics/_GeneralModuleFiles/RWConfigPayload.i"
+%default_bsk_exception(catch (const std::exception& error) {
+    SWIG_exception(SWIG_RuntimeError, error.what());
+});
 %include "reactionWheelStateEffector.h"
 %include "architecture/utilities/macroDefinitions.h"
 
@@ -61,6 +64,22 @@ from Basilisk.simulation.RWConfigPayload import RWConfigPayload as RWConfigPaylo
 %}
 
 %pythoncode %{
+def _reaction_wheel_data(self):
+    return GuardedConfigSequence(
+        self,
+        self.getReactionWheelCount,
+        self.getReactionWheelAt,
+        self.setReactionWheelAt,
+        self.addReactionWheel,
+    )
+
+def _set_reaction_wheel_data(self, values):
+    _reaction_wheel_data(self).replace(values)
+
+ReactionWheelStateEffector.ReactionWheelData = property(
+    _reaction_wheel_data,
+    _set_reaction_wheel_data,
+)
 import sys
 protectAllClasses(sys.modules[__name__])
 %}

@@ -125,10 +125,10 @@ void ReactionWheelStateEffector::validateDimensions()
 /*! @brief Reject state-layout changes without relying on live parent state pointers. */
 void ReactionWheelStateEffector::validateRegisteredLayout()
 {
-    if (!this->registeredWheelLayout) {
+    if (!this->registeredWheelModels) {
         return;
     }
-    const auto& layout = *this->registeredWheelLayout;
+    const auto& layout = *this->registeredWheelModels;
     if (this->ReactionWheelData.size() != layout.size()) {
         this->bskLogger.bskError("ReactionWheelStateEffector: wheel count cannot change after state registration. "
                                 "Configure all wheels before InitializeSimulation().");
@@ -140,9 +140,9 @@ void ReactionWheelStateEffector::validateRegisteredLayout()
             this->bskLogger.bskError("ReactionWheelStateEffector: a registered wheel configuration cannot be null.");
         }
         const bool usesJitterState = rw->RWModel == JitterSimple || rw->RWModel == JitterFullyCoupled;
-        if (usesJitterState != layout[i]) {
-            this->bskLogger.bskError("ReactionWheelStateEffector: wheel jitter-state allocation cannot change "
-                                    "after state registration. Configure wheel models before InitializeSimulation().");
+        if (rw->RWModel != layout[i]) {
+            this->bskLogger.bskError("ReactionWheelStateEffector: wheel models cannot change "
+                                     "after state registration. Configure wheel models before InitializeSimulation().");
         }
         jitterCount += usesJitterState;
     }
@@ -168,14 +168,14 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     this->numRW = 0;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
-    std::vector<bool> wheelLayout;
+    std::vector<RWModels> wheelLayout;
     wheelLayout.reserve(this->ReactionWheelData.size());
 
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         this->initializeWheelConfiguration(rw);
-        wheelLayout.push_back(rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled);
+        wheelLayout.push_back(rw.RWModel);
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
@@ -183,19 +183,23 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         this->numRW++;
     }
 
-	this->OmegasState = states.registerState((uint32_t) this->numRW, 1, this->nameOfReactionWheelOmegasState);
+    if (this->numRW > 0) {
+        this->OmegasState = states.registerState((uint32_t)this->numRW, 1, this->nameOfReactionWheelOmegasState);
+        this->OmegasState->setState(omegasForInit);
+    }
 
-	if (numRWJitter > 0) {
+    if (numRWJitter > 0) {
 		this->thetasState = states.registerState((uint32_t) this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 	}
 
-    this->OmegasState->setState(omegasForInit);
     if (this->numRWJitter > 0) {
         Eigen::MatrixXd thetasForZeroing(this->numRWJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
     }
-    this->registeredWheelLayout = wheelLayout;
+    this->registeredWheelModels = wheelLayout;
+    this->omegasDotBuffer.resize(static_cast<Eigen::Index>(this->numRW), 1);
+    this->thetasDotBuffer.resize(static_cast<Eigen::Index>(this->numRWJitter), 1);
 }
 
 /*! @brief Update the effector mass properties.
@@ -212,17 +216,17 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[mayb
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
-    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
-    const Eigen::MatrixXd* thetaVector = this->numRWJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
+    const double* thetaVector = this->numRWJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     int thetaCount = 0;
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
-		rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
+        rw.Omega = omegasVector[i];
 
-		if (rw.RWModel == JitterFullyCoupled) {
-			rw.theta = (*thetaVector)(thetaCount, 0);
-			Eigen::Matrix3d dcm_WW0 = eigenM1(rw.theta);
+        if (rw.RWModel == JitterFullyCoupled) {
+            rw.theta = thetaVector[thetaCount];
+            Eigen::Matrix3d dcm_WW0 = eigenM1(rw.theta);
 			Eigen::Matrix3d dcm_BW0;
 			dcm_BW0.col(0) = rw.gsHat_B;
 			dcm_BW0.col(1) = rw.w2Hat0_B;
@@ -260,8 +264,8 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[mayb
 			this->effProps.IEffPrimePntB_B += rw.IPrimeRWPntWc_B + rw.mass*rPrimeTildeWcB_B*rw.rTildeWcB_B.transpose() + rw.mass*rw.rTildeWcB_B*rPrimeTildeWcB_B.transpose();
             thetaCount++;
 		} else if (rw.RWModel == JitterSimple) {
-			rw.theta = (*thetaVector)(thetaCount, 0);
-			Eigen::Matrix3d dcm_WW0 = eigenM1(rw.theta);
+            rw.theta = thetaVector[thetaCount];
+            Eigen::Matrix3d dcm_WW0 = eigenM1(rw.theta);
 			Eigen::Matrix3d dcm_BW0;
 			dcm_BW0.col(0) = rw.gsHat_B;
 			dcm_BW0.col(1) = rw.w2Hat0_B;
@@ -412,9 +416,9 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
 void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     this->validateRegisteredLayout();
-	Eigen::MatrixXd OmegasDot(this->numRW,1);
-    Eigen::MatrixXd thetasDot(this->numRWJitter,1);
-	Eigen::Vector3d omegaDotBNLoc_B;
+    Eigen::MatrixXd& OmegasDot = this->omegasDotBuffer;
+    Eigen::MatrixXd& thetasDot = this->thetasDotBuffer;
+    Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
@@ -467,7 +471,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unu
 		}
 	}
 
-	OmegasState->setDerivative(OmegasDot);
+    if (this->numRW > 0) {
+        OmegasState->setDerivative(OmegasDot);
+    }
     if (this->numRWJitter > 0) {
         thetasState->setDerivative(thetasDot);
     }
@@ -522,10 +528,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
  */
 void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
 {
-    if (this->registeredWheelLayout) {
-        this->bskLogger.bskError("ReactionWheelStateEffector: cannot add wheels after state registration. "
-                                "Configure all wheels before InitializeSimulation().");
-    }
+    this->requireMutableTopology("ReactionWheelStateEffector::addReactionWheel");
     /* store the RW information */
     this->ReactionWheelData.push_back(NewRW);
 
@@ -576,17 +579,17 @@ void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]]
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->validateRegisteredLayout();
-    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
-    const Eigen::MatrixXd* thetaVector = this->numRWJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
+    const double* thetaVector = this->numRWJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     int thetaCount=0;
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
-            rw.theta = (*thetaVector)(thetaCount, 0);
+            rw.theta = thetaVector[thetaCount];
             thetaCount++;
         }
-        rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
+        rw.Omega = omegasVector[i];
 
         RWConfigLogMsgPayload tmpRW = this->rwOutMsgs[i]->zeroMsgPayload;
 		tmpRW.theta = rw.theta;
@@ -617,18 +620,18 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
     this->validateDimensions();
-    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
-    const Eigen::MatrixXd* thetaVector = this->numRWJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
+    const double* thetaVector = this->numRWJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     int thetaCount = 0;
     for (std::size_t i = 0; i < ReactionWheelData.size(); ++i)
     {
         auto& rw = *ReactionWheelData[i];
         if (rw.RWModel == JitterSimple || rw.RWModel == JitterFullyCoupled) {
-            rw.theta = (*thetaVector)(thetaCount, 0);
+            rw.theta = thetaVector[thetaCount];
             this->rwSpeedMsgBuffer.wheelThetas[i] = rw.theta;
             thetaCount++;
         }
-        rw.Omega = omegasVector(static_cast<Eigen::Index>(i), 0);
+        rw.Omega = omegasVector[i];
         this->rwSpeedMsgBuffer.wheelSpeeds[i] = rw.Omega;
     }
 

@@ -141,10 +141,10 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
-    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
-    const Eigen::MatrixXd& gammasVector = this->gammasState->getStateReference();
-    const Eigen::MatrixXd& gammaDotsVector = this->gammaDotsState->getStateReference();
-    const Eigen::MatrixXd* thetaVector = this->numVSCMGJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    const auto omegasVector = this->OmegasState->stateView();
+    const auto gammasVector = this->gammasState->stateView();
+    const auto gammaDotsVector = this->gammaDotsState->stateView();
+    const double* thetaVector = this->numVSCMGJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     int thetaCount = 0;
     std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
@@ -154,8 +154,8 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
 		it->gamma = gammasVector(vscmgIndex, 0);
 		it->gammaDot = gammaDotsVector(vscmgIndex, 0);
 		if (it->VSCMGModel == vscmgJitterFullyCoupled || it->VSCMGModel == vscmgJitterSimple) {
-			it->theta = (*thetaVector)(thetaCount, 0);
-			thetaCount++;
+            it->theta = thetaVector[thetaCount];
+            thetaCount++;
 		}
 
 		Eigen::Matrix3d dcm_GG0 = eigenM3(it->gamma);
@@ -464,8 +464,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]], E
 
 	//! Grab necessary values from manager
 	omegaDotBNLoc_B = omegaDot_BN_B;
-	omegaLoc_BN_B = this->hubOmega->getStateReference();
-	rDDotBNLoc_N = rDDot_BN_N;
+    omegaLoc_BN_B = this->hubOmega->stateView();
+    rDDotBNLoc_N = rDDot_BN_N;
 	sigmaBNLocal = sigma_BN;
 	dcm_NB = sigmaBNLocal.toRotationMatrix();
 	dcm_BN = dcm_NB.transpose();
@@ -514,7 +514,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_u
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
 	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
-	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getStateReference();
+    Eigen::Vector3d omegaLoc_BN_B = hubOmega->stateView();
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
@@ -712,10 +712,10 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->outputStates = this->speedOutMsg.zeroMsgPayload;
 	VSCMGConfigMsgPayload tmpVSCMG;
-    const Eigen::MatrixXd& omegasVector = this->OmegasState->getStateReference();
-    const Eigen::MatrixXd& gammasVector = this->gammasState->getStateReference();
-    const Eigen::MatrixXd& gammaDotsVector = this->gammaDotsState->getStateReference();
-    const Eigen::MatrixXd* thetaVector = this->numVSCMGJitter > 0 ? &this->thetasState->getStateReference() : nullptr;
+    const auto omegasVector = this->OmegasState->stateView();
+    const auto gammasVector = this->gammasState->stateView();
+    const auto gammaDotsVector = this->gammaDotsState->stateView();
+    const double* thetaVector = this->numVSCMGJitter > 0 ? this->thetasState->stateView().data() : nullptr;
     Eigen::Index thetaIndex = 0;
 	std::vector<VSCMGConfigMsgPayload>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
@@ -724,7 +724,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         const Eigen::Index vscmgIndex = static_cast<Eigen::Index>(vscmgPosition);
         tmpVSCMG = this->vscmgOutMsgs[0]->zeroMsgPayload;
         if (it->VSCMGModel == vscmgJitterSimple || it->VSCMGModel == vscmgJitterFullyCoupled) {
-            it->theta = (*thetaVector)(thetaIndex, 0);
+            it->theta = thetaVector[thetaIndex];
             thetaIndex++;
         }
         double omegaCurrent = omegasVector(vscmgIndex, 0);
@@ -947,6 +947,7 @@ void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
  */
 void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
 {
+    this->requireMutableTopology("VSCMGStateEffector::AddVSCMG");
     this->VSCMGData.push_back(*NewVSCMG);
 
     /* add a VSCMG output message for this device */

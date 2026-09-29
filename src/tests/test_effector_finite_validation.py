@@ -364,6 +364,7 @@ def test_noise_setters_are_transactional(constructor, field, bad, registered):
     manager = spacecraft.DynParamManager()
     if registered:
         effector.registerStates(manager)
+        manager.finalizeStates()
     previous = getattr(effector, "get" + field)()
     with pytest.raises(BasiliskError):
         getattr(effector, "set" + field)(bad)
@@ -378,6 +379,7 @@ def test_noise_reset_preserves_current_state(constructor):
     effector.Reset(0)
     manager = spacecraft.DynParamManager()
     effector.registerStates(manager)
+    manager.finalizeStates()
     effector.setStateValue(0.25)  # [-]
     effector.Reset(0)
     effector.Reset(0)
@@ -391,6 +393,7 @@ def test_noise_small_time_constant_and_zero_noise(constructor):
     effector.setTimeConstant(1e-320)  # [s]
     manager = spacecraft.DynParamManager()
     effector.registerStates(manager)
+    manager.finalizeStates()
     effector.computeDerivatives(0.0, [0.0]*3, [0.0]*3, [0.0]*3)
     state = manager.getStateObject(effector.getStateName())
     np.testing.assert_array_equal(state.getStateDeriv(), [[0.0]])
@@ -410,6 +413,7 @@ def test_igbm_large_stationary_parameters(mean, std, tau, expected_drift, expect
     effector.setStateValue(0.0)
     manager = spacecraft.DynParamManager()
     effector.registerStates(manager)
+    manager.finalizeStates()
     effector.computeDerivatives(0.0, [0.0]*3, [0.0]*3, [0.0]*3)
     state = manager.getStateObject(effector.getStateName())
     np.testing.assert_allclose(state.getStateDeriv(), [[expected_drift]], rtol=1e-14, atol=0.0)
@@ -422,6 +426,7 @@ def test_noise_unrepresentable_derivative_fails_before_write(constructor):
     effector = constructor()
     manager = spacecraft.DynParamManager()
     effector.registerStates(manager)
+    manager.finalizeStates()
     state = manager.getStateObject(effector.getStateName())
     effector.computeDerivatives(0.0, [0.0]*3, [0.0]*3, [0.0]*3)
     previous = np.asarray(state.getStateDeriv()).copy()

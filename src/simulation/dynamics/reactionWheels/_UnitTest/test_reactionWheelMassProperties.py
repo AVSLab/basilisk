@@ -32,6 +32,12 @@ SIMPLE = reactionWheelStateEffector.JitterSimple
 COUPLED = reactionWheelStateEffector.JitterFullyCoupled
 
 
+def _register_wheel_states(wheels, manager):
+    """Register isolated wheel states and allocate their fixed storage."""
+    wheels.registerStates(manager)
+    manager.finalizeStates()
+
+
 def _parallel_axis(position):
     """Return the parallel-axis tensor per unit mass for a body-frame displacement."""
     return np.dot(position, position) * np.eye(3) - np.outer(position, position)
@@ -212,7 +218,7 @@ def test_factory_wheels_support_automatic_mass_properties(wheel_type, max_moment
     wheels.includeWheelMassProperties = True
     factory.addToSpacecraft("wheels", wheels, sc)
 
-    wheels.registerStates(sc.dynManager)
+    _register_wheel_states(wheels, sc.dynManager)
     wheels.Reset(0)
     wheels.updateEffectorMassProps(0.0)  # [s]
 
@@ -252,7 +258,7 @@ def test_automatic_mass_properties_inertia_tolerance(field, relative_offset, acc
     outcome = nullcontext() if accepted else pytest.raises(BasiliskError, match="axisymmetric wheel inertia")
     with outcome:
         if validation_path == "attachment":
-            wheels.registerStates(sc.dynManager)
+            _register_wheel_states(wheels, sc.dynManager)
         else:
             wheels.Reset(0)
 
@@ -275,7 +281,7 @@ def test_automatic_mass_properties_validate_configuration(field, value, expected
     setattr(factory.rwList["RW1"], field, value)
     with pytest.raises(BasiliskError, match=expected_error):
         if validation_path == "attachment":
-            wheels.registerStates(sc.dynManager)
+            _register_wheel_states(wheels, sc.dynManager)
         else:
             wheels.Reset(0)
 
@@ -303,7 +309,7 @@ def test_fully_coupled_mass_properties_validate_configuration(field, value, expe
     setattr(factory.rwList["RW1"], field, value)
     with pytest.raises(BasiliskError, match=expected_error):
         if validation_path == "attachment":
-            wheels.registerStates(sc.dynManager)
+            _register_wheel_states(wheels, sc.dynManager)
         else:
             wheels.Reset(0)
 
@@ -316,7 +322,7 @@ def test_all_models_require_valid_spin_inertia(model, spin_inertia):
     sim, sc, wheels, factory = objects[:4]
     factory.rwList["RW1"].Js = spin_inertia
     with pytest.raises(BasiliskError, match="positive Js"):
-        wheels.registerStates(sc.dynManager)
+        _register_wheel_states(wheels, sc.dynManager)
 
 
 @pytest.mark.parametrize("model", [BALANCED, SIMPLE])
