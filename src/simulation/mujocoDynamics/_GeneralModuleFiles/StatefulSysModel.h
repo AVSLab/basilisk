@@ -22,20 +22,24 @@
 
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 /** @brief Helper passed to ``StatefulSysModel`` instances while they register
  * their states.
  *
- * This class serves two purposes. First, it adds a prefix to every state
- * name before registering it on the actual DynParamManager. This prevents
- * state-name collisions between ``StatefulSysModel`` instances as long as the
- * prefixes are unique. Second, it exposes only the ``registerState`` method
- * from the ``DynParamManager``. This prevents ``StatefulSysModel`` instances
- * from registering
- * properties or accessing the states of other models, which would allow for
- * information to flow between models without going through the message system.
- * If a model needs to access information from another model, it should do so
- * through a message, not by sharing a state or property.
+ * The scene supplies a unique model prefix during state registration.
+ * This helper prepends it to state names, forwards specifications and owned update
+ * policies, and supports shared-noise declarations. It does not own the manager or
+ * start/finalize registration. The scene must outlive the helper and its returned
+ * state handles.
+ *
+ * Models should exchange ordinary information through messages. Keep returned state
+ * handles for equations of motion, and reacquire views after lifecycle transitions.
  */
 class DynParamRegisterer
 {
@@ -58,23 +62,38 @@ public:
      * ``StatefulSysModel`` instances are allowed to use the same state name,
      * however.
      *
-     * This method may optionally be templated to create StateData of
-     * subclasses of ``StateData``.
-     *
-     * @tparam StateDataType Concrete state-data type to instantiate.
      * @param nRow Number of rows in the state storage.
      * @param nCol Number of columns in the state storage.
      * @param stateName State name local to the registering model.
      * @return Pointer to the newly registered state object.
      */
-    template <typename StateDataType = StateData,
-              std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
-    inline StateDataType* registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
+        inline StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
     {
-        return this->manager.registerState<StateDataType>(
-            nRow, nCol, this->stateNamePrefix + stateName
-        );
+            return this->manager.registerState(nRow, nCol, this->stateNamePrefix + stateName);
     }
+
+        /** @brief Register a state with complete immutable topology metadata.
+         * @param stateName Name local to this model, before prefixing.
+         * @param spec State, drift, tangent, noise, and error-control declarations.
+         * @return Borrowed handle owned by the underlying manager.
+         */
+        inline StateData* registerState(std::string stateName, const StateSpec& spec)
+        {
+            return this->manager.registerState(this->stateNamePrefix + stateName, spec);
+        }
+
+        /** @brief Register a state with complete topology and an owned update policy.
+         * @param stateName Name local to this model, before prefixing.
+         * @param spec Immutable state topology.
+         * @param policy Special update rule whose ownership transfers to the registry.
+         * @return Borrowed handle owned by the underlying manager.
+         */
+        inline StateData* registerState(std::string stateName,
+                                        const StateSpec& spec,
+                                        std::unique_ptr<StateUpdatePolicy> policy)
+        {
+            return this->manager.registerState(this->stateNamePrefix + stateName, spec, std::move(policy));
+        }
 
     /** @brief Register a shared stochastic noise source across multiple states.
      *
@@ -109,8 +128,8 @@ public:
      *
      * @param in List of state/noise-source-index pairs that share one process.
      *
-     * @note Some stochastic integrators do not support shared noise sources.
-     * In this case, this method should raise ``std::logic_error``.
+     * @note Endpoints must belong to this manager and satisfy its registration
+     * contract. The numerical method's noise assumptions still apply.
      */
     inline void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> in)
     {
@@ -125,7 +144,11 @@ protected:
 /** @brief ``SysModel`` base class for modules with continuous-time states.
  *
  * ``StatefulSysModel`` instances are added to the dynamics task of an
- * ``MJScene``. On ``UpdateState()``, a ``StatefulSysModel`` should call each
+ * ``MJScene``. The scene calls registerStates() during Reset,
+ * then resets each distinct task model after finalization. Repeated registration must
+ * reproduce the same topology. Models may also participate in the diffusion task.
+ *
+ * On ``UpdateState()``, a drift model should call each
  * state's ``setDerivative`` method. That derivative is then used by the
  * integrator to update the state for the next integration step.
  *
@@ -134,10 +157,13 @@ protected:
  * exponential trajectory:
  * \code{.cpp}
  * void UpdateState(uint64_t CurrentSimNanos) override {
- *     auto x = this->xState->getState();
- *     this->xState->setDerivative( x );
+ *     const double growthRate = 1.0; // [1/s]
+ *     const auto x = this->xState->stateView();
+ *     this->xState->derivativeView() = growthRate * x;
  * }
  * \endcode
+ * @note The borrowed view aliases the active state buffer. Use getState() for an
+ * owning snapshot, and reacquire views after registry lifecycle transitions.
  */
 class StatefulSysModel : virtual public SysModel
 {

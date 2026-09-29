@@ -80,7 +80,7 @@ public:
         {
             bskLogger.bskError("Tried to get integral error before simulation has been initialized");
         }
-        return this->integralErrorState->getState()(0,0);
+        return this->integralErrorState->stateView()(0, 0);
     }
 
     /**
@@ -145,7 +145,7 @@ public:
             velocityError = readDesiredVelocity(desiredVelInMsg()) - readMeasuredVelocity(measuredVelInMsg());
         }
 
-        double integralError = this->integralErrorState->getState()(0,0);
+        double integralError = this->integralErrorState->stateView()(0, 0);
 
         double outputVal = this->Kp * positionError + this->Kd * velocityError + this->Ki * integralError;
 

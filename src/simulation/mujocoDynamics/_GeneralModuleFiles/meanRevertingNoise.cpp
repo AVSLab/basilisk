@@ -19,8 +19,12 @@
 #include "meanRevertingNoise.h"
 
 void MeanRevertingNoise::registerStates(DynParamRegisterer registerer) {
-    xState = registerer.registerState(1, 1, "meanRevertingState");
-    xState->setNumNoiseSources(1);
+    StateSpec spec;
+    spec.state = { 1, 1 };
+    spec.derivative = spec.state;
+    spec.diffusionTangent = spec.state;
+    spec.noiseCount = 1;
+    xState = registerer.registerState("meanRevertingState", spec);
     // Default initial condition
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(0.0));
 }
@@ -32,7 +36,7 @@ void MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos) {
     }
 
     // Current x
-    const Eigen::MatrixXd &x = xState->getState();
+    const auto x = xState->stateView();
     const double x0 = x(0, 0);
 
     // Drift: dx = -theta * x
@@ -53,7 +57,7 @@ double MeanRevertingNoise::getStateValue() const {
     if (!xState) {
         BSKLogger{}.bskError("MeanRevertingNoise: getStateValue before initialization");
     }
-    return xState->getState()(0, 0);
+    return xState->stateView()(0, 0);
 }
 
 void MeanRevertingNoise::setStateValue(double val) {

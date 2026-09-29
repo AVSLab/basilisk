@@ -15,9 +15,11 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import gc
 import os
 import pytest
 import time
+import weakref
 
 from Basilisk import hasBuildFeature
 from Basilisk.architecture import messaging
@@ -62,6 +64,31 @@ XML_PATH_BALL = f"{TEST_FOLDER}/test_ball.xml"
 XML_PATH_DUMBBELL = f"{TEST_FOLDER}/test_dumbbell.xml"
 
 
+def test_borrowed_gravity_entries_retain_owner():
+    gravity = NBodyGravity.NBodyGravity()
+    gravity_model = pointMassGravityModel.PointMassGravityModel()
+    source = gravity.addGravitySource(
+        "earth", gravity_model, isCentralBody=True
+    )
+    target = gravity.addGravityTarget("spacecraft")
+    fetched_source = gravity.getGravitySource("earth")
+    fetched_target = gravity.getGravityTarget("spacecraft")
+    gravity_ref = weakref.ref(gravity)
+
+    del gravity
+    gc.collect()
+
+    assert gravity_ref() is not None
+    assert source.isCentralBody
+    assert fetched_source.isCentralBody
+    assert target.massFixedForceOutMsg is not None
+    assert fetched_target.massFixedForceOutMsg is not None
+
+    del source, target, fetched_source, fetched_target
+    gc.collect()
+    assert gravity_ref() is None
+
+
 @pytest.mark.parametrize("showPlots", [False])
 def test_pointMass(showPlots):
     """Test that the gravity model with point-mass gravity conserves the
@@ -99,8 +126,8 @@ def test_pointMass(showPlots):
     # Create the MJScene from a simple cannonball body
     scene = mujoco.MJScene.fromFile(XML_PATH_BALL)
     integ = svIntegrators.svIntegratorRKF78(scene)
-    integ.absTol = 1e-12
-    integ.relTol = 1e-10
+    integ.setAbsoluteTolerance(1e-12)
+    integ.setRelativeTolerance(1e-10)
     scene.setIntegrator(integ)
     scSim.AddModelToTask("test", scene)
 
@@ -325,8 +352,8 @@ def test_dumbbell(showPlots, initialAngularRate):
     # We will be logging forces, so we need an extra call to the EoM after each integrator hop
     scene.extraEoMCall = True
     integ = svIntegrators.svIntegratorRKF78(scene)
-    integ.absTol = 1e-14
-    integ.relTol = 1e-12
+    integ.setAbsoluteTolerance(1e-14)
+    integ.setRelativeTolerance(1e-12)
     scene.setIntegrator(integ)
     scSim.AddModelToTask("test", scene)
 
@@ -549,8 +576,8 @@ def test_gps(showPlots: bool, useSphericalHarmonics: bool, useThirdBodies: bool)
     # Create MJScene (cannonball) and configure integrator
     scene = mujoco.MJScene.fromFile(XML_PATH_BALL)
     integ = svIntegrators.svIntegratorRKF78(scene)
-    integ.absTol = 1e-12
-    integ.relTol = 1e-10
+    integ.setAbsoluteTolerance(1e-12)
+    integ.setRelativeTolerance(1e-10)
     scene.setIntegrator(integ)
     scSim.AddModelToTask("test", scene)
 

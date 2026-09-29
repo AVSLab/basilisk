@@ -488,12 +488,12 @@ All ``NumbaModel`` parameters are supported, plus:
    * - ``<name>StateDiffusionN``
      - ``float64[:, :]`` (Fortran-order)
      - Writable diffusion matrix for the ``N``-th noise source (``N ≥ 0``);
-       requires ``self.<name>State.setNumNoiseSources(N+1)`` in ``registerStates()``
+       requires ``StateSpec.noiseCount >= N+1`` when the state is registered
 
-States are registered as *nRow × nCol* matrices with a column-major
-(Fortran-order) backing store, so ``arr[i, j]`` equals matrix element
-``M(i, j)``.  Even 1-D states are exposed as 2-D arrays — a 3×1 column
-vector is accessed as ``posState[i, 0]``.
+States are registered as *nRow × nCol* slices of contiguous state, derivative,
+and diffusion buffers. Each slice uses column-major (Fortran-order) indexing, so
+``arr[i, j]`` equals matrix element ``M(i, j)``. Even 1-D states are exposed as
+2-D arrays — a 3×1 column vector is accessed as ``posState[i, 0]``.
 
 
 Performance Notes

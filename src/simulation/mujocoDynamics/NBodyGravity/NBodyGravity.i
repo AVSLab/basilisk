@@ -39,13 +39,40 @@ from Basilisk.architecture.swig_common_model import *
 
 // Keep the existing manual-source function non-overloaded in Python so SWIG
 // retains support for calls that use the ``isCentralBody`` keyword argument.
+%rename(addGravitySource) NBodyGravity::addGravitySource(
+    std::string,
+    std::shared_ptr<GravityModel>,
+    bool
+);
 %rename(addGravitySourceFromBody) NBodyGravity::addGravitySource(
     std::string,
     std::shared_ptr<GravBodyData>
 );
+%rename(addGravityTarget) NBodyGravity::addGravityTarget;
+%rename(getGravitySource) NBodyGravity::getGravitySource;
+%rename(getGravityTarget) NBodyGravity::getGravityTarget;
 
 %include "sys_model.i"
+%pythonappend NBodyGravity::addGravitySource %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend NBodyGravity::addGravityTarget %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend NBodyGravity::getGravitySource %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend NBodyGravity::getGravityTarget %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+
 %include "NBodyGravity.h"
+
+
 
 %include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 struct SpicePlanetStateMsgPayload_C;

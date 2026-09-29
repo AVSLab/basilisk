@@ -19,8 +19,12 @@
 #include "inhomogeneousGeometricBrownianMotion.h"
 
 void InhomogeneousGeometricBrownianMotion::registerStates(DynParamRegisterer registerer) {
-    xState = registerer.registerState(1, 1, "inhomogeneousGBMState");
-    xState->setNumNoiseSources(1);
+    StateSpec spec;
+    spec.state = { 1, 1 };
+    spec.derivative = spec.state;
+    spec.diffusionTangent = spec.state;
+    spec.noiseCount = 1;
+    xState = registerer.registerState("inhomogeneousGBMState", spec);
     // Default initial condition: start at the mean-reversion level mu. For this
     // multiplicative process x = 0 is degenerate (the diffusion sigma*x vanishes there),
     // so starting at mu keeps the process well-posed and stationary-consistent when the
@@ -35,7 +39,7 @@ void InhomogeneousGeometricBrownianMotion::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // Current x
-    const Eigen::MatrixXd &x = xState->getState();
+    const auto x = xState->stateView();
     const double x0 = x(0, 0);
 
     // Drift: dx = (mu - x) / tau
@@ -57,7 +61,7 @@ double InhomogeneousGeometricBrownianMotion::getStateValue() const {
     if (!xState) {
         BSKLogger{}.bskError("InhomogeneousGeometricBrownianMotion: getStateValue before initialization");
     }
-    return xState->getState()(0, 0);
+    return xState->stateView()(0, 0);
 }
 
 void InhomogeneousGeometricBrownianMotion::setStateValue(double val) {
