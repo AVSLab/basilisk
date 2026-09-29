@@ -36,6 +36,7 @@
 class svStochasticIntegratorSRIW1 : public svIntegratorStrongStochasticRungeKuttaSRI<4> {
 public:
     svStochasticIntegratorSRIW1(DynamicObject* dyn); //!< Constructor
+
 private:
     static SRICoefficients<4> getCoefficients();
 };
