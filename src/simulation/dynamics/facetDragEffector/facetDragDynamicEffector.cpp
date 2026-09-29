@@ -137,8 +137,8 @@ void FacetDragDynamicEffector::updateDragDir(){
     Eigen::MRPd sigmaBN;
     Eigen::Vector3d v_BN_N;
     if (!this->stateNameOfSigma.empty()) {
-        sigmaBN = Eigen::MRPd(this->hubSigma->getState().data());
-        v_BN_N = this->hubVelocity->getState();
+        sigmaBN = Eigen::MRPd(this->hubSigma->stateView().data());
+        v_BN_N = this->hubVelocity->stateView();
     } else {
         sigmaBN = Eigen::MRPd(this->inertialAttitudeProperty->data());
         v_BN_N = *this->inertialVelocityProperty;

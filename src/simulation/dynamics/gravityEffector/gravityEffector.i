@@ -19,6 +19,8 @@
 
 %module(package="Basilisk.simulation") gravityEffector
 
+// BSK_SWIG_RUNTIME_DEPENDS: pointMassGravityModel polyhedralGravityModel sphericalHarmonicsGravityModel
+
 %include "architecture/utilities/bskException.swg"
 %default_bsk_exception();
 
@@ -68,7 +70,7 @@ from typing import Optional, Union
 
 %import "simulation/dynamics/_GeneralModuleFiles/gravityModel.i"
 
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 
 %include "sys_model.i"
