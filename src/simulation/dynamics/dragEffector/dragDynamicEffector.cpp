@@ -113,10 +113,10 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
  * It accounts for wind velocity if the wind message is linked.
 */
 void DragDynamicEffector::updateDragDir(){
-    Eigen::MRPd sigmaBN(this->hubSigma->getState().data());
+    Eigen::MRPd sigmaBN(this->hubSigma->stateView().data());
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
 
-    Eigen::Vector3d v_BN_N = this->hubVelocity->getState();
+    Eigen::Vector3d v_BN_N = this->hubVelocity->stateView();
 
     if (this->windVelInMsg.isLinked()) {
         Eigen::Map<Eigen::Vector3d> v_air_N(this->windInData.v_air_N);
@@ -147,8 +147,8 @@ double DragDynamicEffector::getDensity()
 		// A multiplicative density-correction state (e.g. an IGBM factor) can, under an
 		// explicit stochastic integrator, occasionally make (1 + correction) negative for
 		// a large step/increment; clamp so the density used for drag is never negative.
-		density = std::max(0.0, density * (1 + this->densityCorrection->getState()(0,0)));
-	}
+        density = std::max(0.0, density * (1 + this->densityCorrection->stateView()(0, 0)));
+    }
 	return density;
 }
 

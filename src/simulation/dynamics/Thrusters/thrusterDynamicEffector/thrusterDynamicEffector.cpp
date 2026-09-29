@@ -205,8 +205,8 @@ void ThrusterDynamicEffector::UpdateThrusterProperties()
     Eigen::MRPd sigma_BN;
     Eigen::Vector3d omega_BN_B;
     if (!this->stateNameOfSigma.empty()) {
-        omega_BN_B = this->hubOmega->getState();
-        sigma_BN = Eigen::MRPd(this->hubSigma->getState().data());
+        omega_BN_B = this->hubOmega->stateView();
+        sigma_BN = Eigen::MRPd(this->hubSigma->stateView().data());
     }
     else {
         omega_BN_B = *this->inertialAngVelocityProperty;
@@ -295,7 +295,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
     // Save omega_BN_B
     Eigen::Vector3d omegaLocal_BN_B;
     if (!this->stateNameOfSigma.empty()) {
-        omegaLocal_BN_B = this->hubOmega->getState();
+        omegaLocal_BN_B = this->hubOmega->stateView();
     }
     else {
         omegaLocal_BN_B = *this->inertialAngVelocityProperty;

@@ -167,8 +167,8 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
     Eigen::MRPd sigma_BN;
     Eigen::Vector3d r_BN_N;
     if (!this->stateNameOfSigma.empty()) {
-        sigma_BN = Eigen::MRPd(this->hubSigma->getState().data());
-        r_BN_N = this->hubPosition->getState();
+        sigma_BN = Eigen::MRPd(this->hubSigma->stateView().data());
+        r_BN_N = this->hubPosition->stateView();
     } else {
         sigma_BN = Eigen::MRPd(this->inertialAttitudeProperty->data());
         r_BN_N = *this->inertialPositionProperty;

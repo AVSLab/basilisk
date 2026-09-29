@@ -531,6 +531,7 @@ def register(manager):
     initC_B = [[0.0], [0.0], [0.0]]
     manager.createProperty("centerOfMassSC", initC_B)
     manager.createProperty("systemTime", [[0], [0.0]])
+    manager.finalizeStates()
 
     return
 
