@@ -17,15 +17,19 @@
 
  */
 
+/** @file stochasticRKIntegratorBase.h
+ * @brief Noise-generator ownership and stochastic method workspace binding.
+ */
+
 #ifndef stochasticRKIntegratorBase_h
 #define stochasticRKIntegratorBase_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
-#include "../_GeneralModuleFiles/extendedStateVector.h"
 #include "../_GeneralModuleFiles/stochasticNoiseGenerator.h"
 
 #include <memory>
+#include <stdexcept>
+#include <utility>
 #include <vector>
 
 /**
@@ -34,21 +38,21 @@
  * Euler-Heun/RKMil).
  *
  * It factors out the machinery every one of these integrators needs, so each concrete
- * method only has to implement its own ``integrate()`` step recurrence:
+ * method implements its own integrateImpl() recurrence and, when needed,
+ * bindStochasticMethodStorage() hook:
  *
  *  - a pluggable ``GaussianNoiseGenerator`` (defaulting to a random Mersenne-Twister
  *    source, replaceable by a prescribed-replay generator for tests), plus the
  *    ``setRNGSeed`` / ``setNoiseGenerator`` accessors;
- *  - the pointwise stage-evaluation helpers ``computeDerivatives`` / ``computeDiffusion``
- *    / ``computeDiffusions`` (set the stage state, call the dynamic objects'
- *    ``equationsOfMotion`` / ``equationsOfMotionDiffusion``, and gather the result);
- *  - a cached view of ``getStateIdToNoiseIndexMaps()`` (``noiseIndexMaps()``), whose
- *    state/noise topology is invariant during a run, so it is built once instead of
- *    every step.
+ *  - one canonical flat state/noise binding shared by all concrete methods.
  *
  * Every native stochastic integrator derives from this base. Methods that need only the
- * Wiener increment (Euler-Maruyama, Euler-Heun, RKMil) simply ignore the second increment
- * ``dZ`` the generator also draws.
+ * Wiener increment use the base buffers through the generator's Wiener-only interface;
+ * ``dZ`` remains available as compatibility scratch for legacy generators.
+ * Generator output and method storage are prepared in the same binding transaction.
+ * A method failure restores state through the stochastic base but does not rewind RNG
+ * position. The built-in generator uses a cached exact-type pointer; custom generators
+ * are held by a local shared owner while their callbacks run.
  *
  * @warning Stochastic integration is in beta.
  */
@@ -62,42 +66,78 @@ public:
      * default a randomly generated seed is used. Setting the seed makes the integrator
      * draw the same sequence each run. Has no effect if a custom noise generator that
      * does not honour the seed was installed via ``setNoiseGenerator``. */
-    inline void setRNGSeed(size_t seed) { this->rvGenerator->setSeed(seed); }
+    void setRNGSeed(size_t seed);
 
     /** Replaces the noise generator used by this integrator. This is primarily useful for
      * testing, where a ``PrescribedGaussianNoiseGenerator`` can be installed so the
      * integrator replays a known sequence of Wiener increments. */
-    inline void setNoiseGenerator(std::shared_ptr<GaussianNoiseGenerator> generator)
-    {
-        this->rvGenerator = std::move(generator);
-    }
-
-public:
-    /** Random Number Generator for the integrator (supplies dW and dZ per noise source). */
-    std::shared_ptr<GaussianNoiseGenerator> rvGenerator =
-        std::make_shared<RandomGaussianNoiseGenerator>();
+    void setNoiseGenerator(std::shared_ptr<GaussianNoiseGenerator> generator);
 
 protected:
-    /** Returns the (cached) state-id -> noise-index maps. The topology is fixed for the
-     * run, so it is computed once on first use and reused thereafter. */
-    const std::vector<StateIdToIndexMap>& noiseIndexMaps();
+  /** @brief Prepare shared noise output and method scratch before binding commits. */
+  void prepareIntegrationBinding() override;
 
-    /** Computes f at the current state/time (sets states, calls equationsOfMotion). */
-    ExtendedStateVector computeDerivatives(double time, double timeStep);
+  /** @brief Verify the borrowed topology before reusing numerical storage. */
+  void validateIntegrationBinding() const override { this->validateStochasticTopology(); }
 
-    /** Computes g for a single noise source at the current state/time. */
-    ExtendedStateVector computeDiffusion(double time, double timeStep,
-                                         const StateIdToIndexMap& stateIdToNoiseIndexMap);
+  /** Allocates method-specific scratch in the topology-binding transaction. */
+  virtual void bindStochasticMethodStorage() {}
 
-    /** Computes g for every noise source at the current state/time. */
-    std::vector<ExtendedStateVector>
-    computeDiffusions(double time, double timeStep,
-                      const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps);
+  /** Binds topology, generator output, and method scratch as one transaction. */
+  template<typename MethodBinder>
+  void bindFlatStochasticStorage(MethodBinder&& bindMethodStorage)
+  {
+      try {
+          this->bindFlatStochasticCore();
+          std::forward<MethodBinder>(bindMethodStorage)();
+      } catch (...) {
+          this->resetFlatStochasticStorage();
+          throw;
+      }
+  }
+
+  /** Binds methods that need no additional scratch beyond the flat base. */
+  void bindFlatStochasticStorage();
+
+  /** Draws one sample into preallocated ``dW`` and ``dZ`` buffers. */
+  void generateNoise(double timeStep);
+
+  /** Draws Wiener increments and only the requested auxiliary prefix. */
+  void generateNoise(double timeStep, size_t auxiliaryCount);
+
+  /** Draws only Wiener increments, reusing ``dZ`` as compatibility scratch. */
+  void generateWienerNoise(double timeStep);
+
+  /** Preallocated Wiener increments for flat stochastic methods. */
+  const Eigen::VectorXd& flatDW() const noexcept { return this->dW; }
+
+  /** Preallocated auxiliary Gaussian increments for flat stochastic methods. */
+  const Eigen::VectorXd& flatDZ() const noexcept { return this->dZ; }
 
 private:
-    /** Cached noise-index maps (empty until first noiseIndexMaps() call). */
-    std::vector<StateIdToIndexMap> cachedNoiseIndexMaps;
-    bool noiseIndexMapsCached = false;
+  /** @brief Hold the configured generator alive across a potentially replacing callback. */
+  std::shared_ptr<GaussianNoiseGenerator> noiseGenerator() const
+  {
+      if (this->rvGenerator == nullptr) {
+          throw std::invalid_argument("Stochastic integrator noise generator cannot be null.");
+      }
+      return this->rvGenerator;
+  }
+
+  /** @brief Bind topology and size Wiener/auxiliary buffers once. */
+  void bindFlatStochasticCore();
+  /** @brief Discard incomplete topology and noise output after binding failure. */
+  void resetFlatStochasticStorage() noexcept;
+
+  bool flatNoiseOutputBound = false; ///< True after topology-sized output allocation commits.
+  Eigen::VectorXd dW; ///< Wiener increments indexed by independent global source.
+  Eigen::VectorXd dZ; ///< Auxiliary Gaussian output; only the requested prefix is meaningful.
+  /** Random Number Generator for the integrator (supplies dW and dZ per noise source). */
+  std::shared_ptr<GaussianNoiseGenerator> rvGenerator = std::make_shared<RandomGaussianNoiseGenerator>();
+  /** @brief Cached exact built-in type, or null for custom generators.
+   * Exact built-in generators cannot replace themselves from a callback.
+   */
+  RandomGaussianNoiseGenerator* nativeGenerator = static_cast<RandomGaussianNoiseGenerator*>(this->rvGenerator.get());
 };
 
 #endif /* stochasticRKIntegratorBase_h */

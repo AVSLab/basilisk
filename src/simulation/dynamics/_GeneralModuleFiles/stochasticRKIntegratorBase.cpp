@@ -17,38 +17,98 @@
 
  */
 #include "stochasticRKIntegratorBase.h"
+#include <typeinfo>
 
-const std::vector<StateIdToIndexMap>& StochasticRKIntegratorBase::noiseIndexMaps()
+void
+StochasticRKIntegratorBase::bindFlatStochasticCore()
 {
-    if (!this->noiseIndexMapsCached) {
-        this->cachedNoiseIndexMaps = this->getStateIdToNoiseIndexMaps();
-        this->noiseIndexMapsCached = true;
+    if (this->stochasticObjectDescriptors().size() != this->dynamics().size()) {
+        this->resetFlatStochasticStorage();
     }
-    return this->cachedNoiseIndexMaps;
+    this->bindStochasticTopology();
+    if (this->flatNoiseOutputBound) {
+        return;
+    }
+
+    const auto noiseCount = static_cast<Eigen::Index>(this->globalNoiseCount());
+    Eigen::VectorXd newDW(noiseCount);
+    Eigen::VectorXd newDZ(noiseCount);
+    this->dW.swap(newDW);
+    this->dZ.swap(newDZ);
+    this->flatNoiseOutputBound = true;
 }
 
-ExtendedStateVector StochasticRKIntegratorBase::computeDerivatives(double time, double timeStep)
+void
+StochasticRKIntegratorBase::resetFlatStochasticStorage() noexcept
 {
-    for (auto dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotion(time, timeStep);
-    }
-    return ExtendedStateVector::fromStateDerivs(this->dynPtrs);
+    this->flatNoiseOutputBound = false;
+    Eigen::VectorXd().swap(this->dW);
+    Eigen::VectorXd().swap(this->dZ);
+    this->resetStochasticTopologyBinding();
 }
 
-ExtendedStateVector StochasticRKIntegratorBase::computeDiffusion(
-    double time, double timeStep, const StateIdToIndexMap& stateIdToNoiseIndexMap)
+void
+StochasticRKIntegratorBase::generateNoise(double timeStep)
 {
-    for (auto dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotionDiffusion(time, timeStep);
-    }
-    return ExtendedStateVector::fromStateDiffusions(this->dynPtrs, stateIdToNoiseIndexMap);
+    this->generateNoise(timeStep, this->globalNoiseCount());
 }
 
-std::vector<ExtendedStateVector> StochasticRKIntegratorBase::computeDiffusions(
-    double time, double timeStep, const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps)
+void
+StochasticRKIntegratorBase::generateNoise(double timeStep, size_t auxiliaryCount)
 {
-    for (auto dynPtr : this->dynPtrs) {
-        dynPtr->equationsOfMotionDiffusion(time, timeStep);
+    this->validateStochasticTimeStep(timeStep);
+    if (this->nativeGenerator != nullptr) {
+        this->nativeGenerator->RandomGaussianNoiseGenerator::generateWithAuxiliaryInto(
+          this->dW, this->dZ, this->globalNoiseCount(), auxiliaryCount, timeStep);
+        return;
     }
-    return ExtendedStateVector::fromStateDiffusions(this->dynPtrs, stateIdToNoiseIndexMaps);
+    const auto generator = this->noiseGenerator();
+    generator->generateWithAuxiliaryInto(this->dW, this->dZ, this->globalNoiseCount(), auxiliaryCount, timeStep);
+}
+
+void
+StochasticRKIntegratorBase::generateWienerNoise(double timeStep)
+{
+    this->validateStochasticTimeStep(timeStep);
+    if (this->nativeGenerator != nullptr) {
+        this->nativeGenerator->RandomGaussianNoiseGenerator::generateWienerInto(
+          this->dW, this->globalNoiseCount(), timeStep);
+        return;
+    }
+    const auto generator = this->noiseGenerator();
+    generator->generateWienerInto(this->dW, this->dZ, this->globalNoiseCount(), timeStep);
+}
+
+void
+StochasticRKIntegratorBase::setRNGSeed(size_t seed)
+{
+    const auto generator = this->noiseGenerator();
+    generator->setSeed(seed);
+}
+
+void
+StochasticRKIntegratorBase::setNoiseGenerator(std::shared_ptr<GaussianNoiseGenerator> generator)
+{
+    if (generator == nullptr) {
+        throw std::invalid_argument("Stochastic integrator noise generator cannot be null.");
+    }
+    this->rvGenerator = std::move(generator);
+    auto* activeGenerator = this->rvGenerator.get();
+    this->nativeGenerator = typeid(*activeGenerator) == typeid(RandomGaussianNoiseGenerator)
+                              ? static_cast<RandomGaussianNoiseGenerator*>(activeGenerator)
+                              : nullptr;
+}
+
+void
+StochasticRKIntegratorBase::prepareIntegrationBinding()
+{
+    // This runs before first use and after native peer destruction. Method scratch
+    // must be sized again along with the shared state and noise buffers.
+    this->bindFlatStochasticStorage([this] { this->bindStochasticMethodStorage(); });
+}
+
+void
+StochasticRKIntegratorBase::bindFlatStochasticStorage()
+{
+    this->bindFlatStochasticStorage([] {});
 }
