@@ -21,15 +21,13 @@
 #define svIntegratorStrongStochasticRungeKuttaSRA_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/flatStochasticWorkspace.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "extendedStateVector.h"
+#include "../_GeneralModuleFiles/stochasticTableauValidation.h"
 
 #include <array>
 #include <cmath>
-#include <memory>
 #include <stdint.h>
-#include <vector>
 
 /**
  * Stores the coefficients for a Roessler Stochastic Runge-Kutta method for the
@@ -117,17 +115,23 @@ public:
     svIntegratorStrongStochasticRungeKuttaSRA(DynamicObject* dynIn,
                                               const SRACoefficients<numberStages>& coefficients);
 
+  protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+    void integrateImpl(double currentTime, double timeStep) override;
 
-protected:
+    void bindStochasticMethodStorage() override
+    {
+        this->flatWorkspace.bind(this->stochasticObjectDescriptors(),
+                                 this->stochasticNoiseBindings(),
+                                 this->stochasticNoiseSlots(),
+                                 numberStages,
+                                 numberStages,
+                                 1);
+    }
+
     /** Coefficients to be used in the method */
     const SRACoefficients<numberStages> coefficients;
-
-    /** Utility: result = sum_{i=0}^{length-1} factors[i] * vectors[i]. */
-    ExtendedStateVector scaledSum(const std::array<double, numberStages>& factors,
-                                  const std::array<ExtendedStateVector, numberStages>& vectors,
-                                  size_t length);
+    FlatStochasticWorkspace flatWorkspace; ///< Owned stage and candidate buffers reused across steps.
 };
 
 template <size_t numberStages>
@@ -135,99 +139,91 @@ svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::svIntegratorStrongStoch
     DynamicObject* dynIn, const SRACoefficients<numberStages>& coefficients)
     : StochasticRKIntegratorBase(dynIn), coefficients(coefficients)
 {
+    stochastic_tableau::validateExplicitMatrix(this->coefficients.A0);
+    stochastic_tableau::validateExplicitMatrix(this->coefficients.B0);
+    stochastic_tableau::validateFinite(this->coefficients.alpha);
+    stochastic_tableau::validateFinite(this->coefficients.beta1);
+    stochastic_tableau::validateFinite(this->coefficients.beta2);
+    stochastic_tableau::validateFinite(this->coefficients.c0);
+    stochastic_tableau::validateFinite(this->coefficients.c1);
 }
 
-template <size_t numberStages>
-void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrate(double currentTime,
-                                                                        double timeStep)
+template<size_t numberStages>
+void
+svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrateImpl(double currentTime, double timeStep)
 {
-    // A zero-duration step advances nothing and must not consume a noise sample.
-    // (Basilisk issues an integrate() call with timeStep == 0 at initialization.)
-    if (timeStep == 0) return;
-
-    const ExtendedStateVector currentState = ExtendedStateVector::fromStates(dynPtrs);
-
-    const std::vector<StateIdToIndexMap>& stateIdToNoiseIndexMaps = noiseIndexMaps();
-    const size_t m = stateIdToNoiseIndexMaps.size();
-    const Eigen::Index noiseCount = static_cast<Eigen::Index>(m);
-
-    const GaussianNoiseSample sample = this->rvGenerator->generate(m, timeStep);
-    const Eigen::VectorXd& dW = sample.dW;
-    const Eigen::VectorXd& dZ = sample.dZ;
-
-    const double sqrt3 = std::sqrt(3.0);
-    Eigen::VectorXd chi2(noiseCount); // I_(1,0)/h
-    for (size_t k = 0; k < m; k++) {
-        const Eigen::Index eigenK = static_cast<Eigen::Index>(k);
-        chi2(eigenK) = (dW(eigenK) + dZ(eigenK) / sqrt3) / 2.0;
+    if (timeStep == 0.0) {
+        return;
     }
 
-    // f_H0[i]     = f(t_n + c0[i] h, H0[i])
-    // g_Hk[k][i]  = g_k(t_n + c1[i] h)   (state independent, but evaluated at the stage time)
-    std::array<ExtendedStateVector, numberStages> f_H0;
-    std::vector<std::array<ExtendedStateVector, numberStages>> g_Hk(m);
+    this->gatherStochasticStates();
+    this->generateNoise(timeStep);
 
-    // i = 0: H0[0] == y_n
-    f_H0.at(0) = computeDerivatives(currentTime + coefficients.c0.at(0) * timeStep, timeStep);
-    {
-        std::vector<ExtendedStateVector> diffs = computeDiffusions(
-            currentTime + coefficients.c1.at(0) * timeStep, timeStep, stateIdToNoiseIndexMaps);
-        for (size_t k = 0; k < m; k++) {
-            g_Hk.at(k).at(0) = std::move(diffs.at(k));
-        }
+    auto& workspace = this->flatWorkspace; ///< Owned stage and candidate buffers reused across steps.
+    const auto& c = this->coefficients;
+    const size_t noiseCount = this->globalNoiseCount();
+    const double squareRootThree = std::sqrt(3.0);
+    Eigen::VectorXd& chi2 = workspace.vector(0);
+    for (size_t noise = 0; noise < noiseCount; ++noise) {
+        const Eigen::Index index = static_cast<Eigen::Index>(noise);
+        chi2(index) = (this->flatDW()(index) + this->flatDZ()(index) / squareRootThree) / 2.0;
     }
 
-    for (size_t i = 1; i < numberStages; i++) {
-        // H0[i] = y_n + h sum_j A0[i][j] f(H0[j]) + sum_k chi2[k] sum_j B0[i][j] g_k(t_n + c1[j] h)
-        currentState.setStates(dynPtrs);
-        scaledSum(coefficients.A0.at(i), f_H0, i).setDerivatives(dynPtrs);
-        for (size_t k = 0; k < m; k++) {
-            scaledSum(coefficients.B0.at(i), g_Hk.at(k), i)
-                .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-        }
-        propagateState(timeStep, chi2, stateIdToNoiseIndexMaps);
+    auto evaluateDrift = [&](double time, size_t stage) {
+        this->evaluateDerivatives(time, timeStep);
+        workspace.captureDrift(stage);
+    };
+    auto evaluateDiffusions = [&](double time, size_t stage) {
+        this->evaluateDiffusions(time, timeStep);
+        workspace.captureAllDiffusions(stage);
+    };
+    auto buildCandidate = [&](double driftStep, const Eigen::VectorXd& diffusionSteps) {
+        this->buildStochasticCandidate(
+          this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
+    };
 
-        f_H0.at(i) = computeDerivatives(currentTime + coefficients.c0.at(i) * timeStep, timeStep);
-        // Diffusion is state-independent, but must be sampled at the stage time c1[i].
-        {
-            std::vector<ExtendedStateVector> diffs = computeDiffusions(
-                currentTime + coefficients.c1.at(i) * timeStep, timeStep, stateIdToNoiseIndexMaps);
-            for (size_t k = 0; k < m; k++) {
-                g_Hk.at(k).at(i) = std::move(diffs.at(k));
+    try {
+        evaluateDrift(currentTime + c.c0.at(0) * timeStep, 0);
+        evaluateDiffusions(currentTime + c.c1.at(0) * timeStep, 0);
+
+        for (size_t stage = 1; stage < numberStages; ++stage) {
+            workspace.writeDrift(c.A0.at(stage), stage);
+            for (size_t noise = 0; noise < noiseCount; ++noise) {
+                workspace.writeDiffusion(noise, c.B0.at(stage), stage);
             }
+            buildCandidate(timeStep, chi2);
+            evaluateDrift(currentTime + c.c0.at(stage) * timeStep, stage);
+            evaluateDiffusions(currentTime + c.c1.at(stage) * timeStep, stage);
         }
-    }
 
-    // y_{n+1} = y_n + h sum_i alpha[i] f(H0[i])
-    //               + sum_k [ (beta1 . g_k) dW[k] + (beta2 . g_k) chi2[k] ]
-    currentState.setStates(dynPtrs);
-    scaledSum(coefficients.alpha, f_H0, numberStages).setDerivatives(dynPtrs);
-    for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta1, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
-    }
-    propagateState(timeStep, dW, stateIdToNoiseIndexMaps);
+        workspace.writeDrift(c.alpha, numberStages);
+        for (size_t noise = 0; noise < noiseCount; ++noise) {
+            workspace.writeDiffusion(noise, c.beta1, numberStages);
+        }
+        const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
+        if (coalesceFinalUpdate) {
+            this->beginAllEuclideanFinalCandidate(
+              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), this->flatDW());
+        } else {
+            buildCandidate(timeStep, this->flatDW());
+        }
 
-    for (size_t k = 0; k < m; k++) {
-        scaledSum(coefficients.beta2, g_Hk.at(k), numberStages)
-            .setDiffusions(dynPtrs, stateIdToNoiseIndexMaps.at(k));
+        if (!coalesceFinalUpdate) {
+            this->acceptStochasticCandidate();
+        }
+        for (size_t noise = 0; noise < noiseCount; ++noise) {
+            workspace.writeDiffusion(noise, c.beta2, numberStages);
+        }
+        if (coalesceFinalUpdate) {
+            this->appendAllEuclideanFinalCandidate(workspace.drift(), 0.0, workspace.diffusions(), chi2);
+            this->commitAllEuclideanFinalCandidate();
+        } else {
+            buildCandidate(0.0, chi2);
+        }
+    } catch (...) {
+        this->restoreStochasticStates();
+        throw;
     }
-    propagateState(0, chi2, stateIdToNoiseIndexMaps);
-
-    // The dynPtrs now hold y_{n+1}.
-}
-
-template <size_t numberStages>
-inline ExtendedStateVector svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::scaledSum(
-    const std::array<double, numberStages>& factors,
-    const std::array<ExtendedStateVector, numberStages>& vectors, size_t length)
-{
-    ExtendedStateVector result = vectors.at(0) * factors.at(0);
-    for (size_t i = 1; i < length; i++) {
-        if (factors.at(i) == 0) continue;
-        result += vectors.at(i) * factors.at(i);
-    }
-    return result;
 }
 
 #endif /* svIntegratorStrongStochasticRungeKuttaSRA_h */
