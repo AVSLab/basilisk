@@ -20,14 +20,36 @@
 #include "stateVecIntegrator.h"
 #include "dynamicObject.h"
 
-/*! @brief Constructor */
-StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
+StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn) : dynPtrs{dynIn}
 {
-    this->dynPtrs.push_back(dyn);
 }
 
-/*! @brief Destructor */
-StateVecIntegrator::~StateVecIntegrator(void)
+void StateVecIntegrator::integrate(double currentTime, double timeStep)
 {
-    this->dynPtrs.clear();
+    this->ensureIntegrationBinding();
+    this->integrateImpl(currentTime, timeStep);
+}
+
+void StateVecIntegrator::ensureIntegrationBinding()
+{
+    if (!this->bindingPrepared) {
+        this->prepareIntegrationBinding();
+        this->bindingPrepared = true;
+    } else {
+        this->validateIntegrationBinding();
+    }
+}
+
+void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->equationsOfMotion(time, timeStep);
+    }
+}
+
+void StateVecIntegrator::evaluateDiffusions(double time, double timeStep)
+{
+    for (DynamicObject* object : this->dynPtrs) {
+        object->equationsOfMotionDiffusion(time, timeStep);
+    }
 }
