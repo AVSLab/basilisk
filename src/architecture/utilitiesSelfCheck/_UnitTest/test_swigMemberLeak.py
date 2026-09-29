@@ -39,7 +39,7 @@ import pytest
 
 # (import path, class name) for fixed module classes and affected wrapped data classes.
 FIXED_MODULES = [
-    ("Basilisk.simulation.spacecraft", "Spacecraft"),                                 # DynParamManager::sharedNoiseMap, bskLogger
+    ("Basilisk.simulation.spacecraft", "Spacecraft"),                                 # DynParamManager::bskLogger
     ("Basilisk.simulation.imuSensor", "ImuSensor"),                                   # Discretize/Saturate helpers
     ("Basilisk.simulation.sphericalHarmonicsGravityModel", "SphericalHarmonicsGravityModel"),  # bskLogger
     ("Basilisk.simulation.THRSimConfig", "THRSimConfig"),                             # THROperation ThrustOps
