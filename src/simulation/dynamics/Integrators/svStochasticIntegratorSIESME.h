@@ -20,7 +20,34 @@
 #ifndef svStochasticIntegratorSIESME_h
 #define svStochasticIntegratorSIESME_h
 
+#include "../_GeneralModuleFiles/flatStochasticWorkspace.h"
 #include "../_GeneralModuleFiles/svIntegratorWeakSIESME.h"
+
+/** Flat, preallocated implementation shared by the SIE/SME tableaus. */
+class svStochasticIntegratorSIESME : public svIntegratorWeakSIESME
+{
+  protected:
+    /** Performs one flat SIE/SME integration step. */
+    void integrateImpl(double currentTime, double timeStep) override;
+
+    /** @brief Construct the numerical method for the supplied dynamics object.
+     * @param dyn Dynamics object that will own this integrator.
+     * @param coefficients Coefficient tableau defining this method.
+     */
+    svStochasticIntegratorSIESME(DynamicObject* dyn, const SIESMECoefficients& coefficients);
+
+    /** @brief Allocate the scratch required by this numerical method.
+     */
+    void bindStochasticMethodStorage() override
+    {
+        this->flatWorkspace.bind(
+          this->stochasticObjectDescriptors(), this->stochasticNoiseBindings(), this->stochasticNoiseSlots(), 2, 3, 3);
+    }
+
+
+  private:
+    FlatStochasticWorkspace flatWorkspace;
+};
 
 /** @brief SIEA: Tocino & Vigo-Aguiar weak-order-2 stochastic integrator (Ito, diagonal noise).
  *
@@ -28,8 +55,9 @@
  *
  * Implementation of the ``SIEA`` method (stochastic improved Euler).
  */
-class svStochasticIntegratorSIEA : public svIntegratorWeakSIESME {
-public:
+class svStochasticIntegratorSIEA : public svStochasticIntegratorSIESME
+{
+  public:
     svStochasticIntegratorSIEA(DynamicObject* dyn); //!< Constructor
 private:
     static SIESMECoefficients getCoefficients();
@@ -41,8 +69,9 @@ private:
  *
  * Implementation of the ``SMEA`` method (stochastic modified Euler).
  */
-class svStochasticIntegratorSMEA : public svIntegratorWeakSIESME {
-public:
+class svStochasticIntegratorSMEA : public svStochasticIntegratorSIESME
+{
+  public:
     svStochasticIntegratorSMEA(DynamicObject* dyn); //!< Constructor
 private:
     static SIESMECoefficients getCoefficients();
@@ -54,8 +83,9 @@ private:
  *
  * Implementation of the ``SIEB`` method.
  */
-class svStochasticIntegratorSIEB : public svIntegratorWeakSIESME {
-public:
+class svStochasticIntegratorSIEB : public svStochasticIntegratorSIESME
+{
+  public:
     svStochasticIntegratorSIEB(DynamicObject* dyn); //!< Constructor
 private:
     static SIESMECoefficients getCoefficients();
@@ -67,8 +97,9 @@ private:
  *
  * Implementation of the ``SMEB`` method.
  */
-class svStochasticIntegratorSMEB : public svIntegratorWeakSIESME {
-public:
+class svStochasticIntegratorSMEB : public svStochasticIntegratorSIESME
+{
+  public:
     svStochasticIntegratorSMEB(DynamicObject* dyn); //!< Constructor
 private:
     static SIESMECoefficients getCoefficients();

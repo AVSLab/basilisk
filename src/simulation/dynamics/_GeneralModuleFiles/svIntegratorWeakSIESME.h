@@ -21,13 +21,8 @@
 #define svIntegratorWeakSIESME_h
 
 #include "../_GeneralModuleFiles/dynamicObject.h"
-#include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
-#include "extendedStateVector.h"
 
-#include <cmath>
-#include <memory>
-#include <vector>
 
 /**
  * Coefficients for the Tocino & Vigo-Aguiar weak second-order stochastic integrators
@@ -92,10 +87,10 @@ public:
     /** Constructs the integrator for the given DynamicObject with the passed coefficient tableau. */
     svIntegratorWeakSIESME(DynamicObject* dynIn, const SIESMECoefficients& coefficients);
 
+  protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-    virtual void integrate(double currentTime, double timeStep) override;
+    virtual void integrateImpl(double currentTime, double timeStep) override = 0;
 
-protected:
     /** Coefficients to be used in the method */
     const SIESMECoefficients coefficients;
 };
