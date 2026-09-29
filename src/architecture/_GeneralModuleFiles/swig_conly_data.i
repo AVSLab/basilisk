@@ -280,6 +280,8 @@ def protectAllClasses(moduleType):
 
     clsmembers = inspect.getmembers(moduleType, inspect.isclass)
     for member in clsmembers:
+        if getattr(member[1], "__module__", None) != moduleType.__name__:
+            continue
         try:
             member[1].__setattr__ = protectSetAttr
             member[1].getStructSize = getStructSize

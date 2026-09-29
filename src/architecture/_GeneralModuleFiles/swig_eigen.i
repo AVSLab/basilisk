@@ -33,11 +33,25 @@
     #include <utility>
 %}
 
+// Fragments remain available through %import. Emit their dependencies in each
+// wrapper that uses an Eigen conversion, even when this interface was imported.
+%fragment("eigen_conversion_headers", "header") %{
+    #include <Eigen/Dense>
+    #include "architecture/utilities/avsEigenMRP.h"
+    #include <type_traits>
+    #include <limits>
+    #include <optional>
+    #include <variant>
+    #include <string>
+    #include <cassert>
+    #include <utility>
+%}
+
 // Sometimes, the %typemap(out) cannot be used in an 'optimal' way. We are okay
 // with this as it is only a speed penalty in some special cases.
 #pragma SWIG nowarn=474
 
-%fragment("static_fail", "header") {
+%fragment("static_fail", "header", fragment="eigen_conversion_headers") {
 template<class>
 inline constexpr bool always_false_v = false;
 }
@@ -142,7 +156,7 @@ PyObject * castCToPy(T input)
 }
 }
 
-%fragment("rotationConversion", "header")
+%fragment("rotationConversion", "header", fragment="eigen_conversion_headers")
 {
 /*
 Converts from one rotation type to other (for example, MRPd to Quaterniond).
@@ -179,7 +193,7 @@ struct RotationCoversion<Eigen::Vector4d, Eigen::Quaterniond>
 
 }
 
-%fragment("getInputSize", "header")
+%fragment("getInputSize", "header", fragment="eigen_conversion_headers")
 {
 /*
 This function returns the size of the input.

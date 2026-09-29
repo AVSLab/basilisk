@@ -44,3 +44,89 @@ namespace std {
 }
 
 %include "swig_eigen.i"
+
+%pythoncode %{
+class FixedSizeSequence:
+    """Expose indexed native storage without permitting size changes."""
+
+    _index_label = "sequence"
+    _slice_size_label = "sequence size"
+
+    def __init__(self, owner, count, get_item, set_item):
+        object.__setattr__(self, "_owner", owner)
+        object.__setattr__(self, "_count", count)
+        object.__setattr__(self, "_get_item", get_item)
+        object.__setattr__(self, "_set_item", set_item)
+
+    def __len__(self):
+        return self._count()
+
+    def _normalize_index(self, index):
+        if not isinstance(index, int):
+            raise TypeError(f"{self._index_label} indices must be integers")
+        if index < 0:
+            index += len(self)
+        if index < 0 or index >= len(self):
+            raise IndexError(f"{self._index_label} index out of range")
+        return index
+
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [self[position] for position in range(*index.indices(len(self)))]
+        return self._get_item(self._normalize_index(index))
+
+    def __setitem__(self, index, value):
+        if isinstance(index, slice):
+            positions = list(range(*index.indices(len(self))))
+            values = list(value)
+            if len(positions) != len(values):
+                raise ValueError(
+                    f"slice assignment cannot change {self._slice_size_label}"
+                )
+            for position, item in zip(positions, values):
+                self._set_item(position, item)
+            return
+        self._set_item(self._normalize_index(index), value)
+
+    def __iter__(self):
+        for index in range(len(self)):
+            yield self[index]
+
+    def replace(self, values):
+        self[:] = values
+
+
+class GuardedConfigSequence(FixedSizeSequence):
+    """Expose live indexed configuration access through guarded native mutators."""
+
+    _index_label = "configuration"
+    _slice_size_label = "configuration collection size"
+
+    def __init__(self, owner, count, get_item, set_item, append_item):
+        super().__init__(owner, count, get_item, set_item)
+        object.__setattr__(self, "_append_item", append_item)
+
+    def __getitem__(self, index):
+        item = super().__getitem__(index)
+        try:
+            item._swig_bsk_owner = self._owner
+        except AttributeError:
+            pass
+        return item
+
+    def append(self, value):
+        self._append_item(value)
+
+    def extend(self, values):
+        for value in values:
+            self.append(value)
+
+    def replace(self, values):
+        values = list(values)
+        if len(values) != len(self):
+            raise ValueError(
+                "assignment cannot change configuration collection size; use append()"
+            )
+        for index, value in enumerate(values):
+            self._set_item(index, value)
+%}
