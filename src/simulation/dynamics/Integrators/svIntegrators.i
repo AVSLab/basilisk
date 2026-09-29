@@ -17,6 +17,7 @@
 
  */
 %module svIntegrators
+// BSK_SWIG_RUNTIME_DEPENDS: swig_common_model
 
 %include "architecture/utilities/bskException.swg"
 // Also translate std::exception (e.g. the std::runtime_error a
@@ -71,6 +72,7 @@ _rk_adaptive_base_classes = {}
 %}
 
 %include <std_vector.i>
+%include <std_string.i>
 %template() std::vector<double>;
 %template() std::vector<std::vector<double>>;
 
@@ -86,8 +88,26 @@ _rk_adaptive_base_classes = {}
 %include "swig_eigen.i"
 
 %include "sys_model.i"
-%include "../_GeneralModuleFiles/stateVecIntegrator.h"
+%include "../_GeneralModuleFiles/dynamicObjectImport.swg"
+%ignore StochasticObjectDescriptor;
+%ignore StochasticStateDescriptor;
+%ignore StochasticNoiseBinding;
+%ignore StochasticNoiseSlot;
+// sys_model.i resets %exception to the BasiliskError-only default. Integrator
+// lifecycle checks throw std::runtime_error, so restore translation before
+// the derived integrators are wrapped.
+%default_bsk_exception(catch (const std::exception& e) {
+    SWIG_exception(SWIG_RuntimeError, e.what());
+});
 %include "../_GeneralModuleFiles/stateVecStochasticIntegrator.h"
+
+// Flat-state descriptors are internal implementation details.
+%ignore svIntegratorRungeKutta::FlatObjectDescriptor;
+%ignore svIntegratorRungeKutta::FlatStateDescriptor;
+%ignore svIntegratorRungeKutta::FlatUpdateRun;
+%ignore svIntegratorAdaptiveRungeKutta::ToleranceSpan;
+%ignore svStochasticIntegratorW2Ito::FlatStateDescriptor;
+%ignore svStochasticIntegratorDRI1::FlatStateDescriptor;
 
 // The GaussianNoiseGenerator hierarchy is jointly owned by Python and C++: a
 // generator can be created in Python and handed to an integrator via
@@ -98,6 +118,9 @@ _rk_adaptive_base_classes = {}
 %shared_ptr(GaussianNoiseGenerator)
 %shared_ptr(RandomGaussianNoiseGenerator)
 %shared_ptr(PrescribedGaussianNoiseGenerator)
+%ignore GaussianNoiseGenerator::generateInto;
+%ignore GaussianNoiseGenerator::generateWithAuxiliaryInto;
+%ignore GaussianNoiseGenerator::generateWienerInto;
 // Re-assert the exception handler here (earlier %include'd interfaces reset %exception to
 // the BasiliskError-only default): PrescribedGaussianNoiseGenerator::generate throws a
 // std::runtime_error when out of prescribed samples or given a mismatched increment
@@ -128,6 +151,18 @@ _rk_adaptive_base_classes = {}
       std::vector<double> cArray
    )
    {
+      if (aMatrix.size() != numberStages
+          || bArray.size() != numberStages
+          || cArray.size() != numberStages) {
+          throw std::invalid_argument(
+              "Runge-Kutta tableau dimensions must exactly match the stage count.");
+      }
+      for (const auto& row : aMatrix) {
+          if (row.size() != numberStages) {
+              throw std::invalid_argument(
+                  "Runge-Kutta tableau rows must exactly match the stage count.");
+          }
+      }
       RKCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
       {
@@ -150,6 +185,19 @@ _rk_adaptive_base_classes = {}
       double largestOrder
    )
    {
+      if (aMatrix.size() != numberStages
+          || bArray.size() != numberStages
+          || bStarArray.size() != numberStages
+          || cArray.size() != numberStages) {
+          throw std::invalid_argument(
+              "Adaptive Runge-Kutta tableau dimensions must exactly match the stage count.");
+      }
+      for (const auto& row : aMatrix) {
+          if (row.size() != numberStages) {
+              throw std::invalid_argument(
+                  "Adaptive Runge-Kutta tableau rows must exactly match the stage count.");
+          }
+      }
       RKAdaptiveCoefficients<numberStages> coefficients;
       for (size_t i = 0; i < numberStages; i++)
       {
@@ -195,6 +243,18 @@ TEMPLATE_HELPER(13)
 %include "svIntegratorRK2.h"
 %include "svIntegratorRKF45.h"
 %include "svIntegratorRKF78.h"
+%pythoncode %{
+for _adaptive_rk_class in _rk_adaptive_base_classes.values():
+    _adaptive_rk_class.relTol = property(
+        _adaptive_rk_class.getRelativeTolerance,
+        _adaptive_rk_class.setRelativeTolerance,
+    )
+    _adaptive_rk_class.absTol = property(
+        _adaptive_rk_class.getAbsoluteTolerance,
+        _adaptive_rk_class.setAbsoluteTolerance,
+    )
+del _adaptive_rk_class
+%}
 %include "svStochasticIntegratorMayurama.h"
 %include "svStochasticIntegratorW2Ito.h"
 %include "svStochasticIntegratorW2Ito1.h"
@@ -208,6 +268,12 @@ TEMPLATE_HELPER(13)
 %include "svStochasticIntegratorSIESME.h"
 %include "svStochasticIntegratorRDI1WM.h"
 %include "svStochasticIntegratorDRI1.h"
+%pythoncode %{
+svStochasticIntegratorDRI1.nonMixing = property(
+    svStochasticIntegratorDRI1.getNonMixing,
+    svStochasticIntegratorDRI1.setNonMixing,
+)
+%}
 %include "svStochasticIntegratorRS.h"
 
 // The following methods allow users to create new Runge-Kutta
@@ -216,23 +282,37 @@ TEMPLATE_HELPER(13)
 from typing import Sequence, Union
 import numpy as np
 
-def _validate_coefficients(a_coefficients, **array_coefficients):
+def _coefficient_array(name, values, dimensions):
     try:
-        a_coefficients = np.array(a_coefficients, dtype=float)
-        assert a_coefficients.ndim == 2
-    except:
-        raise ValueError("a_coefficients must be a square matrix or a non-ragged sequence of sequences")
+        result = np.asarray(values, dtype=float)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"{name} must be a non-ragged numeric array") from error
+    if result.ndim != dimensions:
+        shape_name = "matrix" if dimensions == 2 else "vector"
+        raise ValueError(f"{name} must be a {shape_name}")
+    if not np.all(np.isfinite(result)):
+        raise ValueError(f"{name} must contain only finite values")
+    return result
 
-    if a_coefficients.shape[0] != a_coefficients.shape[1]:
+def _validate_coefficients(a_coefficients, **array_coefficients):
+    a_array = _coefficient_array("a_coefficients", a_coefficients, 2)
+    if a_array.shape[0] != a_array.shape[1]:
         raise ValueError("a_coefficients must be a square matrix")
+    if np.any(np.triu(a_array) != 0.0):
+        raise ValueError(
+            "a_coefficients must be strictly lower triangular for an "
+            "explicit Runge-Kutta method"
+        )
 
-    stages = a_coefficients.shape[0]
-    for input_name, array_coefficient in array_coefficients.items():
-        if stages != len(array_coefficient):
+    stages = a_array.shape[0]
+    for input_name, values in array_coefficients.items():
+        array_coefficient = _coefficient_array(input_name, values, 1)
+        if array_coefficient.shape[0] != stages:
             raise ValueError(
                 f"The size of a_coefficients is {stages}x{stages}, "
-                f"but the size of {input_name} is {len(array_coefficient)}. "
+                f"but the size of {input_name} is {array_coefficient.shape[0]}. "
                  "These must be consistent")
+    return stages
 
 def svIntegratorRungeKutta(
     dynamic_object,
@@ -260,8 +340,13 @@ def svIntegratorRungeKutta(
     Returns:
         StateVecIntegrator: A Runge-Kutta integrator object
     """
-    _validate_coefficients(a_coefficients, b_coefficients=b_coefficients, c_coefficients=c_coefficients)
-    stages = len(b_coefficients)
+    stages = _validate_coefficients(
+        a_coefficients,
+        b_coefficients=b_coefficients,
+        c_coefficients=c_coefficients,
+    )
+    if stages not in _rk_base_classes:
+        raise ValueError(f"Unsupported Runge-Kutta stage count: {stages}")
 
     return _rk_base_classes[stages](dynamic_object, a_coefficients, b_coefficients, c_coefficients)
 
@@ -300,10 +385,17 @@ def svIntegratorAdaptiveRungeKutta(
     Returns:
         StateVecIntegrator: A Runge-Kutta integrator object
     """
-    _validate_coefficients(
+    stages = _validate_coefficients(
       a_coefficients, b_coefficients=b_coefficients,
       b_star_coefficients=b_star_coefficients, c_coefficients=c_coefficients)
-    stages = len(b_coefficients)
+    try:
+        largest_order = float(largest_order)
+    except (TypeError, ValueError) as error:
+        raise ValueError("largest_order must be finite and positive") from error
+    if not np.isfinite(largest_order) or largest_order <= 0:
+        raise ValueError("largest_order must be finite and positive")
+    if stages not in _rk_adaptive_base_classes:
+        raise ValueError(f"Unsupported adaptive Runge-Kutta stage count: {stages}")
 
     return _rk_adaptive_base_classes[stages](dynamic_object, a_coefficients, b_coefficients, b_star_coefficients, c_coefficients, largest_order)
 
