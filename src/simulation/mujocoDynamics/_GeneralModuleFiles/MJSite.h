@@ -83,6 +83,9 @@ public:
      */
     void setPositionRelativeToBody(const Eigen::Vector3d& position);
 
+    /** Apply a validated position directly to a transaction's target model. */
+    void commitPositionRelativeToBody(const Eigen::Vector3d& position, mjModel* targetModel) noexcept;
+
     /**
      * @brief Sets the attitude (orientation) of the site relative to the body it's attached to.
      *

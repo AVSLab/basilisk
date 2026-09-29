@@ -65,6 +65,9 @@ public:
      */
     void setActive(bool active);
 
+    /** Return the current runtime activation state. */
+    bool isActive() const;
+
     /**
      * @brief Set the solref parameters for this equality constraint.
      *

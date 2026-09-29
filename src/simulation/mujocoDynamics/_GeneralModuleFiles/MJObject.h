@@ -100,9 +100,9 @@ public:
         mjtObj mjObjectTypeInt = mjsObject->element->elemtype;
         auto idOrFail = mj_name2id(mujocoModel, mjObjectTypeInt, this->name.c_str());
         if (idOrFail < 0) {
-            const std::string objectTypeName{MJBasilisk::detail::getObjectTypeName<mjsObjectType>()};
-            BSKLogger{}.bskError("Could not find %s in MuJoCo with name: %s",
-                objectTypeName.c_str(), this->name.c_str());
+            MJBasilisk::detail::logAndThrow<std::runtime_error>(
+              "Could not find " + std::string(MJBasilisk::detail::getObjectTypeName<mjsObjectType>()) +
+              " in MuJoCo with name: " + this->name);
         }
 
         this->id = size_t(idOrFail);
@@ -130,10 +130,11 @@ public:
     }
 
 protected:
-    std::string name; ///< The name of the MJObject.
-    std::optional<size_t> id; ///< The ID of the MJObject, set during configuration.
 
-    mjsObjectType* mjsObject; ///< Pointer to the underlying MuJoCo object.
+  std::string name;               ///< The name of the MJObject.
+  std::optional<size_t> id;       ///< The ID of the MJObject, set during configuration.
+
+  mjsObjectType* mjsObject; ///< Pointer to the underlying MuJoCo object.
 };
 
 #endif

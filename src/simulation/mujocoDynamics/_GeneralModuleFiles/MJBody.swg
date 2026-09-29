@@ -25,19 +25,63 @@
 %include "MJObject.swg"
 %template_mujoco_object(mjsBody)
 
+// Retain the owner on borrowed results using the generated Python methods.
+%pythonappend MJBody::getSite %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getCenterOfMass %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getOrigin %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getScalarJoint %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getBallJoint %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getFreeJoint %{
+    if val is not None:
+        val._swig_bsk_owner = self
+%}
+%pythonappend MJBody::getScene %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+%pythonappend MJBody::getSpec %{
+    if val is not None:
+        val._swig_bsk_owner = getattr(self, "_swig_bsk_owner", self)
+%}
+
 %ignore MJBody::MJBody;
-%ignore MJBody::configure;
+%ignore MJBody::stageConfiguration;
+%ignore MJBody::commitConfiguration;
+%ignore MJBody::discardStagedConfiguration;
 %ignore MJBody::writeFwdKinematicsMessages;
 %ignore MJBody::writeStateDependentOutputMessages;
+%ignore MJBody::registerJointPositionStates;
+%ignore MJBody::registerJointVelocityStates;
+%ignore MJBody::setJointPositionDerivativesFromMujoco;
+%ignore MJBody::clearJointStateHandles;
+%ignore MJBody::validateJointStateLayout;
 %ignore MJBody::updateMujocoModelFromMassProps;
 %ignore MJBody::updateMassPropsDerivative;
 %ignore MJBody::updateConstrainedEqualityJoints;
+
 
 %extend MJBody {
 MJScene& getScene() { return $self->getSpec().getScene(); }
 }
 
 %include "MJBody.h"
+
+
 
 %include "architecture/msgPayloadDefC/SCMassPropsMsgPayload.h"
 struct SCMassPropsMsgPayload_C;

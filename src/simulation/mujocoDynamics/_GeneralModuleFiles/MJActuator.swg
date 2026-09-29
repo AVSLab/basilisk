@@ -27,21 +27,22 @@
 %ignore MJActuatorObject;
 
 %ignore MJActuator::MJActuator;
-%ignore MJActuator::configure;
+%ignore MJActuator::stageConfiguration;
+%ignore MJActuator::commitConfiguration;
+%ignore MJActuator::discardStagedConfiguration;
 %ignore MJActuator::updateCtrl;
-%ignore MJActuator::readControlMessages;
 
 %ignore MJSingleActuator::MJSingleActuator;
-%ignore MJSingleActuator::readControlMessages;
+%ignore MJSingleActuator::updateCtrl;
 
 %ignore MJForceActuator::MJForceActuator;
-%ignore MJForceActuator::readControlMessages;
+%ignore MJForceActuator::updateCtrl;
 
 %ignore MJTorqueActuator::MJTorqueActuator;
-%ignore MJTorqueActuator::readControlMessages;
+%ignore MJTorqueActuator::updateCtrl;
 
 %ignore MJForceTorqueActuator::MJForceTorqueActuator;
-%ignore MJForceTorqueActuator::readControlMessages;
+%ignore MJForceTorqueActuator::updateCtrl;
 
 %include "MJActuator.h"
 

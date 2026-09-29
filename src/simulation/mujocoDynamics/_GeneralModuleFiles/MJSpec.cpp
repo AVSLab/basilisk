@@ -23,6 +23,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <cstring>
 #include <iterator>
 #include <unordered_set>
 
@@ -61,6 +62,16 @@ void nameUnnamedBodies(mjSpec* spec)
         } while (!bodyNames.insert(name).second);
         MJBasilisk::detail::setSpecObjectName(body, name);
     }
+}
+
+std::string
+compileErrorMessage(mjSpec* spec, const char* context)
+{
+    const char* detail = mjs_getError(spec);
+    if (detail == nullptr || detail[0] == '\0') {
+        return context;
+    }
+    return std::string(context) + ": " + detail;
 }
 
 std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[maybe_unused]])
@@ -137,7 +148,7 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
     if (maybeSpec) {
         this->spec.reset(maybeSpec);
     } else {
-        BSKLogger{}.bskError("%s", error);
+        MJBasilisk::detail::logAndThrow<std::runtime_error>(error);
     }
 
     // Make sure the gravity is deactivated
@@ -149,7 +160,14 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
 
     // Initial compilation of the model and data
     this->model.reset(mj_compile(this->spec.get(), this->virtualFileSystem.get()));
+    if (!this->model) {
+        MJBasilisk::detail::logAndThrow<std::runtime_error>(
+          compileErrorMessage(this->spec.get(), "Failed to compile the initial MuJoCo model"));
+    }
     this->data.reset(mj_makeData(this->model.get()));
+    if (!this->data) {
+        MJBasilisk::detail::logAndThrow<std::runtime_error>("Failed to allocate data for the initial MuJoCo model.");
+    }
 
     {
         // This guard ensures that the model/data are not recompiled
@@ -248,6 +266,20 @@ mjData* MJSpec::getMujocoData()
     return this->data.get();
 }
 
+mjSpec*
+MJSpec::getMujocoSpec()
+{
+    this->scene.requireSceneMutationAllowed("Mutable MuJoCo specification access");
+    return this->spec.get();
+}
+
+void
+MJSpec::markAsNeedingToRecompileModel()
+{
+    this->scene.requireSceneMutationAllowed("MuJoCo specification changes");
+    this->shouldRecompile = true;
+}
+
 std::vector<std::string> MJSpec::getBodyNames() const
 {
     std::vector<std::string> names;
@@ -312,6 +344,7 @@ MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name,
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
     }
 
+    this->markAsNeedingToRecompileModel();
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
     newMjsActuator->trntype = mjTRN_JOINT;
     MJBasilisk::detail::setSpecObjectName(newMjsActuator, name);
@@ -333,6 +366,7 @@ MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.", name.c_str());
     }
 
+    this->markAsNeedingToRecompileModel();
     auto newMjsActuator = mjs_addActuator(this->spec.get(), 0);
     newMjsActuator->trntype = mjTRN_SITE;
     MJBasilisk::detail::setSpecObjectName(newMjsActuator, name);
@@ -352,67 +386,123 @@ bool MJSpec::recompileIfNeeded()
     if (!(this->shouldRecompile && this->shouldRecompileWhenAsked)) {
         return false;
     }
+    this->scene.requireSceneMutationAllowed("MuJoCo recompilation");
 
-    mj_recompile(this->spec.get(),
-                 this->virtualFileSystem.get(),
-                 this->model.get(),
-                 this->data.get());
+    std::unique_ptr<mjModel, MJBasilisk::detail::mjModelDeleter> candidate(
+      mj_compile(this->spec.get(), this->virtualFileSystem.get()));
+    if (!candidate) {
+        MJBasilisk::detail::logAndThrow<std::runtime_error>(
+          compileErrorMessage(this->spec.get(), "Failed to compile the pending MuJoCo model"));
+    }
+    if (!this->scene.modelTopologyMatches(*candidate)) {
+        MJBasilisk::detail::logAndThrow<std::logic_error>(
+          "MuJoCo recompilation would change finalized state or qpos-policy topology.");
+    }
+    auto objectPrefixMatches = [this, &candidate](mjtObj type, int currentCount, int candidateCount) {
+        if (candidateCount < currentCount) {
+            return false;
+        }
+        for (int index = 0; index < currentCount; ++index) {
+            const char* currentName = mj_id2name(this->model.get(), type, index);
+            const char* candidateName = mj_id2name(candidate.get(), type, index);
+            if ((currentName == nullptr) != (candidateName == nullptr) ||
+                (currentName != nullptr && std::strcmp(currentName, candidateName) != 0)) {
+                return false;
+            }
+        }
+        return true;
+    };
+    if (this->scene.modelTopology.registered &&
+        (!objectPrefixMatches(mjOBJ_BODY, this->model->nbody, candidate->nbody) ||
+         !objectPrefixMatches(mjOBJ_JOINT, this->model->njnt, candidate->njnt) ||
+         !objectPrefixMatches(mjOBJ_ACTUATOR, this->model->nu, candidate->nu) ||
+         !objectPrefixMatches(mjOBJ_EQUALITY, this->model->neq, candidate->neq) ||
+         !objectPrefixMatches(mjOBJ_PLUGIN, this->model->nplugin, candidate->nplugin))) {
+        MJBasilisk::detail::logAndThrow<std::logic_error>(
+          "MuJoCo recompilation would reorder or remove runtime-state objects.");
+    }
 
+    auto intPrefixMatches = [](const int* current, const int* pending, int count) {
+        if (count == 0) {
+            return true;
+        }
+        return std::equal(current, current + count, pending);
+    };
+    if (this->scene.modelTopology.registered &&
+        (candidate->nhistory != this->model->nhistory || candidate->npluginstate != this->model->npluginstate ||
+         candidate->nmocap != this->model->nmocap || candidate->nuserdata != this->model->nuserdata ||
+         !intPrefixMatches(this->model->actuator_actadr, candidate->actuator_actadr, this->model->nu) ||
+         !intPrefixMatches(this->model->actuator_actnum, candidate->actuator_actnum, this->model->nu) ||
+         !intPrefixMatches(this->model->plugin_stateadr, candidate->plugin_stateadr, this->model->nplugin) ||
+         !intPrefixMatches(this->model->plugin_statenum, candidate->plugin_statenum, this->model->nplugin) ||
+         !intPrefixMatches(this->model->body_mocapid, candidate->body_mocapid, this->model->nbody))) {
+        MJBasilisk::detail::logAndThrow<std::logic_error>(
+          "MuJoCo recompilation would change positional runtime-state layout.");
+    }
+
+    std::unique_ptr<mjData, MJBasilisk::detail::mjDataDeleter> candidateData(mj_makeData(candidate.get()));
+    if (!candidateData) {
+        MJBasilisk::detail::logAndThrow<std::runtime_error>("Failed to allocate data for the pending MuJoCo model.");
+    }
+
+    candidateData->time = this->data->time;
+    std::copy_n(this->data->qpos, std::min(this->model->nq, candidate->nq), candidateData->qpos);
+    std::copy_n(this->data->qvel, std::min(this->model->nv, candidate->nv), candidateData->qvel);
+    std::copy_n(this->data->act, std::min(this->model->na, candidate->na), candidateData->act);
+    std::copy_n(this->data->history, std::min(this->model->nhistory, candidate->nhistory), candidateData->history);
+    std::copy_n(this->data->qacc_warmstart, std::min(this->model->nv, candidate->nv), candidateData->qacc_warmstart);
+    std::copy_n(this->data->plugin_state,
+                std::min(this->model->npluginstate, candidate->npluginstate),
+                candidateData->plugin_state);
+    std::copy_n(this->data->ctrl, std::min(this->model->nu, candidate->nu), candidateData->ctrl);
+    std::copy_n(this->data->qfrc_applied, std::min(this->model->nv, candidate->nv), candidateData->qfrc_applied);
+    std::copy_n(
+      this->data->xfrc_applied, 6 * std::min(this->model->nbody, candidate->nbody), candidateData->xfrc_applied);
+    std::copy_n(this->data->eq_active, std::min(this->model->neq, candidate->neq), candidateData->eq_active);
+    std::copy_n(this->data->mocap_pos, 3 * std::min(this->model->nmocap, candidate->nmocap), candidateData->mocap_pos);
+    std::copy_n(
+      this->data->mocap_quat, 4 * std::min(this->model->nmocap, candidate->nmocap), candidateData->mocap_quat);
+    std::copy_n(this->data->userdata, std::min(this->model->nuserdata, candidate->nuserdata), candidateData->userdata);
+
+    this->model.swap(candidate);
+    this->data.swap(candidateData);
     this->shouldRecompile = false;
-    configure();
-
+    this->configure();
     return true;
 }
 
-void MJSpec::configure()
+void
+MJSpec::recompileUntilStable()
 {
-    // configure() can run via recompileIfNeeded() while MJScene::initializeDynamics
-    // is still registering the bulk states, before they exist. In that case there
-    // is nothing to size yet; initializeDynamics calls configure() again once the
-    // states are registered.
-    if (!this->scene.getQposState()) {
-        return;
+    this->scene.requireSceneMutationAllowed("MuJoCo recompilation");
+    while (this->shouldRecompile) {
+        if (!this->recompileIfNeeded()) {
+            throw std::logic_error("MuJoCo recompilation is disabled while model changes are pending.");
+        }
     }
+}
 
-    // Size the bulk states to the model dimensions. Only sizes are touched, not
-    // values: configure() runs on every recompile, and the stored state must
-    // survive it. conservativeResize keeps existing entries when the size is
-    // unchanged.
-    auto resizeState = [](StateData* s, mjtSize n, const std::string& quantityName) {
-        const auto stateSize = checkedMjtSizeCast<Eigen::Index>(n, quantityName);
-        s->state.conservativeResize(stateSize, 1);
-        s->stateDeriv.conservativeResize(stateSize, 1);
-    };
-
-    // getQposState()->configure() sizes qpos to nq and records the location of
-    // every orientation quaternion in it.
-    this->scene.getQposState()->configure(this->model.get());
-    resizeState(this->scene.getQvelState(), this->model->nv, "nv");
-
-    // The bodies seed their own mass entries below; the world body (index 0) has
-    // no MJBody, so seed it here to keep the whole vector well-defined.
-    resizeState(this->scene.getMassState(), this->model->nbody, "nbody");
-    this->scene.getMassState()->stateDeriv.setZero();
-    this->scene.getMassState()->state(0) = this->model->body_mass[0];
-
-    // The act state exists only when na > 0.
-    if (this->scene.getActState()) {
-        resizeState(this->scene.getActState(), this->model->na, "na");
+void
+MJSpec::configureForStateRegistration()
+{
+    this->scene.requireSceneMutationAllowed("MuJoCo state-registration configuration");
+    if (!this->shouldRecompile) {
+        this->configure();
     }
+    this->recompileUntilStable();
+}
 
-    // Configure the bodies, which caches the body id corresponding to the name,
-    // and also configures all sites and updates the position of the COM
-    for (auto&& body : this->bodies) {
+void
+MJSpec::configure()
+{
+    this->scene.requireSceneMutationAllowed("MuJoCo configuration");
+    for (auto& body : this->bodies) {
         body.configure(this->model.get());
     }
-
-    // Configure the actuators, which caches the actuator id corresponding to the name
-    for (auto&& actuator : this->actuators) {
+    for (auto& actuator : this->actuators) {
         actuator->configure(this->model.get());
     }
-
-    // Configure the equalities, which caches the actuator id corresponding to the name
-    for (auto&& equality : this->equalities) {
+    for (auto& equality : this->equalities) {
         equality.configure(this->model.get());
     }
 }

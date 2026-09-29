@@ -85,7 +85,7 @@ class MJBody : public MJObject<mjsBody>
      *
      * @param model Pointer to the MuJoCo model used for configuration.
      */
-    void configure(const mjModel* model);
+    void configure(mjModel* model);
 
     /**
      * @brief Adds a site to the body with a specified name, position, and attitude.
@@ -251,27 +251,31 @@ class MJBody : public MJObject<mjsBody>
      */
     void writeStateDependentOutputMessages(uint64_t CurrentSimNanos);
 
+    /** Register all joint-bound position states under this body's namespace. */
+    void registerJointPositionStates(DynParamRegisterer registerer, bool highOrderAttitude);
+
+    /** Register all joint-bound velocity states under this body's namespace. */
+    void registerJointVelocityStates(DynParamRegisterer registerer);
+
+    /** Extract high-order joint-position derivatives from MuJoCo data. */
+    void setJointPositionDerivativesFromMujoco(const mjData* data);
+
+    /** Validate joint-bound buffer offsets against MuJoCo qpos/qvel addresses. */
+    void validateJointStateLayout(const double* qposBase, const double* qvelBase) const;
+
     /**
      * @brief Returns this body's mass, read from the scene's bulk mass state.
      */
     double getMass();
 
     /**
-     * @brief Updates the MuJoCo model from the mass properties of the body.
-     *
-     * The mass of the body is a state, which may change in time (for example,
-     * when a thruster burns fuel). This change in mass must be relayed back
-     * to MuJoCo. Calling this method will update the `mjModel` with the
-     * mass value stored in the bulk mass state for this body.
-     *
-     * Note that the inertia is also updated (scaled by the change in mass).
-     * The center of mass remains constant.
-     *
-     * This method will also mark the kinematics and mujoco model 'const' as stale.
-     *
-     * @param m The compiled MuJoCo model.
+     * @brief Copy a validated mass into MuJoCo and scale body inertia proportionally.
+     * @param model Compiled model containing this body.
+     * @param mass New mass in kilograms; the caller must validate it before this call.
+     * @note The center of mass is unchanged. The scene's model constants and kinematics
+     * are marked stale so subsequent dynamics evaluation refreshes them.
      */
-    void updateMujocoModelFromMassProps(mjModel* m);
+    void applyPrevalidatedMass(mjModel* model, double mass) noexcept;
 
     /**
      * @brief Updates this body's entry of the bulk mass state derivative with
@@ -302,6 +306,7 @@ class MJBody : public MJObject<mjsBody>
     std::optional<MJFreeJoint> freeJoint;  ///< Optional free joint associated with the body.
     std::optional<MJBallJoint> ballJoint;  ///< Optional ball joint associated with the body.
     std::list<MJScalarJoint> scalarJoints; ///< List of scalar joints associated with the body.
+    std::vector<MJJoint*> orderedJoints;   ///< Joints in MuJoCo specification order.
 };
 
 #endif

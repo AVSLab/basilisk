@@ -28,9 +28,17 @@ void MJEquality::setActive(bool active)
     data->eq_active[this->getId()] = active;
 }
 
+bool
+MJEquality::isActive() const
+{
+    return this->spec.getMujocoData()->eq_active[this->getId()] != 0;
+}
+
 void
 MJEquality::setSolref(double val1, double val2)
 {
+    this->mjsObject->solref[0] = val1;
+    this->mjsObject->solref[1] = val2;
     auto model = this->spec.getMujocoModel();
     model->eq_solref[this->getId() * mjNREF + 0] = val1;
     model->eq_solref[this->getId() * mjNREF + 1] = val2;
@@ -39,6 +47,11 @@ MJEquality::setSolref(double val1, double val2)
 void
 MJEquality::setSolimp(double d0, double dwidth, double width, double midpoint, double power)
 {
+    this->mjsObject->solimp[0] = d0;
+    this->mjsObject->solimp[1] = dwidth;
+    this->mjsObject->solimp[2] = width;
+    this->mjsObject->solimp[3] = midpoint;
+    this->mjsObject->solimp[4] = power;
     auto model = this->spec.getMujocoModel();
     model->eq_solimp[this->getId() * mjNIMP + 0] = d0;
     model->eq_solimp[this->getId() * mjNIMP + 1] = dwidth;
@@ -49,6 +62,9 @@ MJEquality::setSolimp(double d0, double dwidth, double width, double midpoint, d
 
 void MJSingleJointEquality::setJointOffsetConstraint(double val)
 {
+    for (size_t i = 0; i < mjNEQDATA; i++) {
+        this->mjsObject->data[i] = i == 0 ? val : 0;
+    }
     auto model = this->spec.getMujocoModel();
     for (size_t i = 0; i < mjNEQDATA; i++) {
         model->eq_data[this->getId() * mjNEQDATA + i] = i == 0 ? val : 0;

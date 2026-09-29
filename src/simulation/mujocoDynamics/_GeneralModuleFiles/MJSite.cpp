@@ -45,6 +45,13 @@ void MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
     }
 }
 
+void
+MJSite::commitPositionRelativeToBody(const Eigen::Vector3d& position, mjModel* targetModel) noexcept
+{
+    std::copy_n(position.data(), 3, this->mjsObject->pos);
+    std::copy_n(position.data(), 3, targetModel->site_pos + 3 * this->getId());
+}
+
 void MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
 {
     auto mat = attitude.toRotationMatrix();
@@ -76,11 +83,10 @@ void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t Cu
     Eigen::Map<Eigen::MRPd> mrpd{payload.sigma_BN};
     mrpd = rot;
 
-    double res_N[6], res_B[6];
+    double res_N[6];
     mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_N, 0);
-    mj_objectVelocity(model, data, mjOBJ_SITE, static_cast<int>(this->getId()), res_B, 1);
 
-    std::copy_n(res_B, 3, payload.omega_BN_B);
+    Eigen::Map<Eigen::Vector3d>{ payload.omega_BN_B } = rot.transpose() * Eigen::Map<const Eigen::Vector3d>{ res_N };
     std::copy_n(res_N + 3, 3, payload.v_BN_N);
 
     this->stateOutMsg.write(&payload, this->body.getSpec().getScene().moduleID, CurrentSimNanos);

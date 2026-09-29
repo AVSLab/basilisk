@@ -22,6 +22,7 @@
 
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include <mujoco/mujoco.h>
@@ -98,7 +99,10 @@ public:
      * the individual actuator parts.
      */
     MJActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-        : name(std::move(name)), subActuators(subActuators) {}
+    : name(std::move(name))
+    , subActuators(std::move(subActuators))
+  {
+  }
 
     // Delete copy and move constructors and assignment operators
     MJActuator(const MJActuator&) = delete;
@@ -130,19 +134,18 @@ public:
      *
      * @param data Pointer to the MuJoCo simulation data.
      */
-    void updateCtrl(mjData* data);
-
-    /**
-     * @brief Reads control messages for the actuator.
-     *
-     * This pure virtual function must be implemented by derived classes
-     * to read specific control messages.
-     *
-     * @return A vector of control values.
-     */
-    virtual std::vector<double> readControlMessages() = 0;
+    virtual void updateCtrl(mjData* data) = 0;
 
 protected:
+    /** Validates the fixed input cardinality required by a composite actuator. */
+    void requireSubActuatorCount(size_t expected, const char* actuatorType) const
+    {
+        if (this->subActuators.size() != expected) {
+            throw std::invalid_argument(std::string(actuatorType) + " requires exactly " + std::to_string(expected) +
+                                        " sub-actuator(s)");
+        }
+    }
+
     std::string name; ///< The name of the actuator.
     std::vector<MJActuatorObject> subActuators; ///< The individual actuator objects.
 };
@@ -160,15 +163,14 @@ protected:
 class MJSingleActuator : public MJActuator
 {
 public:
-    /** Use the same constructor as MJActuator */
-    using MJActuator::MJActuator;
+  /** Constructs a single-input actuator. */
+  MJSingleActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
+    : MJActuator(std::move(name), std::move(subActuators))
+  {
+      this->requireSubActuatorCount(1, "MJSingleActuator");
+  }
 
-    /**
-     * @brief Reads control messages for a single actuator.
-     *
-     * @return A vector containing the control value.
-     */
-    std::vector<double> readControlMessages() override;
+  void updateCtrl(mjData* data) override;
 
     ReadFunctor<SingleActuatorMsgPayload> actuatorInMsg; ///< Functor to read actuator control messages.
 };
@@ -186,15 +188,14 @@ public:
 class MJForceActuator : public MJActuator
 {
 public:
-    /** Use the same constructor as MJActuator */
-    using MJActuator::MJActuator;
+  /** Constructs a three-axis force actuator. */
+  MJForceActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
+    : MJActuator(std::move(name), std::move(subActuators))
+  {
+      this->requireSubActuatorCount(3, "MJForceActuator");
+  }
 
-    /**
-     * @brief Reads force control messages for the actuator.
-     *
-     * @return A vector containing the force control values.
-     */
-    std::vector<double> readControlMessages() override;
+  void updateCtrl(mjData* data) override;
 
     ReadFunctor<ForceAtSiteMsgPayload> forceInMsg; ///< Functor to read force control messages.
 };
@@ -212,15 +213,14 @@ public:
 class MJTorqueActuator : public MJActuator
 {
 public:
-    /** Use the same constructor as MJActuator */
-    using MJActuator::MJActuator;
+  /** Constructs a three-axis torque actuator. */
+  MJTorqueActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
+    : MJActuator(std::move(name), std::move(subActuators))
+  {
+      this->requireSubActuatorCount(3, "MJTorqueActuator");
+  }
 
-    /**
-     * @brief Reads torque control messages for the actuator.
-     *
-     * @return A vector containing the torque control values.
-     */
-    std::vector<double> readControlMessages() override;
+  void updateCtrl(mjData* data) override;
 
     ReadFunctor<TorqueAtSiteMsgPayload> torqueInMsg; ///< Functor to read torque control messages.
 };
@@ -238,15 +238,14 @@ public:
 class MJForceTorqueActuator : public MJActuator
 {
 public:
-    /** Use the same constructor as MJActuator */
-    using MJActuator::MJActuator;
+  /** Constructs a six-axis force/torque actuator. */
+  MJForceTorqueActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
+    : MJActuator(std::move(name), std::move(subActuators))
+  {
+      this->requireSubActuatorCount(6, "MJForceTorqueActuator");
+  }
 
-    /**
-     * @brief Reads force and torque control messages for the actuator.
-     *
-     * @return A vector containing the force and torque control values.
-     */
-    std::vector<double> readControlMessages() override;
+  void updateCtrl(mjData* data) override;
 
     ReadFunctor<ForceAtSiteMsgPayload> forceInMsg; ///< Functor to read force control messages.
     ReadFunctor<TorqueAtSiteMsgPayload> torqueInMsg; ///< Functor to read torque control messages.
