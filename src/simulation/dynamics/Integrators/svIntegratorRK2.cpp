@@ -28,7 +28,6 @@ RKCoefficients<2> svIntegratorRK2::getCoefficients()
 {
     RKCoefficients<2> coefficients;
     coefficients.aMatrix.at(1).at(0) = 1;
-    coefficients.aMatrix.at(1).at(1) = 1;
 
     coefficients.bArray = {0.5, 0.5};
 
