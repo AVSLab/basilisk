@@ -235,8 +235,8 @@ Using a stochastic integrator
 ------------------------------
 A stochastic integrator is attached to a ``DynamicObject`` exactly like a deterministic
 one, with ``setIntegrator()`` (see :ref:`bskPrinciples-9`). The dynamics module must
-declare its noise sources (via ``StateData::setNumNoiseSources`` and, for shared sources,
-``registerSharedNoiseSource``) and provide the diffusion terms in
+declare each state's noise count in its ``StateSpec`` and, for shared sources, call
+``registerSharedNoiseSource``. It provides the diffusion terms in
 ``equationsOfMotionDiffusion``; see the ``_UnitTest`` scripts in
 ``simulation/dynamics/Integrators`` for complete, runnable examples.
 

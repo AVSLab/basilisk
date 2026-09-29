@@ -4,7 +4,7 @@ Multi-body Dynamics with MuJoCo
 ===============================
 
 ``DynamicObject`` subclasses are Basilisk modules that require the integration of
-ordinate differential equations (ODEs) to propagate their internal state (see :ref:`bskPrinciples-9`).
+ordinary differential equations (ODEs) to propagate their internal state (see :ref:`bskPrinciples-9`).
 The :ref:`spacecraft` module is the most commonly used ``DynamicObject`` in Basilisk, and is ideal to
 represent simple or hub-centric vehicles. For vehicles or sets of vehicles with a more complex topology,
 :ref:`MJScene<MJScene>` represents an alternative ``DynamicObject`` designed to facilitate the analysis of
@@ -15,6 +15,9 @@ to important concepts in simulations with :ref:`MJScene<MJScene>`. Once the user
 presented in the *Multi-Body Dynamics Simulations with MuJoCo* section in :ref:`examples`. The user is
 also encouraged to read the `MuJoCo Documentation <https://mujoco.readthedocs.io>`_, as the capabilities
 exposed through :ref:`MJScene<MJScene>` are heavily based on the mathematical and design principles of MuJoCo.
+
+For the implementation contract between MuJoCo joint states, quaternion policies,
+Basilisk integrators, and Reset/recompilation rollback, see :ref:`integratorArchitecture`.
 
 Installation
 ------------
