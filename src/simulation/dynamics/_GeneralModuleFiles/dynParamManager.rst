@@ -1,4 +1,45 @@
+``DynParamManager`` gives a dynamic object and its effectors access to named
+states and shared properties. Integrators advance states; properties hold
+matrices that modules read or update directly.
 
-Manager of states for Basilisk dynamical systems.  Allows the state-
-effector models of a dynamic object to create, get, and update states
-present in the model.
+Using the manager
+-----------------
+
+Declare states in your module's registration callback and retain the returned
+``StateData`` handles. Use ``getStateObject()`` to link another module's state.
+Create shared matrices with ``createProperty()`` and link them with
+``getPropertyReference()``. The manager owns these objects and must outlive
+borrowed handles and property pointers.
+
+The owning ``DynamicObject`` calls ``finalizeStates()`` during ``Reset()`` after
+initial state registration. An individual effector only declares its own states.
+A standalone manager follows the same pattern:
+
+.. code-block:: cpp
+
+    DynParamManager manager;
+    StateData* position = manager.registerState(3, 1, "position");
+    position->stateView().setZero();
+    manager.finalizeStates();
+
+Finalization and reset
+----------------------
+
+First finalization computes the fixed layout and allocates contiguous buffers.
+Reacquire Eigen views after this allocation. Later resets reuse states by name;
+they write directly into the live buffers without moving their addresses.
+Repeated finalization has no effect. Shapes, update policies, and noise connections
+cannot change, and new states cannot be added to a finalized manager.
+
+Setup errors propagate to the caller. The manager does not checkpoint values or
+provide a registration rollback operation.
+
+Native storage access
+---------------------
+
+Include ``stateRegistry.h`` and call ``getStateRegistry()`` to inspect finalized
+layouts, read shared-noise topology, or resolve contiguous buffer segments from C++.
+The returned registry is owned by this manager and has no Python proxy.
+
+See :ref:`creatingDynObject` for a Reset example and :ref:`integratorArchitecture`
+for the relationship between modules, storage, and numerical workspaces.

@@ -17,242 +17,158 @@
 
  */
 
+/**
+ * @file dynParamManager.h
+ * @brief Module-facing state declarations, lookup, and shared properties.
+ * Registration and contiguous storage are implemented by StateRegistry.
+ */
+
 #ifndef STATE_MANAGER_H
 #define STATE_MANAGER_H
 
 #include "architecture/utilities/bskLogging.h"
 #include "stateData.h"
-#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <cstddef>
+#include <cstdint>
 #include <map>
-#include <stdint.h>
-#include <type_traits>
+#include <memory>
+#include <string>
+#include <utility>
 #include <vector>
-#include <functional>
 
-/// @cond DOXYGEN_IGNORE
-template <typename T, typename... Rest>
-void hashCombine(std::size_t& seed, const T& v, const Rest&... rest)
-{
-    seed ^= std::hash<T>{}(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    (hashCombine(seed, rest), ...);
-}
+class StateRegistry;
 
-#ifndef SWIG
-namespace std // Inject hash for std::pair<std::string, size_t> into std::
-{
-    /** Hash implementation for ``std::pair<std::string, size_t>``,
-     * allows using it as the key in maps.
-     */
-    template<> struct hash<std::pair<std::string, size_t>>
-    {
-        /** Produce hash from ``std::pair<std::string, size_t>`` */
-        std::size_t operator()(const std::pair<std::string, size_t>& input) const noexcept
-        {
-            std::size_t h = 0;
-            hashCombine(h, input.first, input.second);
-            return h;
-        }
-    };
-}
-#endif
-/// @endcond
-
-/** StateVector represents an ordered collection of StateData,
- * with each state having a unique name.
+/**
+ * @brief Named integration states and shared property matrices for dynamics modules.
+ *
+ * Register states in your module's registration callback and retain the returned
+ * StateData handles. Use getStateObject() to link another module's state and
+ * getPropertyReference() to link a shared property. Properties are not integrated.
+ *
+ * The owning DynamicObject calls finalizeStates() after initial registration to
+ * allocate contiguous storage. Later resets reuse existing states by name and
+ * update their values in place. Shapes, update policies, and noise connections
+ * cannot change after finalization. Repeated finalization has no effect.
+ *
+ * This manager owns all handles and properties and must outlive borrowed pointers.
+ * Reacquire Eigen views after the first finalization; subsequent resets preserve
+ * storage addresses. Setup errors propagate to the caller without value rollback.
+ *
+ * getStateRegistry() provides native access to layouts and contiguous segments.
  */
-class StateVector {
+class DynParamManager
+{
   public:
-    /** All states managed by the StateVector, cached
-     * by name.
-     *
-     * StateData classes have virtual methods, and this class
-     * should be capable of supporting subclasses of StateData.
-     * To do so, we need to store StateData objects as pointers.
-     * To facilitate memory management, we use unique_ptr.
+    /** @brief Construct an empty manager with no states or properties. */
+    DynParamManager();
+    /** @brief Release all states, properties, and registry storage. */
+    ~DynParamManager();
+
+    // Borrowed handles and property pointers require a stable owner identity.
+    DynParamManager(const DynParamManager&) = delete;
+    DynParamManager& operator=(const DynParamManager&) = delete;
+    DynParamManager(DynParamManager&&) = delete;
+    DynParamManager& operator=(DynParamManager&&) = delete;
+
+    /**
+     * @brief Allocate contiguous state storage and fix the layout after registration.
+     * @note Call before integration. Repeated calls have no effect.
+     * @throws std::exception If dimensions or shared-noise declarations are invalid.
      */
-    std::map<std::string, std::unique_ptr<StateData>> stateMap;
+    void finalizeStates();
 
-  public:
-    /** Default constructor */
-    StateVector() = default;
-
-    /** Copy constructor */
-    StateVector(const StateVector& other);
-
-    /** Assignment operator */
-    StateVector& operator= (const StateVector&);
-
-    /** Sets the values of the states of this StateVector to a copy the
-     * values of the states of the other StateVector.
-     *
-     * Note that we assume that both StateVectors have the same states
-     * and in the same order !!!*/
-    void setStates(const StateVector& operand);
-
-    /** Adds the states of the given StateVector to the states of
-     * this StateVector.
-     *
-     * Note that we assume that both StateVectors have the same states
-     * and in the same order !!!*/
-    void addStates(const StateVector& operand);
-
-    /** Scales the states of this StateVector by the given factor */
-    void scaleStates(double scaleFactor);
-
-    /** Scales the states of this StateVector by the given delta time */
-    void propagateStates(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps = {});
-};
-
-/** A class that manages a set of states and properties. */
-class DynParamManager {
-  public:
-    /** A map of properties managed by this class.
-     *
-     * Properties are matrices of doubles that are defined and updated
-     * by modules. They are not integrated at any point, so it is the
-     * responsability of the user to update them so that they remain
-     * current.
+    /**
+     * @brief Declare a state with explicit dimensions, noise count, and error scaling.
+     * @param stateName Nonempty name, unique within this manager.
+     * @param spec Fixed state topology; Euclidean states require equal state,
+     * derivative, and diffusion-tangent shapes.
+     * @return Manager-owned handle, reused when matching a repeated declaration.
+     * @throws std::exception If the declaration is invalid or would change finalized topology.
      */
-    std::map<std::string, Eigen::MatrixXd> dynProperties;
+    StateData* registerState(std::string stateName, const StateSpec& spec);
 
-    /** A collection of states managed by this class */
-    StateVector stateContainer;
-
-    /** Logger used by this class */
-    BSKLogger bskLogger;
-
-  public:
-    /** Creates and stores a new state to be managed by this class.
-     *
-     * The state name should be unique: registering two states with the
-     * same name will cause either an error or a warning.
-     *
-     * This method may optionally be templated to create StateData of
-     * subclasses of StateData.
+    /**
+     * @brief Declare a state whose update requires a non-Euclidean policy.
+     * @param stateName Nonempty state name, reused by name on reset.
+     * @param spec State topology with StateUpdateKind::Special.
+     * @param policy Immutable update policy; ownership transfers to this call.
+     * Repeated declarations must provide an equivalent policy.
+     * @return Manager-owned handle for the declaration.
+     * @throws std::exception If the declaration or policy is invalid.
      */
-    template <typename StateDataType = StateData,
-              std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool> = true>
-    StateDataType* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
+    StateData* registerState(std::string stateName, const StateSpec& spec, std::unique_ptr<StateUpdatePolicy> policy);
 
-    /** Retrieves the handler to a previously registered StateData.
-     *
-     * Calling this method for a state name not previously registered will raise a warning
-     * and return a nullptr.
+    /**
+     * @brief Compatibility overload for an equal-shape Euclidean matrix state.
+     * @param nRow Nonzero number of rows.
+     * @param nCol Nonzero number of columns.
+     * @param stateName Nonempty state name.
+     * @return Manager-owned state handle.
+     * @note A matching repeated declaration retains its established noise count
+     * and error-control settings. Use StateSpec for explicit new declarations.
+     */
+    StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
+
+    /**
+     * @brief Find a state declared in this manager.
+     * @param stateName Name supplied to registerState().
+     * @return Borrowed handle, or nullptr with a warning if the name is absent.
      */
     StateData* getStateObject(std::string stateName);
 
-    /** Creates and stores a new property to be managed by this class.
-     *
-     * The property name should be unique: registering two properties with the
-     * same name will cause a warning or an error.
+    /**
+     * @brief Declare that several states use the same stochastic process.
+     * @param sharedNoises Pairs of state handles and zero-based local noise indices.
+     * All states must belong to this manager. A local source may appear in only
+     * one group, and a group may contain at most one source from each state.
+     * @throws std::exception If the group is invalid or would change finalized noise connections.
+     * @note Group ordering is immaterial; repeat the same connections on reset.
+     */
+    void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises);
+
+    /** @brief Report whether fixed state storage has been allocated. */
+    bool statesAreFinalized() const noexcept;
+
+    /**
+     * @brief Create or replace a named property without integrating it.
+     * @param propName Property name used by modules to link this matrix.
+     * @param propValue Initial matrix; replacing a property may change its shape.
+     * @return Borrowed pointer to the matrix object, stable across later updates.
      */
     Eigen::MatrixXd* createProperty(std::string propName, const Eigen::MatrixXd& propValue);
-
-    /** Retrieves the handler to a previously registered property.
-     *
-     * Calling this method for a property name not previously registered
-     * will raise an error.
+    /**
+     * @brief Look up a shared property matrix.
+     * @param propName Previously created property name.
+     * @return Borrowed pointer, valid until the manager is destroyed.
+     * @throws BasiliskError If the property does not exist.
      */
     Eigen::MatrixXd* getPropertyReference(std::string propName);
-
-    /** Sets the value for a property.
-     *
-     * An error will be raised if no property exists with name or the size of the
-     * given matrix is different from the size of the existing property.
+    /**
+     * @brief Update an existing property without changing its shape.
+     * @param propName Previously created property name.
+     * @param propValue Replacement values with the existing dimensions.
+     * @throws BasiliskError If the property does not exist.
+     * @throws std::invalid_argument If its dimensions differ.
      */
-    void setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue);
+    void setPropertyValue(std::string propName, const Eigen::MatrixXd& propValue);
 
-    /** Sets the values of the states managed by this class to a copy the
-     * values of the states of the given StateVector.
-     *
-     * Note that we assume that given StateVector have the same states
-     * and in the same order as this object !!!*/
-    void updateStateVector(const StateVector& newState);
-
-    /** Propagates the states managed by this class a given delta time.  */
-    void propagateStateVector(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps = {});
-
-    /** Used when more than one state have dynamics perturbed
-     * by the same noise process.
-     *
-     * For example, consider the following SDE:
-     *
-     * \f[
-     *   dx_0 = f_0(t,x)\,dt + g_{00}(t,x)\,dW_0 + g_{01}(t,x)\,dW_1
-     * \f]
-     * \f[
-     *   dx_1 = f_1(t,x)\,dt + g_{11}(t,x)\,dW_1
-     * \f]
-     *
-     * In this case, state 'x_0' is affected by 2 sources of noise
-     * and 'x_1' by 1 source of noise. However, the source 'W_1' is
-     * shared between 'x_0' and 'x_1'.
-     *
-     * This function is called like:
-     *
-     * \code
-     *     dynParamManager.registerSharedNoiseSource({
-     *         {myStateX0, 1},
-     *         {myStateX1, 0}
-     *     });
-     * \endcode
-     *
-     * which means that the 2nd noise source of the ``StateData`` 'myStateX0'
-     * and the first noise source of the ``StateData`` 'myStateX1' actually
-     * correspond to the same noise process.
+    /**
+     * @brief Access state layouts, contiguous buffer segments, and shared-noise topology.
+     * @return Borrowed registry owned by this manager. Include stateRegistry.h to
+     * inspect layouts, resolve buffer segments, or bind shared-noise topology.
+     * @note This interface is not exposed to Python.
      */
-    void registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>>);
+    StateRegistry& getStateRegistry() noexcept { return *this->registry; }
+    /** @brief Inspect the native registry through a constant manager. @see getStateRegistry() */
+    const StateRegistry& getStateRegistry() const noexcept { return *this->registry; }
 
-    /** When multiple states share a noise source, then this map
-     * maps their (name, noiseIndex) to the same number
-     */
-    std::unordered_map<std::pair<std::string, size_t>, size_t> sharedNoiseMap;
-protected:
-    /** A counter used to ensure that the values in ``sharedNoiseMap``
-     * are unique.
-     */
-    size_t sharedNoiseMapIdCounter = 0;
+    BSKLogger bskLogger; //!< Reports missing state names and invalid property access.
+
+  private:
+    std::map<std::string, Eigen::MatrixXd>
+      dynProperties;                         //!< Named, non-integrated matrices; map nodes keep pointers stable.
+    std::unique_ptr<StateRegistry> registry; //!< Owns registration and buffer storage at a stable address.
 };
-
-template <typename StateDataType,
-          std::enable_if_t<std::is_base_of_v<StateData, StateDataType>, bool>>
-StateDataType* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
-{
-    if (stateName == "") {
-        bskLogger.bskError("Your state name can't be an empty string.  Come on.  You get null.");
-    }
-
-    if (stateContainer.stateMap.count(stateName) > 0) {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created a state with the name: %s more than once.  Go ahead and don't do this.",
-            stateName.c_str());
-
-        auto& stateData = stateContainer.stateMap.at(stateName);
-
-        if (stateData->getRowSize() != nRow || stateData->getColumnSize() != nCol) {
-            bskLogger.bskError("In addition to that, you tried to change the size of the state in "
-                             "question.  Come on.  You get null.");
-        }
-
-        auto casted = dynamic_cast<StateDataType*>(stateData.get());
-        if (!casted) {
-            bskLogger.bskError("In addition to that, you tried to change the StateData type.  Come "
-                             "on.  You get null.");
-        }
-
-        return casted;
-    }
-
-    Eigen::MatrixXd stateMatrix = Eigen::MatrixXd::Zero(nRow, nCol);
-
-    // Emplacing this stateData in the map will wrap the raw
-    // pointer in a unique_ptr, so no worries about leaks.
-    // I didn't emplace `std::make_unique<StateDataType>(...)
-    // because I needed the raw pointer anyway to return it.
-    StateDataType* stateData = new StateDataType(stateName, stateMatrix);
-    stateContainer.stateMap.emplace(stateName, stateData);
-    return stateData;
-}
 
 #endif /* STATE_MANAGER_H */

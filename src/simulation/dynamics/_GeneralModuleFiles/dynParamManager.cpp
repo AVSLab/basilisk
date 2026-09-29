@@ -17,171 +17,100 @@
 
  */
 
+/**
+ * @file dynParamManager.cpp
+ * @brief DynParamManager facade and named property operations.
+ * State lifecycle operations delegate to the owned registry.
+ */
+
 #include "dynParamManager.h"
-#include <algorithm>
-#include <iostream>
+#include "stateRegistry.h"
 
-StateVector::StateVector(const StateVector& other)
+#include <stdexcept>
+#include <utility>
+
+DynParamManager::DynParamManager()
+  : registry(new StateRegistry())
 {
-    *this = other;
 }
 
-StateVector&
-StateVector::operator=(const StateVector& other)
+DynParamManager::~DynParamManager() = default;
+
+void
+DynParamManager::finalizeStates()
 {
-    stateMap.clear();
-    for (const auto& [key, value] : other.stateMap) {
-        stateMap.emplace(key, value->clone());
-    }
-    return *this;
+    this->registry->finalizeStates();
 }
 
-void StateVector::setStates(const StateVector& operand)
+StateData*
+DynParamManager::registerState(std::string stateName, const StateSpec& spec)
 {
-    for (auto [it1, it2] = std::tuple{std::begin(this->stateMap), std::begin(operand.stateMap)};
-         it1 != std::end(this->stateMap) && it2 != std::end(operand.stateMap);
-         ++it1, ++it2) {
-        it1->second->setState(it2->second->getStateReference());
-    }
+    return this->registry->registerState(std::move(stateName), spec);
 }
 
-void StateVector::addStates(const StateVector& operand)
+StateData*
+DynParamManager::registerState(std::string stateName, const StateSpec& spec, std::unique_ptr<StateUpdatePolicy> policy)
 {
-    for (auto [it1, it2] = std::tuple{std::begin(this->stateMap), std::begin(operand.stateMap)};
-         it1 != std::end(this->stateMap) && it2 != std::end(operand.stateMap);
-         ++it1, ++it2) {
-        it1->second->addState(*it2->second);
-    }
+    return this->registry->registerState(std::move(stateName), spec, std::move(policy));
 }
 
-void StateVector::scaleStates(double scaleFactor)
+StateData*
+DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
-    for (const auto& [key, value] : stateMap) {
-        value->scaleState(scaleFactor);
-    }
+    return this->registry->registerState(nRow, nCol, std::move(stateName));
 }
 
-void StateVector::propagateStates(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps)
+StateData*
+DynParamManager::getStateObject(std::string stateName)
 {
-    for (const auto& [key, value] : stateMap) {
-        if (pseudoTimeSteps.count(key) > 0)
-        {
-            value->propagateState(dt, pseudoTimeSteps.at(key));
-        }
-        else
-        {
-            value->propagateState(dt);
-        }
+    StateData* state = this->registry->getStateObject(stateName);
+    if (state == nullptr) {
+        this->bskLogger.bskLog(BSK_WARNING, "You requested this non-existent state name: %s.", stateName.c_str());
     }
-}
-
-StateData* DynParamManager::getStateObject(std::string stateName)
-{
-    if (stateContainer.stateMap.count(stateName) > 0) {
-        return stateContainer.stateMap.at(stateName).get();
-    }
-
-    /*  The requested state could not be found.
-        Either the state name was miss-spelled, or the state simply
-        doesn't exit in the current simulaiton setup (i.e. asking for the
-        hub attitude in a translation only simulation setup */
-    bskLogger.bskLog(
-        BSK_WARNING,
-        "You requested this non-existent state name: %s You either miss-typed the stateName, or "
-        "you asked for a state that doesn't exist in your simulation setup.",
-        stateName.c_str());
-
-    return nullptr;
-}
-
-void DynParamManager::updateStateVector(const StateVector& newState)
-{
-    this->stateContainer.setStates(newState);
-}
-
-void DynParamManager::propagateStateVector(double dt, const std::unordered_map<std::string, std::vector<double>>& pseudoTimeSteps)
-{
-    this->stateContainer.propagateStates(dt, pseudoTimeSteps);
-}
-
-Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
-                                                 const Eigen::MatrixXd& propValue)
-{
-    std::map<std::string, Eigen::MatrixXd>::iterator it;
-    it = dynProperties.find(propName);
-    if (it == dynProperties.end()) {
-        dynProperties.insert(std::pair<std::string, Eigen::MatrixXd>(propName, propValue));
-    }
-    else {
-        bskLogger.bskLog(
-            BSK_WARNING,
-            "You created the dynamic property: %s more than once.  You shouldn't be doing that.",
-            propName.c_str());
-        it->second = propValue;
-    }
-    return (&(dynProperties.find(propName)->second));
-}
-
-Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
-{
-    std::map<std::string, Eigen::MatrixXd>::iterator it;
-    it = dynProperties.find(propName);
-    if (it == dynProperties.end()) {
-        bskLogger.bskError("You requested the property: %s which doesn't exist.  Null returned.",
-                         propName.c_str());
-    }
-    else {
-        return (&(it->second));
-    }
-}
-
-void DynParamManager::setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue)
-{
-    std::map<std::string, Eigen::MatrixXd>::iterator it;
-    it = dynProperties.find(propName);
-    if (it == dynProperties.end()) {
-        bskLogger.bskError("You tried to set the property value for: %s which has not been created "
-                         "yet. I can't do that.",
-                         propName.c_str());
-    }
-    else {
-        it->second = propValue;
-    }
+    return state;
 }
 
 void
 DynParamManager::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
 {
-    std::vector<std::pair<std::string, size_t>> noiseIds;
+    this->registry->registerSharedNoiseSource(std::move(sharedNoises));
+}
 
-    for (auto&& [stateData, noiseIndex] : sharedNoises)
-    {
-        if (
-            this->stateContainer.stateMap.count(stateData.getName()) == 0
-            || this->stateContainer.stateMap.at(stateData.getName()).get() != &stateData
-        )
-        {
-            throw std::runtime_error("Given StateData '"
-                + stateData.getName() + "' does not belong to this dynParamManager.");
-        }
+bool
+DynParamManager::statesAreFinalized() const noexcept
+{
+    return this->registry->statesAreFinalized();
+}
 
-        if (noiseIndex >= stateData.getNumNoiseSources())
-        {
-            throw std::runtime_error("Cannot share noise index '"
-                + std::to_string(noiseIndex) + "' of StateData '" + stateData.getName()
-                + "' because that StateData only has " + std::to_string(stateData.getNumNoiseSources())
-                + " noise sources.");
-        }
-
-        noiseIds.emplace_back(stateData.getName(), noiseIndex);
+Eigen::MatrixXd*
+DynParamManager::createProperty(std::string propName, const Eigen::MatrixXd& propValue)
+{
+    auto [property, inserted] = this->dynProperties.emplace(std::move(propName), propValue);
+    if (!inserted) {
+        property->second = propValue;
     }
+    return &property->second;
+}
 
-    // Save all noiseId in the sharedNoiseMap with the
-    // same ID (a simple counter to guarantee uniqueness)
-    size_t sharedNoiseId = this->sharedNoiseMapIdCounter;
-    this->sharedNoiseMapIdCounter++;
-    for (auto&& noiseId : noiseIds)
-    {
-        sharedNoiseMap[noiseId] = sharedNoiseId;
+Eigen::MatrixXd*
+DynParamManager::getPropertyReference(std::string propName)
+{
+    auto property = this->dynProperties.find(propName);
+    if (property == this->dynProperties.end()) {
+        this->bskLogger.bskError("You requested the property: %s which doesn't exist.", propName.c_str());
     }
+    return &property->second;
+}
+
+void
+DynParamManager::setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue)
+{
+    auto property = this->dynProperties.find(propName);
+    if (property == this->dynProperties.end()) {
+        this->bskLogger.bskError("You tried to set property: %s before creating it.", propName.c_str());
+    }
+    if (property->second.rows() != propValue.rows() || property->second.cols() != propValue.cols()) {
+        throw std::invalid_argument("Property '" + propName + "' shape mismatch.");
+    }
+    property->second = propValue;
 }

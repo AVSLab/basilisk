@@ -1,0 +1,1 @@
+- Added a common native segment/view API for state, derivative, and diffusion buffers, preserving existing typed accessors and state/local-source diffusion ordering.
