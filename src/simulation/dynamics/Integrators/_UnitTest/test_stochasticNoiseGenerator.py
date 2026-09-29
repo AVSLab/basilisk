@@ -19,16 +19,26 @@ Focused unit tests for the pluggable Gaussian noise generators used by the nativ
 stochastic integrators (``stochasticNoiseGenerator.h``). These exercise the public
 behaviors directly, rather than only through an integrator's happy path:
 
-- ``PrescribedGaussianNoiseGenerator``: FIFO replay, ``remaining()``/``clear()``,
+- ``PrescribedGaussianNoiseGenerator``: cursor-based FIFO replay, ``remaining()``/``clear()``,
   omitted-``dZ`` zero-filling, and the error paths (queue exhaustion, mismatched ``dW``
   length, undersized explicit ``dZ``).
-- ``RandomGaussianNoiseGenerator``: seed repeatability and the ``sqrt(h)`` scaling.
+- ``RandomGaussianNoiseGenerator``: seed repeatability, Wiener-only draws, and
+  ``sqrt(h)`` scaling.
 """
 import numpy as np
 import numpy.testing as npt
 import pytest
 
 from Basilisk.simulation import svIntegrators
+
+
+def test_native_output_buffer_methods_are_not_python_apis():
+    """Expose allocation-bearing return APIs instead of ineffective buffer copies."""
+    generator = svIntegrators.RandomGaussianNoiseGenerator()
+
+    assert not hasattr(generator, "generateInto")
+    assert not hasattr(generator, "generateWienerInto")
+    assert len(generator.generateWiener(2, 0.1)) == 2
 
 
 def _flat(vec):
@@ -75,7 +85,7 @@ def test_prescribed_queueExhaustionRaises():
     gen = svIntegrators.PrescribedGaussianNoiseGenerator()
     gen.pushStep([1.0])
     gen.generate(1, 0.01)
-    # Popping past the end raises rather than crashing the interpreter.
+    # Reading past the end raises rather than crashing the interpreter.
     with pytest.raises(RuntimeError):
         gen.generate(1, 0.01)
 
@@ -119,6 +129,38 @@ def test_random_incrementsScaleWithSqrtH():
     g.setSeed(7)
     small = _flat(g.generate(4, 0.25).dW)  # sqrt(0.25) = 0.5
     npt.assert_allclose(small, 0.5 * big, rtol=1e-12)
+
+
+def test_random_wienerOnlySkipsAuxiliaryDraws():
+    first = svIntegrators.RandomGaussianNoiseGenerator()
+    second = svIntegrators.RandomGaussianNoiseGenerator()
+    first.setSeed(4321)
+    second.setSeed(4321)
+
+    first_step = _flat(first.generateWiener(3, 0.25))
+    second_step = _flat(first.generateWiener(3, 0.25))
+
+    npt.assert_array_equal(
+        first_step, _flat(second.generateWiener(3, 0.25))
+    )
+    npt.assert_array_equal(
+        second_step, _flat(second.generateWiener(3, 0.25))
+    )
+
+
+def test_random_reseedResetsCachedNormalVariate():
+    generator = svIntegrators.RandomGaussianNoiseGenerator()
+    reference = svIntegrators.RandomGaussianNoiseGenerator()
+    generator.setSeed(2468)
+    reference.setSeed(2468)
+
+    first = _flat(generator.generateWiener(1, 0.25))
+    generator.setSeed(2468)
+    repeated = _flat(generator.generateWiener(1, 0.25))
+    expected = _flat(reference.generateWiener(1, 0.25))
+
+    npt.assert_array_equal(first, expected)
+    npt.assert_array_equal(repeated, expected)
 
 
 if __name__ == "__main__":
