@@ -11,6 +11,21 @@ Version |release|
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
 
+- Two-axis spinning-body default names could collide with single-axis state
+  and property names once instance counters reached multiple digits. The
+  two-axis names now separate the axis and instance numbers with ``_``.
+  Access these records through each effector's public name fields.
+
+- Empty reaction-wheel and thruster effectors remain usable with flat-state
+  registration. They do not create zero-sized state records, and their device
+  counts still become immutable after successful registration.
+
+- Dynamics-manager references and callback-created state handles are borrowed.
+  Keep the owning dynamics object or MuJoCo scene alive while using them.
+  Replacing an integrator destroys the old method; reacquire the integrator
+  property afterward. Python rejects reinstalling a previously transferred or
+  borrowed integrator after replacement or owner destruction.
+
 - GitHub issue 1581: The C ``debyeLength()`` utility could read beyond its lookup
   arrays for altitudes from 2,000 km through 30,000 km, producing undefined
   results such as NaN. The interval search now includes the final table endpoint

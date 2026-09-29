@@ -1,0 +1,27 @@
+- Added stable contiguous state, derivative, and diffusion storage allocated once after registration. ``DynParamManager`` retains the module-facing API; ``StateRegistry`` owns registration and native buffer access behind ``getStateRegistry()``.
+- Reworked fixed and adaptive Runge-Kutta bookkeeping to use preallocated flat buffers with a fixed synchronized dynamics group.
+- Euclidean drift candidates and adaptive truncation errors use single Eigen expressions, eliminating redundant buffer-copy passes.
+- State and derivative views bind directly to storage without repeated registry lookups; resets update finalized values in place.
+- State, derivative, and diffusion setters copy contiguous input directly while retaining support for strided matrix blocks.
+- Fixed Runge-Kutta can use a Euclidean buffer as its candidate buffer. Euler-Maruyama avoids diffusion packing and fuses one- and two-source Euclidean updates while preserving captured drift and local noise order.
+- Reaction wheels reuse derivative buffers sized during state registration.
+- Empty wheel and thruster effectors remain runnable without registering zero-sized state records.
+- Two-axis spinning-body default state and property names separate the axis and instance numbers with ``_`` to prevent collisions with single-axis effectors. Use each effector's public name fields when accessing these records.
+- Release builds use the toolchain's default optimization flags without appending an ``-O2`` override.
+- Fixed and adaptive Runge-Kutta permit compiler-dependent rounding differences, including fused multiply-add. Numerical compatibility is evaluated with accuracy tolerances.
+- Migrated all stochastic integrators to finalized indexed noise topology and preallocated workspaces. Noise counts can be declared through ``StateSpec`` or the deprecated registration-time ``StateData.setNumNoiseSources()`` compatibility API.
+- Shared stochastic sources preserve each state's local increment order, including noncommutative update policies and Euclidean rounding.
+- Native ``StateBuffers``, ``StateBufferKind``, and ``StateBufferSegment`` types describe contiguous storage and borrowed scalar ranges.
+- Simplified stochastic buffer views and validation, and reduced RKMil's packed arithmetic passes while retaining its inline Euclidean update path.
+- Borrowed VSCMG configuration elements retain their owning Python effector through both indexed collection access and ``getVSCMGAt()``.
+- Stochastic methods that only use Wiener increments no longer draw unused auxiliary Gaussian values. Seeded trajectories from these methods therefore differ from earlier releases.
+- Replaced MuJoCo's specialized scene-wide qpos state with buffer-backed, manager-owned records associated with each joint, quaternion update policies, and fixed-layout validation during model recompilation.
+- Removed ``StateVector``, ``ExtendedStateVector``, standalone or subclassed ``StateData`` construction and arithmetic, and mutable error-control flags. Deprecated ``getStateReference()`` and ``getStateDerivReference()`` names remain as borrowed const-view aliases.
+- Standalone ``DynParamManager`` users call ``finalizeStates()`` after state declarations and before integration. Later declarations reuse existing states by name; shapes and noise connections remain fixed. Setup errors propagate without Reset rollback.
+- Python keeps ``registerState(nRow, nCol, stateName)`` and exposes complete specifications through ``registerStateSpec(stateName, spec)``. Embedded managers and callback-created states retain their borrowed-lifetime contracts; callers keep the owning dynamics object or scene alive.
+- SWIG uses declaration-local ownership hooks and canonical imports. Both ``setIntegrator(method)`` and ``integrator = method`` transfer newly supplied integrators, including rejected replacements. Synchronized secondaries remain retained by Python, and native destruction detaches connections before later propagation.
+- Adaptive Runge-Kutta tolerances can be configured with the compatibility ``relTol`` and ``absTol`` properties or with ``setRelativeTolerance()`` and ``setAbsoluteTolerance()``.
+- C++ callers should replace direct ``DynamicObject::integrator`` reads with ``getIntegrator()``, ``isDynamicsSynced`` reads with ``getIntegrationOwner() != nullptr``, and mutable ``StateVecIntegrator::dynPtrs`` access with the read-only ``getDynamics()`` view.
+- C++ callers should configure MuJoCo attitude integration with ``setHighOrderAttitudeIntegration()`` before reset; Python retains the ``highOrderAttitudeIntegration`` property.
+- Allocation-regression tests intercept C++ and C allocation APIs on macOS and ELF platforms. MSVC validation is explicitly partial because it covers C++ operators and Eigen's runtime allocation guard but cannot robustly interpose every CRT allocator.
+- Added an architecture guide and subsystem/API documentation covering state ownership, initialization, binding, RK workspaces, shared noise, MuJoCo policies, and Python compatibility. Matching resets initialize existing state buffers in place. Replacing an integrator destroys the old object, invalidating its borrowed pointers.
