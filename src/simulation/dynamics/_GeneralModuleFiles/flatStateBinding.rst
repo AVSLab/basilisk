@@ -1,0 +1,23 @@
+``FlatStateBinding`` is the native bridge from named registered states to integrator
+arithmetic. It owns descriptors and update runs while borrowing finalized registry
+buffers and update policies. Numerical stage buffers belong to the consuming integrator.
+
+Binding and reuse
+-----------------
+
+``bind()`` validates state shapes and policies, assigns combined-buffer offsets, and
+coalesces adjacent Euclidean states into contiguous update runs. It also builds the
+state traversal used to assign stochastic noise sources. ``validate()`` checks object
+identity and finalized storage before an existing binding is
+reused. ``reset()`` discards metadata after failed preparation.
+
+``FlatObjectDescriptor`` addresses one object's live buffers.
+``FlatStateDescriptor`` addresses one state in the integrator's combined buffers.
+``FlatUpdateRun`` describes either adjacent states using ordinary vector addition or
+one special-policy state. All offsets count doubles, and matrix views are column-major.
+These offsets must not be confused with registry-local ``StateLayout`` offsets.
+
+Gather and scatter operate on already sized buffers and copy complete object buffers.
+Candidate construction combines flat drift and dispatches special updates through the
+registered policy. External policy calls use the supplied callback guard before further
+borrowed-storage access. See :ref:`integratorArchitecture` for ownership and call ordering.
