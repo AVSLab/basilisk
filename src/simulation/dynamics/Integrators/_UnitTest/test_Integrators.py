@@ -85,6 +85,151 @@ def test_adaptive_integrator_state_specific_tolerances_insert():
     assert integratorObject.getAbsoluteTolerance(scObject, objectStateName) == objectAbsTol
 
 
+def test_adaptive_integrator_tolerance_properties():
+    """Preserve the Python tolerance attributes through generation-aware setters."""
+    scObject = spacecraft.Spacecraft()
+    integrators = [
+        svIntegrators.svIntegratorRKF45(scObject),
+        svIntegrators.svIntegratorAdaptiveRungeKutta(
+            scObject,
+            largest_order=2,
+            a_coefficients=[[0, 0], [1, 0]],
+            b_coefficients=[0.5, 0.5],
+            b_star_coefficients=[1, 0],
+            c_coefficients=[0, 1],
+        ),
+    ]
+
+    for integrator in integrators:
+        integrator.relTol = 2.5e-7
+        integrator.absTol = 3.0e-10
+
+        assert integrator.relTol == 2.5e-7
+        assert integrator.absTol == 3.0e-10
+        assert integrator.getRelativeTolerance() == integrator.relTol
+        assert integrator.getAbsoluteTolerance() == integrator.absTol
+
+
+def test_custom_integrators_reject_malformed_tableaus():
+    dynamic_object = spacecraft.Spacecraft()
+
+    fixed_cases = [
+        dict(
+            a_coefficients=[[0, 0], [1]],
+            b_coefficients=[0.5, 0.5],
+            c_coefficients=[0, 1],
+        ),
+        dict(
+            a_coefficients=[[0, 0, 0], [1, 0, 0]],
+            b_coefficients=[0.5, 0.5],
+            c_coefficients=[0, 1],
+        ),
+        dict(
+            a_coefficients=[[0, 0], [1, 0]],
+            b_coefficients=[[0.5], [0.5]],
+            c_coefficients=[0, 1],
+        ),
+        dict(
+            a_coefficients=[[0, 0], [np.nan, 0]],
+            b_coefficients=[0.5, 0.5],
+            c_coefficients=[0, 1],
+        ),
+        dict(
+            a_coefficients=[[0, 0], [1, 0]],
+            b_coefficients=[0.5, 0.5],
+            c_coefficients=[0, np.inf],
+        ),
+    ]
+    for coefficients in fixed_cases:
+        with pytest.raises(ValueError):
+            svIntegrators.svIntegratorRungeKutta(
+                dynamic_object, **coefficients
+            )
+
+    for a_coefficients in (
+        [[0, 0.25], [1, 0]],
+        [[0, 0], [1, 0.25]],
+    ):
+        with pytest.raises(ValueError, match="strictly lower triangular"):
+            svIntegrators.svIntegratorRungeKutta(
+                dynamic_object,
+                a_coefficients=a_coefficients,
+                b_coefficients=[0.5, 0.5],
+                c_coefficients=[0, 1],
+            )
+
+    adaptive_arguments = dict(
+        dynamic_object=dynamic_object,
+        a_coefficients=[[0, 0], [1, 0]],
+        b_coefficients=[0.5, 0.5],
+        b_star_coefficients=[1, 0],
+        c_coefficients=[0, 1],
+    )
+    for largest_order in (0, -1, np.nan, np.inf):
+        with pytest.raises(ValueError, match="finite and positive"):
+            svIntegrators.svIntegratorAdaptiveRungeKutta(
+                largest_order=largest_order, **adaptive_arguments
+            )
+
+    implicit_adaptive = dict(adaptive_arguments)
+    implicit_adaptive["a_coefficients"] = [[0, 0.25], [1, 0]]
+    with pytest.raises(ValueError, match="strictly lower triangular"):
+        svIntegrators.svIntegratorAdaptiveRungeKutta(
+            largest_order=2, **implicit_adaptive
+        )
+
+    malformed_adaptive = dict(adaptive_arguments)
+    malformed_adaptive["b_star_coefficients"] = [1, np.nan]
+    with pytest.raises(ValueError, match="finite"):
+        svIntegrators.svIntegratorAdaptiveRungeKutta(
+            largest_order=2, **malformed_adaptive
+        )
+
+
+def test_generated_custom_integrator_constructors_validate_dimensions():
+    dynamic_object = spacecraft.Spacecraft()
+
+    with pytest.raises(RuntimeError, match="dimensions"):
+        svIntegrators.svIntegratorRungeKutta2(
+            dynamic_object,
+            [[0, 0]],
+            [0.5, 0.5],
+            [0, 1],
+        )
+    with pytest.raises(RuntimeError, match="rows"):
+        svIntegrators.svIntegratorRungeKutta2(
+            dynamic_object,
+            [[0, 0], [1]],
+            [0.5, 0.5],
+            [0, 1],
+        )
+    with pytest.raises(RuntimeError, match="finite"):
+        svIntegrators.svIntegratorAdaptiveRungeKutta2(
+            dynamic_object,
+            [[0, 0], [1, 0]],
+            [0.5, 0.5],
+            [1, 0],
+            [0, np.inf],
+            2,
+        )
+    with pytest.raises(RuntimeError, match="finite and positive"):
+        svIntegrators.svIntegratorAdaptiveRungeKutta2(
+            dynamic_object,
+            [[0, 0], [1, 0]],
+            [0.5, 0.5],
+            [1, 0],
+            [0, 1],
+            0,
+        )
+    with pytest.raises(RuntimeError, match="strictly lower triangular"):
+        svIntegrators.svIntegratorRungeKutta2(
+            dynamic_object,
+            [[0, 0.25], [1, 0]],
+            [0.5, 0.5],
+            [0, 1],
+        )
+
+
 def run(doUnitTests, show_plots, integratorCase):
     """Call this routine directly to run the tutorial scenario."""
     testFailCount = 0  # zero unit test result counter

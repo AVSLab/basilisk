@@ -119,15 +119,13 @@ def eulerMayuramaIntegrate(
     x = np.zeros([nsteps+1, n], dtype=float)
     x[0,:] = x0
 
-    # Mirror the Basilisk integrator's noise source: the shared RandomGaussianNoiseGenerator.
-    # Euler-Mayurama uses only the Wiener increment dW (the generator also draws dZ, which
-    # this method ignores, exactly as the C++ integrator does). Basilisk's timeStep == 0
-    # init call is skipped by the integrator's guard, so no throw-away sample here.
+    # Mirror the Basilisk integrator's Wiener-only random-number path. Basilisk's
+    # timeStep == 0 init call is skipped, so no throw-away sample is needed here.
     rng = svIntegrators.RandomGaussianNoiseGenerator()
     rng.setSeed(rng_seed)
 
     for step in range(nsteps):
-        dW = rng.generate(m, dt).dW
+        dW = np.asarray(rng.generateWiener(m, dt))
 
         x[step+1,:] = x[step,:] + f(t[step], x[step,:])*dt
         for k, g in enumerate(g_list):
@@ -299,8 +297,17 @@ def getBasiliskSim(method: Method, dt: float, x0: npt.NDArray[np.float64], f: Dy
 
             self.states: List[dynParamManager.StateData] = []
             for i in range(n):
-                self.states.append( registerer.registerState(1, 1, f"y{i+1}") )
-                self.states[-1].setNumNoiseSources(m)
+                shape = dynParamManager.MatrixShape()
+                shape.rows = 1
+                shape.cols = 1
+                spec = dynParamManager.StateSpec()
+                spec.state = shape
+                spec.derivative = shape
+                spec.diffusionTangent = shape
+                spec.noiseCount = m
+                self.states.append(
+                    registerer.registerStateSpec(f"y{i+1}", spec)
+                )
                 self.states[-1].setState([[self.x0[i]]])
 
             # We want every noise source to be shared between states
@@ -370,6 +377,23 @@ def getBasiliskSim(method: Method, dt: float, x0: npt.NDArray[np.float64], f: Dy
     scSim.InitializeSimulation()
 
     return scSim, stateModel, integratorObject, stateLogger
+
+
+def test_legacy_endpoint_map_api_is_removed():
+    _, _, integrator, _ = getBasiliskSim(
+        "EulerMayurama",
+        0.5,
+        np.array([1.0]),
+        lambda _t, _x: np.array([0.0]),
+        [lambda _t, _x: np.array([1.0])],
+        seed=1,
+    )
+
+    assert not hasattr(integrator, "getStateIdToNoiseIndexMaps")
+    assert not hasattr(integrator, "propagateState")
+    assert not hasattr(svIntegrators, "StateIdToIndexMap")
+    assert not hasattr(svIntegrators, "StateIdToIndexMaps")
+
 
 def estimateErrorAndEmpiricalVariance(
         computeTrajectory: Callable[[], npt.NDArray[np.float64]],
