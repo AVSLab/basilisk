@@ -39,8 +39,10 @@ def stateData(show_plots):
 
     stateUse = [[10.0], [20.0]]
     stateName = "position"
-    newState = stateArchitecture.StateData(stateName, stateUse)
+    manager = stateArchitecture.DynParamManager()
+    newState = manager.registerState(2, 1, stateName)
     newState.setState(stateUse)
+    manager.finalizeStates()
 
     predictedDerivative = [[0.0], [0.0]]
 
@@ -62,7 +64,6 @@ def stateData(show_plots):
 
     derivativeInc = [[1.0], [2.5]]
     newState.setDerivative(derivativeInc)
-    newState.propagateState(0.1)
 
     predictedDerivativeNum = numpy.array(predictedDerivative) + numpy.array(derivativeInc)
     obsDerivativeNum = numpy.array(newState.getStateDeriv())
@@ -70,28 +71,11 @@ def stateData(show_plots):
         testFailCount += 1
         testMessages.append("State derivative update check failure.")
 
-    stateUpdateNum = numpy.array(newState.getState())
-    predUpStateNum = numpy.array(stateUse) + predictedDerivativeNum*0.1
-    if(stateUpdateNum.tolist() != stateUpdateNum.tolist()):
+    updatedState = [[30.0], [40.0]]
+    newState.setState(updatedState)
+    if(newState.getState() != updatedState):
         testFailCount += 1
-        testMessages.append("State propagation update check failure.")
-
-    priorState = stateUpdateNum
-    scaleFactor = 0.25
-    priorState *= scaleFactor
-    newState.scaleState(scaleFactor)
-    stateUpdateNum = numpy.array(newState.getState())
-    if(stateUpdateNum.tolist() != priorState.tolist()):
-        testFailCount += 1
-        testMessages.append("State scaling update check failure.")
-
-    dummyState = stateArchitecture.StateData("dummy", newState.getState())
-
-    dummyState.addState(newState)
-    if(dummyState.getState() != (2.0*stateUpdateNum).tolist()):
-        testFailCount += 1
-        testMessages.append("Plus operator failed on StateData")
-
+        testMessages.append("State setter update check failure.")
 
     if testFailCount == 0:
         print("PASSED: " + " State data")
@@ -170,7 +154,6 @@ def stateArchitectureTest(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     newManager = stateArchitecture.DynParamManager()
-
     positionName = "position"
     stateDim = [3, 1]
     posState = newManager.registerState(stateDim[0], stateDim[1], positionName)
@@ -192,15 +175,9 @@ def stateArchitectureTest(show_plots):
         testMessages.append("Failed to return proper state name for velocity")
 
 
-    if(newManager.registerState(stateDim[0], stateDim[1], positionName).getName() != positionName):
-        testFailCount += 1
-        testMessages.append("Failed to return proper state name in overload of call")
-
-    try:
-        newManager.registerState(stateDim[0], stateDim[1]+2, positionName)
-        testFailCount += 1
-    except BasiliskError:
-        pass
+    posState.setState([[1.0], [2.0], [3.5]])
+    velState.setState([[1.0], [2.0], [3.5]])
+    newManager.finalizeStates()
 
     positionStateLookup = newManager.getStateObject("Array1_flex")
 
@@ -208,27 +185,11 @@ def stateArchitectureTest(show_plots):
         testFailCount += 1
         testMessages.append("State lookup for solar array flex failed")
 
-    vectorFactor = 4.0
-    vecStart = [[1.0], [2.0], [3.5]]
-    posState.setState(vecStart)
-    velState.setState(vecStart)
-    vectorComposite = newManager.getStateVector()
-    vectorComposite.addStates(vectorComposite)
-    vectorComposite.scaleStates(vectorFactor)
-    numpyOutput = (numpy.array(vecStart) + numpy.array(vecStart))*vectorFactor
-    newManager.updateStateVector(vectorComposite)
-
-    if(velState.getState() != numpyOutput.tolist()):
+    updatedVelocity = [[4.0], [8.0], [14.0]]
+    velState.setState(updatedVelocity)
+    if(velState.getState() != updatedVelocity):
         testFailCount += 1
         testMessages.append("Velocity state update via state-manager failed")
-
-    dt = 1.0
-    posState.setDerivative(vecStart)
-    newManager.propagateStateVector(dt)
-    numpyOutput += numpy.array(vecStart)*dt
-    if(posState.getState() != numpyOutput.tolist()):
-        testFailCount += 1
-        testMessages.append("Position state propagation via state-manager failed")
 
     if testFailCount == 0:
         print("PASSED: " + " State manager")

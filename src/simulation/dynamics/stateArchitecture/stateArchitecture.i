@@ -35,16 +35,17 @@ from Basilisk.architecture.swig_common_model import *
 %include "swig_eigen.i"
 %include "swig_conly_data.i"
 
-// This method should not be exposed, but it's used in
-// test_stateArchitecture.py, so we enable it here. If
-// the test is every reworked, this extension should be removed.
-%extend DynParamManager
-{
-   StateVector getStateVector() {return self->stateContainer;}
-}
+%include "simulation/dynamics/_GeneralModuleFiles/dynParamManagerImport.swg"
 
-%include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.i"
+%ignore eigenMatrixXd2CArray;
 %include "../../../architecture/utilities/avsEigenSupport.h"
+%rename(eigenMatrixXd2CArray) eigenMatrixXd2CArrayForSwig;
+%inline %{
+void eigenMatrixXd2CArrayForSwig(Eigen::MatrixXd inMat, double *outArray)
+{
+    eigenMatrixXd2CArray(inMat, outArray);
+}
+%}
 
 %pythoncode %{
 import sys
