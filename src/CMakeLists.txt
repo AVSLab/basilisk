@@ -683,7 +683,6 @@ link_libraries(Eigen3::Eigen3)
 
 # Add general compiler flags
 set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 # Test Coverage
 option(USE_COVERAGE "GCOV code coverage analysis" OFF)
