@@ -184,9 +184,10 @@ svStochasticIntegratorW2Ito::integrateImpl(double currentTime, double timeStep)
         this->diagonalIntegral(index) = (this->weakDW(index) * this->weakDW(index) / xi - xi) / 2.0;
     }
     auto Ikl = [&](size_t k, size_t l) -> double {
+        const auto index = static_cast<Eigen::Index>(l);
         if (k < l)
-            return 0.5 * (this->weakDW(l) - eta2 * this->weakDW(l));
-        return 0.5 * (this->weakDW(l) + eta2 * this->weakDW(l)); // k > l
+            return 0.5 * (this->weakDW(index) - eta2 * this->weakDW(index));
+        return 0.5 * (this->weakDW(index) + eta2 * this->weakDW(index)); // k > l
     };
 
     try {

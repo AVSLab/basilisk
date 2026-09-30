@@ -171,7 +171,7 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]]
             "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
     }
     // Read the current RK-stage state before the tank allocates propellant flow.
-    this->fuelMass = this->massState->getStateReference()(0, 0);
+    this->fuelMass = this->massState->stateView()(0, 0);
     if (this->fuelMass < 0.0) {
         this->fuelMass = 0.0;  // [kg]
         Eigen::MatrixXd massMatrix(1, 1);

@@ -785,7 +785,7 @@ void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
-        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+        const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
         this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
     }
 

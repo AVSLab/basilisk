@@ -106,6 +106,7 @@ _rk_adaptive_base_classes = {}
 %ignore svIntegratorRungeKutta::FlatStateDescriptor;
 %ignore svIntegratorRungeKutta::FlatUpdateRun;
 %ignore svIntegratorAdaptiveRungeKutta::ToleranceSpan;
+%ignore svIntegratorAdaptiveRungeKutta::ToleranceOverride;
 %ignore svStochasticIntegratorW2Ito::FlatStateDescriptor;
 %ignore svStochasticIntegratorDRI1::FlatStateDescriptor;
 

@@ -21,14 +21,19 @@
 #define MJSCENE_H
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
+#include <Eigen/Core>
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <mujoco/mujoco.h>
 #include <stdexcept>
+#include <string>
 
 #include "MJSpec.h"
 #include "MJUtils.h"
 #include "architecture/_GeneralModuleFiles/sys_model_task.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefCpp/MJSceneStateMsgPayload.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 
@@ -721,13 +726,13 @@ protected:
     void writeOutputStateMessages(uint64_t CurrentSimNanos);
 
     /** Write output using dimensions captured from the active compiled model. */
-    void writeOutputStateMessages(uint64_t currentSimNanos, int nq, int nv, int na);
+    void writeOutputStateMessages(uint64_t currentSimNanos, mjtSize nq, mjtSize nv, mjtSize na);
 
     /** Size staging output storage without mutating the published message. */
-    void prepareOutputStateMessageStorage(int nq, int nv, int na);
+    void prepareOutputStateMessageStorage(mjtSize nq, mjtSize nv, mjtSize na);
 
     /** Fill already-sized pending output storage from finalized states. */
-    void populateOutputStateMessagePayload(int nq, int nv, int na);
+    void populateOutputStateMessagePayload(mjtSize nq, mjtSize nv, mjtSize na);
 
     /** Publish the already-prepared state payload. */
     void publishOutputStateMessage(uint64_t currentSimNanos);
@@ -743,10 +748,10 @@ protected:
     {
         bool registered = false; ///< True after the first complete scene Reset.
         bool highOrderAttitude = false; ///< Quaternion derivative/policy mode captured at registration.
-        int nq = 0; ///< Stored joint-position scalars.
-        int nv = 0; ///< Joint-velocity scalars.
-        int na = 0; ///< Actuator activation scalars.
-        int nbody = 0; ///< Body count, including the world body.
+        mjtSize nq = 0;                 ///< Stored joint-position scalars.
+        mjtSize nv = 0;                 ///< Joint-velocity scalars.
+        mjtSize na = 0;                 ///< Actuator activation scalars.
+        mjtSize nbody = 0;              ///< Body count, including the world body.
         std::vector<int> jointTypes; ///< Joint kinds in compiled model order.
 
         /** @brief Capture model dimensions and the selected quaternion policy. */

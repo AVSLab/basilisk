@@ -57,7 +57,8 @@ class AccuracyProbe final : public svIntegratorRungeKutta<numberStages>
         for (Eigen::Index index = 0; index < this->baseState.size(); ++index) {
             this->baseState(index) = index % 2 == 0 ? 0.0 : distribution(generator);
             for (size_t stage = 0; stage < numberStages; ++stage) {
-                this->kStorage(index, stage) = std::ldexp(distribution(generator), static_cast<int>(index % 9) - 4);
+                this->kStorage(index, static_cast<Eigen::Index>(stage)) =
+                  std::ldexp(distribution(generator), static_cast<int>(index % 9) - 4);
             }
         }
         std::array<double, numberStages> weights{};
@@ -78,7 +79,8 @@ class AccuracyProbe final : public svIntegratorRungeKutta<numberStages>
                 long double magnitude = 0.0L;
                 for (size_t stage = 0; stage < maxStage; ++stage) {
                     const long double term =
-                      static_cast<long double>(this->kStorage(index, stage)) * static_cast<long double>(weights[stage]);
+                      static_cast<long double>(this->kStorage(index, static_cast<Eigen::Index>(stage))) *
+                      static_cast<long double>(weights[stage]);
                     combined += term;
                     magnitude += std::abs(term);
                 }
@@ -89,7 +91,8 @@ class AccuracyProbe final : public svIntegratorRungeKutta<numberStages>
                 // legitimate roundoff difference behind a near-zero result.
                 // The bound covers products, sums, the final update, and the
                 // reference calculation where long double has double precision.
-                const long double tolerance = 8 * (maxStage + 1) * std::numeric_limits<double>::epsilon() * scale;
+                const long double tolerance =
+                  8.0L * static_cast<long double>(maxStage + 1) * std::numeric_limits<double>::epsilon() * scale;
                 EXPECT_LE(std::abs(static_cast<long double>(this->candidateState(index)) - expected), tolerance)
                   << "scalar " << index;
             }

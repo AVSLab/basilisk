@@ -214,6 +214,9 @@ MJScene::registerAndBindDynamicsState(mjModel* model, mjData* data, bool topolog
 std::array<size_t, 2>
 MJScene::registerMujocoStates(const mjModel* model, bool highOrderAttitude)
 {
+    const auto nbody = checkedMjtSizeCast<uint32_t>(model->nbody, "nbody");
+    const auto na = checkedMjtSizeCast<uint32_t>(model->na, "na");
+    const auto nq = checkedMjtSizeCast<size_t>(model->nq, "nq");
     constexpr size_t qposSlot = 0;
     constexpr size_t qvelSlot = 1;
     std::array<size_t, 2> jointSlots{};
@@ -235,20 +238,17 @@ MJScene::registerMujocoStates(const mjModel* model, bool highOrderAttitude)
     if (this->dynManager.statesAreFinalized()) {
         const auto& layouts = this->dynManager.getStateRegistry().getStateLayouts();
         jointSlots[qvelSlot] = 0;
-        while (jointSlots[qvelSlot] < layouts.size() &&
-               layouts[jointSlots[qvelSlot]].stateOffset < static_cast<size_t>(model->nq)) {
+        while (jointSlots[qvelSlot] < layouts.size() && layouts[jointSlots[qvelSlot]].stateOffset < nq) {
             ++jointSlots[qvelSlot];
         }
     }
     for (auto&& body : this->spec.getBodies()) {
         body.registerJointVelocityStates(DynParamRegisterer(this->dynManager, "body_" + body.getName() + "_"));
     }
-    this->massState = this->dynManager.registerState(
-      "mujocoMass", euclideanSpec(static_cast<uint32_t>(model->nbody), ErrorControlMode::WholeState));
+    this->massState = this->dynManager.registerState("mujocoMass", euclideanSpec(nbody, ErrorControlMode::WholeState));
     this->actState = nullptr;
-    if (model->na > 0) {
-        this->actState = this->dynManager.registerState(
-          "mujocoAct", euclideanSpec(static_cast<uint32_t>(model->na), ErrorControlMode::WholeState));
+    if (na > 0) {
+        this->actState = this->dynManager.registerState("mujocoAct", euclideanSpec(na, ErrorControlMode::WholeState));
     }
     return jointSlots;
 }
@@ -278,19 +278,22 @@ MJScene::bindMujocoStateSegments(mjModel* model,
     constexpr size_t qvelSlot = 1;
     MujocoStateSegments segments;
     if (model->nq > 0) {
+        const auto nq = checkedMjtSizeCast<size_t>(model->nq, "nq");
+        const auto nv = checkedMjtSizeCast<size_t>(model->nv, "nv");
         const auto& layouts = this->dynManager.getStateRegistry().getStateLayouts();
         if (jointSlots[qposSlot] >= layouts.size() || jointSlots[qvelSlot] >= layouts.size()) {
             throw std::logic_error("MuJoCo joint record boundaries are outside the state layout.");
         }
         const size_t qposOffset = layouts[jointSlots[qposSlot]].stateOffset;
-        if (layouts[jointSlots[qvelSlot]].stateOffset != qposOffset + static_cast<size_t>(model->nq)) {
+        if (layouts[jointSlots[qvelSlot]].stateOffset != qposOffset + nq) {
             throw std::logic_error("MuJoCo joint records do not match the captured qpos/qvel spans.");
         }
-        segments.qposState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qposSlot], model->nq);
-        segments.qvelState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qvelSlot], model->nv);
-        segments.qvelDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qvelSlot], model->nv);
+        segments.qposState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qposSlot], nq);
+        segments.qvelState = this->dynManager.getStateRegistry().getStateSegment(jointSlots[qvelSlot], nv);
+        segments.qvelDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qvelSlot], nv);
         if (!highOrderAttitude) {
-            segments.qposDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qposSlot], model->nv);
+            segments.qposDerivative =
+              this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qposSlot], nv);
         }
         double* qposData = this->dynManager.getStateRegistry().stateSegmentData(segments.qposState);
         double* qvelData = this->dynManager.getStateRegistry().stateSegmentData(segments.qvelState);
@@ -372,7 +375,7 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     // On the first dynamics call, zero the CTRL array to prevent NaN/uninitialized
     // actuator commands from triggering instability at t=0.
     if (this->firstDynamicsCall) {
-        for (int i = 0; i < model->nu; ++i) {
+        for (mjtSize i = 0; i < model->nu; ++i) {
             data->ctrl[i] = 0.0;
         }
         this->firstDynamicsCall = false;
@@ -693,10 +696,10 @@ MJScene::MujocoTopology::matches(const mjModel& model) const noexcept
         return true;
     }
     if (model.nq != this->nq || model.nv != this->nv || model.na != this->na || model.nbody != this->nbody ||
-        model.njnt != static_cast<int>(this->jointTypes.size())) {
+        model.njnt != static_cast<mjtSize>(this->jointTypes.size())) {
         return false;
     }
-    for (int joint = 0; joint < model.njnt; ++joint) {
+    for (mjtSize joint = 0; joint < model.njnt; ++joint) {
         const size_t index = static_cast<size_t>(joint);
         if (model.jnt_type[joint] != this->jointTypes[index]) {
             return false;
@@ -774,7 +777,7 @@ MJScene::synchronizeMujocoFromStates(mjModel* model, mjData* data)
     this->validateMujocoMassStates(model);
     const auto masses = this->massState->stateView();
     for (auto&& body : this->spec.getBodies()) {
-        body.applyPrevalidatedMass(model, masses(body.getId()));
+        body.applyPrevalidatedMass(model, masses(static_cast<Eigen::Index>(body.getId())));
     }
     if (this->areMujocoModelConstStale()) {
         mj_setConst(model, data);
@@ -802,7 +805,7 @@ MJScene::validateMujocoMassStates(const mjModel* model) const
     }
 
     constexpr double massEpsilon = 10.0 * std::numeric_limits<double>::epsilon();
-    for (int bodyId = 1; bodyId < model->nbody; ++bodyId) {
+    for (Eigen::Index bodyId = 1; bodyId < masses.size(); ++bodyId) {
         const double oldMass = model->body_mass[bodyId];
         const double newMass = masses(bodyId);
         if (!std::isfinite(newMass) || newMass < 0.0) {
@@ -843,7 +846,7 @@ MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
 }
 
 void
-MJScene::writeOutputStateMessages(uint64_t currentSimNanos, int nq, int nv, int na)
+MJScene::writeOutputStateMessages(uint64_t currentSimNanos, mjtSize nq, mjtSize nv, mjtSize na)
 {
     this->prepareOutputStateMessageStorage(nq, nv, na);
     this->populateOutputStateMessagePayload(nq, nv, na);
@@ -851,15 +854,15 @@ MJScene::writeOutputStateMessages(uint64_t currentSimNanos, int nq, int nv, int 
 }
 
 void
-MJScene::prepareOutputStateMessageStorage(int nq, int nv, int na)
+MJScene::prepareOutputStateMessageStorage(mjtSize nq, mjtSize nv, mjtSize na)
 {
-    this->outputStateMessagePayload.qpos.resize(nq);
-    this->outputStateMessagePayload.qvel.resize(nv);
-    this->outputStateMessagePayload.act.resize(na);
+    this->outputStateMessagePayload.qpos.resize(checkedMjtSizeCast<Eigen::Index>(nq, "nq"));
+    this->outputStateMessagePayload.qvel.resize(checkedMjtSizeCast<Eigen::Index>(nv, "nv"));
+    this->outputStateMessagePayload.act.resize(checkedMjtSizeCast<Eigen::Index>(na, "na"));
 }
 
 void
-MJScene::populateOutputStateMessagePayload(int nq, int nv, int na)
+MJScene::populateOutputStateMessagePayload(mjtSize nq, mjtSize nv, mjtSize na)
 {
     if (nq > 0) {
         std::copy_n(this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment),

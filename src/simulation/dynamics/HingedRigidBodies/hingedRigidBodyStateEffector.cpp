@@ -468,7 +468,7 @@ void HingedRigidBodyStateEffector::computePanelInertialStates()
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
-        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
+        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->stateView().data());
     }
     Eigen::MRPd sigmaBN = this->sigma_BN;
     Eigen::Matrix3d dcm_NP = sigmaBN.toRotationMatrix();  // assumes P and B are identical
