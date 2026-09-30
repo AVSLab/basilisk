@@ -69,8 +69,10 @@ Version |release|
 - GitHub issue 282: Resetting simulation threads could clear process assignments
   while a worker was still using them, and shutdown requests used an unsynchronized
   flag. Worker ownership now guarantees stop and join before releasing thread state
-  or changing assignments. See :ref:`bskThreadOwnership` for configuration and
-  C++ migration details.
+  or changing assignments. ``requestStop()`` and the compatible ``killThread()``
+  now wake idle workers on the first stop request; repeated calls are harmless.
+  Pool shutdown signals all workers before joining. See :ref:`bskThreadOwnership`
+  for configuration and C++ migration details.
 
 - GitHub issue 282: Dynamically allocated output messages now use private
   ``std::unique_ptr`` storage, preserving the public message-vector interfaces.

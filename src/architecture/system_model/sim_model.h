@@ -53,7 +53,14 @@ public:
     void waitOnInit();
     void postInit();
     bool threadValid() const {return !this->terminateThread;} //!< Determines if the thread is currently usable or if it has been requested to shutdown
-    void killThread() {this->terminateThread=true;} //!< Politely asks the thread to no longer be alive.
+    /** @brief Request shutdown and wake the worker without waiting for it to finish.
+     * @note Only the first stop request releases the worker semaphore. Repeated
+     * calls, including through killThread(), are harmless. The owner must keep
+     * this execution record alive until the worker has been joined.
+     */
+    void requestStop();
+    /** @brief Compatibility alias for requestStop(), including waking an idle worker. */
+    void killThread() {this->requestStop();}
     void lockThread();
     void unlockThread();
     void lockParent();
@@ -111,6 +118,7 @@ public:
     void resetThreads(uint64_t threadCount);
     /** @brief Stop and join all workers and release their execution records.
      * @note Safe to call repeatedly, including before workers have been started.
+     * Every worker receives its stop request before any worker is joined.
      */
     void deleteThreads();
     void assignRemainingProcs();

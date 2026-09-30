@@ -85,6 +85,18 @@ def _execute_and_check(simulation, models):
 
 def _run_case(case, thread_count):
     """Run one lifetime scenario in an isolated interpreter."""
+    if case in ("requestStop", "killThread"):
+        for _ in range(thread_count):
+            worker = sim_model.SimThreadExecution()
+            assert worker.threadValid()
+            getattr(worker, case)()
+            assert not worker.threadValid()
+            # A missing shutdown wake-up fails at the subprocess deadline.
+            worker.lockThread()
+            worker.requestStop()
+            worker.killThread()
+        return
+
     if case == "unstarted":
         for _ in range(10):
             simulation = sim_model.SimModel()
@@ -120,7 +132,9 @@ def _run_case(case, thread_count):
 
 
 @pytest.mark.parametrize("thread_count", [1, 3])
-@pytest.mark.parametrize("case", ["unstarted", "reinitialize", "selfInit", "reset", "update"])
+@pytest.mark.parametrize(
+    "case", ["unstarted", "reinitialize", "selfInit", "reset", "update", "requestStop", "killThread"]
+)
 def test_thread_ownership(case, thread_count):
     """Preserve Python scheduling and exception handling without shutdown hangs."""
     timeout = 30  # [s]

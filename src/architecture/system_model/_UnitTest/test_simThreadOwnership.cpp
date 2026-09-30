@@ -21,9 +21,13 @@
 
 #include <array>
 #include <atomic>
+#include <chrono>
+#include <condition_variable>
 #include <functional>
+#include <future>
 #include <gtest/gtest.h>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -32,8 +36,9 @@
 
 namespace {
 
-constexpr uint64_t taskPeriod = 10; // [ns]
-constexpr uint64_t stopTime = 20;   // [ns]
+constexpr uint64_t taskPeriod = 10;                       // [ns]
+constexpr uint64_t stopTime = 20;                         // [ns]
+constexpr auto shutdownTimeout = std::chrono::seconds(2); // [s]
 
 class CountingModel : public SysModel
 {
@@ -144,6 +149,102 @@ TEST(SimThreadOwnership, WorkerDestructionJoins)
     }
 }
 
+/** @brief Both stop interfaces wake an idle worker before its owner joins or destroys it. */
+TEST(SimThreadOwnership, StopRequestsWakeIdleWorkers)
+{
+    for (bool legacyCall : { false, true }) {
+        std::promise<void> finished;
+        auto completion = finished.get_future();
+        bool observedStop = false;
+        SimThreadExecution worker;
+        worker.threadContext = std::thread([&] {
+            worker.postInit();
+            worker.lockThread();
+            observedStop = !worker.threadValid();
+            finished.set_value();
+        });
+        worker.waitOnInit();
+        if (legacyCall) {
+            worker.killThread();
+        } else {
+            worker.requestStop();
+        }
+        auto status = completion.wait_for(shutdownTimeout);
+        if (status != std::future_status::ready) {
+            worker.unlockThread(); // Rescue a missing wake-up so a regression fails without hanging.
+        }
+        worker.threadContext.join();
+        EXPECT_EQ(status, std::future_status::ready);
+        EXPECT_TRUE(observedStop);
+    }
+}
+
+/** @brief Repeated stop requests through either interface release only one semaphore token. */
+TEST(SimThreadOwnership, RepeatedStopRequestsReleaseOnlyOnce)
+{
+    constexpr auto quietPeriod = std::chrono::milliseconds(100); // [ms]
+    for (bool legacyFirst : { false, true }) {
+        SimThreadExecution worker;
+        if (legacyFirst) {
+            worker.killThread();
+        } else {
+            worker.requestStop();
+        }
+        worker.requestStop();
+        worker.killThread();
+        EXPECT_FALSE(worker.threadValid());
+
+        std::promise<void> firstAcquired;
+        std::promise<void> secondAcquired;
+        auto first = firstAcquired.get_future();
+        auto second = secondAcquired.get_future();
+        worker.threadContext = std::thread([&] {
+            worker.lockThread();
+            firstAcquired.set_value();
+            worker.lockThread();
+            secondAcquired.set_value();
+        });
+        auto firstStatus = first.wait_for(shutdownTimeout);
+        if (firstStatus != std::future_status::ready) {
+            worker.unlockThread();
+        }
+        auto secondStatus = second.wait_for(quietPeriod);
+        // Always release the second acquire before joining, including on test failure.
+        worker.unlockThread();
+        worker.threadContext.join();
+        EXPECT_EQ(firstStatus, std::future_status::ready);
+        EXPECT_EQ(secondStatus, std::future_status::timeout);
+    }
+}
+
+/** @brief Pool shutdown signals every worker before waiting for any worker to finish. */
+TEST(SimThreadOwnership, ShutdownSignalsAllWorkersBeforeJoining)
+{
+    std::mutex mutex;
+    std::condition_variable stoppedCondition;
+    std::size_t stoppedCount = 0;
+    std::array<bool, 2> observedAllStops{};
+    SimModel simulation;
+    simulation.resetThreads(observedAllStops.size());
+    for (std::size_t index = 0; index < observedAllStops.size(); ++index) {
+        auto* worker = simulation.threadList[index].get();
+        worker->threadContext = std::thread([&, worker, index] {
+            worker->postInit();
+            worker->lockThread();
+            std::unique_lock<std::mutex> lock(mutex);
+            ++stoppedCount;
+            stoppedCondition.notify_all();
+            observedAllStops[index] =
+              stoppedCondition.wait_for(lock, shutdownTimeout, [&] { return stoppedCount == observedAllStops.size(); });
+        });
+        worker->waitOnInit();
+    }
+    simulation.deleteThreads();
+    EXPECT_TRUE(observedAllStops[0]);
+    EXPECT_TRUE(observedAllStops[1]);
+    EXPECT_EQ(simulation.getThreadCount(), 0);
+}
+
 /** @brief Destruction also joins the started part of a partially constructed pool. */
 TEST(SimThreadOwnership, PartialStartupUnwinds)
 {
@@ -206,13 +307,21 @@ TEST(SimThreadOwnership, ResetAndReinitialize)
 /** @brief Shutdown wakes an idle worker without executing queued initialization work. */
 TEST(SimThreadOwnership, ShutdownDoesNotRunPendingInitialization)
 {
-    ProcessFixture fixture("process");
-    SimModel simulation;
-    simulation.addNewProcess(&fixture.process);
-    simulation.assignRemainingProcs();
-    simulation.threadList.front()->selfInitNow = true;
-    simulation.deleteThreads();
-    EXPECT_EQ(fixture.model.selfInitCalls, 0);
+    for (bool legacyStop : { false, true }) {
+        ProcessFixture fixture("process");
+        SimModel simulation;
+        simulation.addNewProcess(&fixture.process);
+        simulation.assignRemainingProcs();
+        auto* worker = simulation.threadList.front().get();
+        worker->selfInitNow = true;
+        if (legacyStop) {
+            // Existing callers may still explicitly wake the worker after killThread().
+            worker->killThread();
+            worker->unlockThread();
+        }
+        simulation.deleteThreads();
+        EXPECT_EQ(fixture.model.selfInitCalls, 0);
+    }
 }
 
 /** @brief Reset waits for active work before changing process assignments. */
