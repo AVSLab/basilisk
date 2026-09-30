@@ -16,6 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import errno
 import inspect
 import os
 import shutil
@@ -38,12 +39,12 @@ SHOW_PLOTS_ELEVATED_MESSAGE = (
 
 def _patch_rerunfailures_socket_cleanup():
     """
-    Close pytest-rerunfailures server-side sockets when xdist is active.
+    Close pytest-rerunfailures sockets without reporting shutdown errors.
 
-    pytest-rerunfailures 16.1 opens localhost sockets to coordinate reruns
+    pytest-rerunfailures 16.x opens localhost sockets to coordinate reruns
     between xdist workers, but accepted server connections are not closed by
-    the plugin.  This narrow patch preserves the plugin handler while ensuring
-    each accepted connection is closed when the handler exits.
+    the plugin. Preserve its handlers while closing accepted connections and
+    handling the expected socket errors when pytest closes the listener.
     """
     try:
         import pytest_rerunfailures
@@ -56,12 +57,29 @@ def _patch_rerunfailures_socket_cleanup():
     if getattr(server_status_db, "_bsk_socket_cleanup_patched", False):
         return
 
+    original_run_server = server_status_db.run_server
     original_run_connection = server_status_db.run_connection
+    closed_socket_errors = {
+        errno.EBADF,
+        errno.ECONNABORTED,
+        errno.ENOTSOCK,
+        getattr(errno, "WSAENOTSOCK", errno.ENOTSOCK),
+    }
+
+    def run_server_until_socket_close(self):
+        try:
+            return original_run_server(self)
+        except OSError as error:
+            # Closing the listener can interrupt listen() or accept() in this
+            # thread. Preserve all other errors, including errors while open.
+            if self.sock.fileno() != -1 or error.errno not in closed_socket_errors:
+                raise
 
     def run_connection_with_socket_close(self, conn):
         with conn:
             return original_run_connection(self, conn)
 
+    server_status_db.run_server = run_server_until_socket_close
     server_status_db.run_connection = run_connection_with_socket_close
     server_status_db._bsk_socket_cleanup_patched = True
 
