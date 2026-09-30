@@ -278,13 +278,14 @@ StateRegistry::allocateBuffers()
     for (size_t index = 0; index < layouts.size(); ++index) {
         const StateLayout& layout = layouts[index];
         const StateSeed& seed = *this->stateRecords[index].seed;
-        newLive.states.segment(layout.stateOffset, layout.stateCount) =
+        newLive.states.segment(static_cast<Eigen::Index>(layout.stateOffset), layout.stateCount) =
           Eigen::Map<const Eigen::VectorXd>(seed.state.data(), static_cast<Eigen::Index>(layout.stateCount));
-        newLive.derivatives.segment(layout.derivOffset, layout.derivCount) =
+        newLive.derivatives.segment(static_cast<Eigen::Index>(layout.derivOffset), layout.derivCount) =
           Eigen::Map<const Eigen::VectorXd>(seed.derivative.data(), static_cast<Eigen::Index>(layout.derivCount));
         for (size_t noiseIndex = 0; noiseIndex < layout.noiseCount; ++noiseIndex) {
-            newLive.diffusions.segment(layout.diffusionOffset + noiseIndex * layout.diffusionCountPerSource,
-                                       layout.diffusionCountPerSource) =
+            newLive.diffusions.segment(
+              static_cast<Eigen::Index>(layout.diffusionOffset + noiseIndex * layout.diffusionCountPerSource),
+              layout.diffusionCountPerSource) =
               Eigen::Map<const Eigen::VectorXd>(seed.diffusions[noiseIndex].data(),
                                                 static_cast<Eigen::Index>(layout.diffusionCountPerSource));
         }

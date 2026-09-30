@@ -115,7 +115,7 @@ NHingedRigidBodyStateEffector::computePanelInertialStates()
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
-        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->getStateReference().data());
+        this->sigma_BN = Eigen::MRPd(this->hubSigmaState->stateView().data());
     }
     Eigen::MRPd sigmaLocal_BN = this->sigma_BN;
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();

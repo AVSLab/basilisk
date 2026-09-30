@@ -43,8 +43,6 @@ using integrator_step_test::stepIntegrator;
 std::atomic<size_t> allocationCount{ 0 };
 
 static_assert(std::is_same_v<decltype(std::declval<const StateData&>().getName()), std::string>);
-static_assert(std::is_same_v<decltype(std::declval<const StateData&>().getStateReference()), ConstMatrixView>);
-static_assert(std::is_same_v<decltype(std::declval<const StateData&>().getStateDerivReference()), ConstMatrixView>);
 static_assert(!std::is_destructible_v<StateData>);
 
 class MissingBindingPreparation : public StateVecIntegrator
@@ -968,8 +966,23 @@ TEST(FlatRungeKutta, DeprecatedReferenceAccessorsReturnLiveConstViews)
 {
     TestDynamics dynamics;
     const StateData& state = *dynamics.matrixState;
+    // These calls deliberately verify the deprecated compatibility API.
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    static_assert(std::is_same_v<decltype(state.getStateReference()), ConstMatrixView>);
+    static_assert(std::is_same_v<decltype(state.getStateDerivReference()), ConstMatrixView>);
     const auto stateReference = state.getStateReference();
     const auto derivativeReference = state.getStateDerivReference();
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
     Eigen::MatrixXd replacement(2, 2);
     replacement << 4.0, 3.0, 2.0, 1.0;

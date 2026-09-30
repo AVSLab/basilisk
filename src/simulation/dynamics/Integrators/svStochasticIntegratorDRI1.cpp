@@ -516,18 +516,21 @@ svStochasticIntegratorDRI1::integrateImpl(double currentTime, double timeStep)
 
         if (doCrossNoise) {
             auto ihat2 = [&](size_t k, size_t l) -> double {
+                const auto row = static_cast<Eigen::Index>(k);
+                const auto column = static_cast<Eigen::Index>(l);
                 if (k < l) {
-                    return (this->weakDW(k) * this->weakDW(l) - sqh * this->weakDZ(k)) / 2.0;
+                    return (this->weakDW(row) * this->weakDW(column) - sqh * this->weakDZ(row)) / 2.0;
                 }
-                return (this->weakDW(k) * this->weakDW(l) + sqh * this->weakDZ(l)) / 2.0;
+                return (this->weakDW(row) * this->weakDW(column) + sqh * this->weakDZ(column)) / 2.0;
             };
             for (size_t l = 0; l < m; l++) {
                 for (size_t k = 0; k < m; k++) {
                     if (k == l) {
                         continue;
                     }
-                    const double w2 = this->weakDW(k) * c.beta32 + ihat2(k, l) * c.beta42 / sqh;
-                    const double w3 = this->weakDW(k) * c.beta33 + ihat2(k, l) * c.beta43 / sqh;
+                    const auto index = static_cast<Eigen::Index>(k);
+                    const double w2 = this->weakDW(index) * c.beta32 + ihat2(k, l) * c.beta42 / sqh;
+                    const double w3 = this->weakDW(index) * c.beta33 + ihat2(k, l) * c.beta43 / sqh;
 
                     this->copyHatDiffusion(k, l, false);
                     this->applyStochasticNoiseSlotInPlace(this->combinedDiffusion, k, w2);

@@ -26,7 +26,10 @@
 #include <utility>
 
 #ifdef BASILISK_TEST_MUJOCO_POLICIES
+#include "architecture/utilities/bskLogging.h"
 #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJQuaternionStatePolicy.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.h"
+#include <cstdint>
 #include <memory>
 #endif
 
@@ -184,6 +187,29 @@ TEST_F(StateBufferViews, BorrowedViewsSurviveRepeatedFinalization)
 }
 
 #ifdef BASILISK_TEST_MUJOCO_POLICIES
+namespace {
+class MujocoRegistrationProbe : public MJScene
+{
+  public:
+    using MJScene::MJScene;
+    using MJScene::registerMujocoStates;
+};
+}
+
+TEST(StateBufferAccess, MujocoRejectsOversizedBulkDimensionsBeforeRegistration)
+{
+    // An unchecked uint32_t cast would wrap this count to one and accept it.
+    const mjtSize oversized = static_cast<mjtSize>(std::numeric_limits<uint32_t>::max()) + 2;
+    for (auto dimension : { &mjModel::nbody, &mjModel::na }) {
+        MujocoRegistrationProbe scene("<mujoco/>");
+        mjModel model = *scene.getMujocoModel();
+        model.*dimension = oversized;
+        EXPECT_THROW(scene.registerMujocoStates(&model, false), BasiliskError);
+        EXPECT_EQ(scene.dynManager.getStateRegistry().getStateCount(), 0U);
+        EXPECT_NO_THROW(scene.Reset(0));
+    }
+}
+
 TEST(StateBufferAccess, QuaternionPoliciesKeepIndependentBufferDimensions)
 {
     DynParamManager manager;

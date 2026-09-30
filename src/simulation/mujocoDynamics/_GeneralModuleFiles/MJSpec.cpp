@@ -398,11 +398,13 @@ bool MJSpec::recompileIfNeeded()
         MJBasilisk::detail::logAndThrow<std::logic_error>(
           "MuJoCo recompilation would change finalized state or qpos-policy topology.");
     }
-    auto objectPrefixMatches = [this, &candidate](mjtObj type, int currentCount, int candidateCount) {
+    auto objectPrefixMatches = [this, &candidate](mjtObj type, mjtSize currentCount, mjtSize candidateCount) {
         if (candidateCount < currentCount) {
             return false;
         }
-        for (int index = 0; index < currentCount; ++index) {
+        // MuJoCo object IDs remain int even though model counts use mjtSize.
+        const auto count = checkedMjtSizeCast<int>(currentCount, "runtime object count");
+        for (int index = 0; index < count; ++index) {
             const char* currentName = mj_id2name(this->model.get(), type, index);
             const char* candidateName = mj_id2name(candidate.get(), type, index);
             if ((currentName == nullptr) != (candidateName == nullptr) ||
@@ -422,7 +424,7 @@ bool MJSpec::recompileIfNeeded()
           "MuJoCo recompilation would reorder or remove runtime-state objects.");
     }
 
-    auto intPrefixMatches = [](const int* current, const int* pending, int count) {
+    auto intPrefixMatches = [](const int* current, const int* pending, mjtSize count) {
         if (count == 0) {
             return true;
         }

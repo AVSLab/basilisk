@@ -705,7 +705,7 @@ void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double int
 void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
 {
     // - read live: the cached copy lags an integrator substep at write time
-    const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->getStateReference().data());
+    const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
     this->dcm_BN = sigmaHub_BN.toRotationMatrix().transpose();
 
     const Eigen::Vector3d r_BN_N = (Eigen::Vector3d)*this->inertialPositionProperty;
