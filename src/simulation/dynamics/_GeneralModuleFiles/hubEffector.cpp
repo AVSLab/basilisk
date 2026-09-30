@@ -203,7 +203,8 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::V
     gLocal_N = *this->g_N;
 
     // - Set kinematic derivative
-    sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
+    // Derivative buffers do not alias the local values or back-substitution matrices.
+    sigmaState->derivativeView().noalias() = 1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B;
 
     // - Define dcm's
     Eigen::Matrix3d dcm_NB;
@@ -221,7 +222,7 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::V
     omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
-    velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B));
+    velocityState->derivativeView().noalias() = dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B);
 
     // - Set gravity velocity derivatives
     gravVelocityState->setDerivative(gLocal_N);
@@ -259,7 +260,7 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
 
     this->posState->setDerivative(rDotLocal_BN_N);
     this->velocityState->setDerivative(translationalAccel_N);
-    this->sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
+    this->sigmaState->derivativeView().noalias() = 1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B;
     this->omegaState->setDerivative(omegaDotLocal_BN_B);
     this->gravVelocityState->setDerivative(*this->g_N);
     this->gravVelocityBcState->setDerivative(*this->g_N);
