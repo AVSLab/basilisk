@@ -221,7 +221,13 @@ def test_internal_mujoco_derivative_methods_are_not_wrapped():
 
 
 def _native_integrate_position(xml_path, qpos, qvel, time_step):
-    library = ctypes.CDLL(_mujoco.__file__)
+    """Advance positions with the native MuJoCo library used by Basilisk."""
+    library_path = _mujoco.__file__
+    if sys.platform == "win32":
+        # Windows extensions do not re-export symbols from their dependencies.
+        # Conan copies the MuJoCo DLL into the Basilisk package directory.
+        library_path = os.path.join(os.path.dirname(library_path), "..", "mujoco.dll")
+    library = ctypes.CDLL(library_path)
     library.mj_loadXML.restype = ctypes.c_void_p
     library.mj_loadXML.argtypes = [
         ctypes.c_char_p,
@@ -229,12 +235,14 @@ def _native_integrate_position(xml_path, qpos, qvel, time_step):
         ctypes.c_char_p,
         ctypes.c_int,
     ]
+    library.mj_integratePos.restype = None
     library.mj_integratePos.argtypes = [
         ctypes.c_void_p,
         ctypes.POINTER(ctypes.c_double),
         ctypes.POINTER(ctypes.c_double),
         ctypes.c_double,
     ]
+    library.mj_deleteModel.restype = None
     library.mj_deleteModel.argtypes = [ctypes.c_void_p]
 
     error = ctypes.create_string_buffer(1024)
