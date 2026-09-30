@@ -20,7 +20,6 @@
 
 #include <cmath>
 #include <cstdint>
-#include <cstring>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -33,14 +32,6 @@
 
 namespace {
 using integrator_test::stepIntegrator;
-
-uint64_t
-doubleBits(double value)
-{
-    uint64_t bits = 0;
-    std::memcpy(&bits, &value, sizeof(bits));
-    return bits;
-}
 
 class WeakItoDynamics final : public DynamicObject
 {
@@ -239,22 +230,24 @@ expectNoiseCountPath(size_t noiseCount)
     EXPECT_TRUE(std::isfinite(dynamics.second->stateView()(0, 0)));
 }
 
+// Numerical snapshots use EXPECT_DOUBLE_EQ's four-ULP tolerance, as in the
+// paper-reference tests, to allow platform-dependent floating-point rounding.
 template<typename Integrator>
 void
-expectMixedTopology(uint64_t expectedFirstBits, uint64_t expectedSecondBits)
+expectMixedTopology(double expectedFirst, double expectedSecond)
 {
     WeakItoDynamics dynamics(2, true);
     Integrator integrator(&dynamics);
     integrator.setNoiseGenerator(prescribed({ 0.5, -0.45 }, { 0.3, -0.2 }));
     stepIntegrator(integrator, 0.0, 0.125);
 
-    EXPECT_EQ(doubleBits(dynamics.first->stateView()(0, 0)), expectedFirstBits);
-    EXPECT_EQ(doubleBits(dynamics.second->stateView()(0, 0)), expectedSecondBits);
+    EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), expectedFirst);
+    EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), expectedSecond);
 }
 
 template<typename Integrator>
 void
-expectNoncommutativeSpecialPolicy(uint64_t expectedBits)
+expectNoncommutativeSpecialPolicy(double expected)
 {
     OrderedWeakItoDynamics dynamics;
     Integrator integrator(&dynamics);
@@ -262,7 +255,7 @@ expectNoncommutativeSpecialPolicy(uint64_t expectedBits)
 
     stepIntegrator(integrator, 0.0, 0.125);
 
-    EXPECT_EQ(doubleBits(dynamics.state->stateView()(0, 0)), expectedBits);
+    EXPECT_DOUBLE_EQ(dynamics.state->stateView()(0, 0), expected);
 }
 }
 
@@ -372,22 +365,22 @@ TEST(FlatWeakItoFamilies, AllConcreteVariantsHandleZeroAndScalarNoise)
 
 TEST(FlatWeakItoFamilies, MixedSharedAndUnsharedNoiseTopology)
 {
-    expectMixedTopology<svStochasticIntegratorW2Ito1>(UINT64_C(0x3fdf22e09f4a6057), UINT64_C(0x3fec6b1086efba3f));
-    expectMixedTopology<svStochasticIntegratorW2Ito2>(UINT64_C(0x3fdf0f3650431c31), UINT64_C(0x3fec67da8284e8a4));
-    expectMixedTopology<svStochasticIntegratorDRI1>(UINT64_C(0x3fdf6949ae960c2e), UINT64_C(0x3fec428fd341a349));
-    expectMixedTopology<svStochasticIntegratorDRI1NM>(UINT64_C(0x3fe00f75bcab47a0), UINT64_C(0x3fec68cd43e57a52));
-    expectMixedTopology<svStochasticIntegratorRI1>(UINT64_C(0x3fdf67106e542e0a), UINT64_C(0x3fec422b6d3db529));
-    expectMixedTopology<svStochasticIntegratorRI3>(UINT64_C(0x3fdf65f5872a2ab8), UINT64_C(0x3fec42b8e0d2b6d2));
-    expectMixedTopology<svStochasticIntegratorRI5>(UINT64_C(0x3fdf56b39b8891f1), UINT64_C(0x3ff080bad0214133));
-    expectMixedTopology<svStochasticIntegratorRI6>(UINT64_C(0x3fdf65eb1a1c7e86), UINT64_C(0x3fec42c43c36bc05));
+    expectMixedTopology<svStochasticIntegratorW2Ito1>(0.4865037494250876, 0.8880694041707285);
+    expectMixedTopology<svStochasticIntegratorW2Ito2>(0.48530347669697266, 0.8876774357988961);
+    expectMixedTopology<svStochasticIntegratorDRI1>(0.4908012585585223, 0.8831252218343276);
+    expectMixedTopology<svStochasticIntegratorDRI1NM>(0.5018871960585223, 0.8877931905843275);
+    expectMixedTopology<svStochasticIntegratorRI1>(0.4906655385427433, 0.8830773481001063);
+    expectMixedTopology<svStochasticIntegratorRI3>(0.49059808921507964, 0.88314479742777);
+    expectMixedTopology<svStochasticIntegratorRI5>(0.4896668452149973, 1.031428158767153);
+    expectMixedTopology<svStochasticIntegratorRI6>(0.4905956034653872, 0.8831502128649623);
 }
 
 TEST(FlatWeakItoFamilies, NoncommutativeSpecialPolicyPreservesLocalNoiseOrder)
 {
-    expectNoncommutativeSpecialPolicy<svStochasticIntegratorW2Ito1>(UINT64_C(0x401e9f0a64cc9653));
-    expectNoncommutativeSpecialPolicy<svStochasticIntegratorW2Ito2>(UINT64_C(0x401cee91377cd13f));
-    expectNoncommutativeSpecialPolicy<svStochasticIntegratorDRI1>(UINT64_C(0x402e86e6cdf0d484));
-    expectNoncommutativeSpecialPolicy<svStochasticIntegratorDRI1NM>(UINT64_C(0x4021f973804c2951));
+    expectNoncommutativeSpecialPolicy<svStochasticIntegratorW2Ito1>(7.655313086497318);
+    expectNoncommutativeSpecialPolicy<svStochasticIntegratorW2Ito2>(7.232975832932708);
+    expectNoncommutativeSpecialPolicy<svStochasticIntegratorDRI1>(15.263479648254595);
+    expectNoncommutativeSpecialPolicy<svStochasticIntegratorDRI1NM>(8.987209328934712);
 }
 
 TEST(FlatWeakItoFamilies, ZeroDurationAndRollbackDoNotRewindNoise)
