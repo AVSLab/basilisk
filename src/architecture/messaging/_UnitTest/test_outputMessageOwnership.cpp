@@ -7,10 +7,15 @@
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <new>
 #include <string>
 #include <utility>
+
+#ifdef _WIN32
+#include <malloc.h>
+#endif
 
 #include "architecture/utilities/bskLogging.h"
 #include "fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.h"
@@ -30,9 +35,10 @@
 #include "simulation/vizard/dataFileToViz/dataFileToViz.h"
 
 namespace {
-// This test executable replaces ordinary new/delete so it can detect actual missing
-// cleanup and inject allocation failures on platforms without LeakSanitizer. Bookkeeping
-// uses fixed storage and never allocates. Tests and module setup run on one thread.
+// This test executable replaces ordinary and aligned new/delete to detect missing
+// cleanup and inject allocation failures on platforms without LeakSanitizer. Direct
+// malloc/free calls are outside the probe. Bookkeeping uses fixed storage and never
+// allocates. Tests and module setup run on one thread.
 struct AllocationProbe;
 AllocationProbe* activeProbe = nullptr;
 
@@ -48,6 +54,16 @@ struct AllocationProbe
         activeProbe = this;
     }
     ~AllocationProbe() { activeProbe = nullptr; }
+
+    void beforeAllocation()
+    {
+        if (this->failAfter == 0) {
+            throw std::bad_alloc();
+        }
+        if (this->failAfter > 0) {
+            --this->failAfter;
+        }
+    }
 
     void remember(void* pointer)
     {
@@ -73,12 +89,7 @@ void*
 operator new(std::size_t size)
 {
     if (activeProbe != nullptr) {
-        if (activeProbe->failAfter == 0) {
-            throw std::bad_alloc();
-        }
-        if (activeProbe->failAfter > 0) {
-            --activeProbe->failAfter;
-        }
+        activeProbe->beforeAllocation();
     }
     void* pointer = std::malloc(size == 0 ? 1 : size);
     if (pointer == nullptr) {
@@ -120,7 +131,70 @@ operator delete[](void* pointer, std::size_t) noexcept
     ::operator delete(pointer);
 }
 
+void*
+operator new(std::size_t size, std::align_val_t alignment)
+{
+    if (activeProbe != nullptr) {
+        activeProbe->beforeAllocation();
+    }
+    void* pointer = nullptr;
+#ifdef _WIN32
+    pointer = _aligned_malloc(size == 0 ? 1 : size, static_cast<std::size_t>(alignment));
+#else
+    if (posix_memalign(&pointer, static_cast<std::size_t>(alignment), size == 0 ? 1 : size) != 0) {
+        throw std::bad_alloc();
+    }
+#endif
+    if (pointer == nullptr) {
+        throw std::bad_alloc();
+    }
+    if (activeProbe != nullptr) {
+        activeProbe->remember(pointer);
+    }
+    return pointer;
+}
+
+void
+operator delete(void* pointer, std::align_val_t) noexcept
+{
+    if (activeProbe != nullptr) {
+        activeProbe->forget(pointer);
+    }
+#ifdef _WIN32
+    _aligned_free(pointer);
+#else
+    std::free(pointer);
+#endif
+}
+
+void*
+operator new[](std::size_t size, std::align_val_t alignment)
+{
+    return ::operator new(size, alignment);
+}
+void
+operator delete[](void* pointer, std::align_val_t alignment) noexcept
+{
+    ::operator delete(pointer, alignment);
+}
+void
+operator delete(void* pointer, std::size_t, std::align_val_t alignment) noexcept
+{
+    ::operator delete(pointer, alignment);
+}
+void
+operator delete[](void* pointer, std::size_t, std::align_val_t alignment) noexcept
+{
+    ::operator delete(pointer, alignment);
+}
+
 namespace {
+struct alignas(64) OverAlignedValue
+{
+    std::byte value{};
+};
+static_assert(alignof(OverAlignedValue) > __STDCPP_DEFAULT_NEW_ALIGNMENT__);
+
 template<typename Factory>
 std::pair<bool, std::size_t>
 runTrial(const Factory& factory, int failAfter = -1)
@@ -162,6 +236,62 @@ expectCleanupAfterAllocationFailure(const Factory& factory)
 }
 } // namespace
 
+/** @brief Aligned scalar and array storage is tracked through sized and unsized deletion. */
+TEST(AllocationProbe, TracksAlignedAllocationsAndAllDeleteForms)
+{
+    constexpr auto alignment = std::align_val_t{ alignof(OverAlignedValue) };
+    constexpr std::size_t arraySize = 3 * sizeof(OverAlignedValue);
+    for (bool sizedDelete : { false, true }) {
+        std::array<std::size_t, 4> counts{};
+        bool addressesAligned;
+        {
+            AllocationProbe probe;
+            // Direct calls prevent the compiler from eliding the allocations under test.
+            void* scalar = ::operator new(sizeof(OverAlignedValue), alignment);
+            counts[0] = probe.count;
+            void* array = ::operator new[](arraySize, alignment);
+            counts[1] = probe.count;
+            addressesAligned = reinterpret_cast<std::uintptr_t>(scalar) % alignof(OverAlignedValue) == 0 &&
+                               reinterpret_cast<std::uintptr_t>(array) % alignof(OverAlignedValue) == 0;
+            if (sizedDelete) {
+                ::operator delete(scalar, sizeof(OverAlignedValue), alignment);
+                counts[2] = probe.count;
+                ::operator delete[](array, arraySize, alignment);
+            } else {
+                ::operator delete(scalar, alignment);
+                counts[2] = probe.count;
+                ::operator delete[](array, alignment);
+            }
+            counts[3] = probe.count;
+        }
+        EXPECT_TRUE(addressesAligned);
+        EXPECT_EQ(counts, (std::array<std::size_t, 4>{ 1, 2, 1, 0 }));
+    }
+}
+
+/** @brief Failure injection covers aligned scalar and array allocations without leaking. */
+TEST(AllocationProbe, InjectsAlignedScalarAndArrayAllocationFailures)
+{
+    for (bool arrayAllocation : { false, true }) {
+        const auto factory = [arrayAllocation] {
+            constexpr auto alignment = std::align_val_t{ alignof(OverAlignedValue) };
+            if (arrayAllocation) {
+                void* pointer = ::operator new[](3 * sizeof(OverAlignedValue), alignment);
+                ::operator delete[](pointer, alignment);
+            } else {
+                void* pointer = ::operator new(sizeof(OverAlignedValue), alignment);
+                ::operator delete(pointer, alignment);
+            }
+        };
+        auto failed = runTrial(factory, 0);
+        EXPECT_TRUE(failed.first);
+        EXPECT_EQ(failed.second, 0U);
+        auto successful = runTrial(factory, 1);
+        EXPECT_FALSE(successful.first);
+        EXPECT_EQ(successful.second, 0U);
+    }
+}
+
 TEST(OutputMessageOwnership, EnvironmentModelsReleaseGrowingOutputCollections)
 {
     expectCleanup([] {
@@ -192,14 +322,14 @@ TEST(OutputMessageOwnership, FixedEnvironmentOutputsUnwindAfterConstructorFailur
     expectCleanupAfterAllocationFailure([] { SpaceWeatherData model; });
 }
 
-TEST(SpiceBufferOwnership, RejectedSpacecraftNamesReleaseScratchStorage)
+TEST(SpiceBufferOwnership, RejectedSpacecraftNamesReleaseAllocatedOutputs)
 {
-    // The error is raised after scratch storage and output messages have been allocated.
+    // Rejecting the name after output allocation must still allow the model to release those outputs.
     bool rejected = false;
     expectCleanup([&rejected] {
         SpiceInterface model;
         try {
-            model.addSpacecraftNames({std::string(MAX_BODY_NAME_LENGTH, 'x')});
+            model.addSpacecraftNames({ std::string(MAX_BODY_NAME_LENGTH, 'x') });
         } catch (const BasiliskError&) {
             rejected = true;
         }

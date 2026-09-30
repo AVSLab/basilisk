@@ -18,12 +18,68 @@ from Basilisk.architecture import messaging
 from Basilisk.utilities import simHelpers
 
 
+# Each message type must exercise data that differs from freshly initialized storage.
+NONZERO_PAYLOAD_FIELDS = {
+    "AccessMsg": ("slantRange", 125.5),  # [m]
+    "AlbedoMsg": ("albedoAtInstrument", 0.375),  # [-]
+    "AtmoPropsMsg": ("localTemp", 273.5),  # [K]
+    "AttRefMsg": ("omega_RN_N", [0.125, -0.25, 0.375]),  # [rad/s]
+    "CameraImageMsg": ("cameraID", 17),
+    "ChargeMsmMsg": ("q", [[1.25e-9], [-2.5e-9]]),  # [C], Eigen column vector
+    "CmdForceInertialMsg": ("forceRequestInertial", [1.25, -2.5, 3.75]),  # [N]
+    "CmdTorqueBodyMsg": ("torqueRequestBody", [0.125, -0.25, 0.375]),  # [N*m]
+    "DataNodeUsageMsg": ("baudRate", 125.5),  # [baud]
+    "EclipseMsg": ("illuminationFactor", 0.375),  # [-]
+    "EphemerisMsg": ("r_BdyZero_N", [1.25, -2.5, 3.75]),  # [m]
+    "FacetElementBodyMsg": ("area", 1.25),  # [m^2]
+    "GroundStateMsg": ("r_LN_N", [1.25, -2.5, 3.75]),  # [m]
+    "HingedRigidBodyMsg": ("theta", 0.125),  # [rad]
+    "LandmarkMsg": ("pL", [17, 29]),  # [pixel]
+    "LinearTranslationRigidBodyMsg": ("rho", 1.25),  # [m]
+    "MagneticFieldMsg": ("magField_N", [1.25e-5, -2.5e-5, 3.75e-5]),  # [T]
+    "ProjectedAreaMsg": ("area", 1.25),  # [m^2]
+    "RWConfigLogMsg": ("Omega", 12.5),  # [rad/s]
+    "SCStatesMsg": ("r_BN_N", [1.25, -2.5, 3.75]),  # [m]
+    "ScChargingCurrentsMsg": ("electronCurrent", -1.25e-6),  # [A]
+    "SingleActuatorMsg": ("input", 1.25),  # [N or N*m], depending on the actuator
+    "SpicePlanetStateMsg": ("PositionVector", [1.25, -2.5, 3.75]),  # [m]
+    "SwDataMsg": ("dataValue", 17.5),  # Units depend on the space-weather output.
+    "THROutputMsg": ("thrustForce", 1.25),  # [N]
+    "TransRefMsg": ("r_RN_N", [1.25, -2.5, 3.75]),  # [m]
+    "VSCMGConfigMsg": ("Omega", 12.5),  # [rad/s]
+    "VoltMsg": ("voltage", 12.5),  # [V]
+    "WindMsg": ("v_air_N", [1.25, -2.5, 3.75]),  # [m/s]
+}
+
+
 def _check_payload(reader, payload):
     """Compare values across the distinct SWIG payload proxy classes."""
     actual = reader()
     for field in type(payload).__fields__():
-        if field != "shadowFactor":  # Deprecated alias for illuminationFactor.
-            np.testing.assert_array_equal(getattr(actual, field), getattr(payload, field))
+        actual_field = field
+        if field == "shadowFactor":
+            field = "illuminationFactor"
+            # Module-specific SWIG payloads may expose only the original field name.
+            if hasattr(actual, field):
+                actual_field = field
+        np.testing.assert_array_equal(getattr(actual, actual_field), getattr(payload, field))
+
+
+def _write_and_check_output(output, reader, recorder, timestamp, module_id):
+    """Verify a nonzero payload through both a subscriber and a recorder."""
+    message_name = type(output).__name__
+    payload = getattr(messaging, message_name + "Payload")()
+    field, value = NONZERO_PAYLOAD_FIELDS[message_name]
+    assert not np.array_equal(getattr(payload, field), value)
+    setattr(payload, field, value)
+    output.write(payload, timestamp, module_id)
+    assert reader.isWritten()
+    assert reader.timeWritten() == timestamp
+    assert reader.moduleID() == module_id
+    _check_payload(reader, payload)
+    recorder.UpdateState(timestamp)
+    assert list(recorder.times()) == [timestamp]
+    np.testing.assert_array_equal(getattr(recorder, field)[0], value)
 
 
 def _check_outputs(model, fields, grow=None):
@@ -42,14 +98,7 @@ def _check_outputs(model, fields, grow=None):
     module_id = 17
     for field, index, output, reader, recorder in snapshots:
         assert int(getattr(model, field)[index].this) == int(output.this)
-        payload = getattr(messaging, type(output).__name__ + "Payload")()
-        output.write(payload, timestamp, module_id)
-        assert reader.isWritten()
-        assert reader.timeWritten() == timestamp
-        assert reader.moduleID() == module_id
-        _check_payload(reader, payload)
-        recorder.UpdateState(timestamp)
-        assert list(recorder.times()) == [timestamp]
+        _write_and_check_output(output, reader, recorder, timestamp, module_id)
 
 
 ENVIRONMENT_CASES = [
@@ -261,12 +310,7 @@ def test_nested_visualization_outputs():
                 reader = output.addSubscriber()
                 recorder = output.recorder()
                 timestamp = 456  # [ns]
-                payload = getattr(messaging, type(output).__name__ + "Payload")()
-                output.write(payload, timestamp)
-                _check_payload(reader, payload)
-                assert reader.timeWritten() == timestamp
-                recorder.UpdateState(timestamp)
-                assert list(recorder.times()) == [timestamp]
+                _write_and_check_output(output, reader, recorder, timestamp, 0)
 
 
 if __name__ == "__main__":
