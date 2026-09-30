@@ -70,10 +70,16 @@ SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSim
 
 SimThreadExecution::~SimThreadExecution()
 {
-    this->killThread();
-    this->unlockThread();
+    this->requestStop();
     if (this->threadContext.joinable()) {
         this->threadContext.join();
+    }
+}
+
+void SimThreadExecution::requestStop()
+{
+    if (!this->terminateThread.exchange(true)) {
+        this->unlockThread();
     }
 }
 
@@ -467,8 +473,7 @@ void SimModel::resetThreads(uint64_t threadCount)
 void SimModel::deleteThreads() {
     for(auto const& simThread : this->threadList)
     {
-        simThread->killThread();
-        simThread->unlockThread();
+        simThread->requestStop();
     }
     // Request shutdown of every worker before joining any of them.
     this->threadList.clear();

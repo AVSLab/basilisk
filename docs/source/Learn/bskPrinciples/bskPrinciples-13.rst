@@ -133,3 +133,15 @@ Custom C++ scheduling code
 ``SimThreadExecution::threadContext`` is a ``std::thread`` value. Use ``.get()``
 when borrowing an execution record, and do not manually delete either owned
 object. Compiled extensions must be rebuilt against extension ABI version 3.
+
+Use ``SimThreadExecution::requestStop()`` to request shutdown and wake an idle
+worker. ``killThread()`` remains available as a compatibility alias with the same
+behavior; a separate ``unlockThread()`` call is no longer needed. Repeated calls
+through either method release the worker semaphore only on the first stop request.
+
+A stop request does not join the worker. Keep its execution record alive until
+the worker finishes and has been joined. The execution record's destructor
+requests shutdown and joins automatically. ``SimModel::deleteThreads()`` first
+requests shutdown of every worker, then destroys and joins the records, preserving
+the rule that all workers are signaled before any join begins. Call pool lifecycle
+methods from the controlling thread as described above.
