@@ -38,7 +38,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h"
 
 namespace {
-using integrator_test::stepIntegrator;
+using integrator_step_test::stepIntegrator;
 
 std::atomic<size_t> allocationCount{ 0 };
 

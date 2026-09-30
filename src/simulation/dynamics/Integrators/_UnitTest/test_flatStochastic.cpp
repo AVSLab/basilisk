@@ -46,7 +46,7 @@
 #include "simulation/dynamics/_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 
 namespace {
-using integrator_test::stepIntegrator;
+using integrator_step_test::stepIntegrator;
 
 uint64_t
 doubleBits(double value)
@@ -1064,7 +1064,8 @@ TEST(FlatStochastic, BookkeepingAndNativeGenerationDoNotAllocateAfterBind)
     integrator.setRNGSeed(90210);
     stepIntegrator(integrator, 0.0, 0.0);
 
-    const auto observed = integrator_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+    const auto observed =
+      integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
     EXPECT_EQ(observed.allocationCalls(), 0U);
 }
 

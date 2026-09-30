@@ -31,6 +31,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -69,12 +70,37 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
+    /**
+     * @brief Copy the reaction-wheel configuration collection.
+     * @return A vector of shared pointers to the effector's live wheel configurations.
+     * @note Changing the returned vector does not change the effector's collection;
+     * the pointed-to configuration objects remain shared with the effector.
+     */
     std::vector<std::shared_ptr<RWConfigPayload>> getReactionWheelData() const { return this->ReactionWheelData; }
+
+    /**
+     * @brief Get the number of configured reaction wheels.
+     * @return Number of entries in the reaction-wheel collection.
+     */
     size_t getReactionWheelCount() const { return this->ReactionWheelData.size(); }
+
+    /**
+     * @brief Access a reaction-wheel configuration by index.
+     * @param index Zero-based index of the reaction wheel.
+     * @return Shared pointer to the effector's live wheel configuration.
+     * @throws std::out_of_range If the index is outside the collection.
+     */
     std::shared_ptr<RWConfigPayload> getReactionWheelAt(size_t index) const
     {
         return this->ReactionWheelData.at(index);
     }
+    /**
+     * @brief Replace a reaction-wheel configuration before topology is frozen.
+     * @param index Zero-based index of the reaction wheel to replace.
+     * @param reactionWheel Shared configuration stored in the existing entry.
+     * @throws std::logic_error If the effector topology is frozen.
+     * @throws std::out_of_range If the index is outside the collection.
+     */
     void setReactionWheelAt(size_t index, std::shared_ptr<RWConfigPayload> reactionWheel)
     {
         this->requireMutableTopology("ReactionWheelStateEffector::setReactionWheelAt");

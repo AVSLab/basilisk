@@ -48,12 +48,12 @@
 #include "simulation/dynamics/_GeneralModuleFiles/svIntegratorRungeKutta.h"
 
 namespace {
-using integrator_test::AllocationApi;
-using integrator_test::AllocationSnapshot;
-using integrator_test::ScopedAllocationSuspension;
-using integrator_test::ScopedAllocationTracking;
-using integrator_test::stepIntegrator;
-using integrator_test::trackAllocations;
+using integrator_allocation_test::AllocationApi;
+using integrator_allocation_test::AllocationSnapshot;
+using integrator_allocation_test::ScopedAllocationSuspension;
+using integrator_allocation_test::ScopedAllocationTracking;
+using integrator_allocation_test::trackAllocations;
+using integrator_step_test::stepIntegrator;
 
 class AllocationDynamics final : public DynamicObject
 {
@@ -198,7 +198,8 @@ expectFullyTrackedStochasticStepDoesNotAllocate()
 void
 recordAllocatorCoverage()
 {
-    testing::Test::RecordProperty("allocator_interception", integrator_test::allocatorInterceptionDescription());
+    testing::Test::RecordProperty("allocator_interception",
+                                  integrator_allocation_test::allocatorInterceptionDescription());
 }
 }
 
@@ -225,8 +226,8 @@ TEST(IntegratorAllocationTracker, CppOperatorPositiveControls)
 TEST(IntegratorAllocationTracker, CAllocatorPositiveControlsWhenAvailable)
 {
     recordAllocatorCoverage();
-    if (!integrator_test::cAllocatorInterceptionAvailable()) {
-        GTEST_SKIP() << integrator_test::allocatorInterceptionDescription();
+    if (!integrator_allocation_test::cAllocatorInterceptionAvailable()) {
+        GTEST_SKIP() << integrator_allocation_test::allocatorInterceptionDescription();
     }
 
     const AllocationSnapshot mallocSnapshot = trackAllocations([]() {
@@ -269,9 +270,9 @@ TEST(IntegratorAllocationTracker, CAllocatorPositiveControlsWhenAvailable)
 
 TEST(IntegratorAllocationTracker, CoverageDescriptionMarksPartialPlatforms)
 {
-    const std::string description = integrator_test::allocatorInterceptionDescription();
+    const std::string description = integrator_allocation_test::allocatorInterceptionDescription();
     recordAllocatorCoverage();
-    if (integrator_test::cAllocatorInterceptionAvailable()) {
+    if (integrator_allocation_test::cAllocatorInterceptionAvailable()) {
         EXPECT_EQ(description.find("partial coverage"), std::string::npos);
     } else {
         EXPECT_NE(description.find("partial coverage"), std::string::npos);
