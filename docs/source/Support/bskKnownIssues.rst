@@ -52,8 +52,9 @@ Version |release|
   ``std::unique_ptr``. Python ``integrator`` attribute assignment now transfers
   ownership through the same setter. Explicitly disowning a newly constructed
   Python integrator before installation remains supported. Custom C++ dynamics
-  classes must replace direct owning-member assignments with ``setIntegrator()``;
-  see :ref:`creatingDynObject`.
+  classes should replace direct raw-pointer assignments to the owning member
+  with ``setIntegrator(std::make_unique<IntegratorType>(this))`` or transfer an
+  existing ``unique_ptr`` with ``std::move``; see :ref:`creatingDynObject`.
 
 - GitHub issue 282: Synchronized dynamics could retain a dangling pointer after a
   secondary was destroyed, or leave a surviving secondary marked as synchronized

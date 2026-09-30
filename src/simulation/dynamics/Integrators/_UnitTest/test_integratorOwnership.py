@@ -54,7 +54,7 @@ def dynamics_object(request):
 @pytest.mark.parametrize("use_attribute", [False, True])
 @pytest.mark.parametrize("disown_method", [None, "disown", "thisown"])
 def test_transfer_and_reinstall(dynamics_object, use_attribute, disown_method):
-    """Both entry points accept explicit disowning and reinstalling the active object."""
+    """Keyword calls and attribute assignment preserve explicit disowning and reinstalling."""
     integrator = svIntegrators.svIntegratorRK4(dynamics_object)
     address = int(integrator.this)
     assert integrator.thisown
@@ -65,7 +65,7 @@ def test_transfer_and_reinstall(dynamics_object, use_attribute, disown_method):
     if use_attribute:
         dynamics_object.integrator = integrator
     else:
-        dynamics_object.setIntegrator(integrator)
+        dynamics_object.setIntegrator(newIntegrator=integrator)
     assert not integrator.thisown
     assert int(dynamics_object.integrator.this) == address
     assert int(dynamics_object.getIntegrator().this) == address

@@ -103,12 +103,23 @@ class DynamicObject : public SysModel {
      */
     void integrateState(uint64_t t);
 
-    /** @brief Take ownership of a replacement integrator.
-     * @param newIntegrator Integrator constructed for this object, with ownership
-     * available for transfer, or the currently active integrator.
-     * @note A newly supplied integrator is destroyed if rejected. Passing the active
-     * integrator again is a no-op. Replacement invalidates borrowed integrator pointers.
-     * C++ callers must not pass an integrator owned by another object.
+    /** @brief Take exclusive ownership of a replacement integrator from C++.
+     * @param newIntegrator Owning pointer to an integrator constructed for this dynamics object.
+     * @note Ownership is consumed even when the replacement is rejected. A null
+     * pointer or an integrator with missing or mismatched dynamics raises BasiliskError.
+     * A synchronized secondary instead logs a warning and discards the replacement.
+     * The current integrator remains installed in each rejection case.
+     * @note Replacing a primary's integrator preserves its synchronized dynamics
+     * and invalidates borrowed pointers to the previous integrator.
+     */
+    void setIntegrator(std::unique_ptr<StateVecIntegrator> newIntegrator);
+
+    /** @brief Transfer a raw integrator pointer through the Python and compatibility interface.
+     * @param newIntegrator Integrator constructed for this dynamics object,
+     * with ownership available for transfer, or its currently active integrator.
+     * @note A newly supplied integrator is destroyed if it is rejected. Passing
+     * the active integrator again is a no-op. C++ callers must not pass an
+     * integrator owned by another object; prefer the unique_ptr overload for new integrators.
      */
     void setIntegrator(StateVecIntegrator* newIntegrator);
 

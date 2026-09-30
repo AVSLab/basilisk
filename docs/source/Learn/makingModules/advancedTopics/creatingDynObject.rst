@@ -79,11 +79,33 @@ replaced or its owning dynamics object is destroyed. Python synchronization
 connections retain their supplied secondary objects; see
 :ref:`bskSynchronizedDynamicsLifetime` for the lifetime and configuration contract.
 
-Custom C++ dynamics classes should install an integrator with
-``setIntegrator(new svIntegratorRK4(this))``. The owning ``integrator`` member
-is private; use ``getIntegrator()`` when a borrowed raw pointer is required,
-and do not manually delete the owned integrator. Compiled extensions must be
-rebuilt against extension ABI version 3.
+Custom C++ dynamics classes should use the
+``setIntegrator(std::unique_ptr<StateVecIntegrator>)`` overload to transfer
+ownership explicitly. Include ``<memory>`` for ``std::make_unique`` and
+``<utility>`` for ``std::move``:
+
+.. code-block:: cpp
+
+    this->setIntegrator(std::make_unique<svIntegratorRK4>(this));
+
+    auto replacement = std::make_unique<svIntegratorRK4>(this);
+    this->setIntegrator(std::move(replacement));
+    // replacement is now empty; this dynamics object owns the integrator.
+
+The owning argument is consumed even when validation rejects the replacement;
+the rejected integrator is destroyed and the active integrator remains installed.
+Replacing a synchronized secondary's integrator logs a warning and discards the
+replacement. Change the primary's integrator instead to preserve the group.
+
+The raw-pointer overload remains available for Python and existing C++ callers,
+including ``setIntegrator(new svIntegratorRK4(this))`` and the no-op when passing
+``getIntegrator()`` back to the same object. Never construct a new ``unique_ptr``
+from a borrowed integrator pointer. The C++ owning overload is hidden from Python.
+
+The owning C++ ``integrator`` member is private. Replace direct assignments with
+``setIntegrator()`` and use ``getIntegrator()`` when a borrowed raw pointer is
+required. Do not manually delete the owned integrator. Compiled extensions must
+be rebuilt against extension ABI version 3.
 
 Create synchronization links through ``syncDynamicsIntegration()`` before the
 first integration step. The ``DynamicObject`` base destructor removes these links
