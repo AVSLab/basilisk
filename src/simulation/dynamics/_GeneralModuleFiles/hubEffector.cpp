@@ -213,16 +213,17 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]], Eigen::V
     dcm_BN = dcm_NB.transpose();
 
     // - Solve for omegaDot_BN_B
+    const Eigen::Matrix3d matrixAInverse = this->hubBackSubMatrices.matrixA.inverse();
     Eigen::Vector3d omegaDotLocal_BN_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
-    intermediateVector = this->hubBackSubMatrices.vecRot - this->hubBackSubMatrices.matrixC*this->hubBackSubMatrices.matrixA.inverse()*this->hubBackSubMatrices.vecTrans;
-    intermediateMatrix = hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC*hubBackSubMatrices.matrixA.inverse()*hubBackSubMatrices.matrixB;
+    intermediateVector = this->hubBackSubMatrices.vecRot - this->hubBackSubMatrices.matrixC*matrixAInverse*this->hubBackSubMatrices.vecTrans;
+    intermediateMatrix = hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC*matrixAInverse*hubBackSubMatrices.matrixB;
     omegaDotLocal_BN_B = intermediateMatrix.inverse()*intermediateVector;
     omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
-    velocityState->derivativeView().noalias() = dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B);
+    velocityState->derivativeView().noalias() = dcm_NB*matrixAInverse*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B);
 
     // - Set gravity velocity derivatives
     gravVelocityState->setDerivative(gLocal_N);
