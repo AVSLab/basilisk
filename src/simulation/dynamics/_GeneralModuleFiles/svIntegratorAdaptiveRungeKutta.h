@@ -249,8 +249,10 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      */
     double computeFlatMaxRelativeError();
 
-    /** Refreshes descriptor-aligned tolerances after configuration changes. */
-    void resolveToleranceSpans();
+    /** @brief Refresh descriptor-aligned tolerances after configuration or binding changes.
+     * @param force Rebuild even with unchanged tolerances when state descriptors have changed.
+     */
+    void resolveToleranceSpans(bool force = false);
 
     /** Rejects invalid tolerance values before they enter error scaling. */
     static void validateTolerance(double tolerance, const char* toleranceName);
@@ -329,7 +331,8 @@ svIntegratorAdaptiveRungeKutta<numberStages>::prepareIntegrationBinding()
         this->entryState.swap(newEntryState);
         this->lowOrderState.swap(newLowOrderState);
         this->highOrderState.swap(newHighOrderState);
-        this->resolveToleranceSpans();
+        // A rebuilt binding can change state offsets and shapes without changing tolerance settings.
+        this->resolveToleranceSpans(true);
     } catch (...) {
         this->entryState.resize(0);
         this->lowOrderState.resize(0);
@@ -481,11 +484,11 @@ svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError()
 
 template<size_t numberStages>
 void
-svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans()
+svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool force)
 {
     const bool defaultTolerancesChanged =
       this->relTol != this->resolvedRelativeTolerance || this->absTol != this->resolvedAbsoluteTolerance;
-    if (this->resolvedToleranceConfigurationGeneration == this->toleranceConfigurationGeneration &&
+    if (!force && this->resolvedToleranceConfigurationGeneration == this->toleranceConfigurationGeneration &&
         !defaultTolerancesChanged) {
         return;
     }

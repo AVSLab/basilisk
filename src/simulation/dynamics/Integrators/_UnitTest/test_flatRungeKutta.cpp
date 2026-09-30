@@ -462,7 +462,7 @@ class AdaptiveToleranceProbe final : public svIntegratorAdaptiveRungeKutta<numbe
 
     double candidateFront() const { return this->candidateState(0); }
 
-
+    const auto& resolvedSpans() const { return this->toleranceSpans; }
 
     std::pair<double, double> resolvedTolerance(size_t dynamicObjectIndex, const std::string& stateName)
     {
@@ -1113,6 +1113,81 @@ TEST(FlatRungeKutta, SurvivingDynamicsAdvanceAfterSynchronizedPeerDestruction)
             EXPECT_EQ(survivor->getIntegrator()->getDynamicsCount(), 1U);
             survivor->integrateState(0);
             EXPECT_DOUBLE_EQ(survivor->state->stateView()(0, 0), 3.0);
+        }
+    }
+}
+
+TEST(FlatRungeKutta, AdaptivePeerDestructionMatchesFreshBinding)
+{
+    // Check both shifted offsets and a removed trailing span, without changing tolerances after binding.
+    for (bool removeMiddle : { false, true }) {
+        SCOPED_TRACE(::testing::Message() << "removeMiddle=" << removeMiddle);
+        TestDynamics primary;
+        TestDynamics survivor;
+        auto removed = std::make_unique<ControlledScalarDynamics>();
+        auto* integrator = new AdaptiveToleranceProbe<4>(&primary, bogackiShampineCoefficients(), 3.0);
+        primary.setIntegrator(integrator);
+        survivor.setIntegrator(new svIntegratorRungeKutta<4>(&survivor, rk4Coefficients()));
+        removed->setIntegrator(new svIntegratorRungeKutta<4>(removed.get(), rk4Coefficients()));
+        if (removeMiddle) {
+            primary.syncDynamicsIntegration(removed.get());
+            primary.syncDynamicsIntegration(&survivor);
+        } else {
+            primary.syncDynamicsIntegration(&survivor);
+            primary.syncDynamicsIntegration(removed.get());
+        }
+        configureTolerances(*integrator, survivor);
+        integrator->setAbsoluteTolerance(*removed, "controlledScalar", 1.0); // [-]
+
+        const double timeStep = 0.125; // [s]
+        stepIntegrator(integrator, 0.0, timeStep);
+        ASSERT_EQ(integrator->resolvedSpans().size(), 5U);
+        removed.reset();
+
+        // A fresh two-object group starts from the surviving states and has the same tolerance configuration.
+        TestDynamics referencePrimary;
+        TestDynamics referenceSurvivor;
+        referencePrimary.matrixState->setState(primary.matrixState->stateView());
+        referencePrimary.vectorState->setState(primary.vectorState->stateView());
+        referenceSurvivor.matrixState->setState(survivor.matrixState->stateView());
+        referenceSurvivor.vectorState->setState(survivor.vectorState->stateView());
+        auto* reference =
+          new AdaptiveToleranceProbe<4>(&referencePrimary, bogackiShampineCoefficients(), 3.0);
+        referencePrimary.setIntegrator(reference);
+        referenceSurvivor.setIntegrator(new svIntegratorRungeKutta<4>(&referenceSurvivor, rk4Coefficients()));
+        referencePrimary.syncDynamicsIntegration(&referenceSurvivor);
+        configureTolerances(*reference, referenceSurvivor);
+
+        // Bind without advancing so stale spans fail deterministically before any out-of-bounds access.
+        stepIntegrator(integrator, timeStep, 0.0);
+        stepIntegrator(reference, timeStep, 0.0);
+        const auto& actualSpans = integrator->resolvedSpans();
+        const auto& expectedSpans = reference->resolvedSpans();
+        ASSERT_EQ(actualSpans.size(), expectedSpans.size());
+        for (size_t index = 0; index < expectedSpans.size(); ++index) {
+            const auto& actual = actualSpans[index];
+            const auto& expected = expectedSpans[index];
+            EXPECT_EQ(actual.globalStateOffset, expected.globalStateOffset);
+            EXPECT_EQ(actual.rows, expected.rows);
+            EXPECT_EQ(actual.columns, expected.columns);
+            EXPECT_EQ(actual.mode, expected.mode);
+            EXPECT_DOUBLE_EQ(actual.relative, expected.relative);
+            EXPECT_DOUBLE_EQ(actual.absolute, expected.absolute);
+        }
+
+        for (size_t step = 1; step <= 2; ++step) {
+            primary.equationsOfMotionCalls = 0;
+            survivor.equationsOfMotionCalls = 0;
+            referencePrimary.equationsOfMotionCalls = 0;
+            referenceSurvivor.equationsOfMotionCalls = 0;
+            const double currentTime = static_cast<double>(step) * timeStep; // [s]
+            stepIntegrator(integrator, currentTime, timeStep);
+            stepIntegrator(reference, currentTime, timeStep);
+            EXPECT_GT(primary.equationsOfMotionCalls, 4U);
+            EXPECT_EQ(primary.equationsOfMotionCalls, referencePrimary.equationsOfMotionCalls);
+            EXPECT_EQ(survivor.equationsOfMotionCalls, referenceSurvivor.equationsOfMotionCalls);
+            expectStateBitsEqual(primary, referencePrimary);
+            expectStateBitsEqual(survivor, referenceSurvivor);
         }
     }
 }
