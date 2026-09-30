@@ -41,6 +41,7 @@
 #include <cstddef>
 #include <optional>
 #include <string>
+#include <utility>
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/utilities/avsEigenMRP.h"
 
@@ -68,9 +69,35 @@ public:
     void addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg); //!< (overloaded) Add a new thruster to the thruster set connect to a body different than the hub
     void ConfigureThrustRequests();
     void UpdateThrusterProperties();
+    /**
+     * @brief Copy the thruster configuration collection.
+     * @return A vector of shared pointers to the effector's live thruster configurations.
+     * @note Changing the returned vector does not change the effector's collection;
+     * the pointed-to configuration objects remain shared with the effector.
+     */
     std::vector<std::shared_ptr<THRSimConfig>> getThrusterData() const { return this->thrusterData; }
+
+    /**
+     * @brief Get the number of configured thrusters.
+     * @return Number of entries in the thruster collection.
+     */
     size_t getThrusterCount() const { return this->thrusterData.size(); }
+
+    /**
+     * @brief Access a thruster configuration by index.
+     * @param index Zero-based index of the thruster.
+     * @return Shared pointer to the effector's live thruster configuration.
+     * @throws std::out_of_range If the index is outside the collection.
+     */
     std::shared_ptr<THRSimConfig> getThrusterAt(size_t index) const { return this->thrusterData.at(index); }
+
+    /**
+     * @brief Replace a thruster configuration before topology is frozen.
+     * @param index Zero-based index of the thruster to replace.
+     * @param thruster Shared configuration stored in the existing entry.
+     * @throws std::logic_error If the effector topology is frozen.
+     * @throws std::out_of_range If the index is outside the collection.
+     */
     void setThrusterAt(size_t index, std::shared_ptr<THRSimConfig> thruster)
     {
         this->requireMutableTopology("ThrusterStateEffector::setThrusterAt");

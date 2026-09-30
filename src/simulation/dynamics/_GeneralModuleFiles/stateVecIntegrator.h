@@ -27,9 +27,12 @@
 #include <vector>
 
 class DynamicObject;
-namespace integrator_test {
+// The test helper is documented with the native integrator tests.
+/** @cond DOXYGEN_IGNORE */
+namespace integrator_step_test {
 class StateVecIntegratorTestAccess;
 }
+/** @endcond */
 
 /**
  * @brief Base for numerical methods that advance a fixed group of dynamics objects.
@@ -70,7 +73,7 @@ class StateVecIntegrator
 
   private:
     friend class DynamicObject;
-    friend class integrator_test::StateVecIntegratorTestAccess;
+    friend class integrator_step_test::StateVecIntegratorTestAccess;
     /** @brief Prepare workspace and execute the numerical method. */
     void integrate(double currentTime, double timeStep);
 

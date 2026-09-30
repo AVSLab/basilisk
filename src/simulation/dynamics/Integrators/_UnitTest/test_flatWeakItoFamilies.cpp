@@ -31,7 +31,7 @@
 #include "simulation/dynamics/Integrators/svStochasticIntegratorW2Ito2.h"
 
 namespace {
-using integrator_test::stepIntegrator;
+using integrator_step_test::stepIntegrator;
 
 class WeakItoDynamics final : public DynamicObject
 {
@@ -212,7 +212,8 @@ expectNoAllocationAfterBind()
     integrator.setRNGSeed(23847);
     stepIntegrator(integrator, 0.0, 0.0);
 
-    const auto observed = integrator_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+    const auto observed =
+      integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
     EXPECT_EQ(observed.allocationCalls(), 0U);
 }
 

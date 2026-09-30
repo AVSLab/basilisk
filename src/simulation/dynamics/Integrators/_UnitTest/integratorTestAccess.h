@@ -21,22 +21,42 @@
 
 #include "simulation/dynamics/_GeneralModuleFiles/stateVecIntegrator.h"
 
-namespace integrator_test {
+namespace integrator_step_test {
+
+/** @brief Friend access to the integrator's private stepping entry point for native tests. */
 class StateVecIntegratorTestAccess
 {
   public:
+    /**
+     * @brief Prepare and advance an integrator through its normal stepping entry point.
+     * @param integrator Integrator to advance.
+     * @param currentTime [s] Start time of the integration step.
+     * @param timeStep [s] Duration of the integration step.
+     */
     static void step(StateVecIntegrator& integrator, double currentTime, double timeStep)
     {
         integrator.integrate(currentTime, timeStep);
     }
 };
 
+/**
+ * @brief Advance an integrator through its private stepping entry point for testing.
+ * @param integrator Integrator to advance.
+ * @param currentTime [s] Start time of the integration step.
+ * @param timeStep [s] Duration of the integration step.
+ */
 inline void
 stepIntegrator(StateVecIntegrator& integrator, double currentTime, double timeStep)
 {
     StateVecIntegratorTestAccess::step(integrator, currentTime, timeStep);
 }
 
+/**
+ * @brief Advance an integrator supplied by pointer for testing.
+ * @param integrator Non-null pointer to the integrator to advance.
+ * @param currentTime [s] Start time of the integration step.
+ * @param timeStep [s] Duration of the integration step.
+ */
 inline void
 stepIntegrator(StateVecIntegrator* integrator, double currentTime, double timeStep)
 {
