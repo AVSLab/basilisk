@@ -445,10 +445,9 @@ def _assert_torque_metrics(metrics):
     assert metrics["bsmMotionAttitudeMax"] < 1.0e-14  # [rad]
     assert metrics["crossEngineAttitudeRestMax"] < 1.0e-6  # [rad]
     assert metrics["crossEngineAttitudeOrbitMax"] < 1.0e-4  # [rad]
-    assert (
-        metrics["crossEngineAttitudeOrbitMax"]
-        > 10.0*metrics["crossEngineAttitudeRestMax"]
-    )
+    # Roundoff depends on the platform; bound the artifact without requiring
+    # a minimum amplification relative to the at-rest error.
+    assert metrics["mujocoMotionAttitudeMax"] < 1.0e-4  # [rad]
     assert metrics["bodyRateErrorMax"] < 1.0e-6  # [rad/s]
 
 

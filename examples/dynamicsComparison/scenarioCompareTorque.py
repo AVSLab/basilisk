@@ -50,6 +50,8 @@ the rotational part contains the identically-zero term
 :math:`{\bf v}_{\rm lin}\times(m{\bf v}_{\rm lin})`, evaluated as the difference of two
 rounded :math:`\mathcal{O}(m|{\bf v}_{\rm lin}|^2)` products. Directly recording
 ``qfrc_bias`` strongly supports this term as the source of the attitude change.
+The round-off magnitudes and their amplification relative to the at-rest error depend
+on the platform and compiler; the values below describe a representative run.
 
 .. note::
 

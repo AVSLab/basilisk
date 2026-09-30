@@ -23,6 +23,7 @@
 
 #include <atomic>
 #include <cstdlib>
+#include <memory>
 #include <new>
 #include <string>
 #include <thread>
@@ -166,11 +167,14 @@ class LegacyAllocatingNoiseGenerator final : public GaussianNoiseGenerator
 
     GaussianNoiseSample generate(size_t m, double) override
     {
+        ++this->generateCalls;
         GaussianNoiseSample sample;
         sample.dW = Eigen::VectorXd::Constant(static_cast<Eigen::Index>(m), 0.125);
         sample.dZ = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(m));
         return sample;
     }
+
+    size_t generateCalls = 0;
 };
 
 template<typename Integrator>
@@ -477,10 +481,22 @@ TEST(IntegratorAllocationTracker, LegacyNoiseFallbackRemainsCompatible)
     recordAllocatorCoverage();
     AllocationDynamics dynamics(true);
     svStochasticIntegratorMayurama integrator(&dynamics);
-    integrator.setNoiseGenerator(std::make_shared<LegacyAllocatingNoiseGenerator>());
+    const auto generator = std::make_shared<LegacyAllocatingNoiseGenerator>();
+    integrator.setNoiseGenerator(generator);
     stepIntegrator(integrator, 0.0, 0.0);
+    EXPECT_EQ(generator->generateCalls, 0U);
 
-    const AllocationSnapshot snapshot = trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+    const double timeStep = 0.125; // [s]
+    const AllocationSnapshot snapshot = trackAllocations([&]() { stepIntegrator(integrator, 0.0, timeStep); });
 
-    EXPECT_GT(snapshot.totalCalls(), 0U);
+    EXPECT_EQ(generator->generateCalls, 1U);
+    // Euler-Maruyama: initial state + timeStep * drift + 0.125 * diffusion.
+    Eigen::Vector4d expected;
+    expected << 0.7625, -2.084375, 2.7875, -4.04375;
+    EXPECT_TRUE(dynamics.state->stateView().isApprox(expected, 1.0e-14));
+
+    // Eigen allocates through C APIs, which the Windows tracker cannot intercept.
+    if (integrator_allocation_test::cAllocatorInterceptionAvailable()) {
+        EXPECT_GT(snapshot.totalCalls(), 0U);
+    }
 }
