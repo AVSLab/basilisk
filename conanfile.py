@@ -389,13 +389,16 @@ def clean_rust_target_artifacts(root: Optional[Path] = None,
 def should_scan_windows_dll_directory(root: str, build_folder: str) -> bool:
     """Return whether a build directory can contain runtime DLLs.
 
-    Cargo's target tree contains build-time procedural-macro DLLs. They are
-    loaded only by ``rustc`` and must not be copied into the Basilisk wheel.
+    Cargo's procedural-macro DLLs and native-test runtime copies must not enter
+    the wheel. Test copies from another configuration can also be stale.
     """
     normalized_root = os.path.normcase(os.path.abspath(root))
     excluded_roots = (
         os.path.normcase(os.path.abspath(os.path.join(build_folder, "Basilisk"))),
         os.path.normcase(os.path.abspath(os.path.join(build_folder, "cargo"))),
+        os.path.normcase(os.path.abspath(os.path.join(
+            build_folder, "simulation", "dynamics", "Integrators", "_UnitTest"
+        ))),
     )
     for excluded_root in excluded_roots:
         try:
@@ -763,7 +766,7 @@ class BasiliskConan(ConanFile):
 
                 # As a fallback, scan the build tree for any remaining DLLs.
                 for root, dirs, files in os.walk(self.build_folder):
-                    # Skip the destination and Cargo's build-only proc-macro DLLs.
+                    # Skip the destination, Cargo plugins, and native-test DLL copies.
                     if not should_scan_windows_dll_directory(root, self.build_folder):
                         dirs.clear()
                         continue

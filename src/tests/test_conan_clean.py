@@ -408,8 +408,8 @@ def test_prepare_conan_build_folder_uses_resolved_output_folder(
     assert Path.cwd() == generators_folder.resolve()
 
 
-def test_windows_dll_scan_excludes_cargo_build_artifacts(tmp_path, monkeypatch):
-    """The Windows wheel scan ignores Cargo compiler plugins and its output."""
+def test_windows_dll_scan_excludes_build_only_artifacts(tmp_path, monkeypatch):
+    """Exclude Cargo plugins and native-test DLL copies from Windows wheels."""
     repo_root = Path(__file__).resolve().parents[2]
     monkeypatch.chdir(repo_root)
     monkeypatch.syspath_prepend(str(repo_root))
@@ -428,3 +428,14 @@ def test_windows_dll_scan_excludes_cargo_build_artifacts(tmp_path, monkeypatch):
         str(build_folder / "cargo" / "workspace" / "release" / "deps"),
         str(build_folder),
     )
+    integrator_folder = build_folder / "simulation" / "dynamics" / "Integrators"
+    assert conanfile.should_scan_windows_dll_directory(str(integrator_folder), str(build_folder))
+    assert conanfile.should_scan_windows_dll_directory(
+        str(integrator_folder / "_UnitTestExtra"), str(build_folder)
+    )
+    test_folder = integrator_folder / "_UnitTest"
+    assert not conanfile.should_scan_windows_dll_directory(str(test_folder), str(build_folder))
+    for config in ("Debug", "Release"):
+        assert not conanfile.should_scan_windows_dll_directory(
+            str(test_folder / "test_flatRungeKutta" / config), str(build_folder)
+        )
