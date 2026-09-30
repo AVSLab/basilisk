@@ -153,6 +153,66 @@ Common Usage Examples
 Modules
 -------
 
+C++ State Access
+~~~~~~~~~~~~~~~~
+
+For internal C++ access to ``StateData``, prefer ``stateView()``,
+``derivativeView()``, and ``diffusionView(index)`` to avoid copying a dynamically
+sized Eigen matrix. These accessors return borrowed Eigen maps by value:
+``auto`` and ``const auto`` retain a view of the underlying storage, not an
+owning snapshot. For read-only access, call them through a const state handle:
+
+.. code-block:: cpp
+
+    const StateData& readOnlyState = *stateData;
+    const auto state = readOnlyState.stateView();
+    const auto stateDerivative = readOnlyState.derivativeView();
+
+The const handle selects a map of const data. Calling an accessor through a
+mutable handle returns a writable map; declaring that map variable ``const``
+does not change the underlying map type. Do not bind a view to
+``const Eigen::MatrixXd&``: that conversion creates an owning temporary matrix.
+Scalar reads and assignments into existing buffers can use the views directly.
+Such assignments still copy values into the destination, but avoid an intermediate
+dynamic matrix from ``getState()`` or ``getStateDeriv()``.
+
+Use a writable view to update existing storage in place. For example, in the
+equations of motion for a dimensionless Euclidean state:
+
+.. code-block:: cpp
+
+    const double decayRate = 0.5; // [1/s]
+    stateData->derivativeView() = -decayRate * stateData->stateView();
+
+Respect the registered state, derivative, and diffusion shapes; views cannot
+resize the storage. Setters such as ``setState()`` and ``setDerivative()`` also
+remain supported and require exact shape matches. Check Eigen expression
+aliasing when reading from and writing to overlapping storage; use ``noalias()``
+only when the source and destination cannot overlap.
+
+Keep an intentional copy when a value must survive later state updates or be
+edited independently. Make ownership explicit with a copy-returning accessor or
+a concrete Eigen matrix or vector type:
+
+.. code-block:: cpp
+
+    // Preserve this value while subsequent integration stages update the state.
+    const Eigen::MatrixXd initialState = stateData->getState();
+
+``getState()``, ``getStateDeriv()``, and ``getStateDiffusion(index)`` remain
+supported copy-returning methods. An ``auto`` variable holding an Eigen expression
+can still reference its operands; evaluate into an owning matrix or vector when
+a snapshot is required.
+
+Keep views local to the callback using them. They alias the storage active when
+acquired, reflect writes to that storage, and must not outlive the owning manager.
+Reacquire views after the first ``finalizeStates()`` call, which replaces temporary
+registration storage with contiguous buffers. Later resets preserve buffer
+addresses but update their values. The same lifetime restrictions apply to raw
+pointers, blocks, and expressions derived from views. See
+:ref:`integratorArchitecture` for the state lifecycle. This guidance concerns
+internal C++ code; it does not change Python access or ownership contracts.
+
 Messages
 ~~~~~~~~
 
