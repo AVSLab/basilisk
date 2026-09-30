@@ -191,8 +191,10 @@ class StateData
         return ConstMatrixView(this->activeState, this->viewStateShape.rows, this->viewStateShape.cols);
     }
 
-    /** @brief Deprecated alias for stateView() on a constant state handle. */
-    [[deprecated("use stateView()")]]
+    /** @brief Compatibility alias for stateView() on a constant state handle.
+     * @deprecated Will be removed after September 30, 2027. Use stateView().
+     */
+    [[deprecated("Will be removed after 2027-09-30; use stateView().")]]
     ConstMatrixView getStateReference() const
     {
         return this->stateView();
@@ -219,8 +221,10 @@ class StateData
         return ConstMatrixView(this->activeDerivative, this->viewDerivativeShape.rows, this->viewDerivativeShape.cols);
     }
 
-    /** @brief Deprecated alias for derivativeView() on a constant state handle. */
-    [[deprecated("use derivativeView()")]]
+    /** @brief Compatibility alias for derivativeView() on a constant state handle.
+     * @deprecated Will be removed after September 30, 2027. Use derivativeView().
+     */
+    [[deprecated("Will be removed after 2027-09-30; use derivativeView().")]]
     ConstMatrixView getStateDerivReference() const
     {
         return this->derivativeView();
