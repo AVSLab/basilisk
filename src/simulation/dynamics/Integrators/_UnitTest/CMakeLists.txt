@@ -26,6 +26,7 @@ target_compile_definitions(flat_integrator_test_support
                            PUBLIC EIGEN_RUNTIME_NO_MALLOC)
 
 set(flat_integrator_tests
+    test_adaptiveRungeKuttaAccuracy
     test_flatRungeKutta
     test_flatStochastic
     test_flatStochasticBasic
