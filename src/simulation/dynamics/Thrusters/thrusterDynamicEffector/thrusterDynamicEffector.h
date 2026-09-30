@@ -61,10 +61,10 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(std::shared_ptr<THRSimConfig> CurrentThruster, double currentTime);
-    void ComputeThrusterShut(std::shared_ptr<THRSimConfig> CurrentThruster, double currentTime);
+    void ComputeThrusterFire(const std::shared_ptr<THRSimConfig>& CurrentThruster, double currentTime);
+    void ComputeThrusterShut(const std::shared_ptr<THRSimConfig>& CurrentThruster, double currentTime);
     void UpdateThrusterProperties();
-    void computeBlowDownDecay(std::shared_ptr<THRSimConfig> CurrentThruster);
+    void computeBlowDownDecay(const std::shared_ptr<THRSimConfig>& CurrentThruster);
 
 public:
     ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< input message with thruster commands
@@ -76,7 +76,7 @@ public:
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
     double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(std::shared_ptr<THRSimConfig> thrData,
+	double thrFactorToTime(const std::shared_ptr<THRSimConfig>& thrData,
 		std::vector<THRTimePair> *thrRamp);
 	StateData *hubSigma;                           //!< pointer to the hub attitude states
     StateData *hubOmega;                           //!< pointer to the hub angular velocity states
