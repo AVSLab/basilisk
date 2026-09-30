@@ -255,9 +255,17 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
     Eigen::Vector3d translationalAccel_N =
         *this->g_N + (forceExternal_N + dcm_NB*forceExternal_B)/this->effProps.mEff;
 
+    // Compare values at use so resets and direct mass-property updates refresh the cache.
+    if (!this->hubOnlyInertiaValid
+        || (this->hubOnlyInertia.array() != this->effProps.IEffPntB_B.array()).any()) {
+        this->hubOnlyInertiaLDLT.compute(this->effProps.IEffPntB_B);
+        this->hubOnlyInertia = this->effProps.IEffPntB_B;
+        this->hubOnlyInertiaValid = true;
+    }
+
     Eigen::Vector3d rotAngularMomentumPntB_B = this->effProps.IEffPntB_B*omegaLocal_BN_B;
     Eigen::Vector3d omegaDotLocal_BN_B =
-        this->effProps.IEffPntB_B.ldlt().solve(torquePntB_B - omegaLocal_BN_B.cross(rotAngularMomentumPntB_B));
+        this->hubOnlyInertiaLDLT.solve(torquePntB_B - omegaLocal_BN_B.cross(rotAngularMomentumPntB_B));
 
     this->posState->setDerivative(rDotLocal_BN_N);
     this->velocityState->setDerivative(translationalAccel_N);
