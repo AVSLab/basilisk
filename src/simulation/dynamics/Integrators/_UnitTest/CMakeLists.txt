@@ -36,7 +36,6 @@ foreach(test_target IN LISTS flat_integrator_tests)
   add_executable(${test_target} ${test_target}.cpp)
   target_link_libraries(${test_target}
                         PRIVATE flat_integrator_test_support GTest::gtest_main)
-  gtest_discover_tests(${test_target})
 endforeach()
 
 add_executable(test_stateBufferViews test_stateBufferViews.cpp)
@@ -46,7 +45,6 @@ if(BUILD_MUJOCO)
   target_link_libraries(test_stateBufferViews PRIVATE mujocoDynamicsLib)
   target_compile_definitions(test_stateBufferViews PRIVATE BASILISK_TEST_MUJOCO_POLICIES)
 endif()
-gtest_discover_tests(test_stateBufferViews)
 
 add_executable(test_rungeKuttaAccuracy test_rungeKuttaAccuracy.cpp)
 target_link_libraries(test_rungeKuttaAccuracy
@@ -54,7 +52,6 @@ target_link_libraries(test_rungeKuttaAccuracy
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
   target_compile_options(test_rungeKuttaAccuracy PRIVATE -ffp-contract=fast)
 endif()
-gtest_discover_tests(test_rungeKuttaAccuracy)
 
 if(APPLE)
   add_library(integrator_allocation_test_support SHARED allocationTracker.cpp)
@@ -123,10 +120,34 @@ if(UNIX AND NOT APPLE)
   endif()
 endif()
 
-gtest_discover_tests(test_integratorAllocations)
-
 # Reuse the calibrated allocator interception in the stochastic topology tests.
 foreach(test_target test_flatStochastic test_flatStochasticBasic
                     test_flatStochasticTableaux test_flatWeakItoFamilies)
   target_link_libraries(${test_target} PRIVATE integrator_allocation_test_support)
+endforeach()
+
+foreach(test_target IN ITEMS ${flat_integrator_tests} test_stateBufferViews
+                             test_rungeKuttaAccuracy test_integratorAllocations)
+  if(WIN32)
+    # Separate directories prevent parallel targets from copying over the same DLL.
+    set_target_properties(${test_target} PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${test_target}/$<CONFIG>")
+    # Refresh DLLs before discovery, including builds that do not relink the test.
+    add_custom_target(${test_target}_runtime_dlls
+      COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${test_target}>"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              "$<TARGET_RUNTIME_DLLS:${test_target}>" "$<TARGET_FILE_DIR:${test_target}>"
+      DEPENDS "$<TARGET_RUNTIME_DLLS:${test_target}>"
+      COMMAND_EXPAND_LISTS
+      VERBATIM)
+    # DLL file dependencies alone do not order library projects in Visual Studio.
+    get_target_property(test_libraries ${test_target} LINK_LIBRARIES)
+    foreach(test_library IN LISTS test_libraries)
+      if(TARGET "${test_library}")
+        add_dependencies(${test_target}_runtime_dlls ${test_library})
+      endif()
+    endforeach()
+    add_dependencies(${test_target} ${test_target}_runtime_dlls)
+  endif()
+  gtest_discover_tests(${test_target})
 endforeach()
