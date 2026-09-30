@@ -19,6 +19,7 @@
 
 
 #include "simulation/dynamics/msmForceTorque/msmForceTorque.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -94,14 +95,11 @@ void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg
     this->sigma_BNList.push_back(zeroMRP);
 
     /* create output message objects */
-    this->ownedETorqueOutMsgs.push_back(std::make_unique<Message<CmdTorqueBodyMsgPayload>>());
-    this->eTorqueOutMsgs.push_back(this->ownedETorqueOutMsgs.back().get());
+    addOwnedMessage(this->ownedETorqueOutMsgs, this->eTorqueOutMsgs);
 
-    this->ownedEForceOutMsgs.push_back(std::make_unique<Message<CmdForceInertialMsgPayload>>());
-    this->eForceOutMsgs.push_back(this->ownedEForceOutMsgs.back().get());
+    addOwnedMessage(this->ownedEForceOutMsgs, this->eForceOutMsgs);
 
-    this->ownedChargeMsmOutMsgs.push_back(std::make_unique<Message<ChargeMsmMsgPayload>>());
-    this->chargeMsmOutMsgs.push_back(this->ownedChargeMsmOutMsgs.back().get());
+    addOwnedMessage(this->ownedChargeMsmOutMsgs, this->chargeMsmOutMsgs);
 
 }
 

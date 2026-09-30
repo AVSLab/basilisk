@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "thrusterDynamicEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <cmath>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
@@ -399,8 +400,7 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
-    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
+    addOwnedMessage(this->ownedThrusterOutMsgs, this->thrusterOutMsgs);
 
     // Push back an empty message
     ReadFunctor<SCStatesMsgPayload> emptyReadFunctor;
@@ -429,8 +429,7 @@ void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThrus
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
-    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
+    addOwnedMessage(this->ownedThrusterOutMsgs, this->thrusterOutMsgs);
 
     // Save the incoming body message
     this->attachedBodyInMsgs.push_back(bodyStateReader);

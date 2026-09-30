@@ -79,8 +79,10 @@ Version |release|
   This fixes missing cleanup in the two-axis spinning-body effector, joint
   controllers, thruster on-time converter, and the nested wheel/thruster outputs
   of ``DataFileToViz``. Partially constructed output collections are also cleaned
-  up when allocation fails. See :ref:`bskOutputMessageOwnership` for the ownership
-  and reconfiguration contract.
+  up when allocation fails. The shared ``addOwnedMessage()`` helper rolls back
+  each owner/view insertion if either append fails; earlier module configuration
+  changes are not rolled back. See :ref:`bskOutputMessageOwnership` for the
+  ownership and reconfiguration contract.
 
 - GitHub issue 282: Spacecraft-input configuration methods in the atmosphere,
   magnetic-field, wind, eclipse, location, charging, MSM, and formation-barycenter

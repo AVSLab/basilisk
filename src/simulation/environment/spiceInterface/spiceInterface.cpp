@@ -17,6 +17,7 @@
 
  */
 #include "simulation/environment/spiceInterface/spiceInterface.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -843,8 +844,7 @@ void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames) {
     this->planetData.clear();
 
     for (it = planetNames.begin(); it != planetNames.end(); it++) {
-        this->ownedPlanetStateOutMsgs.push_back(std::make_unique<Message<SpicePlanetStateMsgPayload>>());
-        this->planetStateOutMsgs.push_back(this->ownedPlanetStateOutMsgs.back().get());
+        addOwnedMessage(this->ownedPlanetStateOutMsgs, this->planetStateOutMsgs);
 
         SpicePlanetStateMsgPayload newPlanet = {};
         m33SetIdentity(newPlanet.J20002Pfix);
@@ -881,14 +881,11 @@ void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames
 
     for (it = spacecraftNames.begin(); it != spacecraftNames.end(); it++) {
         /* append to spacecraft related output messages */
-        this->ownedScStateOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-        this->scStateOutMsgs.push_back(this->ownedScStateOutMsgs.back().get());
+        addOwnedMessage(this->ownedScStateOutMsgs, this->scStateOutMsgs);
 
-        this->ownedAttRefStateOutMsgs.push_back(std::make_unique<Message<AttRefMsgPayload>>());
-        this->attRefStateOutMsgs.push_back(this->ownedAttRefStateOutMsgs.back().get());
+        addOwnedMessage(this->ownedAttRefStateOutMsgs, this->attRefStateOutMsgs);
 
-        this->ownedTransRefStateOutMsgs.push_back(std::make_unique<Message<TransRefMsgPayload>>());
-        this->transRefStateOutMsgs.push_back(this->ownedTransRefStateOutMsgs.back().get());
+        addOwnedMessage(this->ownedTransRefStateOutMsgs, this->transRefStateOutMsgs);
 
         SpicePlanetStateMsgPayload newSpacecraft = {};
         m33SetIdentity(newSpacecraft.J20002Pfix);

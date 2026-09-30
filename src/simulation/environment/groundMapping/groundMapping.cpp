@@ -19,6 +19,7 @@
 
 
 #include "simulation/environment//groundMapping/groundMapping.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -83,16 +84,14 @@ void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init){
     this->mappingPoints.push_back(r_LP_P_init);
 
     /* Create buffer output messages */
-    this->ownedAccessOutMsgs.push_back(std::make_unique<Message<AccessMsgPayload>>());
-    this->accessOutMsgs.push_back(this->ownedAccessOutMsgs.back().get());
+    addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
     /* Expand the access buffer vectors */
     AccessMsgPayload accMsg;
     this->accessMsgBuffer.push_back(accMsg);
 
     /* Create ground state output message */
-    this->ownedCurrentGroundStateOutMsgs.push_back(std::make_unique<Message<GroundStateMsgPayload>>());
-    this->currentGroundStateOutMsgs.push_back(this->ownedCurrentGroundStateOutMsgs.back().get());
+    addOwnedMessage(this->ownedCurrentGroundStateOutMsgs, this->currentGroundStateOutMsgs);
 
     /* Expand the ground state buffer vectors */
     GroundStateMsgPayload groundMsg;

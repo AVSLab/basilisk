@@ -19,6 +19,7 @@
 
 
 #include "vscmgStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <iostream>
 #include <cmath>
 #include <iterator>
@@ -945,6 +946,5 @@ void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload *NewVSCMG)
     this->VSCMGData.push_back(*NewVSCMG);
 
     /* add a VSCMG output message for this device */
-    this->ownedVscmgOutMsgs.push_back(std::make_unique<Message<VSCMGConfigMsgPayload>>());
-    this->vscmgOutMsgs.push_back(this->ownedVscmgOutMsgs.back().get());
+    addOwnedMessage(this->ownedVscmgOutMsgs, this->vscmgOutMsgs);
 }

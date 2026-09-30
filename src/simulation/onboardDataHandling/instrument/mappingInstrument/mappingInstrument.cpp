@@ -18,6 +18,7 @@
 */
 
 #include "simulation/onboardDataHandling/instrument/mappingInstrument/mappingInstrument.h"
+#include "architecture/messaging/ownedMessage.h"
 
 #include <cstdio>
 
@@ -97,8 +98,7 @@ void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg,
     this->accessInMsgs.push_back(tmpAccessMsg->addSubscriber());
 
     /* Create buffer output messages */
-    this->ownedDataNodeOutMsgs.push_back(std::make_unique<Message<DataNodeUsageMsgPayload>>());
-    this->dataNodeOutMsgs.push_back(this->ownedDataNodeOutMsgs.back().get());
+    addOwnedMessage(this->ownedDataNodeOutMsgs, this->dataNodeOutMsgs);
 
     /* Expand the data node usage buffer vectors */
     this->dataNodeOutMsgBuffer.push_back(dataNodeUsageMsg);

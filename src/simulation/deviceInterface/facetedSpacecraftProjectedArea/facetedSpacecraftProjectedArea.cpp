@@ -18,6 +18,7 @@
 */
 
 #include "facetedSpacecraftProjectedArea.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 
 FacetedSpacecraftProjectedArea::~FacetedSpacecraftProjectedArea() = default;
@@ -212,8 +213,7 @@ void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets) {
     // Push back facet message vectors
     for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
         this->facetElementBodyInMsgs.push_back(ReadFunctor<FacetElementBodyMsgPayload>{});
-        this->ownedFacetProjectedAreaOutMsgs.push_back(std::make_unique<Message<ProjectedAreaMsgPayload>>());
-        this->facetProjectedAreaOutMsgs.push_back(this->ownedFacetProjectedAreaOutMsgs.back().get());
+        addOwnedMessage(this->ownedFacetProjectedAreaOutMsgs, this->facetProjectedAreaOutMsgs);
     }
 }
 

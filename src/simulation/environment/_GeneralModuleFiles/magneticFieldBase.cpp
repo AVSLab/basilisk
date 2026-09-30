@@ -18,6 +18,7 @@
  */
 
 #include "magneticFieldBase.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
@@ -69,8 +70,7 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<MagneticFieldMsgPayload>>());
-    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
+    addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 
     /* create buffer message copies*/
     MagneticFieldMsgPayload msgMagBuffer;

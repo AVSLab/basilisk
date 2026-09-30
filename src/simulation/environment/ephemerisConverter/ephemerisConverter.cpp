@@ -17,6 +17,7 @@
 
  */
 #include "simulation/environment/ephemerisConverter/ephemerisConverter.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -46,8 +47,7 @@ void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload> *t
     this->spiceInMsgs.push_back(tmpMsg->addSubscriber());
 
     /* setup output corresponding message */
-    this->ownedEphemOutMsgs.push_back(std::make_unique<Message<EphemerisMsgPayload>>());
-    this->ephemOutMsgs.push_back(this->ownedEphemOutMsgs.back().get());
+    addOwnedMessage(this->ownedEphemOutMsgs, this->ephemOutMsgs);
 
 
     /* update input and output buffers*/

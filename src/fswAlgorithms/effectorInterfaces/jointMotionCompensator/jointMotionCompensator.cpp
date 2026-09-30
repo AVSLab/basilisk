@@ -19,6 +19,7 @@
 
 
 #include "fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <iostream>
 #include <cstring>
 
@@ -228,12 +229,9 @@ void JointMotionCompensator::addSpacecraft()
     this->numSpacecraft ++;
 
     // add an output message for each principal axis of the new spacecraft
-    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
-    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
-    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
-    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
-    this->ownedHubTorqueOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
-    this->hubTorqueOutMsgs.push_back(this->ownedHubTorqueOutMsgs.back().get());
+    addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
+    addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
+    addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
 }
 
 void JointMotionCompensator::addHingedJoint()

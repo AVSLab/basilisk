@@ -18,6 +18,7 @@
  */
 
 #include "spinningBodyNDOFStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -158,10 +159,8 @@ void SpinningBodyNDOFStateEffector::addSpinningBody(const std::shared_ptr<Spinni
     spinningBodyVec.push_back(newBody);
     this->numberOfDegreesOfFreedom++;
 
-    this->ownedSpinningBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-    this->spinningBodyConfigLogOutMsgs.push_back(this->ownedSpinningBodyConfigLogOutMsgs.back().get());
-    this->ownedSpinningBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
-    this->spinningBodyOutMsgs.push_back(this->ownedSpinningBodyOutMsgs.back().get());
+    addOwnedMessage(this->ownedSpinningBodyConfigLogOutMsgs, this->spinningBodyConfigLogOutMsgs);
+    addOwnedMessage(this->ownedSpinningBodyOutMsgs, this->spinningBodyOutMsgs);
     this->spinningBodyRefInMsgs.push_back(ReadFunctor<HingedRigidBodyMsgPayload>());
 
     this->ATheta.conservativeResize(this->ATheta.rows()+1, 3);

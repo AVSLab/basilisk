@@ -18,6 +18,7 @@
  */
 
 #include "eclipse.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <iostream>
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -225,8 +226,7 @@ void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    this->ownedEclipseOutMsgs.push_back(std::make_unique<Message<EclipseMsgPayload>>());
-    this->eclipseOutMsgs.push_back(this->ownedEclipseOutMsgs.back().get());
+    addOwnedMessage(this->ownedEclipseOutMsgs, this->eclipseOutMsgs);
 
     /* expand the sc state buffer vector */
     SCStatesMsgPayload scMsg;

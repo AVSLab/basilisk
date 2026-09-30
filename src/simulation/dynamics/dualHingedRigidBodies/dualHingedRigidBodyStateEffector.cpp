@@ -19,6 +19,7 @@
 
 
 #include "dualHingedRigidBodyStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <string>
 #include <cmath>
@@ -71,10 +72,8 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->effectorID++;
 
     for (int c = 0; c < 2; c++) {
-        this->ownedDualHingedRigidBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
-        this->dualHingedRigidBodyOutMsgs.push_back(this->ownedDualHingedRigidBodyOutMsgs.back().get());
-        this->ownedDualHingedRigidBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-        this->dualHingedRigidBodyConfigLogOutMsgs.push_back(this->ownedDualHingedRigidBodyConfigLogOutMsgs.back().get());
+        addOwnedMessage(this->ownedDualHingedRigidBodyOutMsgs, this->dualHingedRigidBodyOutMsgs);
+        addOwnedMessage(this->ownedDualHingedRigidBodyConfigLogOutMsgs, this->dualHingedRigidBodyConfigLogOutMsgs);
     }
 
     this->ModelTag = "";

@@ -19,6 +19,7 @@
 
 
 #include "reactionWheelStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 
 #include <algorithm>
 #include <cmath>
@@ -520,8 +521,7 @@ void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayloa
     this->ReactionWheelData.push_back(NewRW);
 
     /* add a RW state log output message for this wheel */
-    this->ownedRwOutMsgs.push_back(std::make_unique<Message<RWConfigLogMsgPayload>>());
-    this->rwOutMsgs.push_back(this->ownedRwOutMsgs.back().get());
+    addOwnedMessage(this->ownedRwOutMsgs, this->rwOutMsgs);
 }
 
 
