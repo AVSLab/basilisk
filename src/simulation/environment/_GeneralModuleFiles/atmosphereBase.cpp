@@ -19,6 +19,7 @@
  */
 
 #include "atmosphereBase.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
@@ -74,8 +75,7 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<AtmoPropsMsgPayload>>());
-    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
+    addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 
     /* create buffer message copies*/
     AtmoPropsMsgPayload msgAtmoBuffer;

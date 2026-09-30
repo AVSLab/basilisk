@@ -18,6 +18,7 @@
  */
 
 #include "linearTranslationNDOFStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
@@ -98,10 +99,8 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
     this->N++;
 
     // Create the output vectors
-    this->ownedTranslatingBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-    this->translatingBodyConfigLogOutMsgs.push_back(this->ownedTranslatingBodyConfigLogOutMsgs.back().get());
-    this->ownedTranslatingBodyOutMsgs.push_back(std::make_unique<Message<LinearTranslationRigidBodyMsgPayload>>());
-    this->translatingBodyOutMsgs.push_back(this->ownedTranslatingBodyOutMsgs.back().get());
+    addOwnedMessage(this->ownedTranslatingBodyConfigLogOutMsgs, this->translatingBodyConfigLogOutMsgs);
+    addOwnedMessage(this->ownedTranslatingBodyOutMsgs, this->translatingBodyOutMsgs);
     this->translatingBodyRefInMsgs.push_back(ReadFunctor<LinearTranslationRigidBodyMsgPayload>());
 
     // resize A B and C

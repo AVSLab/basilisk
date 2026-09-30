@@ -18,6 +18,7 @@
  */
 
 #include "simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <algorithm>
 #include "architecture/utilities/macroDefinitions.h"
 
@@ -103,6 +104,5 @@ void ThrOnTimeToForce::setThrMag(const std::vector<double>& value)
 void ThrOnTimeToForce::addThruster()
 {
     ++this->numThr;
-    this->ownedThrusterForceOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
-    this->thrusterForceOutMsgs.push_back(this->ownedThrusterForceOutMsgs.back().get());
+    addOwnedMessage(this->ownedThrusterForceOutMsgs, this->thrusterForceOutMsgs);
 }

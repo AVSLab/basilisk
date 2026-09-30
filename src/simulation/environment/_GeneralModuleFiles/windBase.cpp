@@ -18,6 +18,7 @@
  */
 
 #include "windBase.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
@@ -193,8 +194,7 @@ void WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     //! - create output message
-    this->ownedEnvOutMsgs.push_back(std::make_unique<Message<WindMsgPayload>>());
-    this->envOutMsgs.push_back(this->ownedEnvOutMsgs.back().get());
+    addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 }
 
 void WindBase::UpdateState(uint64_t CurrentSimNanos)

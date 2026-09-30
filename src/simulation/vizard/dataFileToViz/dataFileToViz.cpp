@@ -17,6 +17,7 @@
 
 
 #include "dataFileToViz.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -137,8 +138,7 @@ void DataFileToViz::setNumOfSatellites(int numSat)
 {
     for (int i=0; i<numSat; i++) {
         /* create output message */
-        this->ownedScStateOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-        this->scStateOutMsgs.push_back(this->ownedScStateOutMsgs.back().get());
+        addOwnedMessage(this->ownedScStateOutMsgs, this->scStateOutMsgs);
     }
 }
 
@@ -182,8 +182,7 @@ void DataFileToViz::appendThrClusterMap(std::vector <ThrClusterMap> thrMsgData, 
             // loop over the number of thrusters in this cluster and create an output message
             for (int i=0; i<numThrPerCluster[thrClusterCount]; i++) {
                 /* create output message */
-                this->ownedThrScOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
-                vecMsgs.push_back(this->ownedThrScOutMsgs.back().get());
+                addOwnedMessage(this->ownedThrScOutMsgs, vecMsgs);
             }
             this->numThr += numThrPerCluster[thrClusterCount];
         }
@@ -202,8 +201,7 @@ void DataFileToViz::appendNumOfRWs(int numRW)
     std::vector <Message<RWConfigLogMsgPayload>*> vecMsgs;
     for (int i=0; i<numRW; i++) {
         /* create output message */
-        this->ownedRwScOutMsgs.push_back(std::make_unique<Message<RWConfigLogMsgPayload>>());
-        vecMsgs.push_back(this->ownedRwScOutMsgs.back().get());
+        addOwnedMessage(this->ownedRwScOutMsgs, vecMsgs);
     }
     // update total number of RWs
     this->numRW += numRW;

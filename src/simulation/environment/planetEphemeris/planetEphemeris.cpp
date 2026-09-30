@@ -17,6 +17,7 @@
 
  */
 #include "simulation/environment/planetEphemeris/planetEphemeris.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
@@ -64,8 +65,7 @@ void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 
     /* create corresponding output messages */
     for (long unsigned int c=0; c<this->planetNames.size(); c++) {
-        this->ownedPlanetOutMsgs.push_back(std::make_unique<Message<SpicePlanetStateMsgPayload>>());
-        this->planetOutMsgs.push_back(this->ownedPlanetOutMsgs.back().get());
+        addOwnedMessage(this->ownedPlanetOutMsgs, this->planetOutMsgs);
     }
 }
 

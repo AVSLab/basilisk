@@ -18,6 +18,7 @@
  */
 
 #include "nHingedRigidBodyStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include <cmath>
 
@@ -54,10 +55,8 @@ NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 {
     this->requireMutableTopology("NHingedRigidBodyStateEffector::addHingedPanel");
     this->PanelVec.push_back(NewPanel);
-    this->ownedNHingedRigidBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
-    this->nHingedRigidBodyOutMsgs.push_back(this->ownedNHingedRigidBodyOutMsgs.back().get());
-    this->ownedNHingedRigidBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-    this->nHingedRigidBodyConfigLogOutMsgs.push_back(this->ownedNHingedRigidBodyConfigLogOutMsgs.back().get());
+    addOwnedMessage(this->ownedNHingedRigidBodyOutMsgs, this->nHingedRigidBodyOutMsgs);
+    addOwnedMessage(this->ownedNHingedRigidBodyConfigLogOutMsgs, this->nHingedRigidBodyConfigLogOutMsgs);
 
     const std::string panelSuffix = this->propertyNameIndex + "_" + std::to_string(this->PanelVec.size());
     HingedPanel& panel = this->PanelVec.back();

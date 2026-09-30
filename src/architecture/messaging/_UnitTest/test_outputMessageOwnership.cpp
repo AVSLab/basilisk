@@ -3,15 +3,19 @@
  * Distributed under the ISC license; see LICENSE.
  */
 
+#include "architecture/messaging/ownedMessage.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include <gtest/gtest.h>
 
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <new>
 #include <string>
 #include <utility>
+#include <vector>
 
 #ifdef _WIN32
 #include <malloc.h>
@@ -289,6 +293,118 @@ TEST(AllocationProbe, InjectsAlignedScalarAndArrayAllocationFailures)
         auto successful = runTrial(factory, 1);
         EXPECT_FALSE(successful.first);
         EXPECT_EQ(successful.second, 0U);
+    }
+}
+
+/** @brief Growing either vector preserves existing message addresses and subscriptions. */
+TEST(OwnedMessageHelper, PreservesViewsAndPayloadsDuringGrowth)
+{
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> owners;
+    std::vector<Message<SCStatesMsgPayload>*> views;
+    addOwnedMessage(owners, views);
+    auto* firstMessage = views.front();
+    auto reader = firstMessage->addSubscriber();
+    SCStatesMsgPayload payload{};
+    payload.r_BN_N[0] = 125.5; // [m]
+    firstMessage->write(&payload, 1, 0);
+
+    const auto initialOwnerCapacity = owners.capacity();
+    const auto initialViewCapacity = views.capacity();
+    for (std::size_t index = 0; index < 64; ++index) {
+        addOwnedMessage(owners, views);
+    }
+
+    ASSERT_EQ(owners.size(), views.size());
+    EXPECT_GT(owners.capacity(), initialOwnerCapacity);
+    EXPECT_GT(views.capacity(), initialViewCapacity);
+    for (std::size_t index = 0; index < owners.size(); ++index) {
+        EXPECT_EQ(owners[index].get(), views[index]);
+    }
+    EXPECT_EQ(views.front(), firstMessage);
+    EXPECT_DOUBLE_EQ(reader().r_BN_N[0], payload.r_BN_N[0]);
+    EXPECT_FALSE(views.back()->addSubscriber().isWritten());
+}
+
+/** @brief A shared owner vector can back separate groups of borrowed messages. */
+TEST(OwnedMessageHelper, SupportsSeparateViewGroups)
+{
+    std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> owners;
+    std::vector<Message<SCStatesMsgPayload>*> firstGroup;
+    std::vector<Message<SCStatesMsgPayload>*> secondGroup;
+    addOwnedMessage(owners, firstGroup);
+    addOwnedMessage(owners, secondGroup);
+    addOwnedMessage(owners, firstGroup);
+
+    ASSERT_EQ(owners.size(), 3U);
+    ASSERT_EQ(firstGroup.size(), 2U);
+    ASSERT_EQ(secondGroup.size(), 1U);
+    EXPECT_EQ(firstGroup[0], owners[0].get());
+    EXPECT_EQ(secondGroup[0], owners[1].get());
+    EXPECT_EQ(firstGroup[1], owners[2].get());
+}
+
+/** @brief Allocation failures preserve both collections and release the rejected message. */
+TEST(OwnedMessageHelper, RollsBackEveryAllocationFailure)
+{
+    for (bool populated : { false, true }) {
+        for (bool reserveOwners : { false, true }) {
+            bool reachedSuccess = false;
+            int failureCount = 0;
+            for (int failAfter = 0; failAfter < 16; ++failAfter) {
+                SCOPED_TRACE(failAfter);
+                bool failed = false;
+                bool sizesCorrect;
+                bool entriesPreserved = true;
+                std::size_t remainingAllocations;
+                {
+                    AllocationProbe probe;
+                    {
+                        std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> owners;
+                        std::vector<Message<SCStatesMsgPayload>*> views;
+                        if (populated) {
+                            addOwnedMessage(owners, views);
+                            // Fill the view storage so the next append must allocate.
+                            while (views.size() < views.capacity()) {
+                                addOwnedMessage(owners, views);
+                            }
+                        }
+                        if (reserveOwners) {
+                            owners.reserve(owners.size() + 1);
+                        }
+                        const auto previousViews = views;
+                        probe.failAfter = failAfter;
+                        try {
+                            addOwnedMessage(owners, views);
+                        } catch (const std::bad_alloc&) {
+                            failed = true;
+                            ++failureCount;
+                        }
+                        probe.failAfter = -1;
+                        const auto expectedSize = previousViews.size() + (failed ? 0U : 1U);
+                        sizesCorrect = owners.size() == expectedSize && views.size() == expectedSize;
+                        for (std::size_t index = 0; index < previousViews.size(); ++index) {
+                            entriesPreserved = entriesPreserved && index < owners.size() && index < views.size() &&
+                                               owners[index].get() == previousViews[index] &&
+                                               views[index] == previousViews[index];
+                        }
+                        if (!failed) {
+                            entriesPreserved = entriesPreserved && !owners.empty() && !views.empty() &&
+                                               owners.back().get() == views.back();
+                        }
+                    }
+                    remainingAllocations = probe.count;
+                }
+                EXPECT_TRUE(sizesCorrect);
+                EXPECT_TRUE(entriesPreserved);
+                EXPECT_EQ(remainingAllocations, 0U);
+                if (!failed) {
+                    reachedSuccess = true;
+                    break;
+                }
+            }
+            EXPECT_TRUE(reachedSuccess);
+            EXPECT_GE(failureCount, 2); // At least message construction and view-vector growth must fail.
+        }
     }
 }
 

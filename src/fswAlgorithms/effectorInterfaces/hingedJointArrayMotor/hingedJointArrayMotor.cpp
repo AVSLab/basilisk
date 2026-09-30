@@ -19,6 +19,7 @@
 
 
 #include "fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <iostream>
 #include <cstring>
 #include <algorithm>
@@ -312,6 +313,5 @@ void HingedJointArrayMotor::addHingedJoint()
     this->jointStateDotsInMsgs.push_back(ReadFunctor<ScalarJointStateMsgPayload>());
 
     // add a new output message for the new hinged joint
-    this->ownedMotorTorquesOutMsgs.push_back(std::make_unique<Message<SingleActuatorMsgPayload>>());
-    this->motorTorquesOutMsgs.push_back(this->ownedMotorTorquesOutMsgs.back().get());
+    addOwnedMessage(this->ownedMotorTorquesOutMsgs, this->motorTorquesOutMsgs);
 }

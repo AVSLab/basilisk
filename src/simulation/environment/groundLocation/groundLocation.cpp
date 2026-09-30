@@ -18,6 +18,7 @@
  */
 
 #include "simulation/environment/groundLocation/groundLocation.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <iostream>
@@ -96,8 +97,7 @@ void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
     /* create output message */
-    this->ownedAccessOutMsgs.push_back(std::make_unique<Message<AccessMsgPayload>>());
-    this->accessOutMsgs.push_back(this->ownedAccessOutMsgs.back().get());
+    addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
     /* expand the buffer vector */
     AccessMsgPayload accMsg;

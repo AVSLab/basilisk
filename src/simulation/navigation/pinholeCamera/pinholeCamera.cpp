@@ -18,6 +18,7 @@
  */
 
 #include "pinholeCamera.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -72,8 +73,7 @@ void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal){
     this->nL_P.push_back(normal);
 
     /* Create buffer output messages */
-    this->ownedLandmarkOutMsgs.push_back(std::make_unique<Message<LandmarkMsgPayload>>());
-    this->landmarkOutMsgs.push_back(this->ownedLandmarkOutMsgs.back().get());
+    addOwnedMessage(this->ownedLandmarkOutMsgs, this->landmarkOutMsgs);
 
     /* Expand the landmark buffer vectors */
     LandmarkMsgPayload lmkMsg;

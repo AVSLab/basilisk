@@ -18,6 +18,7 @@
  */
 
 #include "spinningBodyTwoDOFStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <string>
@@ -27,10 +28,8 @@
 SpinningBodyTwoDOFStateEffector::SpinningBodyTwoDOFStateEffector()
 {
     for (size_t bodyIndex = 0; bodyIndex < 2; ++bodyIndex) {
-        this->ownedSpinningBodyOutMsgs.push_back(std::make_unique<Message<HingedRigidBodyMsgPayload>>());
-        this->spinningBodyOutMsgs.push_back(this->ownedSpinningBodyOutMsgs.back().get());
-        this->ownedSpinningBodyConfigLogOutMsgs.push_back(std::make_unique<Message<SCStatesMsgPayload>>());
-        this->spinningBodyConfigLogOutMsgs.push_back(this->ownedSpinningBodyConfigLogOutMsgs.back().get());
+        addOwnedMessage(this->ownedSpinningBodyOutMsgs, this->spinningBodyOutMsgs);
+        addOwnedMessage(this->ownedSpinningBodyConfigLogOutMsgs, this->spinningBodyConfigLogOutMsgs);
     }
 
     // Zero the mass props and mass prop rates contributions

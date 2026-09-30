@@ -26,6 +26,7 @@
 #include <string>
 
 #include "vizInterface.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
@@ -1380,8 +1381,7 @@ void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload> *tmpMsg)
     this->cameraConfigBuffers.push_back(tmpCamConfigMsg);
 
     /* create output message */
-    this->ownedOpnavImageOutMsgs.push_back(std::make_unique<Message<CameraImageMsgPayload>>());
-    this->opnavImageOutMsgs.push_back(this->ownedOpnavImageOutMsgs.back().get());
+    addOwnedMessage(this->ownedOpnavImageOutMsgs, this->opnavImageOutMsgs);
 
     /* create image pointer */
     void *imgPtr = NULL;

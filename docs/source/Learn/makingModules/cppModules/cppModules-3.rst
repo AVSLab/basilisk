@@ -102,8 +102,11 @@ Use a public configuration method to add related input readers, payload buffers,
 and output messages together. The following ``addMsgToModule()`` example uses
 the vectors declared in :ref:`cppModules-1`. It subscribes to the supplied input,
 adds an initialized payload buffer, and creates the corresponding output message.
+Include the owned-message helper in the module's C++ implementation file:
 
 .. code:: cpp
+
+    #include "architecture/messaging/ownedMessage.h"
 
     /*! @brief Add an input subscription and its corresponding output message.
      * @param tmpMsg Input message that must remain alive while the module uses it.
@@ -118,15 +121,23 @@ adds an initialized payload buffer, and creates the corresponding output message
         this->moreInMsgsBuffer.push_back(inputBuffer);
 
         /* own the output message and expose a borrowed pointer */
-        this->ownedMoreOutMsgs.push_back(std::make_unique<Message<SomeMsgPayload>>());
-        this->moreOutMsgs.push_back(this->ownedMoreOutMsgs.back().get());
+        addOwnedMessage(this->ownedMoreOutMsgs, this->moreOutMsgs);
     }
 
 The example gives each input one output. For example, :ref:`eclipse` creates an
 eclipse output message for each spacecraft state input added to the module.
-``std::make_unique`` and the private owner vector manage allocation and cleanup;
-the public vector holds borrowed pointers. No manual deletion loop is needed.
-See :ref:`bskOutputMessageLifetime` for lifetime and setup-failure behavior.
+``addOwnedMessage()`` creates the message in the private owner vector and appends
+its borrowed pointer to the public vector. If construction or either insertion
+throws, the helper releases the new message and preserves both vectors' previous
+sizes and entries; their capacities may change. No manual deletion loop is needed.
+
+This guarantee covers one message insertion. It does not undo earlier changes
+to input readers, payload buffers, or other module configuration. If setup fails,
+discard the partially configured module as described in
+:ref:`bskOutputMessageLifetime`. Multiple groups of borrowed pointers may share
+one owner vector, as in nested wheel or thruster output collections. Include the
+helper only where the C++ implementation needs it; no SWIG declaration is needed.
+
 The SWIG interface also needs the source-retention hook described in
 :ref:`bskModuleInputMessageLifetime` so that standalone Python input messages
 remain alive while these readers use them.

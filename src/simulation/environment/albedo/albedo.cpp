@@ -18,6 +18,7 @@
  */
 
 #include "albedo.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/macroDefinitions.h"
 
@@ -59,8 +60,7 @@ Config::~Config() {}
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function) */
 void Albedo::addInstrumentConfig(instConfig_t configMsg)
 {
-    this->ownedAlbOutMsgs.push_back(std::make_unique<Message<AlbedoMsgPayload>>());
-    this->albOutMsgs.push_back(this->ownedAlbOutMsgs.back().get());
+    addOwnedMessage(this->ownedAlbOutMsgs, this->albOutMsgs);
 
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (configMsg.fov < 0.0) {
@@ -85,8 +85,7 @@ void Albedo::addInstrumentConfig(instConfig_t configMsg)
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function) */
 void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B)
 {
-    this->ownedAlbOutMsgs.push_back(std::make_unique<Message<AlbedoMsgPayload>>());
-    this->albOutMsgs.push_back(this->ownedAlbOutMsgs.back().get());
+    addOwnedMessage(this->ownedAlbOutMsgs, this->albOutMsgs);
 
     // Do a sanity check and push fov back to the vector (if not defined, use the default value.)
     if (fov < 0.0) {

@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "thrusterStateEffector.h"
+#include "architecture/messaging/ownedMessage.h"
 #include <cmath>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
@@ -279,8 +280,7 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
-    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
+    addOwnedMessage(this->ownedThrusterOutMsgs, this->thrusterOutMsgs);
 
     // Set the initial condition
     double state = 0.0;
@@ -315,8 +315,7 @@ void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruste
     this->thrusterData.push_back(newThruster);
 
     // Create corresponding output message
-    this->ownedThrusterOutMsgs.push_back(std::make_unique<Message<THROutputMsgPayload>>());
-    this->thrusterOutMsgs.push_back(this->ownedThrusterOutMsgs.back().get());
+    addOwnedMessage(this->ownedThrusterOutMsgs, this->thrusterOutMsgs);
 
     // Set the initial condition
     double state = 0.0;

@@ -19,6 +19,7 @@
 
 
 #include "simulation/environment/spacecraftChargingEquilibrium/spacecraftChargingEquilibrium.h"
+#include "architecture/messaging/ownedMessage.h"
 
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -593,11 +594,9 @@ void SpacecraftChargingEquilibrium::addSpacecraft(Message<SCStatesMsgPayload> *t
     this->sigma_BNList.push_back(zeroMRP);
 
     // Create output message objects.
-    this->ownedVoltOutMsgs.push_back(std::make_unique<Message<VoltMsgPayload>>());
-    this->voltOutMsgs.push_back(this->ownedVoltOutMsgs.back().get());
+    addOwnedMessage(this->ownedVoltOutMsgs, this->voltOutMsgs);
 
-    this->ownedCurrentsOutMsgs.push_back(std::make_unique<Message<ScChargingCurrentsMsgPayload>>());
-    this->currentsOutMsgs.push_back(this->ownedCurrentsOutMsgs.back().get());
+    addOwnedMessage(this->ownedCurrentsOutMsgs, this->currentsOutMsgs);
 }
 
 /*!  Read in the input messages

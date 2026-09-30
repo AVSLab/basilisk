@@ -18,6 +18,7 @@
 */
 
 #include "facetedSpacecraftModel.h"
+#include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <cassert>
@@ -212,8 +213,7 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     // Push back facet message vectors
     for (uint64_t idx = 0; idx < this->numFacets; ++idx) {
         this->facetElementInMsgs.push_back(ReadFunctor<FacetElementMsgPayload>{});
-        this->ownedFacetElementBodyOutMsgs.push_back(std::make_unique<Message<FacetElementBodyMsgPayload>>());
-        this->facetElementBodyOutMsgs.push_back(this->ownedFacetElementBodyOutMsgs.back().get());
+        addOwnedMessage(this->ownedFacetElementBodyOutMsgs, this->facetElementBodyOutMsgs);
     }
 
     // Set the articulated facet input messages to the pending input message list
