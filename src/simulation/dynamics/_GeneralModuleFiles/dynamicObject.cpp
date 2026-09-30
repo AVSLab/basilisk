@@ -49,23 +49,27 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
         return;
     }
 
-    std::unique_ptr<StateVecIntegrator> ownedIntegrator(newIntegrator);
+    this->setIntegrator(std::unique_ptr<StateVecIntegrator>(newIntegrator));
+}
+
+void DynamicObject::setIntegrator(std::unique_ptr<StateVecIntegrator> newIntegrator)
+{
     if (this->integrationOwner != nullptr) {
         bskLogger.bskLog(BSK_WARNING,
                          "You cannot set the integrator of a DynamicObject with synced integration. "
                          "Change the integrator of the primary DynamicObject.");
         return;
     }
-    if (!ownedIntegrator) {
+    if (!newIntegrator) {
         bskLogger.bskError("New integrator cannot be a null pointer");
     }
-    if (ownedIntegrator->dynPtrs.empty() || ownedIntegrator->dynPtrs.front() != this) {
+    if (newIntegrator->dynPtrs.empty() || newIntegrator->dynPtrs.front() != this) {
         bskLogger.bskError("New integrator must have been created using this DynamicObject");
     }
     if (this->integrator) {
-        ownedIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
+        newIntegrator->dynPtrs = std::move(this->integrator->dynPtrs);
     }
-    this->integrator = std::move(ownedIntegrator);
+    this->integrator = std::move(newIntegrator);
 }
 
 void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)

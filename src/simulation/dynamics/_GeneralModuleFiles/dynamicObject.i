@@ -81,6 +81,8 @@
 // reference later does not free the integrator a second time.
 // C++ consumes newly supplied integrators, including rejected replacements.
 %apply SWIGTYPE *DISOWN { StateVecIntegrator* newIntegrator };
+// Python continues to transfer ownership through the raw-pointer adapter.
+%ignore DynamicObject::setIntegrator(std::unique_ptr<StateVecIntegrator>);
 %include "simulation/dynamics/_GeneralModuleFiles/dynamicObject.h"
 %clear StateVecIntegrator* newIntegrator;
 

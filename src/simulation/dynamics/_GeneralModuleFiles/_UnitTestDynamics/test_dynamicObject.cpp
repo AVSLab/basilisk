@@ -22,6 +22,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -58,7 +59,7 @@ class FailingDynamicObject : public TestDynamicObject {
 public:
     explicit FailingDynamicObject(int& destructions)
     {
-        this->setIntegrator(new CountingIntegrator(this, destructions));
+        this->setIntegrator(std::make_unique<CountingIntegrator>(this, destructions));
         throw std::runtime_error("Construction failed after installing an integrator");
     }
 };
@@ -91,6 +92,60 @@ TEST(DynamicObjectOwnership, ReplacementAndDestruction)
     }
     EXPECT_EQ(oldDestructions, 1);
     EXPECT_EQ(newDestructions, 1);
+}
+
+/** @brief C++ callers can transfer temporary, derived, and base unique_ptr owners. */
+TEST(DynamicObjectOwnership, UniquePointerTransferAndReplacement)
+{
+    int oldDestructions = 0;
+    int newDestructions = 0;
+    {
+        TestDynamicObject object;
+        object.setIntegrator(std::make_unique<CountingIntegrator>(&object, oldDestructions));
+        std::unique_ptr<StateVecIntegrator> replacement =
+          std::make_unique<CountingIntegrator>(&object, newDestructions);
+        auto* expected = replacement.get();
+        object.setIntegrator(std::move(replacement));
+        EXPECT_EQ(replacement, nullptr);
+        EXPECT_EQ(object.getIntegrator(), expected);
+        EXPECT_EQ(oldDestructions, 1);
+        EXPECT_EQ(newDestructions, 0);
+        object.integrateState(0);
+        EXPECT_EQ(object.preCalls, 1);
+        EXPECT_EQ(object.postCalls, 1);
+    }
+    EXPECT_EQ(oldDestructions, 1);
+    EXPECT_EQ(newDestructions, 1);
+}
+
+/** @brief Invalid owning arguments are consumed without replacing the active integrator. */
+TEST(DynamicObjectOwnership, RejectInvalidUniquePointers)
+{
+    int currentDestructions = 0;
+    int rejectedDestructions = 0;
+    {
+        TestDynamicObject object;
+        TestDynamicObject other;
+        object.setIntegrator(std::make_unique<CountingIntegrator>(&object, currentDestructions));
+        auto* original = object.getIntegrator();
+        EXPECT_THROW(object.setIntegrator(std::unique_ptr<StateVecIntegrator>{}), BasiliskError);
+
+        auto wrongObject = std::make_unique<CountingIntegrator>(&other, rejectedDestructions);
+        EXPECT_THROW(object.setIntegrator(std::move(wrongObject)), BasiliskError);
+        EXPECT_EQ(wrongObject, nullptr);
+        EXPECT_EQ(rejectedDestructions, 1);
+
+        auto nullCreator = std::make_unique<CountingIntegrator>(nullptr, rejectedDestructions);
+        EXPECT_THROW(object.setIntegrator(std::move(nullCreator)), BasiliskError);
+        EXPECT_EQ(nullCreator, nullptr);
+        EXPECT_EQ(rejectedDestructions, 2);
+        EXPECT_EQ(object.getIntegrator(), original);
+        EXPECT_EQ(currentDestructions, 0);
+        object.integrateState(0);
+        EXPECT_EQ(object.preCalls, 1);
+    }
+    EXPECT_EQ(currentDestructions, 1);
+    EXPECT_EQ(rejectedDestructions, 2);
 }
 
 /** @brief Reinstalling the active pointer leaves its storage and dynamics intact. */
@@ -156,7 +211,8 @@ TEST(DynamicObjectOwnership, RejectIntegratorWithExpiredCreator)
     auto integrator = std::make_unique<CountingIntegrator>(creator.get(), destructions);
     creator.reset();
     TestDynamicObject other;
-    EXPECT_THROW(other.setIntegrator(integrator.release()), BasiliskError);
+    EXPECT_THROW(other.setIntegrator(std::move(integrator)), BasiliskError);
+    EXPECT_EQ(integrator, nullptr);
     EXPECT_EQ(other.getIntegrator(), nullptr);
     EXPECT_EQ(destructions, 1);
 }
@@ -174,7 +230,9 @@ TEST(DynamicObjectOwnership, RejectReplacementOnSyncedObject)
         auto* original = new CountingIntegrator(&secondary, secondaryDestructions);
         secondary.setIntegrator(original);
         primary.syncDynamicsIntegration(&secondary);
-        secondary.setIntegrator(new CountingIntegrator(&secondary, rejectedDestructions));
+        auto rejected = std::make_unique<CountingIntegrator>(&secondary, rejectedDestructions);
+        secondary.setIntegrator(std::move(rejected));
+        EXPECT_EQ(rejected, nullptr);
         EXPECT_EQ(rejectedDestructions, 1);
         EXPECT_EQ(secondary.getIntegrator(), original);
         secondary.setIntegrator(original);
@@ -196,13 +254,15 @@ TEST(DynamicObjectOwnership, ReplacementPreservesSyncedDynamics)
         primary.setIntegrator(new CountingIntegrator(&primary, oldDestructions));
         secondary.setIntegrator(new CountingIntegrator(&secondary, secondaryDestructions));
         primary.syncDynamicsIntegration(&secondary);
-        auto* replacement = new CountingIntegrator(&primary, newDestructions);
-        primary.setIntegrator(replacement);
+        auto replacement = std::make_unique<CountingIntegrator>(&primary, newDestructions);
+        auto* active = replacement.get();
+        primary.setIntegrator(std::move(replacement));
+        EXPECT_EQ(replacement, nullptr);
         EXPECT_EQ(oldDestructions, 1);
-        EXPECT_EQ(replacement->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
+        EXPECT_EQ(active->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
         primary.integrateState(0);
         secondary.integrateState(0);
-        EXPECT_EQ(replacement->integrationCalls, 1);
+        EXPECT_EQ(active->integrationCalls, 1);
         EXPECT_EQ(primary.preCalls, 1);
         EXPECT_EQ(primary.postCalls, 1);
         EXPECT_EQ(secondary.preCalls, 1);
