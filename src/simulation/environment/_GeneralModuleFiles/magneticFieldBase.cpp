@@ -22,6 +22,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! This method initializes some basic parameters for the module.
 
@@ -85,6 +86,8 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
  */
 void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
@@ -149,10 +152,12 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused
 }
 
 /*! This method is used to read the incoming command message and set the
- associated spacecraft positions for computing the atmosphere.
-
+ associated spacecraft positions for computing the magnetic field. The spacecraft state is extrapolated to the
+ middle of the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
+ @return true if all required messages were read
  */
-bool MagneticFieldBase::readMessages()
+bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload scMsg;
 
@@ -165,7 +170,10 @@ bool MagneticFieldBase::readMessages()
         scRead = true;
         for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
-            scMsg = this->scStateInMsgs.at(c)();
+            scMsg = extrapolateScStateToStepMidpoint(this->scStateInMsgs.at(c)(),
+                                                     CurrentSimNanos,
+                                                     this->scStateInMsgs.at(c).timeWritten(),
+                                                     this->previousUpdateNanos);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -260,13 +268,13 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
         *it = this->envOutMsgs[0]->zeroMsgPayload;
     }
     //! - update local neutral density information
-    if(this->readMessages())
-    {
+    if (this->readMessages(CurrentSimNanos)) {
         updateLocalMagField(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     }
 
     //! - write out neutral density message
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 
     return;
 }

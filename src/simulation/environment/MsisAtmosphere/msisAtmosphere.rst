@@ -50,3 +50,17 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          20 - ap_3_-57
          21 - f107_1944_0
          22 - f107_24_-24
+
+Planet Shape
+------------
+The NRLMSISE-00 model expects the geodetic latitude and altitude above the reference ellipsoid. By default the module
+computes them for a sphere of radius ``planetRadius``. Call ``setPlanetPolarRadius(orbitalMotion.RP_EARTH * 1000.0)``
+(see :ref:`atmosphereBase`) to use the Earth ellipsoid. This requires ``planetPosInMsg`` to provide the planet orientation.
+
+Local Solar Time
+----------------
+NRLMSISE-00 is defined with the local apparent solar time. By default the module uses the mean solar time, the second
+of the day plus the longitude divided by 15 degrees per hour. The two differ by the equation of time, which is up to
+about 16 minutes during the year. Call ``setUseApparentSolarTime(True)`` to add the equation of time, computed with the
+series of Meeus, *Astronomical Algorithms*, chapter 28, with an accuracy of a few seconds. This changes the density
+by up to about one percent, depending on the epoch and the location, and is the convention used by Orekit.

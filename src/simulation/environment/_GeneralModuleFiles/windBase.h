@@ -74,10 +74,12 @@ protected:
      */
     void writeMessages(uint64_t CurrentClock);
 
-    /*! Reads the spacecraft and planet state messages.
+    /*! Reads the spacecraft and planet state messages. The spacecraft state is extrapolated to the middle of
+     *  the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+     *  @param CurrentSimNanos  Current simulation time (ns).
      *  @return true if all required messages were successfully read.
      */
-    bool readMessages();
+    bool readMessages(uint64_t CurrentSimNanos);
 
     /*! Computes `r_BP_N` from spacecraft and planet positions.
      *
@@ -160,6 +162,7 @@ protected:
     struct tm epochDateTime{};                   //!< Epoch date/time (Gregorian) for time-dependent models
     std::vector<WindMsgPayload> envOutBuffer{};  //!< Message write buffer for each spacecraft
     std::vector<SCStatesMsgPayload> scStates{};  //!< Cached spacecraft state messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] Time of the previous module update, used to detect stale spacecraft messages
     SpicePlanetStateMsgPayload planetState{};    //!< Cached planet state message
 
     /*! Updates `spiceOmega_N` from `J20002Pfix_dot` when SPICE provides it.

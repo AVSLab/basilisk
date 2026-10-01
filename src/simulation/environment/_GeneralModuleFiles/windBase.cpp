@@ -22,6 +22,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 WindBase::WindBase()
 {
@@ -43,6 +44,8 @@ WindBase::~WindBase() = default;
 
 void WindBase::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+
     if (this->scStateInMsgs.empty()) {
         bskLogger.bskError("Wind model has no spacecraft added to it.");
     }
@@ -84,7 +87,7 @@ void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 
 void WindBase::customSetEpochFromVariable() {}
 
-bool WindBase::readMessages()
+bool WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
     bool scRead = std::all_of(
@@ -94,7 +97,8 @@ bool WindBase::readMessages()
 
     if (scRead) {
         for (auto& msg : this->scStateInMsgs) {
-            this->scStates.push_back(msg());
+            this->scStates.push_back(
+              extrapolateScStateToStepMidpoint(msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos));
         }
     }
 
@@ -201,7 +205,7 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
 {
     this->envOutBuffer.clear();
 
-    if (this->readMessages()) {
+    if (this->readMessages(CurrentSimNanos)) {
         this->updateLocalWind(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     } else {
         // Zero outputs when message reads fail to avoid stale data
@@ -212,4 +216,5 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }

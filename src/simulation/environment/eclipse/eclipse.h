@@ -62,9 +62,11 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
     std::vector<double> eclipseIlluminationFactors;               //!< vector of illumination factor output values
+    uint64_t previousUpdateNanos =
+      0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
 
-private:
-    void readInputMessages();
+  private:
+    void readInputMessages(uint64_t CurrentSimNanos);
     double computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);
 

@@ -63,3 +63,12 @@ The following table lists all the module input and output messages.
         Planet SPICE state input message. Provides ``PositionVector`` used to compute ``r_BP_N``. Must be connected before ``InitializeSimulation()``.
     input epochInMsg EpochMsgPayload
         (Optional) Epoch date/time message. When connected, overrides the default Basilisk epoch stored in ``epochDateTime``. Required by empirical wind models that depend on calendar date.
+
+Spacecraft State Timing
+-----------------------
+The module runs before the spacecraft within a task, so the spacecraft state message it reads was written at the end of
+the previous step. To avoid an output that lags the interval it is applied to, the spacecraft position is advanced with
+the message velocity by half of the message age, which is the middle of the interval that the next spacecraft update
+integrates. The extrapolation assumes the module and the spacecraft run at the same task rate. It is skipped for a
+message that was written at the current time and for a stale message that was written before the previous update of
+the module, for example a state written once at the start of the simulation.

@@ -19,13 +19,15 @@
 
 #include "solarFlux.h"
 #include "architecture/utilities/astroConstants.h"
-
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
         bskLogger.bskError("solarFlux.sunPositionInMsg was not linked.");
@@ -42,7 +44,7 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  */
 void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->readMessages();
+    this->readMessages(CurrentSimNanos);
 
     /*! - evaluate spacecraft position relative to the sun in N frame components */
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
@@ -54,12 +56,16 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
 
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }
 
-/*! This method is used to  read messages and save values to member attributes
+/*! This method is used to  read messages and save values to member attributes. The spacecraft position is
+ extrapolated to the middle of the interval the next spacecraft update integrates, see
+ extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
 
  */
-void SolarFlux::readMessages()
+void SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
     /*! - read in planet state message (required) */
     SpicePlanetStateMsgPayload sunPositionMsgData;
@@ -68,7 +74,10 @@ void SolarFlux::readMessages()
 
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
-    scStatesMsgData = this->spacecraftStateInMsg();
+    scStatesMsgData = extrapolateScStateToStepMidpoint(this->spacecraftStateInMsg(),
+                                                       CurrentSimNanos,
+                                                       this->spacecraftStateInMsg.timeWritten(),
+                                                       this->previousUpdateNanos);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
     /*! - read in eclipse message (optional) */

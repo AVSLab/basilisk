@@ -48,7 +48,7 @@ public:
 
 protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    bool readMessages(uint64_t CurrentSimNanos);
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCStatesMsgPayload *scState);
     virtual void evaluateMagneticFieldModel(MagneticFieldMsgPayload *msg, double currentTime) = 0; //!< class method
@@ -75,6 +75,7 @@ protected:
 
     std::vector<MagneticFieldMsgPayload> magFieldOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<SCStatesMsgPayload> scStates;//!< vector of the spacecraft state messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
     SpicePlanetStateMsgPayload planetState;     //!< planet state message
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
