@@ -14,7 +14,10 @@ the reference generators
 :download:`generate_gmat_reference.py <../../../../benchmarks/accuracyComparison/generate_gmat_reference.py>` and
 :download:`generate_orekit_reference.py <../../../../benchmarks/accuracyComparison/generate_orekit_reference.py>`,
 and the case definitions :download:`cases.json <../../../../benchmarks/accuracyComparison/cases.json>`.
-The results on this page were produced with Orekit 13.1 and GMAT R2026a. The GMAT and Orekit ephemerides are not part
+The results on this page were produced with Orekit 13.1 and GMAT R2026a, and with a Basilisk version that includes the
+changes of issue #1456: the rotation-based planet orientation in the gravity effector, the
+spacecraft state timing of the environment modules, and the optional ellipsoidal altitude and apparent solar time of
+:ref:`msisAtmosphere`. The GMAT and Orekit ephemerides are not part
 of the repository: :ref:`accuracyComparisonReproduce` explains how to generate them and run the comparison. The
 comparison is not part of the automated tests because it needs both tools installed and the 30-day run of all cases takes
 about two minutes.
@@ -66,7 +69,7 @@ disagreement can be traced to a single effect.
     * - Gravity
       - :math:`\mu = 3.986004415\times10^{14}` m\ :sup:`3`/s\ :sup:`2`, equatorial radius 6378136.3 m, fully normalized EGM96 coefficients, identical files for all tools
     * - Earth orientation
-      - Zonal-only cases: pole fixed along inertial :math:`+Z`. Rotating cases: ITRF93 in Basilisk (high-precision NAIF kernel), ITRF with IERS 2010 conventions in Orekit, GMAT's default Earth orientation
+      - Zonal-only cases: pole fixed along inertial :math:`+Z`. Rotating cases: ITRF93 in Basilisk (high-precision NAIF Earth kernel and the ITRF93 frame association kernel, requested through ``spicePlanetFrames``; see :ref:`accuracyComparisonReproduce`), ITRF with IERS 2010 conventions in Orekit, GMAT's default Earth orientation
     * - Third bodies
       - Sun and Moon, from DE430 (Basilisk), DE421 (GMAT) and DE440 (Orekit)
     * - Spacecraft
@@ -118,14 +121,6 @@ is the natural yardstick for the other columns.
       - 24
       - 1.1
       - 25
-    * - ``leo_drag``
-      - 41 000 (1 700 with apparent solar time)
-      - 550
-      - 40 700
-    * - ``leo_all``
-      - 35 000 (1 700 with apparent solar time)
-      - 630
-      - 36 000
     * - ``gto_all``
       - 62
       - 0.96
@@ -151,36 +146,54 @@ other at the same level as they agree with Basilisk in the other cases.
    Position differences for the LEO case with solar radiation pressure only. Basilisk and GMAT agree, and Orekit
    differs from both.
 
+The cases with drag are listed separately because GMAT and Basilisk, by default, and Orekit use different conventions for
+the local solar time of NRLMSISE-00 (see below). The Basilisk column compared with GMAT uses the default mean solar time
+and the one compared with Orekit uses the apparent solar time. Both use the ellipsoidal altitude and a 1 s time step.
+
+.. list-table::
+    :widths: 28 24 24 24
+    :header-rows: 1
+
+    * - Case
+      - Basilisk (mean solar time) - GMAT [m]
+      - Basilisk (apparent solar time) - Orekit [m]
+      - GMAT - Orekit [m]
+    * - ``leo_drag``
+      - 550
+      - 1 700
+      - 40 700
+    * - ``leo_all``
+      - 630
+      - 1 700
+      - 36 000
+
 Drag
 ~~~~
 
-Drag differences between tools are far larger in absolute terms because drag shortens the orbit: the drag signal alone is
-13 000 km of position difference after 30 days, so a density bias of 0.1% changes the position by 26 km (measured by
-scaling the drag coefficient; the response is linear). All three tools use the same drag law, cross-section, drag
-coefficient, mass, and co-rotating atmosphere. The differences in the table were traced to three causes, each measured:
+Drag differences between tools are far larger in absolute terms because drag shortens the orbit.
+All three tools use the same drag law, cross-section, drag
+coefficient, mass, and co-rotating atmosphere. The remaining differences come from three settings of the atmosphere:
 
 - **Altitude definition.** NRLMSISE-00 needs the geodetic latitude and the altitude above the reference
-  ellipsoid. Orekit and GMAT use them. Basilisk's :ref:`msisAtmosphere` uses a sphere unless the planet polar radius
-  is set with ``setPlanetPolarRadius()``. On a sphere the altitude is wrong by up to 21 km, which changes the density
-  by +19% at 45 degrees latitude and +44% at the pole (400 km altitude), and gave 11.6 km of position difference to GMAT
-  over two days against 47 m with the ellipsoid. The comparison script sets the polar radius.
+  ellipsoid. Orekit and GMAT use them. :ref:`msisAtmosphere` uses a sphere unless the planet polar radius
+  is set with ``setPlanetPolarRadius()``. The comparison sets the polar radius.
 - **Local solar time convention.** Orekit's NRLMSISE-00 computes the local apparent solar time from the Sun position.
-  GMAT and Basilisk use the mean solar time (second of day plus longitude divided by 15 degrees per hour). The two differ
-  by the equation of time, which varies between about -14 and +16 minutes over the year, and over this 30-day
+  GMAT and Basilisk by default use the mean solar time (second of day plus longitude divided by 15 degrees per hour). The two
+  differ by the equation of time, which varies between about -14 and +16 minutes over the year, and over this 30-day
   period changes the density by up to 3% (1.1% rms). At 721 identical states along the 30-day GMAT trajectory the ratio of the
-  GMAT to Orekit density has a scatter of 1.1%, that of Basilisk with the mean solar time to GMAT only 0.034%
-  (mean ratio 0.99998), and that of Basilisk with the apparent solar time to Orekit 0.003%. This is the whole 41 km difference between GMAT and
-  Orekit. Basilisk uses the mean solar time by default and the apparent one with ``setUseApparentSolarTime()``; the script
-  option ``--apparent-solar-time`` enables it to match Orekit.
-- **Basilisk time step.** The atmosphere and drag evaluate once per integration step, which is 38 km of motion at a 5 s step. The
+  GMAT to Orekit density has a scatter of 1.1%, that of Basilisk with the mean solar time to GMAT only 0.034%, and that of
+  Basilisk with the apparent solar time to Orekit 0.003%. This is the whole 41 km
+  difference between GMAT and Orekit. Use ``setUseApparentSolarTime()`` to match Orekit; the script option
+  ``--apparent-solar-time`` enables it.
+- **Time step.** The atmosphere and drag evaluate once per integration step, which is 38 km of motion at a 5 s step. The
   resulting error is second order in the step: the 10-day difference between Basilisk (apparent solar time) and Orekit
-  falls from 19.3 km at 20 s to 5.0 km at 10 s, 1.35 km at 5 s, 0.45 km at 2.5 s and 0.20 km at 1 s. The cases with drag
+  is 19.3 km at 20 s, 5.0 km at 10 s, 1.35 km at 5 s, 0.45 km at 2.5 s and 0.20 km at 1 s. The cases with drag
   therefore use a 1 s step, with which Basilisk agrees with GMAT to 0.55 km (``leo_drag``) and 0.63 km (``leo_all``)
   over 30 days, 0.004% of the drag signal, and with Orekit to 1.7 km when the apparent solar time is used.
 
 The drag force itself agrees: at identical states the ratio of the Basilisk to the Orekit drag acceleration equals the
-density ratio to within :math:`10^{-5}`, so the relative velocity and the force law are the same. With these three points accounted for, the remaining
-30-day differences are 0.55 to 1.7 km, which is 0.004% to 0.013% of the drag signal.
+density ratio to within :math:`10^{-5}`, so the relative velocity and the force law are the same. With these settings
+the remaining 30-day differences are 0.55 to 1.7 km, which is 0.004% to 0.013% of the drag signal.
 
 .. figure:: /_images/accuracyComparison/accuracyComparison_leo_drag.svg
    :align: center
@@ -192,35 +205,12 @@ density ratio to within :math:`10^{-5}`, so the relative velocity and the force 
 
    Position differences for the LEO case with all perturbations.
 
-Basilisk Behaviours Found by the Comparison
--------------------------------------------
-
-The comparison exposed several Basilisk behaviours that a user comparing with another tool would otherwise have to work
-around. They are fixed in the release that contains this page; see the release notes.
-
-- **Planet orientation extrapolation in the gravity effector.** The orientation was advanced with a first-order update of
-  the matrix elements, which is not orthonormal and scales the field by a relative error of order
-  :math:`(\omega\,\Delta t)^2`. A two-body orbit about a SPICE-driven Earth drifted by 30 m per day at a 5 s step, and the error fell by a
-  factor of four each time the step was halved. The orientation is now advanced as a rotation.
-- **One-step lag of the environment modules.** The atmosphere, wind, magnetic field, eclipse, and solar flux modules read
-  the spacecraft state written at the end of the previous step. At shadow entries and exits this made the eclipse factor a step late; the two
-  lags are equal and opposite in force but at different positions, so they accumulate. The solar radiation pressure error in LEO was 533 m
-  at a 5 s step and scaled with the step. The spacecraft position is now advanced to the middle of the interval the next spacecraft update
-  integrates, which reduced it to 1 m.
-- **Atmosphere altitude and local solar time.** See the drag section above, and :ref:`atmosphereBase` and :ref:`msisAtmosphere`.
-- **High-precision Earth orientation.** The default ``IAU_EARTH`` frame of the SPICE interface has no nutation or polar motion.
-  For rotating-Earth cases the script loads the high-precision Earth kernel and the ITRF93 frame association kernel, and
-  requests ``ITRF93`` through ``spicePlanetFrames``. This halved the error of the EGM96 8x8 case. The kernels are not part of
-  Basilisk's support-data registry. The script searches for ``earth_000101_260711_260415.bpc`` and ``earth_assoc_itrf93.tf`` in the folder given
-  with ``--kernel-dir``, in ``benchmarks/accuracyComparison/data/spice``, and in the Basilisk support-data cache.
-
 .. _accuracyComparisonReproduce:
 
 Reproducing the Results
 -----------------------
 
-All commands are run from ``benchmarks/accuracyComparison`` of the Basilisk repository, with a Basilisk build that
-includes the changes listed above.
+All commands are run from ``benchmarks/accuracyComparison`` of the Basilisk repository.
 
 **1. Prerequisites**
 
