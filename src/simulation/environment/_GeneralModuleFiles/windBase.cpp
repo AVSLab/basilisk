@@ -45,6 +45,7 @@ WindBase::~WindBase() = default;
 void WindBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
 
     if (this->scStateInMsgs.empty()) {
         bskLogger.bskError("Wind model has no spacecraft added to it.");
@@ -87,6 +88,16 @@ void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 
 void WindBase::customSetEpochFromVariable() {}
 
+void WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+bool WindBase::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
 bool WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
@@ -96,9 +107,10 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
     );
 
     if (scRead) {
-        for (auto& msg : this->scStateInMsgs) {
-            this->scStates.push_back(
-              extrapolateScStateToStepMidpoint(msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos));
+        for (std::size_t c = 0; c < this->scStateInMsgs.size(); c++) {
+            auto& msg = this->scStateInMsgs[c];
+            this->scStates.push_back(this->scStateExtrapolation.apply(
+              c, msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos, this->bskLogger));
         }
     }
 

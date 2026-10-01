@@ -40,6 +40,7 @@ Eclipse::~Eclipse() = default;
 void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
     this->previousUpdateNanos = CurrenSimNanos;
+    this->scStateExtrapolation.reset();
 
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("Eclipse: sunInMsg must be linked to sun Spice state message.");
@@ -55,19 +56,31 @@ void Eclipse::Reset(uint64_t CurrenSimNanos)
 
 }
 
+void Eclipse::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+bool Eclipse::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
 /*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
- The spacecraft state is extrapolated to the middle of the interval the next spacecraft update integrates,
- see extrapolateScStateToStepMidpoint().
+ If enabled with setExtrapolateScStateToStepMidpoint(), the spacecraft state is extrapolated to the
+ middle of the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
  @param CurrentSimNanos [ns] current simulation time
 
  */
 void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
     for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
-        this->scStateBuffer.at(c) = extrapolateScStateToStepMidpoint(this->positionInMsgs.at(c)(),
+        this->scStateBuffer.at(c) = this->scStateExtrapolation.apply(c,
+                                                                     this->positionInMsgs.at(c)(),
                                                                      CurrentSimNanos,
                                                                      this->positionInMsgs.at(c).timeWritten(),
-                                                                     this->previousUpdateNanos);
+                                                                     this->previousUpdateNanos,
+                                                                     this->bskLogger);
     }
 
     this->sunInMsgState = this->sunInMsg();

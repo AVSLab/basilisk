@@ -20,7 +20,7 @@ spacecraft state timing of the environment modules, and the optional ellipsoidal
 :ref:`msisAtmosphere`. The GMAT and Orekit ephemerides are not part
 of the repository: :ref:`accuracyComparisonReproduce` explains how to generate them and run the comparison. The
 comparison is not part of the automated tests because it needs both tools installed and the 30-day run of all cases takes
-about two minutes.
+a few minutes.
 
 Method
 ------
@@ -150,6 +150,13 @@ The cases with drag are listed separately because GMAT and Basilisk, by default,
 the local solar time of NRLMSISE-00 (see below). The Basilisk column compared with GMAT uses the default mean solar time
 and the one compared with Orekit uses the apparent solar time. Both use the ellipsoidal altitude and a 1 s time step.
 
+In the two drag figures below Basilisk uses the default mean solar time, as GMAT does, and only Orekit uses the apparent solar
+time. The ``Basilisk - Orekit`` and ``GMAT - Orekit`` curves therefore almost coincide (after 30 days 41.2 km and 40.7 km, with a
+ratio between 1.01 and 1.015 over the whole run): both show the difference between the mean and the apparent solar time and
+not an error of either tool. The ``Basilisk - GMAT`` curve is the actual agreement of the two tools that use the same convention.
+With the apparent solar time, Basilisk and Orekit differ by only 1.7 km after 30 days (the table above and
+``--apparent-solar-time``).
+
 .. list-table::
     :widths: 28 24 24 24
     :header-rows: 1
@@ -198,12 +205,15 @@ the remaining 30-day differences are 0.55 to 1.7 km, which is 0.004% to 0.013% o
 .. figure:: /_images/accuracyComparison/accuracyComparison_leo_drag.svg
    :align: center
 
-   Position differences for the LEO case with drag only. The Basilisk and GMAT curves use the mean solar time.
+   Position differences for the LEO case with drag only. Basilisk and GMAT use the mean solar time and Orekit the apparent
+   solar time, so the ``Basilisk - Orekit`` and ``GMAT - Orekit`` curves nearly coincide and show this convention
+   difference. ``Basilisk - GMAT`` shows the agreement of the two tools with the same convention.
 
 .. figure:: /_images/accuracyComparison/accuracyComparison_leo_all.svg
    :align: center
 
-   Position differences for the LEO case with all perturbations.
+   Position differences for the LEO case with all perturbations. As in the previous figure, the two curves that involve
+   Orekit show the difference between the apparent solar time of Orekit and the mean solar time of Basilisk and GMAT.
 
 .. _accuracyComparisonReproduce:
 
@@ -249,7 +259,7 @@ own velocity.
 
 Use ``--data-dir`` if the reference ephemerides are not in ``data/``. The script prints the maximum position and velocity
 differences of each case between Basilisk, GMAT, and Orekit, and optionally saves a figure of the position difference versus
-time. The all-case run takes about two minutes.
+time. The all-case run takes about six minutes.
 
 **4. What to expect**
 

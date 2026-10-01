@@ -38,6 +38,7 @@ def _airVelocity(r, v, timeNanos):
     proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
 
     wind = zeroWindModel.ZeroWindModel()
+    wind.setExtrapolateScStateToStepMidpoint(True)
     wind.setPlanetOmega_N(OMEGA_PLANET)
     wind.setUseSpiceOmegaFlag(False)
     planetMsg = messaging.SpicePlanetStateMsg().write(messaging.SpicePlanetStateMsgPayload())

@@ -33,6 +33,7 @@
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include "architecture/utilities/bskLogging.h"
 
 
@@ -47,6 +48,17 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
+    /*! @brief Enable or disable the extrapolation of the spacecraft state to the middle of the interval the next
+     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+     *  @param enable [-] True to extrapolate the spacecraft state; the default is false.
+     *  @note The extrapolation assumes that the module and the spacecraft run at the same task rate with a constant
+     *  spacecraft step.
+     */
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+    /*! @brief Return whether the spacecraft state extrapolation is enabled.
+     *  @return [-] True if the spacecraft state is extrapolated.
+     */
+    bool getExtrapolateScStateToStepMidpoint() const;
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
@@ -62,8 +74,8 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
     std::vector<double> eclipseIlluminationFactors;               //!< vector of illumination factor output values
-    uint64_t previousUpdateNanos =
-      0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 
   private:
     void readInputMessages(uint64_t CurrentSimNanos);

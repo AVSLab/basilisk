@@ -37,7 +37,8 @@ support data. They are searched in ``--kernel-dir``, in ``data/spice`` next to t
 support-data cache. The 30-day run of all cases takes several minutes.
 
 The atmosphere altitude is computed above the same ellipsoid as in the other tools. By default the local solar time of
-NRLMSISE-00 is the mean solar time, as in GMAT; ``--apparent-solar-time`` adds the equation of time, as in Orekit.
+NRLMSISE-00 is the mean solar time, as in GMAT; ``--apparent-solar-time`` adds the equation of time, as in Orekit. The cases
+with drag are also run with the other convention, which shows that the convention explains the difference to Orekit.
 """
 
 import argparse
@@ -65,6 +66,7 @@ DEFAULT_KERNELS = (DataFile.EphemerisData.de430, DataFile.EphemerisData.naif0012
                    DataFile.EphemerisData.de_403_masses, DataFile.EphemerisData.pck00010)
 ITRF_KERNELS = ["earth_000101_260711_260415.bpc", "earth_assoc_itrf93.tf"]
 SPICE_FRAMES = {"earth": "ITRF93", "sun": "IAU_SUN", "moon": "IAU_MOON"}
+SAMPLE_TIME_TOLERANCE = 1.0e-3  # [s] allowed difference between reference and Basilisk sample times
 MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 
 
@@ -83,6 +85,33 @@ def loadReference(tool, caseName, dataDir=None):
             f"generate_{tool}_reference.py first (see Reproducing the Results in the accuracy comparison "
             f"documentation, ``accuracyComparison``), or give the folder that contains it with --data-dir.")
     return np.loadtxt(path, delimiter=",", skiprows=1)
+
+
+def validateReference(tool, caseName, reference, bsk):
+    """Return the part of a reference ephemeris that matches the Basilisk samples, after checking it.
+
+    The reference must have the same columns, at least as many samples as Basilisk, and the same sample times.
+    Otherwise states of different epochs would be compared and the reported differences would be misleading.
+
+    Args:
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        caseName (str): case name in ``cases.json``.
+        reference (ndarray): reference ephemeris with columns (t, r_xyz, v_xyz).
+        bsk (ndarray): Basilisk ephemeris with columns (t, r_xyz, v_xyz).
+    """
+    where = f"The {tool} reference ephemeris of case {caseName}"
+    if reference.ndim != 2 or reference.shape[1] != bsk.shape[1]:
+        raise ValueError(f"{where} has shape {reference.shape}; {bsk.shape[1]} columns (t, r_xyz, v_xyz) are expected.")
+    if len(reference) < len(bsk):
+        raise ValueError(f"{where} has {len(reference)} samples but Basilisk produced {len(bsk)}. Regenerate it with "
+                         f"generate_{tool}_reference.py using the same cases.json, or use a shorter --duration-days.")
+    reference = reference[:len(bsk)]
+    timeError = np.abs(reference[:, 0] - bsk[:, 0]).max()  # [s]
+    if timeError > SAMPLE_TIME_TOLERANCE:
+        raise ValueError(f"The sample times of the {tool} reference ephemeris of case {caseName} differ from the Basilisk "
+                         f"sample times by up to {timeError:.3g} s. Regenerate the reference with the sample period of "
+                         f"cases.json.")
+    return reference
 
 
 def findKernelDir(kernelDir=None):
@@ -169,6 +198,7 @@ def propagateBasilisk(spec, case, gravityFile, kernelDir=None, apparentSolarTime
     bodyNames = list(gravFactory.gravBodies)
     if case["srp"]:
         eclipseObject = eclipse.Eclipse()
+        eclipseObject.setExtrapolateScStateToStepMidpoint(True)  # same task rate as the spacecraft
         eclipseObject.addSpacecraftToModel(scObject.scStateOutMsg)
         eclipseObject.addPlanetToModel(spiceObject.planetStateOutMsgs[bodyNames.index("earth")])
         eclipseObject.sunInMsg.subscribeTo(spiceObject.planetStateOutMsgs[bodyNames.index("sun")])
@@ -186,6 +216,7 @@ def propagateBasilisk(spec, case, gravityFile, kernelDir=None, apparentSolarTime
         weather = spec["space_weather"]
         earthPlanetMsg = spiceObject.planetStateOutMsgs[bodyNames.index("earth")]
         atmo = msisAtmosphere.MsisAtmosphere()
+        atmo.setExtrapolateScStateToStepMidpoint(True)  # same task rate as the spacecraft
         atmo.ModelTag = "msis"
         atmo.planetRadius = spec["equatorial_radius_m"]  # [m]
         atmo.setPlanetPolarRadius(spec["equatorial_radius_m"] * (1.0 - spec["earth_flattening"]))  # [m]
@@ -235,23 +266,35 @@ def maxErrors(a, b):
             np.linalg.norm(a[:, 4:7] - b[:, 4:7], axis=1).max())
 
 
-def plotCase(name, bsk, gmat, orekit):
+def plotCase(name, bsk, gmat, orekit, bskOther=None, solarTime="mean", otherSolarTime="apparent"):
     """Return a figure with the position differences between the tools versus time.
 
     Args:
         name (str): case name used as the title.
         bsk, gmat, orekit (ndarray): ephemerides with columns (t, r_xyz, v_xyz).
+        bskOther (ndarray): Basilisk ephemeris of the same case with the other NRLMSISE-00 solar time convention. If
+            given (cases with drag), the Basilisk curves are labeled with their convention and a fourth curve shows
+            this ephemeris against Orekit.
+        solarTime (str): solar time convention of ``bsk``, ``"mean"`` or ``"apparent"``.
+        otherSolarTime (str): solar time convention of ``bskOther``.
     """
+    def difference(a, b):
+        return np.maximum(np.linalg.norm(a[:, 1:4] - b[:, 1:4], axis=1), 1e-6)  # [m]
+
     fig = plt.figure(figsize=(6.0, 3.6))
     tDays = bsk[:, 0] / 86400.0  # [days]
-    for label, a, b, style in (("Basilisk - GMAT", bsk, gmat, "-"), ("Basilisk - Orekit", bsk, orekit, "-"),
-                               ("GMAT - Orekit", gmat, orekit, "--")):
-        plt.semilogy(tDays, np.maximum(np.linalg.norm(a[:, 1:4] - b[:, 1:4], axis=1), 1e-6), style, label=label)
+    bskName = "Basilisk" if bskOther is None else f"Basilisk ({solarTime} solar time)"
+    plt.semilogy(tDays, difference(bsk, gmat), "-", label=f"{bskName} - GMAT")
+    plt.semilogy(tDays, difference(bsk, orekit), "-", label=f"{bskName} - Orekit")
+    plt.semilogy(tDays, difference(gmat, orekit), "--", label="GMAT - Orekit")
+    if bskOther is not None:
+        plt.semilogy(tDays, difference(bskOther, orekit), "-", color="tab:red",
+                     label=f"Basilisk ({otherSolarTime} solar time) - Orekit")
     plt.xlabel("time [days]")
     plt.ylabel("position difference [m]")
     plt.title(name)
     plt.grid(True)
-    plt.legend()
+    plt.legend(fontsize="small")
     plt.tight_layout()
     return fig
 
@@ -269,7 +312,8 @@ def run(caseNames=None, durationDays=None, kernelDir=None, figuresDir=None, show
         kernelDir (Path): folder with the Earth orientation kernels.
         figuresDir (Path): folder where the position-difference figures are saved as SVG files.
         showPlots (bool): show the matplotlib plots.
-        apparentSolarTime (bool): add the equation of time to the local solar time of NRLMSISE-00.
+        apparentSolarTime (bool): add the equation of time to the local solar time of NRLMSISE-00. The cases with drag
+            are run a second time with the other convention, which is reported and drawn as a fourth curve.
         dataDir (Path): folder with the reference ephemerides; ``data`` next to this script by default.
     """
     spec = loadSpec()
@@ -285,15 +329,23 @@ def run(caseNames=None, durationDays=None, kernelDir=None, figuresDir=None, show
             if case["gravity"]["degree"] > 0:
                 writeBasiliskGravity(gravityFile, spec, case["gravity"]["degree"], case["gravity"]["order"])
             bsk = propagateBasilisk(spec, case, gravityFile, kernelDir, apparentSolarTime)
-            gmat = loadReference("gmat", name, dataDir)[:len(bsk)]
-            orekit = loadReference("orekit", name, dataDir)[:len(bsk)]
+            gmat = validateReference("gmat", name, loadReference("gmat", name, dataDir), bsk)
+            orekit = validateReference("orekit", name, loadReference("orekit", name, dataDir), bsk)
             results[name] = {"bsk_vs_gmat": maxErrors(bsk, gmat), "bsk_vs_orekit": maxErrors(bsk, orekit),
                              "gmat_vs_orekit": maxErrors(gmat, orekit)}
+            bskOther = None
+            if case["drag"]:
+                # the same case with the other solar time convention shows that it explains the Orekit difference
+                bskOther = propagateBasilisk(spec, case, gravityFile, kernelDir, not apparentSolarTime)
+                key = "bsk_mean_solar_time_vs_orekit" if apparentSolarTime else "bsk_apparent_solar_time_vs_orekit"
+                results[name][key] = maxErrors(bskOther, orekit)
             print(f"{name}: max |dr| [m] (|dv| [m/s]) "
                   + ", ".join(f"{k}={v[0]:.3e} ({v[1]:.2e})" for k, v in results[name].items()))
 
             if plt is not None and (figuresDir or showPlots):
-                fig = plotCase(name, bsk, gmat, orekit)
+                fig = plotCase(name, bsk, gmat, orekit, bskOther,
+                               "apparent" if apparentSolarTime else "mean",
+                               "mean" if apparentSolarTime else "apparent")
                 if figuresDir:
                     Path(figuresDir).mkdir(parents=True, exist_ok=True)
                     fig.savefig(Path(figuresDir) / f"accuracyComparison_{name}.svg")
