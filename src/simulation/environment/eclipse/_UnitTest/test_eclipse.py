@@ -450,6 +450,7 @@ illumination factors must match, and both must differ from a static spacecraft t
     recorders = []
     for scMsg in (withVelocity, advanced, static):
         module = eclipse.Eclipse()
+        module.setExtrapolateScStateToStepMidpoint(True)
         module.addSpacecraftToModel(scMsg)
         module.addPlanetToModel(planetMsg)
         module.sunInMsg.subscribeTo(sunMsg)

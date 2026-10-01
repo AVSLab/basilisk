@@ -34,6 +34,7 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! @brief Abstract base class for atmospheric wind models.
  *
@@ -74,8 +75,9 @@ protected:
      */
     void writeMessages(uint64_t CurrentClock);
 
-    /*! Reads the spacecraft and planet state messages. The spacecraft state is extrapolated to the middle of
-     *  the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+    /*! Reads the spacecraft and planet state messages. If enabled with setExtrapolateScStateToStepMidpoint(), the
+     *  spacecraft state is extrapolated to the middle of the interval the next spacecraft update integrates, see
+     *  extrapolateScStateToStepMidpoint().
      *  @param CurrentSimNanos  Current simulation time (ns).
      *  @return true if all required messages were successfully read.
      */
@@ -158,11 +160,26 @@ public:
      */
     void setUseSpiceOmegaFlag(bool useSpice);
 
+    /*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next
+     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default and
+     *  assumes that the module and the spacecraft run at the same task rate with a constant spacecraft step.
+     *
+     * @param enable  If true, extrapolate the spacecraft state.
+     */
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+
+    /*! Returns whether the spacecraft state extrapolation is enabled.
+     *
+     * @return true if the spacecraft state is extrapolated.
+     */
+    bool getExtrapolateScStateToStepMidpoint() const;
+
 protected:
     struct tm epochDateTime{};                   //!< Epoch date/time (Gregorian) for time-dependent models
     std::vector<WindMsgPayload> envOutBuffer{};  //!< Message write buffer for each spacecraft
     std::vector<SCStatesMsgPayload> scStates{};  //!< Cached spacecraft state messages
     uint64_t previousUpdateNanos = 0; //!< [ns] Time of the previous module update, used to detect stale spacecraft messages
+    ScStateExtrapolation scStateExtrapolation{}; //!< Opt-in extrapolation of the spacecraft state to the step midpoint
     SpicePlanetStateMsgPayload planetState{};    //!< Cached planet state message
 
     /*! Updates `spiceOmega_N` from `J20002Pfix_dot` when SPICE provides it.

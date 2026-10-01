@@ -26,19 +26,21 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simSe
 STEP = 10.0  # [s] module update period
 
 
-def _density(r, v, timeNanos):
+def _density(r, v, timeNanos, stopSeconds=STEP):
     """Return the exponential atmosphere density at the second module update.
 
     Args:
         r (list): [m] spacecraft position written to the state message.
         v (list): [m/s] spacecraft velocity written to the state message.
         timeNanos (int): [ns] time at which the state message is written.
+        stopSeconds (float): [s] simulation stop time; the density of the last module update is returned.
     """
     scSim = SimulationBaseClass.SimBaseClass()
     proc = scSim.CreateNewProcess("p")
     proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
 
     atmo = exponentialAtmosphere.ExponentialAtmosphere()
+    atmo.setExtrapolateScStateToStepMidpoint(True)
     simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
     payload = messaging.SCStatesMsgPayload()
     payload.r_BN_N = list(r)
@@ -50,7 +52,7 @@ def _density(r, v, timeNanos):
     scSim.AddModelToTask("t", recorder)
 
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(STEP))
+    scSim.ConfigureStopTime(macros.sec2nano(stopSeconds))
     scSim.ExecuteSimulation()
     return recorder.neutralDensity[-1]
 
@@ -75,5 +77,23 @@ def test_density_is_evaluated_at_extrapolated_position():
     assert densityWrittenNow == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
 
 
+def test_stale_message_is_extrapolated_only_once():
+    """Verify a state written once at the start of the simulation is not extrapolated by later updates.
+
+    The module updates at 0, 10 and 20 s. The state written at t = 0 is extrapolated at the first update that
+    reads it, but at the update at 20 s it is stale, because it was written before the module's previous update,
+    so the density must be that of the written position."""
+    r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
+    v0 = [1.0e3, 0.0, 0.0]  # [m/s] radial
+
+    densityFirstUpdate = _density(r0, v0, 0, stopSeconds=STEP)
+    densityStaleUpdate = _density(r0, v0, 0, stopSeconds=2 * STEP)
+    densityStatic = _density(r0, [0.0, 0.0, 0.0], 0, stopSeconds=2 * STEP)
+
+    assert densityFirstUpdate < densityStatic
+    assert densityStaleUpdate == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
+
+
 if __name__ == "__main__":
     test_density_is_evaluated_at_extrapolated_position()
+    test_stale_message_is_extrapolated_only_once()

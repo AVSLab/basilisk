@@ -95,6 +95,7 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
 void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
 
     //! - the geodetic altitude requires the planet orientation and a consistent equatorial and polar radius
     if (this->planetPolarRadius >= 0.0) {
@@ -176,8 +177,9 @@ void AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 }
 
 /*! This method is used to read the incoming command message and set the
- associated spacecraft positions for computing the atmosphere. The spacecraft state is extrapolated to the middle
- of the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+ associated spacecraft positions for computing the atmosphere. If enabled with setExtrapolateScStateToStepMidpoint(),
+ the spacecraft state is extrapolated to the middle of the interval the next spacecraft update integrates, see
+ extrapolateScStateToStepMidpoint().
  @param CurrentSimNanos [ns] current simulation time
  @return true if all required messages were read
  */
@@ -195,10 +197,12 @@ AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
         scRead = true;
         for(long unsigned int c = 0; c<this->scStateInMsgs.size(); c++){
             bool tmpScRead;
-            scMsg = extrapolateScStateToStepMidpoint(this->scStateInMsgs.at(c)(),
+            scMsg = this->scStateExtrapolation.apply(c,
+                                                     this->scStateInMsgs.at(c)(),
                                                      CurrentSimNanos,
                                                      this->scStateInMsgs.at(c).timeWritten(),
-                                                     this->previousUpdateNanos);
+                                                     this->previousUpdateNanos,
+                                                     this->bskLogger);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -248,6 +252,16 @@ AtmosphereBase::setPlanetPolarRadius(double polarRadius)
     this->planetPolarRadius = polarRadius;
 }
 
+void AtmosphereBase::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+bool AtmosphereBase::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
 /*! Returns the polar radius of the planet.
  @return [m] planet polar radius; a negative value means the planet is treated as a sphere
  */
@@ -275,6 +289,10 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, 
 
     //! - compute the altitude above a sphere, or above the oblate ellipsoid if the polar radius was set
     if (this->planetPolarRadius >= 0.0) {
+        if (this->planetPolarRadius > this->planetRadius) {
+            bskLogger.bskError(
+              "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
+        }
         this->orbitAltitude = PCPF2LLA(this->r_BP_P, this->planetRadius, this->planetPolarRadius)[2];
     } else {
         this->orbitAltitude = this->orbitRadius - this->planetRadius;

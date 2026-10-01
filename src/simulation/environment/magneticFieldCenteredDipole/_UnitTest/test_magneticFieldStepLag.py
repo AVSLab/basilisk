@@ -39,6 +39,7 @@ def _field(r, v, timeNanos):
     proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
 
     dipole = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+    dipole.setExtrapolateScStateToStepMidpoint(True)
     simSetPlanetEnvironment.centeredDipoleMagField(dipole, "earth")
     planetPayload = messaging.SpicePlanetStateMsgPayload()
     planetPayload.PlanetName = "earth"

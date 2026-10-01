@@ -36,6 +36,7 @@
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! @brief magnetic field base class */
 class MagneticFieldBase: public SysModel  {
@@ -45,6 +46,17 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
+    /*! @brief Enable or disable the extrapolation of the spacecraft state to the middle of the interval the next
+     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+     *  @param enable [-] True to extrapolate the spacecraft state; the default is false.
+     *  @note The extrapolation assumes that the module and the spacecraft run at the same task rate with a constant
+     *  spacecraft step.
+     */
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+    /*! @brief Return whether the spacecraft state extrapolation is enabled.
+     *  @return [-] True if the spacecraft state is extrapolated.
+     */
+    bool getExtrapolateScStateToStepMidpoint() const;
 
 protected:
     void writeMessages(uint64_t CurrentClock);
@@ -80,6 +92,7 @@ protected:
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
 private:
+    ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<MagneticFieldMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };
