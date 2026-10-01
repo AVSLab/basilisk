@@ -43,5 +43,6 @@ def test_scenarioSpiceReconstruction():
     for pltName, fig in list(figureList.items()):
         simHelpers.saveScenarioFigure(pltName, fig, path)
 
-    # gravityEffector's linear extrapolation carries a km-scale error at this step; guard the run.
-    assert errClassic > 100.0
+    # The classic gravityEffector path is accurate at this step: its error is far below the integrator's own
+    # error, unlike before the planet orientation was advanced as a rotation.
+    assert errClassic < 10.0
