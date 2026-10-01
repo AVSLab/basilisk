@@ -439,6 +439,9 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
                 rDot_B1N_N = *this->inertialVelocityProperty[parent1Index];
                 omega_B1N_B1 = *this->inertialAngVelocityProperty[parent1Index];
                 sigma_B1N = Eigen::MRPd(this->inertialAttitudeProperty[parent1Index]->data());
+            } else {
+                bskLogger.bskError("ConstraintDynamicEffector: invalid parent1 type '%s'.",
+                                   this->parent1.parentType.c_str());
             }
             if (this->parent2.parentType == "hub") {
                 r_B2N_N = this->hubPosition[parent2Index]->stateView();
@@ -450,6 +453,9 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
                 rDot_B2N_N = *this->inertialVelocityProperty[parent2Index];
                 omega_B2N_B2 = *this->inertialAngVelocityProperty[parent2Index];
                 sigma_B2N = Eigen::MRPd(this->inertialAttitudeProperty[parent2Index]->data());
+            } else {
+                bskLogger.bskError("ConstraintDynamicEffector: invalid parent2 type '%s'.",
+                                   this->parent2.parentType.c_str());
             }
 
             // computing direction constraint psi in the N frame
