@@ -14,7 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Compare separate and combined core FSW bindings in an existing Ninja build.
+"""Compare separate and combined binding groups in an existing Ninja build.
 
 The full benchmark switches layouts, removes owned generated outputs, and touches
 one source at a time. It restores source timestamps and the original layout.
@@ -35,8 +35,17 @@ import time
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 MTIME_MARGIN_SECONDS = 1.1  # [s]
-OBJECT_SUFFIXES = {".o", ".obj"}
 NATIVE_SUFFIXES = {".so", ".pyd", ".dll", ".dylib"}
+GROUPS = {
+    "fsw": ("FSW", "fswCoreNative", "fswCoreBindings.txt", "fswAlgorithms", "FswObjects",
+            "fswAlgorithms/attControl/mrpFeedback/mrpFeedback.c"),
+    "simulation": ("SIMULATION", "simulationCoreNative", "simulationCoreNativeBindings.txt",
+                   "simulation", "GroupedObjects", "simulation/dynamics/spacecraft/spacecraft.cpp"),
+    "mujoco": ("MUJOCO", "mujocoNative", "mujocoNativeBindings.txt", "simulation", "GroupedObjects",
+               "simulation/mujocoDynamics/thrOnTimeToForce/thrOnTimeToForce.cpp"),
+    "opnav": ("OPNAV", "opNavNative", "opNavNativeBindings.txt", "", "GroupedObjects",
+              "simulation/sensors/camera/camera.cpp"),
+}
 IMPORT_PROBE = """
 import importlib
 import json
@@ -48,7 +57,7 @@ import Basilisk
 assert Path(Basilisk.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve())
 started = time.perf_counter()
 for name in json.loads(sys.argv[2]):
-    importlib.import_module('Basilisk.fswAlgorithms.' + name)
+    importlib.import_module('Basilisk.' + name)
 print(json.dumps({'seconds': time.perf_counter() - started,
                   'python_version': sys.version}))
 """
@@ -64,9 +73,9 @@ def read_cache(build_dir):
     return values
 
 
-def combined_enabled(cache):
+def combined_enabled(cache, option="BSK_COMBINE_FSW_BINDINGS"):
     """Interpret the experimental option using CMake's usual true values."""
-    return cache.get("BSK_COMBINE_FSW_BINDINGS", "OFF").upper() in {"ON", "YES", "TRUE", "1"}
+    return cache.get(option, "OFF").upper() in {"ON", "YES", "TRUE", "1"}
 
 
 def remove_outputs(build_dir, paths):
@@ -98,6 +107,11 @@ class Benchmark:
 
     def __init__(self, args):
         self.args = args
+        self.group = getattr(args, "group", "fsw")
+        option, self.native_target, self.manifest_name, package, self.object_suffix, source = GROUPS[self.group]
+        self.option = f"BSK_COMBINE_{option}_BINDINGS"
+        self.representative_source = Path(source)
+        self.representative_module = source.split("/")[0] + "." + Path(source).stem
         self.build_dir = args.build_dir.resolve()
         self.cache = read_cache(self.build_dir)
         self.source_dir = Path(self.cache["CMAKE_HOME_DIRECTORY"]).resolve()
@@ -107,13 +121,15 @@ class Benchmark:
             raise ValueError("Build measurements require the single-configuration Ninja generator.")
         self.python = self.cache.get("Python3_EXECUTABLE", self.cache.get("_Python3_EXECUTABLE", sys.executable))
         self.cmake = self.cache["CMAKE_COMMAND"]
-        self.original_combined = combined_enabled(self.cache)
+        self.original_combined = combined_enabled(self.cache, self.option)
         self.restore_all_targets = False
-        self.package_dir = self.build_dir / "Basilisk/fswAlgorithms"
+        self.package_dir = self.build_dir / "Basilisk" / package
         self.names = []
+        self.proxies = {}
         self.mode = "combined" if self.original_combined else "separate"
         self.results = {
             "schema_version": 1,
+            "group": self.group,
             "platform": platform.platform(),
             "machine": platform.machine(),
             "parallel": args.parallel,
@@ -121,6 +137,8 @@ class Benchmark:
             "cache_settings": {key: self.cache.get(key) for key in (
                 "CMAKE_GENERATOR", "CMAKE_BUILD_TYPE", "PY_LIMITED_API", "BSK_STRICT_WARNINGS",
                 "BUILD_OPNAV", "BUILD_MUJOCO", "BUILD_VIZINTERFACE", "BUILD_RUST_MODULES",
+                "BSK_COMBINE_FSW_BINDINGS", "BSK_COMBINE_SIMULATION_BINDINGS",
+                "BSK_COMBINE_MUJOCO_BINDINGS", "BSK_COMBINE_OPNAV_BINDINGS",
             )},
             "measurements": [],
         }
@@ -132,7 +150,7 @@ class Benchmark:
             else:
                 parent = self.build_dir / "benchmarks"
                 parent.mkdir(exist_ok=True)
-                self.output = Path(tempfile.mkdtemp(prefix="fsw-startup-", dir=parent))
+                self.output = Path(tempfile.mkdtemp(prefix=f"{self.group}-startup-", dir=parent))
 
     def record(self, label, **values):
         """Append a measurement and save partial results after each completed step."""
@@ -162,17 +180,17 @@ class Benchmark:
     def configure(self, combined):
         """Select one layout without changing other configured build options."""
         self.mode = "combined" if combined else "separate"
-        if combined_enabled(read_cache(self.build_dir)) != combined:
+        if combined_enabled(read_cache(self.build_dir), self.option) != combined:
             self.run_logged("configure", [self.cmake, "-S", str(self.source_dir),
                             "-B", str(self.build_dir),
-                            f"-DBSK_COMBINE_FSW_BINDINGS={'ON' if combined else 'OFF'}"])
+                            f"-D{self.option}={'ON' if combined else 'OFF'}"])
 
     def build(self, label, all_targets=False):
         """Time a build, retaining its log and compilation, SWIG, and link counts."""
         command = [self.cmake, "--build", str(self.build_dir),
                    "--parallel", str(self.args.parallel)]
         if not all_targets:
-            targets = ["fswCoreNative"] if self.mode == "combined" else self.names
+            targets = [self.native_target] if self.mode == "combined" else [name.split(".")[-1] for name in self.names]
             command.extend(["--target", *targets])
         started = time.perf_counter()
         log = self.run_logged(label, command)
@@ -184,22 +202,37 @@ class Benchmark:
                            swig=content.count("Swig compile"), links=content.count("Linking "))
 
     def native_outputs(self):
-        """Return only the core FSW native files owned by the selected layout."""
-        names = ["fswCoreNative"] if self.mode == "combined" else self.names
+        """Return only the native files owned by the selected group and layout."""
         suffix = ".pyd" if os.name == "nt" else ".so"
-        return [self.package_dir / f"_{name}{suffix}" for name in names]
+        if self.mode == "combined":
+            return [self.package_dir / f"_{self.native_target}{suffix}"]
+        return [self.public_path(name).with_name("_" + name.split(".")[-1] + suffix) for name in self.names]
+
+    def public_path(self, name):
+        """Locate a public proxy, including groups spanning multiple packages."""
+        if "." not in name:
+            name = "fswAlgorithms." + name
+        return self.build_dir.joinpath("Basilisk", *name.split("."))
 
     def objects(self):
-        """Find generated objects for the selected core FSW targets in a Ninja build."""
+        """Find active Ninja object outputs, ignoring stale files from older builds."""
+        listing = subprocess.check_output(
+            [self.cache["CMAKE_MAKE_PROGRAM"], "-C", str(self.build_dir), "-t", "targets", "all"],
+            text=True,
+        )
+        targets = {name.split(".")[-1] + (self.object_suffix if self.mode == "combined" else "")
+                   for name in self.names}
         objects = []
-        for name in self.names:
-            target = f"{name}FswObjects" if self.mode == "combined" else name
-            directory = self.build_dir / "CMakeFiles" / f"{target}.dir"
-            objects.extend(path for path in directory.rglob("*") if path.suffix in OBJECT_SUFFIXES)
+        for line in listing.splitlines():
+            match = re.fullmatch(r"(CMakeFiles/([^/]+)\.dir/[^:]+): (?:C|CXX)_COMPILER.*", line)
+            if match and match[2] in targets:
+                objects.append(self.build_dir / match[1])
         return objects
 
     def import_pair(self, label, names):
-        """Measure consecutive fresh processes, isolating FSW imports after Basilisk."""
+        """Measure consecutive fresh processes, isolating group imports after Basilisk."""
+        names = [name if "." in name else "fswAlgorithms." + name for name in names]
+        names = [self.proxies.get(name, name) for name in names]
         for temperature in ("cold", "warm"):
             result = subprocess.run(
                 [self.python, "-c", IMPORT_PROBE, str(self.build_dir), json.dumps(names)],
@@ -230,7 +263,8 @@ class Benchmark:
 
     def incremental(self, suffix, trial):
         """Touch one representative input and restore its timestamps even after failure."""
-        source = self.source_dir / f"fswAlgorithms/attControl/mrpFeedback/mrpFeedback.{suffix}"
+        representative = getattr(self, "representative_source", Path("fswAlgorithms/attControl/mrpFeedback/mrpFeedback.c"))
+        source = self.source_dir / representative.with_suffix("." + suffix)
         original = source.stat()
         newest = max(path.stat().st_mtime for path in self.native_outputs())
         time.sleep(max(0.0, newest - time.time()) + MTIME_MARGIN_SECONDS)
@@ -275,18 +309,20 @@ class Benchmark:
         expected_objects = len(self.objects())
         for trial in range(self.args.trials):
             outputs = self.objects() + self.native_outputs()
-            outputs.extend(self.package_dir / f"{name}{suffix}"
-                           for name in self.names for suffix in (".py", "PYTHON_wrap.cxx"))
+            outputs.extend(self.public_path(self.proxies.get(name, name)).with_suffix(".py")
+                           for name in self.names)
+            outputs.extend(self.public_path(name).with_name(name.split(".")[-1] + "PYTHON_wrap.cxx")
+                           for name in self.names)
             remove_outputs(self.build_dir, outputs)
             row = self.build(f"rebuild-{trial}")
             if row["compiles"] != expected_objects or row["swig"] != len(self.names):
-                raise RuntimeError(f"Unexpected work during a full core FSW rebuild: {row}")
-            self.import_pair(f"all-fsw-{trial}", self.names)
+                raise RuntimeError(f"Unexpected work during a full binding-group rebuild: {row}")
+            self.import_pair(f"all-{self.group}-{trial}", self.names)
         self.relink("single-import-relink")
-        self.import_pair("one-fsw", ["mrpFeedback"])
+        self.import_pair(f"one-{self.group}", [self.representative_module])
         for trial in range(self.args.trials):
             self.relink(f"relink-{trial}")
-            for suffix in ("c", "i"):
+            for suffix in (self.representative_source.suffix[1:], "i"):
                 self.incremental(suffix, trial)
         row = self.build("no-change")
         if row["compiles"] or row["swig"] or row["links"]:
@@ -302,18 +338,22 @@ class Benchmark:
         """Run both layouts and restore the caller's original layout in all cases."""
         if self.args.smoke:
             result = subprocess.run(
-                [self.python, "-B", "-c", IMPORT_PROBE, str(self.build_dir), '["mrpFeedback"]'],
+                [self.python, "-B", "-c", IMPORT_PROBE, str(self.build_dir), json.dumps([self.representative_module])],
                 capture_output=True, text=True, check=True,
             )
             print(result.stdout.strip())
             return
         try:
             self.configure(True)
-            manifest = self.build_dir / "autoSource/fswCoreBindings.txt"
+            manifest = self.build_dir / "autoSource" / self.manifest_name
             self.names = sorted(manifest.read_text(encoding="utf-8").split())
-            if "mrpFeedback" not in self.names or any(
-                    re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", name) is None for name in self.names):
-                raise ValueError("The core FSW manifest is missing or contains invalid module names.")
+            proxy_manifest = self.build_dir / "autoSource" / f"{self.native_target}Proxies.txt"
+            if self.group != "fsw":
+                self.proxies = dict(line.split("=", 1) for line in proxy_manifest.read_text().splitlines() if line)
+            representative = self.representative_module if self.group != "fsw" else "mrpFeedback"
+            if representative not in self.names or any(
+                    re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*(?:\.[A-Za-z_][A-Za-z_0-9]*)?", name) is None for name in self.names):
+                raise ValueError("The binding manifest is empty or invalid; enable the selected group's build feature.")
             self.results["modules"] = self.names
             for combined in (False, True):
                 self.measure_layout(combined)
@@ -335,6 +375,7 @@ class Benchmark:
 def main():
     """Parse portable paths and benchmark controls, then run the experiment."""
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--group", choices=GROUPS, default="fsw")
     parser.add_argument("--build-dir", type=Path, default=REPOSITORY / "dist3")
     parser.add_argument("--output", type=Path, help="New output directory; defaults under the build tree")
     parser.add_argument("--trials", type=int, default=3)

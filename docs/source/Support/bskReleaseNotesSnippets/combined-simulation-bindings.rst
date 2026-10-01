@@ -1,0 +1,1 @@
+- Extend the native-binding startup experiment to core simulation, MuJoCo, and OpenCV groups, preserving existing Python imports, message recorders, and per-module compilation. The OpenCV group also supports the optional ``bsk-opnav`` wheel.

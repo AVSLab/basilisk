@@ -163,16 +163,21 @@ CI.  New benchmarks should document:
 - How to interpret each reported metric.
 - Any known limitations that affect comparison quality.
 
-Core FSW Startup Experiment
----------------------------
+Native Binding Startup Experiments
+----------------------------------
 
-The optional startup benchmark compares separate and combined core FSW libraries
+The optional startup benchmark compares separate and combined native libraries
 in an existing Ninja build. Run it from the repository root with other builds and
 tests stopped:
 
 .. code-block:: bash
 
    .venv/bin/python benchmarks/startup/benchmark_fsw_bindings.py --build-dir dist3 --trials 3 --parallel 12 --pytest-workers 16
+
+The default group is core FSW. Use ``--group simulation``, ``--group mujoco``,
+or ``--group opnav`` to measure the other groups. Optional groups require their
+corresponding build features to be enabled. Each comparison changes only the
+selected group's layout.
 
 It saves build, import, and collection timings, then restores the original build
 layout. Omit ``--pytest-workers`` to skip collection measurements, or use
@@ -182,3 +187,7 @@ layout. Omit ``--pytest-workers`` to skip collection measurements, or use
 See the :download:`macOS experiment report <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.rst>`
 and :download:`raw measurements <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.json>`
 for results and methodology. Linux and Windows results remain to be collected.
+
+The :download:`simulation, MuJoCo, and OpenCV report <../../../../benchmarks/startup/results/macos-arm64-simulation-2026-10-01.rst>`
+and its :download:`raw measurements <../../../../benchmarks/startup/results/macos-arm64-simulation-2026-10-01.json>`
+extend the comparison to the remaining binding groups.

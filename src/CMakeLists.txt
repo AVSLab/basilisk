@@ -36,6 +36,7 @@ include(bskTargetExcludeBuildOptions)
 include(bskBuildInfo)
 include(bskCollectWrapperCustomFiles)
 include(bskCombineFswBindings)
+include(bskCombineSimulationBindings)
 include(bskFindRustModules)
 include(bskSourceInventory)
 
@@ -543,19 +544,36 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     set(MODULE_NAME "${TARGET_NAME}")
     set(WRAPPER_LIBRARY_TYPE MODULE)
-    if("${MODULE_DIR}" STREQUAL "fswAlgorithms")
+    bsk_select_simulation_binding_group(BINDING_GROUP "${MODULE_NAME}" "${PARENT_DIR}" "${MODULE_DIR}")
+    if(BINDING_GROUP)
+      set(TARGET_NAME "${MODULE_NAME}GroupedObjects")
+      set(WRAPPER_LIBRARY_TYPE OBJECT)
+      set_property(SOURCE ${TARGET_FILE} APPEND PROPERTY SWIG_FLAGS "-interface" "_${MODULE_NAME}")
+      set_property(GLOBAL APPEND PROPERTY BSK_${BINDING_GROUP}_OBJECT_TARGETS "${TARGET_NAME}")
+      set_property(GLOBAL APPEND PROPERTY BSK_${BINDING_GROUP}_MODULES "${MODULE_DIR}.${MODULE_NAME}")
+      file(STRINGS "${CMAKE_SOURCE_DIR}/${TARGET_FILE}" SWIG_MODULE_LINE REGEX "^[ \t]*%module")
+      if(NOT SWIG_MODULE_LINE MATCHES "%module(\\([^)]*\\))?[ \t]+([A-Za-z_][A-Za-z_0-9]*)")
+        message(FATAL_ERROR "Cannot determine the Python module name in ${TARGET_FILE}")
+      endif()
+      set_property(GLOBAL APPEND PROPERTY BSK_${BINDING_GROUP}_PROXIES
+        "${MODULE_DIR}.${MODULE_NAME}=${MODULE_DIR}.${CMAKE_MATCH_2}")
+    elseif("${MODULE_DIR}" STREQUAL "fswAlgorithms")
       bsk_collect_wrapper_custom_files(
         FSW_CUSTOM_FILES "${PARENT_DIR}" "${MODULE_DIR}" "${CMAKE_SOURCE_DIR}"
         "${EXTERNAL_MODULES_PATH}" "${BSK_CUSTOM_CMAKE_FILES}")
       if(BSK_COMBINE_FSW_BINDINGS AND NOT FSW_CUSTOM_FILES)
         set(TARGET_NAME "${MODULE_NAME}FswObjects")
         set(WRAPPER_LIBRARY_TYPE OBJECT)
+        set(BINDING_GROUP fswCoreNative)
         # Keep each Python extension's original name and initialization entry point.
         set_property(SOURCE ${TARGET_FILE} APPEND PROPERTY SWIG_FLAGS "-interface" "_${MODULE_NAME}")
         set_property(GLOBAL APPEND PROPERTY BSK_FSW_OBJECT_TARGETS "${TARGET_NAME}")
         set_property(GLOBAL APPEND PROPERTY BSK_FSW_COMBINED_MODULES "${MODULE_NAME}")
       endif()
       set_property(GLOBAL APPEND PROPERTY BSK_FSW_BINDING_TARGETS "${TARGET_NAME}")
+    endif()
+    if(MODULE_DIR STREQUAL "simulation" OR MODULE_DIR STREQUAL "fswAlgorithms")
+      set_property(GLOBAL APPEND PROPERTY BSK_SIMULATION_BINDING_TARGETS "${TARGET_NAME}")
     endif()
 
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
@@ -581,10 +599,25 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
 
     if(WRAPPER_LIBRARY_TYPE STREQUAL "OBJECT")
       set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+      if(BINDING_GROUP STREQUAL "mujocoNative")
+        # Retain shared director RTTI and callbacks while making SWIG's
+        # per-wrapper external mutex definitions one C++17 inline variable.
+        set(SWIG_WRAPPER "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${MODULE_NAME}PYTHON_wrap.cxx")
+        set(GROUPED_WRAPPER "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${MODULE_NAME}PYTHON_grouped.cxx")
+        add_custom_command(OUTPUT "${GROUPED_WRAPPER}"
+          COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/prepareGroupedWrapper.py"
+            "${SWIG_WRAPPER}" "${GROUPED_WRAPPER}"
+          DEPENDS "${SWIG_WRAPPER}" "${CMAKE_SOURCE_DIR}/cmake/prepareGroupedWrapper.py"
+          COMMENT "Preparing ${MODULE_NAME} for the MuJoCo binding group" VERBATIM)
+        get_target_property(WRAPPER_SOURCES ${TARGET_NAME} SOURCES)
+        list(REMOVE_ITEM WRAPPER_SOURCES "${SWIG_WRAPPER}")
+        set_property(TARGET ${TARGET_NAME} PROPERTY SOURCES ${WRAPPER_SOURCES} "${GROUPED_WRAPPER}")
+        bsk_suppress_strict_warnings_for_sources("${GROUPED_WRAPPER}")
+      endif()
       bsk_isolate_fsw_symbols("${MODULE_NAME}" ${WRAPPER_IMPLEMENTATION_FILES}
         "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${MODULE_NAME}PYTHON_wrap.cxx")
       add_custom_target(${MODULE_NAME})
-      add_dependencies(${MODULE_NAME} fswCoreNative)
+      add_dependencies(${MODULE_NAME} ${BINDING_GROUP})
     endif()
 
     if("${MODULE_DIR}" STREQUAL "ExternalModules")
@@ -1027,6 +1060,7 @@ generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;ModuleIdG
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 
 bsk_finalize_fsw_bindings()
+bsk_finalize_simulation_bindings()
 
 # Rust modules under fswAlgorithms/ -- see the "ARCHITECTURE" section above.
 find_rust_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms" FSW_RUST_TARGETS)

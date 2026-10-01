@@ -11,6 +11,9 @@ Version |release|
   system validated each separately compiled message extension. Message bindings now
   share one native library to reduce this per-file overhead. Python message imports
   and recorder APIs are unchanged; individual wrappers still compile separately.
+  Experimental grouping now also covers core FSW, core simulation, MuJoCo, and
+  OpenCV bindings. MuJoCo and OpenCV retain separate optional groups; Python
+  imports and module initialization remain on demand.
   The combined library is validated again when rebuilt, so first-import timing can
   still differ from subsequent runs.
 
