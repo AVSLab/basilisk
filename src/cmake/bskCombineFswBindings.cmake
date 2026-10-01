@@ -16,7 +16,8 @@
 
 include_guard(GLOBAL)
 
-option(BSK_COMBINE_FSW_BINDINGS "Experimentally combine core FSW native bindings" OFF)
+# Temporary CI experiment: revert this default after cross-platform validation.
+option(BSK_COMBINE_FSW_BINDINGS "Experimentally combine core FSW native bindings" ON)
 
 function(bsk_finalize_fsw_bindings)
   get_property(OBJECT_TARGETS GLOBAL PROPERTY BSK_FSW_OBJECT_TARGETS)

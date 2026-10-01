@@ -207,6 +207,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
 
         venv_path = create_venv(tmp_dir, "install")
         python = venv_python(venv_path)
+        combined_check = [python, "-I", Path(__file__).with_name("check_combined_bindings.py")]
 
         run([python, "-m", "pip", "install", base_wheel])
         run_import_check(
@@ -216,6 +217,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             expected_features=CORE_FEATURES,
             env=test_env,
         )
+        run(combined_check, env=test_env)
 
         install_extra(python, wheelhouse, "opnav")
         run([python, "-m", "pip", "show", "bsk", "bsk-opnav"])
@@ -226,6 +228,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             expected_features=OPNAV_FEATURES,
             env=test_env,
         )
+        run(combined_check, env=test_env)
         run_protobuf_consumer_checks(python, test_env)
 
         run([python, "-m", "pip", "uninstall", "-y", "bsk-opnav"])
@@ -236,6 +239,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             expected_features=CORE_FEATURES,
             env=test_env,
         )
+        run(combined_check, env=test_env)
 
         install_extra(python, wheelhouse, "all")
         run([python, "-m", "pip", "show", "bsk", "bsk-opnav"])
@@ -246,6 +250,7 @@ def test_optional_wheels(wheelhouse: Path) -> None:
             expected_features=OPNAV_FEATURES,
             env=test_env,
         )
+        run(combined_check, env=test_env)
         run_protobuf_consumer_checks(python, test_env)
 
 

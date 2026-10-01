@@ -122,6 +122,11 @@ runs:
         fi
         bskLargeData
 
+    - name: Verify temporary combined binding experiment
+      shell: bash
+      if: ${{ inputs.skip-build == 'false' }}
+      run: python -I .github/scripts/check_combined_bindings.py
+
     - name: Verify installed Basilisk version
       shell: bash
       if: ${{ inputs.skip-build == 'false' }}

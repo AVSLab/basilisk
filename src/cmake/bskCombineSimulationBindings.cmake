@@ -16,9 +16,10 @@
 
 include_guard(GLOBAL)
 
-option(BSK_COMBINE_SIMULATION_BINDINGS "Experimentally combine core simulation bindings" OFF)
-option(BSK_COMBINE_MUJOCO_BINDINGS "Experimentally combine MuJoCo bindings" OFF)
-option(BSK_COMBINE_OPNAV_BINDINGS "Experimentally combine OpenCV bindings" OFF)
+# Temporary CI experiment: revert these defaults after cross-platform validation.
+option(BSK_COMBINE_SIMULATION_BINDINGS "Experimentally combine core simulation bindings" ON)
+option(BSK_COMBINE_MUJOCO_BINDINGS "Experimentally combine MuJoCo bindings" ON)
+option(BSK_COMBINE_OPNAV_BINDINGS "Experimentally combine OpenCV bindings" ON)
 
 function(bsk_select_simulation_binding_group OUTPUT MODULE_NAME PARENT_DIR MODULE_DIR)
   set(GROUP "")
