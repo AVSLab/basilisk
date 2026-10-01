@@ -19,6 +19,8 @@
 
 #include <functional>
 
+#include <Eigen/Geometry>
+
 #include "gravityEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
@@ -63,7 +65,22 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64
 
     Eigen::Matrix3d dcm_PfixN_dot =
         c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
-    dcm_PfixN += dcm_PfixN_dot * dt;
+
+    // Advance the planet orientation by the time since the message was written as a rotation
+    // about the planet angular velocity. A first-order update of the matrix elements
+    // (dcm_PfixN + dcm_PfixN_dot * dt) is not orthonormal, which scales the evaluated field by a
+    // relative error of order (omega * dt)^2 and distorts even a point-mass gravity field.
+    if (!dcm_PfixN_dot.isZero() && dt != 0.0) {
+        // dcm_PfixN_dot = [omega_N x] dcm_PfixN, hence [omega_N x] = dcm_PfixN_dot * dcm_PfixN^T
+        const Eigen::Matrix3d omegaTilde_N = dcm_PfixN_dot * dcm_PfixN.transpose();
+        const Eigen::Vector3d omega_N(0.5 * (omegaTilde_N(2, 1) - omegaTilde_N(1, 2)),
+                                      0.5 * (omegaTilde_N(0, 2) - omegaTilde_N(2, 0)),
+                                      0.5 * (omegaTilde_N(1, 0) - omegaTilde_N(0, 1))); // [rad/s]
+        const double rotationAngle = omega_N.norm() * dt;                               // [rad]
+        if (rotationAngle != 0.0) {
+            dcm_PfixN = Eigen::AngleAxisd(rotationAngle, omega_N.normalized()).toRotationMatrix() * dcm_PfixN;
+        }
+    }
 
     // store the current planet orientation and rates
     *this->J20002Pfix = dcm_PfixN;

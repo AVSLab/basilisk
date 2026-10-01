@@ -17,6 +17,8 @@
 
  */
 
+#include <cmath>
+
 #include "msisAtmosphere.h"
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/geodeticConversion.h"
@@ -92,6 +94,51 @@ MsisAtmosphere::~MsisAtmosphere()
     return;
 }
 
+/*! Selects the local solar time used by NRLMSISE-00. By default the mean solar time
+ (second of day plus longitude divided by 15 deg/hr) is used. The model is defined with the apparent solar time, which
+ differs from the mean solar time by the equation of time, up to about 16 minutes during the year.
+ @param useApparent true to add the equation of time to the local solar time
+ */
+void MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
+{
+    this->useApparentSolarTime = useApparent;
+}
+
+/*! Returns whether the apparent solar time is used as the local solar time input.
+ @return true if the equation of time is added to the mean solar time
+ */
+bool MsisAtmosphere::getUseApparentSolarTime() const
+{
+    return this->useApparentSolarTime;
+}
+
+/*! Computes the equation of time, apparent minus mean solar time, with the series of Meeus, Astronomical
+ Algorithms, chapter 28. The accuracy is a few seconds.
+ @param year calendar year
+ @param dayOfYear day of year, 1 is January 1
+ @param secondOfDay [s] second of the day, UTC
+ @return [s] equation of time
+ */
+double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
+{
+    // days from the Unix epoch to January 1 of the year, valid for years from 1970
+    const int y = year - 1;
+    const long daysFromEpoch =
+      365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400);
+    const double julianDate =
+      static_cast<double>(daysFromEpoch + dayOfYear - 1) + 2440587.5 + secondOfDay / 86400.0; // [day]
+    const double T = (julianDate - 2451545.0) / 36525.0;                                      // [century] since J2000
+    const double meanLongitude = std::fmod(280.46646 + 36000.76983 * T + 0.0003032 * T * T, 360.0) * D2R; // [rad]
+    const double meanAnomaly = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * D2R;                   // [rad]
+    const double eccentricity = 0.016708634 - 0.000042037 * T;                                            // [-]
+    const double obliquity = (23.439291 - 0.0130042 * T) * D2R;                                           // [rad]
+    const double y2 = std::pow(std::tan(0.5 * obliquity), 2.0);                                           // [-]
+    const double equation = y2 * std::sin(2.0 * meanLongitude) - 2.0 * eccentricity * std::sin(meanAnomaly) +
+                            4.0 * eccentricity * y2 * std::sin(meanAnomaly) * std::cos(2.0 * meanLongitude) -
+                            0.5 * y2 * y2 * std::sin(4.0 * meanLongitude) -
+                            1.25 * eccentricity * eccentricity * std::sin(2.0 * meanAnomaly); // [rad]
+    return equation * R2D * 240.0; // [s] one degree of hour angle is 4 minutes
+}
 
 /*! This method is used to reset the module.
 
@@ -211,7 +258,7 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double cu
     this->updateInputParams();
     //! Compute the geodetic position using the planet orientation.
 
-    this->currentLLA = PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius);
+    this->currentLLA = PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius, this->getPlanetPolarRadius());
     this->msisInput.g_lat = R2D*this->currentLLA[0];
     this->msisInput.g_long = R2D*this->currentLLA[1];
     this->msisInput.alt = this->currentLLA[2]/1000.0; // NRLMSISE Altitude input must be in kilometers!
@@ -226,8 +273,13 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double cu
     double fracSecond = currentTime - (int) currentTime;
     this->msisInput.sec = localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
 
-    // WIP - need to actually figure out how to pull in these values.
+    // Local solar time [hr]. By default this is the mean solar time. The apparent solar time, which NRLMSISE-00 is
+    // defined with, adds the equation of time.
     this->msisInput.lst = this->msisInput.sec/3600.0 + this->msisInput.g_long/15.0;
+    if (this->useApparentSolarTime) {
+        this->msisInput.lst +=
+          this->equationOfTime(this->msisInput.year, this->msisInput.doy, this->msisInput.sec) / 3600.0;
+    }
 
     //!  NRLMSISE-00 uses different models depending on the altitude.
     if(this->msisInput.alt < 500.0){

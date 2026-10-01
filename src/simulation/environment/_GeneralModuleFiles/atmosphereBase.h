@@ -43,10 +43,12 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void UpdateState(uint64_t CurrentSimNanos);
+    void setPlanetPolarRadius(double polarRadius);
+    double getPlanetPolarRadius() const;
 
-protected:
+  protected:
     void writeMessages(uint64_t CurrentClock);
-    bool readMessages();
+    bool readMessages(uint64_t CurrentSimNanos);
     void updateLocalAtmosphere(double currentTime);
     void updateRelativePos(SpicePlanetStateMsgPayload  *planetState, SCStatesMsgPayload *scState);
     virtual void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime) = 0;     //!< class method
@@ -73,11 +75,13 @@ protected:
     std::vector<AtmoPropsMsgPayload> envOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<SCStatesMsgPayload> scStates;  //!< vector of the spacecraft state messages
     SpicePlanetStateMsgPayload planetState; //!< planet state message
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
 private:
-    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
-    std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
+  double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius
+  // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+  std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };
 
 

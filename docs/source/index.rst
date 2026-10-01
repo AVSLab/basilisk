@@ -160,6 +160,8 @@ several different (often competing) requirements.
    Each dynamics module has associated momentum, energy and power
    validation tests. This ensures the integrity of the validated modules
    as new simulation capabilities are added.
+   Orbit propagation accuracy is compared against GMAT and Orekit in
+   :ref:`accuracyComparison`.
 
 -  **Monte-Carlo Capability:** The simulation framework is capable of
    doing bit-for-bit repeatable Monte-Carlo runs. The simulation
