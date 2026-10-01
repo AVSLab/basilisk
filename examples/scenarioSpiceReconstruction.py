@@ -69,8 +69,9 @@ below it is the "free" zone, where reconstruction error is smaller than the inte
 does not change the orbit. The reconstruction curve drops into that band after only a few tens of
 queries, so coarsening the grid further buys nothing. For comparison, the exact-SPICE reference sits
 at the far right at its full query cost (zero error by definition, on the broken "0" tick), and the
-:ref:`spacecraft` + :ref:`gravityEffector` default sits *above* the band: a handful of
-reconstruction knots is both cheaper and more accurate than that default behaviour.
+:ref:`spacecraft` + :ref:`gravityEffector` default sits inside the band too, at a cost of one Moon
+query per step: it is as accurate as the reconstruction, but a handful of
+reconstruction knots gives the same orbit for a small fraction of the queries.
 
 .. figure:: /_images/Scenarios/scenarioSpiceReconstruction2.svg
    :align: center
@@ -80,8 +81,8 @@ The third figure shows the position error buildup against time for three cases: 
 curve, the run with a perfect ephemeris, which grows over the leg and jumps at the flyby), one cheap
 reconstruction taken from the free zone of the second figure, and the :ref:`spacecraft` default. The shaded
 region is again the free zone, now time-varying because the integrator error grows. The
-reconstruction stays inside that zone for nearly the whole leg on a handful of Moon queries, while
-the :ref:`spacecraft` default climbs above it early in the coast and grows to tens of kilometres.
+reconstruction stays inside that zone for nearly the whole leg on a handful of Moon queries. The
+:ref:`spacecraft` default stays inside it as well, but needs one Moon query per step.
 
 .. figure:: /_images/Scenarios/scenarioSpiceReconstruction3.svg
    :align: center
@@ -407,7 +408,7 @@ def plotAccuracyVsCost(sweep, errClassic, integratorFloor, nQExact, nQClassic):
             byQ[s["nQ"]] = s["err"]
     nq = np.array(sorted(byQ))
     err = np.array([byQ[q] for q in nq])
-    top = errClassic * 3.0
+    top = max(errClassic, integratorFloor, float(err.max())) * 3.0
     plotFloor = 1e-6  # [m] bottom of the log panel; the finest grids are microns from the reference
 
     # Broken y-axis: a wide log panel for the error curve, and a thin panel below holding the single
@@ -474,7 +475,7 @@ def plotErrorOverTime(tTruth, posTruth, integratorFloor_t, tR, posR, nQGood,
                 label=f"reconstruction, {nQGood} Moon queries")
     ax.semilogy(tClassic / 3600.0, np.maximum(errClassic_t, 1e-6), color=C_CLASSIC, ls="--", zorder=2,
                 label=f"classic spacecraft + gravityEffector ({nQClassic} queries)")
-    ax.set_ylim(1e-6, errClassic * 3.0)
+    ax.set_ylim(1e-6, max(errClassic_t.max(), floor_t.max(), errRecon_t.max()) * 3.0)
     ax.set_xlabel("time  [hr]")
     ax.set_ylabel("position error vs. exact SPICE  [m]")
     ax.grid(True, which="both", alpha=0.3)
