@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- On macOS, the first Basilisk import after a build could pause while the operating
+  system validated each separately compiled message extension. Message bindings now
+  share one native library to reduce this per-file overhead. Python message imports
+  and recorder APIs are unchanged; individual wrappers still compile separately.
+  The combined library is validated again when rebuilt, so first-import timing can
+  still differ from subsequent runs.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.

@@ -1,0 +1,1 @@
+- Message bindings now share one native library, reducing Basilisk startup overhead, especially macOS validation after a rebuild. Existing Python message imports and recorder APIs are preserved, and wrappers still compile individually for incremental builds.
