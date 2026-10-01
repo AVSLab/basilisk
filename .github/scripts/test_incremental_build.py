@@ -329,6 +329,80 @@ def assert_no_compilation(
         )
 
 
+def assert_single_message_rebuild(
+    build_dir: Path,
+    targets: tuple[WrapperTarget, ...],
+    parallel: int,
+    configuration: Optional[str],
+) -> None:
+    """Require a message interface change to rebuild only its wrapper object."""
+
+    message_name = "AttRefMsgPayload"
+    interface = build_dir / "autoSource" / f"{message_name}.i"
+    messaging_dir = build_dir / "Basilisk/architecture/messaging"
+    libraries = [
+        path
+        for path in messaging_dir.glob("_messagingNative.*")
+        if path.suffix in {".so", ".pyd"}
+    ]
+    if len(libraries) != 1:
+        raise IncrementalBuildError(
+            f"Expected one combined messaging library, found {libraries}."
+        )
+    library = libraries[0]
+    require_files((interface, library))
+    before = compiled_artifacts(build_dir)
+    library_mtime = library.stat().st_mtime_ns
+    with temporarily_touch(interface, (library,)):
+        run_build(build_dir, targets, parallel, configuration)
+    after = compiled_artifacts(build_dir)
+    changed = [
+        path
+        for path in before.keys() | after.keys()
+        if before.get(path) != after.get(path)
+    ]
+    if len(changed) != 1 or changed[0].name not in {
+        f"{message_name}PYTHON_wrap.cxx.o",
+        f"{message_name}PYTHON_wrap.cxx.obj",
+        f"{message_name}PYTHON_wrap.obj",
+    }:
+        raise IncrementalBuildError(
+            "A single message interface change rebuilt unexpected objects: "
+            + ", ".join(str(path) for path in changed)
+        )
+    if library.stat().st_mtime_ns <= library_mtime:
+        raise IncrementalBuildError("The combined messaging library was not relinked.")
+    print("PASS: one message interface rebuilt only its object and relinked the library.")
+
+
+def assert_message_initializer_regenerated(
+    source_dir: Path,
+    build_dir: Path,
+    targets: tuple[WrapperTarget, ...],
+    parallel: int,
+    configuration: Optional[str],
+) -> None:
+    """Check that reconfiguration cannot mask a missing generated initializer."""
+
+    initializer = build_dir / "Basilisk/architecture/messaging/__init__.py"
+    initializer.unlink()
+    result = subprocess.run(
+        [cmake_executable(), "-S", str(source_dir), "-B", str(build_dir)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+    )
+    if result.returncode:
+        raise IncrementalBuildError(f"CMake reconfiguration failed:\n{result.stdout}")
+    run_build(build_dir, targets, parallel, configuration)
+    if not initializer.read_text(encoding="utf-8").strip():
+        raise IncrementalBuildError(
+            "CMake left an empty messaging initializer after reconfiguration."
+        )
+    print("PASS: reconfiguring a cleaned package regenerated its messaging initializer.")
+
+
 def run_regression_test(args: argparse.Namespace) -> None:
     """Run positive, negative, and no-change incremental-build checks."""
 
@@ -357,6 +431,11 @@ def run_regression_test(args: argparse.Namespace) -> None:
     after_cpp = modification_times(targets)
     assert_wrappers_unchanged(before_cpp, after_cpp)
     print("PASS: an unrelated .cpp did not regenerate any wrapper.")
+
+    assert_single_message_rebuild(build_dir, targets, args.parallel, args.config)
+    assert_message_initializer_regenerated(
+        source_dir, build_dir, targets, args.parallel, args.config
+    )
 
     before_unchanged_wrappers = modification_times(targets)
     before_unchanged = compiled_artifacts(build_dir)

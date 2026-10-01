@@ -138,14 +138,25 @@ def generate_package_init(
         Path(manifest_path).parent,
     )
 
+    # Retire the former per-module binaries when upgrading an existing build.
+    # Keeping them would duplicate native code in wheels and permit accidental
+    # imports of stale bindings outside the package's initialization sequence.
+    for module_name in ["messagingSupport", *current_payloads]:
+        for extension_suffix in COMPILED_EXTENSION_SUFFIXES:
+            (output_directory / f"_{module_name}{extension_suffix}").unlink(missing_ok=True)
+
     init_content = (
+        "from ._load_messages import load_message_module as _load_message_module\n"
+        "_load_message_module('messagingSupport')\n"
         "from Basilisk.architecture.messaging.messagingSupport import *\n"
     )
     init_content += "".join(
+        f"_load_message_module('{payload_module}')\n"
         f"from Basilisk.architecture.messaging.{payload_module} import *\n"
         for payload_module in current_payloads
     )
     init_content += "from Basilisk.architecture.messagingBase import *\n"
+    init_content += "del _load_message_module\n"
     output_path = output_directory / "__init__.py"
     write_text_atomically(output_path, init_content)
 

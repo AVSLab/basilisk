@@ -72,7 +72,7 @@ generate_payload_manifest(
   "${MESSAGE_PAYLOAD_MANIFEST}"
   ${MESSAGE_PAYLOAD_FILES})
 
-function(generate_messages searchDir generateCCode messageFilesVariable)
+function(generate_messages searchDir generateCCode messageFilesVariable outputVariable)
 
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/autoSource/cMsgMeta)
 
@@ -83,6 +83,7 @@ function(generate_messages searchDir generateCCode messageFilesVariable)
     set(CLANG_LANG_FLAG "c++")
   endif()
 
+  set(message_interfaces)
   foreach(msgFile IN LISTS ${messageFilesVariable})
     get_filename_component(TARGET_NAME ${msgFile} NAME_WE)
 
@@ -168,35 +169,15 @@ function(generate_messages searchDir generateCCode messageFilesVariable)
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../")
     include_directories(${NUMPY_INCLUDE_DIR})
 
-    swig_add_library(
-      ${TARGET_NAME}
-      LANGUAGE "python"
-      TYPE MODULE
-      SOURCES ${COMP_OUT_NAME} OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
-              OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
+    list(APPEND message_interfaces "${COMP_OUT_NAME}")
 
-    bsk_suppress_strict_warnings_for_sources(
-      "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/${TARGET_NAME}PYTHON_wrap.cxx")
-
-    set_property(TARGET ${TARGET_NAME} APPEND PROPERTY SWIG_DEPENDS
-                 "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messaging.h"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.h"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.i"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupport.i"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupportTypemaps.swg")
-    add_dependencies(${TARGET_NAME} messagingBase messagingSupport swigtrick)
+    # Preserve the existing convenience build targets. Every message is now
+    # delivered by the same library, with a separate generated wrapper object.
+    add_custom_target(${TARGET_NAME})
+    add_dependencies(${TARGET_NAME} messagingNative)
     set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "architecture/messaging/derivedCode")
-    set_target_properties(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME}
-                          PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
-    set_target_properties(
-      ${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG
-                                                         "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
-    set_target_properties(
-      ${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
-                                                         "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
-    target_link_libraries(${SWIG_MODULE_${TARGET_NAME}_REAL_NAME} PUBLIC architectureLib)
   endforeach()
+  set(${outputVariable} ${message_interfaces} PARENT_SCOPE)
 endfunction(generate_messages)
 
 # Remove the retired compatibility package from incremental builds as well.
@@ -216,6 +197,16 @@ add_custom_command(
   VERBATIM)
 add_custom_target(msgKeepAlivePy DEPENDS ${MSG_KEEP_ALIVE_PY})
 
+set(MSG_LOADER_PY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/_load_messages.py")
+add_custom_command(
+  OUTPUT ${MSG_LOADER_PY}
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${CMAKE_CURRENT_SOURCE_DIR}/_load_messages.py" "${MSG_LOADER_PY}"
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/_load_messages.py
+  VERBATIM)
+add_custom_target(msgLoaderPy DEPENDS ${MSG_LOADER_PY})
+
 # Generate package imports from the exact payload inventory used for SWIG
 # targets.  This avoids a second directory scan with different file matching.
 add_custom_command(
@@ -234,7 +225,7 @@ add_custom_command(
 
 # Custom target for establishing dependency
 add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
-add_dependencies(swigtrick msgKeepAlivePy)
+add_dependencies(swigtrick msgKeepAlivePy msgLoaderPy)
 
 # Build common payload-wrapper types and helpers once, inside the messaging
 # package, instead of emitting them into every generated payload extension.
@@ -250,30 +241,48 @@ set_property(
            "-I${Python3_INCLUDE_DIRS}"
            "-I${NUMPY_INCLUDE_DIR}")
 
+# SWIG generates one source and Python proxy per interface. Keeping those
+# translation units separate preserves parallel and incremental compilation;
+# only the final native library is shared. With multiple interfaces UseSWIG
+# retains each interface's own initialization entry point and proxy imports.
+generate_messages(msgPayloadDefCpp "False" CPP_MESSAGE_PAYLOAD_FILES CPP_MESSAGE_INTERFACES)
+generate_messages(msgPayloadDefC "True" C_MESSAGE_PAYLOAD_FILES C_MESSAGE_INTERFACES)
 swig_add_library(
-  messagingSupport
+  messagingNative
   LANGUAGE "python"
   TYPE MODULE
-  SOURCES ${MESSAGING_SUPPORT_INTERFACE}
+  SOURCES ${MESSAGING_SUPPORT_INTERFACE} ${CPP_MESSAGE_INTERFACES} ${C_MESSAGE_INTERFACES}
   OUTFILE_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
   OUTPUT_DIR "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/")
 set_property(
-  TARGET messagingSupport
+  TARGET messagingNative
   APPEND
-  PROPERTY SWIG_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupportTypemaps.swg")
+  PROPERTY SWIG_DEPENDS
+           "${CMAKE_CURRENT_SOURCE_DIR}/newMessaging.ih"
+           "${CMAKE_CURRENT_SOURCE_DIR}/messaging.h"
+           "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.h"
+           "${CMAKE_CURRENT_SOURCE_DIR}/messagingBase.i"
+           "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupport.i"
+           "${CMAKE_CURRENT_SOURCE_DIR}/messagingSupportTypemaps.swg")
 
-bsk_suppress_strict_warnings_for_sources(
-  "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/messagingSupportPYTHON_wrap.cxx")
-target_include_directories(messagingSupport PRIVATE ${Python3_INCLUDE_DIRS})
-target_include_directories(messagingSupport PRIVATE ${NUMPY_INCLUDE_DIR})
-target_include_directories(messagingSupport PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-target_link_libraries(messagingSupport PUBLIC architectureLib)
-set_target_properties(messagingSupport PROPERTIES FOLDER "architecture/messaging")
+foreach(message_interface IN ITEMS ${MESSAGING_SUPPORT_INTERFACE} ${CPP_MESSAGE_INTERFACES} ${C_MESSAGE_INTERFACES})
+  get_filename_component(message_name "${message_interface}" NAME_WE)
+  bsk_suppress_strict_warnings_for_sources(
+    "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/${message_name}PYTHON_wrap.cxx")
+endforeach()
+target_include_directories(messagingNative PRIVATE ${Python3_INCLUDE_DIRS} ${NUMPY_INCLUDE_DIR})
+target_include_directories(messagingNative PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+target_link_libraries(messagingNative PRIVATE architectureLib ${PYTHON3_MODULE})
+add_dependencies(messagingNative messagingBase swigtrick)
+set_target_properties(messagingNative PROPERTIES FOLDER "architecture/messaging")
 set_target_properties(
-  ${SWIG_MODULE_messagingSupport_REAL_NAME}
+  messagingNative
   PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
              LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
-             LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+             LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+             LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging"
+             LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+add_custom_target(messagingSupport DEPENDS messagingNative)
 
 # The target is created above with messaging-package output paths; do not let
 # the root architecture target discovery create it a second time.
@@ -281,11 +290,6 @@ list(APPEND EXCLUDED_BSK_TARGETS messagingSupport)
 set(EXCLUDED_BSK_TARGETS
     ${EXCLUDED_BSK_TARGETS}
     PARENT_SCOPE)
-
-# Generate per-payload equality headers. Each "<Payload>_equality.h" is included
-# only by that payload's own SWIG module.
-generate_messages(msgPayloadDefCpp "False" CPP_MESSAGE_PAYLOAD_FILES)
-generate_messages(msgPayloadDefC "True" C_MESSAGE_PAYLOAD_FILES)
 
 set(recorder_copy_contract_test_source
     "${CMAKE_CURRENT_SOURCE_DIR}/_UnitTest/test_recorder_copy_contract.cpp")

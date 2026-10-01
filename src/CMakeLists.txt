@@ -1061,6 +1061,12 @@ file(
   "${CMAKE_BINARY_DIR}/Basilisk/*")
 
 foreach(DIR ${DIST_DIRECTORIES})
+  # Messaging owns its initializer through a build-time generator. An empty
+  # configure-time placeholder would make that output appear up to date after
+  # cleaning and reconfiguring an existing build directory.
+  if(DIR STREQUAL "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging")
+    continue()
+  endif()
   if(IS_DIRECTORY ${DIR} AND NOT IS_SYMLINK ${DIR})
     file(
       GLOB DIST_DIR_FILES
