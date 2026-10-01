@@ -162,3 +162,23 @@ CI.  New benchmarks should document:
 - Representative terminal output.
 - How to interpret each reported metric.
 - Any known limitations that affect comparison quality.
+
+Core FSW Startup Experiment
+---------------------------
+
+The optional startup benchmark compares separate and combined core FSW libraries
+in an existing Ninja build. Run it from the repository root with other builds and
+tests stopped:
+
+.. code-block:: bash
+
+   .venv/bin/python benchmarks/startup/benchmark_fsw_bindings.py --build-dir dist3 --trials 3 --parallel 12 --pytest-workers 16
+
+It saves build, import, and collection timings, then restores the original build
+layout. Omit ``--pytest-workers`` to skip collection measurements, or use
+``--smoke`` to check one import without rebuilding. On Windows, use
+``.venv\Scripts\python.exe`` from a compiler developer shell.
+
+See the :download:`macOS experiment report <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.rst>`
+and :download:`raw measurements <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.json>`
+for results and methodology. Linux and Windows results remain to be collected.

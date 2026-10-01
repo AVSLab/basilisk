@@ -35,6 +35,7 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/conan")
 include(bskTargetExcludeBuildOptions)
 include(bskBuildInfo)
 include(bskCollectWrapperCustomFiles)
+include(bskCombineFswBindings)
 include(bskFindRustModules)
 include(bskSourceInventory)
 
@@ -540,6 +541,23 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     list(FILTER WRAPPER_FILES EXCLUDE REGEX "\\.(c|cpp)$")
     list(APPEND WRAPPER_FILES ${WRAPPER_IMPLEMENTATION_FILES})
 
+    set(MODULE_NAME "${TARGET_NAME}")
+    set(WRAPPER_LIBRARY_TYPE MODULE)
+    if("${MODULE_DIR}" STREQUAL "fswAlgorithms")
+      bsk_collect_wrapper_custom_files(
+        FSW_CUSTOM_FILES "${PARENT_DIR}" "${MODULE_DIR}" "${CMAKE_SOURCE_DIR}"
+        "${EXTERNAL_MODULES_PATH}" "${BSK_CUSTOM_CMAKE_FILES}")
+      if(BSK_COMBINE_FSW_BINDINGS AND NOT FSW_CUSTOM_FILES)
+        set(TARGET_NAME "${MODULE_NAME}FswObjects")
+        set(WRAPPER_LIBRARY_TYPE OBJECT)
+        # Keep each Python extension's original name and initialization entry point.
+        set_property(SOURCE ${TARGET_FILE} APPEND PROPERTY SWIG_FLAGS "-interface" "_${MODULE_NAME}")
+        set_property(GLOBAL APPEND PROPERTY BSK_FSW_OBJECT_TARGETS "${TARGET_NAME}")
+        set_property(GLOBAL APPEND PROPERTY BSK_FSW_COMBINED_MODULES "${MODULE_NAME}")
+      endif()
+      set_property(GLOBAL APPEND PROPERTY BSK_FSW_BINDING_TARGETS "${TARGET_NAME}")
+    endif()
+
     set_property(SOURCE ${TARGET_FILE} PROPERTY USE_TARGET_INCLUDE_DIRECTORIES TRUE) # Allows for include paths in the
                                                                                      # .i files
     set_property(SOURCE ${TARGET_FILE} PROPERTY CPLUSPLUS ON)
@@ -547,7 +565,7 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
     swig_add_library(
       ${TARGET_NAME}
       LANGUAGE "python"
-      TYPE MODULE
+      TYPE ${WRAPPER_LIBRARY_TYPE}
       SOURCES ${TARGET_FILE}
               ${WRAPPER_FILES}
               # TODO: Following commented lines will become default with future imports OUTFILE_DIR
@@ -559,7 +577,15 @@ function(generate_package_targets TARGET_LIST LIB_DEP_LIST MODULE_DIR)
               "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}") # generated .py file
 
     bsk_suppress_strict_warnings_for_sources(
-      "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${TARGET_NAME}PYTHON_wrap.cxx")
+      "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${MODULE_NAME}PYTHON_wrap.cxx")
+
+    if(WRAPPER_LIBRARY_TYPE STREQUAL "OBJECT")
+      set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+      bsk_isolate_fsw_symbols("${MODULE_NAME}" ${WRAPPER_IMPLEMENTATION_FILES}
+        "${CMAKE_BINARY_DIR}/Basilisk/${MODULE_DIR}/${MODULE_NAME}PYTHON_wrap.cxx")
+      add_custom_target(${MODULE_NAME})
+      add_dependencies(${MODULE_NAME} fswCoreNative)
+    endif()
 
     if("${MODULE_DIR}" STREQUAL "ExternalModules")
       bsk_suppress_strict_warnings_for_sources(${C_FILES})
@@ -999,6 +1025,8 @@ generate_package_targets("${STATE_EST_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgo
 generate_package_targets("${ORBIT_CONTROL_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
 generate_package_targets("${TRANS_DET_TARGETS}" "transDeterminationLib;ModuleIdGenerator" "fswAlgorithms")
 generate_package_targets("${VEH_CONFIG_TARGETS}" "${ARCHITECTURE_LIBS};" "fswAlgorithms")
+
+bsk_finalize_fsw_bindings()
 
 # Rust modules under fswAlgorithms/ -- see the "ARCHITECTURE" section above.
 find_rust_package_targets("${CMAKE_SOURCE_DIR}/fswAlgorithms" FSW_RUST_TARGETS)
