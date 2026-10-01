@@ -34,6 +34,7 @@
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! @brief atmospheric density base class */
 class AtmosphereBase: public SysModel  {
@@ -45,6 +46,17 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void setPlanetPolarRadius(double polarRadius);
     double getPlanetPolarRadius() const;
+    /*! @brief Enable or disable the extrapolation of the spacecraft state to the middle of the interval the next
+     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+     *  @param enable [-] True to extrapolate the spacecraft state; the default is false.
+     *  @note The extrapolation assumes that the module and the spacecraft run at the same task rate with a constant
+     *  spacecraft step.
+     */
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+    /*! @brief Return whether the spacecraft state extrapolation is enabled.
+     *  @return [-] True if the spacecraft state is extrapolated.
+     */
+    bool getExtrapolateScStateToStepMidpoint() const;
 
   protected:
     void writeMessages(uint64_t CurrentClock);
@@ -79,7 +91,8 @@ protected:
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
 private:
-  double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius
+  double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius, planetRadius must not change after Reset()
+  ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
   // Public output-message vectors are borrowed views; only these smart pointers own the messages.
   std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };

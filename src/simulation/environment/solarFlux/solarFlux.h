@@ -28,6 +28,7 @@
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 
 /*! @brief solar flux class */
@@ -40,6 +41,17 @@ public:
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
     void readMessages(uint64_t CurrentSimNanos);
+    /*! @brief Enable or disable the extrapolation of the spacecraft state to the middle of the interval the next
+     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+     *  @param enable [-] True to extrapolate the spacecraft state; the default is false.
+     *  @note The extrapolation assumes that the module and the spacecraft run at the same task rate with a constant
+     *  spacecraft step.
+     */
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+    /*! @brief Return whether the spacecraft state extrapolation is enabled.
+     *  @return [-] True if the spacecraft state is extrapolated.
+     */
+    bool getExtrapolateScStateToStepMidpoint() const;
 
   public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;       //!< sun state input message
@@ -55,4 +67,5 @@ private:
     Eigen::Vector3d r_SN_N;  //!< [m] sun position
     Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
     uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 };

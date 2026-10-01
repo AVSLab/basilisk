@@ -87,6 +87,7 @@ void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScM
 void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
 
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -151,9 +152,20 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused
     return;
 }
 
+void MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+bool MagneticFieldBase::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
 /*! This method is used to read the incoming command message and set the
- associated spacecraft positions for computing the magnetic field. The spacecraft state is extrapolated to the
- middle of the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+ associated spacecraft positions for computing the magnetic field. If enabled with
+ setExtrapolateScStateToStepMidpoint(), the spacecraft state is extrapolated to the middle of the interval the next
+ spacecraft update integrates, see extrapolateScStateToStepMidpoint().
  @param CurrentSimNanos [ns] current simulation time
  @return true if all required messages were read
  */
@@ -170,10 +182,12 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
         scRead = true;
         for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
-            scMsg = extrapolateScStateToStepMidpoint(this->scStateInMsgs.at(c)(),
+            scMsg = this->scStateExtrapolation.apply(c,
+                                                     this->scStateInMsgs.at(c)(),
                                                      CurrentSimNanos,
                                                      this->scStateInMsgs.at(c).timeWritten(),
-                                                     this->previousUpdateNanos);
+                                                     this->previousUpdateNanos,
+                                                     this->bskLogger);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
