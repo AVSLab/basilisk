@@ -35,13 +35,13 @@ class SolarFlux: public SysModel {
 public:
     SolarFlux(){};
     ~SolarFlux(){};
-    
+
     void Reset(uint64_t CurrentSimNanos) override;
     void UpdateState(uint64_t CurrentSimNanos) override;
     void writeMessages(uint64_t CurrentSimNanos);
-    void readMessages();
+    void readMessages(uint64_t CurrentSimNanos);
 
-public:
+  public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;       //!< sun state input message
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
     Message<SolarFluxMsgPayload> solarFluxOutMsg;                   //!< solar flux output message
@@ -54,5 +54,5 @@ private:
     double eclipseFactor = 1.0;  //!< [] 1.0 is full sun, 0.0 is full eclipse
     Eigen::Vector3d r_SN_N;  //!< [m] sun position
     Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
-
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
 };

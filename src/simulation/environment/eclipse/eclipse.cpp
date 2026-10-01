@@ -19,10 +19,10 @@
 
 #include "eclipse.h"
 #include "architecture/messaging/ownedMessage.h"
-#include <iostream>
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
-
+#include "architecture/utilities/stateExtrapolation.h"
+#include <iostream>
 
 Eclipse::Eclipse()
 {
@@ -37,8 +37,10 @@ Eclipse::~Eclipse() = default;
 /*! Reset the module to origina configuration values.
 
  */
-void Eclipse::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
+    this->previousUpdateNanos = CurrenSimNanos;
+
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
@@ -54,12 +56,18 @@ void Eclipse::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 }
 
 /*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
+ The spacecraft state is extrapolated to the middle of the interval the next spacecraft update integrates,
+ see extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
 
  */
-void Eclipse::readInputMessages()
+void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
     for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
-        this->scStateBuffer.at(c) = this->positionInMsgs.at(c)();
+        this->scStateBuffer.at(c) = extrapolateScStateToStepMidpoint(this->positionInMsgs.at(c)(),
+                                                                     CurrentSimNanos,
+                                                                     this->positionInMsgs.at(c).timeWritten(),
+                                                                     this->previousUpdateNanos);
     }
 
     this->sunInMsgState = this->sunInMsg();
@@ -90,7 +98,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
  */
 void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->readInputMessages();
+    this->readInputMessages(CurrentSimNanos);
 
     // A lot of different vectors here. The below letters denote frames
     // P: planet frame
@@ -178,6 +186,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         scIdx++;
     }
     this->writeOutputMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }
 
 /*! This method computes the fraction of sunlight given an eclipse.

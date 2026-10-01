@@ -54,3 +54,10 @@ Each gravity body data object can be created using::
 
 Note that the ``simIncludeGradBody.py`` helper file contains a gravity body factor class to facilitate
 setting up gravity bodies.
+
+Planet Orientation
+------------------
+The planet orientation is read from ``planetBodyInMsg`` together with its time derivative ``J20002Pfix_dot``. Between
+message updates the orientation is advanced as a rotation about the planet angular velocity, which keeps the
+orientation matrix orthonormal at every integrator stage. A first-order update of the matrix elements would scale the
+evaluated field by a relative error of order :math:`(\omega\,\Delta t)^2`.

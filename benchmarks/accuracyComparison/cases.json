@@ -1,0 +1,128 @@
+{
+  "description": "Shared definition of the Basilisk vs GMAT vs Orekit accuracy-comparison cases. All quantities in SI units (m, m/s, kg, s) unless the key says otherwise. Every case is propagated in the Earth-centered inertial EME2000 / EarthMJ2000Eq / Basilisk N frame.",
+  "epoch_utc": "2026-01-01T00:00:00.000",
+  "mu_m3_s2": 398600441500000.0,
+  "equatorial_radius_m": 6378136.3,
+  "earth_flattening": 0.0033528,
+  "gravity_coefficients_file": "data/egm96_normalized_coefficients.csv",
+  "spacecraft": {
+    "mass_kg": 1000.0,
+    "srp_area_m2": 10.0,
+    "srp_cr": 1.5,
+    "drag_area_m2": 10.0,
+    "drag_cd": 2.2
+  },
+  "srp": {
+    "solar_flux_w_m2": 1361.0,
+    "astronomical_unit_km": 149597870.693
+  },
+  "space_weather": {
+    "f107": 150.0,
+    "ap": 15.0,
+    "kp": 3.0
+  },
+  "duration_s": 2592000.0,
+  "sample_period_s": 3600.0,
+  "cases": {
+    "leo_twobody": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_zonal6": {
+      "gravity": {"degree": 6, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "gto_zonal6": {
+      "gravity": {"degree": 6, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6572319.308, 0.0, 0.0],
+      "v0_m_s": [0.0, 9003.3973, 4888.44588]
+    },
+    "leo_egm8x8": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_sunmoon": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_srp": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": true,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_drag": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "gto_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "drag": false,
+      "r0_m": [6572319.308, 0.0, 0.0],
+      "v0_m_s": [0.0, 9003.3973, 4888.44588]
+    },
+    "geo_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "drag": false,
+      "r0_m": [42164137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 3074.193002, 53.660238]
+    }
+  }
+}

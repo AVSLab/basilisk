@@ -7,6 +7,14 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The gravity effector advanced the planet orientation of a SPICE-driven
+  planet with a first-order update of the matrix elements, which is not orthonormal and distorted even a point-mass
+  field by a relative error of order :math:`(\omega\,\Delta t)^2`.
+- The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the
+  previous step, which made the solar radiation pressure shadow entries and exits a step late.
+- The :ref:`msisAtmosphere` module computed the altitude over a sphere and used the mean solar time. Models that evaluate the atmosphere once per integration step still show a step-size dependent
+  drag error, which is second order in the step.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.

@@ -217,3 +217,12 @@ The ``eclipse`` module will output a series of messages of type :ref:`EclipseMsg
     eclipseObject.eclipseOutMsgs[2]
 
 where ``0`` indicates the first spacecraft illumination factor messages, etc.
+
+Spacecraft State Timing
+-----------------------
+The module runs before the spacecraft within a task, so the spacecraft state message it reads was written at the end of
+the previous step. To avoid an output that lags the interval it is applied to, the spacecraft position is advanced with
+the message velocity by half of the message age, which is the middle of the interval that the next spacecraft update
+integrates. The extrapolation assumes the module and the spacecraft run at the same task rate. It is skipped for a
+message that was written at the current time and for a stale message that was written before the previous update of
+the module, for example a state written once at the start of the simulation.
