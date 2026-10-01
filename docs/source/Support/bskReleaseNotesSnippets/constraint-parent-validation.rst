@@ -1,0 +1,1 @@
+- Added fatal checks for unexpected parent types in :ref:`constraintDynamicEffector`, closing paths that could leave local states uninitialized.
