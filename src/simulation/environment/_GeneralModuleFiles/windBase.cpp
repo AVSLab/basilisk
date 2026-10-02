@@ -20,6 +20,7 @@
 #include "windBase.h"
 #include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/stateExtrapolation.h"
@@ -66,7 +67,7 @@ void WindBase::Reset(uint64_t CurrentSimNanos)
         this->epochDateTime.tm_hour  = epochMsg.hours;
         this->epochDateTime.tm_min   = epochMsg.minutes;
         this->epochDateTime.tm_sec   = (int) round(epochMsg.seconds);
-        mktime(&this->epochDateTime);
+        normalizeUtcTime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }

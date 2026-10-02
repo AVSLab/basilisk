@@ -20,11 +20,10 @@
 #include "facetSRPDynamicEffector.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/astroConstants.h"
 #include <cmath>
 
-const double speedLight = 299792458.0;  // [m/s] Speed of light
-const double AstU = 149597870700.0;  // [m] Astronomical unit
-const double solarRadFlux = 1368.0;  // [W/m^2] Solar radiation flux at 1 AU
+constexpr double AU_M = AU * 1000.0;  // [m] Astronomical unit
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
 
@@ -200,8 +199,8 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
     double cosTheta = 0.0;
 
     // Calculate the SRP pressure acting at the current spacecraft location
-    double numAU = AstU / r_SB_B.norm();
-    double SRPPressure = (solarRadFlux / speedLight) * numAU * numAU;
+    double numAU = AU_M / r_SB_B.norm();  // [-]
+    double SRPPressure = (SOLAR_FLUX_EARTH / SPEED_LIGHT) * numAU * numAU;
 
     // Loop through the facets and calculate the total SRP force and torque acting on the spacecraft about point B
     for (uint64_t i = 0; i < this->numFacets; i++) {

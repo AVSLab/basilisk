@@ -220,8 +220,8 @@ where ``0`` indicates the first spacecraft illumination factor messages, etc.
 
 Spacecraft State Timing
 -----------------------
-The module runs before the spacecraft within a task, so the spacecraft state message it reads was written at the end of
-the previous step. By default the message is used as written. To avoid an output that lags the interval it is applied
+The module is normally executed before the spacecraft within a task, so the spacecraft state message it reads was written
+at the end of the previous step. By default the message is used as written. To avoid an output that lags the interval it is applied
 to, the extrapolation can be enabled with ``setExtrapolateScStateToStepMidpoint(True)``. The spacecraft position is
 then advanced with the message velocity by half of the message age, which is the middle of the interval that the next
 spacecraft update integrates. It is skipped for a message that was written at the current time and for a stale

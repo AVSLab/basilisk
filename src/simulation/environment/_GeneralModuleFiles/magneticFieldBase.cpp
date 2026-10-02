@@ -20,6 +20,7 @@
 #include "magneticFieldBase.h"
 #include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/stateExtrapolation.h"
@@ -103,7 +104,7 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
         this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-        mktime(&this->epochDateTime);
+        normalizeUtcTime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }
@@ -152,11 +153,20 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused
     return;
 }
 
+/*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
+ update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
+ state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
+ rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ @param enable [-] true to extrapolate the spacecraft state to the middle of the step
+ */
 void MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
 
+/*! Returns whether the spacecraft state extrapolation is enabled.
+ @return [-] true if the spacecraft state is extrapolated
+ */
 bool MagneticFieldBase::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();

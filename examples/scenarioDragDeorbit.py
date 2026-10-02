@@ -59,6 +59,10 @@ data must be mocked in a message to the module, where ``sw_msg`` is a dict of re
         swMsgList.append(messaging.SwDataMsg().write(swMsgData))
         atmo.swDataInMsgs[c].subscribeTo(swMsgList[-1])
 
+By default NRLMSISE-00 uses the daily ap index, the first entry of ``sw_msg``. ``atmo.setUseApHistory(True)`` makes it use the
+3-hour ap values instead, which follows a geomagnetic storm more closely. As ``ap`` is constant in this example, both options
+give nearly the same density, and the line is left commented out in the script.
+
 The drag model ``DragDynamicEffector()`` is initialized, then model parameters are set. In this example, the projected
 area ``coreParams.projectedArea`` is set to 10 meters squared and the drag coefficient :math:`C_D`
 ``coreParams.dragCoeff`` is set to 2.2.
@@ -215,6 +219,7 @@ def run(show_plots, initialAlt=250, deorbitAlt=100, model="exponential", useWind
     elif model == "msis":
         atmo = msisAtmosphere.MsisAtmosphere()
         atmo.ModelTag = "MsisAtmo"
+        # atmo.setUseApHistory(True)  # use the 3-hour Ap values instead of the daily Ap, relevant in a geomagnetic storm
 
         ap = 8
         f107 = 110
