@@ -187,7 +187,8 @@ The peak of this geometric alignment coincides with the specular peak of the `Bl
 The output ``hasGlare`` uses an inclusive comparison against ``glareThreshold``, with an absolute tolerance of
 16 times double-precision machine epsilon to accommodate numerical roundoff. This includes exact reflections
 when ``glareThreshold`` is 1. The reported ``glareFactor`` retains the computed, clamped alignment.
-The default ``glareThreshold`` is 0.95. Glare is evaluated separately for every spacecraft connected through
+The default ``glareThreshold`` is 0.95. It must be finite and in ``[0, 1]``; invalid values raise an error during
+initialization. Glare is evaluated separately for every spacecraft connected through
 ``addSpacecraftToModel()`` and only when ``sunInMsg``
 is connected. If no surface normal is supplied through ``aHat_B``, both glare outputs remain zero. By default, glare
 is reported without modifying access. Setting ``useGlareConstraint`` to ``True`` also clears ``hasAccess`` for glared

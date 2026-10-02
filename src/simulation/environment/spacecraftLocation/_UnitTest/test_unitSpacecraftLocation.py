@@ -504,6 +504,92 @@ def test_spacecraft_location_glare_roundoff(
     assert access_msg.hasAccess == expected_access
 
 
+@pytest.mark.parametrize("use_glare_constraint", [False, True])
+@pytest.mark.parametrize("sigma_BN", [[0.0, 0.0, 0.0], [0.1, -0.2, 0.3]])  # [-]
+def test_spacecraft_location_glare_multiple_observers(use_glare_constraint, sigma_BN):
+    """Check independent glare outputs as two observers change position.
+
+    Validation Test Description
+    ---------------------------
+    Connect two observers to an offset surface point. Start one at the ideal
+    reflection and the other outside the glare cone, then swap their positions.
+    Finally, move both outside the cone to check that each glare flag clears.
+
+    Test Parameter Discussion
+    -------------------------
+    Run with identity and nonzero primary attitudes and with glare rejection
+    enabled and disabled. The Sun and observer directions are defined in the
+    body frame and transformed into the inertial frame.
+
+    Expected Results
+    ----------------
+    The observer on the reflected ray has unit glare factor. The other is
+    twenty degrees away and has a glare factor below the default threshold.
+    Each output follows its own observer at every update. Only the glared
+    observer loses access when the constraint is enabled; previous glare flags
+    do not persist once either observer leaves the reflected ray.
+    """
+    module = spacecraftLocation.SpacecraftLocation()
+    module.rEquator = 1.0  # [m]
+    module.aHat_B = [1.0, 0.0, 0.0]  # [-]
+    module.theta = np.pi  # [rad]
+    module.glareThreshold = 0.95  # [-]
+    module.useGlareConstraint = use_glare_constraint
+    location_offset_B = np.array([2.0, -3.0, 1.0])  # [m]
+    module.r_LB_B = location_offset_B
+
+    primary_position_N = np.array([100.0, 200.0, -300.0])  # [m]
+    primary_payload = messaging.SCStatesMsgPayload()
+    primary_payload.r_BN_N = primary_position_N
+    primary_payload.sigma_BN = sigma_BN
+    primary_msg = messaging.SCStatesMsg().write(primary_payload)
+    module.primaryScStateInMsg.subscribeTo(primary_msg)
+
+    dcm_NB = rbk.MRP2C(sigma_BN).T
+    location_position_N = primary_position_N + dcm_NB @ location_offset_B
+    incidence_angle = np.deg2rad(30.0)  # [rad]
+    view_offset = np.deg2rad(20.0)  # [rad]
+    sun_direction_B = np.array([np.cos(incidence_angle), np.sin(incidence_angle), 0.0])
+    sun_distance = 1.0e6  # [m]
+    sun_payload = messaging.SpicePlanetStateMsgPayload()
+    sun_payload.PositionVector = location_position_N + sun_distance * (dcm_NB @ sun_direction_B)
+    sun_msg = messaging.SpicePlanetStateMsg().write(sun_payload)
+    module.sunInMsg.subscribeTo(sun_msg)
+
+    view_directions_B = (
+        np.array([np.cos(incidence_angle), -np.sin(incidence_angle), 0.0]),
+        np.array([np.cos(incidence_angle + view_offset), -np.sin(incidence_angle + view_offset), 0.0]),
+    )
+    viewing_distance = 1.0e3  # [m]
+    observer_msgs = []
+    for view_direction_B in view_directions_B:
+        observer_payload = messaging.SCStatesMsgPayload()
+        observer_payload.r_BN_N = location_position_N + viewing_distance * (dcm_NB @ view_direction_B)
+        observer_msg = messaging.SCStatesMsg().write(observer_payload)
+        observer_msgs.append(observer_msg)
+        module.addSpacecraftToModel(observer_msg)
+
+    module.Reset(0)
+    time_step = macros.sec2nano(1.0)  # [ns]
+    for step, direction_indices in enumerate(((0, 1), (1, 0), (1, 1))):
+        current_time = step * time_step
+        for observer_msg, direction_index in zip(observer_msgs, direction_indices):
+            observer_payload = messaging.SCStatesMsgPayload()
+            observer_payload.r_BN_N = (
+                location_position_N + viewing_distance * (dcm_NB @ view_directions_B[direction_index])
+            )
+            observer_msg.write(observer_payload, current_time)
+
+        module.UpdateState(current_time)
+        for output_msg, direction_index in zip(module.accessOutMsgs, direction_indices):
+            access_msg = output_msg.read()
+            expected_glare = int(direction_index == 0)
+            expected_factor = 1.0 if expected_glare else np.cos(view_offset)  # [-]
+            np.testing.assert_allclose(access_msg.glareFactor, expected_factor, rtol=0.0, atol=2.0e-14)
+            assert access_msg.hasGlare == expected_glare
+            assert access_msg.hasAccess == int(not (use_glare_constraint and expected_glare))
+
+
 @pytest.mark.parametrize(
     "viewAngle, viewAngleLimit, connectSun, expectedAccess",
     [
@@ -765,18 +851,29 @@ def test_spacecraftLocationIlluminationRequirements(
         assert accessMsg.scViewAngle == 0.0
 
 
-@pytest.mark.parametrize("glareThreshold", [-0.01, 1.01])
+@pytest.mark.parametrize(
+    "glareThreshold",
+    [  # [-]
+        pytest.param(-0.01, id="below_zero"),
+        pytest.param(1.01, id="above_one"),
+        pytest.param(np.nan, id="nan"),
+        pytest.param(np.inf, id="positive_infinity"),
+        pytest.param(-np.inf, id="negative_infinity"),
+    ],
+)
 def test_spacecraftLocationGlareThresholdValidation(glareThreshold):
-    """Verify that the geometric glare threshold is limited to [0, 1].
+    """Verify that the geometric glare threshold is finite and in [0, 1].
 
     Validation Test Description
     ---------------------------
     The test initializes an otherwise valid module with a glare threshold
-    outside the supported dimensionless alignment range.
+    outside the supported dimensionless alignment range or with a non-finite
+    value.
 
     Test Parameter Discussion
     -------------------------
     Values immediately below zero and above one exercise both invalid bounds.
+    NaN and both infinities check that non-finite thresholds are rejected.
 
     Expected Results
     ----------------
@@ -792,7 +889,7 @@ def test_spacecraftLocationGlareThresholdValidation(glareThreshold):
     module.primaryScStateInMsg.subscribeTo(primaryMsg)
     module.addSpacecraftToModel(otherMsg)
 
-    with pytest.raises(BasiliskError):
+    with pytest.raises(BasiliskError, match="glareThreshold"):
         module.Reset(0)
 
 

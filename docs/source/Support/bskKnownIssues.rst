@@ -150,6 +150,7 @@ Version |release|
 - :ref:`spacecraftLocation` formed its Sun direction from the inertial origin and its viewing direction from the
   primary spacecraft center instead of the configured body-fixed location. Illumination and viewing angles for
   translated or offset locations are corrected in the current version (issue #864).
+  NaN ``glareThreshold`` values are now rejected during initialization rather than silently bypassing glare rejection.
 
 - GitHub issue 1393: The :ref:`constraintDynamicEffector` applied its constraint force and torque
   regardless of the device status message, which gated only the load filtering and the output

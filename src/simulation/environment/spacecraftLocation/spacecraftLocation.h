@@ -23,7 +23,6 @@
 #include <cstdint>
 #include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include <cstdint>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
