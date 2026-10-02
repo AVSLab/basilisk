@@ -76,7 +76,8 @@ The output message object has the following support functions.  Again the argume
     Returns a zero'd structure copy of the message type associated with this output message.
 
 ``SomeMsg_C_addAuthor(SomeMsg_C *msg, SomeMsg_C *targetMsg)``
-    This function makes the ``msg`` object write to ``targetMsg`` instead of writting to itself
+    This function makes the ``msg`` object write to ``targetMsg`` instead of writing to itself.
 
 ``SomeMsg_C_init(SomeMsg_C *msg)``
-    This method is required to initialize a C message object. If the message data pointer is not re-directed to write to another module, then his function will setup this message object to write to its own data container.
+    This method is required to initialize a C message object.  If the message data pointer is not redirected to write
+    to another module, then this function sets up the message object to write to its own data container.
