@@ -1,0 +1,268 @@
+{
+  "description": "Shared definition of the Basilisk vs GMAT vs Orekit accuracy-comparison cases. All quantities in SI units (m, m/s, kg, s) unless the key says otherwise. Every case is propagated in the Earth-centered inertial EME2000 / EarthMJ2000Eq / Basilisk N frame.",
+  "epoch_utc": "2026-01-01T00:00:00.000",
+  "mu_m3_s2": 398600441500000.0,
+  "equatorial_radius_m": 6378136.3,
+  "earth_flattening": 0.0033528,
+  "gravity_coefficients_file": "data/egm96_normalized_coefficients.csv",
+  "spacecraft": {
+    "mass_kg": 1000.0,
+    "srp_area_m2": 10.0,
+    "srp_cr": 1.5,
+    "drag_area_m2": 10.0,
+    "drag_cd": 2.2
+  },
+  "srp": {
+    "solar_flux_w_m2": 1361.0,
+    "astronomical_unit_km": 149597870.693
+  },
+  "space_weather": {
+    "f107": 150.0,
+    "ap": 15.0,
+    "kp": 3.0
+  },
+  "box": {
+    "size_m": [1.0, 2.0, 3.0],
+    "drag_cd": 2.2,
+    "absorption": 0.6,
+    "specular_reflection": 0.2,
+    "diffuse_reflection": 0.2
+  },
+  "real_weather": {
+    "cssi_file": "SpaceWeather-All-v1.2.txt"
+  },
+  "duration_s": 2592000.0,
+  "sample_period_s": 3600.0,
+  "cases": {
+    "leo_twobody": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_zonal6": {
+      "gravity": {"degree": 6, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "gto_zonal6": {
+      "gravity": {"degree": 6, "order": 0},
+      "earth_rotation": false,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6572319.308, 0.0, 0.0],
+      "v0_m_s": [0.0, 9003.3973, 4888.44588]
+    },
+    "leo_egm8x8": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_sunmoon": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_srp": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_drag": {
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "gto_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": false,
+      "r0_m": [6572319.308, 0.0, 0.0],
+      "v0_m_s": [0.0, 9003.3973, 4888.44588]
+    },
+    "geo_all": {
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": false,
+      "r0_m": [42164137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 3074.193002, 53.660238]
+    },
+    "leo_egm70": {
+      "description": "EGM96 degree and order 70, rotating Earth, 7 days",
+      "duration_s": 604800.0,
+      "gravity": {"degree": 70, "order": 70},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": false,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "sso_all": {
+      "description": "Sun-synchronous orbit at 700 km, all perturbations, spring equinox epoch",
+      "epoch_utc": "2026-03-20T00:00:00.000",
+      "gravity": {"degree": 20, "order": 20},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": true,
+      "r0_m": [872147.576, -503534.638, 6998976.713],
+      "v0_m_s": [-3755.897451, -6505.405213, 0.0]
+    },
+    "sso_drag": {
+      "description": "Point-mass gravity and NRLMSISE-00 drag in the 700 km sun-synchronous orbit",
+      "epoch_utc": "2026-03-20T00:00:00.000",
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": true,
+      "r0_m": [872147.576, -503534.638, 6998976.713],
+      "v0_m_s": [-3755.897451, -6505.405213, 0.0]
+    },
+    "molniya_all": {
+      "description": "Molniya orbit, gravity, Sun and Moon, SRP, northern summer epoch",
+      "epoch_utc": "2026-05-20T00:00:00.000",
+      "gravity": {"degree": 8, "order": 8},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": ["sun", "moon"],
+      "srp": true,
+      "orekit_max_step_s": 10.0,
+      "drag": false,
+      "r0_m": [1546138.996, -2677991.296, -6175136.458],
+      "v0_m_s": [8678.748104, 5010.677554, 0.0]
+    },
+    "leo_drag_real_quiet": {
+      "description": "NRLMSISE-00 drag with the CSSI space-weather record of a quiet period, 7 days",
+      "epoch_utc": "2024-02-01T00:00:00.000",
+      "duration_s": 604800.0,
+      "weather": "real",
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": true,
+      "r0_m": [3951637.318, 5194639.913, 1815896.125],
+      "v0_m_s": [-4888.77288, 1743.817168, 5650.188328]
+    },
+    "leo_drag_real_storm": {
+      "description": "NRLMSISE-00 drag with the CSSI space-weather record of the May 2024 geomagnetic storm, 5 days",
+      "epoch_utc": "2024-05-09T00:00:00.000",
+      "duration_s": 432000.0,
+      "weather": "real",
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": false,
+      "drag": true,
+      "r0_m": [3951637.318, 5194639.913, 1815896.125],
+      "v0_m_s": [-4888.77288, 1743.817168, 5650.188328]
+    },
+    "leo_box_fixed": {
+      "description": "Box spacecraft with a fixed inertial attitude, drag and SRP, 7 days (Orekit reference only)",
+      "references": ["orekit"],
+      "body": "box",
+      "attitude": {"sigma_BN": [0.1, -0.2, 0.3], "omega_BN_B_rad_s": [0.0, 0.0, 0.0]},
+      "duration_s": 604800.0,
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": true,
+      "orekit_max_step_s": 2.0,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "leo_box_spin": {
+      "description": "Box spacecraft spinning at about 1.5 deg/s, drag and SRP, 7 days (Orekit reference only)",
+      "references": ["orekit"],
+      "body": "box",
+      "attitude": {"sigma_BN": [0.1, -0.2, 0.3], "omega_BN_B_rad_s": [0.02, 0.01, -0.015]},
+      "duration_s": 604800.0,
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 1.0,
+      "third_bodies": [],
+      "srp": true,
+      "orekit_max_step_s": 2.0,
+      "drag": true,
+      "r0_m": [6778137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 4763.307887, 6009.798867]
+    },
+    "geo_box_spin": {
+      "description": "Box spacecraft spinning at about 1.5 deg/s in GEO, SRP only, 7 days (Orekit reference only)",
+      "references": ["orekit"],
+      "body": "box",
+      "attitude": {"sigma_BN": [0.1, -0.2, 0.3], "omega_BN_B_rad_s": [0.02, 0.01, -0.015]},
+      "duration_s": 604800.0,
+      "gravity": {"degree": 0, "order": 0},
+      "earth_rotation": true,
+      "basilisk_step_s": 5.0,
+      "third_bodies": [],
+      "srp": true,
+      "orekit_max_step_s": 2.0,
+      "drag": false,
+      "r0_m": [42164137.0, 0.0, 0.0],
+      "v0_m_s": [0.0, 3074.193002, 53.660238]
+    }
+  }
+}

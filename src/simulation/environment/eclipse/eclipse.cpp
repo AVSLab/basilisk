@@ -19,10 +19,10 @@
 
 #include "eclipse.h"
 #include "architecture/messaging/ownedMessage.h"
-#include <iostream>
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
-
+#include "architecture/utilities/stateExtrapolation.h"
+#include <iostream>
 
 Eclipse::Eclipse()
 {
@@ -37,8 +37,11 @@ Eclipse::~Eclipse() = default;
 /*! Reset the module to origina configuration values.
 
  */
-void Eclipse::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
+    this->previousUpdateNanos = CurrenSimNanos;
+    this->scStateExtrapolation.reset();
+
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("Eclipse: sunInMsg must be linked to sun Spice state message.");
     }
@@ -53,13 +56,40 @@ void Eclipse::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 
 }
 
+/*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
+ update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
+ state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
+ rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ @param enable [-] true to extrapolate the spacecraft state to the middle of the step
+ */
+void Eclipse::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+/*! Returns whether the spacecraft state extrapolation is enabled.
+ @return [-] true if the spacecraft state is extrapolated
+ */
+bool Eclipse::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
 /*! This method reads the spacecraft state, spice planet states and the sun position from the messaging system.
+ If enabled with setExtrapolateScStateToStepMidpoint(), the spacecraft state is extrapolated to the
+ middle of the interval the next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
 
  */
-void Eclipse::readInputMessages()
+void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
     for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
-        this->scStateBuffer.at(c) = this->positionInMsgs.at(c)();
+        this->scStateBuffer.at(c) = this->scStateExtrapolation.apply(c,
+                                                                     this->positionInMsgs.at(c)(),
+                                                                     CurrentSimNanos,
+                                                                     this->positionInMsgs.at(c).timeWritten(),
+                                                                     this->previousUpdateNanos,
+                                                                     this->bskLogger);
     }
 
     this->sunInMsgState = this->sunInMsg();
@@ -90,7 +120,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
  */
 void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->readInputMessages();
+    this->readInputMessages(CurrentSimNanos);
 
     // A lot of different vectors here. The below letters denote frames
     // P: planet frame
@@ -178,6 +208,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         scIdx++;
     }
     this->writeOutputMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }
 
 /*! This method computes the fraction of sunlight given an eclipse.

@@ -154,17 +154,21 @@ def radiationPressureIntegratedTest(show_plots):
     skipValue = int(len(pos_rel_earth) / (numTruthPoints - 1))
     pos_rel_earth_parse = pos_rel_earth[::skipValue]
 
-    # true position for un perturbed 2 body GEO orbit with cannonball SRP
+    # true position of the GEO orbit with point-mass Earth gravity, the Sun as a third body, and cannonball SRP.
+    # The values come from an independent integration (scipy DOP853, rtol 1e-13) of these accelerations with the
+    # Sun position from the SPICE kernels, sampled at the logged times. An earlier version of these values differed
+    # by up to 47 m because the gravity effector extrapolated the SPICE planet orientation with a non-orthonormal
+    # matrix, which distorted even the point-mass field.
     true_pos = np.array([[-2.18197848e+07,  3.58872415e+07,  0.00000000e+00]
-                        ,[-3.97753171e+07,  1.34888807e+07, -7.27348185e+01]
-                        ,[-3.91389782e+07, -1.52401325e+07, -3.04240669e+02]
-                        ,[-2.01837764e+07, -3.68366798e+07, -6.33981582e+02]
-                        ,[ 8.21688462e+06, -4.11949916e+07, -9.08494855e+02]
-                        ,[ 3.27533081e+07, -2.63022792e+07, -9.52917670e+02]
-                        ,[ 4.19944317e+07,  9.02698019e+05, -6.74284599e+02]
-                        ,[ 3.15826998e+07,  2.76843894e+07, -1.38342155e+02]
-                        ,[ 6.38602614e+06,  4.15048356e+07,  4.30316096e+02]
-                        ,[-2.18007830e+07,  3.58875125e+07,  7.40921837e+02]])
+                        ,[-3.97753164e+07,  1.34888800e+07, -7.27325107e+01]
+                        ,[-3.91389742e+07, -1.52401342e+07, -3.04230960e+02]
+                        ,[-2.01837657e+07, -3.68366793e+07, -6.33962893e+02]
+                        ,[ 8.21690111e+06, -4.11949809e+07, -9.08472804e+02]
+                        ,[ 3.27533203e+07, -2.63022524e+07, -9.52903969e+02]
+                        ,[ 4.19944254e+07,  9.02735498e+05, -6.74291081e+02]
+                        ,[ 3.15826687e+07,  2.76844202e+07, -1.38372868e+02]
+                        ,[ 6.38598026e+06,  4.15048418e+07,  4.30269951e+02]
+                        ,[-2.18008229e+07,  3.58874883e+07,  7.40880287e+02]])
     # compare the results to the truth values
     accuracy = 10.0  # meters
 

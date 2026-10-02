@@ -33,6 +33,7 @@
 #include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/stateExtrapolation.h"
 #include "architecture/utilities/bskLogging.h"
 
 
@@ -47,6 +48,8 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
+    void setExtrapolateScStateToStepMidpoint(bool enable);
+    bool getExtrapolateScStateToStepMidpoint() const;
 
 public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;   //!< sun ephemeris input message name
@@ -62,9 +65,11 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
     std::vector<double> eclipseIlluminationFactors;               //!< vector of illumination factor output values
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 
-private:
-    void readInputMessages();
+  private:
+    void readInputMessages(uint64_t CurrentSimNanos);
     double computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);
 

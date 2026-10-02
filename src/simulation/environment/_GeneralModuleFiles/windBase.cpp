@@ -20,8 +20,10 @@
 #include "windBase.h"
 #include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 WindBase::WindBase()
 {
@@ -43,6 +45,9 @@ WindBase::~WindBase() = default;
 
 void WindBase::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
+
     if (this->scStateInMsgs.empty()) {
         bskLogger.bskError("Wind model has no spacecraft added to it.");
     }
@@ -62,7 +67,7 @@ void WindBase::Reset(uint64_t CurrentSimNanos)
         this->epochDateTime.tm_hour  = epochMsg.hours;
         this->epochDateTime.tm_min   = epochMsg.minutes;
         this->epochDateTime.tm_sec   = (int) round(epochMsg.seconds);
-        mktime(&this->epochDateTime);
+        normalizeUtcTime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }
@@ -84,7 +89,17 @@ void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 
 void WindBase::customSetEpochFromVariable() {}
 
-bool WindBase::readMessages()
+void WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+bool WindBase::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
+bool WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
     bool scRead = std::all_of(
@@ -93,8 +108,10 @@ bool WindBase::readMessages()
     );
 
     if (scRead) {
-        for (auto& msg : this->scStateInMsgs) {
-            this->scStates.push_back(msg());
+        for (std::size_t c = 0; c < this->scStateInMsgs.size(); c++) {
+            auto& msg = this->scStateInMsgs[c];
+            this->scStates.push_back(this->scStateExtrapolation.apply(
+              c, msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos, this->bskLogger));
         }
     }
 
@@ -201,7 +218,7 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
 {
     this->envOutBuffer.clear();
 
-    if (this->readMessages()) {
+    if (this->readMessages(CurrentSimNanos)) {
         this->updateLocalWind(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     } else {
         // Zero outputs when message reads fail to avoid stale data
@@ -212,4 +229,5 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
     }
 
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }

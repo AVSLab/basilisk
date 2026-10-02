@@ -23,4 +23,24 @@ provides information on what this message is used for.
     input planetPosInMsg SpicePlanetStateMsgPayload
         (optional) planet state input message.  If not provided the planet state is zero information.
     input epochInMsg EpochMsgPayload
-        (optional) epoch date/time input message.
+        (optional) epoch date/time input message. The date and time are interpreted as UTC, independent of the time zone of the computer.
+
+Spacecraft State Timing
+-----------------------
+The module is normally executed before the spacecraft within a task, so the spacecraft state message it reads was written
+at the end of the previous step. By default the message is used as written. To avoid an output that lags the interval it is applied
+to, the extrapolation can be enabled with ``setExtrapolateScStateToStepMidpoint(True)``. The spacecraft position is
+then advanced with the message velocity by half of the message age, which is the middle of the interval that the next
+spacecraft update integrates. It is skipped for a message that was written at the current time and for a stale
+message that was written before the previous update of the module, for example a state written once at the start of
+the simulation.
+
+.. warning::
+
+    The extrapolation assumes that the module and the spacecraft run at the same task rate and that the spacecraft
+    uses a constant step. If the task rates differ, the position offset alternates between extrapolated and
+    unextrapolated on successive steps, and the module input jumps by about ``v * dt / 2``. A spacecraft with a
+    variable step, such as a variable-step integrator or a changing task period, has the same problem, because the
+    message age no longer matches the interval the spacecraft integrates. A warning is logged once if a different
+    task rate is detected while the extrapolation is enabled. Run the module in the same task and at the same rate as
+    the spacecraft.

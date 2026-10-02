@@ -43,8 +43,12 @@ class MsisAtmosphere: public AtmosphereBase {
 public:
     MsisAtmosphere();
     ~MsisAtmosphere();
+    void setUseApparentSolarTime(bool useApparent);
+    bool getUseApparentSolarTime() const;
+    void setUseApHistory(bool useHistory);
+    bool getUseApHistory() const;
 
-private:
+  private:
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
     void customReset(uint64_t CurrentClock);
@@ -53,8 +57,9 @@ private:
     void updateSwIndices();
     void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
     void customSetEpochFromVariable();
+    static double equationOfTime(int year, int dayOfYear, double secondOfDay);
 
-public:
+  public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs; //!< Vector of space weather input message names
     int epochDoy;                               //!< [day] Day-of-Year at epoch
     BSKLogger bskLogger;                        //!< -- BSK Logging
@@ -72,8 +77,8 @@ private:
     double ap;
     double f107;
     double f107A;
-
-
+    bool useApparentSolarTime = false; //!< [-] if true the local solar time input is the apparent solar time, otherwise the mean solar time
+    bool useApHistory = false; //!< [-] if true NRLMSISE-00 uses the 3-hour Ap history (switch 9 set to -1), otherwise the daily Ap
 };
 
 

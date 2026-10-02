@@ -7,6 +7,20 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The gravity effector advanced the planet orientation of a SPICE-driven
+  planet with a first-order update of the matrix elements, which is not orthonormal and distorted even a point-mass
+  field by a relative error of order :math:`(\omega\,\Delta t)^2`.
+- The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the
+  previous step, which made the solar radiation pressure shadow entries and exits a step late.
+- The :ref:`msisAtmosphere` module computed the altitude over a sphere and used the mean solar time. Models that evaluate the atmosphere once per integration step still show a step-size dependent
+  drag error, which is second order in the step.
+- The :ref:`msisAtmosphere`, :ref:`windBase`, :ref:`magneticFieldBase`, and :ref:`magneticFieldWMM` modules converted the UTC epoch with ``mktime``, which uses
+  the time zone of the computer. On a computer in a time zone with daylight saving time, the local solar time was one hour wrong for the part of a
+  simulation on the other side of a daylight saving transition than the epoch. The epoch is now converted as UTC.
+- The :ref:`msisAtmosphere` module used the daily Ap index and did not use the array of 3-hour Ap values that NRLMSISE-00 uses in its storm
+  mode, so during a geomagnetic storm the density followed the daily mean from midnight.
+- The :ref:`facetSRPDynamicEffector` module used a solar flux of 1368 W/m\ :sup:`2` at 1 AU, while :ref:`radiationPressure` uses 1361 W/m\ :sup:`2`.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.

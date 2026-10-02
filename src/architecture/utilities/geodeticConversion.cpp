@@ -77,7 +77,13 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, doubl
       llaPosition[0] = atan2(kappa*pcpfPosition[2], pSingle);
       double sPhi = sin(llaPosition[0]);
       double nVal = planetEqRad/sqrt(1.0 - planetEcc2*sPhi*sPhi);
-      llaPosition[2] = pSingle/(cos(llaPosition[0])) - nVal;
+      // The altitude p/cos(phi) - N is singular at the poles, where p = 0 and cos(phi) = 0. At latitudes beyond
+      // 45 degrees use the equivalent expression z/sin(phi) - N(1 - e^2), which is well conditioned there.
+      if (std::abs(sPhi) > std::abs(cos(llaPosition[0]))) {
+          llaPosition[2] = pcpfPosition[2] / sPhi - nVal * (1.0 - planetEcc2);
+      } else {
+          llaPosition[2] = pSingle / (cos(llaPosition[0])) - nVal;
+      }
       llaPosition[1] = atan2(pcpfPosition[1], pcpfPosition[0]);
   }
 

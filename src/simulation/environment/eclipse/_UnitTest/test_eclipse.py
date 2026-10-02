@@ -408,6 +408,66 @@ def unitEclipseCustom(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+def test_eclipse_uses_spacecraft_state_extrapolated_to_step_midpoint():
+    """
+**Test Description and Success Criteria**
+
+The spacecraft state message read by the module was written at the end of the previous step, so the
+illumination factor lags the interval it is applied to. The module therefore advances the spacecraft position
+with its velocity by half of the message age.
+
+A spacecraft is placed outside the Earth shadow, moving towards it fast enough that the position advanced
+by half a step is inside the shadow. The state is given to one module with its velocity, written at the start
+of the simulation, and to a second module as the already advanced position written at the current time. The two
+illumination factors must match, and both must differ from a static spacecraft that does not move.
+
+    """
+    stepSeconds = 10.0  # [s]
+    halfStepShift = np.array([0.0, -4.0e4, 0.0]) * stepSeconds / 2.0  # [m] v * dt / 2
+    rStart = np.array([-7.0e6, 6.50e6, 0.0])  # [m] outside the penumbra, which extends ~35 km beyond the Earth radius
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    proc = scSim.CreateNewProcess("p")
+    proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(stepSeconds)))
+
+    sunPayload = messaging.SpicePlanetStateMsgPayload()
+    sunPayload.PositionVector = [orbitalMotion.AU * 1000.0, 0.0, 0.0]  # [m]
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPayload)
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PlanetName = "earth"
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+
+    def stateMsg(r, v, timeNanos):
+        payload = messaging.SCStatesMsgPayload()
+        payload.r_BN_N = r.tolist()
+        payload.v_BN_N = v.tolist()
+        return messaging.SCStatesMsg().write(payload, timeNanos)
+
+    withVelocity = stateMsg(rStart, np.array([0.0, -4.0e4, 0.0]), 0)
+    advanced = stateMsg(rStart + halfStepShift, np.zeros(3), macros.sec2nano(stepSeconds))
+    static = stateMsg(rStart, np.zeros(3), 0)
+
+    recorders = []
+    for scMsg in (withVelocity, advanced, static):
+        module = eclipse.Eclipse()
+        module.setExtrapolateScStateToStepMidpoint(True)
+        module.addSpacecraftToModel(scMsg)
+        module.addPlanetToModel(planetMsg)
+        module.sunInMsg.subscribeTo(sunMsg)
+        scSim.AddModelToTask("t", module)
+        recorders.append(module.eclipseOutMsgs[0].recorder())
+        scSim.AddModelToTask("t", recorders[-1])
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(stepSeconds))
+    scSim.ExecuteSimulation()
+
+    factorVelocity, factorAdvanced, factorStatic = (r.illuminationFactor[-1] for r in recorders)
+    assert factorStatic == pytest.approx(1.0)
+    assert factorAdvanced < 1.0
+    assert factorVelocity == pytest.approx(factorAdvanced, abs=1e-12)
+
+
 def test_shadow_vs_illumination_alias_and_deprecation_behavior():
     """
     Check aliasing and deprecation behavior for EclipseMsgPayload.

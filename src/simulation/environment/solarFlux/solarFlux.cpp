@@ -19,13 +19,16 @@
 
 #include "solarFlux.h"
 #include "architecture/utilities/astroConstants.h"
-
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
+
     // check if input message has not been included
     if (!this->sunPositionInMsg.isLinked()) {
         bskLogger.bskError("solarFlux.sunPositionInMsg was not linked.");
@@ -42,7 +45,7 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  */
 void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
-    this->readMessages();
+    this->readMessages(CurrentSimNanos);
 
     /*! - evaluate spacecraft position relative to the sun in N frame components */
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
@@ -54,12 +57,35 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
 
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 }
 
-/*! This method is used to  read messages and save values to member attributes
+/*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
+ update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
+ state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
+ rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ @param enable [-] true to extrapolate the spacecraft state to the middle of the step
+ */
+void SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+/*! Returns whether the spacecraft state extrapolation is enabled.
+ @return [-] true if the spacecraft state is extrapolated
+ */
+bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
+/*! This method is used to  read messages and save values to member attributes. If enabled with
+ setExtrapolateScStateToStepMidpoint(), the spacecraft position is extrapolated to the middle of the interval the
+ next spacecraft update integrates, see extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
 
  */
-void SolarFlux::readMessages()
+void SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
     /*! - read in planet state message (required) */
     SpicePlanetStateMsgPayload sunPositionMsgData;
@@ -68,7 +94,12 @@ void SolarFlux::readMessages()
 
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
-    scStatesMsgData = this->spacecraftStateInMsg();
+    scStatesMsgData = this->scStateExtrapolation.apply(0,
+                                                       this->spacecraftStateInMsg(),
+                                                       CurrentSimNanos,
+                                                       this->spacecraftStateInMsg.timeWritten(),
+                                                       this->previousUpdateNanos,
+                                                       this->bskLogger);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
     /*! - read in eclipse message (optional) */

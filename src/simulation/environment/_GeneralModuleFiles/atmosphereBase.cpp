@@ -20,9 +20,12 @@
 
 #include "atmosphereBase.h"
 #include "architecture/messaging/ownedMessage.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
+#include "architecture/utilities/stateExtrapolation.h"
 
 /*! This method initializes some basic parameters for the module.
 
@@ -92,6 +95,20 @@ void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
  */
 void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousUpdateNanos = CurrentSimNanos;
+    this->scStateExtrapolation.reset();
+
+    //! - the geodetic altitude requires the planet orientation and a consistent equatorial and polar radius
+    if (this->planetPolarRadius >= 0.0) {
+        if (!this->planetPosInMsg.isLinked()) {
+            bskLogger.bskError("Atmosphere model: planetPosInMsg must be linked to use a planet polar radius.");
+        }
+        if (this->planetPolarRadius > this->planetRadius) {
+            bskLogger.bskError(
+              "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
+        }
+    }
+
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
@@ -109,7 +126,7 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
         this->epochDateTime.tm_hour = epochMsg.hours;
         this->epochDateTime.tm_min = epochMsg.minutes;
         this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-        mktime(&this->epochDateTime);
+        normalizeUtcTime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
     }
@@ -161,10 +178,14 @@ void AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 }
 
 /*! This method is used to read the incoming command message and set the
- associated spacecraft positions for computing the atmosphere.
-
+ associated spacecraft positions for computing the atmosphere. If enabled with setExtrapolateScStateToStepMidpoint(),
+ the spacecraft state is extrapolated to the middle of the interval the next spacecraft update integrates, see
+ extrapolateScStateToStepMidpoint().
+ @param CurrentSimNanos [ns] current simulation time
+ @return true if all required messages were read
  */
-bool AtmosphereBase::readMessages()
+bool
+AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload scMsg;
 
@@ -177,7 +198,12 @@ bool AtmosphereBase::readMessages()
         scRead = true;
         for(long unsigned int c = 0; c<this->scStateInMsgs.size(); c++){
             bool tmpScRead;
-            scMsg = this->scStateInMsgs.at(c)();
+            scMsg = this->scStateExtrapolation.apply(c,
+                                                     this->scStateInMsgs.at(c)(),
+                                                     CurrentSimNanos,
+                                                     this->scStateInMsgs.at(c).timeWritten(),
+                                                     this->previousUpdateNanos,
+                                                     this->bskLogger);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -211,6 +237,50 @@ bool AtmosphereBase::customReadMessages()
     return true;
 }
 
+/*! Sets the polar radius of the planet. If set, the altitude (and the geodetic latitude in models that use it) is
+ computed above the oblate ellipsoid defined by the equatorial radius planetRadius and this polar radius. By default
+ the planet is a sphere of radius planetRadius, and altitude is the distance to the planet center minus planetRadius.
+ The planet orientation message planetPosInMsg is required when the polar radius is set.
+ @param polarRadius [m] planet polar radius; a negative value selects the spherical planet
+ */
+void
+AtmosphereBase::setPlanetPolarRadius(double polarRadius)
+{
+    if (polarRadius == 0.0) {
+        bskLogger.bskError(
+          "Atmosphere model: the planet polar radius must be positive, or negative to select a spherical planet.");
+    }
+    this->planetPolarRadius = polarRadius;
+}
+
+/*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
+ update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
+ state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
+ rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ @param enable [-] true to extrapolate the spacecraft state to the middle of the step
+ */
+void AtmosphereBase::setExtrapolateScStateToStepMidpoint(bool enable)
+{
+    this->scStateExtrapolation.setEnabled(enable);
+}
+
+/*! Returns whether the spacecraft state extrapolation is enabled.
+ @return [-] true if the spacecraft state is extrapolated
+ */
+bool AtmosphereBase::getExtrapolateScStateToStepMidpoint() const
+{
+    return this->scStateExtrapolation.isEnabled();
+}
+
+/*! Returns the polar radius of the planet.
+ @return [m] planet polar radius; a negative value means the planet is treated as a sphere
+ */
+double
+AtmosphereBase::getPlanetPolarRadius() const
+{
+    return this->planetPolarRadius;
+}
+
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
  @param scState A spacecraft states message struct.
@@ -226,7 +296,17 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload *planetState, 
 
     //! - compute orbit radius
     this->orbitRadius = this->r_BP_N.norm();
-    this->orbitAltitude = this->orbitRadius - this->planetRadius;
+
+    //! - compute the altitude above a sphere, or above the oblate ellipsoid if the polar radius was set
+    if (this->planetPolarRadius >= 0.0) {
+        if (this->planetPolarRadius > this->planetRadius) {
+            bskLogger.bskError(
+              "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
+        }
+        this->orbitAltitude = PCPF2LLA(this->r_BP_P, this->planetRadius, this->planetPolarRadius)[2];
+    } else {
+        this->orbitAltitude = this->orbitRadius - this->planetRadius;
+    }
 
     return;
 }
@@ -272,13 +352,13 @@ void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
         *it = this->envOutMsgs[0]->zeroMsgPayload;
     }
     //! - update local neutral density information
-    if(this->readMessages())
-    {
+    if (this->readMessages(CurrentSimNanos)) {
         this->updateLocalAtmosphere(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     }
 
     //! - write out neutral density message
     this->writeMessages(CurrentSimNanos);
+    this->previousUpdateNanos = CurrentSimNanos;
 
     return;
 }

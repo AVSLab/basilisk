@@ -50,3 +50,32 @@ Regarding the vector ``swDataInMsgs``, the order of these 23 messages must follo
          20 - ap_3_-57
          21 - f107_1944_0
          22 - f107_24_-24
+
+Planet Shape
+------------
+The NRLMSISE-00 model expects the geodetic latitude and altitude above the reference ellipsoid. By default the module
+computes them for a sphere of radius ``planetRadius``. Call ``setPlanetPolarRadius(orbitalMotion.RP_EARTH * 1000.0)``
+(see :ref:`atmosphereBase`) to use the Earth ellipsoid. This requires ``planetPosInMsg`` to provide the planet orientation.
+
+Local Solar Time
+----------------
+NRLMSISE-00 is defined with the local apparent solar time. By default the module uses the mean solar time, the second
+of the day plus the longitude divided by 15 degrees per hour. The two differ by the equation of time, which is up to
+about 16 minutes during the year. Call ``setUseApparentSolarTime(True)`` to add the equation of time, computed with the
+series of Meeus, *Astronomical Algorithms*, chapter 28, with an accuracy of a few seconds.
+
+Density Model and Space Weather
+-------------------------------
+Below 500 km the density is the total mass density of NRLMSISE-00 (``gtd7``). From 500 km it is the effective total mass
+density (``gtd7d``), which includes the contribution of the anomalous oxygen. The epoch is interpreted as UTC.
+
+By default all switches of NRLMSISE-00 are set to 1, so the model uses the daily Ap index (message 0) and the two F10.7 values
+(messages 21 and 22). During a geomagnetic storm the density then follows the daily Ap from midnight and not the 3-hour
+history.
+
+Call ``setUseApHistory(True)`` to use the 3-hour Ap history instead. This sets switch 9 of NRLMSISE-00 to -1, and the model
+then uses the Ap array that the module builds from messages 1 to 20: the current 3-hour value (message 1), the values 3, 6 and
+9 hours earlier (messages 2 to 4), the average of the eight values 12 to 33 hours earlier (messages 5 to 12), and the average
+of the eight values 36 to 57 hours earlier (messages 13 to 20). The daily Ap of message 0 is then not used. The 3-hour values
+must therefore be provided and kept up to date, for example with :ref:`spaceWeatherData`. When all Ap values are equal the two
+options give nearly the same density, because the two formulations of NRLMSISE-00 differ slightly. ``getUseApHistory()`` returns the current setting.
