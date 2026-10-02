@@ -17,6 +17,7 @@
 """Check grouped simulation and optional imports without changing their public APIs."""
 
 import importlib
+import importlib.machinery
 import importlib.util
 from pathlib import Path
 import re
@@ -96,10 +97,12 @@ for unrelated in ('Basilisk.simulation._solarFlux', 'Basilisk.simulation._MJSyst
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-def test_group_layout_cleanup_preserves_other_groups(tmp_path):
+@pytest.mark.parametrize("suffix", importlib.machinery.EXTENSION_SUFFIXES)
+def test_group_layout_cleanup_preserves_other_groups(tmp_path, suffix):
     """Switching a cross-package group leaves adjacent native modules and loaders intact.
 
     :param tmp_path: Temporary directory supplied by pytest.
+    :param suffix: Native extension suffix supported by the active Python interpreter.
     """
     source = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location("generateGroupedBindings", source / "cmake/generateGroupedBindings.py")
@@ -118,9 +121,9 @@ def test_group_layout_cleanup_preserves_other_groups(tmp_path):
     stamp = first.stat().st_mtime_ns
     generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav")
     assert first.stat().st_mtime_ns == stamp
-    unrelated = package / "simulation/_simulationCoreNative.so"
+    unrelated = package / f"simulation/_simulationCoreNative{suffix}"
     unrelated.write_bytes(b"other group")
-    native = package / "_opNavNative.so"
+    native = package / f"_opNavNative{suffix}"
     native.touch()
     archive = package / "_opNavNative.lib"
     archive.touch()
