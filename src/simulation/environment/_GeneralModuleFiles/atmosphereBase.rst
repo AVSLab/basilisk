@@ -22,12 +22,12 @@ provides information on what this message is used for.
     input planetPosInMsg SpicePlanetStateMsgPayload
         (optional) planet state input message.  If not provided the planet state is zero information.
     input epochInMsg EpochMsgPayload
-        (optional) epoch date/time input message.
+        (optional) epoch date/time input message. The date and time are interpreted as UTC, independent of the time zone of the computer.
 
 Spacecraft State Timing
 -----------------------
-The module runs before the spacecraft within a task, so the spacecraft state message it reads was written at the end of
-the previous step. By default the message is used as written. To avoid an output that lags the interval it is applied
+The module is normally executed before the spacecraft within a task, so the spacecraft state message it reads was written
+at the end of the previous step. By default the message is used as written. To avoid an output that lags the interval it is applied
 to, the extrapolation can be enabled with ``setExtrapolateScStateToStepMidpoint(True)``. The spacecraft position is
 then advanced with the message velocity by half of the message age, which is the middle of the interval that the next
 spacecraft update integrates. It is skipped for a message that was written at the current time and for a stale

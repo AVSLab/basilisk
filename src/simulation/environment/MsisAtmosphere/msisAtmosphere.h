@@ -45,6 +45,8 @@ public:
     ~MsisAtmosphere();
     void setUseApparentSolarTime(bool useApparent);
     bool getUseApparentSolarTime() const;
+    void setUseApHistory(bool useHistory);
+    bool getUseApHistory() const;
 
   private:
     void customWriteMessages(uint64_t CurrentClock);
@@ -76,6 +78,7 @@ private:
     double f107;
     double f107A;
     bool useApparentSolarTime = false; //!< [-] if true the local solar time input is the apparent solar time, otherwise the mean solar time
+    bool useApHistory = false; //!< [-] if true NRLMSISE-00 uses the 3-hour Ap history (switch 9 set to -1), otherwise the daily Ap
 };
 
 

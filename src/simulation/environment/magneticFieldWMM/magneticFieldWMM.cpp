@@ -19,6 +19,7 @@
 
 #include "magneticFieldWMM.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "EGM9615.h"
 #include <filesystem>
@@ -120,7 +121,7 @@ void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear [[maybe_unuse
     this->epochDateTime.tm_isdst = 0;
 
     //! - make sure a proper time structure is setup
-    mktime(&this->epochDateTime);
+    normalizeUtcTime(&this->epochDateTime);
 }
 
 /*! Convert a time structure with gregorian date/time information into a fraction year value.
@@ -136,7 +137,7 @@ double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
     char Error_Message[255];
     localDateTime = this->epochDateTime;
     localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
-    mktime(&localDateTime);
+    normalizeUtcTime(&localDateTime);
 
     calendar.Year = localDateTime.tm_year + 1900;
     calendar.Month = localDateTime.tm_mon + 1;
