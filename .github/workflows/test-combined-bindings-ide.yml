@@ -77,27 +77,43 @@ jobs:
           PY
           python -I .github/scripts/check_combined_bindings.py
 
+      - name: CTest
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        timeout-minutes: 15 # [min]
+        shell: bash
+        working-directory: dist3
+        run: ctest -C "${BSK_EXPECTED_CONFIGURATION}" --output-on-failure --timeout 120 # [s] per test
+
       - name: Test incremental Visual Studio builds
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        timeout-minutes: 30 # [min]
         shell: bash
         run: >-
           python .github/scripts/test_incremental_build.py
           --build-dir dist3 --config "${BSK_EXPECTED_CONFIGURATION}"
 
-      - name: Pytest
+      - name: Install diagnostic test dependencies
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        shell: bash
+        run: python -m pip install pytest-error-for-skips pytest-timeout
+
+      - name: Diagnose known Debug failures individually
+        id: debug-checks
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.configuration == 'Debug' }}
+        timeout-minutes: 115 # [min]
+        shell: bash
+        run: python -u .github/scripts/run_visual_studio_debug_checks.py
+
+      - name: Pytest (full suite)
+        if: >-
+          ${{ !cancelled() && steps.build.outcome == 'success' &&
+              (matrix.configuration == 'Release' || steps.debug-checks.outcome == 'success') }}
         shell: bash
         working-directory: src
         run: |
-          python -m pip install pytest-error-for-skips pytest-timeout
           python -m pytest -n auto -m "not ciSkip" -rs --error-for-skips \
             --timeout="${PYTEST_TIMEOUT_SECONDS}" --timeout-method=thread \
             --durations=25 --junitxml=../visual-studio-tests.xml -v
-
-      - name: CTest
-        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        shell: bash
-        working-directory: dist3
-        run: ctest -C "${BSK_EXPECTED_CONFIGURATION}" --output-on-failure
 
       - name: Upload validation reports
         if: ${{ always() }}
@@ -106,6 +122,7 @@ jobs:
           name: visual-studio-${{ matrix.configuration }}
           path: |
             visual-studio-tests.xml
+            visual-studio-debug-checks/
             dist3/CMakeCache.txt
             dist3/Testing/Temporary/LastTest.log
             dist3/Basilisk/_buildInfoData.py
