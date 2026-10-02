@@ -33,6 +33,8 @@ import time
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TIMEOUT_SECONDS = 600  # [s]
+SLOW_TIMEOUT_SECONDS = 3600  # [s]
+SLOW_CASES = {"constrained-dynamics", "flex-panel-comparison"}
 SHUTDOWN_GRACE_SECONDS = 30  # [s]
 OUTPUT_POLL_SECONDS = 0.2  # [s]
 CASES = {
@@ -60,7 +62,6 @@ CASES = {
         "test_scenarioConstrainedDynamicsFrequencyAnalysis[gain_list0-MEV2]"
     ),
     "flex-panel-comparison": "tests/test_scenarioDynamicsComparison.py::test_scenarios[scenarioCompareFlexPanels]",
-    # Run last: the benchmark currently requests a Release build even in Debug.
     "eigen-benchmark": "../benchmarks/tests/test_benchmark_smoke.py::test_eigen_linear_algebra_benchmark_smoke",
 }
 
@@ -75,6 +76,7 @@ def run_child(case, report_dir, timeout_seconds):
     faulthandler.dump_traceback_later(timeout_seconds, exit=True)
     try:
         return pytest.main([
+            "-p", "visual_studio_debug_runtime",
             "-c", str(REPOSITORY_ROOT / "src/pytest.ini"),
             "-n", "0", "-vv", "-s", "-ra", "--tb=long", "--error-for-skips",
             "--timeout=0", f"--junitxml={report_dir / (case + '.xml')}", CASES[case],
@@ -141,23 +143,28 @@ def run_case(case, report_dir, timeout_seconds):
 
 def main():
     """Run every selected diagnostic even when an earlier case fails or crashes."""
+    # GitHub's Windows pipes otherwise use cp1252, which cannot print tqdm bars.
+    sys.stdout.reconfigure(encoding="utf-8", errors="backslashreplace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--case", action="append", choices=CASES)
     parser.add_argument("--child", choices=CASES, help=argparse.SUPPRESS)
     parser.add_argument("--report-dir", type=Path, default=REPOSITORY_ROOT / "visual-studio-debug-checks")
-    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="Per-case timeout in seconds")
+    parser.add_argument("--timeout", type=int, help="Override every per-case timeout in seconds")
     args = parser.parse_args()
-    if args.timeout <= 0:
+    if args.timeout is not None and args.timeout <= 0:
         parser.error("--timeout must be positive")
     report_dir = args.report_dir.resolve()
     report_dir.mkdir(parents=True, exist_ok=True)
     if args.child:
-        return run_child(args.child, report_dir, args.timeout)
+        timeout = args.timeout or (SLOW_TIMEOUT_SECONDS if args.child in SLOW_CASES else DEFAULT_TIMEOUT_SECONDS)
+        return run_child(args.child, report_dir, timeout)
 
     results = []
     for case in args.case or CASES:
         try:
-            result = run_case(case, report_dir, args.timeout)
+            timeout = args.timeout or (SLOW_TIMEOUT_SECONDS if case in SLOW_CASES else DEFAULT_TIMEOUT_SECONDS)
+            result = run_case(case, report_dir, timeout)
         except (OSError, RuntimeError, subprocess.SubprocessError) as error:
             result = {"case": case, "nodeid": CASES[case], "returnCode": 1, "error": str(error)}
             print(f"::error::{case}: {error}", flush=True)

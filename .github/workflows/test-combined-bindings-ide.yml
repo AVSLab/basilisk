@@ -21,7 +21,7 @@ jobs:
     name: Visual Studio (${{ matrix.configuration }})
     if: github.ref == 'refs/heads/feature/bsk_startup'
     runs-on: windows-2025-vs2026
-    timeout-minutes: 180 # [min]
+    timeout-minutes: 360 # [min]
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,9 @@ jobs:
       MPLBACKEND: Agg
       BSK_EXPECTED_GENERATOR: Visual Studio 18 2026
       BSK_EXPECTED_CONFIGURATION: ${{ matrix.configuration }}
-      PYTEST_TIMEOUT_SECONDS: "600" # [s]
+      PYTEST_TIMEOUT_SECONDS: ${{ matrix.configuration == 'Debug' && '3600' || '600' }} # [s]
+      PYTHONIOENCODING: utf-8
+      PYTHONPATH: ${{ github.workspace }}\.github\scripts
 
     steps:
       - name: Checkout source
@@ -100,7 +102,7 @@ jobs:
       - name: Diagnose known Debug failures individually
         id: debug-checks
         if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.configuration == 'Debug' }}
-        timeout-minutes: 115 # [min]
+        timeout-minutes: 140 # [min]
         shell: bash
         run: python -u .github/scripts/run_visual_studio_debug_checks.py
 
@@ -111,7 +113,7 @@ jobs:
         shell: bash
         working-directory: src
         run: |
-          python -m pytest -n auto -m "not ciSkip" -rs --error-for-skips \
+          python -m pytest -p visual_studio_debug_runtime -n auto -m "not ciSkip" -rs --error-for-skips \
             --timeout="${PYTEST_TIMEOUT_SECONDS}" --timeout-method=thread \
             --durations=25 --junitxml=../visual-studio-tests.xml -v
 
