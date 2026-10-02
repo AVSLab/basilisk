@@ -1,0 +1,112 @@
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+# Temporary branch validation; remove after the combined-binding experiment.
+name: "TEMP Combined Bindings Visual Studio"
+
+on:
+  push:
+    branches:
+      - feature/bsk_startup
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-studio:
+    name: Visual Studio (${{ matrix.configuration }})
+    if: github.ref == 'refs/heads/feature/bsk_startup'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 180 # [min]
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+    env:
+      MPLBACKEND: Agg
+      BSK_EXPECTED_GENERATOR: Visual Studio 18 2026
+      BSK_EXPECTED_CONFIGURATION: ${{ matrix.configuration }}
+      PYTEST_TIMEOUT_SECONDS: "600" # [s]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - uses: ./.github/actions/data-cache
+
+      - name: Build full Visual Studio solution
+        id: build
+        uses: ./.github/actions/build
+        with:
+          python-version: "3.14"
+          conan-args: >-
+            --generator "Visual Studio 18 2026"
+            --buildType ${{ matrix.configuration }}
+            --opNav True --mujoco True --vizInterface True --rustModules True --clean
+          save-conan-cache: "false"
+
+      - name: Verify generator and compiled configuration
+        shell: bash
+        run: |
+          python -I - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import Basilisk
+
+          expected_generator = os.environ["BSK_EXPECTED_GENERATOR"]
+          expected_configuration = os.environ["BSK_EXPECTED_CONFIGURATION"]
+          info = Basilisk.getBuildInfo()
+          diagnostics = info["diagnostics"]
+          build = diagnostics["build"]
+          print(json.dumps(info, indent=2), flush=True)
+          assert build["generator"] == expected_generator, build
+          assert build["multiConfig"], build
+          assert expected_configuration in build["availableConfigurations"], build
+          assert info["abi"]["build"]["configuration"] == expected_configuration, info["abi"]
+          assert diagnostics["conanSettings"]["buildType"] == expected_configuration, diagnostics
+          assert diagnostics["compilers"]["cxx"]["id"] == "MSVC", diagnostics
+          assert Path(Basilisk.__file__).resolve().is_relative_to(Path("dist3/Basilisk").resolve())
+          assert list(Path("dist3").glob("*.sln")) or list(Path("dist3").glob("*.slnx"))
+          for feature in ("opNav", "mujoco", "vizInterface", "rustModules"):
+              assert Basilisk.hasBuildFeature(feature), feature
+          PY
+          python -I .github/scripts/check_combined_bindings.py
+
+      - name: Test incremental Visual Studio builds
+        shell: bash
+        run: >-
+          python .github/scripts/test_incremental_build.py
+          --build-dir dist3 --config "${BSK_EXPECTED_CONFIGURATION}"
+
+      - name: Pytest
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        shell: bash
+        working-directory: src
+        run: |
+          python -m pip install pytest-error-for-skips pytest-timeout
+          python -m pytest -n auto -m "not ciSkip" -rs --error-for-skips \
+            --timeout="${PYTEST_TIMEOUT_SECONDS}" --timeout-method=thread \
+            --durations=25 --junitxml=../visual-studio-tests.xml -v
+
+      - name: CTest
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        shell: bash
+        working-directory: dist3
+        run: ctest -C "${BSK_EXPECTED_CONFIGURATION}" --output-on-failure
+
+      - name: Upload validation reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: visual-studio-${{ matrix.configuration }}
+          path: |
+            visual-studio-tests.xml
+            dist3/CMakeCache.txt
+            dist3/Testing/Temporary/LastTest.log
+            dist3/Basilisk/_buildInfoData.py
+          if-no-files-found: warn
+          retention-days: 7 # [days]
