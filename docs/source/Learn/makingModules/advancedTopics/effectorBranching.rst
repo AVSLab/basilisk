@@ -77,7 +77,7 @@ For a dynamic effector, three changes must also be made.
 Additional Resources
 --------------------
 .. important::
-    The force and torque ouput by dependent effectors as variables forceExternal_B and
+    The force and torque output by dependent effectors as variables forceExternal_B and
     ``torqueExternalPntB_B`` is computed relative to its parent frame, not the body frame as they
     are labeled. For example if attached to a :ref:`spinningBodyOneDOFStateEffector`,
     ``torqueExternalPntB_B`` is actually the torque about point S expressed in the S frame
@@ -86,7 +86,7 @@ Additional Resources
     This also requires that the state effector output inertial properties to this frame origin
     (``r_SN_N``) as opposed to outputting inertial properties to its center of mass (``r_ScN_N``).
     This is important because dynamic effectors handle converting their applied forces to torques
-    with respect to their parent frame origin. If the state effector passes it's center of mass
+    with respect to their parent frame origin. If the state effector passes its center of mass
     position, this torque computed by the attached dynamic effector would need to be corrected, but
     the state effector does not get knowledge of where dynamic effectors are attached to make such a
     correction.

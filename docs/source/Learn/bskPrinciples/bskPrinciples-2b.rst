@@ -11,7 +11,7 @@ Seeing the Order of Process, Task and Module Execution
 Now that you have learned how to add and prioritize processes with task lists, as well as assign Basilisk
 modules to the task for an ordered execution, it is nice to be able to see how the simulation is setup.
 The :ref:`SimulationBaseClass` defines a method ``ShowExecutionOrder`` which will print to the terminal window
-the process names and priorties as they are setup to be executed.  For each process you will see the order with
+the process names and priorities as they are set up to be executed.  For each process you will see the order with
 which the tasks will be called, and the order of task modules that will be executed.  This is very handy
 to quickly validate that the simulation is setup as desired.
 
@@ -63,5 +63,3 @@ or saved off for future use.  For example, adding this command to this sample sc
 
 .. image:: ../../_images/static/qs-bsk-2b-order.svg
    :align: center
-
-

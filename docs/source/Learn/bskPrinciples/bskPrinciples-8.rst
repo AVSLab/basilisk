@@ -8,7 +8,10 @@ Advanced: Enabling and Disabling Tasks
 
     The python code shown below can be downloaded :download:`here </../../docs/source/codeSamples/bsk-8.py>`.
 
-Next we study how the Basilisk tasks can be both disabled and enabled.  Why would we do this?  You might setup a set of BSK modules to mimic a sun-pointing behavior in a task.  Next, you setup another set of BSK modules to create a science pointing mode.  Being able to enable and disable tasks means that you can creates these tasks once, but then control which flight software modules are actually executed.
+Next we study how Basilisk tasks can be enabled and disabled.  Why would we do this?  You might set up one set of BSK
+modules to mimic sun-pointing behavior in a task, then set up another set of BSK modules to create a science-pointing
+mode.  Enabling and disabling tasks lets you create both sets once and then control which flight software modules are
+executed.
 
 .. image:: ../../_images/static/qs-bsk-8.svg
    :align: center
