@@ -44,6 +44,7 @@ def find_build_tool(name):
 
 CMAKE = find_build_tool("cmake")
 NINJA = find_build_tool("ninja")
+SWIG = find_build_tool("swig")
 BUILD_GENERATORS = [None] if os.name == "nt" else ["Unix Makefiles"]
 if NINJA and (os.name != "nt" or os.environ.get("VCINSTALLDIR")):
     BUILD_GENERATORS.append("Ninja")
@@ -195,3 +196,146 @@ assert _first.__file__ == _second.__file__
     run(configure)
     run(build_command)
     assert library.stat().st_mtime_ns == original_mtime
+
+
+@pytest.mark.parametrize("semicolon", [";", ""], ids=["swig44", "swig45"])
+def test_director_mutex_syntax_variants(tmp_path, semicolon):
+    """Accept the mutex forms emitted by both supported SWIG runtime versions.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param semicolon: Terminator emitted after the macro invocation.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "prepareGroupedWrapper", SOURCE / "cmake/prepareGroupedWrapper.py")
+    preparer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(preparer)
+    source = tmp_path / "wrapper.cxx"
+    destination = tmp_path / "grouped.cxx"
+    definition = "SWIG_GUARD_DEFINITION(Director, swig_mutex_own)" + semicolon
+    source.write_text("#define SWIG_DIRECTORS\n  " + definition + "\n", encoding="utf-8")
+    preparer.prepare_wrapper(source, destination)
+    assert destination.read_text(encoding="utf-8") == (
+        "#define SWIG_DIRECTORS\n  #ifdef SWIG_THREADS\n  inline " + definition + "\n  #endif\n")
+    for count in (0, 2):
+        source.write_text("#define SWIG_DIRECTORS\n" + (definition + "\n") * count, encoding="utf-8")
+        with pytest.raises(ValueError, match=f"found {count} definitions"):
+            preparer.prepare_wrapper(source, destination)
+
+
+@pytest.mark.skipif(CMAKE is None or SWIG is None, reason="CMake and SWIG are required")
+@pytest.mark.parametrize("build_generator", BUILD_GENERATORS)
+@pytest.mark.parametrize("limited_api", [False, True], ids=["full-api", "limited-api"])
+@pytest.mark.parametrize("threads", [False, True], ids=["no-threads", "threads"])
+def test_grouped_swig_directors_preserve_cross_module_callbacks(tmp_path, build_generator, limited_api, threads):
+    """Compile real SWIG wrappers and dispatch Python overrides across modules.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param build_generator: CMake generator used for the isolated native build.
+    :param limited_api: Compile against the stable Python API when true.
+    :param threads: Generate SWIG's threaded director runtime when true.
+    """
+    if build_generator == "Xcode":
+        xcodebuild = shutil.which("xcodebuild")
+        if xcodebuild is None:
+            pytest.skip("Xcode is not installed")
+        version = subprocess.run([xcodebuild, "-version"], capture_output=True, text=True,
+                                 timeout=SUBPROCESS_TIMEOUT_SECONDS)
+        if version.returncode:
+            pytest.skip("A full Xcode installation must be selected to test its generator")
+
+    project = tmp_path / "source"
+    build = tmp_path / "build"
+    (project / "cmake").mkdir(parents=True)
+    (project / "fswAlgorithms").mkdir()
+    for name in ("generateGroupedBindings.py", "prepareGroupedWrapper.py"):
+        shutil.copyfile(SOURCE / "cmake" / name, project / "cmake" / name)
+    shutil.copyfile(SOURCE / "fswAlgorithms/_load_fsw.py", project / "fswAlgorithms/_load_fsw.py")
+    (project / "base.h").write_text(
+        "#pragma once\nclass Base { public: virtual ~Base() = default; virtual int value() { return 2; } };\n",
+        encoding="utf-8",
+    )
+    (project / "first.i").write_text('''%module(package="Basilisk.simulation", directors="1") first
+%feature("director") Base;
+%{
+#include "base.h"
+%}
+%include "base.h"
+''', encoding="utf-8")
+    (project / "second.i").write_text('''%module(package="Basilisk.simulation", directors="1") second
+%{
+#include "base.h"
+%}
+%import "first.i"
+%feature("director") Other;
+%inline %{
+class Other { public: virtual ~Other() = default; virtual int value() { return 3; } };
+int call(Base *object) { return object->value(); }
+int callOther(Other *object) { return object->value(); }
+bool isDirector(Base *object) { return dynamic_cast<Swig::Director *>(object) != nullptr; }
+%}
+''', encoding="utf-8")
+    helper = SOURCE / "cmake/bskCombineSimulationBindings.cmake"
+    (project / "CMakeLists.txt").write_text(f'''cmake_minimum_required(VERSION 3.26)
+project(directorBuildTest LANGUAGES CXX)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(SWIG 4.4.1 REQUIRED)
+include(${{SWIG_USE_FILE}})
+set(SWIG_USE_SWIG_DEPENDENCIES ON)
+set(CMAKE_CXX_STANDARD 17)
+include("{helper.as_posix()}")
+if(LIMITED_API)
+  add_compile_definitions(Py_LIMITED_API=0x03090000)
+endif()
+set(out "${{CMAKE_BINARY_DIR}}/Basilisk/simulation")
+foreach(name first second)
+  set(interface "${{CMAKE_CURRENT_SOURCE_DIR}}/${{name}}.i")
+  set_source_files_properties("${{interface}}" PROPERTIES CPLUSPLUS ON USE_TARGET_INCLUDE_DIRECTORIES TRUE)
+  set_property(SOURCE "${{interface}}" APPEND PROPERTY SWIG_FLAGS -interface "_${{name}}" {"-threads" if threads else "-nothreads"})
+  swig_add_library(${{name}}GroupedObjects LANGUAGE python TYPE OBJECT SOURCES "${{interface}}"
+    OUTFILE_DIR "${{out}}" OUTPUT_DIR "${{out}}")
+  target_link_libraries(${{name}}GroupedObjects PRIVATE Python3::Module)
+  target_include_directories(${{name}}GroupedObjects PRIVATE "${{CMAKE_CURRENT_SOURCE_DIR}}")
+  set_target_properties(${{name}}GroupedObjects PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  set(wrapper "${{out}}/${{name}}PYTHON_wrap.cxx")
+  set(grouped "${{out}}/${{name}}PYTHON_grouped.cxx")
+  add_custom_command(OUTPUT "${{grouped}}"
+    COMMAND "${{Python3_EXECUTABLE}}" "${{CMAKE_SOURCE_DIR}}/cmake/prepareGroupedWrapper.py" "${{wrapper}}" "${{grouped}}"
+    DEPENDS "${{wrapper}}" "${{CMAKE_SOURCE_DIR}}/cmake/prepareGroupedWrapper.py" VERBATIM)
+  get_target_property(wrapper_sources ${{name}}GroupedObjects SOURCES)
+  list(REMOVE_ITEM wrapper_sources "${{wrapper}}")
+  set_property(TARGET ${{name}}GroupedObjects PROPERTY SOURCES ${{wrapper_sources}} "${{grouped}}")
+  set_property(GLOBAL APPEND PROPERTY BSK_mujocoNative_OBJECT_TARGETS ${{name}}GroupedObjects)
+  set_property(GLOBAL APPEND PROPERTY BSK_mujocoNative_MODULES "simulation.${{name}}")
+  set_property(GLOBAL APPEND PROPERTY BSK_SIMULATION_BINDING_TARGETS ${{name}}GroupedObjects)
+endforeach()
+bsk_finalize_simulation_bindings()
+file(WRITE "${{CMAKE_BINARY_DIR}}/Basilisk/__init__.py" "")
+file(WRITE "${{out}}/__init__.py" "")
+''', encoding="utf-8")
+    configure = [CMAKE, "-S", str(project), "-B", str(build),
+                 f"-DPython3_EXECUTABLE={sys.executable}", f"-DSWIG_EXECUTABLE={SWIG}",
+                 f"-DLIMITED_API={'ON' if limited_api else 'OFF'}", "-DCMAKE_BUILD_TYPE=Release"]
+    if build_generator:
+        configure.extend(["-G", build_generator])
+    if build_generator == "Ninja":
+        configure.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
+    probe = '''import sys
+sys.path.insert(0, sys.argv[1])
+from Basilisk.simulation import first, second
+class First(first.Base):
+    def value(self): return 42
+class Second(second.Other):
+    def value(self): return 17
+first_object = First()
+assert second.call(first_object) == 42
+assert second.callOther(Second()) == 17
+assert second.isDirector(first_object)
+assert first._first.__file__ == second._second.__file__
+'''
+    for command in (
+        configure,
+        [CMAKE, "--build", str(build), "--target", "mujocoNative", "--config", "Release"],
+        [sys.executable, "-I", "-c", probe, str(build)],
+    ):
+        result = subprocess.run(command, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS)
+        assert result.returncode == 0, result.stdout + result.stderr

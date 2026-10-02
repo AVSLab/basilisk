@@ -1,0 +1,1 @@
+- Fix experimental combined MuJoCo builds with SWIG 4.5.0 while retaining SWIG 4.4.1 compatibility and Python director callbacks.

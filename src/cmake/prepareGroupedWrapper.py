@@ -17,6 +17,7 @@
 """Share SWIG's director mutex across wrappers without changing director RTTI."""
 
 from pathlib import Path
+import re
 import sys
 
 
@@ -33,12 +34,13 @@ def prepare_wrapper(source: Path, destination: Path) -> None:
     """
     content = source.read_text(encoding="utf-8")
     if "#define SWIG_DIRECTORS" in content:
-        definition = "SWIG_GUARD_DEFINITION(Director, swig_mutex_own);"
-        if content.count(definition) != 1:
-            raise ValueError(f"Unrecognized SWIG director mutex in {source}")
+        # SWIG 4.5 moved the trailing semicolon into the macro definition.
+        definition = r"^([ \t]*)(SWIG_GUARD_DEFINITION\(Director, swig_mutex_own\);?)[ \t]*$"
         # The declaration macro can be empty when threading is disabled.
-        replacement = "#ifdef SWIG_THREADS\n  inline " + definition + "\n#endif"
-        content = content.replace(definition, replacement)
+        replacement = r"\1#ifdef SWIG_THREADS\n\1inline \2\n\1#endif"
+        content, count = re.subn(definition, replacement, content, flags=re.MULTILINE)
+        if count != 1:
+            raise ValueError(f"Unrecognized SWIG director mutex in {source}: found {count} definitions")
     destination.write_text(content, encoding="utf-8")
 
 

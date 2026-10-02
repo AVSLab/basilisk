@@ -17,6 +17,10 @@ Version |release|
   The combined library is validated again when rebuilt, so first-import timing can
   still differ from subsequent runs.
 
+- Experimental combined MuJoCo bindings failed to build with SWIG 4.5.0 because
+  its generated director mutex syntax changed. Wrapper preparation now accepts
+  both the SWIG 4.4.1 and 4.5.0 forms.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
