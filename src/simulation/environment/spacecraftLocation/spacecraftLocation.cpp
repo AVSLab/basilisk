@@ -23,6 +23,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <limits>
 
@@ -94,8 +95,8 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("SpacecraftLocation must set aHat_B if you specify theta_view");
     }
 
-    if (this->glareThreshold < 0.0 || this->glareThreshold > 1.0) {
-        bskLogger.bskError("SpacecraftLocation glareThreshold must be in the range [0, 1]");
+    if (!std::isfinite(this->glareThreshold) || this->glareThreshold < 0.0 || this->glareThreshold > 1.0) {
+        bskLogger.bskError("SpacecraftLocation glareThreshold must be finite and in the range [0, 1]");
     }
 
     if (this->min_shadow_factor != -2.0) {
