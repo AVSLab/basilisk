@@ -96,13 +96,11 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
     trueThetaDot = hingedRigidBodyMotorSensorInMsgBuffer.thetaDot;
 
     //! apply sensor noise and bias
-    std::normal_distribution<double>::param_type updateThetaPair(0.0, this->thetaNoiseStd);
-    std::normal_distribution<double>::param_type updateThetaDotPair(0.0, this->thetaDotNoiseStd);
-
-    this->rNum.param(updateThetaPair);
-    thetaNoise = this->rNum(this->rGen); //! sample using thetaNoiseStd
-    this->rNum.param(updateThetaDotPair);
-    thetaDotNoise = this->rNum(this->rGen); //! sample using thetaDotNoiseStd
+    // Scale standard-normal samples so zero noise remains valid. The normal
+    // distribution requires a strictly positive standard deviation. Sampling
+    // both channels also preserves the generator sequence when noise is disabled.
+    thetaNoise = this->thetaNoiseStd * this->rNum(this->rGen);
+    thetaDotNoise = this->thetaDotNoiseStd * this->rNum(this->rGen);
 
     sensedTheta =  trueTheta + thetaNoise + this->thetaBias;
     sensedThetaDot = trueThetaDot + thetaDotNoise + this->thetaDotBias;

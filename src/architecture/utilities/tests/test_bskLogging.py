@@ -16,6 +16,9 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import subprocess
+import sys
+
 import pytest
 
 from Basilisk.architecture import bskLogging
@@ -40,19 +43,25 @@ def test_bsk_log_treats_python_message_as_text():
     assert str(error.value) == message
 
 
-def test_warning_level_output_is_flushed(capfd):
+def test_warning_level_output_is_flushed():
     """A ``BSK_WARNING`` must reach stdout at log time (issue #1444).
 
-    ``bskLog`` flushes warning-level (and higher) output, so it is observable to
-    ``capfd`` before the process exits. Without that flush the C runtime fully
-    buffers the line when stdout is not a TTY (pytest capture, pipes, redirection)
-    and it would be lost on a crash and invisible to this assertion. The log level
-    is set on the instance so the test does not depend on the global default level
-    left behind by other tests."""
-    bsk_logger = bskLogging.BSKLogger()
-    bsk_logger.setLogLevel(bskLogging.BSK_WARNING)
-
-    bsk_logger.bskLog(bskLogging.BSK_WARNING, "flush regression marker")
-
-    out, _ = capfd.readouterr()
-    assert "flush regression marker" in out
+    Use an OS pipe because a Windows Debug extension has a separate C runtime
+    from release Python, whose file descriptors ``capfd`` redirects. The child
+    exits without normal C stream cleanup, so removing the warning flush loses
+    the marker and fails the test.
+    """
+    result = subprocess.run(
+        [sys.executable, "-c", """
+import os
+from Basilisk.architecture import bskLogging
+logger = bskLogging.BSKLogger()
+logger.setLogLevel(bskLogging.BSK_WARNING)
+logger.bskLog(bskLogging.BSK_WARNING, "flush regression marker")
+print("after native warning", flush=True)
+os._exit(0)
+"""],
+        capture_output=True, text=True, check=True, timeout=60,  # [s]
+    )
+    assert "flush regression marker" in result.stdout
+    assert result.stdout.index("flush regression marker") < result.stdout.index("after native warning")

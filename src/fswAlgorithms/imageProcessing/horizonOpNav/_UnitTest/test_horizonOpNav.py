@@ -9,6 +9,8 @@ import inspect
 import os
 
 import numpy as np
+import pytest
+from Basilisk.architecture import bskLogging
 from Basilisk.architecture import messaging
 from Basilisk.fswAlgorithms import horizonOpNav
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -37,7 +39,8 @@ def back_substitution(A, b):
     return x
 
 
-def test_horizonOpNav():
+@pytest.mark.parametrize("configuredPlanet, messagePlanet", [(2, 0), (0, 2), (1, 2)])
+def test_horizonOpNav(configuredPlanet, messagePlanet):
     """
     Unit test for Horizon Navigation. The unit test specifically covers:
 
@@ -53,7 +56,7 @@ def test_horizonOpNav():
     """
     [testResults, testMessage] = horizonOpNav_methods()
     assert testResults < 1, testMessage
-    [testResults, testMessage] = horizonOpNav_update()
+    [testResults, testMessage] = horizonOpNav_update(configuredPlanet, messagePlanet)
     assert testResults < 1, testMessage
 
 def horizonOpNav_methods():
@@ -152,7 +155,7 @@ def horizonOpNav_methods():
 ###################################################################################
 ## Testing dynamics matrix computation
 ###################################################################################
-def horizonOpNav_update():
+def horizonOpNav_update(configuredPlanet=2, messagePlanet=0):
     # Create a sim module as an empty container
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -263,6 +266,7 @@ def horizonOpNav_update():
 
     # Set circles
     inputLimbMsg.valid = 1
+    inputLimbMsg.planetIds = messagePlanet
     inputLimbMsg.limbPoints = inputPoints
     inputLimbMsg.numLimbPoints = int(len(inputPoints)/2)
     inputLimbMsg.timeTag = 12345
@@ -277,7 +281,7 @@ def horizonOpNav_update():
 
 
     # Set module for Mars
-    opNav.planetTarget = 2
+    opNav.planetTarget = configuredPlanet
     dataLog = opNav.opNavOutMsg.recorder()
     unitTestSim.AddModelToTask(unitTaskName, dataLog)
 
@@ -286,6 +290,8 @@ def horizonOpNav_update():
     # The result isn't going to change with more time. The module will continue to produce the same result
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
+    assert opNav.planetTarget == 2
+    np.testing.assert_array_equal(dataLog.planetID, 2)
 
     # Truth Vlaues
     ############################
@@ -376,17 +382,15 @@ def horizonOpNav_update():
 
     outputR = dataLog.r_BN_C
     outputCovar = dataLog.covar_C
-    outputTime = dataLog.timeTag
 
-    for i in range(len(outputR[-1, 1:])):
-        if np.abs((r_BN_C[i] - outputR[0, i])/r_BN_C[i]) > posErr or np.isnan(outputR.any()):
-            testFailCount += 1
-            testMessages.append("FAILED: Position Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((r_BN_C[i] - outputR[-1, i+1])/r_BN_C[i])))
-
-    for i in range(len(outputCovar[-1, 1:])):
-        if np.abs((Covar_C_test.flatten()[i] - outputCovar[0, i])/Covar_C_test.flatten()[i]) > covarErr or np.isnan(outputTime.any()):
-            testFailCount += 1
-            testMessages.append("FAILED: Covar Check in Horizon Nav for index "+ str(i) + " with error " + str(np.abs((Covar_C_test.flatten()[i] - outputCovar[-1, i+1]))))
+    # Validate every component at both updates; the second update previously
+    # used uninitialized radii after a zero message ID erased planetTarget.
+    assert np.isfinite(outputR).all()
+    assert np.isfinite(outputCovar).all()
+    np.testing.assert_allclose(outputR, np.broadcast_to(r_BN_C, outputR.shape), rtol=posErr)
+    np.testing.assert_allclose(
+        outputCovar, np.broadcast_to(Covar_C_test.flatten(), outputCovar.shape), rtol=covarErr,
+    )
 
     snippentName = "passFail"
     if testFailCount == 0:
@@ -402,6 +406,26 @@ def horizonOpNav_update():
 
 
     return [testFailCount, ''.join(testMessages)]
+
+
+@pytest.mark.parametrize("configuredPlanet, messagePlanet", [(0, 0), (4, 0), (2, -1), (2, 4), (2, float("nan"))])
+def test_horizonOpNav_rejects_unknown_planet(configuredPlanet, messagePlanet):
+    """Reject unsupported targets before reading uninitialized planet radii."""
+    module = horizonOpNav.horizonOpNav()
+    module.planetTarget = configuredPlanet
+    camera = messaging.CameraConfigMsg().write(messaging.CameraConfigMsgPayload())
+    attitude = messaging.NavAttMsg().write(messaging.NavAttMsgPayload())
+    limbPayload = messaging.OpNavLimbMsgPayload()
+    limbPayload.valid = 1
+    limbPayload.planetIds = messagePlanet
+    limb = messaging.OpNavLimbMsg().write(limbPayload)
+    module.cameraConfigInMsg.subscribeTo(camera)
+    module.attInMsg.subscribeTo(attitude)
+    module.limbInMsg.subscribeTo(limb)
+    module.SelfInit()
+    module.Reset(0)
+    with pytest.raises(bskLogging.BasiliskError, match="horizonOpNav:.*planet"):
+        module.UpdateState(0)
 
 
 if __name__ == '__main__':

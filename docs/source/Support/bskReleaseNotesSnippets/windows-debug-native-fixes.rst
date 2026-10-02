@@ -1,0 +1,3 @@
+- Fixed a five-state covariance-update buffer overflow in :ref:`headingSuKF` exposed by Visual Studio Debug runtime checks.
+- Fixed :ref:`horizonOpNav` target selection so a zero limb-message planet ID preserves the configured target, a supported message ID takes effect immediately, and unsupported targets raise an error before computing with uninitialized radii.
+- Fixed zero-noise operation in :ref:`hingedRigidBodyMotorSensor` by scaling standard-normal samples instead of constructing a distribution with zero standard deviation.

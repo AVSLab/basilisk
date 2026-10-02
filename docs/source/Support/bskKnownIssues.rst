@@ -7,6 +7,16 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- Visual Studio Debug checks exposed a stack-buffer overflow during
+  :ref:`headingSuKF` measurement updates and an invalid zero-standard-deviation
+  distribution in :ref:`hingedRigidBodyMotorSensor`. Both are fixed. These defects
+  also affected Release code even when its runtime did not diagnose them.
+
+- :ref:`horizonOpNav` could use uninitialized planet radii after a zero limb-message
+  planet ID overwrote its configured target. Zero now preserves the configured
+  target, supported message IDs take effect in the current update, and unsupported
+  targets raise an error before the navigation calculation.
+
 - On macOS, the first Basilisk import after a build could pause while the operating
   system validated each separately compiled message extension. Message bindings now
   share one native library to reduce this per-file overhead. Python message imports

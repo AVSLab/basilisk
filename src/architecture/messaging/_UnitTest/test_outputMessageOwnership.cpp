@@ -227,6 +227,12 @@ template<typename Factory>
 void
 expectCleanupAfterAllocationFailure(const Factory& factory)
 {
+#if defined(_MSC_VER) && _ITERATOR_DEBUG_LEVEL != 0
+    // MSVC's debug STL allocates iterator proxies inside noexcept container
+    // constructors. A global-new failure there terminates instead of unwinding.
+    // Release runs these sweeps; ordinary ownership checks still run in Debug.
+    GTEST_SKIP() << "Global allocation-failure sweeps cannot unwind MSVC debug iterator-proxy construction";
+#endif
     factory();
     // Fail each allocation in turn, including those between paired output vectors.
     for (int failAfter = 0; failAfter < 256; ++failAfter) {
