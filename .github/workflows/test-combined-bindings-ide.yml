@@ -113,9 +113,11 @@ jobs:
         shell: bash
         working-directory: src
         run: |
+          # The native watchdog still fires if a C/C++ call holds the GIL.
           python -m pytest -p visual_studio_debug_runtime -n auto -m "not ciSkip" -rs --error-for-skips \
             --timeout="${PYTEST_TIMEOUT_SECONDS}" --timeout-method=thread \
-            --durations=25 --junitxml=../visual-studio-tests.xml -v
+            -o faulthandler_timeout="${PYTEST_TIMEOUT_SECONDS}" -o faulthandler_exit_on_timeout=true \
+            --durations=25 --junitxml=../visual-studio-tests.xml -v 2>&1 | tee ../visual-studio-pytest.log
 
       - name: Upload validation reports
         if: ${{ always() }}
@@ -124,6 +126,7 @@ jobs:
           name: visual-studio-${{ matrix.configuration }}
           path: |
             visual-studio-tests.xml
+            visual-studio-pytest.log
             visual-studio-debug-checks/
             dist3/CMakeCache.txt
             dist3/Testing/Temporary/LastTest.log

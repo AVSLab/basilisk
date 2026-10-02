@@ -38,6 +38,7 @@ SLOW_CASES = {"constrained-dynamics", "flex-panel-comparison"}
 SHUTDOWN_GRACE_SECONDS = 30  # [s]
 OUTPUT_POLL_SECONDS = 0.2  # [s]
 CASES = {
+    "reaction-wheel-power": "simulation/power/ReactionWheelPower/_UnitTest/test_unitReactionWheelPower.py",
     "package-paths": (
         "tests/test_incremental_build_checks.py::"
         "test_package_configuration_checks_native_targets[None-None]"
