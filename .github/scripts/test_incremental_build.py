@@ -221,8 +221,9 @@ def assert_package_configuration(source_dir: Path, build_dir: Path) -> None:
     with tempfile.TemporaryDirectory(prefix="bsk-cmake-package-") as temporary_dir:
         custom_file_command = [
             cmake_executable(),
-            f"-DBSK_SOURCE_DIR={source_dir}",
-            f"-DTEST_ROOT={temporary_dir}",
+            # CMake compares these values with its forward-slash glob results.
+            f"-DBSK_SOURCE_DIR={source_dir.as_posix()}",
+            f"-DTEST_ROOT={Path(temporary_dir).as_posix()}",
             "-P",
             str(test_script),
         ]
