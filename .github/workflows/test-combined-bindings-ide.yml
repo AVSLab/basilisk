@@ -13,7 +13,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Preserve full test results while a corrected validation run waits its turn.
+  cancel-in-progress: false
 
 jobs:
   visual-studio:
