@@ -21,6 +21,7 @@
 
 #include "msisAtmosphere.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/geodeticConversion.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 
@@ -112,6 +113,27 @@ bool MsisAtmosphere::getUseApparentSolarTime() const
     return this->useApparentSolarTime;
 }
 
+/*! Selects the geomagnetic index used by NRLMSISE-00. By default the daily Ap index (input message 0) is used
+ (switch 9 set to 1). With the 3-hour history the model uses the 3-hour Ap values of messages 1 to 20, which are collected
+ into the Ap array of the model: the current 3-hour value, the values 3, 6 and 9 hours earlier, and the averages of the
+ values 12 to 33 and 36 to 57 hours earlier (switch 9 set to -1). The history follows a geomagnetic storm more closely
+ than the daily Ap, which applies from midnight.
+ @param useHistory true to use the 3-hour Ap history, false to use the daily Ap
+ */
+void MsisAtmosphere::setUseApHistory(bool useHistory)
+{
+    this->useApHistory = useHistory;
+    this->msisFlags.switches[9] = useHistory ? -1 : 1;
+}
+
+/*! Returns whether NRLMSISE-00 uses the 3-hour Ap history instead of the daily Ap.
+ @return true if the 3-hour Ap history is used
+ */
+bool MsisAtmosphere::getUseApHistory() const
+{
+    return this->useApHistory;
+}
+
 /*! Computes the equation of time, apparent minus mean solar time, with the series of Meeus, Astronomical
  Algorithms, chapter 28. The accuracy is a few seconds.
  @param year calendar year
@@ -162,7 +184,7 @@ void MsisAtmosphere::customSetEpochFromVariable()
     if (this->epochDoy > 0.0) {
         /* here the BSK default epoch year is used on Jan 1, mid-night, and the requested days of year are added and converted to a proper date-time structure */
         this->epochDateTime.tm_mday = this->epochDoy;  // assumes 1 is first day of year
-        mktime(&this->epochDateTime);
+        normalizeUtcTime(&this->epochDateTime);
     }
 
     return;
@@ -267,7 +289,7 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double cu
     struct tm localDateTime;                            // []       date/time structure
     localDateTime = this->epochDateTime;
     localDateTime.tm_sec += (int) currentTime;   // sets the current seconds
-    mktime(&localDateTime);
+    normalizeUtcTime(&localDateTime);
     this->msisInput.year = localDateTime.tm_year + 1900;
     this->msisInput.doy = localDateTime.tm_yday + 1;    // Jan 1 is the 1st day of year, not 0th
     double fracSecond = currentTime - (int) currentTime;

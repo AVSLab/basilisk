@@ -48,16 +48,7 @@ public:
     void writeOutputMessages(uint64_t CurrentClock);
     void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
     void addPlanetToModel(Message<SpicePlanetStateMsgPayload> *tmpSpMsg);
-    /*! @brief Enable or disable the extrapolation of the spacecraft state to the middle of the interval the next
-     *  spacecraft update integrates, see extrapolateScStateToStepMidpoint().
-     *  @param enable [-] True to extrapolate the spacecraft state; the default is false.
-     *  @note The extrapolation assumes that the module and the spacecraft run at the same task rate with a constant
-     *  spacecraft step.
-     */
     void setExtrapolateScStateToStepMidpoint(bool enable);
-    /*! @brief Return whether the spacecraft state extrapolation is enabled.
-     *  @return [-] True if the spacecraft state is extrapolated.
-     */
     bool getExtrapolateScStateToStepMidpoint() const;
 
 public:

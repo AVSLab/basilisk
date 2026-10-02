@@ -29,12 +29,107 @@ import csv
 import json
 from pathlib import Path
 
+import numpy as np
+
 HERE = Path(__file__).resolve().parent
+TOOLS = ("gmat", "orekit")
 
 
 def loadSpec():
     """Return the parsed ``cases.json``."""
     return json.loads((HERE / "cases.json").read_text())
+
+
+def caseEpoch(spec, case):
+    """Return the UTC epoch of a case, ``"YYYY-MM-DDTHH:MM:SS.sss"``; cases may override the global epoch.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        case (dict): the case entry.
+    """
+    return case.get("epoch_utc", spec["epoch_utc"])
+
+
+def caseDuration(spec, case):
+    """Return the propagation time of a case in seconds [s]; cases may override the global duration.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        case (dict): the case entry.
+    """
+    return case.get("duration_s", spec["duration_s"])
+
+
+def caseReferences(case):
+    """Return the tools that provide a reference ephemeris for a case, ``("gmat", "orekit")`` by default.
+
+    Args:
+        case (dict): the case entry.
+    """
+    return tuple(case.get("references", TOOLS))
+
+
+def mrp2dcm(sigma):
+    """Return the direction cosine matrix [BN] of the modified Rodrigues parameters ``sigma_BN``.
+
+    Args:
+        sigma (list): MRP set of the body frame B relative to the inertial frame N.
+    """
+    s = np.asarray(sigma, dtype=float)
+    s2 = s @ s
+    tilde = np.array([[0.0, -s[2], s[1]], [s[2], 0.0, -s[0]], [-s[1], s[0], 0.0]])
+    return np.eye(3) + (8.0 * tilde @ tilde - 4.0 * (1.0 - s2) * tilde) / (1.0 + s2) ** 2
+
+
+def boxFacets(spec):
+    """Return the six facets of the box spacecraft as ``(area [m^2], unit normal in the body frame)`` tuples.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+    """
+    lx, ly, lz = spec["box"]["size_m"]  # [m]
+    areas = {0: ly * lz, 1: lx * lz, 2: lx * ly}  # [m^2] by the axis of the facet normal
+    facets = []
+    for axis in range(3):
+        for sign in (1.0, -1.0):
+            normal = np.zeros(3)
+            normal[axis] = sign
+            facets.append((areas[axis], normal))
+    return facets
+
+
+CSSI_COLUMNS = ["DATE", "AP1", "AP2", "AP3", "AP4", "AP5", "AP6", "AP7", "AP8", "AP_AVG", "F10.7_OBS",
+                "F10.7_OBS_CENTER81"]
+
+
+def writeCelesTrakWeather(cssiPath, csvPath):
+    """Convert the observed section of a CSSI space-weather file to the CelesTrak CSV read by Basilisk.
+
+    GMAT and Orekit read the CSSI file directly. Converting the same file keeps the three tools on identical indices.
+
+    Args:
+        cssiPath (Path): CSSI ``SpaceWeather-All-v1.2.txt`` file.
+        csvPath (Path): output CSV with the columns of :data:`CSSI_COLUMNS`.
+    """
+    rows = []
+    inObserved = False
+    for line in Path(cssiPath).read_text().splitlines():
+        if line.startswith("BEGIN OBSERVED"):
+            inObserved = True
+        elif line.startswith("END OBSERVED"):
+            break
+        elif inObserved and line.strip():
+            f = line.split()
+            # year month day, BSRN, ND, 8 Kp, Kp sum, 8 Ap, Ap mean, Cp, C9, ISN, F10.7 adj, flag,
+            # F10.7 adj ctr81, adj lst81, F10.7 obs, obs ctr81, obs lst81
+            if len(f) < 33:
+                continue
+            date = f"{int(f[0]):04d}-{int(f[1]):02d}-{int(f[2]):02d}"
+            rows.append([date] + f[14:22] + [f[22], f[30], f[31]])
+    with open(csvPath, "w", newline="") as out:
+        writer = csv.writer(out, lineterminator="\n")
+        writer.writerow(CSSI_COLUMNS)
+        writer.writerows(rows)
 
 
 def loadCoefficients(spec):

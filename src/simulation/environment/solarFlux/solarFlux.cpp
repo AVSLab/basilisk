@@ -60,11 +60,20 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
     this->previousUpdateNanos = CurrentSimNanos;
 }
 
+/*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
+ update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
+ state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
+ rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ @param enable [-] true to extrapolate the spacecraft state to the middle of the step
+ */
 void SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
 
+/*! Returns whether the spacecraft state extrapolation is enabled.
+ @return [-] true if the spacecraft state is extrapolated
+ */
 bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();

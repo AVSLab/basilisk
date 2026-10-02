@@ -26,25 +26,33 @@ state in ``<output-dir>/gmat_<case>.csv`` (SI units, default ``data/``).
 Usage::
 
     python generate_gmat_reference.py /path/to/GMAT/R2026a [case ...] [--output-dir DIR]
+                                      [--weather-file SpaceWeather-All-v1.2.txt]
 
 Cases without Earth rotation use a user-defined planet with a constant spin axis along
 inertial +Z, because the orientation of GMAT's built-in Earth cannot be modified. Cases
 with Earth rotation use GMAT's built-in Earth with its default orientation model.
+
+Cases with ``"weather": "real"`` read the CSSI space-weather file given with ``--weather-file``. Cases that GMAT cannot
+natively model (a box spacecraft with attitude-dependent drag) do not list ``gmat`` in their ``references`` and are skipped.
+The wall-clock time of each GMAT run is stored in ``<output-dir>/gmat_runtime.json``, together with the time of an
+empty mission (``_startup``) that contains the start-up and the mission setup of GMAT.
 """
 
 import argparse
 import csv
+import json
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 
-from comparisonCommon import HERE, loadSpec, writeGmatCof
+from comparisonCommon import HERE, caseDuration, caseEpoch, caseReferences, loadSpec, writeGmatCof
 
 KM = 1000.0  # [m/km]
 GMAT_BODY = {"sun": "Sun", "moon": "Luna"}
 
 
-def gmatScript(spec, case, cofPath, reportPath):
+def gmatScript(spec, case, cofPath, reportPath, weatherFile=None, propagate=True):
     """Return the GMAT script text for one case.
 
     Args:
@@ -52,6 +60,8 @@ def gmatScript(spec, case, cofPath, reportPath):
         case (dict): the case entry.
         cofPath (Path): gravity file (used when the gravity degree is positive).
         reportPath (Path): GMAT report file to write.
+        weatherFile (Path): CSSI space-weather file, used by the cases with real space weather.
+        propagate (bool): if false, the mission sequence is empty. It is used to time the start-up of GMAT.
     """
     sc = spec["spacecraft"]
     r0 = [x / KM for x in case["r0_m"]]  # [km]
@@ -60,11 +70,11 @@ def gmatScript(spec, case, cofPath, reportPath):
     rotating = case["earth_rotation"]
     body = "Earth" if rotating else "Terra"
     cs = f"{body}MJ2000Eq"
-    epoch = spec["epoch_utc"]  # "YYYY-MM-DDTHH:MM:SS.sss"
+    epoch = caseEpoch(spec, case)  # "YYYY-MM-DDTHH:MM:SS.sss"
     month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
              "Dec"][int(epoch[5:7]) - 1]
     gmatEpoch = f"{epoch[8:10]} {month} {epoch[0:4]} {epoch[11:]}"
-    steps = int(round(spec["duration_s"] / spec["sample_period_s"]))
+    steps = int(round(caseDuration(spec, case) / spec["sample_period_s"]))
     thirdBodies = [GMAT_BODY[b] for b in case["third_bodies"]]
 
     lines = []
@@ -129,7 +139,16 @@ def gmatScript(spec, case, cofPath, reportPath):
         ]
     else:
         lines += ["fm.SRP = Off;"]
-    if case["drag"]:
+    if case["drag"] and case.get("weather", "constant") == "real":
+        if weatherFile is None:
+            raise SystemExit("Cases with real space weather need --weather-file (CSSI space-weather file).")
+        lines += [
+            "fm.Drag.AtmosphereModel = NRLMSISE00;",
+            "fm.Drag.HistoricWeatherSource = 'CSSISpaceWeatherFile';",
+            "fm.Drag.PredictedWeatherSource = 'CSSISpaceWeatherFile';",
+            f"fm.Drag.CSSISpaceWeatherFile = '{weatherFile}';",
+        ]
+    elif case["drag"]:
         sw = spec["space_weather"]
         lines += [
             "fm.Drag.AtmosphereModel = NRLMSISE00;",
@@ -163,12 +182,15 @@ def gmatScript(spec, case, cofPath, reportPath):
         "rf.WriteReport = true;",
         "Create Variable i;",
         "BeginMissionSequence;",
-        report,
-        f"For i = 1:{steps}",
-        "   Propagate prop(sat) {sat.ElapsedSecs = %.1f};" % spec["sample_period_s"],
-        "   " + report,
-        "EndFor;",
     ]
+    if propagate:
+        lines += [
+            report,
+            f"For i = 1:{steps}",
+            "   Propagate prop(sat) {sat.ElapsedSecs = %.1f};" % spec["sample_period_s"],
+            "   " + report,
+            "EndFor;",
+        ]
     return "\n".join(lines) + "\n"
 
 
@@ -178,6 +200,8 @@ def main():
     parser.add_argument("cases", nargs="*", help="case names to generate (default: all)")
     parser.add_argument("--output-dir", type=Path, default=HERE / "data",
                         help="folder where the reference ephemerides are written (default: data next to this script)")
+    parser.add_argument("--weather-file", type=Path,
+                        help="CSSI space-weather file, required by the cases with real space weather")
     args = parser.parse_args()
 
     spec = loadSpec()
@@ -185,19 +209,35 @@ def main():
     outDir.mkdir(parents=True, exist_ok=True)
     console = args.gmatRoot / "bin" / "GmatConsole"
 
+    runtimePath = outDir / "gmat_runtime.json"
+    runtimes = json.loads(runtimePath.read_text()) if runtimePath.exists() else {}
+    weatherFile = args.weather_file.resolve() if args.weather_file else None
+
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
+        # an empty mission measures the start-up time of GMAT, which is not propagation time
+        empty = tmp / "startup.script"
+        first = next(iter(spec["cases"].values()))
+        empty.write_text(gmatScript(spec, first, tmp / "startup.cof", tmp / "startup.txt", propagate=False))
+        startTime = time.perf_counter()
+        subprocess.run([str(console), "--run", str(empty), "--exit"], cwd=console.parent, check=True)
+        runtimes["_startup"] = time.perf_counter() - startTime  # [s]
         for name, case in spec["cases"].items():
             if args.cases and name not in args.cases:
+                continue
+            if "gmat" not in caseReferences(case):
                 continue
             cof = tmp / f"{name}.cof"
             if case["gravity"]["degree"] > 0 or case["drag"]:
                 writeGmatCof(cof, spec, max(case["gravity"]["degree"], 2), case["gravity"]["order"])
             report = tmp / f"{name}.txt"
             script = tmp / f"{name}.script"
-            script.write_text(gmatScript(spec, case, cof, report))
+            script.write_text(gmatScript(spec, case, cof, report, weatherFile))
+            startTime = time.perf_counter()
             subprocess.run([str(console), "--run", str(script), "--exit"],
                            cwd=console.parent, check=True)
+            runtimes[name] = time.perf_counter() - startTime  # [s] including the GMAT start-up
+            runtimePath.write_text(json.dumps(runtimes, indent=2, sort_keys=True) + "\n")
             rows = [[float(v) for v in line.split(",")]
                     for line in report.read_text().splitlines() if line.strip()]
             with open(outDir / f"gmat_{name}.csv", "w", newline="") as f:
@@ -211,7 +251,7 @@ def main():
                     state = [(x - v * dt) * KM for x, v in zip(row[1:4], row[4:7])]
                     writer.writerow([f"{tNominal:.1f}"] + [f"{v:.9f}" for v in state]
                                     + [f"{v * KM:.9f}" for v in row[4:7]])
-            print(f"{name}: {len(rows)} samples")
+            print(f"{name}: {len(rows)} samples, {runtimes[name]:.1f} s")
 
 
 if __name__ == "__main__":

@@ -4,3 +4,5 @@ data/gmat_*.csv
 data/orekit_*.csv
 data/spice/
 __pycache__/
+data/*_runtime.json
+data/SpaceWeather*.txt

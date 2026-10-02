@@ -72,7 +72,8 @@ by summing the SRP force contribution from all :math:`N` facets:
 Note that all values in the above expression must be specified in the spacecraft body frame. :math:`\theta`
 is defined as the incidence angle between each facet normal vector and the Sun-direction vector.
 :math:`P(|\boldsymbol{r}_{\text{sc}/ \odot\ }|)` represents the pressure acting on the spacecraft
-scaled by the spacecraft heliocentric distance. :math:`\boldsymbol{\hat{s}}` is the unit direction
+scaled by the spacecraft heliocentric distance. At 1 AU it is the solar flux ``SOLAR_FLUX_EARTH`` of ``astroConstants``
+divided by the speed of light. :math:`\boldsymbol{\hat{s}}` is the unit direction
 vector pointing radially towards the Sun from the spacecraft body frame origin point :math:`B`.
 This vector is found by subtracting the current spacecraft inertial position from the Sun position:
 
