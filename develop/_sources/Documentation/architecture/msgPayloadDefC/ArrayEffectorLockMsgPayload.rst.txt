@@ -1,0 +1,10 @@
+.. _ArrayEffectorLockMsgPayload:
+
+ArrayEffectorLockMsgPayload
+===========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ArrayEffectorLockMsgPayload.h
+   :project: msgPayloadDefC
+

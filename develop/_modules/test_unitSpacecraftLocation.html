@@ -1,0 +1,1076 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_unitSpacecraftLocation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_unitSpacecraftLocation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_unitSpacecraftLocation</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraftLocation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">RigidBodyKinematics</span> <span class="k">as</span> <span class="n">rbk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">macros</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbitalMotion</span>
+
+<span class="n">filename</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+<span class="n">bskName</span> <span class="o">=</span> <span class="s1">'Basilisk'</span>
+<span class="n">splitPath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bskName</span><span class="p">)</span>
+
+<div class="viewcode-block" id="test_spacecraftLocation">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"defaultPolarRadius"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"defaultPlanet"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"latitude"</span><span class="p">,</span> <span class="p">[</span><span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">115</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"maxRange"</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">3000.</span><span class="o">*</span><span class="mi">1000</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"cone"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocation</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">defaultPolarRadius</span><span class="p">,</span> <span class="n">defaultPlanet</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">maxRange</span><span class="p">,</span> <span class="n">cone</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Tests whether spacecraftLocation:</span>
+
+<span class="sd">    1. defaults planet polar radius to equatorial radius if the polar radius is not set</span>
+<span class="sd">    2. checks that the zero default planet states are used if the planet is not provided</span>
+<span class="sd">    3. checks that the planet oblateness is accounted for</span>
+<span class="sd">    4. checks if the optional sensor boresight axis is properly accounted for</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># each test method requires a single assert method to be called</span>
+    <span class="p">[</span><span class="n">testResults</span><span class="p">,</span> <span class="n">testMessage</span><span class="p">]</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span> <span class="n">defaultPolarRadius</span><span class="p">,</span> <span class="n">defaultPlanet</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">maxRange</span><span class="p">,</span> <span class="n">cone</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">testResults</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">testMessage</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">showplots</span><span class="p">,</span> <span class="n">defaultPolarRadius</span><span class="p">,</span> <span class="n">defaultPlanet</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">maxRange</span><span class="p">,</span> <span class="n">cone</span><span class="p">):</span>
+
+    <span class="n">testFailCount</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># zero unit test result counter</span>
+    <span class="n">testMessages</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># create empty array to store test log messages</span>
+
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">"simTask"</span>
+    <span class="n">simProcessName</span> <span class="o">=</span> <span class="s2">"simProcess"</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="n">simProcessName</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="c1">#   Initialize new atmosphere and drag model, add them to task</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scLocation"</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">defaultPolarRadius</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="k">if</span> <span class="n">maxRange</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">maximumRange</span> <span class="o">=</span> <span class="n">maxRange</span>
+    <span class="k">if</span> <span class="n">cone</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cone</span><span class="p">]</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="mf">80.</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">D2R</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># create planet message</span>
+    <span class="n">planetPos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">defaultPlanet</span><span class="p">:</span>
+        <span class="n">planet_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+        <span class="n">planet_message</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">euler3</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">planetPos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbitalMotion</span><span class="o">.</span><span class="n">AU</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">planet_message</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">planetPos</span>
+        <span class="n">planetMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">planet_message</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">planetInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+
+    <span class="c1"># create primary spacecraft state message</span>
+    <span class="n">alt</span> <span class="o">=</span> <span class="mf">1000.</span> <span class="o">*</span> <span class="mi">1000</span>      <span class="c1"># meters</span>
+    <span class="n">scMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">+</span> <span class="n">alt</span>
+    <span class="n">scMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">planetPos</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scMsgData</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">scMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">scMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scMsg</span><span class="p">)</span>
+
+    <span class="n">sc1MsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+    <span class="n">sc1MsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">planetPos</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)])</span>
+    <span class="n">sc1Msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sc1MsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">sc1Msg</span><span class="p">)</span>
+
+    <span class="c1"># Run the sim</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+
+    <span class="c1"># check polar planet radius default behavior</span>
+    <span class="k">if</span> <span class="n">defaultPolarRadius</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">" Module failed default polar radius check."</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="n">accessMsg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">latitude</span> <span class="o">==</span> <span class="mi">55</span> <span class="ow">or</span> <span class="p">(</span><span class="n">latitude</span> <span class="o">==</span> <span class="mi">65</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">defaultPolarRadius</span><span class="p">):</span>
+        <span class="n">trueAccess</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">maxRange</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">slantRange</span> <span class="o">&gt;</span> <span class="n">maxRange</span><span class="p">:</span>
+                <span class="n">trueAccess</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">cone</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">trueAccess</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">!=</span> <span class="n">trueAccess</span><span class="p">:</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">" Module failed access test."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">slantRange</span> <span class="o">&lt;=</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">" Module failed positive slant range test."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">latitude</span> <span class="o">==</span> <span class="mi">65</span> <span class="ow">and</span> <span class="n">defaultPolarRadius</span><span class="p">)</span> <span class="ow">or</span> <span class="n">latitude</span> <span class="o">==</span> <span class="mi">115</span><span class="p">:</span>
+        <span class="c1"># should not have access</span>
+        <span class="k">if</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">" Module failed negative have access test."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">slantRange</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="n">testFailCount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">testMessages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"FAILED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">+</span> <span class="s2">" Module failed negative slant range test."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">testFailCount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"PASSED: "</span> <span class="o">+</span> <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">testFailCount</span><span class="p">,</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">testMessages</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="test_spacecraftLocationColinearAccess">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationColinearAccess">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationColinearAccess</span><span class="p">(</span><span class="n">show_plots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Regression test for issues #644 / #946.</span>
+
+<span class="sd">    Two spacecraft that are radially aligned (on the same ray from the planet</span>
+<span class="sd">    center) at different altitudes have an unobstructed line of sight, so</span>
+<span class="sd">    ``hasAccess`` must be 1.</span>
+
+<span class="sd">    Before the #946 fix (commit ``d432682135``), ``rClose`` -- the closest point</span>
+<span class="sd">    on the inter-spacecraft segment to the planet center -- was computed from the</span>
+<span class="sd">    *unclamped* line parameter. For a radial alignment that parameter is negative,</span>
+<span class="sd">    placing the "closest point" at the planet center (``rClose`` ~ 0), so the</span>
+<span class="sd">    ``rClose.norm() &gt; rEquator`` gate failed and access was wrongly denied.</span>
+
+<span class="sd">    This geometry keeps every other access pathway neutral -- no planet message</span>
+<span class="sd">    (identity orientation at the origin), a spherical planet so ``zScale == 1``,</span>
+<span class="sd">    no range cap, no boresight cone, and no sun message -- which isolates the</span>
+<span class="sd">    ``rClose`` computation. The existing :func:`test_spacecraftLocation` cases</span>
+<span class="sd">    cannot catch this regression: their equal-radius geometry holds the line</span>
+<span class="sd">    parameter at ~0.5, inside ``[0, 1]``, where the clamp is a no-op.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"simProcess"</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.</span><span class="p">)))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scLocationColinear"</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span>  <span class="c1"># [m]</span>
+    <span class="c1"># rPolar left unset -&gt; spherical planet (zScale = 1); no range cap, cone, or sun.</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="c1"># primary spacecraft on the +x axis, 1000 km altitude</span>
+    <span class="n">rPrimary</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">+</span> <span class="mf">1000.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">primaryMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primaryMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rPrimary</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primaryMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+
+    <span class="c1"># other spacecraft farther out on the SAME ray -&gt; unobstructed line of sight</span>
+    <span class="n">rOther</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">REQ_EARTH</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">+</span> <span class="mf">2000.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">otherMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">otherMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">[</span><span class="n">rOther</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">otherMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+
+    <span class="n">accessMsg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">"radially-aligned spacecraft must have line-of-sight access (issues #644/#946); "</span>
+        <span class="s2">"hasAccess=0 indicates the rClose clamp-ordering regression"</span>
+    <span class="p">)</span>
+    <span class="c1"># for a pure radial separation the slant range is just the altitude difference</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">slantRange</span><span class="p">,</span> <span class="n">rOther</span> <span class="o">-</span> <span class="n">rPrimary</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraftLocationGlare">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationGlare">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"caseName, sunPolarAngle, sunAzimuth, viewPolarAngle, viewAzimuth, expectedGlareFactor, "</span>
+    <span class="s2">"glareThreshold, expectedHasGlare, useGlareConstraint, expectedAccess"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="s2">"normal_incidence"</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"exact_oblique"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"near_miss"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">18</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">9</span><span class="p">),</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"out_of_plane"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"back_facing_sun"</span><span class="p">,</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"back_facing_sun_zero_threshold"</span><span class="p">,</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"back_facing_view_zero_threshold"</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"threshold_boundary"</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.95</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationGlare</span><span class="p">(</span>
+        <span class="n">caseName</span><span class="p">,</span>
+        <span class="n">sunPolarAngle</span><span class="p">,</span>
+        <span class="n">sunAzimuth</span><span class="p">,</span>
+        <span class="n">viewPolarAngle</span><span class="p">,</span>
+        <span class="n">viewAzimuth</span><span class="p">,</span>
+        <span class="n">expectedGlareFactor</span><span class="p">,</span>
+        <span class="n">glareThreshold</span><span class="p">,</span>
+        <span class="n">expectedHasGlare</span><span class="p">,</span>
+        <span class="n">useGlareConstraint</span><span class="p">,</span>
+        <span class="n">expectedAccess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify specular-glare geometry and its optional access constraint.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    The test places an offset body-fixed location far from the inertial origin,</span>
+<span class="sd">    then supplies point-to-Sun and point-to-viewer directions with known mirror</span>
+<span class="sd">    geometry. This verifies the glare factor, threshold flag, access behavior,</span>
+<span class="sd">    and the use of the body-fixed location as the origin of both directions.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    The cases cover normal and oblique exact reflections, an in-plane near</span>
+<span class="sd">    miss, an out-of-plane view, Sun and observer directions behind the surface,</span>
+<span class="sd">    the exact threshold boundary, and zero-threshold back-facing geometry.</span>
+<span class="sd">    ``useGlareConstraint`` also verifies that glare rejection is opt-in.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    Exact reflections produce a glare factor of one. Off-specular and</span>
+<span class="sd">    back-facing cases produce the analytical factor supplied by the test and</span>
+<span class="sd">    do not meet the configured glare threshold. Back-facing geometry is never</span>
+<span class="sd">    classified as glare, including when the threshold is zero.</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">direction_from_normal</span><span class="p">(</span><span class="n">polarAngle</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return a unit direction measured from the positive x-axis.</span>
+
+<span class="sd">        :param polarAngle: Polar angle from the surface normal in radians.</span>
+<span class="sd">        :param azimuth: Azimuth about the surface normal in radians.</span>
+<span class="sd">        :return: Unit direction vector.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">polarAngle</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">polarAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azimuth</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">polarAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azimuth</span><span class="p">),</span>
+        <span class="p">])</span>
+
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"simProcess"</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scLocationGlare_"</span> <span class="o">+</span> <span class="n">caseName</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">locationOffset_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">r_LB_B</span> <span class="o">=</span> <span class="n">locationOffset_B</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">glareThreshold</span> <span class="o">=</span> <span class="n">glareThreshold</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">useGlareConstraint</span> <span class="o">=</span> <span class="n">useGlareConstraint</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="n">primaryPosition_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0e9</span><span class="p">,</span> <span class="mf">3.0e9</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">primaryMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primaryMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">primaryPosition_N</span>
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primaryMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+
+    <span class="n">locationPosition_N</span> <span class="o">=</span> <span class="n">primaryPosition_N</span> <span class="o">+</span> <span class="n">locationOffset_B</span>  <span class="c1"># [m]</span>
+    <span class="n">sunDirection_N</span> <span class="o">=</span> <span class="n">direction_from_normal</span><span class="p">(</span><span class="n">sunPolarAngle</span><span class="p">,</span> <span class="n">sunAzimuth</span><span class="p">)</span>
+    <span class="n">sunDistance</span> <span class="o">=</span> <span class="mf">1.0e6</span>  <span class="c1"># [m]</span>
+    <span class="n">sunMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sunMsgData</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="n">sunDistance</span> <span class="o">*</span> <span class="n">sunDirection_N</span>
+    <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="n">viewDirection_N</span> <span class="o">=</span> <span class="n">direction_from_normal</span><span class="p">(</span><span class="n">viewPolarAngle</span><span class="p">,</span> <span class="n">viewAzimuth</span><span class="p">)</span>
+    <span class="n">viewingDistance</span> <span class="o">=</span> <span class="mf">1.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">otherMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">otherMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="n">viewingDistance</span> <span class="o">*</span> <span class="n">viewDirection_N</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">otherMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="n">accessMsg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">sunIncidenceAngle</span><span class="p">,</span> <span class="n">sunPolarAngle</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">scViewAngle</span><span class="p">,</span> <span class="n">viewPolarAngle</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">glareFactor</span><span class="p">,</span> <span class="n">expectedGlareFactor</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasGlare</span> <span class="o">==</span> <span class="n">expectedHasGlare</span>
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="n">expectedAccess</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraft_location_glare_roundoff">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraft_location_glare_roundoff">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"incidence_angle"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">43.0</span><span class="p">,</span> <span class="mf">65.0</span><span class="p">,</span> <span class="mf">89.0</span><span class="p">]),</span>  <span class="c1"># [rad]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"sigma_BN"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]],</span>  <span class="c1"># [-]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"use_glare_constraint"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"view_offset, glare_threshold, expected_glare"</span><span class="p">,</span>
+    <span class="p">[</span>  <span class="c1"># Viewing offset [rad], glare threshold [-], expected glare flag.</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"exact_reflection"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"near_exact_reflection"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mf">0.95</span><span class="p">),</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"threshold_boundary"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0e-6</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"below_threshold"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_location_glare_roundoff</span><span class="p">(</span>
+        <span class="n">incidence_angle</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">,</span> <span class="n">use_glare_constraint</span><span class="p">,</span>
+        <span class="n">view_offset</span><span class="p">,</span> <span class="n">glare_threshold</span><span class="p">,</span> <span class="n">expected_glare</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify glare thresholds at and just outside exact reflection geometry.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    Construct the Sun direction and its ideal mirror reflection in the body</span>
+<span class="sd">    frame, then rotate both into the inertial frame about an offset surface</span>
+<span class="sd">    point. Shift the observer by a known angle from the ideal reflection.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    Incidence angles span normal through nearly grazing illumination, with</span>
+<span class="sd">    identity and nonzero spacecraft attitudes. The cases exercise exact</span>
+<span class="sd">    reflection at threshold one, the default threshold boundary, and views</span>
+<span class="sd">    one microradian beyond each boundary. Glare rejection is enabled and</span>
+<span class="sd">    disabled independently.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    The glare factor equals the cosine of the reflected-ray viewing offset.</span>
+<span class="sd">    Roundoff must not prevent boundary views from being classified as glare.</span>
+<span class="sd">    Nearby views outside the boundary retain access, and detected glare only</span>
+<span class="sd">    prevents access when the constraint is enabled.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">location_offset_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">r_LB_B</span> <span class="o">=</span> <span class="n">location_offset_B</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">glareThreshold</span> <span class="o">=</span> <span class="n">glare_threshold</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">useGlareConstraint</span> <span class="o">=</span> <span class="n">use_glare_constraint</span>
+
+    <span class="n">primary_position_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">primary_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primary_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">primary_position_N</span>
+    <span class="n">primary_payload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">sigma_BN</span>
+    <span class="n">primary_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primary_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primary_msg</span><span class="p">)</span>
+
+    <span class="n">dcm_NB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">location_position_N</span> <span class="o">=</span> <span class="n">primary_position_N</span> <span class="o">+</span> <span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">location_offset_B</span>
+    <span class="n">sun_direction_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">sun_distance</span> <span class="o">=</span> <span class="mf">1.0e6</span>  <span class="c1"># [m]</span>
+    <span class="n">sun_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sun_payload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">location_position_N</span> <span class="o">+</span> <span class="n">sun_distance</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">sun_direction_B</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">sun_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sun_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sun_msg</span><span class="p">)</span>
+
+    <span class="n">view_direction_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span> <span class="o">-</span> <span class="n">view_offset</span><span class="p">),</span>
+        <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incidence_angle</span> <span class="o">-</span> <span class="n">view_offset</span><span class="p">),</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">viewing_distance</span> <span class="o">=</span> <span class="mf">1.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">other_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">other_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">location_position_N</span> <span class="o">+</span> <span class="n">viewing_distance</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">view_direction_B</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">other_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">other_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">other_msg</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">access_msg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">access_msg</span><span class="o">.</span><span class="n">glareFactor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">view_offset</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2.0e-14</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">access_msg</span><span class="o">.</span><span class="n">hasGlare</span> <span class="o">==</span> <span class="n">expected_glare</span>
+    <span class="n">expected_access</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">use_glare_constraint</span> <span class="ow">and</span> <span class="n">expected_glare</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">access_msg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="n">expected_access</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraft_location_glare_multiple_observers">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraft_location_glare_multiple_observers">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"use_glare_constraint"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"sigma_BN"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]])</span>  <span class="c1"># [-]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraft_location_glare_multiple_observers</span><span class="p">(</span><span class="n">use_glare_constraint</span><span class="p">,</span> <span class="n">sigma_BN</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check independent glare outputs as two observers change position.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    Connect two observers to an offset surface point. Start one at the ideal</span>
+<span class="sd">    reflection and the other outside the glare cone, then swap their positions.</span>
+<span class="sd">    Finally, move both outside the cone to check that each glare flag clears.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    Run with identity and nonzero primary attitudes and with glare rejection</span>
+<span class="sd">    enabled and disabled. The Sun and observer directions are defined in the</span>
+<span class="sd">    body frame and transformed into the inertial frame.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    The observer on the reflected ray has unit glare factor. The other is</span>
+<span class="sd">    twenty degrees away and has a glare factor below the default threshold.</span>
+<span class="sd">    Each output follows its own observer at every update. Only the glared</span>
+<span class="sd">    observer loses access when the constraint is enabled; previous glare flags</span>
+<span class="sd">    do not persist once either observer leaves the reflected ray.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">glareThreshold</span> <span class="o">=</span> <span class="mf">0.95</span>  <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">useGlareConstraint</span> <span class="o">=</span> <span class="n">use_glare_constraint</span>
+    <span class="n">location_offset_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">r_LB_B</span> <span class="o">=</span> <span class="n">location_offset_B</span>
+
+    <span class="n">primary_position_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">primary_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primary_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">primary_position_N</span>
+    <span class="n">primary_payload</span><span class="o">.</span><span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">sigma_BN</span>
+    <span class="n">primary_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primary_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primary_msg</span><span class="p">)</span>
+
+    <span class="n">dcm_NB</span> <span class="o">=</span> <span class="n">rbk</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigma_BN</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">location_position_N</span> <span class="o">=</span> <span class="n">primary_position_N</span> <span class="o">+</span> <span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">location_offset_B</span>
+    <span class="n">incidence_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">view_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>  <span class="c1"># [rad]</span>
+    <span class="n">sun_direction_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">sun_distance</span> <span class="o">=</span> <span class="mf">1.0e6</span>  <span class="c1"># [m]</span>
+    <span class="n">sun_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">sun_payload</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">location_position_N</span> <span class="o">+</span> <span class="n">sun_distance</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">sun_direction_B</span><span class="p">)</span>
+    <span class="n">sun_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sun_payload</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sun_msg</span><span class="p">)</span>
+
+    <span class="n">view_directions_B</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incidence_angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incidence_angle</span> <span class="o">+</span> <span class="n">view_offset</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incidence_angle</span> <span class="o">+</span> <span class="n">view_offset</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="n">viewing_distance</span> <span class="o">=</span> <span class="mf">1.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">observer_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">view_direction_B</span> <span class="ow">in</span> <span class="n">view_directions_B</span><span class="p">:</span>
+        <span class="n">observer_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+        <span class="n">observer_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">location_position_N</span> <span class="o">+</span> <span class="n">viewing_distance</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">view_direction_B</span><span class="p">)</span>
+        <span class="n">observer_msg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">observer_payload</span><span class="p">)</span>
+        <span class="n">observer_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observer_msg</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">observer_msg</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">direction_indices</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))):</span>
+        <span class="n">current_time</span> <span class="o">=</span> <span class="n">step</span> <span class="o">*</span> <span class="n">time_step</span>
+        <span class="k">for</span> <span class="n">observer_msg</span><span class="p">,</span> <span class="n">direction_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">observer_msgs</span><span class="p">,</span> <span class="n">direction_indices</span><span class="p">):</span>
+            <span class="n">observer_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+            <span class="n">observer_payload</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">location_position_N</span> <span class="o">+</span> <span class="n">viewing_distance</span> <span class="o">*</span> <span class="p">(</span><span class="n">dcm_NB</span> <span class="o">@</span> <span class="n">view_directions_B</span><span class="p">[</span><span class="n">direction_index</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">observer_msg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">observer_payload</span><span class="p">,</span> <span class="n">current_time</span><span class="p">)</span>
+
+        <span class="n">module</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">output_msg</span><span class="p">,</span> <span class="n">direction_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">,</span> <span class="n">direction_indices</span><span class="p">):</span>
+            <span class="n">access_msg</span> <span class="o">=</span> <span class="n">output_msg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">expected_glare</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">direction_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">expected_factor</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">expected_glare</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">view_offset</span><span class="p">)</span>  <span class="c1"># [-]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">access_msg</span><span class="o">.</span><span class="n">glareFactor</span><span class="p">,</span> <span class="n">expected_factor</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2.0e-14</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">access_msg</span><span class="o">.</span><span class="n">hasGlare</span> <span class="o">==</span> <span class="n">expected_glare</span>
+            <span class="k">assert</span> <span class="n">access_msg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">use_glare_constraint</span> <span class="ow">and</span> <span class="n">expected_glare</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraftLocationViewAngleRequirement">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequirement">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"viewAngle, viewAngleLimit, connectSun, expectedAccess"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># [rad], [rad], [-]</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># [rad], [rad], [-]</span>
+        <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># [rad], [rad], [-]</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># [rad], [rad], [-]</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># [rad], [rad], [-]</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationViewAngleRequirement</span><span class="p">(</span>
+        <span class="n">viewAngle</span><span class="p">,</span> <span class="n">viewAngleLimit</span><span class="p">,</span> <span class="n">connectSun</span><span class="p">,</span> <span class="n">expectedAccess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify the optional surface-normal-to-observer access requirement.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    Place the tracked spacecraft at a known angle from the body-fixed normal,</span>
+<span class="sd">    with and without the optional Sun message.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    The cases cover accepted and rejected views, the exact limit, and the</span>
+<span class="sd">    negative default that disables the requirement.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    ``scViewAngle`` reports the viewing geometry even without a Sun message.</span>
+<span class="sd">    Access is denied only when the enabled viewing-angle limit is exceeded.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"simProcess"</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)))</span>  <span class="c1"># [s]</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scLocationViewAngle"</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta_view</span> <span class="o">=</span> <span class="n">viewAngleLimit</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="n">locationPosition_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">primaryMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primaryMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">locationPosition_N</span>
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primaryMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+
+    <span class="n">viewingDistance</span> <span class="o">=</span> <span class="mf">1.0e3</span>  <span class="c1"># [m]</span>
+    <span class="n">viewDirection_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">viewAngle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">viewAngle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [-]</span>
+    <span class="n">otherMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">otherMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="n">viewingDistance</span> <span class="o">*</span> <span class="n">viewDirection_N</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">otherMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">connectSun</span><span class="p">:</span>
+        <span class="n">sunMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+        <span class="n">sunMsgData</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+        <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsgData</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="n">accessMsg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">scViewAngle</span><span class="p">,</span> <span class="n">viewAngle</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="n">expectedAccess</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">connectSun</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasIllumination</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">glareFactor</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasGlare</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraftLocationViewAngleRequiresNormal">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationViewAngleRequiresNormal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationViewAngleRequiresNormal</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Verify that an enabled viewing-angle limit requires a surface normal.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    Initialize a module with a viewing-angle limit but no ``aHat_B``.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    A positive limit enables the otherwise optional viewing-angle check.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    ``Reset()`` emits ``BSK_ERROR`` and initialization stops.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta_view</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span>  <span class="c1"># [rad]</span>
+
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraftLocationIlluminationRequirements">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationIlluminationRequirements">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"caseName, sunPolarAngle, solarAngleLimit, eclipseFactor, minimumIllumination, "</span>
+    <span class="s2">"connectSun, connectEclipse, expectedIllumination, expectedAccess"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="s2">"inside_solar_angle"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"outside_solar_angle"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"eclipse_above_threshold"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"eclipse_below_threshold"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.25</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"eclipse_optional"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">"sun_optional"</span><span class="p">,</span>
+            <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [rad]</span>
+            <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># [-]</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationIlluminationRequirements</span><span class="p">(</span>
+        <span class="n">caseName</span><span class="p">,</span>
+        <span class="n">sunPolarAngle</span><span class="p">,</span>
+        <span class="n">solarAngleLimit</span><span class="p">,</span>
+        <span class="n">eclipseFactor</span><span class="p">,</span>
+        <span class="n">minimumIllumination</span><span class="p">,</span>
+        <span class="n">connectSun</span><span class="p">,</span>
+        <span class="n">connectEclipse</span><span class="p">,</span>
+        <span class="n">expectedIllumination</span><span class="p">,</span>
+        <span class="n">expectedAccess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify the optional illumination-angle and eclipse requirements.</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    The test provides a surface point, its normal, a tracked imaging</span>
+<span class="sd">    spacecraft, and optional Sun and eclipse messages. It evaluates the two</span>
+<span class="sd">    illumination gates independently and together.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    The cases place the Sun inside or outside ``theta_solar``, put the eclipse</span>
+<span class="sd">    illumination factor above or below ``min_illumination_factor``, omit the</span>
+<span class="sd">    optional eclipse input, and omit the optional Sun input.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    An illuminated point retains access only when every configured and</span>
+<span class="sd">    connected illumination requirement is satisfied. Without a Sun message,</span>
+<span class="sd">    illumination and glare remain unreported while geometric access is</span>
+<span class="sd">    unchanged.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"simProcess"</span><span class="p">)</span>
+    <span class="n">simulationTimeStep</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">simulationTimeStep</span><span class="p">))</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"scLocationIllumination_"</span> <span class="o">+</span> <span class="n">caseName</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rPolar</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">aHat_B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># [rad]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">theta_solar</span> <span class="o">=</span> <span class="n">solarAngleLimit</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">min_illumination_factor</span> <span class="o">=</span> <span class="n">minimumIllumination</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"simTask"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+    <span class="n">locationPosition_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">primaryMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">primaryMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">locationPosition_N</span>
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">primaryMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+
+    <span class="n">otherMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">()</span>
+    <span class="n">otherMsgData</span><span class="o">.</span><span class="n">r_BN_N</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0e3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m]</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">otherMsgData</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">connectSun</span><span class="p">:</span>
+        <span class="n">sunDirection_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">sunPolarAngle</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">sunPolarAngle</span><span class="p">),</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="n">sunMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+        <span class="n">sunMsgData</span><span class="o">.</span><span class="n">PositionVector</span> <span class="o">=</span> <span class="n">locationPosition_N</span> <span class="o">+</span> <span class="mf">1.0e6</span> <span class="o">*</span> <span class="n">sunDirection_N</span>  <span class="c1"># [m]</span>
+        <span class="n">sunMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sunMsgData</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">sunInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sunMsg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">connectEclipse</span><span class="p">:</span>
+        <span class="n">eclipseMsgData</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsgPayload</span><span class="p">()</span>
+        <span class="n">eclipseMsgData</span><span class="o">.</span><span class="n">illuminationFactor</span> <span class="o">=</span> <span class="n">eclipseFactor</span>
+        <span class="n">eclipseMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EclipseMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">eclipseMsgData</span><span class="p">)</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">eclipseInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">eclipseMsg</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">TotalSim</span><span class="o">.</span><span class="n">SingleStepProcesses</span><span class="p">()</span>
+    <span class="n">accessMsg</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">accessOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasIllumination</span> <span class="o">==</span> <span class="n">expectedIllumination</span>
+    <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasAccess</span> <span class="o">==</span> <span class="n">expectedAccess</span>
+    <span class="k">if</span> <span class="n">connectSun</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">accessMsg</span><span class="o">.</span><span class="n">sunIncidenceAngle</span><span class="p">,</span> <span class="n">sunPolarAngle</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">hasGlare</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">glareFactor</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="k">assert</span> <span class="n">accessMsg</span><span class="o">.</span><span class="n">scViewAngle</span> <span class="o">==</span> <span class="mf">0.0</span></div>
+
+
+
+<div class="viewcode-block" id="test_spacecraftLocationGlareThresholdValidation">
+<a class="viewcode-back" href="../Documentation/simulation/environment/spacecraftLocation/_UnitTest/test_unitSpacecraftLocation.html#test_unitSpacecraftLocation.test_spacecraftLocationGlareThresholdValidation">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"glareThreshold"</span><span class="p">,</span>
+    <span class="p">[</span>  <span class="c1"># [-]</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"below_zero"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"above_one"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"nan"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"positive_infinity"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"negative_infinity"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftLocationGlareThresholdValidation</span><span class="p">(</span><span class="n">glareThreshold</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify that the geometric glare threshold is finite and in [0, 1].</span>
+
+<span class="sd">    Validation Test Description</span>
+<span class="sd">    ---------------------------</span>
+<span class="sd">    The test initializes an otherwise valid module with a glare threshold</span>
+<span class="sd">    outside the supported dimensionless alignment range or with a non-finite</span>
+<span class="sd">    value.</span>
+
+<span class="sd">    Test Parameter Discussion</span>
+<span class="sd">    -------------------------</span>
+<span class="sd">    Values immediately below zero and above one exercise both invalid bounds.</span>
+<span class="sd">    NaN and both infinities check that non-finite thresholds are rejected.</span>
+
+<span class="sd">    Expected Results</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    ``Reset()`` emits ``BSK_ERROR``, which raises ``BasiliskError`` and stops</span>
+<span class="sd">    initialization.</span>
+<span class="sd">    """</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">spacecraftLocation</span><span class="o">.</span><span class="n">SpacecraftLocation</span><span class="p">()</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">rEquator</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">glareThreshold</span> <span class="o">=</span> <span class="n">glareThreshold</span>
+
+    <span class="n">primaryMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+    <span class="n">otherMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgPayload</span><span class="p">())</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">primaryScStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">primaryMsg</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">otherMsg</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"glareThreshold"</span><span class="p">):</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">False</span>
+        <span class="p">,</span> <span class="kc">False</span>      <span class="c1"># defaultPolarRadius</span>
+        <span class="p">,</span> <span class="kc">True</span>     <span class="c1"># defaultPlanet</span>
+        <span class="p">,</span> <span class="mi">55</span>        <span class="c1"># true latitude angle (deg)</span>
+        <span class="p">,</span> <span class="o">-</span><span class="mf">7000.</span><span class="o">*</span><span class="mi">1000</span> <span class="c1"># max range</span>
+        <span class="p">,</span> <span class="mi">1</span>            <span class="c1"># cone case, 0-&gt; no cone, 1 -&gt; [0, 1, 0], -1 -&gt; [0, -1, 0]</span>
+        <span class="p">)</span>
+    <span class="n">test_spacecraftLocationColinearAccess</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

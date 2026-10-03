@@ -1,0 +1,22 @@
+.. _Folder_deviceInterface:
+
+deviceInterface
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   arrayMotorTorqueToSingleActuators <arrayMotorTorqueToSingleActuators/arrayMotorTorqueToSingleActuators>
+   encoder <encoder/encoder>
+   facetedSpacecraftModel <facetedSpacecraftModel/facetedSpacecraftModel>
+   facetedSpacecraftProjectedArea <facetedSpacecraftProjectedArea/facetedSpacecraftProjectedArea>
+   hingedBodyLinearProfiler <hingedBodyLinearProfiler/hingedBodyLinearProfiler>
+   jointArrayRefProfiler <jointArrayRefProfiler/jointArrayRefProfiler>
+   motorVoltageInterface <motorVoltageInterface/motorVoltageInterface>
+   prescribedLinearTranslation <prescribedLinearTranslation/prescribedLinearTranslation>
+   prescribedRotation1DOF <prescribedRotation1DOF/prescribedRotation1DOF>
+   saturationSingleActuator <saturationSingleActuator/saturationSingleActuator>
+   scalarJointStatesToRWSpeed <scalarJointStatesToRWSpeed/scalarJointStatesToRWSpeed>
+   stepperMotor <stepperMotor/stepperMotor>
+   tempMeasurement <tempMeasurement/tempMeasurement>

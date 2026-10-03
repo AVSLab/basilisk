@@ -1,0 +1,578 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module RST Documentation &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module Unit Test File" href="makingModules-4.html" />
+    <link rel="prev" title="Making Numba Modules" href="numbaModules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rustModules.html"><span class="beta-label">[BETA]</span> Making Rust Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbaModules.html">Making Numba Modules</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writingEffectors.html">Writing Dynamic and State Effectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advancedTopics.html">Advanced Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+      <li class="breadcrumb-item active">Module RST Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Learn/makingModules/makingModules-3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rst-documentation">
+<span id="makingmodules-3"></span><h1>Module RST Documentation<a class="headerlink" href="#module-rst-documentation" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#creating-the-documentation-page">Creating the Documentation Page</a>
+      </li>
+      
+      <li>
+        <a href="#message-connections">Message Connections</a>
+      </li>
+      
+      <li>
+        <a href="#equations">Equations</a>
+      </li>
+      
+      <li>
+        <a href="#citations">Citations</a>
+      </li>
+      
+      <li>
+        <a href="#images-and-figures">Images and Figures</a>
+      </li>
+      
+      <li>
+        <a href="#tables">Tables</a>
+      </li>
+      
+      <li>
+        <a href="#admonitions">Admonitions</a>
+      </li>
+      
+      <li>
+        <a href="#code-blocks">Code Blocks</a>
+      </li>
+      
+      <li>
+        <a href="#testing-the-documentation">Testing the Documentation</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<section id="creating-the-documentation-page">
+<h2>Creating the Documentation Page<a class="headerlink" href="#creating-the-documentation-page" title="Link to this heading"></a></h2>
+<p>Each module has a plain text reStructuredText (RST) file named <code class="docutils literal notranslate"><span class="pre">&lt;moduleName&gt;.rst</span></code> in its
+source folder, alongside its implementation and interface files. The documentation build
+places this content before the generated API descriptions. The <a class="reference internal" href="../../Documentation/moduleTemplates/cModuleTemplate/cModuleTemplate.html#cmoduletemplate"><span class="std std-ref">C Module: cModuleTemplate</span></a> and
+<a class="reference internal" href="../../Documentation/moduleTemplates/cppModuleTemplate/cppModuleTemplate.html#cppmoduletemplate"><span class="std std-ref">C++ Module: cppModuleTemplate</span></a> pages are complete examples: they describe the implemented calculation,
+message interfaces, reset behavior, and a runnable Python simulation.</p>
+<p>Use the following sections when documenting your own module:</p>
+<ul class="simple">
+<li><p><strong>Executive Summary:</strong> State what the module does and its intended use.</p></li>
+<li><p><strong>Module Assumptions and Limitations:</strong> Explain model assumptions, input requirements,
+and conditions under which the results are meaningful.</p></li>
+<li><p><strong>Message Connection Descriptions:</strong> Describe every input and output, including units,
+optional inputs, and the behavior when an optional input is disconnected.</p></li>
+<li><p><strong>Detailed Module Description:</strong> Explain the algorithm and mathematics when needed.</p></li>
+<li><p><strong>User Guide:</strong> Show configuration, message subscriptions, scheduling, and expected
+results. Explain which values are configuration, which are runtime state, and what
+initialization and reset do to them.</p></li>
+</ul>
+<p>Replace template descriptions with the behavior of your implementation. In the sample
+modules, for example, the output is the input vector with an increasing counter added to
+its first component. Their user guides demonstrate that behavior with executable assertions.
+When using <a class="reference internal" href="../../Documentation/utilities/makeDraftModule.html#makedraftmodule"><span class="std std-ref">makeDraftModule</span></a>, complete the generated section prompts as you implement
+the algorithm.</p>
+<p>The examples below show both RST source and its rendered result. Use unique labels when
+copying examples into a module so that equations and cross-references remain unambiguous.
+For folder documentation and integration with the generated API pages, see <a class="reference internal" href="../../Support/Developer/addSphinxDoc.html#addsphinxdoc"><span class="std std-ref">Using Sphinx to Document Basilisk Modules and Folders</span></a>.</p>
+</section>
+<section id="message-connections">
+<h2>Message Connections<a class="headerlink" href="#message-connections" title="Link to this heading"></a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">bsk-module-io</span></code> to generate the diagram and message table together. For example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">bsk-module-io</span><span class="p">::</span> cModuleTemplate
+    <span class="nc">:caption:</span> Module I/O Messages
+    <span class="nc">:module-type:</span> C
+
+    input dataInMsg CModuleTemplateMsgPayload
+        Optional dimensionless input vector; uses zeros when disconnected.
+
+    output dataOutMsg CModuleTemplateMsgPayload
+        Input vector with the update counter added to its first component.
+</pre></div>
+</div>
+<p>This renders as:</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../_images/graphviz-17fe9731eb5c9dd685a701b27e8a51a7407e4bad.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">cModuleTemplate module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dataInMsg</p></td>
+<td><p><a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>Optional dimensionless input vector; uses zeros when disconnected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>Input vector with the update counter added to its first component.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The message names must match the module members, and payload names link to their definitions.
+The documentation build infers the language on module pages; <code class="docutils literal notranslate"><span class="pre">:module-type:</span></code> supplies it
+explicitly here because this is a tutorial page. See <a class="reference internal" href="../../Support/Developer/addSphinxDoc.html#addsphinxdoc"><span class="std std-ref">Using Sphinx to Document Basilisk Modules and Folders</span></a> for the directive syntax.</p>
+</section>
+<section id="equations">
+<h2>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h2>
+<p>Use LaTeX to describe the module mathematics. For the template counter, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:math:`c_k = c_{k-1} + 1`
+</pre></div>
+</div>
+<p>produces the inline equation <span class="math notranslate nohighlight">\(c_k = c_{k-1} + 1\)</span>.  In contrast, this code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+    <span class="n">c_k</span> <span class="o">=</span> <span class="n">c_</span><span class="p">{</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>or this compact version for a single line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span> <span class="n">c_k</span> <span class="o">=</span> <span class="n">c_</span><span class="p">{</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>creates this block of math.</p>
+<div class="math notranslate nohighlight">
+\[c_k = c_{k-1} + 1\]</div>
+<p>To create a numbered equation you need to add a label:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">math</span><span class="p">::</span>
+    <span class="p">:</span><span class="n">label</span><span class="p">:</span> <span class="n">eq</span><span class="o">-</span><span class="n">module</span><span class="o">-</span><span class="n">rst</span><span class="o">-</span><span class="n">counter</span>
+
+    <span class="n">c_k</span> <span class="o">=</span> <span class="n">c_</span><span class="p">{</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>which creates this</p>
+<div class="math notranslate nohighlight" id="equation-eq-module-rst-counter">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-module-rst-counter" title="Link to this equation"></a></span>\[c_k = c_{k-1} + 1\]</div>
+<p>This label can be referenced using <code class="docutils literal notranslate"><span class="pre">:eq:`eq-module-rst-counter`</span></code> to cite Eq. <a class="reference internal" href="#equation-eq-module-rst-counter">(1)</a>.
+Note that these label names must be unique across all of the Basilisk RST documentation.  It is encouraged to use
+a module-unique naming scheme.</p>
+<p>For bold math with the documentation configuration, use <code class="docutils literal notranslate"><span class="pre">{\bf</span> <span class="pre">u}</span></code> (regular letters) or
+<code class="docutils literal notranslate"><span class="pre">\pmb</span> <span class="pre">\omega</span></code> (Greek letters).  The following math is an example of this showing both bold and plain letters
+next to each other:</p>
+<div class="math notranslate nohighlight" id="equation-eq-module-rst-bold-vector">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-module-rst-bold-vector" title="Link to this equation"></a></span>\[{\bf u} u = 3 \hat{\bf e}_3\]</div>
+<div class="math notranslate nohighlight" id="equation-eq-module-rst-bold-greek">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-module-rst-bold-greek" title="Link to this equation"></a></span>\[\pmb \omega \omega = 2 \hat{\imath}_{\theta}\]</div>
+<p>More details on how to typeset TeX math in Sphinx can be found <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#math">here</a>.</p>
+<p>If the module description requires extensive math discussion, this can be TeX’d up using the technical note
+template inside the <code class="docutils literal notranslate"><span class="pre">_Documentation</span></code> folder. A link should be included in the HTML documentation to
+the <a class="reference download internal" download="" href="../../_downloads/9ceb680c54d8f57ac808399bcbfbf3bb/Basilisk-MODULENAME.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Detailed</span> <span class="pre">PDF</span> <span class="pre">Documentation</span></code></a>
+using the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:download:`Detailed PDF Documentation &lt;/../../src/moduleTemplates/cModuleTemplate/_Documentation/Basilisk-MODULENAME.pdf&gt;`
+</pre></div>
+</div>
+<p>Use a PDF technical note when a derivation is too long for the module page. Keep the assumptions,
+interfaces, and usage instructions in the Sphinx documentation.  Another option is to link to a web site, conference paper, journal
+paper, book or thesis document that discusses the mathematical developments used.</p>
+</section>
+<section id="citations">
+<h2>Citations<a class="headerlink" href="#citations" title="Link to this heading"></a></h2>
+<p>If you want to cite other papers or text, provide a web link to a paper.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>`The link text &lt;http://example.net/&gt;`__
+</pre></div>
+</div>
+<p>creates <a class="reference external" href="http://example.net/">The link text</a>.</p>
+</section>
+<section id="images-and-figures">
+<h2>Images and Figures<a class="headerlink" href="#images-and-figures" title="Link to this heading"></a></h2>
+<p>Store static images and figures in the module’s <code class="docutils literal notranslate"><span class="pre">_Documentation/Images/</span></code> folder, using
+web-compatible formats such as SVG, JPG, or PNG. The examples below use an existing image
+from <code class="docutils literal notranslate"><span class="pre">cModuleTemplate/_Documentation/Images/</span></code>. The SVG image format
+scales without losing detail. Check that figures remain legible in both the light and dark
+documentation themes.</p>
+<p>For example, to include an image (has no caption) you can use code such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">image</span><span class="p">::</span> <span class="o">/../../</span><span class="n">src</span><span class="o">/</span><span class="n">moduleTemplates</span><span class="o">/</span><span class="n">cModuleTemplate</span><span class="o">/</span><span class="n">_Documentation</span><span class="o">/</span><span class="n">Images</span><span class="o">/</span><span class="n">fig1</span><span class="o">.</span><span class="n">svg</span>
+    <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+</pre></div>
+</div>
+<p>to generate the following image.</p>
+<img alt="../../_images/fig1.svg" class="align-center" src="../../_images/fig1.svg" />
+<p>Note that with pixelated images such as <code class="docutils literal notranslate"><span class="pre">jpg</span></code> and <code class="docutils literal notranslate"><span class="pre">png</span></code> format save the file at twice the resolution
+that you need, then provide <code class="docutils literal notranslate"><span class="pre">:scale:</span> <span class="pre">50</span> <span class="pre">%</span></code> to shrink it to the normal size.  This way the image has
+enough resolution to look good on high-resolution displays.</p>
+<p>To include a figure with a caption and a reference label, use the following code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">_fig</span><span class="o">-</span><span class="n">module</span><span class="o">-</span><span class="n">rst</span><span class="o">-</span><span class="n">example</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">figure</span><span class="p">::</span> <span class="o">/../../</span><span class="n">src</span><span class="o">/</span><span class="n">moduleTemplates</span><span class="o">/</span><span class="n">cModuleTemplate</span><span class="o">/</span><span class="n">_Documentation</span><span class="o">/</span><span class="n">Images</span><span class="o">/</span><span class="n">fig1</span><span class="o">.</span><span class="n">svg</span>
+    <span class="p">:</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+
+    <span class="n">Example</span> <span class="n">illustration</span> <span class="k">for</span> <span class="n">module</span> <span class="n">documentation</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This yields</p>
+<figure class="align-center" id="id2">
+<span id="fig-module-rst-example"></span><img alt="../../_images/fig1.svg" src="../../_images/fig1.svg" />
+<figcaption>
+<p><span class="caption-text">Example illustration for module documentation.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>You can cite the figure using <code class="docutils literal notranslate"><span class="pre">:ref:`fig-module-rst-example`</span></code>. For example, as seen in <a class="reference internal" href="#fig-module-rst-example"><span class="std std-ref">Example illustration for module documentation.</span></a>, the figure can
+now be referenced.</p>
+<p>More information on how to include images or figures using Sphinx can be found
+<a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/directives.html#images">here</a>.  In particular, it is
+also possible to include an image as a figure which has a caption.</p>
+</section>
+<section id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Link to this heading"></a></h2>
+<p>The standard Sphinx table formatting can be used to generate tables. More information on Sphinx table formatting
+can be found <a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#grid-tables">here</a>.
+For example, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">table</span><span class="p">::</span> <span class="n">Example</span> <span class="n">Grid</span> <span class="n">Table</span>
+
+    <span class="o">+------------------------+------------+----------+----------+</span>
+    <span class="o">|</span> <span class="n">Header</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="mi">1</span>   <span class="o">|</span> <span class="n">Header</span> <span class="mi">2</span>   <span class="o">|</span> <span class="n">Header</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">Header</span> <span class="mi">4</span> <span class="o">|</span>
+    <span class="o">|</span> <span class="p">(</span><span class="n">header</span> <span class="n">rows</span> <span class="n">optional</span><span class="p">)</span> <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>          <span class="o">|</span>
+    <span class="o">+========================+============+==========+==========+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">1</span><span class="p">,</span> <span class="n">column</span> <span class="mi">1</span>   <span class="o">|</span> <span class="n">column</span> <span class="mi">2</span>   <span class="o">|</span> <span class="n">column</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">column</span> <span class="mi">4</span> <span class="o">|</span>
+    <span class="o">+------------------------+------------+----------+----------+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">2</span>             <span class="o">|</span> <span class="n">Cells</span> <span class="n">may</span> <span class="n">span</span> <span class="n">columns</span><span class="o">.</span>          <span class="o">|</span>
+    <span class="o">+------------------------+------------+---------------------+</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">3</span>             <span class="o">|</span> <span class="n">Cells</span> <span class="n">may</span>  <span class="o">|</span> <span class="o">-</span> <span class="n">Table</span> <span class="n">cells</span>       <span class="o">|</span>
+    <span class="o">+------------------------+</span> <span class="n">span</span> <span class="n">rows</span><span class="o">.</span> <span class="o">|</span> <span class="o">-</span> <span class="n">contain</span>           <span class="o">|</span>
+    <span class="o">|</span> <span class="n">body</span> <span class="n">row</span> <span class="mi">4</span>             <span class="o">|</span>            <span class="o">|</span> <span class="o">-</span> <span class="n">body</span> <span class="n">elements</span><span class="o">.</span>    <span class="o">|</span>
+    <span class="o">+------------------------+------------+---------------------+</span>
+</pre></div>
+</div>
+<p>will generate the following table:</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Example Grid Table</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Header row, column 1
+(header rows optional)</p></th>
+<th class="head"><p>Header 2</p></th>
+<th class="head"><p>Header 3</p></th>
+<th class="head"><p>Header 4</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>body row 1, column 1</p></td>
+<td><p>column 2</p></td>
+<td><p>column 3</p></td>
+<td><p>column 4</p></td>
+</tr>
+<tr class="row-odd"><td><p>body row 2</p></td>
+<td colspan="3"><p>Cells may span columns.</p></td>
+</tr>
+<tr class="row-even"><td><p>body row 3</p></td>
+<td rowspan="2"><p>Cells may
+span rows.</p></td>
+<td colspan="2" rowspan="2"><ul class="simple">
+<li><p>Table cells</p></li>
+<li><p>contain</p></li>
+<li><p>body elements.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>body row 4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keep column borders aligned when editing a grid table.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">list-table</span></code> command is nice in that it allows for a simple table to be created where the table
+structure does not have to be drawn with ASCII vertical and horizontal lines.  However, the formatting options
+are more limited than with the above method.  See
+<a class="reference external" href="https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table">documentation</a> for more info.
+For example, the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="nb">list</span><span class="o">-</span><span class="n">table</span><span class="p">::</span> <span class="n">List</span> <span class="n">Based</span> <span class="n">Table</span> <span class="n">Title</span>
+    <span class="p">:</span><span class="n">widths</span><span class="p">:</span> <span class="n">auto</span>
+    <span class="p">:</span><span class="n">header</span><span class="o">-</span><span class="n">rows</span><span class="p">:</span> <span class="mi">1</span>
+
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Header</span> <span class="mi">1</span>
+      <span class="o">-</span> <span class="n">Header</span> <span class="mi">2</span>
+      <span class="o">-</span> <span class="n">Header</span> <span class="mi">3</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">1</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span> <span class="n">more</span> <span class="n">text</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">2</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span>
+    <span class="o">*</span> <span class="o">-</span> <span class="n">Label</span> <span class="mi">3</span>
+      <span class="o">-</span> <span class="n">text</span>
+      <span class="o">-</span> <span class="n">some</span> <span class="n">more</span> <span class="n">text</span>
+</pre></div>
+</div>
+<p>will produce this table:</p>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">List Based Table Title</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Header 1</p></th>
+<th class="head"><p>Header 2</p></th>
+<th class="head"><p>Header 3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Label 1</p></td>
+<td><p>text</p></td>
+<td><p>more text</p></td>
+</tr>
+<tr class="row-odd"><td><p>Label 2</p></td>
+<td><p>text</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Label 3</p></td>
+<td><p>text</p></td>
+<td><p>some more text</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="admonitions">
+<h2>Admonitions<a class="headerlink" href="#admonitions" title="Link to this heading"></a></h2>
+<p>With Sphinx you can easily create HTML highlight blocks called admonitions such as
+<code class="docutils literal notranslate"><span class="pre">attention</span></code>, <code class="docutils literal notranslate"><span class="pre">caution</span></code>, <code class="docutils literal notranslate"><span class="pre">danger</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">hint</span></code>, <code class="docutils literal notranslate"><span class="pre">important</span></code>, <code class="docutils literal notranslate"><span class="pre">note</span></code>, <code class="docutils literal notranslate"><span class="pre">tip</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">warning</span></code>. For example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">note</span><span class="p">::</span>
+
+    Reset clears the runtime counter and preserves the sample configuration.
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reset clears the runtime counter and preserves the sample configuration.</p>
+</div>
+<p>The following samples show the other block styles:</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>text goes here</p>
+</div>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
+<p>text goes here</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>text goes here</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>text goes here</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>text goes here</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>text goes here</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>text goes here</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>text goes here</p>
+</div>
+</section>
+<section id="code-blocks">
+<h2>Code Blocks<a class="headerlink" href="#code-blocks" title="Link to this heading"></a></h2>
+<p>Show executable Python configuration and usage with <code class="docutils literal notranslate"><span class="pre">code-block</span></code>. For example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">code-block</span><span class="p">::</span> python
+    <span class="nc">:linenos:</span>
+
+    from Basilisk.moduleTemplates import cModuleTemplate
+
+    module = cModuleTemplate.cModuleTemplate()
+    module.sampleConfigVector = [1.0, 2.0, 3.0]  # [-]
+</pre></div>
+</div>
+<p>This produces:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.moduleTemplates</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="n">module</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+<span class="linenos">4</span><span class="n">module</span><span class="o">.</span><span class="n">sampleConfigVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+</pre></div>
+</div>
+<p>Use the complete simulation examples in <a class="reference internal" href="../../Documentation/moduleTemplates/cModuleTemplate/cModuleTemplate.html#cmoduletemplate"><span class="std std-ref">C Module: cModuleTemplate</span></a> and <a class="reference internal" href="../../Documentation/moduleTemplates/cppModuleTemplate/cppModuleTemplate.html#cppmoduletemplate"><span class="std std-ref">C++ Module: cppModuleTemplate</span></a>
+as patterns for a user guide. Include required imports, configuration, input messages,
+and expected results so readers can run the example with a built Basilisk installation.
+For additional options, see the <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block">Sphinx code-block documentation</a>.</p>
+</section>
+<section id="testing-the-documentation">
+<h2>Testing the Documentation<a class="headerlink" href="#testing-the-documentation" title="Link to this heading"></a></h2>
+<p>Run the Python examples against a built Basilisk installation and check their expected
+outputs. Build the HTML documentation and inspect the equations, figures, tables, code
+blocks, and links. See <a class="reference internal" href="../../Support/Developer/createHtmlDocumentation.html#createhtmldocumentation"><span class="std std-ref">Creating the HTML Basilisk Documentation using Sphinx/Doxygen</span></a> for the normal build command and
+single-page preview workflow. A full documentation build checks cross-page references
+and navigation that a single-page preview cannot resolve.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="numbaModules.html" class="btn btn-neutral float-left" title="Making Numba Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="makingModules-4.html" class="btn btn-neutral float-right" title="Module Unit Test File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

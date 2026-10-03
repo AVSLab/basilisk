@@ -1,0 +1,213 @@
+.. _spinningBodyOneDOFStateEffector:
+
+:module-type:`C++` Module: spinningBodyOneDOFStateEffector
+==========================================================
+
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   * :doc:`Unit tests <_UnitTest/index>`
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   Unit tests <_UnitTest/index>
+
+Executive Summary
+-----------------
+
+The spinning body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the spinning body module and the rigid body hub that it is attached to. In this case, a 1-DoF spinning body has an inertia tensor and is attached to the hub by a single degree of freedom axis. This module can represent multiple different effectors, such as a hinged solar panel, a reaction wheel or a single-gimbal. The spinning axis is fixed in the body frame and the effector is rigid, which means that its center of mass location does not move in the spinning frame S. An optional motor torque can be applied on the spinning axis, and the user can also lock the axis through a command.
+
+
+Message Connection Descriptions
+-------------------------------
+The following table lists all the module input and output messages.  The module msg variable name is set by the user from python.  The msg type contains a link to the message structure definition, while the description provides information on what this message is used for.
+
+.. bsk-module-io:: spinningBodyOneDOFStateEffector
+    :caption: Module I/O Messages
+
+    output spinningBodyOutMsg HingedRigidBodyMsgPayload
+        Output message containing the spinning body state angle and angle rate.
+    input motorTorqueInMsg ArrayMotorTorqueMsgPayload
+        (Optional) Motor torque for this module's axis, read from ``motorTorque[0]``.
+    input motorLockInMsg ArrayEffectorLockMsgPayload
+        (Optional) Lock command for this module's axis, read from ``effectorLockFlag[0]``.
+    input spinningBodyRefInMsg HingedRigidBodyMsgPayload
+        (Optional) Input message for prescribing the angle and angle rate.
+    output spinningBodyConfigLogOutMsg SCStatesMsgPayload
+        Output message containing the spinning body inertial position and attitude states.
+
+
+Detailed Module Description
+---------------------------
+
+A 1 DoF spinning body has 2 states: ``theta`` and ``thetaDot``. The angle and angle rate can change due to the interaction with the hub, but also because of applied torques (control, spring and damper). The angle remains fixed and the angle rate is set to zero when the axis is locked.
+
+Command Array Indexing
+^^^^^^^^^^^^^^^^^^^^^^
+Each module instance reads only element ``[0]`` of its lock and motor torque messages.
+For the spinning-body modules, array elements correspond to degrees of freedom within
+one module; they are not selected by ``effectorID`` or by the order in which module
+instances are added to the spacecraft. The shared message payloads use arrays sized by
+``MAX_EFF_CNT``, but that capacity does not assign an element to each module instance.
+
+Use a separate ``ArrayEffectorLockMsg`` for each OneDOF instance that needs independent
+locking. If two instances subscribe to the same message, both read
+``effectorLockFlag[0]``: ``[1, 0]`` locks both, and ``[0, 1]`` leaves both free to rotate.
+The same rule applies to independent motor torque commands using
+``ArrayMotorTorqueMsg``. Use ``0`` for a free axis and ``1`` for a locked axis.
+
+Mathematical Modeling
+^^^^^^^^^^^^^^^^^^^^^
+See the following conference paper
+for a detailed description of this model.
+
+.. note::
+
+    J. Vaz Carneiro, C. Allard and H. Schaub, `“Rotating Rigid Body Dynamics
+    Architecture for Spacecraft Simulation Software Implementation” <https://hanspeterschaub.info/Papers/VazCarneiro2023.pdf>`_, AAS Rocky
+    Mountain GN&C Conference, Breckenridge, CO, Feb. 2–8, 2023
+
+User Guide
+----------
+This section is to outline the steps needed to setup a Spinning Body State Effector in Python using Basilisk.
+
+#. Import the spinningBodyOneDOFStateEffector class::
+
+    from Basilisk.simulation import spinningBodyOneDOFStateEffector
+
+#. Create an instantiation of a Spinning body::
+
+    spinningBody = spinningBodyOneDOFStateEffector.SpinningBodyOneDOFStateEffector()
+
+#. Define all physical parameters for a Spinning Body. For example::
+
+    spinningBody.mass = 100.0
+    spinningBody.IPntSc_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    spinningBody.dcm_S0B = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    spinningBody.r_ScS_S = [[0.5], [0.0], [1.0]]
+    spinningBody.r_SB_B = [[1.5], [-0.5], [2.0]]
+    spinningBody.sHat_S = [[0], [0], [1]]
+
+#. (Optional) Define initial conditions of the effector.  Default values are zero states::
+
+    spinningBody.thetaInit = 5 * macros.D2R
+    spinningBody.thetaDotInit = 1 * macros.D2R
+
+#. (Optional) Define spring and damper coefficients.  Default values are zero states::
+
+    spinningBody.k = 1.0
+    spinningBody.c = 0.5
+
+#. (Optional) Define a unique name for each state.  If you have multiple spinning bodies, they each must have a unique name.  If these names are not specified, then the default names are used which are incremented by the effector number::
+
+    spinningBody.nameOfThetaState = "spinningBodyTheta"
+    spinningBody.nameOfThetaDotState = "spinningBodyThetaDot"
+
+#. (Optional) Connect a command torque message::
+
+    cmdArray = messaging.ArrayMotorTorqueMsgPayload()
+    cmdArray.motorTorque = [cmdTorque]  # [Nm]
+    cmdMsg = messaging.ArrayMotorTorqueMsg().write(cmdArray)
+    spinningBody.motorTorqueInMsg.subscribeTo(cmdMsg)
+
+#. (Optional) Connect an axis-locking message (0 means the axis is free to rotate and 1 locks the axis)::
+
+    lockArray = messaging.ArrayEffectorLockMsgPayload()
+    lockArray.effectorLockFlag = [1]
+    lockMsg = messaging.ArrayEffectorLockMsg().write(lockArray)
+    spinningBody.motorLockInMsg.subscribeTo(lockMsg)
+
+#. (Optional) Connect an angle and angle rate reference message::
+
+    angleRef = messaging.HingedRigidBodyMsgPayload()
+    angleRef.theta = thetaRef
+    angleRef.thetaDot = thetaDotRef
+    angleRefMsg = messaging.HingedRigidBodyMsg().write(angleRef)
+    spinningBody.spinningBodyRefInMsg.subscribeTo(angleRefMsg)
+
+#. The angular states of the body are created using an output message ``spinningBodyOutMsg``.
+
+#. The spinning body config log state output message is ``spinningBodyConfigLogOutMsg``.
+
+#. Add the effector to your spacecraft::
+
+    scObject.addStateEffector(spinningBody)
+
+   See :ref:`spacecraft` documentation on how to set up a spacecraft object.
+
+#. Add the module to the task list::
+
+    unitTestSim.AddModelToTask(unitTaskName, spinningBody)
+
+Locking Multiple Module Instances
+----------------------------------
+For two configured OneDOF instances named ``solar_array1`` and ``solar_array2``, the
+following example locks the first axis and leaves the second free to rotate::
+
+    from Basilisk.architecture import messaging
+
+    lock_payload1 = messaging.ArrayEffectorLockMsgPayload()
+    lock_payload1.effectorLockFlag = [1]
+    lock_msg1 = messaging.ArrayEffectorLockMsg().write(lock_payload1)
+    solar_array1.motorLockInMsg.subscribeTo(lock_msg1)
+
+    lock_payload2 = messaging.ArrayEffectorLockMsgPayload()
+    lock_payload2.effectorLockFlag = [0]
+    lock_msg2 = messaging.ArrayEffectorLockMsg().write(lock_payload2)
+    solar_array2.motorLockInMsg.subscribeTo(lock_msg2)
+
+Keep both message objects available for the simulation. To change a lock command,
+update its payload and write it to the corresponding message again. Add both effectors
+to the spacecraft and to a simulation task as shown above so they process the commands.
+
+Initialization and Reset
+------------------------
+Attaching the effector to a spacecraft causes its configuration to be validated when the spacecraft registers
+the effector states.  Initialization normalizes ``sHat_S`` and rejects a zero spin axis, a non-rotation
+``dcm_S0B``, a negative mass, or an invalid inertia tensor for a body with positive mass.
+
+The spacecraft drives the effector dynamics.  Add the effector to a task to process its optional torque, lock,
+and reference inputs and to update its output messages through ``UpdateState()``.
+
+When the effector is scheduled, its ``Reset()`` repeats the same validation and
+normalization.  ``Reset()`` does not reset the integrated angle or angle-rate states; those states receive their
+configured initial values when they are registered with the spacecraft dynamics.
+
+Hosting a Dynamic Effector
+--------------------------
+This effector supports the branching described in :ref:`bskPrinciples-11`, so a compatible
+dynamic effector can be carried by the spinning body rather than by the hub::
+
+    spinningBody.addDynamicEffector(childEffector)
+
+This effector then makes its inertial position, velocity, attitude, and angular velocity available
+in place of the hub's, and the child reads whichever of the four its model needs. Any geometry given
+to the child is expressed in that spinning body's frame rather than the hub body frame. Both this
+effector and the child are still added to the task in the usual way.
+
+
+Finite Configuration Values
+---------------------------
+All configured masses, spring and damping coefficients, initial angles and angular rates,
+position offsets, and inertia entries must be finite. This requirement also applies to inertia
+entries on massless bodies; the existing rules for inertia realizability remain unchanged.
+The frame rotation checks reject non-finite DCMs as well as improper rotations.
+
+Spin axes must contain only finite components and have a norm strictly greater than ``0.01``.
+Normalization scales the components before computing their norm, so very large finite axes
+retain the correct direction. Repeated resets preserve integrated states and commands.
+
+These checks run before state registration and from ``Reset()``. A failed configuration check
+raises ``BasiliskError`` before normalizing the spin axis or registering effector states.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: spinningBodyOneDOFStateEffector.h
+   :project: spinningBodiesOneDOF
+

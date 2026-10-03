@@ -1,0 +1,10 @@
+.. _RWSpeedMsgPayload:
+
+RWSpeedMsgPayload
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: RWSpeedMsgPayload.h
+   :project: msgPayloadDefC
+

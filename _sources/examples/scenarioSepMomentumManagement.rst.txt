@@ -1,0 +1,15 @@
+.. _scenarioSepMomentumManagement:
+
+scenarioSepMomentumManagement
+=============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioSepMomentumManagement
+   :members:
+   :show-inheritance:
+

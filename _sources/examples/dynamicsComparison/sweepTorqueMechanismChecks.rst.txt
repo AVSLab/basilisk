@@ -1,0 +1,15 @@
+.. _sweepTorqueMechanismChecks:
+
+sweepTorqueMechanismChecks
+==========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: sweepTorqueMechanismChecks
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,884 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scenarioAerobrake &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scenarioAerobrake</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scenarioAerobrake</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+
+<span class="sa">r</span><span class="sd">"""</span>
+
+<span class="sd">.. youtube:: vUzMG_ZaVg4</span>
+<span class="sd">   :width: 560</span>
+<span class="sd">   :height: 315</span>
+
+<span class="sd">Overview</span>
+<span class="sd">--------</span>
+
+<span class="sd">This scenario demonstrates effector branching for facet drag dynamic effectors attached to two</span>
+<span class="sd">hinged solar-panel state effectors on an aerobraking spacecraft. See :ref:`bskPrinciples-11` for</span>
+<span class="sd">the conceptual background on attaching dynamic effectors onto state effectors. The orbit is</span>
+<span class="sd">strongly elliptical about Earth, with a periapsis that dips into dense atmosphere on each pass.</span>
+<span class="sd">The configuration takes its cue from NASA's Magellan aerobraking campaign at Venus, which used</span>
+<span class="sd">asymmetric solar-panel tilting to control drag, rather than reproducing that mission's orbit.</span>
+
+<span class="sd">The hub carries six cube facets (one per face) attached directly to it. Each hinged panel</span>
+<span class="sd">carries two facets (front and back) attached via the branched :ref:`facetDragDynamicEffector`</span>
+<span class="sd">on the :ref:`hingedRigidBodyStateEffector`. Drag forces and torques therefore depend on each</span>
+<span class="sd">panel's instantaneous orientation, propagating into the hub equations of motion.</span>
+
+<span class="sd">The two panels are mirrored about the hub's velocity-axis plane so that drag torques on the</span>
+<span class="sd">pair self-cancel about the hub center of mass when the vehicle is aligned with the flow, giving</span>
+<span class="sd">a passively aerodynamically stable "shuttlecock" configuration. The scenario runs four cases and</span>
+<span class="sd">overlays them on each plot, a 2×2 sweep over drag model and control:</span>
+
+<span class="sd">1. **Branched + control**: panel drag is branched onto each hinged body (orientation-dependent)</span>
+<span class="sd">   and an MRP-feedback velocity-pointing controller is active.</span>
+<span class="sd">2. **Branched + free**: same drag model, no controller, which shows the passive aerodynamic</span>
+<span class="sd">   stabilization.</span>
+<span class="sd">3. **Legacy + control**: panel facets are baked into the hub at the undeflected (theta = 0)</span>
+<span class="sd">   panel positions, so drag is independent of panel orientation. This is the modeling baseline</span>
+<span class="sd">   that branched effectors are meant to improve on.</span>
+<span class="sd">4. **Legacy + free**: same drag baseline with no controller. This is the control for the</span>
+<span class="sd">   stabilization comparison, isolating how much of the passive pointing comes from the panels</span>
+<span class="sd">   being free to feather rather than from the vehicle simply being uncontrolled.</span>
+
+<span class="sd">The script is found in the folder ``basilisk/examples`` and executed by::</span>
+
+<span class="sd">    python3 scenarioAerobrake.py</span>
+
+<span class="sd">Illustration of Simulation Results</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">The default ``run()`` invocation reproduces the configuration presented in the companion</span>
+<span class="sd">journal article (citation pending publication): all four cases at ``dynRateSeconds = 0.2``</span>
+<span class="sd">over two full orbits. The pytest wrapper in ``src/tests`` drives a stripped-down</span>
+<span class="sd">configuration (``dynRateSeconds = 0.5`` over 1.2 orbits) to keep wall time low. For best</span>
+<span class="sd">fidelity drop ``dynRateSeconds`` to 0.1 s, since the chaotic free-attitude case is the most</span>
+<span class="sd">timestep-sensitive dynamic.</span>
+
+<span class="sd">The orbit trace shows two apogees of decreasing altitude across the three atmospheric passes as</span>
+<span class="sd">drag bleeds energy from each. The legacy cases overlap each other and lie inside the branched</span>
+<span class="sd">curves. Comparing the two controlled cases, the legacy model overestimates aerobraking by roughly</span>
+<span class="sd">270 km of apoapsis altitude per pass, because rigid panels keep their full drag area through the</span>
+<span class="sd">pass whereas the branched panels feather backward and shed projected area.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakeOrbitTrace.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakeAltitude.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakeApoapsisAltitude.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">The panel-deflection plot shows the branched panels feathering to about 61° at each perigee,</span>
+<span class="sd">whereas the legacy panels reach about 48° when controlled. The legacy panels still hinge, driven by</span>
+<span class="sd">the hub's deceleration, but they feel no aero loads of their own.</span>
+
+<span class="sd">The pointing error trace shows the branched free case holding velocity-pointing to within a</span>
+<span class="sd">hundredth of a degree at every perigee, whereas the legacy free case degrades from about 1° on the</span>
+<span class="sd">first pass to 19° on the third. Panels free to feather track the flow and supply a restoring</span>
+<span class="sd">moment over a wider range of arrival attitudes than panels frozen at zero deflection. Between</span>
+<span class="sd">passes both free vehicles rotate at the rate they left the previous perigee with, whereas the</span>
+<span class="sd">velocity direction rotates at a rate that varies with true anomaly, so each pass is entered with</span>
+<span class="sd">an accumulated pointing error. The aerodynamic torque recaptures that error when it is inside</span>
+<span class="sd">roughly sixty degrees, and the apoapsis is chosen so a free vehicle re-enters inside that basin.</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakePanelDeflection.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakePointingError.svg</span>
+<span class="sd">   :align: center</span>
+
+<span class="sd">.. image:: /_images/Scenarios/scenarioAerobrakeDensity.svg</span>
+<span class="sd">   :align: center</span>
+<span class="sd">"""</span>
+
+<span class="c1">#</span>
+<span class="c1">#   Basilisk Scenario Script</span>
+<span class="c1">#</span>
+<span class="c1">#   Purpose:            Aerobrake demo with branched facet drag on hinged solar panels.</span>
+<span class="c1">#   Author:             Andrew Morell &amp; Isabella Davila</span>
+<span class="c1">#   Creation Date:      2026-05-04</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span><span class="p">,</span> <span class="n">sysModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.fswAlgorithms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">attTrackingError</span><span class="p">,</span> <span class="n">mrpFeedback</span><span class="p">,</span> <span class="n">velocityPoint</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">exponentialAtmosphere</span><span class="p">,</span> <span class="n">extForceTorque</span><span class="p">,</span>
+                                 <span class="n">facetDragDynamicEffector</span><span class="p">,</span> <span class="n">gravityEffector</span><span class="p">,</span>
+                                 <span class="n">hingedRigidBodyStateEffector</span><span class="p">,</span> <span class="n">simpleNav</span><span class="p">,</span>
+                                 <span class="n">spacecraft</span><span class="p">,</span> <span class="n">svIntegrators</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">RigidBodyKinematics</span><span class="p">,</span> <span class="n">SimulationBaseClass</span><span class="p">,</span>
+                                <span class="n">macros</span><span class="p">,</span> <span class="n">orbitalMotion</span><span class="p">,</span> <span class="n">simSetPlanetEnvironment</span><span class="p">,</span>
+                                <span class="n">vizSupport</span><span class="p">)</span>
+
+<span class="n">fileName</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="c1"># Hub geometry / inertia</span>
+<span class="n">hubMass</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [kg]</span>
+<span class="n">hubSide</span> <span class="o">=</span> <span class="mf">1.0</span>    <span class="c1"># [m]</span>
+<span class="n">hubFaceArea</span> <span class="o">=</span> <span class="n">hubSide</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># [m^2]</span>
+<span class="n">hubHalf</span> <span class="o">=</span> <span class="n">hubSide</span> <span class="o">/</span> <span class="mf">2.0</span>     <span class="c1"># [m]</span>
+<span class="n">hubInertia</span> <span class="o">=</span> <span class="n">hubMass</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">hubSide</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># [kg m^2] cube about its center</span>
+
+<span class="c1"># Panel geometry / inertia</span>
+<span class="n">panelMass</span> <span class="o">=</span> <span class="mf">10.0</span>     <span class="c1"># [kg]</span>
+<span class="n">panelLength</span> <span class="o">=</span> <span class="mf">2.0</span>    <span class="c1"># [m]   spans from hinge outward</span>
+<span class="n">panelWidth</span> <span class="o">=</span> <span class="mf">1.0</span>     <span class="c1"># [m]   along the hinge axis</span>
+<span class="n">panelArea</span> <span class="o">=</span> <span class="n">panelLength</span> <span class="o">*</span> <span class="n">panelWidth</span>  <span class="c1"># [m^2]</span>
+<span class="n">panelD</span> <span class="o">=</span> <span class="n">panelLength</span> <span class="o">/</span> <span class="mf">2.0</span>            <span class="c1"># [m] hinge-to-CoM</span>
+<span class="c1"># plate inertia about its CoM in the S frame: length along s1, width along s2</span>
+<span class="n">panelI11</span> <span class="o">=</span> <span class="n">panelMass</span> <span class="o">*</span> <span class="n">panelWidth</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">12.0</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">panelI22</span> <span class="o">=</span> <span class="n">panelMass</span> <span class="o">*</span> <span class="n">panelLength</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">12.0</span>  <span class="c1"># [kg m^2]</span>
+<span class="n">panelI33</span> <span class="o">=</span> <span class="n">panelMass</span> <span class="o">*</span> <span class="p">(</span><span class="n">panelLength</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">panelWidth</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">12.0</span>  <span class="c1"># [kg m^2]</span>
+
+<span class="n">panelStiffness</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [N m / rad]</span>
+<span class="n">panelDamping</span> <span class="o">=</span> <span class="mf">8.0</span>    <span class="c1"># [N m s / rad], ζ ≈ 0.5 about the hinge axis</span>
+
+<span class="c1"># Drag coefficients</span>
+<span class="n">dragCoeffPanel</span> <span class="o">=</span> <span class="mf">2.2</span>  <span class="c1"># [-]</span>
+<span class="n">dragCoeffHub</span> <span class="o">=</span> <span class="mf">2.2</span>  <span class="c1"># [-]</span>
+
+<span class="c1"># Orbit / atmosphere</span>
+<span class="n">earthRadius</span> <span class="o">=</span> <span class="mf">6378.1363e3</span>    <span class="c1"># [m] used for altitude reporting</span>
+<span class="n">periapsisAltitude</span> <span class="o">=</span> <span class="mf">135e3</span>    <span class="c1"># [m]</span>
+<span class="c1"># sets how far a free vehicle rotates between passes; see the module docstring</span>
+<span class="n">apoapsisAltitude</span> <span class="o">=</span> <span class="mf">11000e3</span>   <span class="c1"># [m]</span>
+<span class="n">orbitInclination</span> <span class="o">=</span> <span class="mf">0.0</span>      <span class="c1"># [rad] equatorial, orbit lies in the inertial X-Y plane</span>
+
+<span class="c1"># negative starts inbound, so the panels load gradually before perigee</span>
+<span class="n">startTrueAnomalyDeg</span> <span class="o">=</span> <span class="o">-</span><span class="mf">60.0</span>  <span class="c1"># [deg]</span>
+
+<span class="c1"># Simulation cadence: paper-quality defaults (overridable from run())</span>
+<span class="n">defaultDynRateSeconds</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [s] dt=0.1 reproduced within &lt;1 km apoapsis, &lt;0.1° panel angle</span>
+<span class="n">defaultNOrbits</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># Default case set: the full 2x2 sweep over drag model and attitude control</span>
+<span class="n">allCases</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">"branched + ctrl"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>  <span class="s2">"branched"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"branched + free"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"branched"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"legacy + ctrl"</span><span class="p">,</span>   <span class="kc">True</span><span class="p">,</span>  <span class="s2">"legacy"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"legacy + free"</span><span class="p">,</span>   <span class="kc">False</span><span class="p">,</span> <span class="s2">"legacy"</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Attitude control gains (only used when control is enabled)</span>
+<span class="n">attCtrlK</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># [N m] MRP feedback proportional</span>
+<span class="n">attCtrlP</span> <span class="o">=</span> <span class="mf">50.0</span>  <span class="c1"># [N m s] MRP feedback rate</span>
+
+<span class="c1"># False leaves playback speed to Vizard's own controls</span>
+<span class="n">prescribePlaybackSpeed</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="PlaybackSpeedController">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.PlaybackSpeedController">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlaybackSpeedController</span><span class="p">(</span><span class="n">sysModel</span><span class="o">.</span><span class="n">SysModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Per-tick Vizard playback-speed toggle keyed on spacecraft altitude.</span>
+
+<span class="sd">    User specifies the desired playback speeds (e.g. ``fastSpeed=700`` for</span>
+<span class="sd">    700×). Vizard's actual control is the integer ``playbackMultiplier``</span>
+<span class="sd">    mapped as ``rate = 2^multiplier``, so the controller rounds</span>
+<span class="sd">    ``log2(speed)`` to the nearest integer.</span>
+
+<span class="sd">    Vizard has two playback *modes* with very different effective rates</span>
+<span class="sd">    for the same multiplier label:</span>
+
+<span class="sd">    * ``'realTime'``: literal ``2^N`` sim-sec per wall-sec. Used for the</span>
+<span class="sd">      slow band so ``slowSpeed=1`` actually produces 1× wall-clock.</span>
+<span class="sd">    * ``'frameRate'``: show 1 of every ``2^N`` data frames. Effective</span>
+<span class="sd">      rate is ``renderer_fps × dynRateSeconds × 2^N``, typically ~12×</span>
+<span class="sd">      higher than the label at 60 fps with ``dynRateSeconds = 0.2``.</span>
+<span class="sd">      Used for the fast band where real-time mode gets renderer-capped.</span>
+
+<span class="sd">    Modes are switched *per altitude band*: real-time below</span>
+<span class="sd">    ``slowAltitude_m`` (true slow-motion), frame-rate above</span>
+<span class="sd">    ``fastAltitude_m`` (max effective fast). The transition band uses</span>
+<span class="sd">    frame-rate mode so the ramp doesn't get capped by the real-time</span>
+<span class="sd">    renderer. The mode discontinuity sits at ``slowAltitude_m``, which</span>
+<span class="sd">    is also the visual entry into the atmosphere. The abrupt slow-down</span>
+<span class="sd">    there reads as "and now we're at perigee" rather than as a glitch.</span>
+
+<span class="sd">    The mode is asserted every tick because Vizard's API refuses to act</span>
+<span class="sd">    on ``playbackMultiplier = 0`` (the protobuf default reads as "no</span>
+<span class="sd">    change"). Per ``VizardReleaseNotes.rst:54`` the documented workaround</span>
+<span class="sd">    is to send a mode value alongside. The mode toggle is what lets</span>
+<span class="sd">    Vizard accept multiplier=0 and snap back to 1×.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">viz</span><span class="p">,</span> <span class="n">earthRadius</span><span class="p">,</span> <span class="n">slowAltitude_m</span><span class="p">,</span>
+                 <span class="n">fastAltitude_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">slowSpeed</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fastSpeed</span><span class="o">=</span><span class="mf">16.0</span><span class="p">,</span>
+                 <span class="n">slowMode</span><span class="o">=</span><span class="s1">'realTime'</span><span class="p">,</span> <span class="n">fastMode</span><span class="o">=</span><span class="s1">'frameRate'</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"playbackSpeed"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viz</span> <span class="o">=</span> <span class="n">viz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scStateInMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsgReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">earthRadius</span> <span class="o">=</span> <span class="n">earthRadius</span>          <span class="c1"># [m]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slowAltitude_m</span> <span class="o">=</span> <span class="n">slowAltitude_m</span>    <span class="c1"># [m]</span>
+        <span class="c1"># None steps hard at slowAltitude_m; otherwise the multiplier ramps between the two</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastAltitude_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">fastAltitude_m</span> <span class="k">if</span> <span class="n">fastAltitude_m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                               <span class="k">else</span> <span class="n">slowAltitude_m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastAltitude_m</span> <span class="o">&lt;</span> <span class="n">slowAltitude_m</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"fastAltitude_m (</span><span class="si">{</span><span class="n">fastAltitude_m</span><span class="si">}</span><span class="s2">) must be &gt;= "</span>
+                <span class="sa">f</span><span class="s2">"slowAltitude_m (</span><span class="si">{</span><span class="n">slowAltitude_m</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slowMultiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speedToMultiplier</span><span class="p">(</span><span class="n">slowSpeed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastMultiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speedToMultiplier</span><span class="p">(</span><span class="n">fastSpeed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slowModeValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modeToValue</span><span class="p">(</span><span class="n">slowMode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastModeValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modeToValue</span><span class="p">(</span><span class="n">fastMode</span><span class="p">)</span>
+        <span class="c1"># multipliers are powers of two; report when a request gets rounded</span>
+        <span class="k">for</span> <span class="n">requested</span><span class="p">,</span> <span class="n">multiplier</span> <span class="ow">in</span> <span class="p">((</span><span class="n">fastSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastMultiplier</span><span class="p">),</span>
+                                      <span class="p">(</span><span class="n">slowSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowMultiplier</span><span class="p">)):</span>
+            <span class="n">actual</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">**</span> <span class="n">multiplier</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual</span> <span class="o">-</span> <span class="n">requested</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PlaybackSpeedController: </span><span class="si">{</span><span class="n">requested</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">x playback rounded "</span>
+                      <span class="sa">f</span><span class="s2">"to </span><span class="si">{</span><span class="n">actual</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">x"</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_speedToMultiplier</span><span class="p">(</span><span class="n">speed</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert a speed label (e.g. 700×) to the nearest integer</span>
+<span class="sd">        Vizard playback-multiplier exponent (``rate = 2^multiplier``)."""</span>
+        <span class="k">if</span> <span class="n">speed</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Playback speed must be positive, got </span><span class="si">{</span><span class="n">speed</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">speed</span><span class="p">)))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_modeToValue</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Map ``'realTime'``/``'frameRate'`` to Vizard's</span>
+<span class="sd">        ``playbackInRealTime`` field values (+1 / −1)."""</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">'realTime'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">'frameRate'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"mode must be 'realTime' or 'frameRate', got </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">Reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+        <span class="c1"># start in the fast band; UpdateState corrects on the first tick</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">playbackInRealTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastModeValue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">playbackMultiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastMultiplier</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">UpdateState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CurrentSimNanos</span><span class="p">):</span>
+        <span class="n">scState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="p">()</span>
+        <span class="n">rN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scState</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+        <span class="n">altitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rN</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">earthRadius</span>
+        <span class="k">if</span> <span class="n">altitude</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowAltitude_m</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowModeValue</span>
+            <span class="n">multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowMultiplier</span>
+        <span class="k">elif</span> <span class="n">altitude</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastAltitude_m</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastModeValue</span>
+            <span class="n">multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastMultiplier</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># frame-rate mode through the band so the ramp is not capped by the real-time renderer</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastModeValue</span>
+            <span class="n">frac</span> <span class="o">=</span> <span class="p">((</span><span class="n">altitude</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowAltitude_m</span><span class="p">)</span>
+                    <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fastAltitude_m</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowAltitude_m</span><span class="p">))</span>
+            <span class="n">multiplier</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slowMultiplier</span>
+                                   <span class="o">+</span> <span class="n">frac</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fastMultiplier</span>
+                                             <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">slowMultiplier</span><span class="p">)))</span>
+        <span class="c1"># re-assert both every tick; the mode field is the workaround for multiplier 0 reading as no change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">playbackInRealTime</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viz</span><span class="o">.</span><span class="n">liveSettings</span><span class="o">.</span><span class="n">playbackMultiplier</span> <span class="o">=</span> <span class="n">multiplier</span></div>
+
+
+
+<div class="viewcode-block" id="panel1DCM">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.panel1DCM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panel1DCM</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""H frame for the +X panel.</span>
+
+<span class="sd">    Panel arm extends in +X (radial out), so sHat1_B = -X (CoM-to-hinge).</span>
+<span class="sd">    Hinge along +Z (orbit normal): sHat2_B = +Z. sHat3_B = sHat1 x sHat2 = +Y</span>
+<span class="sd">    so the plate plane is normal to +Y at theta=0, i.e. the panel face is</span>
+<span class="sd">    perpendicular to the velocity vector.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="panel2DCM">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.panel2DCM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">panel2DCM</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""H frame for the -X panel: mirrored hinge along -Z so deflection sign matches panel1."""</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="addCubeFacets">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.addCubeFacets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addCubeFacets</span><span class="p">(</span><span class="n">facetDrag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add six cube faces with outward normals at half-side offsets."""</span>
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">normal</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">sign</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="n">hubHalf</span> <span class="o">*</span> <span class="n">normal</span>
+            <span class="n">facetDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">hubFaceArea</span><span class="p">,</span> <span class="n">dragCoeffHub</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="addPanelFacets">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.addPanelFacets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addPanelFacets</span><span class="p">(</span><span class="n">facetDrag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add the two faces of a flat plate panel, both normals along the panel's s3 axis.</span>
+
+<span class="sd">    BSK hingedBody convention: the plate plane is the s1-s2 plane and sHat3 is</span>
+<span class="sd">    perpendicular to the plate, so the panel face normals are ±sHat3_S. A branched</span>
+<span class="sd">    effector's frame origin is the hinge, and the plate's center of pressure sits at</span>
+<span class="sd">    its centroid, ``-d`` along sHat1 from there.</span>
+<span class="sd">    """</span>
+    <span class="n">centerOfPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">panelD</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>  <span class="c1"># [m] in the panel S frame</span>
+    <span class="n">facetDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">panelArea</span><span class="p">,</span> <span class="n">dragCoeffPanel</span><span class="p">,</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">centerOfPressure</span><span class="p">)</span>
+    <span class="n">facetDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">panelArea</span><span class="p">,</span> <span class="n">dragCoeffPanel</span><span class="p">,</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">]),</span> <span class="n">centerOfPressure</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="addRigidPanelFacetsToHub">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.addRigidPanelFacetsToHub">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">addRigidPanelFacetsToHub</span><span class="p">(</span><span class="n">facetDrag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bake panel faces into the hub at their theta=0 locations.</span>
+
+<span class="sd">    Used by the legacy drag-modeling case: each panel is treated as a</span>
+<span class="sd">    rigid extension of the hub with no orientation update, so its drag area</span>
+<span class="sd">    contributes a fixed pair of facets at the panel CoM positions in B.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">+</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sign</span> <span class="o">*</span> <span class="p">(</span><span class="n">hubHalf</span> <span class="o">+</span> <span class="n">panelD</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">facetDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">panelArea</span><span class="p">,</span> <span class="n">dragCoeffPanel</span><span class="p">,</span>
+                           <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">location</span><span class="p">)</span>
+        <span class="n">facetDrag</span><span class="o">.</span><span class="n">addFacet</span><span class="p">(</span><span class="n">panelArea</span><span class="p">,</span> <span class="n">dragCoeffPanel</span><span class="p">,</span>
+                           <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">buildPanel</span><span class="p">(</span><span class="n">modelTag</span><span class="p">,</span> <span class="n">dcm_HB</span><span class="p">,</span> <span class="n">r_HB_B</span><span class="p">):</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">hingedRigidBodyStateEffector</span><span class="o">.</span><span class="n">HingedRigidBodyStateEffector</span><span class="p">()</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="n">modelTag</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">panelMass</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">IPntS_S</span> <span class="o">=</span> <span class="p">[[</span><span class="n">panelI11</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">panelI22</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">panelI33</span><span class="p">]]</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">panelD</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">panelStiffness</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">panelDamping</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">r_HB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">r_HB_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">r_HB_B</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">r_HB_B</span><span class="p">[</span><span class="mi">2</span><span class="p">]]]</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">dcm_HB</span> <span class="o">=</span> <span class="n">dcm_HB</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">thetaInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">panel</span><span class="o">.</span><span class="n">thetaDotInit</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">panel</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runOneCase</span><span class="p">(</span><span class="n">useAttitudeControl</span><span class="p">,</span> <span class="n">dragModel</span><span class="o">=</span><span class="s2">"branched"</span><span class="p">,</span>
+               <span class="n">dynRateSeconds</span><span class="o">=</span><span class="n">defaultDynRateSeconds</span><span class="p">,</span> <span class="n">nOrbitsToRun</span><span class="o">=</span><span class="n">defaultNOrbits</span><span class="p">):</span>
+    <span class="n">simTaskName</span> <span class="o">=</span> <span class="s2">"simTask"</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">dynProcess</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"dynProcess"</span><span class="p">)</span>
+    <span class="n">dynProcess</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dynRateSeconds</span><span class="p">)))</span>
+
+    <span class="c1"># Hub, default RK4; RKF45 subdivides too aggressively near perigee</span>
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hub"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">mHub</span> <span class="o">=</span> <span class="n">hubMass</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_BcB_B</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">IHubPntBc_B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">hubInertia</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">hubInertia</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">hubInertia</span><span class="p">]]</span>
+
+    <span class="c1"># Earth gravity</span>
+    <span class="n">earthGrav</span> <span class="o">=</span> <span class="n">gravityEffector</span><span class="o">.</span><span class="n">GravBodyData</span><span class="p">()</span>
+    <span class="n">earthGrav</span><span class="o">.</span><span class="n">planetName</span> <span class="o">=</span> <span class="s2">"earth_planet_data"</span>
+    <span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">0.3986004415e15</span>  <span class="c1"># [m^3/s^2]</span>
+    <span class="n">earthGrav</span><span class="o">.</span><span class="n">radEquator</span> <span class="o">=</span> <span class="n">earthRadius</span>
+    <span class="n">earthGrav</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">([</span><span class="n">earthGrav</span><span class="p">])</span>
+
+    <span class="c1"># Orbit elements (perigee start)</span>
+    <span class="n">rPeri</span> <span class="o">=</span> <span class="n">earthRadius</span> <span class="o">+</span> <span class="n">periapsisAltitude</span>
+    <span class="n">rApo</span> <span class="o">=</span> <span class="n">earthRadius</span> <span class="o">+</span> <span class="n">apoapsisAltitude</span>
+    <span class="n">oe</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">ClassicElements</span><span class="p">()</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">rPeri</span> <span class="o">+</span> <span class="n">rApo</span><span class="p">)</span>  <span class="c1"># [m]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">rApo</span> <span class="o">-</span> <span class="n">rPeri</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rApo</span> <span class="o">+</span> <span class="n">rPeri</span><span class="p">)</span>  <span class="c1"># [-]</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">orbitInclination</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">Omega</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">oe</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">startTrueAnomalyDeg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>  <span class="c1"># [rad]</span>
+    <span class="n">rN</span><span class="p">,</span> <span class="n">vN</span> <span class="o">=</span> <span class="n">orbitalMotion</span><span class="o">.</span><span class="n">elem2rv</span><span class="p">(</span><span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">oe</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">rN</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">vN</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># initial attitude in the velocityPoint frame: radial, velocity, orbit normal</span>
+    <span class="c1"># built from v and h, since r and v are only perpendicular at the apsides</span>
+    <span class="n">vHat_N</span> <span class="o">=</span> <span class="n">vN</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vN</span><span class="p">)</span>
+    <span class="n">hHat_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">)</span>
+    <span class="n">hHat_N</span> <span class="o">=</span> <span class="n">hHat_N</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hHat_N</span><span class="p">)</span>
+    <span class="n">inPlane_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">vHat_N</span><span class="p">,</span> <span class="n">hHat_N</span><span class="p">)</span>  <span class="c1"># radial outward at the apsides</span>
+    <span class="n">dcm_BN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">inPlane_N</span><span class="p">,</span> <span class="n">vHat_N</span><span class="p">,</span> <span class="n">hHat_N</span><span class="p">))</span>
+    <span class="n">sigma_BN</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">C2MRP</span><span class="p">(</span><span class="n">dcm_BN</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">sigma_BNInit</span> <span class="o">=</span> <span class="n">sigma_BN</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># h/r^2 about the orbit normal; mean motion would be 2.5x off at perigee</span>
+    <span class="n">orbitRate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">vN</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rN</span><span class="p">,</span> <span class="n">rN</span><span class="p">)</span>  <span class="c1"># [rad/s]</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">omega_BN_BInit</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">orbitRate</span><span class="p">]]</span>
+
+    <span class="c1"># Hinged panels: mirrored on the radial (±X) faces of the hub</span>
+    <span class="n">panel1</span> <span class="o">=</span> <span class="n">buildPanel</span><span class="p">(</span><span class="s2">"panel1"</span><span class="p">,</span> <span class="n">panel1DCM</span><span class="p">(),</span> <span class="p">[</span><span class="n">hubHalf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">panel2</span> <span class="o">=</span> <span class="n">buildPanel</span><span class="p">(</span><span class="s2">"panel2"</span><span class="p">,</span> <span class="n">panel2DCM</span><span class="p">(),</span> <span class="p">[</span><span class="o">-</span><span class="n">hubHalf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel1</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addStateEffector</span><span class="p">(</span><span class="n">panel2</span><span class="p">)</span>
+
+    <span class="c1"># Atmosphere</span>
+    <span class="n">atmo</span> <span class="o">=</span> <span class="n">exponentialAtmosphere</span><span class="o">.</span><span class="n">ExponentialAtmosphere</span><span class="p">()</span>
+    <span class="n">atmo</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"expAtmo"</span>
+    <span class="n">simSetPlanetEnvironment</span><span class="o">.</span><span class="n">exponentialAtmosphere</span><span class="p">(</span><span class="n">atmo</span><span class="p">,</span> <span class="s2">"earth"</span><span class="p">)</span>
+    <span class="n">atmo</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+    <span class="c1"># Hub drag: always six cube facets attached to the hub</span>
+    <span class="n">hubDrag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+    <span class="n">hubDrag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"hubDrag"</span>
+    <span class="n">addCubeFacets</span><span class="p">(</span><span class="n">hubDrag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dragModel</span> <span class="o">==</span> <span class="s2">"legacy"</span><span class="p">:</span>
+        <span class="c1"># legacy model: panel facets baked into the hub at their undeflected positions</span>
+        <span class="n">addRigidPanelFacetsToHub</span><span class="p">(</span><span class="n">hubDrag</span><span class="p">)</span>
+    <span class="n">hubDrag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">hubDrag</span><span class="p">)</span>
+
+    <span class="n">panel1Drag</span> <span class="o">=</span> <span class="n">panel2Drag</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">dragModel</span> <span class="o">==</span> <span class="s2">"branched"</span><span class="p">:</span>
+        <span class="c1"># Branched facet drag on each panel</span>
+        <span class="n">panel1Drag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+        <span class="n">panel1Drag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"panel1Drag"</span>
+        <span class="n">addPanelFacets</span><span class="p">(</span><span class="n">panel1Drag</span><span class="p">)</span>
+        <span class="n">panel1Drag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">panel1</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">panel1Drag</span><span class="p">)</span>
+
+        <span class="n">panel2Drag</span> <span class="o">=</span> <span class="n">facetDragDynamicEffector</span><span class="o">.</span><span class="n">FacetDragDynamicEffector</span><span class="p">()</span>
+        <span class="n">panel2Drag</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"panel2Drag"</span>
+        <span class="n">addPanelFacets</span><span class="p">(</span><span class="n">panel2Drag</span><span class="p">)</span>
+        <span class="n">panel2Drag</span><span class="o">.</span><span class="n">atmoDensInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">panel2</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">panel2Drag</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dragModel</span> <span class="o">!=</span> <span class="s2">"legacy"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown dragModel: </span><span class="si">{</span><span class="n">dragModel</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmo</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel1</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel2</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">hubDrag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">panel1Drag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel1Drag</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel2Drag</span><span class="p">)</span>
+
+    <span class="c1"># Optional velocity-pointing attitude control</span>
+    <span class="n">extFT</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">useAttitudeControl</span><span class="p">:</span>
+        <span class="n">sNav</span> <span class="o">=</span> <span class="n">simpleNav</span><span class="o">.</span><span class="n">SimpleNav</span><span class="p">()</span>
+        <span class="n">sNav</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"sNav"</span>
+        <span class="n">sNav</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+
+        <span class="c1"># Earth ephemeris at the inertial origin (velocityPoint references planet-relative velocity)</span>
+        <span class="n">earthEphPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsgPayload</span><span class="p">()</span>
+        <span class="n">earthEphMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">EphemerisMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">earthEphPayload</span><span class="p">)</span>
+
+        <span class="n">velPt</span> <span class="o">=</span> <span class="n">velocityPoint</span><span class="o">.</span><span class="n">velocityPoint</span><span class="p">()</span>
+        <span class="n">velPt</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"velPoint"</span>
+        <span class="n">velPt</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span>
+        <span class="n">velPt</span><span class="o">.</span><span class="n">transNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNav</span><span class="o">.</span><span class="n">transOutMsg</span><span class="p">)</span>
+        <span class="n">velPt</span><span class="o">.</span><span class="n">celBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">earthEphMsg</span><span class="p">)</span>
+
+        <span class="n">attErr</span> <span class="o">=</span> <span class="n">attTrackingError</span><span class="o">.</span><span class="n">attTrackingError</span><span class="p">()</span>
+        <span class="n">attErr</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"attErr"</span>
+        <span class="n">attErr</span><span class="o">.</span><span class="n">attRefInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">velPt</span><span class="o">.</span><span class="n">attRefOutMsg</span><span class="p">)</span>
+        <span class="n">attErr</span><span class="o">.</span><span class="n">attNavInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">sNav</span><span class="o">.</span><span class="n">attOutMsg</span><span class="p">)</span>
+
+        <span class="n">vcPayload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsgPayload</span><span class="p">()</span>
+        <span class="n">vcPayload</span><span class="o">.</span><span class="n">ISCPntB_B</span> <span class="o">=</span> <span class="p">[</span><span class="n">hubInertia</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="mf">0.0</span><span class="p">,</span> <span class="n">hubInertia</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                               <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">hubInertia</span><span class="p">]</span>
+        <span class="n">vcMsg</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">VehicleConfigMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vcPayload</span><span class="p">)</span>
+
+        <span class="n">ctrl</span> <span class="o">=</span> <span class="n">mrpFeedback</span><span class="o">.</span><span class="n">mrpFeedback</span><span class="p">()</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"mrpFb"</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">attCtrlK</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">attCtrlP</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">Ki</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">integralLimit</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">Ki</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>  <span class="c1"># [N m]</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">guidInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">attErr</span><span class="o">.</span><span class="n">attGuidOutMsg</span><span class="p">)</span>
+        <span class="n">ctrl</span><span class="o">.</span><span class="n">vehConfigInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">vcMsg</span><span class="p">)</span>
+
+        <span class="n">extFT</span> <span class="o">=</span> <span class="n">extForceTorque</span><span class="o">.</span><span class="n">ExtForceTorque</span><span class="p">()</span>
+        <span class="n">extFT</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"ctrlTorque"</span>
+        <span class="n">extFT</span><span class="o">.</span><span class="n">cmdTorqueInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">cmdTorqueOutMsg</span><span class="p">)</span>
+        <span class="n">scObject</span><span class="o">.</span><span class="n">addDynamicEffector</span><span class="p">(</span><span class="n">extFT</span><span class="p">)</span>
+
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">sNav</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">velPt</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">attErr</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">)</span>
+        <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">extFT</span><span class="p">)</span>
+
+    <span class="c1"># Recorders</span>
+    <span class="n">samplingTime</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">dynRateSeconds</span><span class="p">)</span>
+    <span class="n">scStateRec</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">panel1Rec</span> <span class="o">=</span> <span class="n">panel1</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">panel2Rec</span> <span class="o">=</span> <span class="n">panel2</span><span class="o">.</span><span class="n">hingedRigidBodyOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">atmoRec</span> <span class="o">=</span> <span class="n">atmo</span><span class="o">.</span><span class="n">envOutMsgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recorder</span><span class="p">(</span><span class="n">samplingTime</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">scStateRec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel1Rec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">panel2Rec</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">atmoRec</span><span class="p">)</span>
+
+    <span class="c1"># Vizard hookup (best-effort)</span>
+    <span class="k">if</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">vizFound</span><span class="p">:</span>
+        <span class="n">caseSuffix</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"_"</span> <span class="o">+</span> <span class="n">dragModel</span>
+                      <span class="o">+</span> <span class="p">(</span><span class="s2">"_ctrl"</span> <span class="k">if</span> <span class="n">useAttitudeControl</span> <span class="k">else</span> <span class="s2">"_free"</span><span class="p">))</span>
+        <span class="n">scBodyList</span> <span class="o">=</span> <span class="p">[</span><span class="n">scObject</span><span class="p">,</span>
+                      <span class="p">[</span><span class="s2">"panel1"</span><span class="p">,</span> <span class="n">panel1</span><span class="o">.</span><span class="n">hingedRigidBodyConfigLogOutMsg</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s2">"panel2"</span><span class="p">,</span> <span class="n">panel2</span><span class="o">.</span><span class="n">hingedRigidBodyConfigLogOutMsg</span><span class="p">]]</span>
+        <span class="n">viz</span> <span class="o">=</span> <span class="n">vizSupport</span><span class="o">.</span><span class="n">enableUnityVisualization</span><span class="p">(</span>
+            <span class="n">scSim</span><span class="p">,</span> <span class="n">simTaskName</span><span class="p">,</span> <span class="n">scBodyList</span>
+            <span class="c1"># , saveFile=fileName + caseSuffix</span>
+        <span class="p">)</span>
+        <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                     <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span><span class="p">],</span>
+                                     <span class="n">modelPath</span><span class="o">=</span><span class="s2">"CUBE"</span><span class="p">,</span>
+                                     <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">hubSide</span><span class="p">,</span> <span class="n">hubSide</span><span class="p">,</span> <span class="n">hubSide</span><span class="p">],</span>
+                                     <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">"blue"</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"panel1"</span><span class="p">,</span> <span class="s2">"panel2"</span><span class="p">):</span>
+            <span class="n">vizSupport</span><span class="o">.</span><span class="n">createCustomModel</span><span class="p">(</span><span class="n">viz</span><span class="p">,</span>
+                                         <span class="n">simBodiesToModify</span><span class="o">=</span><span class="p">[</span><span class="n">tag</span><span class="p">],</span>
+                                         <span class="n">modelPath</span><span class="o">=</span><span class="s2">"CUBE"</span><span class="p">,</span>
+                                         <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="n">panelLength</span><span class="p">,</span> <span class="n">panelWidth</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span>  <span class="c1"># [m] along ±sHat1, ±sHat2, ±sHat3</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="n">vizSupport</span><span class="o">.</span><span class="n">toRGBA255</span><span class="p">(</span><span class="s2">"gold"</span><span class="p">))</span>
+        <span class="c1"># slow playback through the atmospheric pass, fast in vacuum</span>
+        <span class="k">if</span> <span class="n">prescribePlaybackSpeed</span><span class="p">:</span>
+            <span class="n">playbackCtrl</span> <span class="o">=</span> <span class="n">PlaybackSpeedController</span><span class="p">(</span>
+                <span class="n">viz</span><span class="p">,</span>
+                <span class="n">earthRadius</span><span class="o">=</span><span class="n">earthRadius</span><span class="p">,</span>
+                <span class="n">slowAltitude_m</span><span class="o">=</span><span class="mf">200e3</span><span class="p">,</span>  <span class="c1"># [m]</span>
+                <span class="n">fastAltitude_m</span><span class="o">=</span><span class="mf">1000e3</span><span class="p">,</span>  <span class="c1"># [m]</span>
+                <span class="n">slowSpeed</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+                <span class="n">fastSpeed</span><span class="o">=</span><span class="mf">256.0</span><span class="p">)</span>
+            <span class="n">playbackCtrl</span><span class="o">.</span><span class="n">scStateInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="p">)</span>
+            <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="n">simTaskName</span><span class="p">,</span> <span class="n">playbackCtrl</span><span class="p">,</span> <span class="n">ModelPriority</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># load the whole .bin up front so high multipliers are not disk bound</span>
+        <span class="n">viz</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">messageBufferSize</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># Run</span>
+    <span class="n">period</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oe</span><span class="o">.</span><span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">/</span> <span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>  <span class="c1"># [s]</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">nOrbitsToRun</span> <span class="o">*</span> <span class="n">period</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"running </span><span class="si">{</span><span class="n">dragModel</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="s1">'ctrl'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">useAttitudeControl</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'free'</span><span class="si">}</span><span class="s2"> case"</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">SetProgressBar</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="c1"># Extract data</span>
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">scStateRec</span><span class="o">.</span><span class="n">times</span><span class="p">()</span> <span class="o">*</span> <span class="n">macros</span><span class="o">.</span><span class="n">NANO2SEC</span>
+    <span class="n">rN_hist</span> <span class="o">=</span> <span class="n">scStateRec</span><span class="o">.</span><span class="n">r_BN_N</span>
+    <span class="n">vN_hist</span> <span class="o">=</span> <span class="n">scStateRec</span><span class="o">.</span><span class="n">v_BN_N</span>
+    <span class="n">sigmaBN_hist</span> <span class="o">=</span> <span class="n">scStateRec</span><span class="o">.</span><span class="n">sigma_BN</span>
+
+    <span class="n">altitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rN_hist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">earthRadius</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vN_hist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Pointing error: angle between body y-axis (the velocity-pointing axis) and velocity direction</span>
+    <span class="n">pointingErrDeg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeData</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeData</span><span class="p">)):</span>
+        <span class="n">dcm_BN_i</span> <span class="o">=</span> <span class="n">RigidBodyKinematics</span><span class="o">.</span><span class="n">MRP2C</span><span class="p">(</span><span class="n">sigmaBN_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">by_N</span> <span class="o">=</span> <span class="n">dcm_BN_i</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+        <span class="n">vHat</span> <span class="o">=</span> <span class="n">vN_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vN_hist</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">cosAng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">by_N</span><span class="p">,</span> <span class="n">vHat</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">pointingErrDeg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">cosAng</span><span class="p">))</span>
+
+    <span class="c1"># Per-orbit apoapsis tracking via instantaneous orbital energy</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">speed</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rN_hist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [m^2/s^2]</span>
+    <span class="n">semiMajor</span> <span class="o">=</span> <span class="o">-</span><span class="n">earthGrav</span><span class="o">.</span><span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">energy</span><span class="p">)</span>
+    <span class="c1"># Periapsis is approximately preserved on ballistic + drag-only trajectories</span>
+    <span class="n">apoapsisAltHist</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">semiMajor</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rN_hist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">-</span> <span class="n">earthRadius</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'time'</span><span class="p">:</span> <span class="n">timeData</span><span class="p">,</span>
+        <span class="s1">'rN'</span><span class="p">:</span> <span class="n">rN_hist</span><span class="p">,</span>
+        <span class="s1">'vN'</span><span class="p">:</span> <span class="n">vN_hist</span><span class="p">,</span>
+        <span class="s1">'altitude'</span><span class="p">:</span> <span class="n">altitude</span><span class="p">,</span>
+        <span class="s1">'theta1'</span><span class="p">:</span> <span class="n">panel1Rec</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+        <span class="s1">'theta2'</span><span class="p">:</span> <span class="n">panel2Rec</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+        <span class="s1">'density'</span><span class="p">:</span> <span class="n">atmoRec</span><span class="o">.</span><span class="n">neutralDensity</span><span class="p">,</span>
+        <span class="s1">'pointingErrDeg'</span><span class="p">:</span> <span class="n">pointingErrDeg</span><span class="p">,</span>
+        <span class="s1">'semiMajor'</span><span class="p">:</span> <span class="n">semiMajor</span><span class="p">,</span>
+        <span class="s1">'apoapsisAlt'</span><span class="p">:</span> <span class="n">apoapsisAltHist</span><span class="p">,</span>
+        <span class="s1">'period'</span><span class="p">:</span> <span class="n">period</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../examples/scenarioAerobrake.html#scenarioAerobrake.run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">show_plots</span><span class="p">,</span>
+        <span class="n">dynRateSeconds</span><span class="o">=</span><span class="n">defaultDynRateSeconds</span><span class="p">,</span>
+        <span class="n">nOrbitsToRun</span><span class="o">=</span><span class="n">defaultNOrbits</span><span class="p">,</span>
+        <span class="n">cases</span><span class="o">=</span><span class="n">allCases</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run the requested cases and overlay them.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        show_plots: display matplotlib windows interactively if ``True``.</span>
+<span class="sd">        dynRateSeconds: integration step size. Default 0.2 s; lower to 0.1 s</span>
+<span class="sd">            for highest fidelity, especially in the chaotic branched + free case.</span>
+<span class="sd">        nOrbitsToRun: number of orbital periods to integrate. Default 2.</span>
+<span class="sd">        cases: iterable of (label, useAttitudeControl, dragModel) tuples.</span>
+<span class="sd">            Defaults to all four (the journal-paper configuration); the test</span>
+<span class="sd">            wrapper passes a smaller subset to keep the suite fast.</span>
+<span class="sd">    """</span>
+    <span class="n">caseStyles</span> <span class="o">=</span> <span class="p">((</span><span class="s2">"C0"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"C1"</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"C2"</span><span class="p">,</span> <span class="s2">"-."</span><span class="p">),</span> <span class="p">(</span><span class="s2">"C3"</span><span class="p">,</span> <span class="s2">":"</span><span class="p">))</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">useAttitudeControl</span><span class="p">,</span> <span class="n">dragModel</span><span class="p">),</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">ls</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cases</span><span class="p">,</span> <span class="n">caseStyles</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">runOneCase</span><span class="p">(</span><span class="n">useAttitudeControl</span><span class="o">=</span><span class="n">useAttitudeControl</span><span class="p">,</span>
+                            <span class="n">dragModel</span><span class="o">=</span><span class="n">dragModel</span><span class="p">,</span>
+                            <span class="n">dynRateSeconds</span><span class="o">=</span><span class="n">dynRateSeconds</span><span class="p">,</span>
+                            <span class="n">nOrbitsToRun</span><span class="o">=</span><span class="n">nOrbitsToRun</span><span class="p">)</span>
+        <span class="n">series</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">label</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+
+    <span class="n">figureList</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">minDensFloor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span>
+
+    <span class="c1"># Orbit trace in the X-Y inertial plane (equatorial orbit lies here)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'rN'</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">'rN'</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e3</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">earthRadius</span> <span class="o">/</span> <span class="mf">1e3</span><span class="p">,</span>
+                                   <span class="n">color</span><span class="o">=</span><span class="s1">'0.7'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'x [km]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'y [km]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">'equal'</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">'box'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"OrbitTrace"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Altitude vs time</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">'altitude'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e3</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'altitude [km]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"Altitude"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Apoapsis altitude (the headline aerobraking effect)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">'apoapsisAlt'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e3</span><span class="p">,</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'apoapsis altitude [km]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"ApoapsisAltitude"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Panel deflection: only theta1 is plotted per case (panels are mirrored)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'theta1'</span><span class="p">]),</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'panel 1 deflection $\theta_1$ [deg]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"PanelDeflection"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Pointing error (body y-axis vs velocity vector)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">'pointingErrDeg'</span><span class="p">],</span>
+                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time [min]'</span><span class="p">)</span>
+    <span class="c1"># trailing spaces shift the centered label down so the tight bounding box keeps its top</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Velocity pointing error $\angle(\hat</span><span class="si">{b}</span><span class="s1">_2, \hat</span><span class="si">{v}</span><span class="s1">)$ [deg]    '</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"PointingError"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="c1"># Atmospheric density</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">ls</span> <span class="ow">in</span> <span class="n">series</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'density'</span><span class="p">],</span> <span class="n">minDensFloor</span><span class="p">),</span>
+                     <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time [min]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'atmospheric density [kg/m$^3$]'</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">figureList</span><span class="p">[</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">"Density"</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">show_plots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">"all"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">figureList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

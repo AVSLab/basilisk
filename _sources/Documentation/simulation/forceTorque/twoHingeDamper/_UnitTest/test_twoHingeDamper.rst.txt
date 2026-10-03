@@ -1,0 +1,15 @@
+.. _test_twoHingeDamper:
+
+test_twoHingeDamper
+===================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_twoHingeDamper
+   :members:
+   :show-inheritance:
+

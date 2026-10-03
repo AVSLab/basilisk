@@ -1,0 +1,10 @@
+.. _MTBArrayConfigMsgPayload:
+
+MTBArrayConfigMsgPayload
+========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MTBArrayConfigMsgPayload.h
+   :project: msgPayloadDefC
+

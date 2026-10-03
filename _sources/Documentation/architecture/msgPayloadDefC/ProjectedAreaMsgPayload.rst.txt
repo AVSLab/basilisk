@@ -1,0 +1,10 @@
+.. _ProjectedAreaMsgPayload:
+
+ProjectedAreaMsgPayload
+=======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ProjectedAreaMsgPayload.h
+   :project: msgPayloadDefC
+

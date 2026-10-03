@@ -1,0 +1,498 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamics state and integrator architecture &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Multi-body Dynamics with MuJoCo" href="mujocoDynObject.html" />
+    <link rel="prev" title="Creating DynamicObject Basilisk Modules" href="creatingDynObject.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../bskPrinciples.html">Fundamentals of Basilisk Simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples/index.html">Integrated Example Scripts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../makingModules.html">Basics of Writing Basilisk Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-1.html">Module Design Considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-2.html">Creating New Message Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cModules.html">Making C Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cppModules.html">Making C++ Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rustModules.html"><span class="beta-label">[BETA]</span> Making Rust Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyModules.html">Making Python Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../numbaModules.html">Making Numba Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-3.html">Module RST Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-4.html">Module Unit Test File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../writingEffectors.html">Writing Dynamic and State Effectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingDraftModule.html">Automation Script to Create a New Basilisk Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../makingModules-5.html">Common Basilisk Support Files</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../advancedTopics.html">Advanced Topics</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="creatingDynObject.html">Creating <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> Basilisk Modules</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Dynamics state and integrator architecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mujocoDynObject.html">Multi-body Dynamics with MuJoCo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="effectorBranching.html">Enabling Branching of Basilisk Effectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="spiceReconstruction.html">Optimizing performance when using SPICE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../Learn.html">Learning Basilisk</a></li>
+          <li class="breadcrumb-item"><a href="../../makingModules.html">Basics of Writing Basilisk Modules</a></li>
+          <li class="breadcrumb-item"><a href="../advancedTopics.html">Advanced Topics</a></li>
+      <li class="breadcrumb-item active">Dynamics state and integrator architecture</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Learn/makingModules/advancedTopics/integratorArchitecture.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dynamics-state-and-integrator-architecture">
+<span id="integratorarchitecture"></span><h1>Dynamics state and integrator architecture<a class="headerlink" href="#dynamics-state-and-integrator-architecture" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#components-and-ownership">Components and ownership</a>
+      </li>
+      
+      <li>
+        <a href="#registration-values-and-shapes">Registration, values, and shapes</a>
+      </li>
+      
+      <li>
+        <a href="#registration-and-reset">Registration and Reset</a>
+      </li>
+      
+      <li>
+        <a href="#binding-and-lifetime">Binding and lifetime</a>
+      </li>
+      
+      <li>
+        <a href="#fixed-and-adaptive-runge-kutta">Fixed and adaptive Runge–Kutta</a>
+      </li>
+      
+      <li>
+        <a href="#stochastic-topology-and-stage-storage">Stochastic topology and stage storage</a>
+      </li>
+      
+      <li>
+        <a href="#bsm-and-mujoco-adapters">BSM and MuJoCo adapters</a>
+      </li>
+      
+      <li>
+        <a href="#python-compatibility-and-borrowed-objects">Python compatibility and borrowed objects</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<p>Basilisk separates the definition of a dynamics model from the storage and arithmetic
+used to integrate it. A model registers named states once, then reads their values and
+writes derivatives through stable <code class="docutils literal notranslate"><span class="pre">StateData</span></code> handles. Integrators bind to the finalized
+storage and reuse flat numerical buffers for every stage. BSM spacecraft and MuJoCo scenes
+use this same integration layer, with different equations of motion and state-update rules.</p>
+<p>This guide explains the boundaries between those components. For a minimal model
+implementation, start with <a class="reference internal" href="creatingDynObject.html#creatingdynobject"><span class="std std-ref">Creating DynamicObject Basilisk Modules</span></a>; for MuJoCo model setup, see
+<a class="reference internal" href="mujocoDynObject.html#mujocodynobject"><span class="std std-ref">Multi-body Dynamics with MuJoCo</span></a>.</p>
+<section id="components-and-ownership">
+<h2>Components and ownership<a class="headerlink" href="#components-and-ownership" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 39.0%" />
+<col style="width: 37.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Responsibility</p></th>
+<th class="head"><p>Owns or borrows</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code></p></td>
+<td><p>Coordinates Reset, integration, and synchronized models.</p></td>
+<td><p>Owns its <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code> and active integrator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code></p></td>
+<td><p>Exposes registration, state lookup, and named properties to modules.</p></td>
+<td><p>Owns properties and one native <code class="docutils literal notranslate"><span class="pre">StateRegistry</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">StateRegistry</span></code></p></td>
+<td><p>Validates declarations and allocates fixed contiguous state storage.</p></td>
+<td><p>Owns state handles, update policies, layouts, and value buffers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StateData</span></code></p></td>
+<td><p>Provides shaped access to one state’s values, drift, and diffusion.</p></td>
+<td><p>Borrows storage from its registry; models borrow the handle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">StateVecIntegrator</span></code></p></td>
+<td><p>Prepares workspaces once and calls the dynamics models.</p></td>
+<td><p>Borrows the ordered list of synchronized dynamics objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FlatStateBinding</span></code></p></td>
+<td><p>Translates registered states into validated offsets and update runs.</p></td>
+<td><p>Borrows finalized buffers and policies; owns descriptors.</p></td>
+</tr>
+<tr class="row-even"><td><p>Numerical integrator and workspace</p></td>
+<td><p>Evaluates stages and combines their derivatives or noise tangents.</p></td>
+<td><p>Owns preallocated stage, candidate, and rollback buffers.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The usual module-facing path is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DynamicObject</span>
+  <span class="n">dynManager</span><span class="o">.</span><span class="n">registerState</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">borrowed</span> <span class="n">StateData</span><span class="o">*</span>
+  <span class="n">equationsOfMotion</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>        <span class="o">-&gt;</span> <span class="n">stateView</span><span class="p">(),</span> <span class="n">derivativeView</span><span class="p">()</span>
+  <span class="n">integrateState</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>           <span class="o">-&gt;</span> <span class="n">owned</span> <span class="n">StateVecIntegrator</span>
+</pre></div>
+</div>
+<p>The integrator-facing path is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">StateVecIntegrator</span>
+  <span class="n">FlatStateBinding</span> <span class="o">-&gt;</span> <span class="n">finalized</span> <span class="n">StateRegistry</span> <span class="n">layouts</span> <span class="ow">and</span> <span class="n">buffers</span>
+  <span class="n">stage</span> <span class="n">workspace</span>  <span class="o">-&gt;</span> <span class="n">candidate</span> <span class="o">-&gt;</span> <span class="n">live</span> <span class="n">buffers</span> <span class="o">-&gt;</span> <span class="n">dynamics</span> <span class="n">callback</span>
+                   <span class="o">&lt;-</span> <span class="n">captured</span> <span class="n">derivatives</span> <span class="ow">and</span> <span class="n">diffusion</span> <span class="n">tangents</span>
+</pre></div>
+</div>
+<p>To access contiguous segments or complete state layouts from C++, include
+<code class="docutils literal notranslate"><span class="pre">stateRegistry.h</span></code> and call <code class="docutils literal notranslate"><span class="pre">DynParamManager::getStateRegistry()</span></code>.</p>
+</section>
+<section id="registration-values-and-shapes">
+<h2>Registration, values, and shapes<a class="headerlink" href="#registration-values-and-shapes" title="Link to this heading"></a></h2>
+<p>A state declaration has a name and a <code class="docutils literal notranslate"><span class="pre">StateSpec</span></code>. The specification records the
+state matrix shape, derivative shape, diffusion-tangent shape, local noise count,
+error-control mode, and update kind. The simple <code class="docutils literal notranslate"><span class="pre">registerState(rows,</span> <span class="pre">cols,</span> <span class="pre">name)</span></code>
+overload declares an ordinary Euclidean state with matching shapes.</p>
+<p>Each registry stores three column-major arrays of doubles:</p>
+<ul class="simple">
+<li><p>state values, in registration order;</p></li>
+<li><p>derivatives, in registration order;</p></li>
+<li><p>diffusion tangents, in state order and then local noise-source order.</p></li>
+</ul>
+<p>A <code class="docutils literal notranslate"><span class="pre">StateLayout</span></code> gives offsets into those arrays. Its offsets count scalars, not bytes.
+An integrator concatenates objects in synchronized integration order; its descriptors
+therefore also have offsets into the integrator’s combined buffers. Registry-local and
+integrator-global offsets are different coordinate systems and must not be interchanged.</p>
+<p>For a Euclidean state, propagation uses ordinary addition. A special state instead supplies
+an immutable <code class="docutils literal notranslate"><span class="pre">StateUpdatePolicy</span></code> that constructs drift candidates and applies diffusion
+increments. Its derivative or tangent may have fewer components than its stored value:
+a unit quaternion, for example, has four stored components but can use a three-component
+angular-velocity derivative. The policy owns the meaning of that update; the integrator
+owns the stage coefficients and ordering.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StateData</span></code> is a handle, not an owning matrix. <code class="docutils literal notranslate"><span class="pre">stateView()</span></code>, <code class="docutils literal notranslate"><span class="pre">derivativeView()</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">diffusionView(i)</span></code> return borrowed Eigen maps. Use them for local calculations and
+reacquire them after the first finalization. Later resets preserve their addresses. The copying getters, such as
+<code class="docutils literal notranslate"><span class="pre">getState()</span></code>, remain useful when a snapshot must survive a later update.
+Setters require exact shapes and never resize established state storage.</p>
+<p>Properties are separate named matrices used for model information that is not itself
+integrated. They belong to <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code> and do not appear in integrator workspaces.</p>
+</section>
+<section id="registration-and-reset">
+<h2>Registration and Reset<a class="headerlink" href="#registration-and-reset" title="Link to this heading"></a></h2>
+<p>A model’s Reset declares and initializes states, finalizes storage, links handles, and
+performs the remaining model setup:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Reset</span>
+  <span class="n">register</span> <span class="n">named</span> <span class="n">states</span> <span class="ow">and</span> <span class="n">initialize</span> <span class="n">values</span>
+  <span class="n">finalizeStates</span><span class="p">():</span> <span class="n">allocate</span> <span class="n">contiguous</span> <span class="n">storage</span> <span class="n">on</span> <span class="n">the</span> <span class="n">first</span> <span class="n">call</span>
+  <span class="n">link</span> <span class="n">handles</span> <span class="ow">and</span> <span class="n">finish</span> <span class="n">initialization</span>
+</pre></div>
+</div>
+<p>Before finalization, each state has temporary matrices because the total storage size is
+not yet known. Finalization computes offsets, allocates the three buffers, copies initial
+values, and redirects the existing handles into those buffers. The temporary matrices are
+then released. The layout and buffer addresses remain fixed for the manager’s lifetime.</p>
+<p>Later resets look up states by name and write values directly into the same storage.
+Declarations may occur in a different order, but each existing state’s dimensions, update
+policy, and noise count must match. Shared-noise groups may be repeated with their endpoints
+in any order. New states or changed noise connections require a new manager. Repeated calls
+to <code class="docutils literal notranslate"><span class="pre">finalizeStates()</span></code> have no effect, including for an empty finalized manager.</p>
+<p>Reset is ordinary model initialization. Errors propagate to the caller and may leave
+partially initialized values. There is no registration transaction, saved pre-Reset copy,
+or automatic retry protocol. Complete model initialization successfully before integration.</p>
+</section>
+<section id="binding-and-lifetime">
+<h2>Binding and lifetime<a class="headerlink" href="#binding-and-lifetime" title="Link to this heading"></a></h2>
+<p>An integrator prepares its descriptors and numerical workspaces on its first step.
+Later steps reuse that storage. If a native secondary is destroyed, the surviving
+primary rebuilds its workspace before advancing again. The registry records whether its buffers have been
+allocated, and the integrator records whether its workspace is prepared. These flags
+track one-time setup; they do not describe Reset success or recovery from model errors.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StateBufferSegment</span></code> identifies a registry, a buffer kind, and a range of scalars.
+Resolve it through the owning registry before using the pointer. Matching resets preserve
+the range and its address. The registry must outlive the segment and any pointer obtained
+from it; segments do not track owner destruction or allocator address reuse.</p>
+<p>The primary <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code> owns the integrator and calls the synchronized objects’
+pre- and post-integration hooks. Configure synchronization before the first step. Do not destroy objects,
+replace the integrator, or modify the integration group from a dynamics callback.
+<code class="docutils literal notranslate"><span class="pre">setIntegrator()</span></code> transfers the dynamics list and destroys the previous integrator.
+Pointers to that previous integrator are no longer valid.</p>
+<p>Python retains synchronized secondaries for the primary’s lifetime. Native connections
+are detached when either object is destroyed; a surviving secondary can integrate
+independently again. Keep the dynamics object alive while using its borrowed manager or
+integrator. Reacquire the integrator property after replacement.</p>
+</section>
+<section id="fixed-and-adaptive-runge-kutta">
+<h2>Fixed and adaptive Runge–Kutta<a class="headerlink" href="#fixed-and-adaptive-runge-kutta" title="Link to this heading"></a></h2>
+<p>For ordinary states, a fixed-step explicit RK method evaluates</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}k_i &amp;= f\left(t+c_i h,\;x_n+h\sum_{j&lt;i}a_{ij}k_j\right),\\
+x_{n+1} &amp;= x_n+h\sum_i b_i k_i.\end{split}\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">svIntegratorRungeKutta</span></code> stores each derivative stage in one column of <code class="docutils literal notranslate"><span class="pre">kStorage</span></code>.
+It captures the step-entry state once, combines stage columns into candidates, and makes
+each candidate visible in the live buffers before evaluating the dynamics. Adjacent
+Euclidean states form contiguous update runs; special states dispatch through their policy.
+An all-Euclidean single-object model can use its live buffer as the candidate buffer.</p>
+<p>Adaptive RK reuses those stages to form lower- and higher-order candidates. It accepts the
+higher-order candidate when the greatest error-to-tolerance ratio is at most one, otherwise
+it retries with a smaller internal step. <code class="docutils literal notranslate"><span class="pre">baseState</span></code> holds the most recently accepted
+internal step, while <code class="docutils literal notranslate"><span class="pre">entryState</span></code> preserves the start of the entire requested interval.
+An exception restores the latter, even if earlier internal substeps succeeded, while propagating the error to the caller.</p>
+<p>For whole-state error control, the ratio is</p>
+<div class="math notranslate nohighlight">
+\[r_s =
+\frac{\lVert x_s^{\mathrm{high}}-x_s^{\mathrm{low}}\rVert}
+     {a_s+r_s^{\mathrm{tol}}\lVert x_s^{\mathrm{high}}\rVert}.\]</div>
+<p>For per-component control, the corresponding scalar ratios are evaluated separately and
+their maximum is used. The norm above is the Euclidean/Frobenius norm of the stored state,
+including for special-policy states; this is not a manifold-distance error metric.
+Absolute tolerances have the units of the state, and relative tolerances are dimensionless.</p>
+<p>Tolerance precedence is object-and-state override, then state-name override, then global
+default, independently for relative and absolute tolerance. Resolved tolerances are cached
+in descriptor order so an unchanged configuration needs no state-name lookup during error
+evaluation. Direct writes to the legacy public default fields are also detected.
+Nonfinite candidates and time steps that cannot make representable forward progress fail
+explicitly.</p>
+</section>
+<section id="stochastic-topology-and-stage-storage">
+<h2>Stochastic topology and stage storage<a class="headerlink" href="#stochastic-topology-and-stage-storage" title="Link to this heading"></a></h2>
+<p>Stochastic models supply drift and diffusion for</p>
+<div class="math notranslate nohighlight">
+\[dx = f(t,x)\,dt + \sum_q g_q(t,x)\,dW_q.\]</div>
+<p>Choose an integrator whose stochastic interpretation and noise assumptions match the
+model; the shared storage layer does not change those mathematical requirements.
+Each state declares local noise sources. <code class="docutils literal notranslate"><span class="pre">registerSharedNoiseSource()</span></code> identifies local
+endpoints driven by the same process, so they receive the same global Wiener increment.</p>
+<p>There are three relevant orders:</p>
+<ul class="simple">
+<li><p><strong>Registration order</strong> determines state and derivative buffer layout.</p></li>
+<li><p><strong>Canonical noise traversal</strong> visits objects in integration order and states by name
+within each object to assign global noise slots consistently.</p></li>
+<li><p><strong>State-local noise order</strong> determines how successive diffusion increments are applied
+to a state. Special updates need this order because the operations may not commute.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">StateVecStochasticIntegrator</span></code> builds the mappings between those orders once.
+A <code class="docutils literal notranslate"><span class="pre">StochasticNoiseSlot</span></code> identifies one global source; its <code class="docutils literal notranslate"><span class="pre">StochasticNoiseBinding</span></code>
+records identify the state-local tangents affected by that source. Diffusion-stage storage
+is packed by global slot, with only the tangents belonging to that slot. It is not a dense
+state-by-global-noise matrix.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StochasticRKIntegratorBase</span></code> owns the generator and preallocated Wiener/auxiliary output.
+<code class="docutils literal notranslate"><span class="pre">FlatStochasticWorkspace</span></code> owns method stage matrices, combined tangents, and scratch
+vectors indexed by global source. Concrete methods supply coefficients and callback order.
+Methods needing only Wiener increments do not request unused auxiliary samples. Consequently,
+identical seeds need not reproduce trajectories from versions that consumed those samples.
+Prescribed generators are available for reproducible recurrence tests.</p>
+<p>Candidate assembly has a small internal protocol:</p>
+<ul class="simple">
+<li><p>a complete candidate can be accepted as the base for another update;</p></li>
+<li><p>sparse per-source trials share a drift baseline and restore the previous source’s
+scratch changes; live buffers are also checked and restored if callbacks changed them;</p></li>
+<li><p>an all-Euclidean final candidate can accumulate ordered terms before one final scatter.</p></li>
+</ul>
+<p>Those phases describe scratch-buffer validity, not model registration. They prevent a
+method from accepting an incomplete candidate or mixing sparse and final assembly.
+On an attempted-step failure, the numerical method restores its step-entry state values before propagating the error.
+It does not rewind the noise generator, derivatives, messages, or other callback effects.</p>
+</section>
+<section id="bsm-and-mujoco-adapters">
+<h2>BSM and MuJoCo adapters<a class="headerlink" href="#bsm-and-mujoco-adapters" title="Link to this heading"></a></h2>
+<p>BSM spacecraft register hub and effector states during Reset. Effectors keep <code class="docutils literal notranslate"><span class="pre">StateData</span></code>
+handles and reacquire local views for their equations of motion. Device counts and state
+dimensions become fixed with the first topology. Effectors with dimension-dependent
+derivative scratch allocate it during setup and overwrite it during evaluation. Existing
+post-integration operations, such as MRP shadow-set selection, remain model responsibilities.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MJScene</span></code> registers joint position states first and velocity states second, allowing
+checked contiguous segments to transfer the corresponding <code class="docutils literal notranslate"><span class="pre">qpos</span></code> and <code class="docutils literal notranslate"><span class="pre">qvel</span></code> blocks.
+Scalar joints use Euclidean states. Ball joints use quaternion position states; free joints
+split translation and attitude into separate records. The native quaternion policy has a
+four-component state and three-component drift, whereas the high-order policy uses a
+four-component quaternion derivative. Both use three-component diffusion tangents.</p>
+<p>Before evaluating MuJoCo dynamics, the scene copies the candidate states into MuJoCo data.
+The evaluation updates drift or diffusion, which the integrator then captures. Scene
+tasks and message publication keep their defined callback schedule; storage optimization
+does not make intermediate-stage callbacks optional.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MJSpec</span></code> compiles a candidate model and checks its dimensions against the fixed state
+layout before replacing model/data. Runtime values are copied into the replacement, and
+body, joint, actuator, and equality wrappers update their cached IDs and addresses directly.
+Wrapper initialization errors propagate without restoring previous bindings. Compile guards
+keep model/data pointers stable while callbacks use them.</p>
+<p>Additional continuous states use <code class="docutils literal notranslate"><span class="pre">StatefulSysModel</span></code>. The scene passes a
+<code class="docutils literal notranslate"><span class="pre">DynParamRegisterer</span></code> during registration, which prefixes state names and supports shared
+noise declarations. The helper is temporary, and the scene must outlive returned state
+handles. Modules exchange ordinary model information through messages.</p>
+</section>
+<section id="python-compatibility-and-borrowed-objects">
+<h2>Python compatibility and borrowed objects<a class="headerlink" href="#python-compatibility-and-borrowed-objects" title="Link to this heading"></a></h2>
+<p>The SWIG modules use canonical <code class="docutils literal notranslate"><span class="pre">DynParamManager</span></code>, <code class="docutils literal notranslate"><span class="pre">StateData</span></code>, <code class="docutils literal notranslate"><span class="pre">DynamicObject</span></code>, and
+integrator proxy classes. Import shims reuse those definitions across extension modules.
+Compatibility names remain aliases to the
+canonical class, preserving identity across import paths.</p>
+<p>Python keeps the established <code class="docutils literal notranslate"><span class="pre">registerState(nRow,</span> <span class="pre">nCol,</span> <span class="pre">stateName)</span></code> signature, including
+keyword arguments. Use <code class="docutils literal notranslate"><span class="pre">registerStateSpec(stateName,</span> <span class="pre">spec)</span></code> for a complete <code class="docutils literal notranslate"><span class="pre">StateSpec</span></code>.
+C++ uses the corresponding <code class="docutils literal notranslate"><span class="pre">registerState</span></code> overloads.</p>
+<p>The ownership rules follow the objects that hold native storage:</p>
+<ul class="simple">
+<li><p>A standalone manager owns its states. States returned directly by its registration and
+lookup methods retain that manager’s Python proxy.</p></li>
+<li><p>A manager embedded in a dynamics object is borrowed. Keep the dynamics object alive
+while using the manager or its states.</p></li>
+<li><p>States returned through a <code class="docutils literal notranslate"><span class="pre">DynParamRegisterer</span></code> borrow the scene’s storage. Keep the
+scene alive while using those handles; the temporary registerer does not own them.</p></li>
+<li><p>MuJoCo body, joint, and site accessors retain their parent through a reference attached
+to the returned proxy. Local SWIG <code class="docutils literal notranslate"><span class="pre">%pythonappend</span></code> declarations provide this behavior
+without replacing methods at module import.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setIntegrator()</span></code> consumes a newly supplied integrator, including on rejection.
+Reinstalling the active integrator is a no-op. Borrowed integrators expire on replacement
+or owner destruction; Python rejects attempts to reinstall those expired proxies.</p></li>
+</ul>
+<p>The bindings do not maintain a global owner registry. Native callers manage borrowed
+lifetimes explicitly.</p>
+<p>Registry internals and lifecycle mutation helpers are not exposed to Python.
+The fixed-size sequence adapters allow supported indexed configuration updates without
+exposing container-resize operations that would bypass topology checks.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="creatingDynObject.html" class="btn btn-neutral float-left" title="Creating DynamicObject Basilisk Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mujocoDynObject.html" class="btn btn-neutral float-right" title="Multi-body Dynamics with MuJoCo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

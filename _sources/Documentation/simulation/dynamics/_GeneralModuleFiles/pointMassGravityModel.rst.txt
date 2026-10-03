@@ -1,0 +1,10 @@
+.. _pointMassGravityModel:
+
+pointMassGravityModel
+=====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: pointMassGravityModel.h
+   :project: _GeneralModuleFiles4
+

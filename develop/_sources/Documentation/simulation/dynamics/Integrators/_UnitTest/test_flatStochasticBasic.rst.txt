@@ -1,0 +1,7 @@
+.. _test_flatStochasticBasic:
+
+test_flatStochasticBasic
+========================
+
+.. bsk-module-guide-end::
+

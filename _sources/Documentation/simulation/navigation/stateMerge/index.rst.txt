@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_stateMerge:
+
+stateMerge
+==========
+
+:doc:`Module documentation <stateMerge>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

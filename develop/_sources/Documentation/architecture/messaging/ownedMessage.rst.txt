@@ -1,0 +1,10 @@
+.. _ownedMessage:
+
+ownedMessage
+============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ownedMessage.h
+   :project: messaging
+

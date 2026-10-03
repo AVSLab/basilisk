@@ -1,0 +1,15 @@
+.. _scenarioPrescribedMotionWithRotationBranching:
+
+scenarioPrescribedMotionWithRotationBranching
+=============================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioPrescribedMotionWithRotationBranching
+   :members:
+   :show-inheritance:
+

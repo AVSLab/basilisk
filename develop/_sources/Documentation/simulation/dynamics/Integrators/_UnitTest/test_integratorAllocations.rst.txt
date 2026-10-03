@@ -1,0 +1,7 @@
+.. _test_integratorAllocations:
+
+test_integratorAllocations
+==========================
+
+.. bsk-module-guide-end::
+

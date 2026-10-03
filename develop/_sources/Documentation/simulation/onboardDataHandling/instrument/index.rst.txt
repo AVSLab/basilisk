@@ -1,0 +1,11 @@
+.. _Folder_instrument:
+
+instrument
+==========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   mappingInstrument <mappingInstrument/mappingInstrument>
+   simpleInstrument <simpleInstrument/simpleInstrument>

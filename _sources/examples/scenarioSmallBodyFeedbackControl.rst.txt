@@ -1,0 +1,15 @@
+.. _scenarioSmallBodyFeedbackControl:
+
+scenarioSmallBodyFeedbackControl
+================================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioSmallBodyFeedbackControl
+   :members:
+   :show-inheritance:
+

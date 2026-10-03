@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="270 251 344 427" width="344" height="427">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.12 
+    <dc:date>2019-12-31 22:46:21 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" fill="none" stroke-opacity="1" stroke-dasharray="none" stroke="none" fill-opacity="1">
+    <title>Canvas 1</title>
+    <g id="Canvas_1: Layer 2">
+      <title>Layer 2</title>
+      <g id="Graphic_7">
+        <ellipse cx="326.26463" cy="623.8041" rx="54.842609619873" ry="52.3041732534244" stroke="#ff7f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_5">
+        <ellipse cx="326.26463" cy="464.3041" rx="54.842609619873" ry="52.3041732534246" stroke="#ff7f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_3">
+        <ellipse cx="326.26463" cy="304.8041" rx="36.4932668766654" ry="34.8041452901413" stroke="#ff7f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_4">
+        <path d="M 365.0441 267.81955 C 386.46154 288.24556 386.46154 321.36262 365.0441 341.78863 C 343.6268 362.21473 308.90248 362.21473 287.48516 341.78863 C 266.06773 321.36262 266.06773 288.24556 287.48516 267.81955 C 308.90248 247.39345 343.6268 247.39345 365.0441 267.81955" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_6">
+        <path d="M 352.0692 439.6939 C 366.32075 453.28574 366.32075 475.32244 352.0692 488.91427 C 337.81773 502.5062 314.71154 502.5062 300.46007 488.91427 C 286.20852 475.32244 286.20852 453.28574 300.46007 439.6939 C 314.71154 426.102 337.81773 426.102 352.0692 439.6939" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_8">
+        <path d="M 443.40493 599.1939 C 457.6565 612.78574 457.6565 634.82244 443.40493 648.4143 C 429.15346 662.0062 406.04727 662.0062 391.7958 648.4143 C 377.54425 634.82244 377.54425 612.78574 391.7958 599.1939 C 406.04727 585.602 429.15346 585.602 443.40493 599.1939" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_9">
+        <text transform="translate(452.507 282)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="42.518" y="13">Full Eclipse</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="5684342e-20" y="29.392">(c &lt; b - a, implying b &gt; a)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <text transform="translate(452.507 447.9121)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="29.68" y="13">Annular Eclipse</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="5684342e-20" y="29.392">(c &lt; a - b, implying a &gt; b)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <text transform="translate(486.345 607.4121)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="32684966e-20" y="13">Partial Eclipse</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="12.719" y="29.392">(c &lt; a + b)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

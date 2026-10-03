@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_simpleSolarPanel:
+
+simpleSolarPanel
+================
+
+:doc:`Module documentation <simpleSolarPanel>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

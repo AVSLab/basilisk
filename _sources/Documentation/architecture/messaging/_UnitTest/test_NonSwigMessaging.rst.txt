@@ -1,0 +1,15 @@
+.. _test_NonSwigMessaging:
+
+test_NonSwigMessaging
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_NonSwigMessaging
+   :members:
+   :show-inheritance:
+

@@ -1,0 +1,10 @@
+.. _SpiceTimeMsgPayload:
+
+SpiceTimeMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: SpiceTimeMsgPayload.h
+   :project: msgPayloadDefC
+

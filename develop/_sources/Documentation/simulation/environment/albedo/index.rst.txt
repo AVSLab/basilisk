@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_albedo:
+
+albedo
+======
+
+:doc:`Module documentation <albedo>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

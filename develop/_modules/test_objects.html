@@ -1,0 +1,813 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_objects &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_objects</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_objects</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1">#  ISC License</span>
+<span class="c1">#</span>
+<span class="c1">#  Copyright (c) 2025, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1">#  Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1">#  purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1">#  copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1">#  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1">#  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1">#  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1">#  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1">#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1">#  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1">#  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk</span><span class="w"> </span><span class="kn">import</span> <span class="n">hasBuildFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+
+<span class="n">mujocoEnabled</span> <span class="o">=</span> <span class="n">hasBuildFeature</span><span class="p">(</span><span class="s2">"mujoco"</span><span class="p">)</span>
+<span class="n">pytestmark</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">mujocoEnabled</span><span class="p">,</span>
+    <span class="n">reason</span><span class="o">=</span><span class="s2">"Requires Basilisk built with --mujoco True"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">mujocoEnabled</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">dynParamManager</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">mujoco</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">svIntegrators</span>
+
+<span class="n">TEST_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">XML_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">TEST_FOLDER</span><span class="si">}</span><span class="s2">/test_sat.xml"</span>
+
+<span class="n">OWNERSHIP_XML</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="root"&gt;</span>
+<span class="s2">      &lt;joint name="slide" type="slide"/&gt;</span>
+<span class="s2">      &lt;geom type="sphere" size="1" mass="1"/&gt;</span>
+<span class="s2">      &lt;site name="site"/&gt;</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">  &lt;equality&gt;</span>
+<span class="s2">    &lt;joint name="lock" joint1="slide"/&gt;</span>
+<span class="s2">  &lt;/equality&gt;</span>
+<span class="s2">  &lt;actuator&gt;</span>
+<span class="s2">    &lt;general</span>
+<span class="s2">      name="stateful"</span>
+<span class="s2">      joint="slide"</span>
+<span class="s2">      dyntype="filter"</span>
+<span class="s2">      dynprm="2"</span>
+<span class="s2">      gear="1"</span>
+<span class="s2">    /&gt;</span>
+<span class="s2">  &lt;/actuator&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span>
+
+<span class="n">PREEXISTING_BODY_SITES_XML</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">&lt;mujoco&gt;</span>
+<span class="s2">  &lt;worldbody&gt;</span>
+<span class="s2">    &lt;body name="root"&gt;</span>
+<span class="s2">      &lt;joint name="slide" type="slide"/&gt;</span>
+<span class="s2">      &lt;geom type="sphere" size="1" mass="1"/&gt;</span>
+<span class="s2">      &lt;site name="root_com"/&gt;</span>
+<span class="s2">      &lt;site name="root_origin"/&gt;</span>
+<span class="s2">    &lt;/body&gt;</span>
+<span class="s2">  &lt;/worldbody&gt;</span>
+<span class="s2">&lt;/mujoco&gt;</span>
+<span class="s2">"""</span>
+
+
+<div class="viewcode-block" id="test_loading">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_loading">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_loading</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Tests that MJObject are created from the XML as expected"""</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+
+    <span class="n">expected_bodies_and_sites</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"cube"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"cube_com"</span><span class="p">,</span> <span class="s2">"cube_origin"</span><span class="p">),</span>
+        <span class="s2">"panel_1"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"panel_1_com"</span><span class="p">,</span> <span class="s2">"panel_1_origin"</span><span class="p">,</span> <span class="s2">"test_site"</span><span class="p">),</span>
+        <span class="s2">"panel_2"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"panel_2_com"</span><span class="p">,</span> <span class="s2">"panel_2_origin"</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">body</span><span class="p">,</span> <span class="n">sites</span> <span class="ow">in</span> <span class="n">expected_bodies_and_sites</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bodyObj</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">:</span>
+            <span class="n">bodyObj</span><span class="o">.</span><span class="n">getSite</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+
+    <span class="n">expected_actuators</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"panel_1_elevation"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">,</span>
+        <span class="s2">"panel_2_elevation"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">,</span>
+        <span class="s2">"test_act_1"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceActuator</span><span class="p">,</span>
+        <span class="s2">"test_act_2"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceActuator</span><span class="p">,</span>
+        <span class="s2">"test_act_3"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceTorqueActuator</span><span class="p">,</span>
+        <span class="s2">"test_act_4"</span><span class="p">:</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceTorqueActuator</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">actuator</span><span class="p">,</span> <span class="n">getter</span> <span class="ow">in</span> <span class="n">expected_actuators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">getter</span><span class="p">(</span><span class="n">actuator</span><span class="p">)</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># this will compile the existing model</span>
+
+    <span class="c1"># this will trigger changes in the model</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"test_add_1"</span><span class="p">,</span> <span class="s2">"panel_2_origin"</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">addSite</span><span class="p">(</span><span class="s2">"test_add_1"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># Check that we can retrieve the newly added elements</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">getTorqueActuator</span><span class="p">(</span><span class="s2">"test_add_1"</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">getSite</span><span class="p">(</span><span class="s2">"test_add_1"</span><span class="p">)</span>
+
+    <span class="c1"># Move time forward, which will trigger a re-compile (since</span>
+    <span class="c1"># we added actuators), and check that the simulation runs ok</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_actuator_addition_alone_triggers_recompile</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">actuator</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"late_torque"</span><span class="p">,</span> <span class="s2">"panel_2_origin"</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">actuator</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"late_torque"</span>
+    <span class="k">assert</span> <span class="n">scene</span><span class="o">.</span><span class="n">getTorqueActuator</span><span class="p">(</span><span class="s2">"late_torque"</span><span class="p">)</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"late_torque"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scalar_joint_equality_recompiles_when_body_sites_already_exist</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">PREEXISTING_BODY_SITES_XML</span><span class="p">)</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">equality</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="s2">"slide"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getConstrainedEquality</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">equality</span><span class="o">.</span><span class="n">isActive</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="test_adaptive_free_joint_translation_tolerances_are_stage_independent">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_adaptive_free_joint_translation_tolerances_are_stage_independent">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_adaptive_free_joint_translation_tolerances_are_stage_independent</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Tests MJScene zeroes relTol only for free-joint translation records.</span>
+
+<span class="sd">    The relative-tolerance conditioning fix applies to any free-joint body at</span>
+<span class="sd">    orbital scale, independent of how its gravity is applied, so the presence of</span>
+<span class="sd">    a free body (``cube`` here) alone should trigger it.</span>
+<span class="sd">    """</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">joint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">position_name</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+    <span class="n">velocity_name</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getTranslationVelocityState</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+    <span class="n">attitude_name</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getAttitudeState</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">integrator</span><span class="o">.</span><span class="n">getRelativeTolerance</span><span class="p">(</span><span class="n">position_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">integrator</span><span class="o">.</span><span class="n">getRelativeTolerance</span><span class="p">(</span><span class="n">velocity_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">integrator</span><span class="o">.</span><span class="n">getRelativeTolerance</span><span class="p">(</span><span class="n">attitude_name</span><span class="p">)</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_adaptive_free_joint_tolerances_apply_after_integrator_replacement</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">integrator</span> <span class="o">=</span> <span class="n">svIntegrators</span><span class="o">.</span><span class="n">svIntegratorRKF78</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">setIntegrator</span><span class="p">(</span><span class="n">integrator</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">joint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">position_name</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+    <span class="n">velocity_name</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getTranslationVelocityState</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">integrator</span><span class="o">.</span><span class="n">getRelativeTolerance</span><span class="p">(</span><span class="n">position_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">integrator</span><span class="o">.</span><span class="n">getRelativeTolerance</span><span class="p">(</span><span class="n">velocity_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_joint_state_proxy_keeps_native_owner_chain_alive</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">body</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span>
+    <span class="n">joint</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span>
+
+
+    <span class="k">del</span> <span class="n">scene</span>
+    <span class="k">del</span> <span class="n">body</span>
+    <span class="k">del</span> <span class="n">joint</span>
+
+    <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_qposTranslation"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scene_and_joint_states_use_canonical_state_proxies</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">OWNERSHIP_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">joint_state</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="s2">"slide"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getPositionState</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">mass_state</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getMassState</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">_COMPATIBILITY_EXPORTS</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mujoco</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dynParamManager</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">dynManager</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">DynParamManager</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">dynManager</span><span class="p">,</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">joint_state</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">StateData</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">joint_state</span><span class="p">,</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">StateData</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">mass_state</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">StateData</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mass_state</span><span class="p">,</span> <span class="n">dynParamManager</span><span class="o">.</span><span class="n">StateData</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_constrained_equality_proxy_keeps_joint_owner_chain_alive</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">OWNERSHIP_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+    <span class="n">joint</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="s2">"slide"</span><span class="p">)</span>
+    <span class="n">equality</span> <span class="o">=</span> <span class="n">joint</span><span class="o">.</span><span class="n">getConstrainedEquality</span><span class="p">()</span>
+
+
+    <span class="n">scene_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">scene</span>
+    <span class="k">del</span> <span class="n">body</span>
+    <span class="k">del</span> <span class="n">joint</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">equality</span><span class="o">.</span><span class="n">setActive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">equality</span><span class="o">.</span><span class="n">isActive</span><span class="p">()</span>
+
+    <span class="k">del</span> <span class="n">equality</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_borrowed_method_signatures_hide_native_implementation</span><span class="p">():</span>
+    <span class="n">expected_signatures</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getBody"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getSite"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getEquality"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getSingleActuator"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getForceActuator"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getTorqueActuator"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getForceTorqueActuator"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"addJointSingleActuator"</span><span class="p">):</span> <span class="s2">"(self, *args)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"addSingleActuator"</span><span class="p">):</span> <span class="s2">"(self, *args)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"addForceActuator"</span><span class="p">):</span> <span class="s2">"(self, *args)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"addTorqueActuator"</span><span class="p">):</span> <span class="s2">"(self, *args)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"addForceTorqueActuator"</span><span class="p">):</span> <span class="s2">"(self, *args)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getActState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">,</span> <span class="s2">"getMassState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getSite"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getCenterOfMass"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getOrigin"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getScalarJoint"</span><span class="p">):</span> <span class="s2">"(self, name)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getBallJoint"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getFreeJoint"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getScene"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBody</span><span class="p">,</span> <span class="s2">"getSpec"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJJoint</span><span class="p">,</span> <span class="s2">"getBody"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span><span class="p">,</span> <span class="s2">"getConstrainedEquality"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span><span class="p">,</span> <span class="s2">"getPositionState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScalarJoint</span><span class="p">,</span> <span class="s2">"getVelocityState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBallJoint</span><span class="p">,</span> <span class="s2">"getPositionState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJBallJoint</span><span class="p">,</span> <span class="s2">"getVelocityState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJFreeJoint</span><span class="p">,</span> <span class="s2">"getTranslationPositionState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJFreeJoint</span><span class="p">,</span> <span class="s2">"getTranslationVelocityState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJFreeJoint</span><span class="p">,</span> <span class="s2">"getAttitudeState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJFreeJoint</span><span class="p">,</span> <span class="s2">"getAttitudeRateState"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJSite</span><span class="p">,</span> <span class="s2">"getBody"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJEquality</span><span class="p">,</span> <span class="s2">"getScene"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJEquality</span><span class="p">,</span> <span class="s2">"getSpec"</span><span class="p">):</span> <span class="s2">"(self)"</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">wrapper_type</span><span class="p">,</span> <span class="n">method_name</span><span class="p">),</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">expected_signatures</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">wrapper_type</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">"__signature__"</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">method</span><span class="p">))</span> <span class="o">==</span> <span class="n">expected</span>
+        <span class="k">assert</span> <span class="s2">"_native"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s2">"__wrapped__"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="fm">__init__</span><span class="p">,</span> <span class="s2">"__signature__"</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="fm">__init__</span><span class="p">))</span> <span class="o">==</span> <span class="s2">"(self, *args)"</span>
+    <span class="k">assert</span> <span class="s2">"_native"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="fm">__init__</span><span class="p">,</span> <span class="s2">"__wrapped__"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_reverse_owner_proxy</span><span class="p">(</span><span class="n">proxy_case</span><span class="p">):</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">OWNERSHIP_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"joint_body"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">getScalarJoint</span><span class="p">(</span><span class="s2">"slide"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">getBody</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"site_body"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSite</span><span class="p">(</span><span class="s2">"site"</span><span class="p">)</span><span class="o">.</span><span class="n">getBody</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"body_scene"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span><span class="o">.</span><span class="n">getScene</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getEquality</span><span class="p">(</span><span class="s2">"lock"</span><span class="p">)</span><span class="o">.</span><span class="n">getScene</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">scene</span><span class="p">),</span> <span class="n">proxy</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"proxy_case"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">"joint_body"</span><span class="p">,</span>
+        <span class="s2">"site_body"</span><span class="p">,</span>
+        <span class="s2">"body_scene"</span><span class="p">,</span>
+        <span class="s2">"equality_scene"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reverse_owner_proxy_keeps_scene_alive</span><span class="p">(</span><span class="n">proxy_case</span><span class="p">):</span>
+    <span class="n">scene_ref</span><span class="p">,</span> <span class="n">proxy</span> <span class="o">=</span> <span class="n">_make_reverse_owner_proxy</span><span class="p">(</span><span class="n">proxy_case</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">proxy_case</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_body"</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">proxy</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"root"</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s2">"root"</span> <span class="ow">in</span> <span class="n">proxy</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">()</span>
+
+    <span class="k">del</span> <span class="n">proxy</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="test_scene_borrowed_proxy_keeps_scene_alive">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_scene_borrowed_proxy_keeps_scene_alive">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"proxy_case"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">"get_body"</span><span class="p">,</span>
+        <span class="s2">"get_site"</span><span class="p">,</span>
+        <span class="s2">"get_equality"</span><span class="p">,</span>
+        <span class="s2">"get_single_actuator"</span><span class="p">,</span>
+        <span class="s2">"get_force_actuator"</span><span class="p">,</span>
+        <span class="s2">"get_torque_actuator"</span><span class="p">,</span>
+        <span class="s2">"get_force_torque_actuator"</span><span class="p">,</span>
+        <span class="s2">"add_joint_single_actuator"</span><span class="p">,</span>
+        <span class="s2">"add_single_actuator"</span><span class="p">,</span>
+        <span class="s2">"add_force_actuator"</span><span class="p">,</span>
+        <span class="s2">"add_torque_actuator"</span><span class="p">,</span>
+        <span class="s2">"add_force_torque_actuator"</span><span class="p">,</span>
+        <span class="s2">"get_mass_state"</span><span class="p">,</span>
+        <span class="s2">"get_act_state"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scene_borrowed_proxy_keeps_scene_alive</span><span class="p">(</span><span class="n">proxy_case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Each borrowed scene result independently retains its native owner."""</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">OWNERSHIP_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_body"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"root"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_site"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSite</span><span class="p">(</span><span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"site"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_equality"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getEquality</span><span class="p">(</span><span class="s2">"lock"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"lock"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_single_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getSingleActuator</span><span class="p">(</span><span class="s2">"stateful"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"stateful"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_force_actuator"</span><span class="p">:</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">addForceActuator</span><span class="p">(</span><span class="s2">"force_getter"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceActuator</span><span class="p">(</span><span class="s2">"force_getter"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"force_getter"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_torque_actuator"</span><span class="p">:</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"torque_getter"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getTorqueActuator</span><span class="p">(</span><span class="s2">"torque_getter"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"torque_getter"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_force_torque_actuator"</span><span class="p">:</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">addForceTorqueActuator</span><span class="p">(</span><span class="s2">"force_torque_getter"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getForceTorqueActuator</span><span class="p">(</span><span class="s2">"force_torque_getter"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"force_torque_getter"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"add_joint_single_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addJointSingleActuator</span><span class="p">(</span><span class="s2">"joint_single_added"</span><span class="p">,</span> <span class="s2">"slide"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"joint_single_added"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"add_single_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addSingleActuator</span><span class="p">(</span>
+            <span class="s2">"single_added"</span><span class="p">,</span>
+            <span class="s2">"site"</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"single_added"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"add_force_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addForceActuator</span><span class="p">(</span><span class="s2">"force_added"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"force_added"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"add_torque_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"torque_added"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"torque_added"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"add_force_torque_actuator"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addForceTorqueActuator</span><span class="p">(</span><span class="s2">"force_torque_added"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">)</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"force_torque_added"</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"get_mass_state"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getMassState</span><span class="p">()</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"mujocoMass"</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getActState</span><span class="p">()</span>
+        <span class="n">expected_name</span> <span class="o">=</span> <span class="s2">"mujocoAct"</span>
+
+    <span class="n">scene_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">scene</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">proxy</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="n">expected_name</span>
+
+    <span class="k">del</span> <span class="n">proxy</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_body_borrowed_site_proxy_keeps_owner_chain_alive">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_body_borrowed_site_proxy_keeps_owner_chain_alive">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"proxy_case, expected_name"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">"site"</span><span class="p">,</span> <span class="s2">"site"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"center_of_mass"</span><span class="p">,</span> <span class="s2">"root_com"</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">"origin"</span><span class="p">,</span> <span class="s2">"root_origin"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_body_borrowed_site_proxy_keeps_owner_chain_alive</span><span class="p">(</span>
+    <span class="n">proxy_case</span><span class="p">,</span>
+    <span class="n">expected_name</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A borrowed site retains its body, which in turn retains the scene."""</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">OWNERSHIP_XML</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"root"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"site"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getSite</span><span class="p">(</span><span class="s2">"site"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">proxy_case</span> <span class="o">==</span> <span class="s2">"center_of_mass"</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getCenterOfMass</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">getOrigin</span><span class="p">()</span>
+
+
+    <span class="n">scene_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">body_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">scene</span>
+    <span class="k">del</span> <span class="n">body</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">body_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">proxy</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">==</span> <span class="n">expected_name</span>
+
+    <span class="k">del</span> <span class="n">proxy</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">body_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">scene_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_failed_candidate_compile_preserves_wrappers_and_recovers</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="n">XML_PATH</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">free_joint</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+    <span class="n">position_state</span> <span class="o">=</span> <span class="n">free_joint</span><span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">position_state</span><span class="o">.</span><span class="n">this</span><span class="p">)</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">addTorqueActuator</span><span class="p">(</span><span class="s2">"pending_torque"</span><span class="p">,</span> <span class="s2">"pending_site"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"pending_torque"</span><span class="p">):</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">this</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="n">handle</span>
+    <span class="n">position_state</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]])</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span><span class="o">.</span><span class="n">addSite</span><span class="p">(</span><span class="s2">"pending_site"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="s2">"cube"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getFreeJoint</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">getTranslationPositionState</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">this</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="n">handle</span>
+    <span class="k">assert</span> <span class="n">position_state</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">]]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nonzero_reset_synchronizes_integration_clocks</span><span class="p">():</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="s2">"&lt;mujoco/&gt;"</span><span class="p">)</span>
+    <span class="n">reset_time_nanos</span> <span class="o">=</span> <span class="mi">2_000_000_000</span>
+    <span class="n">step_nanos</span> <span class="o">=</span> <span class="mi">125_000_000</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="n">reset_time_nanos</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">scene</span><span class="o">.</span><span class="n">timeBefore</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">scene</span><span class="o">.</span><span class="n">timeBeforeNanos</span> <span class="o">==</span> <span class="n">reset_time_nanos</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">integrateState</span><span class="p">(</span><span class="n">reset_time_nanos</span> <span class="o">+</span> <span class="n">step_nanos</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">scene</span><span class="o">.</span><span class="n">timeStep</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">0.125</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_unnamed_body_introspection">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_unnamed_body_introspection">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"root_name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s1">'name="_nameless_1"'</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"unnamed-root"</span><span class="p">,</span> <span class="s2">"named-root"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_unnamed_body_introspection</span><span class="p">(</span><span class="n">root_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Body, parent, and geometry names agree before initialization and after reset.</span>
+
+<span class="sd">    Cover unnamed roots and children, a named child of an unnamed parent, and</span>
+<span class="sd">    explicit names that would otherwise collide with generated names. Creating</span>
+<span class="sd">    another scene must not change the generated names for identical XML.</span>
+<span class="sd">    """</span>
+    <span class="c1"># MJCF positions and geometry sizes are in [m].</span>
+    <span class="n">xml</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">        &lt;mujoco&gt;</span>
+<span class="s2">          &lt;worldbody&gt;</span>
+<span class="s2">            &lt;body </span><span class="si">{</span><span class="n">root_name</span><span class="si">}</span><span class="s2">&gt;</span>
+<span class="s2">              &lt;freejoint/&gt;</span>
+<span class="s2">              &lt;geom type="box" size="0.5 0.5 0.5"/&gt;</span>
+<span class="s2">              &lt;body pos="0 0 2"&gt;</span>
+<span class="s2">                &lt;joint type="hinge"/&gt;</span>
+<span class="s2">                &lt;geom type="sphere" size="0.2"/&gt;</span>
+<span class="s2">                &lt;body name="named_tip" pos="0 0 1"&gt;</span>
+<span class="s2">                  &lt;joint type="hinge"/&gt;</span>
+<span class="s2">                  &lt;geom type="sphere" size="0.1"/&gt;</span>
+<span class="s2">                &lt;/body&gt;</span>
+<span class="s2">              &lt;/body&gt;</span>
+<span class="s2">            &lt;/body&gt;</span>
+<span class="s2">            &lt;body pos="3 0 0"&gt;</span>
+<span class="s2">              &lt;freejoint/&gt;</span>
+<span class="s2">              &lt;geom type="box" size="0.3 0.3 0.3"/&gt;</span>
+<span class="s2">            &lt;/body&gt;</span>
+<span class="s2">            &lt;body name="_nameless_0" pos="6 0 0"&gt;</span>
+<span class="s2">              &lt;freejoint/&gt;</span>
+<span class="s2">              &lt;geom type="box" size="0.4 0.4 0.4"/&gt;</span>
+<span class="s2">            &lt;/body&gt;</span>
+<span class="s2">          &lt;/worldbody&gt;</span>
+<span class="s2">        &lt;/mujoco&gt;</span>
+<span class="s2">    """</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">names</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"named_tip"</span>
+    <span class="k">assert</span> <span class="n">names</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"_nameless_0"</span>
+    <span class="k">if</span> <span class="n">root_name</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"_nameless_1"</span>
+    <span class="n">parents</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"world"</span><span class="p">,</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"world"</span><span class="p">,</span> <span class="s2">"world"</span><span class="p">]</span>
+    <span class="n">scene_reader</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_introspection</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">"""Check all public lookups without asking MuJoCo to recompile."""</span>
+        <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">())</span> <span class="o">==</span> <span class="n">names</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getBodyParentName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span> <span class="o">==</span> <span class="n">parents</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="n">scene</span><span class="o">.</span><span class="n">getBody</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span> <span class="o">==</span> <span class="n">names</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getGeomInfos</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="n">geoms</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">bodyName</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geoms</span><span class="p">))]</span> <span class="o">==</span> <span class="n">names</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"unknown body 'missing'"</span><span class="p">):</span>
+            <span class="n">scene</span><span class="o">.</span><span class="n">getBodyParentName</span><span class="p">(</span><span class="s2">"missing"</span><span class="p">)</span>
+
+    <span class="n">check_introspection</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">scene_reader</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+    <span class="n">other_scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">other_scene</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">())</span> <span class="o">==</span> <span class="n">names</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">check_introspection</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">scene_reader</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># All RGBA values below are dimensionless, in the range [0, 1].</span>
+<div class="viewcode-block" id="test_geometry_rgba_matches_mujoco_material_precedence">
+<a class="viewcode-back" href="../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/_UnitTest/test_objects.html#test_objects.test_geometry_rgba_matches_mujoco_material_precedence">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"geom_attributes, material_rgba, expected_rgba"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"no-material-default"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">'rgba="0 0 1 0.5"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"no-material-explicit"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">'material="paint"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"material-translucent"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">'material="paint"'</span><span class="p">,</span> <span class="s2">"1 0 0 0"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"material-transparent"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">'material="paint"'</span><span class="p">,</span> <span class="s2">"1 0 0 1"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"material-opaque"</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s1">'material="paint" rgba="0.5 0.5 0.5 1"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">"explicit-default-still-uses-material"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s1">'material="paint" rgba="0 1 0 0.5"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">"geom-overrides-material"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s1">'material="paint" rgba="0.5 0.5 0.5 0.125"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">],</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">"alpha-only-override"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s1">'material="paint" class="tinted"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">"inherited-rgba-overrides-material"</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">'class="painted"'</span><span class="p">,</span> <span class="s2">"1 0 0 0.25"</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s2">"inherited-material"</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_geometry_rgba_matches_mujoco_material_precedence</span><span class="p">(</span>
+    <span class="n">geom_attributes</span><span class="p">,</span> <span class="n">material_rgba</span><span class="p">,</span> <span class="n">expected_rgba</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Export material color and alpha unless the geom has non-default RGBA.</span>
+
+<span class="sd">    MuJoCo treats explicit default gray like omitted RGBA, but a change to</span>
+<span class="sd">    any channel (including alpha alone) overrides all four material channels.</span>
+<span class="sd">    A second material ensures the export follows the geom's material index.</span>
+<span class="sd">    """</span>
+    <span class="c1"># MJCF geometry sizes are in [m]; RGBA values are dimensionless.</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">mujoco</span><span class="o">.</span><span class="n">MJScene</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">        &lt;mujoco&gt;</span>
+<span class="s2">          &lt;default&gt;</span>
+<span class="s2">            &lt;default class="tinted"&gt;&lt;geom rgba="0 0 1 0.75"/&gt;&lt;/default&gt;</span>
+<span class="s2">            &lt;default class="painted"&gt;&lt;geom material="paint"/&gt;&lt;/default&gt;</span>
+<span class="s2">          &lt;/default&gt;</span>
+<span class="s2">          &lt;asset&gt;</span>
+<span class="s2">            &lt;material name="unused" rgba="0 1 0 1"/&gt;</span>
+<span class="s2">            &lt;material name="paint" rgba="</span><span class="si">{</span><span class="n">material_rgba</span><span class="si">}</span><span class="s2">"/&gt;</span>
+<span class="s2">          &lt;/asset&gt;</span>
+<span class="s2">          &lt;worldbody&gt;</span>
+<span class="s2">            &lt;body name="hub"&gt;</span>
+<span class="s2">              &lt;freejoint/&gt;</span>
+<span class="s2">              &lt;geom type="box" size="0.5 0.5 0.5" </span><span class="si">{</span><span class="n">geom_attributes</span><span class="si">}</span><span class="s2">/&gt;</span>
+<span class="s2">            &lt;/body&gt;</span>
+<span class="s2">          &lt;/worldbody&gt;</span>
+<span class="s2">        &lt;/mujoco&gt;</span>
+<span class="s2">    """</span><span class="p">)</span>
+    <span class="n">scene_reader</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">stateOutMsg</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getGeomInfos</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">geoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">geoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rgba</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_rgba</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">scene_reader</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+
+    <span class="n">scene</span><span class="o">.</span><span class="n">Reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+    <span class="n">geoms</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">getGeomInfos</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">geoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rgba</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_rgba</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">test_loading</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

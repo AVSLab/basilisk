@@ -1,0 +1,10 @@
+.. _DragGeometryMsgPayload:
+
+DragGeometryMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: DragGeometryMsgPayload.h
+   :project: msgPayloadDefC
+

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_dualHingedRigidBodies:
+
+dualHingedRigidBodies
+=====================
+
+:doc:`Module documentation <dualHingedRigidBodyStateEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

@@ -1,0 +1,15 @@
+.. _test_hingedRigidBodyMotor:
+
+test_hingedRigidBodyMotor
+=========================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: test_hingedRigidBodyMotor
+   :members:
+   :show-inheritance:
+

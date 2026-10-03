@@ -1,0 +1,10 @@
+.. _integratorTestAccess:
+
+integratorTestAccess
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: integratorTestAccess.h
+   :project: _UnitTest
+
