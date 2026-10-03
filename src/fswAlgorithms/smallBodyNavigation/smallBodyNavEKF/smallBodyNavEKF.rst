@@ -95,6 +95,14 @@ The associated frame definitions may be found in the following table.
 Initialization
 ^^^^^^^^^^^^^^
 
+The initial state ``x_hat_k`` must contain exactly 12 entries: relative position,
+relative velocity, small-body MRP attitude, and small-body angular rate, with
+three entries for each quantity. The covariance ``P_k`` and noise matrices
+``Q`` and ``R`` must each have 12 rows and 12 columns. These dimensions are
+checked during reset and before every update, including after Python changes
+the configuration. Invalid dimensions produce ``BSK_ERROR``, exposed to Python
+as ``BasiliskError``, before the filter performs any matrix operations.
+
 Algorithm
 ^^^^^^^^^^
 This module employs a hybrid extended Kalman filter (EKF) to estimate the relevant states. First, :math:`\hat{\mathbf{x}}_0`

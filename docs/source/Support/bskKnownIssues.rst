@@ -7,6 +7,12 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- ``scenarioSmallBodyNav`` supplied an 18-element state to the 12-state
+  :ref:`smallBodyNavEKF`, causing Eigen assertions to abort Debug builds. The
+  example now supplies 12 elements. The filter also rejects incorrectly sized
+  states and covariance or noise matrices with ``BSK_ERROR`` during reset and
+  updates, rather than passing them to fixed-size Eigen operations.
+
 - Visual Studio Debug checks exposed a stack-buffer overflow during
   :ref:`headingSuKF` measurement updates and an invalid zero-standard-deviation
   distribution in :ref:`hingedRigidBodyMotorSensor`. Both are fixed. These defects
