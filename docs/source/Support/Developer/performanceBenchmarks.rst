@@ -162,3 +162,40 @@ CI.  New benchmarks should document:
 - Representative terminal output.
 - How to interpret each reported metric.
 - Any known limitations that affect comparison quality.
+
+Native Binding Startup Measurements
+-----------------------------------
+
+The startup benchmark measures native binding builds, imports, incremental
+compilation, and library sizes. Activate the Python environment for an existing
+Ninja build, then run from the repository root:
+
+.. code-block:: bash
+
+   python benchmarks/startup/benchmark_fsw_bindings.py --build-dir dist3
+
+The default group is core FSW. Select ``--group simulation``, ``--group mujoco``,
+or ``--group opnav`` for another group; optional features must be enabled in the
+build. Add ``--pytest-workers 4`` to measure pytest collection with four workers.
+Use ``--smoke`` to check one import without rebuilding.
+
+Full measurements rebuild generated bindings and temporarily change source
+timestamps. Collection measurements also relink other Basilisk native libraries.
+Keep other builds and tests stopped; on Windows, use a compiler developer shell.
+On exit, the benchmark restores source timestamps and attempts to rebuild removed
+outputs, including after interruption. JSON results and command logs are saved
+under the build directory's ``benchmarks`` folder, or a new ``--output`` directory.
+
+Cold imports use the first process after rebuilding or relinking; warm imports
+use the next fresh process. These measurements do not flush operating-system
+caches. The current tool measures the grouped layout only.
+
+The :download:`macOS experiment report <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.rst>`
+and :download:`raw measurements <../../../../benchmarks/startup/results/macos-arm64-2026-10-01.json>`
+compare separate and grouped FSW libraries in a development prototype.
+
+The :download:`simulation, MuJoCo, and OpenCV report <../../../../benchmarks/startup/results/macos-arm64-simulation-2026-10-01.rst>`
+and its :download:`raw measurements <../../../../benchmarks/startup/results/macos-arm64-simulation-2026-10-01.json>`
+cover the other groups. Both reports are archived experiments; their timings and
+test counts describe those snapshots. Linux and Windows startup timings have
+not been measured in these reports.
