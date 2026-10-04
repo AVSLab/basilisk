@@ -29,6 +29,8 @@
 #
 
 import os
+import subprocess
+import sys
 
 import pytest
 from Basilisk import __path__
@@ -139,52 +141,57 @@ def test_polyhedralDependsOnOrientation():
     assert PolyhedralGravityModel().dependsOnOrientation() is True
 
 
-def test_resetEmitsWarningForTesseralFieldWithoutRotation(capfd):
+def _captureResetWarning(factoryName, *factoryArgs, propagate=False):
+    """Capture native output across both release and Debug Windows C runtimes."""
+    script = f"""
+import runpy
+namespace = runpy.run_path({os.path.abspath(__file__)!r})
+scSim = namespace[{factoryName!r}](*{factoryArgs!r})
+scSim.InitializeSimulation()
+if {propagate!r}:
+    scSim.ConfigureStopTime(namespace["macros"].sec2nano(60.0))  # [s]
+    scSim.ExecuteSimulation()
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True, text=True, check=True, timeout=60,  # [s]
+    )
+    return result.stdout
+
+
+def test_resetEmitsWarningForTesseralFieldWithoutRotation():
     """GravityEffector::Reset() must actually emit the BSK_WARNING when a body
     whose field depends on orientation (GGM03S order 4, which retains tesseral
     terms) has no planet-orientation message connected. This is the user-facing
     alert for issue #1352, so the test fails if the warning block is removed.
 
-    The warning is read from stdout (where ``bskLog`` writes it). It is observable
-    here only because ``bskLog`` flushes warning-level output; without the flush
-    the C runtime buffers it past pytest's capture point.
-
     Capturing the warning also exercises the full reset path, and propagating a
     few steps afterwards confirms the non-rotating field still initializes and
     runs (it must warn, not fail)."""
-    scSim = _buildShSim(GGM03S, 4)
-    scSim.InitializeSimulation()
-    out, _ = capfd.readouterr()
+    out = _captureResetWarning("_buildShSim", GGM03S, 4, propagate=True)
     assert WARNING_SUBSTR in out, (
         "Reset() did not emit the missing-planet-rotation warning; captured "
         f"stdout was:\n{out}"
     )
 
-    scSim.ConfigureStopTime(macros.sec2nano(60.0))
-    scSim.ExecuteSimulation()
 
-
-def test_resetEmitsWarningForPolyhedralWithoutRotation(capfd):
+def test_resetEmitsWarningForPolyhedralWithoutRotation():
     """GravityEffector::Reset() must also emit the warning for a polyhedral body
     without a planet-orientation message. This is the case schaubh flagged: a
     polyhedral field is evaluated in the body-fixed frame and was previously
     falling back to non-rotating silently (issue #1352). Init-only to stay fast."""
-    scSim = _buildPolySim()
-    scSim.InitializeSimulation()
-    out, _ = capfd.readouterr()
+    out = _captureResetWarning("_buildPolySim")
     assert WARNING_SUBSTR in out, (
         "Reset() did not emit the missing-planet-rotation warning for a polyhedral "
         f"body; captured stdout was:\n{out}"
     )
 
 
-def test_resetSilentForZonalFieldWithoutRotation(capfd):
+def test_resetSilentForZonalFieldWithoutRotation():
     """A purely zonal field (GGM03S J2-only) does not depend on orientation, so
     Reset() must NOT warn even without a planet-orientation message. This guards
     against a false alarm on the common J2-only configuration (issue #1352)."""
-    scSim = _buildShSim(GGM03S_J2, 2)
-    scSim.InitializeSimulation()
-    out, _ = capfd.readouterr()
+    out = _captureResetWarning("_buildShSim", GGM03S_J2, 2)
     assert WARNING_SUBSTR not in out, (
         "Reset() warned about a purely zonal (orientation-independent) field; "
         f"captured stdout was:\n{out}"

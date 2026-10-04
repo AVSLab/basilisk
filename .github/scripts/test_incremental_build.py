@@ -25,6 +25,7 @@ or assertion fails.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -161,33 +162,52 @@ def run_build(
     return result.stdout
 
 
-def assert_package_configuration(source_dir: Path, build_dir: Path) -> None:
-    """Check header-only libraries and shared Custom.cmake discovery."""
+def configured_target_names(source_dir: Path, build_dir: Path) -> set[str]:
+    """List generated targets using the generator-independent CMake File API."""
 
-    help_command = [
-        cmake_executable(),
-        "--build",
-        str(build_dir),
-        "--target",
-        "help",
-    ]
-    help_result = subprocess.run(
-        help_command,
+    # Visual Studio and Xcode do not provide the Make/Ninja ``help`` target.
+    api_dir = build_dir / ".cmake/api/v1"
+    client = "client-bsk-incremental-test"
+    query_dir = api_dir / "query" / client
+    query_dir.mkdir(parents=True, exist_ok=True)
+    (query_dir / "codemodel-v2").touch()
+    result = subprocess.run(
+        [cmake_executable(), "-S", str(source_dir), "-B", str(build_dir)],
         check=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
     )
-    if help_result.returncode:
-        raise IncrementalBuildError(
-            f"CMake target listing failed with exit status {help_result.returncode}.\n"
-            f"{help_result.stdout}"
-        )
+    if result.returncode:
+        raise IncrementalBuildError(f"CMake target query failed:\n{result.stdout}")
 
+    reply_dir = api_dir / "reply"
+    indexes = sorted(reply_dir.glob("index-*.json"))
+    if not indexes:
+        raise IncrementalBuildError("CMake did not generate a File API reply index.")
+    try:
+        index = json.loads(indexes[-1].read_text(encoding="utf-8"))
+        reply = index["reply"][client]["codemodel-v2"]
+        codemodel = json.loads((reply_dir / reply["jsonFile"]).read_text(encoding="utf-8"))
+        return {
+            target["name"]
+            for configuration in codemodel["configurations"]
+            for target in configuration["targets"]
+        }
+    except (KeyError, ValueError, OSError) as error:
+        raise IncrementalBuildError(
+            f"Could not read the CMake target query reply: {error}"
+        ) from error
+
+
+def assert_package_configuration(source_dir: Path, build_dir: Path) -> None:
+    """Check header-only libraries and shared Custom.cmake discovery."""
+
+    target_names = configured_target_names(source_dir, build_dir)
     unexpected_libraries = [
         library
         for library in ("communicationLib", "vizardLib")
-        if library in help_result.stdout
+        if library in target_names
     ]
     if unexpected_libraries:
         raise IncrementalBuildError(
@@ -201,8 +221,9 @@ def assert_package_configuration(source_dir: Path, build_dir: Path) -> None:
     with tempfile.TemporaryDirectory(prefix="bsk-cmake-package-") as temporary_dir:
         custom_file_command = [
             cmake_executable(),
-            f"-DBSK_SOURCE_DIR={source_dir}",
-            f"-DTEST_ROOT={temporary_dir}",
+            # CMake compares these values with its forward-slash glob results.
+            f"-DBSK_SOURCE_DIR={source_dir.as_posix()}",
+            f"-DTEST_ROOT={Path(temporary_dir).as_posix()}",
             "-P",
             str(test_script),
         ]

@@ -25,6 +25,7 @@ import subprocess
 import sys
 
 import pytest
+from Basilisk import getBuildInfo
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -224,7 +225,7 @@ def test_eigen_linear_algebra_benchmark_smoke():
                 "--target",
                 target_name,
                 "--config",
-                "Release",
+                getBuildInfo()["abi"]["build"]["configuration"],
             ]
         )
     )
