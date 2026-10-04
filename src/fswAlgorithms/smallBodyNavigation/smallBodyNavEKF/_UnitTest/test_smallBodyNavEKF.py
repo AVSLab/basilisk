@@ -18,12 +18,46 @@
 #
 
 import numpy as np
-from Basilisk.architecture import messaging
+import pytest
+from Basilisk.architecture import bskLogging, messaging
 from Basilisk.fswAlgorithms import smallBodyNavEKF
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros, orbitalMotion
 from Basilisk.utilities import unitTestSupport
 from matplotlib import pyplot as plt
+
+
+@pytest.mark.parametrize("method", ["Reset", "UpdateState"])
+@pytest.mark.parametrize("field, shape", [
+    ("x_hat_k", (11,)),
+    ("x_hat_k", (18,)),
+    ("P_k", (11, 12)),
+    ("P_k", (12, 13)),
+    ("Q", (11, 12)),
+    ("Q", (12, 13)),
+    ("R", (11, 12)),
+    ("R", (12, 13)),
+])
+def test_smallBodyNavEKF_rejects_invalid_dimensions(method, field, shape):
+    """Reject malformed configuration at reset and after later Python reassignment."""
+    module = smallBodyNavEKF.SmallBodyNavEKF()
+    module.x_hat_k = np.zeros(12).tolist()
+    for matrix in ("P_k", "Q", "R"):
+        setattr(module, matrix, np.eye(12).tolist())
+    inputs = {
+        "navTransInMsg": messaging.NavTransMsg().write(messaging.NavTransMsgPayload()),
+        "navAttInMsg": messaging.NavAttMsg().write(messaging.NavAttMsgPayload()),
+        "asteroidEphemerisInMsg": messaging.EphemerisMsg().write(messaging.EphemerisMsgPayload()),
+        "sunEphemerisInMsg": messaging.EphemerisMsg().write(messaging.EphemerisMsgPayload()),
+    }
+    for name, message in inputs.items():
+        getattr(module, name).subscribeTo(message)
+    module.SelfInit()
+    module.Reset(0)
+
+    setattr(module, field, np.zeros(shape).tolist())
+    with pytest.raises(bskLogging.BasiliskError, match=rf"SmallBodyNavEKF\.{field} must .*12"):
+        getattr(module, method)(0)
 
 
 def test_smallBodyNavEKF(show_plots):

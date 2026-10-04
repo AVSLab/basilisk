@@ -57,6 +57,7 @@ private:
     using StateVector = Eigen::Matrix<double, stateSize, 1>;
     using StateMatrix = Eigen::Matrix<double, stateSize, stateSize>;
 
+    void validateStateDimensions();  //!< Reject state and covariance dimensions incompatible with the filter.
     void readMessages(uint64_t CurrentSimNanos);  //!< Reads input messages
     void writeMessages(uint64_t CurrentSimNanos);  //!< Writes output messages
     void predict(uint64_t CurrentSimNanos);  //!< Prediction step of Kalman filter

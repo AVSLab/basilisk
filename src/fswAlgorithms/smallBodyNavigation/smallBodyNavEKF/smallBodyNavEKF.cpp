@@ -75,11 +75,13 @@ void SmallBodyNavEKF::SelfInit(){
     EphemerisMsg_C_init(&this->asteroidEphemerisOutMsgC);
 }
 
-/*! This method is used to reset the module and checks that required input messages are connect.
-
+/*! @brief Validate filter dimensions and required input message connections.
+    @param CurrentSimNanos Current simulation time [ns].
 */
 void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
+    this->validateStateDimensions();
+
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
         bskLogger.bskError("SmallBodyNavEKF.navTransInMsg was not linked.");
@@ -94,6 +96,23 @@ void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("SmallBodyNavEKF.sunEphemerisInMsg was not linked.");
     }
 
+}
+
+/*! @brief Reject invalid dimensions before converting Python-facing dynamic arrays to fixed-size Eigen storage. */
+void SmallBodyNavEKF::validateStateDimensions()
+{
+    if (this->x_hat_k.size() != stateSize) {
+        bskLogger.bskError("SmallBodyNavEKF.x_hat_k must contain exactly %d states.", stateSize);
+    }
+    if (this->P_k.rows() != stateSize || this->P_k.cols() != stateSize) {
+        bskLogger.bskError("SmallBodyNavEKF.P_k must be a %d-by-%d matrix.", stateSize, stateSize);
+    }
+    if (this->Q.rows() != stateSize || this->Q.cols() != stateSize) {
+        bskLogger.bskError("SmallBodyNavEKF.Q must be a %d-by-%d matrix.", stateSize, stateSize);
+    }
+    if (this->R.rows() != stateSize || this->R.cols() != stateSize) {
+        bskLogger.bskError("SmallBodyNavEKF.R must be a %d-by-%d matrix.", stateSize, stateSize);
+    }
 }
 
 /*! This method is used to add a thruster to the filter.
@@ -400,6 +419,7 @@ void SmallBodyNavEKF::computeDynamicsMatrix(const StateVector& x_hat){
 */
 void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 {
+    this->validateStateDimensions();
     this->readMessages(CurrentSimNanos);
     this->predict(CurrentSimNanos);
     this->checkMRPSwitching();

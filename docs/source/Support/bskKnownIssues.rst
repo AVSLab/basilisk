@@ -40,6 +40,11 @@ Version |release|
   for generator selection and the default and custom build-directory settings. Disabling export now removes an
   existing database from the selected build directory so clangd cannot keep reading stale compilation commands.
 
+- ``scenarioSmallBodyNav`` supplied an 18-element state to the 12-state
+  :ref:`smallBodyNavEKF <smallBodyNavEKF>`, causing Debug builds to abort. The example now supplies
+  12 elements. Invalid state and matrix dimensions raise ``BasiliskError`` in
+  Python during reset or update.
+
 - A buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates and invalid
   zero-noise sampling in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>` are fixed. Both
   defects affected Debug and Release builds.

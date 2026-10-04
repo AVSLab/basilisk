@@ -693,7 +693,7 @@ def run(show_plots):
     smallBodyNav.R = np.multiply(R, R).tolist()  # Measurement Noise
 
     # Set the initial guess, x_0
-    x_0 = np.zeros(18)
+    x_0 = np.zeros(12)
     x_0[0:3] = np.array([2458., -704.08, 844.275])
     x_0[3:6] = np.array([1.475, -0.176, 0.894])
     x_0[6:9] = np.array([-0.58, 0.615, 0.125])
