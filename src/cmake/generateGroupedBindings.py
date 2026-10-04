@@ -45,7 +45,9 @@ def remove_native(path: Path) -> None:
         path.with_name(stem + ".lib").unlink(missing_ok=True)
 
 
-def generate_layout(manifest: Path, root: Path, loader: Path, native: str, loader_name: str) -> None:
+def generate_layout(
+    manifest: Path, root: Path, loader: Path, native: str, loader_name: str, active_manifest: Path,
+) -> None:
     """Create lazy import shims and retire a group's previous layout.
 
     :param manifest: Private extension base names, without underscores, relative to Basilisk.
@@ -53,14 +55,17 @@ def generate_layout(manifest: Path, root: Path, loader: Path, native: str, loade
     :param loader: Source of the shared native loader implementation.
     :param native: Dotted name of the native container relative to Basilisk.
     :param loader_name: Dotted destination of the loader relative to Basilisk.
+    :param active_manifest: Current dotted module names across all binding groups.
     """
     previous = manifest.with_suffix(".previous.txt")
     names = set(manifest.read_text(encoding="utf-8").split())
     old_names = set(previous.read_text(encoding="utf-8").split()) if previous.exists() else set()
+    active_names = set(active_manifest.read_text(encoding="utf-8").split())
     paths = {name: module_path(root, name) for name in names | old_names}
     native_path = module_path(root, native)
     loader_path = module_path(root, loader_name).with_suffix(".py")
-    for name in old_names - names:
+    # Use the configured inventory so cleanup cannot race another group's write.
+    for name in old_names - names - active_names:
         path = paths[name]
         path.with_name("_" + path.name + ".py").unlink(missing_ok=True)
     for name in sorted(names):
@@ -80,4 +85,4 @@ def generate_layout(manifest: Path, root: Path, loader: Path, native: str, loade
 
 
 if __name__ == "__main__":
-    generate_layout(*(Path(arg) for arg in sys.argv[1:4]), *sys.argv[4:6])
+    generate_layout(*(Path(arg) for arg in sys.argv[1:4]), *sys.argv[4:6], Path(sys.argv[6]))

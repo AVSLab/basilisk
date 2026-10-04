@@ -15,6 +15,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 include_guard(GLOBAL)
+include("${CMAKE_CURRENT_LIST_DIR}/bskBindingInventory.cmake")
 
 function(bsk_select_simulation_binding_group OUTPUT MODULE_NAME PARENT_DIR MODULE_DIR)
   set(GROUP "")
@@ -46,6 +47,7 @@ function(bsk_select_simulation_binding_group OUTPUT MODULE_NAME PARENT_DIR MODUL
 endfunction()
 
 function(bsk_add_binding_group GROUP PACKAGE LOADER)
+  bsk_write_binding_inventory(ACTIVE_MANIFEST)
   get_property(OBJECT_TARGETS GLOBAL PROPERTY BSK_${GROUP}_OBJECT_TARGETS)
   get_property(MODULE_NAMES GLOBAL PROPERTY BSK_${GROUP}_MODULES)
   list(SORT MODULE_NAMES)
@@ -91,9 +93,10 @@ function(bsk_add_binding_group GROUP PACKAGE LOADER)
   endif()
   add_custom_command(OUTPUT ${OUTPUTS}
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/generateGroupedBindings.py"
-      "${MANIFEST}" "${PACKAGE_ROOT}" "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py" "${NATIVE_NAME}" "${LOADER}"
+      "${MANIFEST}" "${PACKAGE_ROOT}" "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py"
+      "${NATIVE_NAME}" "${LOADER}" "${ACTIVE_MANIFEST}"
     COMMAND "${CMAKE_COMMAND}" -E touch "${STAMP}"
-    DEPENDS "${MANIFEST}" "${CMAKE_SOURCE_DIR}/cmake/generateGroupedBindings.py"
+    DEPENDS "${MANIFEST}" "${ACTIVE_MANIFEST}" "${CMAKE_SOURCE_DIR}/cmake/generateGroupedBindings.py"
       "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py"
     COMMENT "Updating ${GROUP} binding layout" VERBATIM)
   add_custom_target(${GROUP}Layout DEPENDS ${OUTPUTS})

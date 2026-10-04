@@ -48,19 +48,23 @@ def remove_native(package_dir: Path, name: str) -> None:
         (package_dir / f"_{name}{suffix}").unlink(missing_ok=True)
 
 
-def generate_layout(manifest: Path, package_dir: Path, loader: Path) -> None:
+def generate_layout(manifest: Path, package_dir: Path, loader: Path, active_manifest: Path) -> None:
     """Update the package layout when the combined binding inventory changes.
 
     :param manifest: Manifest of bindings in the combined library, empty when no bindings remain.
     :param package_dir: Generated FSW Python package directory.
     :param loader: Source file for the combined-library loader.
+    :param active_manifest: Current dotted module names across all binding groups.
     """
     names = read_names(manifest)
     previous = manifest.with_suffix(".previous.txt")
     old_names = read_names(previous)
+    active_names = set(active_manifest.read_text(encoding="utf-8").split())
     package_dir.mkdir(parents=True, exist_ok=True)
     for name in old_names - names:
-        (package_dir / f"_{name}.py").unlink(missing_ok=True)
+        # Another group may be writing this shim concurrently after a move.
+        if f"fswAlgorithms.{name}" not in active_names:
+            (package_dir / f"_{name}.py").unlink(missing_ok=True)
     for name in names:
         remove_native(package_dir, name)
         write_if_changed(package_dir / f"_{name}.py", SHIM)

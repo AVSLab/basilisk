@@ -116,11 +116,11 @@ def test_group_layout_cleanup_preserves_other_groups(tmp_path, suffix):
     (package / "simulation").mkdir(parents=True)
     for name in ("first.lib", "_first.lib"):
         (package / "simulation" / name).touch()
-    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav")
+    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav", manifest)
     assert not list((package / "simulation").glob("*.lib"))
     first = package / "simulation/_first.py"
     stamp = first.stat().st_mtime_ns
-    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav")
+    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav", manifest)
     assert first.stat().st_mtime_ns == stamp
     unrelated = package / f"simulation/_simulationCoreNative{suffix}"
     unrelated.write_bytes(b"other group")
@@ -129,7 +129,7 @@ def test_group_layout_cleanup_preserves_other_groups(tmp_path, suffix):
     archive = package / "_opNavNative.lib"
     archive.touch()
     manifest.write_text("")
-    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav")
+    generator.generate_layout(manifest, package, loader, "_opNavNative", "_load_opnav", manifest)
     assert not first.exists()
     assert not (package / "fswAlgorithms/_second.py").exists()
     assert not (package / "_load_opnav.py").exists()
