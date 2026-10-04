@@ -98,10 +98,15 @@ def test_package_init_uses_only_cmake_manifest_entries(tmp_path):
     )
     previous_manifest_path = tmp_path / "messagePayloads.previous.txt"
     expected = """\
+from ._load_messages import load_message_module as _load_message_module
+_load_message_module('messagingSupport')
 from Basilisk.architecture.messaging.messagingSupport import *
+_load_message_module('AlphaMsgPayload')
 from Basilisk.architecture.messaging.AlphaMsgPayload import *
+_load_message_module('ZuluMsgPayload')
 from Basilisk.architecture.messaging.ZuluMsgPayload import *
 from Basilisk.architecture.messagingBase import *
+del _load_message_module
 """
 
     output_path = tmp_path / "output"
@@ -133,6 +138,31 @@ def test_package_init_rejects_duplicate_manifest_entries(tmp_path):
             manifest_path,
             tmp_path / "messagePayloads.previous.txt",
         )
+
+
+def test_package_init_retires_separate_native_libraries(tmp_path):
+    """An incremental upgrade removes old binaries while retaining wrappers."""
+    output_path = tmp_path / "messaging"
+    output_path.mkdir()
+    manifest_path = tmp_path / "messagePayloads.txt"
+    manifest_path.write_text("SCStatesMsgPayload\n", encoding="utf-8")
+    legacy_binaries = [
+        output_path / f"_{name}{suffix}"
+        for name in ("SCStatesMsgPayload", "messagingSupport")
+        for suffix in generatePackageInit.COMPILED_EXTENSION_SUFFIXES
+    ]
+    retained = [output_path / name for name in (
+        "SCStatesMsgPayload.py", "_messagingNative.so", "_messagingNative.pyd",
+        "_load_messages.py", "_UserExtension.so",
+    )]
+    for path in [*legacy_binaries, *retained]:
+        path.write_text("fixture", encoding="utf-8")
+
+    generatePackageInit.generate_package_init(
+        output_path, manifest_path, tmp_path / "messagePayloads.previous.txt",
+    )
+    assert all(not path.exists() for path in legacy_binaries)
+    assert all(path.read_text(encoding="utf-8") == "fixture" for path in retained)
 
 
 def test_package_init_rejects_invalid_manifest_entry(tmp_path):
