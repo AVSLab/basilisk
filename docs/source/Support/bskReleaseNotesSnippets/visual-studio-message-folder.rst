@@ -1,0 +1,1 @@
+- Fixed Visual Studio 2026 clean failures caused by an absolute path in the C-message target's solution folder.

@@ -40,6 +40,10 @@ Version |release|
   for generator selection and the default and custom build-directory settings. Disabling export now removes an
   existing database from the selected build directory so clangd cannot keep reading stale compilation commands.
 
+- Visual Studio 2026 solution-wide clean could fail because the C-message
+  target used an absolute path as its solution folder. It now uses a valid
+  relative folder name.
+
 - Ninja Multi-Config builds could fail on C message interface dependencies.
   CMake now preserves these configured sources across native clean operations
   and avoids dependencies on other build configurations.

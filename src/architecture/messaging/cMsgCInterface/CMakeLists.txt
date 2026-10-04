@@ -63,14 +63,6 @@ function(GenCMessages TARGET searchDir)
     endforeach()
 endfunction(GenCMessages)
 
-SET(LIB_DIR "${CMAKE_SOURCE_DIR}/simulation/architecture/messaging/cMsgCInterface/")
-
-# Determine the name of the parent directory of _GeneralModuleFiles (i.e. dynamics, environment, etc)
-get_filename_component(PARENT_DIR ${LIB_DIR} DIRECTORY) # Relative to the source directory (e.g. simulation/power)
-string(FIND ${PARENT_DIR} "/" DIR_NAME_IDX REVERSE)
-math(EXPR DIR_NAME_IDX "${DIR_NAME_IDX} + 1")# "simulation/"
-string(SUBSTRING ${PARENT_DIR} ${DIR_NAME_IDX} -1 PARENT_DIR_NAME) # Should be "power"
-
 # Set the library name (ex. dynamicsLib, environmentLib, etc)
 set(LIB_NAME "cMsgCInterface")
 
@@ -108,7 +100,8 @@ target_link_libraries(${LIB_NAME} ${PYTHON3_MODULE})
 #target_link_libraries(${LIB_NAME} Eigen3::Eigen3)
 
 # define build location, IDE generation specifications
-set_target_properties(${LIB_NAME} PROPERTIES FOLDER ${PARENT_DIR})
+# Solution folders are logical names; Windows drive letters are invalid here.
+set_target_properties(${LIB_NAME} PROPERTIES FOLDER "architecture/messaging")
 set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(${LIB_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk")

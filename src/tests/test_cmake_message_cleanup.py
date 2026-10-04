@@ -75,6 +75,11 @@ include("{source.as_posix()}/cmake/bskSourceInventory.cmake")
 set(BSK_HEADER_FILES "{source.as_posix()}/architecture/msgPayloadDefC/AttRefMsgPayload.h")
 add_subdirectory("{source.as_posix()}/architecture/messaging/cMsgCInterface" c-messages)
 target_include_directories(cMsgCInterface PRIVATE "{source.as_posix()}")
+get_target_property(message_folder cMsgCInterface FOLDER)
+# IDE folders are logical hierarchy names, never absolute filesystem paths.
+if(IS_ABSOLUTE "${{message_folder}}" OR message_folder MATCHES ":")
+    message(FATAL_ERROR "Invalid C-message IDE folder: ${{message_folder}}")
+endif()
 """,
         encoding="utf-8",
     )
