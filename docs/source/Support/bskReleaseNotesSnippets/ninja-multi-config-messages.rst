@@ -1,0 +1,1 @@
+- Fixed Ninja Multi-Config builds failing on C message interface dependencies and preserved configured C message sources across native clean operations.

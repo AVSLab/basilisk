@@ -51,9 +51,10 @@ function(GenCMessages TARGET searchDir)
         configure_file(msg_C.h.in   ${headerFile} @ONLY)
         configure_file(msg_C.cpp.in ${objectFile} @ONLY)
 
-        # Mark these files as GENERATED
+        # configure_file owns these outputs. Marking them GENERATED without a
+        # build-time rule creates invalid cross-configuration dependencies in
+        # Ninja Multi-Config and lets native clean remove required sources.
         set(generatedFiles ${objectFile} ${headerFile})
-        set_source_files_properties(${generatedFiles} PROPERTIES GENERATED ON)
 
         # Add these files as sources for the TARGET
         target_sources(${TARGET} PRIVATE ${generatedFiles})

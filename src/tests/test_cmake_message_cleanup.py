@@ -14,7 +14,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Exercise generated C-message retirement through the real CMake generator."""
+"""Exercise C-message generation, native builds, and retirement through CMake."""
 
 import os
 import shutil
@@ -37,6 +37,11 @@ NINJA = shutil.which("ninja") or (
 GENERATORS = [None] if os.name == "nt" else ["Unix Makefiles"]
 if NINJA and os.name != "nt":
     GENERATORS.append("Ninja")
+BUILD_CONFIGURATIONS = [(generator, "Release") for generator in GENERATORS]
+if NINJA and os.name != "nt":
+    BUILD_CONFIGURATIONS.extend(
+        ("Ninja Multi-Config", configuration) for configuration in ("Release", "Debug")
+    )
 
 
 def _run(command):
@@ -46,6 +51,50 @@ def _run(command):
     """
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.skipif(CMAKE is None, reason="CMake is required")
+@pytest.mark.parametrize("generator,configuration", BUILD_CONFIGURATIONS)
+def test_configured_c_messages_build_after_native_clean(tmp_path, generator, configuration):
+    """Compile configured interfaces before and after the native clean target.
+
+    :param tmp_path: Temporary directory supplied by pytest.
+    :param generator: Native build generator to exercise.
+    :param configuration: Configuration selected for compilation and cleaning.
+    """
+    source = REPOSITORY_ROOT / "src"
+    project = tmp_path / "project"
+    project.mkdir()
+    (tmp_path / "LICENSE").write_text("Test fixture license.\n", encoding="utf-8")
+    (project / "CMakeLists.txt").write_text(
+        f"""cmake_minimum_required(VERSION 3.26)
+project(messageBuild CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+include("{source.as_posix()}/cmake/bskSourceInventory.cmake")
+set(BSK_HEADER_FILES "{source.as_posix()}/architecture/msgPayloadDefC/AttRefMsgPayload.h")
+add_subdirectory("{source.as_posix()}/architecture/messaging/cMsgCInterface" c-messages)
+target_include_directories(cMsgCInterface PRIVATE "{source.as_posix()}")
+""",
+        encoding="utf-8",
+    )
+    build = tmp_path / "build"
+    configure = [CMAKE, "-S", str(project), "-B", str(build), f"-DCMAKE_BUILD_TYPE={configuration}"]
+    if generator:
+        configure.extend(["-G", generator])
+    if generator and generator.startswith("Ninja"):
+        configure.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
+    if sys.platform == "darwin" and not os.environ.get("SDKROOT"):
+        configure.append("-DCMAKE_OSX_SYSROOT=macosx")
+    _run(configure)
+    command = [CMAKE, "--build", str(build), "--config", configuration]
+    interfaces = [build / "autoSource/cMsgCInterface" / f"AttRefMsg_C.{suffix}" for suffix in ("h", "cpp")]
+    original_times = {path: path.stat().st_mtime_ns for path in interfaces}
+    _run(command)
+    _run(command + ["--target", "clean"])
+    assert {path: path.stat().st_mtime_ns for path in interfaces} == original_times
+    _run(command)
+    assert {path: path.stat().st_mtime_ns for path in interfaces} == original_times
 
 
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")

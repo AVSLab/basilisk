@@ -40,6 +40,10 @@ Version |release|
   for generator selection and the default and custom build-directory settings. Disabling export now removes an
   existing database from the selected build directory so clangd cannot keep reading stale compilation commands.
 
+- Ninja Multi-Config builds could fail on C message interface dependencies.
+  CMake now preserves these configured sources across native clean operations
+  and avoids dependencies on other build configurations.
+
 - ``scenarioSmallBodyNav`` supplied an 18-element state to the 12-state
   :ref:`smallBodyNavEKF <smallBodyNavEKF>`, causing Debug builds to abort. The example now supplies
   12 elements. Invalid state and matrix dimensions raise ``BasiliskError`` in
