@@ -53,6 +53,19 @@ if NINJA and (os.name != "nt" or os.environ.get("VCINSTALLDIR")):
 if sys.platform == "darwin":
     BUILD_GENERATORS.append("Xcode")
 
+# Exercise the full compiler/API matrix once, plus one representative real SWIG
+# build with each other generator to retain coverage of its generated build graph.
+DIRECTOR_GENERATOR = "Ninja" if "Ninja" in BUILD_GENERATORS else BUILD_GENERATORS[0]
+DIRECTOR_CONFIGURATIONS = [
+    pytest.param(generator, limited_api, threads,
+                 id=f"{generator}-{'limited' if limited_api else 'full'}-api-"
+                    f"{'threads' if threads else 'no-threads'}")
+    for generator in BUILD_GENERATORS
+    for limited_api in (False, True)
+    for threads in (False, True)
+    if generator == DIRECTOR_GENERATOR or (limited_api and threads)
+]
+
 
 @pytest.mark.parametrize("update_order", ["source-first", "destination-first", "parallel"])
 @pytest.mark.parametrize("source_group,destination_group,package_name", [
@@ -176,6 +189,8 @@ def test_layout_switch_preserves_optional_bindings_and_retires_stale_files(tmp_p
     assert optional.read_bytes() == b"optional native binding"
 
 
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
 @pytest.mark.parametrize("build_generator", BUILD_GENERATORS)
 def test_cmake_binding_moves_preserve_shims_after_reconfiguration(tmp_path, build_generator):
@@ -267,15 +282,15 @@ add_custom_target(allLayouts DEPENDS sourceLayouts destinationLayouts)
     assert "Basilisk.simulation._simulationCoreNative" in shims[1].read_text(encoding="utf-8")
 
 
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
 @pytest.mark.parametrize("build_generator", BUILD_GENERATORS)
-@pytest.mark.parametrize("group", ["fswCoreNative", "simulationCoreNative", "mujocoNative", "opNavNative"])
-def test_combined_library_is_linked_and_reconfigure_is_incremental(tmp_path, build_generator, group):
-    """Build and import both native entry points, then check an unchanged rebuild.
+def test_combined_library_is_linked_and_reconfigure_is_incremental(tmp_path, build_generator):
+    """Build all four groups together and verify their imports and unchanged rebuild.
 
     :param tmp_path: Temporary directory supplied by pytest.
     :param build_generator: CMake generator used for the isolated native build.
-    :param group: Native binding container to build.
     """
     if build_generator == "Xcode":
         xcodebuild = shutil.which("xcodebuild")
@@ -293,9 +308,28 @@ def test_combined_library_is_linked_and_reconfigure_is_incremental(tmp_path, bui
     shutil.copyfile(SOURCE / "cmake/generateFswBindings.py", project / "cmake/generateFswBindings.py")
     shutil.copyfile(SOURCE / "cmake/generateGroupedBindings.py", project / "cmake/generateGroupedBindings.py")
     shutil.copyfile(SOURCE / "fswAlgorithms/_load_fsw.py", project / "fswAlgorithms/_load_fsw.py")
-    for value, name in enumerate(("first", "second"), start=1):
-        (project / f"{name}.cpp").write_text(
-            f"""#include <Python.h>
+    declarations = [f'''cmake_minimum_required(VERSION 3.26)
+project(bindingBuildTest LANGUAGES CXX)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
+include("{SOURCE.as_posix()}/cmake/bskCombineFswBindings.cmake")
+include("{SOURCE.as_posix()}/cmake/bskCombineSimulationBindings.cmake")
+''']
+    groups = ("fswCoreNative", "simulationCoreNative", "mujocoNative", "opNavNative")
+    libraries = []
+    probe = ["import importlib, sys", "sys.path.insert(0, sys.argv[1])", "native_files = set()"]
+    suffix = ".pyd" if os.name == "nt" else ".so"
+    # Share compiler discovery and generator startup, retaining two native
+    # entry points per group and opNav imports from both public packages.
+    for group in groups:
+        packages = (("fswAlgorithms", "fswAlgorithms") if group == "fswCoreNative" else
+                    ("simulation", "fswAlgorithms" if group == "opNavNative" else "simulation"))
+        output_package = "" if group == "opNavNative" else packages[0]
+        libraries.append(build / "Basilisk" / output_package / f"_{group}{suffix}")
+        probe.append("modules = []")
+        for value, package in enumerate(packages, start=1):
+            name = f"{group}{value}"
+            (project / f"{name}.cpp").write_text(
+                f"""#include <Python.h>
 static PyObject *value(PyObject *, PyObject *) {{ return PyLong_FromLong({value}); }}
 static PyMethodDef methods[] = {{
     {{"value", value, METH_NOARGS, nullptr}}, {{nullptr, nullptr, 0, nullptr}}
@@ -303,47 +337,42 @@ static PyMethodDef methods[] = {{
 static PyModuleDef module = {{PyModuleDef_HEAD_INIT, "_{name}", nullptr, -1, methods}};
 PyMODINIT_FUNC PyInit__{name}(void) {{ return PyModule_Create(&module); }}
 """, encoding="utf-8",
-        )
-    if group == "fswCoreNative":
-        helper = SOURCE / "cmake/bskCombineFswBindings.cmake"
-        registration = """set_property(GLOBAL APPEND PROPERTY BSK_FSW_OBJECT_TARGETS ${name}Objects)
-  set_property(GLOBAL APPEND PROPERTY BSK_FSW_COMBINED_MODULES ${name})
-  set_property(GLOBAL APPEND PROPERTY BSK_FSW_BINDING_TARGETS ${name}Objects)"""
-        finalizer = "bsk_finalize_fsw_bindings()"
-        packages = ("fswAlgorithms", "fswAlgorithms")
-        output_package = "fswAlgorithms"
-    else:
-        helper = SOURCE / "cmake/bskCombineSimulationBindings.cmake"
-        packages = ("simulation", "fswAlgorithms" if group == "opNavNative" else "simulation")
-        output_package = "" if group == "opNavNative" else "simulation"
-        registration = f"""set_property(GLOBAL APPEND PROPERTY BSK_{group}_OBJECT_TARGETS ${{name}}Objects)
-  if(name STREQUAL "first")
-    set(package "{packages[0]}")
-  else()
-    set(package "{packages[1]}")
-  endif()
-  set_property(GLOBAL APPEND PROPERTY BSK_{group}_MODULES "${{package}}.${{name}}")
-  set_property(GLOBAL APPEND PROPERTY BSK_SIMULATION_BINDING_TARGETS ${{name}}Objects)"""
-        finalizer = "bsk_finalize_simulation_bindings()"
-    (project / "CMakeLists.txt").write_text(
-        f"""cmake_minimum_required(VERSION 3.26)
-project(bindingBuildTest LANGUAGES CXX)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
-include("{helper.as_posix()}")
-foreach(name first second)
-  add_library(${{name}}Objects OBJECT ${{name}}.cpp)
-  set_target_properties(${{name}}Objects PROPERTIES POSITION_INDEPENDENT_CODE ON CXX_STANDARD 17)
-  target_link_libraries(${{name}}Objects PRIVATE Python3::Module)
-  {registration}
-endforeach()
-{finalizer}
-file(MAKE_DIRECTORY "${{CMAKE_BINARY_DIR}}/Basilisk/fswAlgorithms")
-file(MAKE_DIRECTORY "${{CMAKE_BINARY_DIR}}/Basilisk/simulation")
-file(WRITE "${{CMAKE_BINARY_DIR}}/Basilisk/__init__.py" "")
-file(WRITE "${{CMAKE_BINARY_DIR}}/Basilisk/fswAlgorithms/__init__.py" "")
-file(WRITE "${{CMAKE_BINARY_DIR}}/Basilisk/simulation/__init__.py" "")
-""", encoding="utf-8",
-    )
+            )
+            declarations.append(f'''add_library({name}Objects OBJECT {name}.cpp)
+set_target_properties({name}Objects PROPERTIES POSITION_INDEPENDENT_CODE ON CXX_STANDARD 17)
+target_link_libraries({name}Objects PRIVATE Python3::Module)
+''')
+            if group == "fswCoreNative":
+                declarations.append(f'''set_property(GLOBAL APPEND PROPERTY BSK_FSW_OBJECT_TARGETS {name}Objects)
+set_property(GLOBAL APPEND PROPERTY BSK_FSW_COMBINED_MODULES {name})
+set_property(GLOBAL APPEND PROPERTY BSK_FSW_BINDING_TARGETS {name}Objects)
+''')
+            else:
+                declarations.append(f'''set_property(GLOBAL APPEND PROPERTY BSK_{group}_OBJECT_TARGETS {name}Objects)
+set_property(GLOBAL APPEND PROPERTY BSK_{group}_MODULES {package}.{name})
+set_property(GLOBAL APPEND PROPERTY BSK_SIMULATION_BINDING_TARGETS {name}Objects)
+''')
+            probe.extend([
+                f"module = importlib.import_module('Basilisk.{package}._{name}')",
+                f"assert module.value() == {value}",
+                "modules.append(module)",
+            ])
+        probe.extend([
+            "assert modules[0].__file__ == modules[1].__file__",
+            f"assert modules[0].__file__.endswith('_{group}{suffix}')",
+            "native_files.add(modules[0].__file__)",
+        ])
+    probe.append("assert len(native_files) == 4")
+    declarations.append('''bsk_finalize_fsw_bindings()
+bsk_finalize_simulation_bindings()
+add_custom_target(allBindings DEPENDS fswCoreNative simulationCoreNative mujocoNative opNavNative)
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/simulation")
+file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "")
+file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms/__init__.py" "")
+file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/simulation/__init__.py" "")
+''')
+    (project / "CMakeLists.txt").write_text("\n".join(declarations), encoding="utf-8")
 
     def run(command):
         """Run a fixture command and include its output when it fails."""
@@ -357,24 +386,16 @@ file(WRITE "${{CMAKE_BINARY_DIR}}/Basilisk/simulation/__init__.py" "")
         configure.extend(["-G", build_generator])
     if build_generator == "Ninja":
         configure.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
-    build_command = [CMAKE, "--build", str(build), "--target", group, "--config", "Release"]
+    build_command = [CMAKE, "--build", str(build), "--target", "allBindings", "--config", "Release"]
     run(configure)
     run(build_command)
-    suffix = ".pyd" if os.name == "nt" else ".so"
-    library = build / "Basilisk" / output_package / f"_{group}{suffix}"
-    assert library.is_file(), "The build succeeded without producing the combined library"
-    run([sys.executable, "-c", f"""import sys
-sys.path.insert(0, sys.argv[1])
-from Basilisk.{packages[0]} import _first
-from Basilisk.{packages[1]} import _second
-assert _first.value() == 1
-assert _second.value() == 2
-assert _first.__file__ == _second.__file__
-""", str(build)])
-    original_mtime = library.stat().st_mtime_ns
+    for library in libraries:
+        assert library.is_file(), f"The build succeeded without producing {library}"
+    run([sys.executable, "-I", "-c", "\n".join(probe), str(build)])
+    original_mtimes = [library.stat().st_mtime_ns for library in libraries]
     run(configure)
     run(build_command)
-    assert library.stat().st_mtime_ns == original_mtime
+    assert [library.stat().st_mtime_ns for library in libraries] == original_mtimes
 
 
 @pytest.mark.parametrize("semicolon", [";", ""], ids=["swig44", "swig45"])
@@ -401,10 +422,10 @@ def test_director_mutex_syntax_variants(tmp_path, semicolon):
             preparer.prepare_wrapper(source, destination)
 
 
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
 @pytest.mark.skipif(CMAKE is None or SWIG is None, reason="CMake and SWIG are required")
-@pytest.mark.parametrize("build_generator", BUILD_GENERATORS)
-@pytest.mark.parametrize("limited_api", [False, True], ids=["full-api", "limited-api"])
-@pytest.mark.parametrize("threads", [False, True], ids=["no-threads", "threads"])
+@pytest.mark.parametrize("build_generator,limited_api,threads", DIRECTOR_CONFIGURATIONS)
 def test_grouped_swig_directors_preserve_cross_module_callbacks(tmp_path, build_generator, limited_api, threads):
     """Compile real SWIG wrappers and dispatch Python overrides across modules.
 

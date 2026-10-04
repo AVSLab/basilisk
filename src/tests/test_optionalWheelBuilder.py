@@ -24,6 +24,7 @@ import sys
 import venv
 import zipfile
 from contextlib import contextmanager
+from functools import cache
 from importlib.metadata import distributions
 from pathlib import Path
 from types import ModuleType
@@ -65,11 +66,17 @@ WHEEL_TESTER = _loadWheelTester()
 
 
 @pytest.mark.parametrize("suffix", ["so", "pyd"])
-def test_grouped_opnav_wheel_delta(suffix):
+def test_grouped_opnav_wheel_delta(suffix, monkeypatch):
     """Package grouped OpenCV bindings without accepting incomplete or mixed layouts.
 
     :param suffix: Native extension suffix for Unix or Windows wheels.
+    :param monkeypatch: Pytest helper for reusing the unchanged source inventory.
     """
+    # Discover the real modules once; each missing-file case uses the same tree.
+    monkeypatch.setattr(
+        WHEEL_BUILDER, "discover_cmake_include_modules",
+        cache(WHEEL_BUILDER.discover_cmake_include_modules),
+    )
     component = WHEEL_BUILDER.COMPONENTS["opnav"]
     base = {"Basilisk/__init__.py", "Basilisk/simulation/_simulationCoreNative." + suffix}
     delta = {"Basilisk/_opNavNative." + suffix, "Basilisk/_load_opnav.py"}
