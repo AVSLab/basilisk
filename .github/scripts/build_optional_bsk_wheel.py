@@ -71,6 +71,8 @@ class OptionalComponent:
     description: str
     cmake_include: str
     support_files: tuple[tuple[str, re.Pattern[str]], ...] = ()
+    binding_group: str | None = None
+    binding_loader: str | None = None
 
 
 COMPONENTS = {
@@ -81,6 +83,8 @@ COMPONENTS = {
         description="Optional optical navigation extension modules for Basilisk.",
         # Basilisk treats OpenCV-backed modules as optical navigation modules.
         cmake_include="usingOpenCV",
+        binding_group="opNavNative",
+        binding_loader="_load_opnav",
         support_files=(
             (
                 "Windows dependency DLL",
@@ -147,6 +151,7 @@ def module_files_for_component(
     component: OptionalComponent,
     *,
     include_libraries: bool = False,
+    combined: bool = False,
 ) -> tuple[tuple[str, re.Pattern[str]], ...]:
     module_files = []
     for module_dir in discover_cmake_include_modules(component.cmake_include):
@@ -159,10 +164,11 @@ def module_files_for_component(
             ),
             (
                 f"_{target}",
-                re.compile(rf"{re.escape(package_root)}/_{re.escape(target)}\.(so|pyd)"),
+                re.compile(rf"{re.escape(package_root)}/_{re.escape(target)}\."
+                           + ("py" if combined else "(so|pyd)")),
             ),
         ])
-        if include_libraries:
+        if include_libraries and not combined:
             module_files.append((
                 f"{target}.lib",
                 re.compile(rf"{re.escape(package_root)}/{re.escape(target)}\.lib"),
@@ -171,12 +177,33 @@ def module_files_for_component(
     return tuple(module_files)
 
 
-def expected_files_for_component(component: OptionalComponent) -> tuple[tuple[str, re.Pattern[str]], ...]:
-    return module_files_for_component(component)
+def grouped_files_for_component(
+    component: OptionalComponent, *, include_libraries: bool = False,
+) -> tuple[tuple[str, re.Pattern[str]], ...]:
+    """Describe the optional container and its loader without owning core files."""
+    if component.binding_group is None:
+        return ()
+    group = re.escape(component.binding_group)
+    files = [(component.binding_group, re.compile(rf"Basilisk/_{group}\.(so|pyd)")),
+             (component.binding_loader, re.compile(rf"Basilisk/{re.escape(component.binding_loader)}\.py"))]
+    if include_libraries:
+        files.append((component.binding_group + ".lib", re.compile(rf"Basilisk/_?{group}\.lib")))
+    return tuple(files)
 
 
-def allowed_files_for_component(component: OptionalComponent) -> tuple[tuple[str, re.Pattern[str]], ...]:
-    allowed_files = list(module_files_for_component(component, include_libraries=True))
+def expected_files_for_component(
+    component: OptionalComponent, *, combined: bool = False,
+) -> tuple[tuple[str, re.Pattern[str]], ...]:
+    return module_files_for_component(component, combined=combined) + (
+        grouped_files_for_component(component) if combined else ())
+
+
+def allowed_files_for_component(
+    component: OptionalComponent, *, combined: bool = False,
+) -> tuple[tuple[str, re.Pattern[str]], ...]:
+    allowed_files = list(module_files_for_component(component, include_libraries=True, combined=combined))
+    if combined:
+        allowed_files.extend(grouped_files_for_component(component, include_libraries=True))
     allowed_files.extend(component.support_files)
     return tuple(allowed_files)
 
@@ -184,7 +211,9 @@ def allowed_files_for_component(component: OptionalComponent) -> tuple[tuple[str
 def optional_module_files_for_component(
     component: OptionalComponent,
 ) -> tuple[tuple[str, re.Pattern[str]], ...]:
-    return module_files_for_component(component, include_libraries=True)
+    return (module_files_for_component(component, include_libraries=True)
+            + module_files_for_component(component, combined=True)
+            + grouped_files_for_component(component, include_libraries=True))
 
 
 def find_dist_info_file(names: list[str], suffix: str) -> str:
@@ -654,8 +683,10 @@ def validate_delta(
     component_payload: set[str],
     component: OptionalComponent,
 ) -> list[str]:
-    expected_files = expected_files_for_component(component)
-    allowed_files = allowed_files_for_component(component)
+    group_files = grouped_files_for_component(component)
+    combined = bool(group_files) and any(group_files[0][1].fullmatch(name) for name in component_payload)
+    expected_files = expected_files_for_component(component, combined=combined)
+    allowed_files = allowed_files_for_component(component, combined=combined)
     optional_module_files = optional_module_files_for_component(component)
     optional_in_base = sorted(
         name
