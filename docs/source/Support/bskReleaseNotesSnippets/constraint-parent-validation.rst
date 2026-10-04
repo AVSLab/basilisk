@@ -1,0 +1,1 @@
+- :ref:`constraintDynamicEffector <constraintDynamicEffector>` now rejects unsupported parent types before computing forces and torques.
