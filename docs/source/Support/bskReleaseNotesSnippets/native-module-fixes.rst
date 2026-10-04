@@ -1,0 +1,1 @@
+- Fixed a buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates.

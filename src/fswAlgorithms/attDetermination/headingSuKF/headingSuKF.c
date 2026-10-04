@@ -519,8 +519,9 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
           get the total shifted S matrix (called sBar in internal parameters*/
     for(int i=0; i<OPNAV_MEAS; i++)
     {
-        vCopy(&(pXY[(size_t) i * (size_t) configData->numStates]), (size_t) configData->numStates, tempYVec);
-        ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
+        /* A column of U has numStates entries, not OPNAV_MEAS entries. */
+        vCopy(&(pXY[(size_t) i * (size_t) configData->numStates]), (size_t) configData->numStates, xHat);
+        ukfCholDownDate(configData->sBar, xHat, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, (size_t) configData->numStates, (size_t) configData->numStates,
             configData->sBar);
     }
