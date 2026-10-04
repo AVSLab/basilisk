@@ -25,3 +25,11 @@ description provides information on what this message is used for.
         attitude input message
     input limbInMsg OpNavLimbMsgPayload
         limb input message
+
+Planet Selection
+----------------
+
+Set ``planetTarget`` to 1 (Earth), 2 (Mars), or 3 (Jupiter). For a valid limb
+measurement, a nonzero ``planetIds`` in ``limbInMsg`` replaces ``planetTarget``
+before the navigation calculation. A zero ID leaves the current target unchanged.
+Unsupported IDs raise ``BasiliskError`` in Python.

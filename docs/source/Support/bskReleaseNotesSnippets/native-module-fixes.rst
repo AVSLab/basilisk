@@ -1,2 +1,3 @@
 - Fixed a buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates.
+- Corrected :ref:`horizonOpNav <horizonOpNav>` planet selection and added errors for unsupported planet IDs.
 - Fixed zero-noise operation in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>`.

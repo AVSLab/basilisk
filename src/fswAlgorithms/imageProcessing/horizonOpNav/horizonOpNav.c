@@ -89,6 +89,17 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
         OpNavMsg_C_write(&opNavMsgOut, &configData->opNavOutMsg, moduleID, callTime);
         return;
     }
+    /* A positive message ID overrides the configured target for this update.
+       A zero ID means unspecified and must not erase the configured target. */
+    if (limbIn.planetIds != 0.0) {
+        if (limbIn.planetIds != 1.0 && limbIn.planetIds != 2.0 && limbIn.planetIds != 3.0) {
+            _bskError(configData->bskLogger, "horizonOpNav: unsupported limb planet ID.");
+        }
+        configData->planetTarget = (int32_t) limbIn.planetIds;
+    }
+    if (configData->planetTarget < 1 || configData->planetTarget > 3) {
+        _bskError(configData->bskLogger, "horizonOpNav: planetTarget must be Earth (1), Mars (2), or Jupiter (3).");
+    }
     /*! Create Q matrix, the square root inverse of the A matrix, eq (6) in Engineering Note*/
     if(configData->planetTarget ==1){
         planetRad_Eq = REQ_EARTH*1E3;//in m
@@ -121,7 +132,6 @@ void Update_horizonOpNav(HorizonOpNavData *configData, uint64_t callTime, int64_
     sigma_pix = configData->noiseSF*cameraSpecs.resolution[0]/(numPoints);
 
     /*! Build DCMs */
-    configData->planetTarget = (int32_t) limbIn.planetIds;
     MRP2C(cameraSpecs.sigma_CB, dcm_CB);
     MRP2C(attInfo.sigma_BN, dcm_BN);
     m33MultM33(dcm_CB, dcm_BN, dcm_NC);
