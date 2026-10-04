@@ -393,9 +393,10 @@ def computeDockingDistance(scSim):
 
 
 def logData(scSim):
-    scSim.datLog1 = scSim.scObject1.scStateOutMsg.recorder()
-    scSim.datLog2 = scSim.scObject2.scStateOutMsg.recorder()
-    scSim.armLog = scSim.translatingBody.translatingBodyOutMsg.recorder()
+    samplingTime = macros.sec2nano(0.1)  # [ns] 10 Hz
+    scSim.datLog1 = scSim.scObject1.scStateOutMsg.recorder(samplingTime)
+    scSim.datLog2 = scSim.scObject2.scStateOutMsg.recorder(samplingTime)
+    scSim.armLog = scSim.translatingBody.translatingBodyOutMsg.recorder(samplingTime)
     scSim.AddModelToTask(scSim.simTaskName, scSim.datLog1)
     scSim.AddModelToTask(scSim.simTaskName, scSim.datLog2)
     scSim.AddModelToTask(scSim.simTaskName, scSim.armLog)
