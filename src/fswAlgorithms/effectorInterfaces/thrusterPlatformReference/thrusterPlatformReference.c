@@ -23,7 +23,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-const double epsilon = 1e-12;                           // module tolerance for zero
+static const double epsilon = 1e-12;  // [-] Module tolerance for zero
 
 /*! This method initializes the output messages for this module.
 

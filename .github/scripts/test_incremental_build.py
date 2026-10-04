@@ -396,6 +396,49 @@ def assert_single_message_rebuild(
     print("PASS: one message interface rebuilt only its object and relinked the library.")
 
 
+def assert_single_fsw_rebuild(
+    source_dir: Path,
+    build_dir: Path,
+    targets: tuple[WrapperTarget, ...],
+    parallel: int,
+    configuration: Optional[str],
+) -> None:
+    """Require one FSW edit to rebuild one object and relink the combined library."""
+
+    libraries = [
+        path
+        for path in (build_dir / "Basilisk/fswAlgorithms").glob("_fswCoreNative.*")
+        if path.suffix in {".so", ".pyd"}
+    ]
+    if not libraries:
+        return
+    if len(libraries) != 1:
+        raise IncrementalBuildError(f"Expected one combined FSW library, found {libraries}.")
+    library = libraries[0]
+    for suffix, object_names in (
+        ("c", {"mrpFeedback.c.o", "mrpFeedback.c.obj", "mrpFeedback.obj"}),
+        ("i", {"mrpFeedbackPYTHON_wrap.cxx.o", "mrpFeedbackPYTHON_wrap.cxx.obj",
+               "mrpFeedbackPYTHON_wrap.obj"}),
+    ):
+        source = source_dir / f"fswAlgorithms/attControl/mrpFeedback/mrpFeedback.{suffix}"
+        require_files((source, library))
+        before = compiled_artifacts(build_dir)
+        library_mtime = library.stat().st_mtime_ns
+        with temporarily_touch(source, (library,)):
+            run_build(build_dir, targets, parallel, configuration)
+        after = compiled_artifacts(build_dir)
+        changed = [path for path in before.keys() | after.keys()
+                   if before.get(path) != after.get(path)]
+        if len(changed) != 1 or changed[0].name not in object_names:
+            raise IncrementalBuildError(
+                f"A single FSW .{suffix} edit rebuilt unexpected objects: "
+                + ", ".join(str(path) for path in changed)
+            )
+        if library.stat().st_mtime_ns <= library_mtime:
+            raise IncrementalBuildError("The combined FSW library was not relinked.")
+        print(f"PASS: one FSW .{suffix} edit rebuilt only its object and relinked the library.")
+
+
 def assert_message_initializer_regenerated(
     source_dir: Path,
     build_dir: Path,
@@ -454,6 +497,7 @@ def run_regression_test(args: argparse.Namespace) -> None:
     print("PASS: an unrelated .cpp did not regenerate any wrapper.")
 
     assert_single_message_rebuild(build_dir, targets, args.parallel, args.config)
+    assert_single_fsw_rebuild(source_dir, build_dir, targets, args.parallel, args.config)
     assert_message_initializer_regenerated(
         source_dir, build_dir, targets, args.parallel, args.config
     )

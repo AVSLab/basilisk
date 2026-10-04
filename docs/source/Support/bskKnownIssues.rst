@@ -62,8 +62,8 @@ Version |release|
   updates it before the calculation. Unsupported IDs raise ``BasiliskError``.
 
 - On macOS, validating many native extensions could delay the first Basilisk
-  import after a build. Message
-  bindings now use one library to reduce this overhead. Python imports and
+  import after a build. Message and core FSW
+  bindings now use fewer libraries to reduce this overhead. Python imports and
   recorder APIs are unchanged. Rebuilt libraries still require validation, so
   first imports can remain slower than subsequent runs.
 
