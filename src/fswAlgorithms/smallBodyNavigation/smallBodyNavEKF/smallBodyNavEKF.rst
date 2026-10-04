@@ -95,6 +95,10 @@ The associated frame definitions may be found in the following table.
 Initialization
 ^^^^^^^^^^^^^^
 
+Set ``x_hat_k`` to 12 entries in the state order above. The covariance ``P_k``
+and noise matrices ``Q`` and ``R`` must each have 12 rows and 12 columns.
+Invalid dimensions raise ``BasiliskError`` in Python during reset or update.
+
 Algorithm
 ^^^^^^^^^^
 This module employs a hybrid extended Kalman filter (EKF) to estimate the relevant states. First, :math:`\hat{\mathbf{x}}_0`

@@ -1,3 +1,4 @@
 - Fixed a buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates.
 - Corrected :ref:`horizonOpNav <horizonOpNav>` planet selection and added errors for unsupported planet IDs.
 - Fixed zero-noise operation in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>`.
+- Corrected the initial state dimension in ``scenarioSmallBodyNav``. Invalid state and covariance or noise matrix dimensions in :ref:`smallBodyNavEKF <smallBodyNavEKF>` now raise ``BasiliskError`` in Python.
