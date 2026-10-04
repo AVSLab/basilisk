@@ -44,6 +44,10 @@ Version |release|
   zero-noise sampling in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>` are fixed. Both
   defects affected Debug and Release builds.
 
+- :ref:`horizonOpNav <horizonOpNav>` could use incorrect or uninitialized planet radii. A zero
+  limb-message planet ID now preserves ``planetTarget``; a supported nonzero ID
+  updates it before the calculation. Unsupported IDs raise ``BasiliskError``.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
