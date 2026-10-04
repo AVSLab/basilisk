@@ -26,7 +26,7 @@
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
 
-const double epsilon = 1e-12;                           // module tolerance for zero
+static const double epsilon = 1e-12;  // [-] Module tolerance for zero
 
 /*! This method initializes the output messages for this module.
 
