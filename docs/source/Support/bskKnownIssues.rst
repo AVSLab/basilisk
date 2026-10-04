@@ -61,6 +61,12 @@ Version |release|
   limb-message planet ID now preserves ``planetTarget``; a supported nonzero ID
   updates it before the calculation. Unsupported IDs raise ``BasiliskError``.
 
+- On macOS, validating many native extensions could delay the first Basilisk
+  import after a build. Message
+  bindings now use one library to reduce this overhead. Python imports and
+  recorder APIs are unchanged. Rebuilt libraries still require validation, so
+  first imports can remain slower than subsequent runs.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.

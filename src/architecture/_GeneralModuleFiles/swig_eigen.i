@@ -202,7 +202,7 @@ Otherwise, the number of rows and columns are returned in the pair.
 The number of columns are obtained from the first element of the input sequence.
 (i.e. ragged nested sequences are not checked)
 */
-std::optional<std::pair<Py_ssize_t, Py_ssize_t>> getInputSize(PyObject *input)
+static std::optional<std::pair<Py_ssize_t, Py_ssize_t>> getInputSize(PyObject *input)
 {
     // Vectors and matrices must come from python sequences
     if(!PySequence_Check(input)) {
@@ -412,13 +412,13 @@ void fillPyObjList(PyObject *input, const T& value)
 
 // Eigen::MRPd and Eigen::Quaterniond need to be converted first to Eigen::Matrix
 template<>
-void fillPyObjList<Eigen::MRPd>(PyObject *input, const Eigen::MRPd& value)
+inline void fillPyObjList<Eigen::MRPd>(PyObject *input, const Eigen::MRPd& value)
 {
-    return fillPyObjList(input, value.vec());
+    return fillPyObjList(input, value.coeffs());
 }
 
 template<>
-void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond& value)
+inline void fillPyObjList<Eigen::Quaterniond>(PyObject *input, const Eigen::Quaterniond& value)
 {
     return fillPyObjList<Eigen::Vector4d>(input, {value.w(), value.x(), value.y(), value.z()});
 }
