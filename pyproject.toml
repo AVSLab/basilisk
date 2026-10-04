@@ -133,4 +133,5 @@ markers = [
   "scenarioTest: mark a test as a tutorial scenario test.",
   "ciSkip: mark a test that should be skipped on the CI test runs",
   "docsIntegration: documentation-tool integration test run explicitly by docs CI",
+  "buildIntegration: native build regression test run explicitly by platform CI",
 ]

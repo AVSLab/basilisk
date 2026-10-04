@@ -75,6 +75,11 @@ jobs:
         run: |
           pip install pytest-error-for-skips pytest-timeout
           pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v
+      - name: Build integration tests
+        working-directory: src
+        run: >-
+          pytest -n 2 -m buildIntegration --error-for-skips --timeout=300 --timeout-method=thread --durations=10 -v
+          tests/test_fswBindingLayout.py tests/test_incremental_build_checks.py tests/test_cmake_message_cleanup.py
       - name: CTest
         if: ${{ always() && hashFiles('dist3/CTestTestfile.cmake') != '' }}
         working-directory: dist3
@@ -107,6 +112,12 @@ jobs:
           pip install pytest-error-for-skips pytest-timeout
           pytest -n auto -m "not ciSkip" -rs --error-for-skips --timeout=300 --timeout-method=thread --durations=25 -v
           if(($LastExitCode -ne 0) -and ($LastExitCode -ne 5)) {exit 1}
+      - name: Build integration tests
+        shell: pwsh
+        working-directory: src
+        run: |
+          pytest -n 2 -m buildIntegration --error-for-skips --timeout=300 --timeout-method=thread --durations=10 -v tests/test_fswBindingLayout.py tests/test_incremental_build_checks.py tests/test_cmake_message_cleanup.py
+          if ($LastExitCode -ne 0) { exit $LastExitCode }
       - name: CTest
         if: ${{ always() && hashFiles('dist3/CTestTestfile.cmake') != '' }}
         shell: pwsh
@@ -172,6 +183,11 @@ jobs:
         run: |
           pip install pytest-error-for-skips pytest-timeout
           pytest ${{ matrix.pytest_flags }}
+      - name: Build integration tests
+        working-directory: src
+        run: >-
+          pytest -n 2 -m buildIntegration --error-for-skips --timeout=300 --timeout-method=thread --durations=10 -v
+          tests/test_fswBindingLayout.py tests/test_incremental_build_checks.py tests/test_cmake_message_cleanup.py
       - name: CTest
         if: ${{ always() && hashFiles('dist3/CTestTestfile.cmake') != '' }}
         working-directory: dist3

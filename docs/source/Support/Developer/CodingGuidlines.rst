@@ -318,6 +318,13 @@ should pass. If not all Basilisk modules are built (i.e. the build process
 turned off the ``opNav`` option), then some Python tests will show up as
 skipped.
 
+Native build regression tests use ``buildIntegration`` and ``ciSkip`` markers.
+They run in a separate PR CI step on each platform; routine
+``pytest -n auto -m "not ciSkip"`` runs retain the import and recorder checks.
+To run the build tests locally from the repository root, use::
+
+    pytest -n 2 -m buildIntegration src/tests/test_fswBindingLayout.py src/tests/test_incremental_build_checks.py src/tests/test_cmake_message_cleanup.py
+
 Guarding Tests for Optional Build Features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

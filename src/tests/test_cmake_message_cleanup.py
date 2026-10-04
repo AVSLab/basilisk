@@ -53,6 +53,8 @@ def _run(command):
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
 @pytest.mark.parametrize("generator,configuration", BUILD_CONFIGURATIONS)
 def test_configured_c_messages_build_after_native_clean(tmp_path, generator, configuration):

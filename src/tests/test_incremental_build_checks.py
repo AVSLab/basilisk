@@ -47,16 +47,16 @@ if sys.platform == "darwin":
     BUILD_GENERATORS.append("Xcode")
 
 
+@pytest.mark.ciSkip
+@pytest.mark.buildIntegration
 @pytest.mark.skipif(CMAKE is None, reason="CMake is required")
 @pytest.mark.parametrize("generator", BUILD_GENERATORS)
-@pytest.mark.parametrize("binary_package", [None, "communicationLib", "vizardLib"])
-def test_package_configuration_checks_native_targets(tmp_path, monkeypatch, generator, binary_package):
+def test_package_configuration_checks_native_targets(tmp_path, monkeypatch, generator):
     """Accept header-only packages and detect accidental binary targets.
 
     :param tmp_path: Temporary directory supplied by pytest.
     :param monkeypatch: Pytest helper for selecting the CMake executable.
     :param generator: Native CMake generator to exercise.
-    :param binary_package: Header-only package deliberately compiled, if any.
     """
     if generator == "Xcode":
         xcodebuild = shutil.which("xcodebuild")
@@ -81,24 +81,30 @@ def test_package_configuration_checks_native_targets(tmp_path, monkeypatch, gene
         # A similar name must not be mistaken for a header-only package.
         "add_library(communicationLibHelper STATIC fixture.c)",
     ]
-    for package in ("communicationLib", "vizardLib"):
-        kind = "STATIC fixture.c" if package == binary_package else "INTERFACE"
-        declarations.append(f"add_library({package} {kind})")
+    declarations.append('''foreach(package communicationLib vizardLib)
+  if(package STREQUAL BINARY_PACKAGE)
+    add_library(${package} STATIC fixture.c)
+  else()
+    add_library(${package} INTERFACE)
+  endif()
+endforeach()''')
     (project / "CMakeLists.txt").write_text("\n".join(declarations) + "\n", encoding="utf-8")
     command = [CMAKE, "-S", str(project), "-B", str(build)]
     if generator:
         command.extend(["-G", generator])
     if generator == "Ninja":
         command.append(f"-DCMAKE_MAKE_PROGRAM={NINJA}")
-    result = subprocess.run(
-        command, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-
     check = CHECKS["assert_package_configuration"]
     monkeypatch.setitem(check.__globals__, "cmake_executable", lambda: CMAKE)
-    if binary_package:
-        with pytest.raises(CHECKS["IncrementalBuildError"], match=f"binary library targets: {binary_package}"):
+    # Reuse compiler detection while exercising each actual File API target set.
+    for binary_package in ("", "communicationLib", "vizardLib", ""):
+        result = subprocess.run(
+            command + [f"-DBINARY_PACKAGE={binary_package}"], capture_output=True, text=True,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        if binary_package:
+            with pytest.raises(CHECKS["IncrementalBuildError"], match=f"binary library targets: {binary_package}"):
+                check(project, build)
+        else:
             check(project, build)
-    else:
-        check(project, build)
