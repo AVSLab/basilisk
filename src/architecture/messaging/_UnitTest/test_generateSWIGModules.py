@@ -122,6 +122,16 @@ del _load_message_module
     assert previous_manifest_path.read_text(encoding="utf-8") == (
         "AlphaMsgPayload\nZuluMsgPayload\n"
     )
+    shims = [output_path / f"_{name}.py" for name in (
+        "messagingSupport", "AlphaMsgPayload", "ZuluMsgPayload",
+    )]
+    assert all(path.is_file() for path in shims)
+    original_times = {path: path.stat().st_mtime_ns for path in shims}
+    generatePackageInit.generate_package_init(output_path, manifest_path, previous_manifest_path)
+    assert {path: path.stat().st_mtime_ns for path in shims} == original_times
+    shims[-1].unlink()
+    generatePackageInit.generate_package_init(output_path, manifest_path, previous_manifest_path)
+    assert shims[-1].is_file()
 
 
 def test_package_init_rejects_duplicate_manifest_entries(tmp_path):
@@ -202,6 +212,7 @@ def test_package_init_removes_only_stale_payload_artifacts(tmp_path):
     ))
     required_artifacts = {
         module_output_path / f"{removed_payload}.py",
+        module_output_path / f"_{removed_payload}.py",
         module_output_path / f"{removed_payload}PYTHON_wrap.cxx",
         module_output_path / f"_{removed_payload}.so",
         module_output_path / f"_{removed_payload}.pyd",
