@@ -1,1 +1,1 @@
-- Reduced native binding startup overhead, especially after macOS rebuilds, by grouping message and core FSW bindings into separate libraries. Python imports, message recorders, optional build features, and per-module compilation are preserved.
+- Reduced native binding startup overhead, especially after macOS rebuilds, by grouping message, core FSW, core simulation, MuJoCo, and OpenCV bindings into separate libraries. Python imports, message recorders, optional build features, and per-module compilation are preserved.

@@ -62,7 +62,7 @@ Version |release|
   updates it before the calculation. Unsupported IDs raise ``BasiliskError``.
 
 - On macOS, validating many native extensions could delay the first Basilisk
-  import after a build. Message and core FSW
+  import after a build. Message, core FSW, core simulation, MuJoCo, and OpenCV
   bindings now use fewer libraries to reduce this overhead. Python imports and
   recorder APIs are unchanged. Rebuilt libraries still require validation, so
   first imports can remain slower than subsequent runs.
