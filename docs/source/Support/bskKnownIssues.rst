@@ -40,8 +40,9 @@ Version |release|
   for generator selection and the default and custom build-directory settings. Disabling export now removes an
   existing database from the selected build directory so clangd cannot keep reading stale compilation commands.
 
-- Fixed a buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates.
-  The defect affected Debug and Release builds.
+- A buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates and invalid
+  zero-noise sampling in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>` are fixed. Both
+  defects affected Debug and Release builds.
 
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.

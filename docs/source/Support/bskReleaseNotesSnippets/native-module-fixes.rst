@@ -1,1 +1,2 @@
 - Fixed a buffer overflow in :ref:`headingSuKF <headingSuKF>` covariance updates.
+- Fixed zero-noise operation in :ref:`hingedRigidBodyMotorSensor <hingedRigidBodyMotorSensor>`.
