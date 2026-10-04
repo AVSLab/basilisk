@@ -209,8 +209,16 @@ add_custom_target(msgLoaderPy DEPENDS ${MSG_LOADER_PY})
 
 # Generate package imports from the exact payload inventory used for SWIG
 # targets.  This avoids a second directory scan with different file matching.
+set(MSG_PACKAGE_OUTPUTS
+    "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py"
+    "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/_messagingSupport.py")
+foreach(MSG_PAYLOAD IN LISTS MESSAGE_PAYLOAD_FILES)
+  get_filename_component(MSG_NAME "${MSG_PAYLOAD}" NAME_WE)
+  list(APPEND MSG_PACKAGE_OUTPUTS
+       "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/_${MSG_NAME}.py")
+endforeach()
 add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py
+  OUTPUT ${MSG_PACKAGE_OUTPUTS}
   COMMAND
     ${Python3_EXECUTABLE} generatePackageInit.py
     "${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/"
@@ -221,10 +229,11 @@ add_custom_command(
     ${MESSAGE_PAYLOAD_MANIFEST}
     ${MESSAGE_PAYLOAD_FILES}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/msgAutoSource
+  COMMENT "Updating the messaging package and private import shims"
   VERBATIM)
 
 # Custom target for establishing dependency
-add_custom_target(swigtrick DEPENDS ${CMAKE_BINARY_DIR}/Basilisk/architecture/messaging/__init__.py)
+add_custom_target(swigtrick DEPENDS ${MSG_PACKAGE_OUTPUTS})
 add_dependencies(swigtrick msgKeepAlivePy msgLoaderPy)
 
 # Build common payload-wrapper types and helpers once, inside the messaging
