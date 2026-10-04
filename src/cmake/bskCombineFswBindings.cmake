@@ -15,8 +15,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 include_guard(GLOBAL)
+include("${CMAKE_CURRENT_LIST_DIR}/bskBindingInventory.cmake")
 
 function(bsk_finalize_fsw_bindings)
+  bsk_write_binding_inventory(ACTIVE_MANIFEST)
   get_property(OBJECT_TARGETS GLOBAL PROPERTY BSK_FSW_OBJECT_TARGETS)
   get_property(MODULE_NAMES GLOBAL PROPERTY BSK_FSW_COMBINED_MODULES)
   get_property(BINDING_TARGETS GLOBAL PROPERTY BSK_FSW_BINDING_TARGETS)
@@ -60,9 +62,9 @@ function(bsk_finalize_fsw_bindings)
   add_custom_command(
     OUTPUT ${LAYOUT_OUTPUTS}
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/cmake/generateFswBindings.py"
-            "${MANIFEST}" "${PACKAGE_DIR}" "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py"
+            "${MANIFEST}" "${PACKAGE_DIR}" "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py" "${ACTIVE_MANIFEST}"
     COMMAND "${CMAKE_COMMAND}" -E touch "${STAMP}"
-    DEPENDS "${MANIFEST}" "${CMAKE_SOURCE_DIR}/cmake/generateFswBindings.py"
+    DEPENDS "${MANIFEST}" "${ACTIVE_MANIFEST}" "${CMAKE_SOURCE_DIR}/cmake/generateFswBindings.py"
             "${CMAKE_SOURCE_DIR}/fswAlgorithms/_load_fsw.py"
     COMMENT "Updating the FSW binding layout"
     VERBATIM)
