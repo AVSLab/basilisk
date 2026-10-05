@@ -17,8 +17,6 @@
 
  */
 #include "simulation/simSynch/simSynch.h"
-#include <iostream>
-#include <cstring>
 #include <thread>
 #include "architecture/utilities/macroDefinitions.h"
 
