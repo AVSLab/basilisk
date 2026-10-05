@@ -130,6 +130,7 @@ def test_concurrent_message_imports_wait_for_native_initialization(
     code = textwrap.dedent("""\
         import importlib
         import importlib.machinery
+        import os
         import sys
         import threading
 
@@ -144,9 +145,13 @@ def test_concurrent_message_imports_wait_for_native_initialization(
             'package': package_name,
         }[sys.argv[2]]
         fail_first = sys.argv[3] == 'True'
+        if fail_first and os.name == 'nt':
+            # The probe bypasses Basilisk.__init__, including its DLL setup.
+            # Retain the directory handle across failed imports and retries.
+            dll_directory = os.add_dll_directory(sys.argv[6])
         timeout = 10.0  # [s]
         blocking_window = 0.2  # [s]
-        entered = threading.Event()
+        first_ready = threading.Event()
         release = threading.Event()
         second_started = threading.Event()
         second_done = threading.Event()
@@ -159,7 +164,7 @@ def test_concurrent_message_imports_wait_for_native_initialization(
             if loader.name == native_name:
                 attempts.append(module)
                 if len(attempts) == 1:
-                    entered.set()
+                    first_ready.set()
                     assert release.wait(timeout), 'Native initialization was never released'
                     if fail_first:
                         raise RuntimeError('Injected native initialization failure')
@@ -173,7 +178,9 @@ def test_concurrent_message_imports_wait_for_native_initialization(
             except BaseException as error:
                 errors[label] = error
             finally:
-                if label == 'second':
+                if label == 'first':
+                    first_ready.set()
+                else:
                     second_done.set()
 
         importlib.machinery.ExtensionFileLoader.exec_module = paused_exec
@@ -181,7 +188,9 @@ def test_concurrent_message_imports_wait_for_native_initialization(
         second = threading.Thread(target=import_module, args=('second', second_name), daemon=True)
         try:
             first.start()
-            assert entered.wait(timeout), 'Native initialization did not start'
+            assert first_ready.wait(timeout), 'Native initialization did not start'
+            if 'first' in errors:
+                raise errors['first']
             second.start()
             assert second_started.wait(timeout), 'Concurrent import did not start'
             returned_early = second_done.wait(blocking_window)
@@ -253,7 +262,7 @@ def test_concurrent_message_imports_wait_for_native_initialization(
     subprocess_timeout = 60  # [s]
     result = subprocess.run(
         [sys.executable, "-c", code, first_import, second_import,
-         str(fail_first), package_name, str(tmp_path)],
+         str(fail_first), package_name, str(tmp_path), str(Path(messaging.__file__).resolve().parents[2])],
         capture_output=True, text=True, timeout=subprocess_timeout,
     )
     assert result.returncode == 0, result.stdout + result.stderr
