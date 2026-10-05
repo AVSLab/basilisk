@@ -1,0 +1,1 @@
+- Conan builds now export ``compile_commands.json`` by default for clangd and other language servers. Set ``exportCompileCommands=False`` to disable it.

@@ -86,6 +86,10 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - True
       - Builds the native GoogleTest executables and registers them with CTest
+    * - ``-o "&:exportCompileCommands=<value>"``
+      - Boolean
+      - True
+      - Exports ``compile_commands.json`` from CMake, which is useful for clangd and other language servers
     * - ``-s build_type``
       - Release, Debug
       - Release
