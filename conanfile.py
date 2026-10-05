@@ -47,6 +47,7 @@ bskModuleOptionsBool = {
     # Enable the opt-in compiler warning policy defined by BSK_STRICT_WARNINGS
     # in src/CMakeLists.txt.
     "strictWarnings": [[True, False], False],
+    "exportCompileCommands": [[True, False], True],
     "buildTesting": [[True, False], True],
     "buildProject": [[True, False], True],
     "recorderPropertyRollback": [[True, False], False],
@@ -692,6 +693,9 @@ class BasiliskConan(ConanFile):
         tc.cache_variables["BUILD_RUST_MODULES"] = bool(self.options.get_safe("rustModules"))
         tc.cache_variables["BSK_STRICT_WARNINGS"] = bool(self.options.get_safe("strictWarnings"))
         tc.cache_variables["BUILD_TESTING"] = bool(self.options.get_safe("buildTesting"))
+        tc.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = bool(
+            self.options.get_safe("exportCompileCommands")
+        )
         tc.cache_variables["BSK_OFFLINE_BUILD"] = bool(
             self.conf.get(OFFLINE_CONAN_CONF, default=False, check_type=bool)
         )
