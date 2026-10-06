@@ -26,10 +26,11 @@ each case with Orekit's numerical propagator, and stores the state in
 Usage::
 
     python generate_orekit_reference.py /path/to/orekit-data.zip [case ...] [--output-dir DIR]
-                                        [--weather-file SpaceWeather-All-v1.2.txt]
+                                        [--oblate-shadow] [--max-step SECONDS]
 
-It requires the ``orekit_jpype`` package and a Java runtime. Cases without Earth rotation
-evaluate the gravity field in the EME2000 frame, so the Earth pole is along inertial +Z.
+It requires the ``orekit_jpype`` package and a Java runtime. Every case is propagated and written in the GCRF frame,
+which has the ICRF axes of the DE430 SPICE kernels that Basilisk uses. Cases without Earth rotation
+evaluate the gravity field in the GCRF frame, so the Earth pole is along inertial +Z.
 Cases with Earth rotation evaluate it in ITRF (IERS 2010 conventions). The orekit-data folder
 can be fetched with ``orekit_jpype.pyhelpers.download_orekit_data_curdir()``.
 
@@ -38,23 +39,30 @@ in Basilisk and GMAT, and ``--oblate-shadow`` uses Orekit's oblate Earth instead
 of a box that turn in and out of view make the force non-smooth, which the adaptive integrator resolves only with a small
 maximum step; the cases set it with ``orekit_max_step_s`` (``--max-step`` overrides it, default 300 s).
 
-Cases with ``"weather": "real"`` read the CSSI space-weather file given with ``--weather-file``. Cases with
-``"body": "box"`` use Orekit's ``BoxAndSolarArraySpacecraft`` without solar array and a ``FixedRate`` attitude, so the
-drag and the radiation pressure depend on the attitude. The wall-clock time of each propagation is stored in
-``<output-dir>/orekit_runtime.json`` (the sampling and the file output are included).
+The drag uses Orekit's ``SimpleExponentialAtmosphere`` with the density at zero altitude and the scale height of the
+``exponential_atmosphere`` entry of ``cases.json``, evaluated at the altitude above the oblate Earth. The generator also
+writes ``orekit_density_probe.csv``: the altitude and the density that Orekit computes at the points of ``density_probe``,
+which ``compare_with_basilisk.py`` compares with Basilisk and GMAT before it propagates anything.
+
+Next to the ephemerides, ``<output-dir>/orekit_manifest.json`` records for every case the effective configuration and
+its hash, the frame, the generator options, the tool version, the checksums of the external data and of the ephemeris,
+and a ``variant`` label. A reference generated with ``--oblate-shadow`` or ``--max-step`` is labeled as such, and
+``compare_with_basilisk.py`` refuses it unless it is asked for explicitly.
+
+Cases with ``"body": "box"`` use Orekit's ``BoxAndSolarArraySpacecraft`` without solar array and a ``FixedRate`` attitude, so the
+drag and the radiation pressure depend on the attitude.
 """
 
 import argparse
 import csv
-import json
-import shutil
 import tempfile
-import time
+from importlib import metadata
 from pathlib import Path
 
 import orekit_jpype
 
-from comparisonCommon import (HERE, caseDuration, caseEpoch, loadSpec, mrp2dcm, writeOrekitGfc)
+from comparisonCommon import (DEFAULT_VARIANT, HERE, caseDuration, caseEpoch, fileSha256, loadSpec, mrp2dcm,
+                              probePoints, writeManifestEntry, writeOrekitGfc, writeProbe)
 
 SPEED_OF_LIGHT = 299792458.0  # [m/s]
 
@@ -70,15 +78,13 @@ def main():
                         "of the equatorial radius, as in Basilisk and GMAT)")
     parser.add_argument("--max-step", type=float,
                         help="maximum integrator step in seconds, overriding the case value (default: 300 s)")
-    parser.add_argument("--weather-file", type=Path,
-                        help="CSSI space-weather file, required by the cases with real space weather")
     args = parser.parse_args()
 
     orekit_jpype.initVM()
     from orekit_jpype.pyhelpers import setup_orekit_curdir
     setup_orekit_curdir(str(args.orekitData))
 
-    from jpype import JArray, JDouble, JImplements, JOverride
+    from jpype import JArray, JClass, JDouble
     from java.io import File
     from org.hipparchus.geometry.euclidean.threed import Vector3D
     from org.hipparchus.ode.nonstiff import DormandPrince853Integrator
@@ -93,8 +99,7 @@ def main():
     from org.orekit.forces.radiation import IsotropicRadiationSingleCoefficient, SolarRadiationPressure
     from org.orekit.frames import FramesFactory
     from org.hipparchus.geometry.euclidean.threed import Rotation
-    from org.orekit.models.earth.atmosphere import NRLMSISE00, NRLMSISE00InputParameters
-    from org.orekit.models.earth.atmosphere.data import CssiSpaceWeatherData
+    from org.orekit.models.earth.atmosphere import SimpleExponentialAtmosphere
     from org.orekit.orbits import CartesianOrbit, OrbitType
     from org.orekit.propagation import SpacecraftState
     from org.orekit.propagation.numerical import NumericalPropagator
@@ -107,7 +112,7 @@ def main():
     outDir.mkdir(parents=True, exist_ok=True)
     mu = spec["mu_m3_s2"]  # [m^3/s^2]
     ae = spec["equatorial_radius_m"]  # [m]
-    eme2000 = FramesFactory.getEME2000()
+    gcrf = FramesFactory.getGCRF()  # ICRF axes, as the J2000 frame of the DE430 SPICE kernels used by Basilisk
     itrf = FramesFactory.getITRF(IERSConventions.IERS_2010, True)
     utc = TimeScalesFactory.getUTC()
 
@@ -121,40 +126,30 @@ def main():
     sun = CelestialBodyFactory.getSun()
     bodies = {"sun": sun, "moon": CelestialBodyFactory.getMoon()}
 
-    @JImplements(NRLMSISE00InputParameters)
-    class ConstantWeather:
-        """Constant solar flux and geomagnetic activity."""
-
-        @JOverride
-        def getMinDate(self):
-            return AbsoluteDate.PAST_INFINITY
-
-        @JOverride
-        def getMaxDate(self):
-            return AbsoluteDate.FUTURE_INFINITY
-
-        @JOverride
-        def getAverageFlux(self, date):
-            return float(spec["space_weather"]["f107"])
-
-        @JOverride
-        def getDailyFlux(self, date):
-            return float(spec["space_weather"]["f107"])
-
-        @JOverride
-        def getAp(self, date):
-            return JArray(JDouble)([float(spec["space_weather"]["ap"])] * 7)
+    expAtm = spec["exponential_atmosphere"]
+    orekitJar = JClass("org.orekit.frames.FramesFactory").class_.getPackage().getImplementationVersion()
+    toolVersion = f"Orekit {orekitJar or 'unknown'}, orekit_jpype {metadata.version('orekit_jpype')}"
+    externalData = {
+        "orekit_data": {"id": args.orekitData.name, "sha256": fileSha256(args.orekitData)},
+        "gravity_coefficients": {"id": spec["gravity_coefficients_file"],
+                                 "sha256": fileSha256(HERE / spec["gravity_coefficients_file"])},
+    }
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         DataContext.getDefault().getDataProvidersManager().addProvider(
             DirectoryCrawler(File(str(tmp))))
-        realWeather = None
-        if args.weather_file:
-            shutil.copy(args.weather_file, tmp / args.weather_file.name)
-            realWeather = CssiSpaceWeatherData(args.weather_file.name)
-        runtimePath = outDir / "orekit_runtime.json"
-        runtimes = json.loads(runtimePath.read_text()) if runtimePath.exists() else {}
+
+        probeEpoch = utcDate(spec["epoch_utc"])
+        probeAtmosphere = SimpleExponentialAtmosphere(
+            earthShape, expAtm["density_at_zero_altitude_kg_m3"], 0.0, expAtm["scale_height_m"])
+        probeRows = []
+        for x, y, z, _ in probePoints(spec):  # Earth-fixed positions
+            position = Vector3D(float(x), float(y), float(z))
+            altitude = earthShape.transform(position, itrf, probeEpoch).getAltitude()  # [m]
+            probeRows.append((x, y, z, altitude, probeAtmosphere.getDensity(probeEpoch, position, itrf)))
+        writeProbe(outDir, "orekit", spec, probeRows, toolVersion, {"atmosphere": "SimpleExponentialAtmosphere"})
+        print(f"density probe: {len(probeRows)} points")
 
         for name, case in spec["cases"].items():
             if args.cases and name not in args.cases:
@@ -168,10 +163,10 @@ def main():
                 box = BoxAndSolarArraySpacecraft(
                     float(size[0]), float(size[1]), float(size[2]), sun, 0.0, Vector3D(0.0, 1.0, 0.0),
                     float(coeffs["drag_cd"]), 0.0, float(coeffs["absorption"]), float(coeffs["specular_reflection"]))
-            gravityFrame = itrf if case["earth_rotation"] else eme2000
+            gravityFrame = itrf if case["earth_rotation"] else gcrf
 
             pv = PVCoordinates(Vector3D(*case["r0_m"]), Vector3D(*case["v0_m_s"]))
-            orbit = CartesianOrbit(pv, eme2000, epoch, mu)
+            orbit = CartesianOrbit(pv, gcrf, epoch, mu)
             maxStep = args.max_step or case.get("orekit_max_step_s", 300.0)  # [s]
             integrator = DormandPrince853Integrator(1.0e-3, maxStep, 1.0e-10, 1.0e-13)
             integrator.setInitialStepSize(10.0)  # [s]
@@ -197,13 +192,8 @@ def main():
                     box if box is not None else
                     IsotropicRadiationSingleCoefficient(sc["srp_area_m2"], sc["srp_cr"])))
             if case["drag"]:
-                if case.get("weather", "constant") == "real":
-                    if realWeather is None:
-                        raise SystemExit(f"Case {name} needs --weather-file (CSSI space-weather file).")
-                    weather = realWeather
-                else:
-                    weather = ConstantWeather()
-                atmosphere = NRLMSISE00(weather, sun, earthShape)
+                atmosphere = SimpleExponentialAtmosphere(
+                    earthShape, expAtm["density_at_zero_altitude_kg_m3"], 0.0, expAtm["scale_height_m"])
                 propagator.addForceModel(DragForce(
                     atmosphere, box if box is not None else IsotropicDrag(sc["drag_area_m2"], sc["drag_cd"])))
             if box is not None:
@@ -211,12 +201,12 @@ def main():
                 dcm = mrp2dcm(att["sigma_BN"])  # [BN], maps inertial components to body components
                 rotation = Rotation(JArray(JArray(JDouble))([[float(x) for x in row] for row in dcm]), 1.0e-10)
                 spin = Vector3D(*[float(w) for w in att["omega_BN_B_rad_s"]])  # [rad/s] in the body frame
-                propagator.setAttitudeProvider(FixedRate(Attitude(epoch, eme2000, rotation, spin, Vector3D.ZERO)))
+                propagator.setAttitudeProvider(FixedRate(Attitude(epoch, gcrf, rotation, spin, Vector3D.ZERO)))
 
             state = SpacecraftState(orbit).withMass(sc["mass_kg"])
             propagator.setInitialState(state)
-            startTime = time.perf_counter()
-            with open(outDir / f"orekit_{name}.csv", "w", newline="") as f:
+            csvPath = outDir / f"orekit_{name}.csv"
+            with open(csvPath, "w", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(["t_s", "x_m", "y_m", "z_m", "vx_m_s", "vy_m_s", "vz_m_s"])
                 for k in range(steps + 1):
@@ -225,13 +215,20 @@ def main():
                         # restart from the previous sample to avoid re-propagating from t = 0
                         propagator.resetInitialState(state)
                         state = propagator.propagate(epoch.shiftedBy(float(t)))
-                    pvOut = state.getPVCoordinates(eme2000)
+                    pvOut = state.getPVCoordinates(gcrf)
                     p, v = pvOut.getPosition(), pvOut.getVelocity()
                     writer.writerow([f"{t:.1f}"] + [f"{c:.9f}" for c in
                                     (p.getX(), p.getY(), p.getZ(), v.getX(), v.getY(), v.getZ())])
-            runtimes[name] = time.perf_counter() - startTime  # [s]
-            runtimePath.write_text(json.dumps(runtimes, indent=2, sort_keys=True) + "\n")
-            print(f"{name}: {steps + 1} samples, {runtimes[name]:.1f} s")
+            options = {"oblate_shadow": args.oblate_shadow, "max_step_s": maxStep,
+                       "max_step_overridden": args.max_step is not None,
+                       "integrator": {"type": "DormandPrince853", "min_step_s": 1.0e-3,
+                                      "abs_tolerance_m": 1.0e-10, "rel_tolerance": 1.0e-13,
+                                      "initial_step_s": 10.0}}
+            variants = ((["oblate_shadow"] if args.oblate_shadow else [])
+                        + ([f"max_step_{args.max_step:g}s"] if args.max_step is not None else []))
+            writeManifestEntry(outDir, "orekit", spec, name, csvPath, spec["inertial_frame"], toolVersion, options,
+                               externalData, "+".join(variants) if variants else DEFAULT_VARIANT)
+            print(f"{name}: {steps + 1} samples")
 
 
 if __name__ == "__main__":

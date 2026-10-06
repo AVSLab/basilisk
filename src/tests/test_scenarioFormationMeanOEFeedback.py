@@ -60,9 +60,8 @@ def test_bskFormationMeanOEFeedback(show_plots, useClassicElem):
     dataPos2 = dataPos2[::skipValue]
     dataVel2 = dataVel2[::skipValue]
 
-    # setup truth data for unit test. The values were re-baselined when the gravity effector began advancing the
-    # SPICE planet orientation as a rotation: the previous values carried the error of the non-orthonormal
-    # first-order update. The chief orbit, which is uncontrolled, matches an
+    # setup truth data for unit test. The planet orientation is advanced as a rotation by the gravity effector. The
+    # chief orbit, which is uncontrolled, matches an
     # independent integration of the degree-2 GGM03S field with the SPICE orientation to 0.4 m.
     truePos = [
         [2.25733295e+06, 6.10774942e+06, 1.07696101e+06]

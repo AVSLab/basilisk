@@ -83,19 +83,25 @@ bool Eclipse::getExtrapolateScStateToStepMidpoint() const
  */
 void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
+    std::vector<uint64_t> timesWritten; // [ns]
+    for (auto& msg : this->positionInMsgs) {
+        timesWritten.push_back(msg.timeWritten());
+    }
+    this->scStateExtrapolation.prepare(CurrentSimNanos, this->previousUpdateNanos, timesWritten, this->bskLogger);
+
     for (long unsigned int c = 0; c<this->positionInMsgs.size(); c++){
-        this->scStateBuffer.at(c) = this->scStateExtrapolation.apply(c,
-                                                                     this->positionInMsgs.at(c)(),
+        this->scStateBuffer.at(c) = this->scStateExtrapolation.apply(this->positionInMsgs.at(c)(),
                                                                      CurrentSimNanos,
                                                                      this->positionInMsgs.at(c).timeWritten(),
-                                                                     this->previousUpdateNanos,
-                                                                     this->bskLogger);
+                                                                     this->previousUpdateNanos);
     }
 
-    this->sunInMsgState = this->sunInMsg();
+    this->sunInMsgState = this->scStateExtrapolation.applyPlanet(
+      this->sunInMsg(), CurrentSimNanos, this->sunInMsg.timeWritten(), this->previousUpdateNanos);
 
     for (long unsigned int c = 0; c<this->planetInMsgs.size(); c++){
-        this->planetBuffer[c] = this->planetInMsgs[c]();
+        this->planetBuffer[c] = this->scStateExtrapolation.applyPlanet(
+          this->planetInMsgs[c](), CurrentSimNanos, this->planetInMsgs[c].timeWritten(), this->previousUpdateNanos);
     }
 }
 

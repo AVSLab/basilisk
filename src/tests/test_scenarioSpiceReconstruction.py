@@ -44,5 +44,5 @@ def test_scenarioSpiceReconstruction():
         simHelpers.saveScenarioFigure(pltName, fig, path)
 
     # The classic gravityEffector path is accurate at this step: its error is far below the integrator's own
-    # error, unlike before the planet orientation was advanced as a rotation.
+    # error.
     assert errClassic < 10.0

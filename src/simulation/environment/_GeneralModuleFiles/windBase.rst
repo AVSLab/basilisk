@@ -77,10 +77,19 @@ the simulation.
 
 .. warning::
 
-    The extrapolation assumes that the module and the spacecraft run at the same task rate and that the spacecraft
-    uses a constant step. If the task rates differ, the position offset alternates between extrapolated and
-    unextrapolated on successive steps, and the module input jumps by about ``v * dt / 2``. A spacecraft with a
-    variable step, such as a variable-step integrator or a changing task period, has the same problem, because the
-    message age no longer matches the interval the spacecraft integrates. A warning is logged once if a different
-    task rate is detected while the extrapolation is enabled. Run the module in the same task and at the same rate as
-    the spacecraft.
+    The extrapolation requires that the module is updated with the same task period as the spacecraft, so that the
+    state message written by the spacecraft at the previous module update is exactly one module interval old. If the
+    task periods differ, whether the spacecraft is faster or slower than the module, half of the message age is not
+    the middle of the module interval. The state is then not extrapolated: the planets and all the spacecraft of the
+    module are left at the epoch of their messages, so that every spacecraft is evaluated against the same planet epoch,
+    and a warning is logged once, after the spacecraft state has been seen to be rewritten. A task period that changes
+    during the simulation has the same
+    effect. Run the module in the same task as the spacecraft, or at the same period.
+
+When the extrapolation is enabled the position and the orientation of the planet (or of the sun and the planets for
+the eclipse) are advanced, or moved back, with their message velocity and angular rate to the same middle of the
+interval as the spacecraft, so that the relative geometry is evaluated at a single epoch. Other time-dependent inputs,
+such as the epoch used for solar time or a space weather sample, are not shifted and are evaluated at the current
+time.
+As in the gravity effector, the planet is advanced by the time since its message was written, whatever the age of the
+message, so a planet message written once with a non-zero velocity is projected forward over the whole simulation.
