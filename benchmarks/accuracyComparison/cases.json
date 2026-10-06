@@ -1,5 +1,6 @@
 {
-  "description": "Shared definition of the Basilisk vs GMAT vs Orekit accuracy-comparison cases. All quantities in SI units (m, m/s, kg, s) unless the key says otherwise. Every case is propagated in the Earth-centered inertial EME2000 / EarthMJ2000Eq / Basilisk N frame.",
+  "description": "Shared definition of the Basilisk vs GMAT vs Orekit accuracy-comparison cases. All quantities in SI units (m, m/s, kg, s) unless the key says otherwise. Every case is propagated in the Earth-centered inertial ICRF axes (GCRF in Orekit, EarthICRF in GMAT, J2000 of the DE430 SPICE kernels, which are ICRF-aligned, in Basilisk N); the initial states, the attitudes and the outputs are all expressed in that frame.",
+  "inertial_frame": "ICRF",
   "epoch_utc": "2026-01-01T00:00:00.000",
   "mu_m3_s2": 398600441500000.0,
   "equatorial_radius_m": 6378136.3,
@@ -16,10 +17,25 @@
     "solar_flux_w_m2": 1361.0,
     "astronomical_unit_km": 149597870.693
   },
-  "space_weather": {
-    "f107": 150.0,
-    "ap": 15.0,
-    "kp": 3.0
+  "exponential_atmosphere": {
+    "density_at_zero_altitude_kg_m3": 2.0e-9,
+    "scale_height_m": 60000.0
+  },
+  "density_probe": {
+    "description": "Geodetic points [latitude deg, longitude deg, altitude m] at which every tool reports its own atmosphere altitude and density, so that the three exponential atmospheres are compared directly before any propagation. The points are expressed in the Earth-fixed frame, where the altitude does not depend on the epoch.",
+    "points_lat_lon_alt": [
+      [0.0, 0.0, 400000.0],
+      [0.0, 90.0, 200000.0],
+      [45.0, 30.0, 400000.0],
+      [45.0, 200.0, 800000.0],
+      [-60.0, 300.0, 300000.0],
+      [20.0, 150.0, 500000.0],
+      [80.0, 45.0, 250000.0],
+      [89.99, 0.0, 400000.0],
+      [-89.99, 0.0, 600000.0]
+    ],
+    "density_rel_tolerance": 2e-5,
+    "altitude_tolerance_m": 1.0
   },
   "box": {
     "size_m": [1.0, 2.0, 3.0],
@@ -27,9 +43,6 @@
     "absorption": 0.6,
     "specular_reflection": 0.2,
     "diffuse_reflection": 0.2
-  },
-  "real_weather": {
-    "cssi_file": "SpaceWeather-All-v1.2.txt"
   },
   "duration_s": 2592000.0,
   "sample_period_s": 3600.0,
@@ -98,7 +111,7 @@
     "leo_drag": {
       "gravity": {"degree": 0, "order": 0},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": [],
       "srp": false,
       "drag": true,
@@ -108,7 +121,7 @@
     "leo_all": {
       "gravity": {"degree": 8, "order": 8},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": ["sun", "moon"],
       "srp": true,
       "orekit_max_step_s": 10.0,
@@ -155,7 +168,7 @@
       "epoch_utc": "2026-03-20T00:00:00.000",
       "gravity": {"degree": 20, "order": 20},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": ["sun", "moon"],
       "srp": true,
       "orekit_max_step_s": 10.0,
@@ -164,11 +177,11 @@
       "v0_m_s": [-3755.897451, -6505.405213, 0.0]
     },
     "sso_drag": {
-      "description": "Point-mass gravity and NRLMSISE-00 drag in the 700 km sun-synchronous orbit",
+      "description": "Point-mass gravity and exponential-atmosphere drag in the 700 km sun-synchronous orbit",
       "epoch_utc": "2026-03-20T00:00:00.000",
       "gravity": {"degree": 0, "order": 0},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": [],
       "srp": false,
       "drag": true,
@@ -188,34 +201,6 @@
       "r0_m": [1546138.996, -2677991.296, -6175136.458],
       "v0_m_s": [8678.748104, 5010.677554, 0.0]
     },
-    "leo_drag_real_quiet": {
-      "description": "NRLMSISE-00 drag with the CSSI space-weather record of a quiet period, 7 days",
-      "epoch_utc": "2024-02-01T00:00:00.000",
-      "duration_s": 604800.0,
-      "weather": "real",
-      "gravity": {"degree": 0, "order": 0},
-      "earth_rotation": true,
-      "basilisk_step_s": 1.0,
-      "third_bodies": [],
-      "srp": false,
-      "drag": true,
-      "r0_m": [3951637.318, 5194639.913, 1815896.125],
-      "v0_m_s": [-4888.77288, 1743.817168, 5650.188328]
-    },
-    "leo_drag_real_storm": {
-      "description": "NRLMSISE-00 drag with the CSSI space-weather record of the May 2024 geomagnetic storm, 5 days",
-      "epoch_utc": "2024-05-09T00:00:00.000",
-      "duration_s": 432000.0,
-      "weather": "real",
-      "gravity": {"degree": 0, "order": 0},
-      "earth_rotation": true,
-      "basilisk_step_s": 1.0,
-      "third_bodies": [],
-      "srp": false,
-      "drag": true,
-      "r0_m": [3951637.318, 5194639.913, 1815896.125],
-      "v0_m_s": [-4888.77288, 1743.817168, 5650.188328]
-    },
     "leo_box_fixed": {
       "description": "Box spacecraft with a fixed inertial attitude, drag and SRP, 7 days (Orekit reference only)",
       "references": ["orekit"],
@@ -224,7 +209,7 @@
       "duration_s": 604800.0,
       "gravity": {"degree": 0, "order": 0},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": [],
       "srp": true,
       "orekit_max_step_s": 2.0,
@@ -240,7 +225,7 @@
       "duration_s": 604800.0,
       "gravity": {"degree": 0, "order": 0},
       "earth_rotation": true,
-      "basilisk_step_s": 1.0,
+      "basilisk_step_s": 0.25,
       "third_bodies": [],
       "srp": true,
       "orekit_max_step_s": 2.0,

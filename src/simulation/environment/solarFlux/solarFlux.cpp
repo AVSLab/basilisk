@@ -87,20 +87,23 @@ bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
  */
 void SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
-    /*! - read in planet state message (required) */
-    SpicePlanetStateMsgPayload sunPositionMsgData;
-    sunPositionMsgData = this->sunPositionInMsg();
-    this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
-
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
-    scStatesMsgData = this->scStateExtrapolation.apply(0,
-                                                       this->spacecraftStateInMsg(),
+    this->scStateExtrapolation.prepare(
+      CurrentSimNanos, this->previousUpdateNanos, { this->spacecraftStateInMsg.timeWritten() }, this->bskLogger);
+    scStatesMsgData = this->scStateExtrapolation.apply(this->spacecraftStateInMsg(),
                                                        CurrentSimNanos,
                                                        this->spacecraftStateInMsg.timeWritten(),
-                                                       this->previousUpdateNanos,
-                                                       this->bskLogger);
+                                                       this->previousUpdateNanos);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
+
+    /*! - read in planet state message (required), evaluated at the same epoch as the spacecraft state */
+    SpicePlanetStateMsgPayload sunPositionMsgData;
+    sunPositionMsgData = this->scStateExtrapolation.applyPlanet(this->sunPositionInMsg(),
+                                                                CurrentSimNanos,
+                                                                this->sunPositionInMsg.timeWritten(),
+                                                                this->previousUpdateNanos);
+    this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
     /*! - read in eclipse message (optional) */
     if (this->eclipseInMsg.isLinked()) {

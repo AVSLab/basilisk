@@ -81,5 +81,51 @@ def test_field_is_evaluated_at_extrapolated_position():
     np.testing.assert_allclose(fieldWrittenNow, fieldStatic, rtol=1e-12)
 
 
+def _fieldWithPlanet(planetVelocity):
+    """Return the dipole field at the second update for a spacecraft that moves together with the planet.
+
+    The planet message is written at the current time and the spacecraft message one step earlier, so the relative
+    position is only constant if both are evaluated at the same epoch.
+
+    Args:
+        planetVelocity (list): [m/s] common velocity of the spacecraft and the planet.
+    """
+    scSim = SimulationBaseClass.SimBaseClass()
+    proc = scSim.CreateNewProcess("p")
+    proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
+
+    dipole = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+    dipole.setExtrapolateScStateToStepMidpoint(True)
+    simSetPlanetEnvironment.centeredDipoleMagField(dipole, "earth")
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PlanetName = "earth"
+    planetPayload.PositionVector = (np.array(planetVelocity) * STEP).tolist()  # [m]
+    planetPayload.VelocityVector = list(planetVelocity)
+    planetPayload.J20002Pfix = np.eye(3).tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(STEP))
+    dipole.planetPosInMsg.subscribeTo(planetMsg)
+    payload = messaging.SCStatesMsgPayload()
+    payload.r_BN_N = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
+    payload.v_BN_N = list(planetVelocity)
+    scMsg = messaging.SCStatesMsg().write(payload, 0)
+    dipole.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("t", dipole)
+    recorder = dipole.envOutMsgs[0].recorder()
+    scSim.AddModelToTask("t", recorder)
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(STEP))
+    scSim.ExecuteSimulation()
+    return np.array(recorder.magField_N[-1])
+
+
+def test_translating_planet_does_not_change_the_field():
+    """Verify the spacecraft and the planet are evaluated at the same epoch.
+
+    The spacecraft and the planet move together at 30 km/s, so the relative position and the field are constant."""
+    np.testing.assert_allclose(_fieldWithPlanet([0.0, 3.0e4, 0.0]), _fieldWithPlanet([0.0, 0.0, 0.0]), rtol=1e-9)
+
+
 if __name__ == "__main__":
     test_field_is_evaluated_at_extrapolated_position()
+    test_translating_planet_does_not_change_the_field()

@@ -26,6 +26,8 @@ and Basilisk (text), so that all three tools use identical coefficients.
 """
 
 import csv
+import datetime
+import hashlib
 import json
 from pathlib import Path
 
@@ -98,38 +100,146 @@ def boxFacets(spec):
     return facets
 
 
-CSSI_COLUMNS = ["DATE", "AP1", "AP2", "AP3", "AP4", "AP5", "AP6", "AP7", "AP8", "AP_AVG", "F10.7_OBS",
-                "F10.7_OBS_CENTER81"]
+MANIFEST_VERSION = 1  # [-] version of the reference manifest format
+DEFAULT_VARIANT = "default"
+NON_REFERENCE_KEYS = ("basilisk_step_s", "references")  # case keys that do not affect the reference ephemerides
 
 
-def writeCelesTrakWeather(cssiPath, csvPath):
-    """Convert the observed section of a CSSI space-weather file to the CelesTrak CSV read by Basilisk.
+def effectiveCase(spec, name):
+    """Return the effective configuration of a case: the global settings merged with the case entry.
 
-    GMAT and Orekit read the CSSI file directly. Converting the same file keeps the three tools on identical indices.
+    The global ``description`` is left out because it is prose, the ``density_probe`` because it has its own manifest
+    (:func:`probeFingerprint`), and so are the case keys that do not change a reference
+    (:data:`NON_REFERENCE_KEYS`: the Basilisk time step and the list of tools), so that changing them does not invalidate
+    the references. The epoch and the duration are resolved, so that a
+    change of the global value is seen by every case that uses it.
 
     Args:
-        cssiPath (Path): CSSI ``SpaceWeather-All-v1.2.txt`` file.
-        csvPath (Path): output CSV with the columns of :data:`CSSI_COLUMNS`.
+        spec (dict): parsed ``cases.json`` content.
+        name (str): case name.
     """
-    rows = []
-    inObserved = False
-    for line in Path(cssiPath).read_text().splitlines():
-        if line.startswith("BEGIN OBSERVED"):
-            inObserved = True
-        elif line.startswith("END OBSERVED"):
-            break
-        elif inObserved and line.strip():
-            f = line.split()
-            # year month day, BSRN, ND, 8 Kp, Kp sum, 8 Ap, Ap mean, Cp, C9, ISN, F10.7 adj, flag,
-            # F10.7 adj ctr81, adj lst81, F10.7 obs, obs ctr81, obs lst81
-            if len(f) < 33:
-                continue
-            date = f"{int(f[0]):04d}-{int(f[1]):02d}-{int(f[2]):02d}"
-            rows.append([date] + f[14:22] + [f[22], f[30], f[31]])
-    with open(csvPath, "w", newline="") as out:
-        writer = csv.writer(out, lineterminator="\n")
-        writer.writerow(CSSI_COLUMNS)
-        writer.writerows(rows)
+    # the Basilisk task period and the list of tools with a reference do not influence the reference ephemerides
+    case = {k: v for k, v in spec["cases"][name].items() if k not in NON_REFERENCE_KEYS}
+    settings = {k: v for k, v in spec.items() if k not in ("cases", "description", "density_probe")}
+    return {"settings": settings, "case": case, "epoch_utc": caseEpoch(spec, spec["cases"][name]),
+            "duration_s": caseDuration(spec, spec["cases"][name])}
+
+
+def caseFingerprint(spec, name):
+    """Return the SHA-256 hash of the canonical JSON of the effective configuration of a case.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        name (str): case name.
+    """
+    canonical = json.dumps(effectiveCase(spec, name), sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+def fileSha256(path):
+    """Return the SHA-256 hash of a file, or of the files of a folder in sorted order.
+
+    Args:
+        path (Path): file or folder.
+    """
+    digest = hashlib.sha256()
+    path = Path(path)
+    files = sorted(p for p in path.rglob("*") if p.is_file()) if path.is_dir() else [path]
+    for item in files:
+        if path.is_dir():
+            digest.update(str(item.relative_to(path)).encode())
+        with open(item, "rb") as f:
+            for block in iter(lambda: f.read(1 << 20), b""):
+                digest.update(block)
+    return digest.hexdigest()
+
+
+def manifestPath(dataDir, tool):
+    """Return the path of the reference manifest of a tool.
+
+    Args:
+        dataDir (Path): folder holding the reference ephemerides.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+    """
+    return Path(dataDir) / f"{tool}_manifest.json"
+
+
+def writeManifestEntry(dataDir, tool, spec, name, csvPath, frame, toolVersion, generatorOptions, externalData,
+                       variant=DEFAULT_VARIANT):
+    """Record the provenance of a reference ephemeris in the manifest of its tool, merging with the other cases.
+
+    Args:
+        dataDir (Path): folder holding the reference ephemerides.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        spec (dict): parsed ``cases.json`` content.
+        name (str): case name.
+        csvPath (Path): the reference ephemeris written for the case.
+        frame (str): inertial frame of the ephemeris.
+        toolVersion (str): version of the tool that generated the ephemeris.
+        generatorOptions (dict): generator options and integrator settings that affect the physics.
+        externalData (dict): identifier and SHA-256 hash of each external data set used, keyed by name.
+        variant (str): ``"default"`` or the name of an intentional alternative configuration.
+    """
+    path = manifestPath(dataDir, tool)
+    manifest = json.loads(path.read_text()) if path.exists() else {"version": MANIFEST_VERSION, "cases": {}}
+    manifest["cases"][name] = {
+        "config_hash": caseFingerprint(spec, name),
+        "config": effectiveCase(spec, name),
+        "frame": frame,
+        "tool": tool,
+        "tool_version": toolVersion,
+        "generator_options": generatorOptions,
+        "external_data": externalData,
+        "variant": variant,
+        "csv_sha256": fileSha256(csvPath),
+        "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    }
+    path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+
+def validateManifestEntry(dataDir, tool, spec, name, csvPath, allowedVariant=DEFAULT_VARIANT):
+    """Check that a reference ephemeris was generated for the current definition of a case.
+
+    The manifest of the tool must hold an entry of the case whose configuration hash, inertial frame and ephemeris
+    checksum match the current ``cases.json`` and the file on disk. A reference generated with an alternative
+    configuration (e.g. ``--oblate-shadow``) is rejected unless that variant is explicitly allowed.
+
+    Args:
+        dataDir (Path): folder holding the reference ephemerides.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        spec (dict): parsed ``cases.json`` content.
+        name (str): case name.
+        csvPath (Path): the reference ephemeris of the case.
+        allowedVariant (str): variant of the reference that is accepted.
+
+    Returns:
+        dict: the manifest entry of the case.
+
+    Raises:
+        ValueError: naming the manifest field that does not match.
+    """
+    path = manifestPath(dataDir, tool)
+    if not path.exists():
+        raise ValueError(f"No manifest {path}: regenerate the {tool} references with the generator script.")
+    entry = json.loads(path.read_text()).get("cases", {}).get(name)
+    where = f"{tool} reference of case {name}"
+    if entry is None:
+        raise ValueError(f"{where} has no entry in {path}: regenerate it.")
+    if entry["config_hash"] != caseFingerprint(spec, name):
+        raise ValueError(f"{where} was generated for a different case configuration (config_hash, e.g. epoch, "
+                         "initial state or force models changed in cases.json): regenerate it.")
+    if entry["frame"] != spec["inertial_frame"]:
+        raise ValueError(f"{where} is expressed in {entry['frame']} (frame), but the comparison uses "
+                         f"{spec['inertial_frame']}: regenerate it.")
+    if entry["variant"] != allowedVariant:
+        raise ValueError(f"{where} was generated as variant '{entry['variant']}' (variant), but the comparison "
+                         f"expects variant '{allowedVariant}'. Alternative configurations such as --oblate-shadow are "
+                         f"only accepted knowingly: pass --{tool}-variant {entry['variant']} to compare against it, "
+                         "or regenerate the default reference.")
+    if entry["csv_sha256"] != fileSha256(csvPath):
+        raise ValueError(f"{csvPath} does not match the checksum recorded in the manifest (csv_sha256): the file was "
+                         "modified or overwritten after it was generated.")
+    return entry
 
 
 def loadCoefficients(spec):
@@ -166,6 +276,21 @@ def writeGmatCof(path, spec, degree, order):
             line = f"RECOEF{n:5d}{m:3d}{c:24.14E}"
             lines.append(line + f"{s: .14E}" if m else line)
     path.write_text("\n".join(lines) + "\n")
+
+
+def writeGmatExponentialAtmosphere(path, spec):
+    """Write the GMAT exponential atmosphere table of the single-scale density model shared by all tools.
+
+    GMAT's table has one band per row: bottom altitude [km], density at that altitude [kg/m^3] and scale height [km].
+    A single band from 0 km is the model :math:`\\rho = \\rho_0 \\exp(-h/H)` given by the density at zero altitude and
+    the scale height of ``cases.json``, which every tool receives without conversion.
+
+    Args:
+        path (Path): output file path.
+        spec (dict): parsed ``cases.json`` content.
+    """
+    atm = spec["exponential_atmosphere"]
+    path.write_text(f"0.0, {float(atm['density_at_zero_altitude_kg_m3'])!r}, {atm['scale_height_m'] / 1000.0!r}\n")
 
 
 def writeOrekitGfc(path, spec, degree, order):
@@ -219,3 +344,152 @@ def writeBasiliskGravity(path, spec, degree, order):
                 c, s = 0.0, 0.0
             lines.append(f"{n}, {m}, {c:.12E}, {s:.12E}, 0.0, 0.0")
     path.write_text("\n".join(lines) + "\n")
+
+
+PROBE_COLUMNS = ["x_m", "y_m", "z_m", "altitude_m", "density_kg_m3"]  # columns of the density probe files
+
+
+def geodeticToEcef(spec, latDeg, lonDeg, altitude):
+    """Return the Earth-fixed position [m] of a geodetic point above the ellipsoid of ``cases.json``.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        latDeg (float): [deg] geodetic latitude.
+        lonDeg (float): [deg] longitude.
+        altitude (float): [m] altitude above the ellipsoid.
+    """
+    a = spec["equatorial_radius_m"]  # [m]
+    f = spec["earth_flattening"]  # [-]
+    e2 = f * (2.0 - f)  # [-]
+    lat, lon = np.radians(latDeg), np.radians(lonDeg)  # [rad]
+    n = a / np.sqrt(1.0 - e2 * np.sin(lat) ** 2)  # [m]
+    return np.array([(n + altitude) * np.cos(lat) * np.cos(lon),
+                     (n + altitude) * np.cos(lat) * np.sin(lon),
+                     (n * (1.0 - e2) + altitude) * np.sin(lat)])
+
+
+def probePoints(spec):
+    """Return the density probe points as an array of rows ``(x, y, z [m], nominal altitude [m])``, Earth-fixed.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+    """
+    return np.array([[*geodeticToEcef(spec, lat, lon, alt), alt]
+                     for lat, lon, alt in spec["density_probe"]["points_lat_lon_alt"]])
+
+
+def probeFingerprint(spec):
+    """Return the SHA-256 hash of everything that defines the density probe of a tool.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+    """
+    canonical = json.dumps({"probe": spec["density_probe"]["points_lat_lon_alt"],
+                            "atmosphere": spec["exponential_atmosphere"],
+                            "equatorial_radius_m": spec["equatorial_radius_m"],
+                            "earth_flattening": spec["earth_flattening"]},
+                           sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+def probePath(dataDir, tool):
+    """Return the path of the density probe file of a tool.
+
+    Args:
+        dataDir (Path): folder holding the reference files.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+    """
+    return Path(dataDir) / f"{tool}_density_probe.csv"
+
+
+def writeProbe(dataDir, tool, spec, rows, toolVersion, generatorOptions):
+    """Write the density probe of a tool and record its provenance in the manifest of the tool.
+
+    Args:
+        dataDir (Path): folder holding the reference files.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        spec (dict): parsed ``cases.json`` content.
+        rows (list): one ``(x, y, z [m], altitude [m], density [kg/m^3])`` row per probe point, in the order of
+            ``points_lat_lon_alt``, with the position and the altitude as reported by the tool.
+        toolVersion (str): version of the tool.
+        generatorOptions (dict): generator options that affect the evaluation.
+    """
+    path = probePath(dataDir, tool)
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(PROBE_COLUMNS)
+        for row in rows:
+            writer.writerow([f"{v:.12e}" for v in row])
+    manifestFile = manifestPath(dataDir, tool)
+    manifest = json.loads(manifestFile.read_text()) if manifestFile.exists() else {"version": MANIFEST_VERSION,
+                                                                                    "cases": {}}
+    manifest["density_probe"] = {"probe_hash": probeFingerprint(spec), "tool": tool, "tool_version": toolVersion,
+                                 "generator_options": generatorOptions, "csv_sha256": fileSha256(path),
+                                 "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(
+                                     timespec="seconds")}
+    manifestFile.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+
+def loadProbe(dataDir, tool, spec):
+    """Return the density probe of a tool as an array of rows ``PROBE_COLUMNS``, after validating its manifest.
+
+    Args:
+        dataDir (Path): folder holding the reference files.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        spec (dict): parsed ``cases.json`` content.
+
+    Raises:
+        ValueError: naming the manifest field that does not match, or if the file has the wrong number of points.
+    """
+    path = probePath(dataDir, tool)
+    manifestFile = manifestPath(dataDir, tool)
+    where = f"{tool} density probe {path}"
+    if not path.exists():
+        raise ValueError(f"The {where} does not exist: regenerate the {tool} references with the generator script.")
+    entry = json.loads(manifestFile.read_text()).get("density_probe") if manifestFile.exists() else None
+    if entry is None:
+        raise ValueError(f"The {where} has no density_probe entry in {manifestFile}: regenerate it.")
+    if entry["probe_hash"] != probeFingerprint(spec):
+        raise ValueError(f"The {where} was generated for a different probe or atmosphere (probe_hash): regenerate it.")
+    if entry["csv_sha256"] != fileSha256(path):
+        raise ValueError(f"The {where} does not match the checksum recorded in the manifest (csv_sha256).")
+    rows = np.loadtxt(path, delimiter=",", skiprows=1, ndmin=2)
+    if rows.shape != (len(spec["density_probe"]["points_lat_lon_alt"]), len(PROBE_COLUMNS)):
+        raise ValueError(f"The {where} has shape {rows.shape}, which does not match the probe points of cases.json.")
+    return rows
+
+
+def checkProbe(spec, tool, rows, bskDensity):
+    """Compare the density and altitude of a tool at the probe points with Basilisk and the nominal altitude.
+
+    The tool reports the position it evaluated and the altitude and density it computed there. Basilisk evaluates its
+    atmosphere at the same positions. The altitude of the tool must agree with the geodetic altitude of the point
+    (altitude definition) and the densities must agree (model).
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        rows (ndarray): the probe of the tool, columns ``PROBE_COLUMNS``.
+        bskDensity (ndarray): [kg/m^3] density of Basilisk at the positions of ``rows``.
+
+    Returns:
+        list: one ``(nominal altitude [m], altitude error [m], relative density difference [-])`` tuple per point.
+
+    Raises:
+        ValueError: naming the tool and the first point that exceeds a tolerance.
+    """
+    probe = spec["density_probe"]
+    nominal = probePoints(spec)[:, 3]  # [m]
+    results = []
+    for k, (row, h0, rhoBsk) in enumerate(zip(rows, nominal, bskDensity)):
+        altitudeError = row[3] - h0  # [m]
+        densityError = (rhoBsk - row[4]) / row[4]  # [-]
+        results.append((h0, altitudeError, densityError))
+        point = probe["points_lat_lon_alt"][k]
+        if abs(altitudeError) > probe["altitude_tolerance_m"]:
+            raise ValueError(f"{tool} reports an altitude {altitudeError:+.3g} m different from the geodetic altitude "
+                             f"at probe point {k} {point}: the altitude definition differs.")
+        if abs(densityError) > probe["density_rel_tolerance"]:
+            raise ValueError(f"Basilisk and {tool} differ in density by {densityError:+.3e} (relative) at probe point "
+                             f"{k} {point}: the atmosphere models are not equivalent.")
+    return results

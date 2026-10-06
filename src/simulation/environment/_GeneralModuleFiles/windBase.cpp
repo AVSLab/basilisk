@@ -108,15 +108,21 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
     );
 
     if (scRead) {
+        std::vector<uint64_t> timesWritten; // [ns]
+        for (auto& msg : this->scStateInMsgs) {
+            timesWritten.push_back(msg.timeWritten());
+        }
+        this->scStateExtrapolation.prepare(CurrentSimNanos, this->previousUpdateNanos, timesWritten, this->bskLogger);
         for (std::size_t c = 0; c < this->scStateInMsgs.size(); c++) {
             auto& msg = this->scStateInMsgs[c];
             this->scStates.push_back(this->scStateExtrapolation.apply(
-              c, msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos, this->bskLogger));
+              msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos));
         }
     }
 
     bool planetRead = this->planetPosInMsg.isWritten();
-    this->planetState = this->planetPosInMsg();
+    this->planetState = this->scStateExtrapolation.applyPlanet(
+      this->planetPosInMsg(), CurrentSimNanos, this->planetPosInMsg.timeWritten(), this->previousUpdateNanos);
 
     // Update planetOmega_N from SPICE data only if SPICE mode is enabled and planetPosInMsg has ever been written to
     if (this->useSpiceOmega && planetRead) {
