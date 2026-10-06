@@ -115,6 +115,10 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
 	return;
 }
 
+// Create method addPrescribedMotionCouplingContributions
+
+// Create method linkInPrescribedMotionProperties
+
 /*! This is the method for the SMD to add its contributions to the mass props and mass prop rates of the vehicle
  *
  * @param[in] integTime [s] Current integration time.
@@ -276,6 +280,8 @@ void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]
 
     return;
 }
+
+
 
 /*! This method is for the SMD to add its contributions to energy and momentum
  *
