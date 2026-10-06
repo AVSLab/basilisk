@@ -26,7 +26,7 @@ OMEGA_PLANET = np.array([0.0, 0.0, 7.2921150e-5])  # [rad/s]
 
 
 def _airVelocity(r, v, timeNanos):
-    """Return the co-rotating air velocity at the second module update.
+    """Return the co-rotating air velocity at the third module update.
 
     Args:
         r (list): [m] spacecraft position written to the state message.
@@ -55,13 +55,18 @@ def _airVelocity(r, v, timeNanos):
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(STEP))
     scSim.ExecuteSimulation()
+    # the spacecraft rewrites its state one step later, so that the module observes the spacecraft task period
+    scMsg.write(payload, timeNanos + macros.sec2nano(STEP))
+    scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
+    scSim.ExecuteSimulation()
     return np.array(recorder.v_air_N[-1])
 
 
 def test_air_velocity_is_evaluated_at_extrapolated_position():
     """Verify the co-rotating air velocity uses the state advanced by half of the message age.
 
-    A state written at the start of the simulation with a velocity along x must give the air velocity of the
+    A state with a velocity along x, written at the start of the simulation and
+    rewritten one step later, must give the air velocity of the
     position advanced by v * dt / 2, which differs from the static one along y. The same state written at the
     current time is not advanced."""
     r0 = [6.778e6, 0.0, 0.0]  # [m]
@@ -79,7 +84,7 @@ def test_air_velocity_is_evaluated_at_extrapolated_position():
 
 
 def _airVelocityWithPlanet(planetVelocity):
-    """Return the co-rotating air velocity at the second update for a spacecraft that moves together with the planet.
+    """Return the co-rotating air velocity at the third update for a spacecraft that moves together with the planet.
 
     The planet message is written at the current time and the spacecraft message one step earlier, so the relative
     position is only constant if both are evaluated at the same epoch.
@@ -99,7 +104,7 @@ def _airVelocityWithPlanet(planetVelocity):
     planetPayload.PositionVector = (np.array(planetVelocity) * STEP).tolist()  # [m]
     planetPayload.VelocityVector = list(planetVelocity)
     planetPayload.J20002Pfix = np.eye(3).tolist()
-    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(STEP))
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(2 * STEP))
     wind.planetPosInMsg.subscribeTo(planetMsg)
     payload = messaging.SCStatesMsgPayload()
     payload.r_BN_N = [6.778e6, 0.0, 0.0]  # [m]
@@ -112,6 +117,10 @@ def _airVelocityWithPlanet(planetVelocity):
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(STEP))
+    scSim.ExecuteSimulation()
+    # the spacecraft rewrites its state one step later, so that the module observes the spacecraft task period
+    scMsg.write(payload, 0 + macros.sec2nano(STEP))
+    scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
     scSim.ExecuteSimulation()
     return np.array(recorder.v_air_N[-1])
 

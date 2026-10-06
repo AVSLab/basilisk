@@ -95,7 +95,8 @@ the simulation.
     task periods differ, whether the spacecraft is faster or slower than the module, half of the message age is not
     the middle of the module interval. The state is then not extrapolated and a warning is logged once, after the
     spacecraft state has been seen to be rewritten. A task period that changes during the simulation has the same
-    effect. Run the module in the same task as the spacecraft, or at the same period.
+    effect. The extrapolation only starts once two write times of the spacecraft state message have been observed and their interval equals the module update interval, so the first updates are not extrapolated.
+ Run the module in the same task as the spacecraft, or at the same period.
 
 When the extrapolation is enabled the position and the orientation of the planet (or of the sun and the planets for
 the eclipse) are advanced, or moved back, with their message velocity and angular rate to the same middle of the
