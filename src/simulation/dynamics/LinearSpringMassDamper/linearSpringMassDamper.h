@@ -76,6 +76,7 @@ class LinearSpringMassDamper final
     void Reset(uint64_t CurrentSimNanos) override;
     void registerStates(DynParamManager& states) override; //!< Method for SMD to register its states
     void linkInStates(DynParamManager& states) override;   //!< Method for SMD to get access of other states
+    void linkInPrescribedMotionProperties(DynParamManager& states) override;
     void retrieveMassValue(double integTime) override;
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
         override; //!< Force and torque on s/c due to linear spring mass damper
@@ -93,6 +94,8 @@ class LinearSpringMassDamper final
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
+    void addPrescribedMotionCouplingContributions(BackSubMatrices&
+        backSubContr) override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
