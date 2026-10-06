@@ -98,7 +98,7 @@ isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t p
  * was written at the current time, or if it was not written at the previous update of the environment module.
  * The latter is either a stale message (written once at the start of the simulation), or a spacecraft that runs
  * faster or slower than the environment module, for which half of the message age is not the middle of the module
- * interval. A message written at the start of the simulation is extrapolated in the first update.
+ * interval. ScStateExtrapolation additionally waits until the spacecraft period has been observed.
  *
  * @param scState spacecraft state message payload as read from the message
  * @param currentSimNanos [ns] current simulation time
@@ -157,6 +157,11 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
     const Eigen::Matrix3d dcm_NPfix_dot = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
     const Eigen::Matrix3d dcmAdvanced_NPfix = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix[0][0]) = dcmAdvanced_NPfix.transpose();
+    // keep the derivative consistent with the advanced matrix: dcm_NPfix_dot = [omega_N x] dcm_NPfix, with the
+    // inertial angular velocity unchanged, so dcm_NPfix_dot advances as [omega_N x] dcmAdvanced_NPfix
+    const Eigen::Matrix3d omegaTilde_N = dcm_NPfix_dot * dcm_NPfix.transpose();
+    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = omegaTilde_N * dcmAdvanced_NPfix;
+    Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix_dot[0][0]) = dcmAdvanced_NPfix_dot.transpose();
     return extrapolated;
 }
 
@@ -165,7 +170,9 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
  * The extrapolation is disabled by default, in which case the state message is used as written. When enabled, the
  * module calls prepare() once per update with the write times of all its spacecraft state messages. The spacecraft
  * states are extrapolated with extrapolateScStateToStepMidpoint() and the planets with
- * extrapolatePlanetStateToEpoch() only if all spacecraft messages were written at the previous module update. If
+ * extrapolatePlanetStateToEpoch() only if all spacecraft messages were written at the previous module update and two
+ * successive write times were observed with an interval equal to the module update interval. The extrapolation is
+ * therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If
  * one of them was not nothing is extrapolated, so the spacecraft and the shared planets stay at one epoch, and a warning is
  * logged once.
  */
@@ -191,6 +198,7 @@ class ScStateExtrapolation
     void reset()
     {
         this->lastWriteNanos.clear();
+        this->writeIntervalNanos.clear();
         this->rewritten.clear();
         this->seen.clear();
         this->warned = false;
@@ -222,9 +230,11 @@ class ScStateExtrapolation
         }
         if (this->lastWriteNanos.size() < timesWrittenNanos.size()) {
             this->lastWriteNanos.resize(timesWrittenNanos.size(), 0);
+            this->writeIntervalNanos.resize(timesWrittenNanos.size(), 0);
             this->rewritten.resize(timesWrittenNanos.size(), false);
             this->seen.resize(timesWrittenNanos.size(), false);
         }
+        const uint64_t moduleIntervalNanos = currentSimNanos - previousUpdateNanos; // [ns]
         bool allLagged = true;
         bool mismatch = false;
         for (std::size_t index = 0; index < timesWrittenNanos.size(); index++) {
@@ -234,11 +244,18 @@ class ScStateExtrapolation
                 this->lastWriteNanos[index] = timeWrittenNanos;
             } else if (timeWrittenNanos != this->lastWriteNanos[index]) {
                 this->rewritten[index] = true;
+                this->writeIntervalNanos[index] = timeWrittenNanos - this->lastWriteNanos[index];
                 this->lastWriteNanos[index] = timeWrittenNanos;
             }
-            const bool lagged = isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            // extrapolate only once two successive write times show that the spacecraft period equals the module
+            // update interval
+            const bool periodKnown = this->writeIntervalNanos[index] != 0;
+            const bool periodDiffers = periodKnown && this->writeIntervalNanos[index] != moduleIntervalNanos;
+            const bool lagged = periodKnown && !periodDiffers &&
+                                isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
             allLagged = allLagged && lagged;
-            mismatch = mismatch || (this->rewritten[index] && timeWrittenNanos < currentSimNanos && !lagged);
+            mismatch = mismatch ||
+                       (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
         }
         this->lagConsistent = allLagged;
         if (mismatch && !this->warned) {
@@ -298,6 +315,7 @@ class ScStateExtrapolation
     bool warned = false;                     //!< true once the rate mismatch warning was logged
     bool lagConsistent = false;              //!< true if all spacecraft messages were written at the previous update
     std::vector<uint64_t> lastWriteNanos{};  //!< [ns] last observed write time of each state message
+    std::vector<uint64_t> writeIntervalNanos{}; //!< [ns] last observed interval between two write times, 0 if unknown
     std::vector<bool> rewritten{};           //!< true if the state message was seen with more than one write time
     std::vector<bool> seen{};                //!< true if the state message was observed in a previous update
 };

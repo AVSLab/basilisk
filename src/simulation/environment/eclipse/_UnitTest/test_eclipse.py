@@ -418,7 +418,7 @@ with its velocity by half of the message age.
 
 A spacecraft is placed outside the Earth shadow, moving towards it fast enough that the position advanced
 by half a step is inside the shadow. The state is given to one module with its velocity, written at the start
-of the simulation, and to a second module as the already advanced position written at the current time. The two
+of the simulation and rewritten one step later, and to a second module as the already advanced position written at the current time. The two
 illumination factors must match, and both must differ from a static spacecraft that does not move.
 
     """
@@ -437,11 +437,15 @@ illumination factors must match, and both must differ from a static spacecraft t
     planetPayload.PlanetName = "earth"
     planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
 
+    rewrites = []  # (message, payload, [ns] time of the rewrite one step later)
+
     def stateMsg(r, v, timeNanos):
         payload = messaging.SCStatesMsgPayload()
         payload.r_BN_N = r.tolist()
         payload.v_BN_N = v.tolist()
-        return messaging.SCStatesMsg().write(payload, timeNanos)
+        msg = messaging.SCStatesMsg().write(payload, timeNanos)
+        rewrites.append((msg, payload, timeNanos + macros.sec2nano(stepSeconds)))
+        return msg
 
     withVelocity = stateMsg(rStart, np.array([0.0, -4.0e4, 0.0]), 0)
     advanced = stateMsg(rStart + halfStepShift, np.zeros(3), macros.sec2nano(stepSeconds))
@@ -460,6 +464,11 @@ illumination factors must match, and both must differ from a static spacecraft t
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(stepSeconds))
+    scSim.ExecuteSimulation()
+    # the spacecraft rewrites its state one step later, so that the module observes the spacecraft task period
+    for msg, payload, timeNanos in rewrites:
+        msg.write(payload, timeNanos)
+    scSim.ConfigureStopTime(macros.sec2nano(2 * stepSeconds))
     scSim.ExecuteSimulation()
 
     factorVelocity, factorAdvanced, factorStatic = (r.illuminationFactor[-1] for r in recorders)

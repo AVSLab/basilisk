@@ -27,7 +27,7 @@ STEP = 10.0  # [s] module update period
 
 
 def _field(r, v, timeNanos):
-    """Return the dipole field at the second module update.
+    """Return the dipole field at the third module update.
 
     Args:
         r (list): [m] spacecraft position written to the state message.
@@ -58,13 +58,18 @@ def _field(r, v, timeNanos):
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(STEP))
     scSim.ExecuteSimulation()
+    # the spacecraft rewrites its state one step later, so that the module observes the spacecraft task period
+    scMsg.write(payload, timeNanos + macros.sec2nano(STEP))
+    scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
+    scSim.ExecuteSimulation()
     return np.array(recorder.magField_N[-1])
 
 
 def test_field_is_evaluated_at_extrapolated_position():
     """Verify the field uses the state advanced by half of the message age.
 
-    A state written at the start of the simulation with a radial velocity must give the field of
+    A state with a radial velocity, written at the start of the simulation and
+    rewritten one step later, must give the field of
     the position advanced by v * dt / 2; the field decays with the cube of the radius so the
     advanced and static fields differ measurably."""
     r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
@@ -82,7 +87,7 @@ def test_field_is_evaluated_at_extrapolated_position():
 
 
 def _fieldWithPlanet(planetVelocity):
-    """Return the dipole field at the second update for a spacecraft that moves together with the planet.
+    """Return the dipole field at the third update for a spacecraft that moves together with the planet.
 
     The planet message is written at the current time and the spacecraft message one step earlier, so the relative
     position is only constant if both are evaluated at the same epoch.
@@ -102,7 +107,7 @@ def _fieldWithPlanet(planetVelocity):
     planetPayload.PositionVector = (np.array(planetVelocity) * STEP).tolist()  # [m]
     planetPayload.VelocityVector = list(planetVelocity)
     planetPayload.J20002Pfix = np.eye(3).tolist()
-    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(STEP))
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(2 * STEP))
     dipole.planetPosInMsg.subscribeTo(planetMsg)
     payload = messaging.SCStatesMsgPayload()
     payload.r_BN_N = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
@@ -115,6 +120,10 @@ def _fieldWithPlanet(planetVelocity):
 
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(STEP))
+    scSim.ExecuteSimulation()
+    # the spacecraft rewrites its state one step later, so that the module observes the spacecraft task period
+    scMsg.write(payload, 0 + macros.sec2nano(STEP))
+    scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
     scSim.ExecuteSimulation()
     return np.array(recorder.magField_N[-1])
 

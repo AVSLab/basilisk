@@ -226,8 +226,10 @@ TEST(ScStateExtrapolation, matchedTaskPeriodsDoNotWarnAndAreExtrapolated)
     runModule(extrapolation, logger, 10 * SECOND_NANOS, 10 * SECOND_NANOS, 5, extrapolated);
 
     EXPECT_FALSE(extrapolation.mismatchDetected());
-    EXPECT_FALSE(extrapolated[0]); // the first update has no message age
-    for (std::size_t k = 1; k < extrapolated.size(); k++) {
+    // the spacecraft period is only known after two write times: the first two updates are not extrapolated
+    EXPECT_FALSE(extrapolated[0]);
+    EXPECT_FALSE(extrapolated[1]);
+    for (std::size_t k = 2; k < extrapolated.size(); k++) {
         EXPECT_TRUE(extrapolated[k]) << "update " << k;
     }
 }
@@ -257,11 +259,26 @@ TEST(ScStateExtrapolation, slowerSpacecraftWarnsAndIsNotExtrapolated)
     runModule(extrapolation, logger, SECOND_NANOS, 10 * SECOND_NANOS, 25, extrapolated);
 
     EXPECT_TRUE(extrapolation.mismatchDetected());
-    // The extrapolation is only skipped for the module updates whose previous update is not the spacecraft write
-    // time. The update right after each spacecraft write (every 10th, at 21 s) is the one-interval case and is valid.
-    for (std::size_t k = 12; k < extrapolated.size(); k++) {
-        EXPECT_EQ(extrapolated[k], k % 10 == 1) << "update " << k;
+    // Nothing is extrapolated before the spacecraft period is known (k = 1), nor after two successive write times show
+    // a spacecraft interval of 10 s that differs from the 1 s module interval (including the update right after each
+    // spacecraft write at 21 s, 31 s, ...).
+    for (std::size_t k = 0; k < extrapolated.size(); k++) {
+        EXPECT_FALSE(extrapolated[k]) << "update " << k;
     }
+}
+
+TEST(ScStateExtrapolation, isNotExtrapolatedBeforeTwoWriteTimesAreKnown)
+{
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    const SCStatesMsgPayload in = makeState();
+    // first observation of a message written at the previous update: the period is unknown
+    const SCStatesMsgPayload first = applySingle(extrapolation, in, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
+    EXPECT_DOUBLE_EQ(first.r_BN_N[1], in.r_BN_N[1]);
+    // second write time observed with an interval equal to the module interval
+    const SCStatesMsgPayload second = applySingle(extrapolation, in, 30 * SECOND_NANOS, 20 * SECOND_NANOS, 20 * SECOND_NANOS, logger);
+    EXPECT_NE(second.r_BN_N[1], in.r_BN_N[1]);
 }
 
 TEST(ScStateExtrapolation, staleMessageDoesNotWarn)
@@ -307,6 +324,7 @@ TEST(PlanetStateExtrapolation, translatingPlanetFollowsTheSpacecraftToTheStepMid
     ScStateExtrapolation extrapolation;
     extrapolation.setEnabled(true);
     BSKLogger logger;
+    extrapolation.prepare(step, 0, { 0 }, logger); // first write time, the period is known at the next update
     const SCStatesMsgPayload scOut = applySingle(extrapolation, sc, 2 * step, step, step, logger);
     const SpicePlanetStateMsgPayload planetOut = extrapolation.applyPlanet(planet, 2 * step, 2 * step, step);
 
@@ -354,6 +372,30 @@ TEST(PlanetStateExtrapolation, spinningPlanetOrientationStaysOrthonormal)
     EXPECT_NEAR(dcm(0, 1), std::sin(spinRate * 3600.0), 1e-12);
 }
 
+TEST(PlanetStateExtrapolation, spinningPlanetKeepsTheAngularVelocityConsistent)
+{
+    const double spinRate = 7.2921159e-5; // [rad/s] Earth rotation rate
+    SpicePlanetStateMsgPayload planet{};
+    planet.J20002Pfix[0][0] = 1.0;           // [-]
+    planet.J20002Pfix[1][1] = 1.0;           // [-]
+    planet.J20002Pfix[2][2] = 1.0;           // [-]
+    planet.J20002Pfix_dot[0][1] = spinRate;  // [1/s]
+    planet.J20002Pfix_dot[1][0] = -spinRate; // [1/s]
+
+    // angular velocity reconstructed as in WindBase::updatePlanetOmegaFromSpice()
+    const auto omegaFrom = [](const SpicePlanetStateMsgPayload& p) {
+        Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C_dot(p.J20002Pfix_dot[0]);
+        Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C(p.J20002Pfix[0]);
+        const Eigen::Matrix3d skewP = -C_dot * C.transpose();
+        const Eigen::Vector3d omega_P(skewP(2, 1), skewP(0, 2), skewP(1, 0));
+        return Eigen::Vector3d(C.transpose() * omega_P); // [rad/s]
+    };
+
+    const SpicePlanetStateMsgPayload out = extrapolatePlanetStateToEpoch(planet, 3600 * SECOND_NANOS, 0);
+
+    EXPECT_NEAR((omegaFrom(out) - omegaFrom(planet)).norm(), 0.0, 1e-15);
+}
+
 TEST(PlanetStateExtrapolation, planetIsNotMovedIfTheExtrapolationIsDisabled)
 {
     SpicePlanetStateMsgPayload planet{};
@@ -379,6 +421,7 @@ TEST(PlanetStateExtrapolation, resetClearsTheExtrapolatedStateOfThePlanet)
     extrapolation.setEnabled(true);
     BSKLogger logger;
     const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    extrapolation.prepare(step, 0, { 0 }, logger); // first write time, the period is known at the next update
     applySingle(extrapolation, makeState(), 2 * step, step, step, logger);
     const SpicePlanetStateMsgPayload moved = extrapolation.applyPlanet(planet, 2 * step, 2 * step, step);
     EXPECT_NE(moved.PositionVector[0], planet.PositionVector[0]);

@@ -26,8 +26,11 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simSe
 STEP = 10.0  # [s] module update period
 
 
-def _density(r, v, timeNanos, stopSeconds=STEP):
-    """Return the exponential atmosphere density at the second module update.
+def _density(r, v, timeNanos, stopSeconds=2 * STEP):
+    """Return the exponential atmosphere density at the third module update.
+
+    The state message is rewritten one step after ``timeNanos``, so that the module observes the spacecraft task period
+    and the extrapolation applies.
 
     Args:
         r (list): [m] spacecraft position written to the state message.
@@ -52,6 +55,9 @@ def _density(r, v, timeNanos, stopSeconds=STEP):
     scSim.AddModelToTask("t", recorder)
 
     scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(macros.sec2nano(STEP))
+    scSim.ExecuteSimulation()
+    scMsg.write(payload, timeNanos + macros.sec2nano(STEP))
     scSim.ConfigureStopTime(macros.sec2nano(stopSeconds))
     scSim.ExecuteSimulation()
     return recorder.neutralDensity[-1]
@@ -60,7 +66,8 @@ def _density(r, v, timeNanos, stopSeconds=STEP):
 def test_density_is_evaluated_at_extrapolated_position():
     """Verify the density uses the state advanced by half of the message age.
 
-    A state written at the start of the simulation with a radial velocity must give the density of
+    A state with a radial velocity, written at the start of the simulation and
+    rewritten one step later, must give the density of
     the position advanced by v * dt / 2. The same state written at the current time, or a
     zero velocity, is not advanced."""
     r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
@@ -77,21 +84,35 @@ def test_density_is_evaluated_at_extrapolated_position():
     assert densityWrittenNow == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
 
 
-def test_stale_message_is_extrapolated_only_once():
-    """Verify a state written once at the start of the simulation is not extrapolated by later updates.
+def test_stale_message_is_never_extrapolated():
+    """Verify a state written once at the start of the simulation is not extrapolated.
 
-    The module updates at 0, 10 and 20 s. The state written at t = 0 is extrapolated at the first update that
-    reads it, but at the update at 20 s it is stale, because it was written before the module's previous update,
-    so the density must be that of the written position."""
+    The module updates at 0, 10 and 20 s. A state that is never rewritten has no observed spacecraft task period and
+    is stale after the first update, so the density must be that of the written position."""
     r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
     v0 = [1.0e3, 0.0, 0.0]  # [m/s] radial
 
-    densityFirstUpdate = _density(r0, v0, 0, stopSeconds=STEP)
-    densityStaleUpdate = _density(r0, v0, 0, stopSeconds=2 * STEP)
-    densityStatic = _density(r0, [0.0, 0.0, 0.0], 0, stopSeconds=2 * STEP)
+    densityMoving = _densityWithRewrittenState(STEP, [0.0], 2 * STEP, r0, v0)
+    densityStatic = _densityWithRewrittenState(STEP, [0.0], 2 * STEP, r0, [0.0, 0.0, 0.0])
 
-    assert densityFirstUpdate < densityStatic
-    assert densityStaleUpdate == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
+    assert densityMoving == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
+
+
+def test_first_update_is_not_extrapolated_before_the_task_period_is_known():
+    """Verify the extrapolation waits for two spacecraft write times.
+
+    The state is written at 0 s and rewritten at 10 s. The update at 10 s has seen one write time only and is not
+    extrapolated; the update at 20 s has seen an interval equal to the module period and is."""
+    r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
+    v0 = [1.0e3, 0.0, 0.0]  # [m/s] radial
+
+    densityFirst = _densityWithRewrittenState(STEP, [0.0], STEP, r0, v0)
+    densityFirstStatic = _densityWithRewrittenState(STEP, [0.0], STEP, r0, [0.0, 0.0, 0.0])
+    densitySecond = _density(r0, v0, 0)
+    densitySecondStatic = _density(r0, [0.0, 0.0, 0.0], 0)
+
+    assert densityFirst == pytest.approx(densityFirstStatic, rel=1e-12, abs=0.0)
+    assert densitySecond < densitySecondStatic
 
 
 def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v):
@@ -160,7 +181,7 @@ def test_translating_planet_does_not_change_the_density():
         planetPayload.PositionVector = [0.0, speed * STEP if moving else 0.0, 0.0]
         planetPayload.VelocityVector = [0.0, speed if moving else 0.0, 0.0]
         planetPayload.J20002Pfix = np.eye(3).tolist()
-        planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(STEP))
+        planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(2 * STEP))
         atmo.planetPosInMsg.subscribeTo(planetMsg)
 
         scSim.AddModelToTask("t", atmo)
@@ -168,6 +189,9 @@ def test_translating_planet_does_not_change_the_density():
         scSim.AddModelToTask("t", recorder)
         scSim.InitializeSimulation()
         scSim.ConfigureStopTime(macros.sec2nano(STEP))
+        scSim.ExecuteSimulation()
+        scMsg.write(scPayload, macros.sec2nano(STEP))  # rewritten, so that the module observes the task period
+        scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
         scSim.ExecuteSimulation()
         return recorder.neutralDensity[-1]
 
@@ -194,7 +218,7 @@ def test_task_period_mismatch_disables_the_extrapolation(moduleStep, writeTimes,
 
 
 def _densityOfFirstOfTwoSpacecraft(secondWriteSeconds, r, v):
-    """Return the density at the first module update after STEP seconds for the first of two spacecraft.
+    """Return the density at the second module update after STEP seconds for the first of two spacecraft.
 
     Args:
         secondWriteSeconds (float): [s] time at which the state message of the second spacecraft is written.
@@ -215,7 +239,7 @@ def _densityOfFirstOfTwoSpacecraft(secondWriteSeconds, r, v):
         payload.v_BN_N = list(velocity)
         payloads.append(payload)
     firstMsg = messaging.SCStatesMsg().write(payloads[0], 0)
-    secondMsg = messaging.SCStatesMsg().write(payloads[1], macros.sec2nano(secondWriteSeconds))
+    secondMsg = messaging.SCStatesMsg().write(payloads[1], 0)
     atmo.addSpacecraftToModel(firstMsg)
     atmo.addSpacecraftToModel(secondMsg)
     scSim.AddModelToTask("t", atmo)
@@ -225,6 +249,11 @@ def _densityOfFirstOfTwoSpacecraft(secondWriteSeconds, r, v):
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(STEP))
     scSim.ExecuteSimulation()
+    # both spacecraft rewrite their state; the second one at secondWriteSeconds instead of the previous module update
+    firstMsg.write(payloads[0], macros.sec2nano(STEP))
+    secondMsg.write(payloads[1], macros.sec2nano(secondWriteSeconds))
+    scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
+    scSim.ExecuteSimulation()
     return recorder.neutralDensity[-1]
 
 
@@ -233,14 +262,14 @@ def test_one_mismatched_spacecraft_disables_the_extrapolation_of_all():
 
     The planet state is shared by all spacecraft, so moving it for one spacecraft would make the geometry of another
     one inconsistent. With both messages written at the previous module update (0 s) the first spacecraft is
-    extrapolated. If the second message was written at 5 s, which is not the previous module update, the first
+    extrapolated. If the second message was last written at 15 s, which is not the previous module update, the first
     spacecraft is not extrapolated either."""
     r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
     v0 = [1.0e3, 0.0, 0.0]  # [m/s] radial
 
-    densityMatched = _densityOfFirstOfTwoSpacecraft(0.0, r0, v0)
-    densityMismatched = _densityOfFirstOfTwoSpacecraft(STEP / 2.0, r0, v0)
-    densityStatic = _densityOfFirstOfTwoSpacecraft(STEP / 2.0, r0, [0.0, 0.0, 0.0])
+    densityMatched = _densityOfFirstOfTwoSpacecraft(STEP, r0, v0)
+    densityMismatched = _densityOfFirstOfTwoSpacecraft(1.5 * STEP, r0, v0)
+    densityStatic = _densityOfFirstOfTwoSpacecraft(1.5 * STEP, r0, [0.0, 0.0, 0.0])
 
     assert densityMatched < densityStatic
     assert densityMismatched == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
@@ -248,6 +277,6 @@ def test_one_mismatched_spacecraft_disables_the_extrapolation_of_all():
 
 if __name__ == "__main__":
     test_density_is_evaluated_at_extrapolated_position()
-    test_stale_message_is_extrapolated_only_once()
+    test_stale_message_is_never_extrapolated()
     test_translating_planet_does_not_change_the_density()
     test_one_mismatched_spacecraft_disables_the_extrapolation_of_all()
