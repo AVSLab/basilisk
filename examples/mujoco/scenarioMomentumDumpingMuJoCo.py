@@ -84,28 +84,28 @@ requests, and delivered thruster forces are plotted at the end.
 Illustration of Simulation Results
 ----------------------------------
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_attError.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_attError.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_rateError.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rateError.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_rwMomenta.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rwMomenta.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_DH.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_DH.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_rwSpeeds.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rwSpeeds.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_thrImpulse.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_thrImpulse.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_OnTimeReq.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_OnTimeReq.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_thrForce.svg
+.. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_thrForce.svg
    :align: center
 """
 
