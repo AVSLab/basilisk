@@ -1,0 +1,4 @@
+- Added :ref:`scenarioHingedRigidBodyMuJoCo` to demonstrate hinged solar-panel dynamics and an orbital burn using MuJoCo.
+- Added :ref:`scenarioFlexiblePanelMuJoCo` to demonstrate attitude control with a flexible, multi-segment solar panel using MuJoCo.
+- Added :ref:`scenarioMomentumDumpingMuJoCo` to demonstrate reaction-wheel momentum dumping with thrusters using MuJoCo.
+- Added :ref:`cmdTorqueBodyToTorqueAtSite`, a Python module that converts a ``CmdTorqueBodyMsg`` into a ``TorqueAtSiteMsg`` with an optional constant body-to-site rotation.

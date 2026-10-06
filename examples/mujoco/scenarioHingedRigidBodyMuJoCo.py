@@ -59,13 +59,13 @@ displacements are plotted at the end.
 Illustration of Simulation Results
 ----------------------------------
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_inertPos.svg
+.. image:: /_images/Scenarios/scenarioHingedRigidBodyMuJoCo_inertPos.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_orbitalMotion.svg
+.. image:: /_images/Scenarios/scenarioHingedRigidBodyMuJoCo_orbitalMotion.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioFlexiblePanelMuJoCo_angDisp.svg
+.. image:: /_images/Scenarios/scenarioHingedRigidBodyMuJoCo_angDisp.svg
    :align: center
 """
 
