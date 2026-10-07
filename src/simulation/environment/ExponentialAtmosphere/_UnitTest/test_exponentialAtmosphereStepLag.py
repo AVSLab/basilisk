@@ -157,15 +157,20 @@ def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v, writeB
 
 
 def test_translating_planet_does_not_change_the_density():
-    """Verify the spacecraft and the planet are evaluated at the same epoch.
+    """Verify the spacecraft and the planet are evaluated at the same epoch at every update, including the startup.
 
-    The spacecraft and the planet move together at 30 km/s, so the altitude is constant. The planet message is
-    written at the current time while the spacecraft message is one step old. Extrapolating only the spacecraft
-    would shift the relative position by v * dt / 2 and change the density."""
+    The spacecraft and the planet move together at 30 km/s, so the altitude is constant. At every update the planet
+    message is written at the current time while the spacecraft message is one step old. Before the task period of
+    the spacecraft is known (the first updates) the spacecraft is not extrapolated, so the planet must be moved back
+    to the epoch of the spacecraft message. Extrapolating only one of them would shift the relative position by up to
+    v * dt and change the density. The density is checked at the update at 0 s, at the first positive-time update
+    and at all the following ones."""
     speed = 3.0e4  # [m/s] common velocity of the spacecraft and the planet
-    r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
+    r0 = np.array([(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0])  # [m]
+    updates = 6  # [-] number of module updates
 
     def run(moving):
+        velocity = np.array([0.0, speed if moving else 0.0, 0.0])  # [m/s]
         scSim = SimulationBaseClass.SimBaseClass()
         proc = scSim.CreateNewProcess("p")
         proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(STEP)))
@@ -173,31 +178,42 @@ def test_translating_planet_does_not_change_the_density():
         atmo.setExtrapolateScStateToStepMidpoint(True)
         simSetPlanetEnvironment.exponentialAtmosphere(atmo, "earth")
 
-        scPayload = messaging.SCStatesMsgPayload()
-        scPayload.r_BN_N = r0
-        scPayload.v_BN_N = [0.0, speed if moving else 0.0, 0.0]
-        scMsg = messaging.SCStatesMsg().write(scPayload, 0)
-        atmo.addSpacecraftToModel(scMsg)
+        def scPayload(time):
+            payload = messaging.SCStatesMsgPayload()
+            payload.r_BN_N = (r0 + velocity * time).tolist()
+            payload.v_BN_N = velocity.tolist()
+            return payload
 
-        planetPayload = messaging.SpicePlanetStateMsgPayload()
-        planetPayload.PositionVector = [0.0, speed * STEP if moving else 0.0, 0.0]
-        planetPayload.VelocityVector = [0.0, speed if moving else 0.0, 0.0]
-        planetPayload.J20002Pfix = np.eye(3).tolist()
-        planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload, macros.sec2nano(2 * STEP))
+        def planetPayload(time):
+            payload = messaging.SpicePlanetStateMsgPayload()
+            payload.PositionVector = (velocity * time).tolist()
+            payload.VelocityVector = velocity.tolist()
+            payload.J20002Pfix = np.eye(3).tolist()
+            return payload
+
+        scMsg = messaging.SCStatesMsg().write(scPayload(0.0), 0)
+        atmo.addSpacecraftToModel(scMsg)
+        planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload(0.0), 0)
         atmo.planetPosInMsg.subscribeTo(planetMsg)
 
         scSim.AddModelToTask("t", atmo)
         recorder = atmo.envOutMsgs[0].recorder()
         scSim.AddModelToTask("t", recorder)
         scSim.InitializeSimulation()
-        scSim.ConfigureStopTime(macros.sec2nano(STEP))
-        scSim.ExecuteSimulation()
-        scMsg.write(scPayload, macros.sec2nano(STEP))  # rewritten, so that the module observes the task period
-        scSim.ConfigureStopTime(macros.sec2nano(2 * STEP))
-        scSim.ExecuteSimulation()
-        return recorder.neutralDensity[-1]
+        for k in range(updates):
+            time = k * STEP  # [s]
+            # the planet is updated before the module, the spacecraft after it
+            planetMsg.write(planetPayload(time), macros.sec2nano(time))
+            scSim.ConfigureStopTime(macros.sec2nano(time))
+            scSim.ExecuteSimulation()
+            scMsg.write(scPayload(time), macros.sec2nano(time))
+        return np.array(recorder.neutralDensity)
 
-    assert run(True) == pytest.approx(run(False), rel=1e-9, abs=0.0)
+    moving = run(True)
+    static = run(False)
+    assert len(moving) == updates
+    for k in range(updates):
+        assert moving[k] == pytest.approx(static[k], rel=1e-9, abs=0.0), f"update {k}"
 
 
 @pytest.mark.parametrize("moduleStep, writeTimes, stopSeconds", [

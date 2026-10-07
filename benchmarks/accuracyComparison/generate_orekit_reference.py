@@ -62,7 +62,7 @@ from pathlib import Path
 import orekit_jpype
 
 from comparisonCommon import (DEFAULT_VARIANT, HERE, caseDuration, caseEpoch, fileSha256, gravityCoefficientsRecord,
-                              loadSpec, mrp2dcm, probePoints, writeManifestEntry, writeOrekitGfc, writeProbe)
+                              loadSpec, mrp2dcm, probePoints, requireIcrf, writeManifestEntry, writeOrekitGfc, writeProbe)
 
 SPEED_OF_LIGHT = 299792458.0  # [m/s]
 
@@ -107,6 +107,7 @@ def main():
     from org.orekit.utils import IERSConventions, PVCoordinates
 
     spec = loadSpec()
+    requireIcrf(spec, "orekit")
     sc = spec["spacecraft"]
     outDir = args.output_dir
     outDir.mkdir(parents=True, exist_ok=True)
@@ -127,10 +128,19 @@ def main():
     bodies = {"sun": sun, "moon": CelestialBodyFactory.getMoon()}
 
     expAtm = spec["exponential_atmosphere"]
-    orekitJar = JClass("org.orekit.frames.FramesFactory").class_.getPackage().getImplementationVersion()
-    toolVersion = f"Orekit {orekitJar or 'unknown'}, orekit_jpype {metadata.version('orekit_jpype')}"
+    def jarRecord(javaClass):
+        """Return the file name and SHA-256 hash of the jar that provides a Java class."""
+        jar = Path(JClass(javaClass).class_.getProtectionDomain().getCodeSource().getLocation().getPath())
+        return {"id": jar.name, "sha256": fileSha256(jar)}
+
+    orekitJar = jarRecord("org.orekit.frames.FramesFactory")
+    hipparchusJar = jarRecord("org.hipparchus.ode.nonstiff.DormandPrince853Integrator")
+    toolVersion = (f"Orekit {orekitJar['id']}, Hipparchus {hipparchusJar['id']}, "
+                   f"orekit_jpype {metadata.version('orekit_jpype')}")
     externalData = {
         "orekit_data": {"id": args.orekitData.name, "sha256": fileSha256(args.orekitData)},
+        "orekit_jar": orekitJar,
+        "hipparchus_jar": hipparchusJar,
         "gravity_coefficients": gravityCoefficientsRecord(spec),
     }
 

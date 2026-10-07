@@ -51,6 +51,7 @@ model differ beyond the tolerances given there.
 """
 
 import argparse
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -70,13 +71,15 @@ except ImportError:
 
 DATA_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(DATA_DIR))
-from comparisonCommon import (DEFAULT_VARIANT, TOOLS, boxFacets, caseDuration, caseEpoch, caseReferences, checkProbe,
-                              loadProbe, loadSpec, validateManifestEntry, writeBasiliskGravity)
+from comparisonCommon import (DEFAULT_VARIANT, boxFacets, caseDuration, caseEpoch, caseReferences, checkConsistentProvenance,
+                              checkProbe, loadProbe, loadSpec, manifestPath, requiredProbeTools, validateManifestEntry,
+                              writeBasiliskGravity)
 
 DEFAULT_KERNELS = (DataFile.EphemerisData.de430, DataFile.EphemerisData.naif0012,
                    DataFile.EphemerisData.de_403_masses, DataFile.EphemerisData.pck00010)
 ITRF_KERNELS = ["earth_000101_260711_260415.bpc", "earth_assoc_itrf93.tf"]
 SPICE_FRAMES = {"earth": "ITRF93", "sun": "IAU_SUN", "moon": "IAU_MOON"}
+INITIAL_STATE_TOLERANCE = 1.0e-3  # [m, m/s] allowed difference between the first reference sample and the case state
 SAMPLE_TIME_TOLERANCE = 1.0e-3  # [s] allowed difference between reference and Basilisk sample times
 RKF78_REL_TOL = 1.0e-4  # [-] relative tolerance of the Basilisk RKF78 integrator (the library default)
 RKF78_ABS_TOL = 1.0e-8  # [m, m/s, ...] absolute tolerance of the Basilisk RKF78 integrator (the library default)
@@ -101,8 +104,16 @@ def loadReference(tool, caseName, spec, dataDir=None, variant=DEFAULT_VARIANT):
             f"The {tool} reference ephemeris {path} does not exist. Generate it with "
             f"generate_{tool}_reference.py first (see Reproducing the Results in the accuracy comparison "
             f"documentation, ``accuracyComparison``), or give the folder that contains it with --data-dir.")
-    validateManifestEntry(folder, tool, spec, caseName, path, variant)
-    return np.loadtxt(path, delimiter=",", skiprows=1)
+    entry = validateManifestEntry(folder, tool, spec, caseName, path, variant)
+    data = np.loadtxt(path, delimiter=",", skiprows=1)
+    if not np.isfinite(data).all():
+        raise ValueError(f"The {tool} reference ephemeris {path} contains non-finite values: regenerate it.")
+    case = spec["cases"][caseName]
+    initial = np.concatenate([case["r0_m"], case["v0_m_s"]])  # [m, m/s]
+    if np.abs(data[0, 1:7] - initial).max() > INITIAL_STATE_TOLERANCE or abs(data[0, 0]) > SAMPLE_TIME_TOLERANCE:
+        raise ValueError(f"The first sample of the {tool} reference ephemeris {path} is not the initial state of case "
+                         f"{caseName} in cases.json: regenerate it.")
+    return data, entry
 
 
 def validateReference(tool, caseName, reference, bsk):
@@ -212,19 +223,20 @@ def probeBasilisk(spec, positions):
     return np.array([recorder.neutralDensity[-1] for recorder in recorders])
 
 
-def compareDensityProbe(spec, dataDir=None):
-    """Check that Basilisk, GMAT and Orekit evaluate the same altitude and density at the probe points.
+def compareDensityProbe(spec, dataDir=None, tools=("gmat", "orekit")):
+    """Check that Basilisk and the reference tools evaluate the same altitude and density at the probe points.
 
     Args:
         spec (dict): parsed ``cases.json`` content.
         dataDir (Path): folder with the probe files; ``data`` next to this script by default.
+        tools (tuple): reference tools whose probe is checked; see :func:`comparisonCommon.requiredProbeTools`.
 
     Raises:
         ValueError: if a probe file is missing or stale, or a tolerance of ``density_probe`` is exceeded.
     """
     folder = Path(dataDir or DATA_DIR / "data")
     print("density probe: altitude error [m] / density difference to Basilisk [-]")
-    for tool in TOOLS:
+    for tool in tools:
         rows = loadProbe(folder, tool, spec)
         results = checkProbe(spec, tool, rows, probeBasilisk(spec, rows[:, :3]))
         print(f"  {tool}: max |dh| = {max(abs(r[1]) for r in results):.3e} m, "
@@ -430,8 +442,21 @@ def run(caseNames=None, durationDays=None, kernelDir=None, figuresDir=None, show
     caseNames = caseNames or list(spec["cases"])
     variants = variants or {}
     results = {}
-    if any(spec["cases"][name]["drag"] for name in caseNames):
-        compareDensityProbe(spec, dataDir)
+    provenance = {}  # manifest entries of the references used, by tool and case
+    probeTools = requiredProbeTools(spec, caseNames)  # only the references of the selected drag cases
+    if probeTools:
+        compareDensityProbe(spec, dataDir, probeTools)
+
+    # validate every reference, and that they are consistent with each other
+    for name in caseNames:
+        for tool in caseReferences(spec["cases"][name]):
+            provenance.setdefault(tool, {})[name] = loadReference(
+                tool, name, spec, dataDir, variants.get(tool, DEFAULT_VARIANT))[1]
+    folder = Path(dataDir or DATA_DIR / "data")
+    for tool, entries in provenance.items():
+        if tool in probeTools:
+            entries = {**entries, "density_probe": json.loads(manifestPath(folder, tool).read_text())["density_probe"]}
+        checkConsistentProvenance(folder, tool, entries)
 
     with tempfile.TemporaryDirectory() as tmp:
         for name in caseNames:
@@ -439,8 +464,7 @@ def run(caseNames=None, durationDays=None, kernelDir=None, figuresDir=None, show
             duration = caseDuration(spec, case)  # [s]
             if durationDays is not None:
                 duration = min(duration, durationDays * 86400.0)  # [s]
-            # validate the references before the (long) Basilisk run
-            loaded = {tool: loadReference(tool, name, spec, dataDir, variants.get(tool, DEFAULT_VARIANT))
+            loaded = {tool: loadReference(tool, name, spec, dataDir, variants.get(tool, DEFAULT_VARIANT))[0]
                       for tool in caseReferences(case)}
             gravityFile = Path(tmp) / f"{name}.txt"
             if case["gravity"]["degree"] > 0:
@@ -469,6 +493,8 @@ def run(caseNames=None, durationDays=None, kernelDir=None, figuresDir=None, show
                 if not showPlots:
                     plt.close(fig)
 
+    for tool, entries in provenance.items():
+        print(f"{tool} references: {next(iter(entries.values()))['tool_version']}")
     if plt is not None and showPlots:
         plt.show()
     return results

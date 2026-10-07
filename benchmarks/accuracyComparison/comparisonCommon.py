@@ -25,6 +25,7 @@ gravity-field files in the formats read by GMAT (``.cof``), Orekit (ICGEM ``.gfc
 and Basilisk (text), so that all three tools use identical coefficients.
 """
 
+import ast
 import csv
 import datetime
 import hashlib
@@ -163,6 +164,103 @@ def gravityCoefficientsRecord(spec):
     return {"id": spec["gravity_coefficients_file"], "sha256": fileSha256(HERE / spec["gravity_coefficients_file"])}
 
 
+GENERATOR_INPUT_FUNCTIONS = ("mrp2dcm", "geodeticToEcef", "probePoints", "loadCoefficients", "writeGmatCof",
+                             "writeGmatExponentialAtmosphere", "writeOrekitGfc")  # shared code that builds tool inputs
+REQUIRED_EXTERNAL_DATA = {"gmat": ("gravity_coefficients", "de405_file", "eop_file", "leap_secs_file"),
+                          "orekit": ("gravity_coefficients", "orekit_data", "orekit_jar", "hipparchus_jar")}
+
+
+def _executableLines(source, node):
+    """Return the lines of ``node`` without docstrings, comments and blank lines, whitespace-normalized."""
+    lines = source.splitlines()
+    skip = set()
+    for item in ast.walk(node):
+        if isinstance(item, (ast.Module, ast.FunctionDef, ast.ClassDef)) and ast.get_docstring(item, clean=False):
+            doc = item.body[0]
+            skip.update(range(doc.lineno, doc.end_lineno + 1))
+    first, last = (1, len(lines)) if isinstance(node, ast.Module) else (node.lineno, node.end_lineno)
+    kept = []
+    for number in range(first, last + 1):
+        if number not in skip:
+            code = " ".join(lines[number - 1].split("#")[0].split())
+            if code:
+                kept.append(code)
+    return kept
+
+
+def generatorFingerprint(tool):
+    """Return the SHA-256 hash of the code that defines what a generator feeds to its tool.
+
+    It covers ``generate_<tool>_reference.py`` and the functions of this module in :data:`GENERATOR_INPUT_FUNCTIONS`,
+    ignoring docstrings, comments and blank lines, so that a change of a hard-coded constant, of the integrator settings
+    or of a force model invalidates the references while documentation edits do not.
+
+    Args:
+        tool (str): ``"gmat"`` or ``"orekit"``.
+    """
+    digest = hashlib.sha256()
+    script = Path(__file__).resolve().parent / f"generate_{tool}_reference.py"  # not HERE, which tests redirect
+    source = script.read_text()
+    digest.update("\n".join(_executableLines(source, ast.parse(source))).encode())
+    common = Path(__file__).read_text()
+    tree = ast.parse(common)
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name in GENERATOR_INPUT_FUNCTIONS:
+            digest.update("\n".join(_executableLines(common, node)).encode())
+    return digest.hexdigest()
+
+
+def requireIcrf(spec, tool):
+    """Raise if ``cases.json`` asks for an inertial frame other than the ICRF axes that the generators implement.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+    """
+    if spec["inertial_frame"] != "ICRF":
+        raise ValueError(f"The {tool} generator propagates and reports in the ICRF axes only, but cases.json asks for "
+                         f"{spec['inertial_frame']}.")
+
+
+def requiredProbeTools(spec, caseNames):
+    """Return the tools whose density probe is needed by the selected cases: the references of the drag cases.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+        caseNames (list): names of the selected cases.
+    """
+    needed = {tool for name in caseNames if spec["cases"][name]["drag"] for tool in caseReferences(spec["cases"][name])}
+    return tuple(tool for tool in TOOLS if tool in needed)
+
+
+def checkConsistentProvenance(dataDir, tool, entries):
+    """Raise if the references used together were generated with different tool builds, data or generator code.
+
+    Cases regenerated one at a time with another GMAT build, Orekit data set or generator revision would otherwise
+    be mixed silently.
+
+    Args:
+        dataDir (Path): folder holding the reference ephemerides.
+        tool (str): ``"gmat"`` or ``"orekit"``.
+        entries (dict): manifest entries (and optionally ``"density_probe"``) keyed by name.
+    """
+    def comparable(entry, key):
+        value = entry.get(key)
+        if key == "generator_options" and isinstance(value, dict) and not value.get("max_step_overridden"):
+            # The default maximum step is set per case by cases.json (and so is covered by the config hash)
+            value = {k: v for k, v in value.items() if k != "max_step_s"}
+        return value
+
+    keys = ("tool_version", "generator_sha256", "external_data", "generator_options")
+    names = list(entries)
+    for name in names[1:]:
+        for key in keys:
+            if comparable(entries[name], key) != comparable(entries[names[0]], key) and not (
+                    key in ("external_data", "generator_options") and name == "density_probe"):
+                raise ValueError(f"The {tool} references in {manifestPath(dataDir, tool)} were generated with different "
+                                 f"{key} ({names[0]} vs {name}): regenerate all the cases used together.")
+
+
 def manifestPath(dataDir, tool):
     """Return the path of the reference manifest of a tool.
 
@@ -198,6 +296,7 @@ def writeManifestEntry(dataDir, tool, spec, name, csvPath, frame, toolVersion, g
         "tool": tool,
         "tool_version": toolVersion,
         "generator_options": generatorOptions,
+        "generator_sha256": generatorFingerprint(tool),
         "external_data": externalData,
         "variant": variant,
         "csv_sha256": fileSha256(csvPath),
@@ -231,13 +330,22 @@ def validateManifestEntry(dataDir, tool, spec, name, csvPath, allowedVariant=DEF
     path = manifestPath(dataDir, tool)
     if not path.exists():
         raise ValueError(f"No manifest {path}: regenerate the {tool} references with the generator script.")
-    entry = json.loads(path.read_text()).get("cases", {}).get(name)
+    manifest = json.loads(path.read_text())
     where = f"{tool} reference of case {name}"
+    if manifest.get("version") != MANIFEST_VERSION:
+        raise ValueError(f"{path} has format version {manifest.get('version')} (version), expected {MANIFEST_VERSION}: "
+                         "regenerate the references.")
+    entry = manifest.get("cases", {}).get(name)
     if entry is None:
         raise ValueError(f"{where} has no entry in {path}: regenerate it.")
+    if entry.get("tool") != tool:
+        raise ValueError(f"{where} was generated by {entry.get('tool')} (tool), not {tool}: the manifest was mixed up.")
     if entry["config_hash"] != caseFingerprint(spec, name):
         raise ValueError(f"{where} was generated for a different case configuration (config_hash, e.g. epoch, "
                          "initial state or force models changed in cases.json): regenerate it.")
+    if hashlib.sha256(json.dumps(entry["config"], sort_keys=True, separators=(",", ":")).encode()).hexdigest() \
+            != entry["config_hash"]:
+        raise ValueError(f"{where} has a config that does not match its config_hash: the manifest was edited by hand.")
     if entry["frame"] != spec["inertial_frame"]:
         raise ValueError(f"{where} is expressed in {entry['frame']} (frame), but the comparison uses "
                          f"{spec['inertial_frame']}: regenerate it.")
@@ -249,11 +357,18 @@ def validateManifestEntry(dataDir, tool, spec, name, csvPath, allowedVariant=DEF
     if entry["csv_sha256"] != fileSha256(csvPath):
         raise ValueError(f"{csvPath} does not match the checksum recorded in the manifest (csv_sha256): the file was "
                          "modified or overwritten after it was generated.")
-    recorded = entry.get("external_data", {}).get("gravity_coefficients")
+    if entry.get("generator_sha256") != generatorFingerprint(tool):
+        raise ValueError(f"{where} was generated by another version of generate_{tool}_reference.py or of the shared "
+                         "input writers (generator_sha256): the integrator, force model or constants may differ. "
+                         "Regenerate it.")
+    if not entry.get("tool_version") or "unknown" in entry["tool_version"]:
+        raise ValueError(f"{where} records no tool build (tool_version '{entry.get('tool_version')}'): regenerate it.")
+    external = entry.get("external_data", {})
+    missing = [key for key in REQUIRED_EXTERNAL_DATA[tool] if key not in external]
+    if missing:
+        raise ValueError(f"{where} records no checksum of {missing} (external_data): regenerate it.")
     current = gravityCoefficientsRecord(spec)
-    if recorded is None:
-        raise ValueError(f"{where} records no gravity_coefficients checksum (external_data): regenerate it.")
-    if recorded["sha256"] != current["sha256"]:
+    if external["gravity_coefficients"]["sha256"] != current["sha256"]:
         raise ValueError(f"{where} was generated with a different gravity coefficient file than the one Basilisk "
                          f"reads (external_data.gravity_coefficients.sha256 of {current['id']}): the coefficients "
                          "changed without a change of the file name or of cases.json. Regenerate the reference.")
@@ -443,7 +558,7 @@ def writeProbe(dataDir, tool, spec, rows, toolVersion, generatorOptions):
     manifest = json.loads(manifestFile.read_text()) if manifestFile.exists() else {"version": MANIFEST_VERSION,
                                                                                     "cases": {}}
     manifest["density_probe"] = {"probe_hash": probeFingerprint(spec), "tool": tool, "tool_version": toolVersion,
-                                 "generator_options": generatorOptions, "csv_sha256": fileSha256(path),
+                                 "generator_options": generatorOptions, "generator_sha256": generatorFingerprint(tool), "csv_sha256": fileSha256(path),
                                  "generated_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(
                                      timespec="seconds")}
     manifestFile.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
@@ -465,9 +580,17 @@ def loadProbe(dataDir, tool, spec):
     where = f"{tool} density probe {path}"
     if not path.exists():
         raise ValueError(f"The {where} does not exist: regenerate the {tool} references with the generator script.")
-    entry = json.loads(manifestFile.read_text()).get("density_probe") if manifestFile.exists() else None
+    manifest = json.loads(manifestFile.read_text()) if manifestFile.exists() else {}
+    entry = manifest.get("density_probe")
     if entry is None:
         raise ValueError(f"The {where} has no density_probe entry in {manifestFile}: regenerate it.")
+    if manifest.get("version") != MANIFEST_VERSION or entry.get("tool") != tool:
+        raise ValueError(f"The {where} has another manifest format version or tool (version, tool): regenerate it.")
+    if entry.get("generator_sha256") != generatorFingerprint(tool):
+        raise ValueError(f"The {where} was generated by another version of generate_{tool}_reference.py "
+                         "(generator_sha256): regenerate it.")
+    if not entry.get("tool_version") or "unknown" in entry["tool_version"]:
+        raise ValueError(f"The {where} records no tool build (tool_version): regenerate it.")
     if entry["probe_hash"] != probeFingerprint(spec):
         raise ValueError(f"The {where} was generated for a different probe or atmosphere (probe_hash): regenerate it.")
     if entry["csv_sha256"] != fileSha256(path):
