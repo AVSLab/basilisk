@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1598: clangd does not automatically discover the compilation database in the default ``dist3``
+  build directory. Configure clangd to use the directory containing the generated ``compile_commands.json``;
+  see :ref:`clangdSetup` for the default and custom build-directory settings.
+
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
   The affected axes now form right-handed frames, fixing the benchmark in the current version.
