@@ -23,7 +23,7 @@ from Basilisk.simulation import exponentialAtmosphere, msisAtmosphere
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simSetPlanetEnvironment
 
 RP_EARTH = orbitalMotion.RP_EARTH * 1000.0  # [m] polar radius
-REQ_EARTH = 6378136.6  # [m] equatorial radius set by simSetPlanetEnvironment
+REQ_EARTH = orbitalMotion.REQ_EARTH * 1000.0  # [m] equatorial radius set by simSetPlanetEnvironment
 
 
 def _density(polarRadius):

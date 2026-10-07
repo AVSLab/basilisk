@@ -61,3 +61,6 @@ The planet orientation is read from ``planetBodyInMsg`` together with its time d
 message updates the orientation is advanced as a rotation about the planet angular velocity, which keeps the
 orientation matrix orthonormal at every integrator stage. A first-order update of the matrix elements would scale the
 evaluated field by a relative error of order :math:`(\omega\,\Delta t)^2`.
+The advanced orientation and its time derivative at the same epoch are stored as the state-engine properties
+``[planetName].J20002Pfix`` and ``[planetName].J20002Pfix_dot``, both in the :math:`[PN]` convention of the
+planet state message.

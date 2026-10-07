@@ -331,7 +331,8 @@ def writeBasiliskGravity(path, spec, degree, order):
         order (int): maximum order to write.
     """
     table = loadCoefficients(spec)
-    omegaEarth = 7.2921150e-5  # [rad/s] required by the file format, unused here
+    from Basilisk.utilities import orbitalMotion  # only the Basilisk comparison writes this file
+    omegaEarth = orbitalMotion.OMEGA_EARTH  # [rad/s] required by the file format, unused here
     lines = [f"{spec['equatorial_radius_m']:.10E}, {spec['mu_m3_s2']:.10E}, {omegaEarth:.7E}, "
              f"{degree}, {degree}, 1, 0.0, 0.0"]
     for n in range(degree + 1):

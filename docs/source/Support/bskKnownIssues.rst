@@ -7,19 +7,32 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
-- The gravity effector advanced the planet orientation of a SPICE-driven
-  planet with a first-order update of the matrix elements, which is not orthonormal and distorted even a point-mass
-  field by a relative error of order :math:`(\omega\,\Delta t)^2`.
-- The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the
-  previous step, which made the solar radiation pressure shadow entries and exits a step late.
-- The :ref:`msisAtmosphere` module computed the altitude over a sphere and used the mean solar time. Models that evaluate the atmosphere once per integration step still show a step-size dependent
-  drag error, which is second order in the step.
-- The :ref:`msisAtmosphere`, :ref:`windBase`, :ref:`magneticFieldBase`, and :ref:`magneticFieldWMM` modules converted the UTC epoch with ``mktime``, which uses
-  the time zone of the computer. On a computer in a time zone with daylight saving time, the local solar time was one hour wrong for the part of a
-  simulation on the other side of a daylight saving transition than the epoch. The epoch is now converted as UTC.
-- The :ref:`msisAtmosphere` module used the daily Ap index and did not use the array of 3-hour Ap values that NRLMSISE-00 uses in its storm
-  mode, so during a geomagnetic storm the density followed the daily mean from midnight.
-- The :ref:`facetSRPDynamicEffector` module used a solar flux of 1368 W/m\ :sup:`2` at 1 AU, while :ref:`radiationPressure` uses 1361 W/m\ :sup:`2`.
+- The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
+  matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order
+  :math:`(\omega\,\Delta t)^2`. The orientation is now advanced as a rotation about the planet angular velocity.
+
+- The atmosphere, wind, magnetic field, eclipse, and solar flux modules evaluated the spacecraft state of the previous
+  step, which made the solar radiation pressure shadow entries and exits a step late. The state can now be extrapolated
+  to the middle of the step with ``setExtrapolateScStateToStepMidpoint()``, which is disabled by default.
+
+- The :ref:`msisAtmosphere` module computed the altitude over a sphere and used the mean solar time. The altitude above
+  an oblate planet is now available with ``setPlanetPolarRadius()``, and the apparent solar time with
+  ``setUseApparentSolarTime()``. Both are disabled by default.
+
+- Atmosphere models that are evaluated once per integration step still show a step-size dependent drag error, which is
+  second order in the step.
+
+- The :ref:`msisAtmosphere`, :ref:`windBase`, :ref:`magneticFieldBase`, and :ref:`magneticFieldWMM` modules converted
+  the UTC epoch with ``mktime``, which uses the time zone of the computer. On a computer in a time zone with daylight
+  saving time, the local solar time was one hour wrong for the part of a simulation on the other side of a daylight
+  saving transition than the epoch. The epoch is now converted as UTC.
+
+- The :ref:`msisAtmosphere` module used the daily Ap index and did not use the array of 3-hour Ap values that
+  NRLMSISE-00 uses in its storm mode, so during a geomagnetic storm the density followed the daily mean from midnight.
+  The 3-hour history is now available with ``setUseApHistory()``, which is disabled by default.
+
+- The :ref:`facetSRPDynamicEffector` module used a solar flux of 1368 W/m\ :sup:`2` at 1 AU, while
+  :ref:`radiationPressure` uses 1361 W/m\ :sup:`2`. Both now use ``SOLAR_FLUX_EARTH``.
 
 - GitHub issue 1598: Compilation database export requires Ninja or a Makefile generator; Xcode and Visual Studio
   do not support export. Clangd does not automatically discover the generated database in the default ``dist3`` build

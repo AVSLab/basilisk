@@ -80,8 +80,9 @@ def _propagate(stepSeconds, spinning):
 
     stateManager = scObject.dynManager
     dcm = np.array(stateManager.getPropertyReference("planet.J20002Pfix"))
+    dcmDot = np.array(stateManager.getPropertyReference("planet.J20002Pfix_dot"))
     r_N = np.array(scObject.scStateOutMsg.read().r_BN_N)
-    return r_N, dcm
+    return r_N, dcm, dcmDot
 
 
 @pytest.mark.parametrize("stepSeconds", [10.0, 60.0])
@@ -90,7 +91,7 @@ def test_extrapolated_orientation_is_orthonormal(stepSeconds):
 
     A first-order update of the matrix elements loses orthonormality by about
     ``(omega * dt)^2 / 2``, which is a few percent after an hour of extrapolation."""
-    _, dcm = _propagate(stepSeconds, spinning=True)
+    _, dcm, _ = _propagate(stepSeconds, spinning=True)
 
     np.testing.assert_allclose(dcm @ dcm.T, np.eye(3), atol=1e-9)
     assert np.linalg.det(dcm) == pytest.approx(1.0, abs=1e-9)
@@ -103,10 +104,31 @@ def test_point_mass_orbit_is_independent_of_planet_spin(stepSeconds):
     The point-mass field is spherically symmetric, so a spinning planet must give the same
     trajectory as a non-spinning one. A non-orthonormal orientation scales the evaluated
     field and breaks this."""
-    rSpinning, _ = _propagate(stepSeconds, spinning=True)
-    rFixed, _ = _propagate(stepSeconds, spinning=False)
+    rSpinning, _, _ = _propagate(stepSeconds, spinning=True)
+    rFixed, _, _ = _propagate(stepSeconds, spinning=False)
 
     np.testing.assert_allclose(rSpinning, rFixed, atol=1e-6)
+
+
+@pytest.mark.parametrize("stepSeconds", [10.0, 60.0])
+def test_stored_orientation_and_rate_are_consistent(stepSeconds):
+    """Verify the stored planet orientation and rate are [PN] and [PN_dot] of the same epoch.
+
+    The planet spins about the inertial z axis and its message is written once at t = 0, so at the final time the
+    orientation is a rotation by ``OMEGA_PLANET * SIM_TIME`` and the rate satisfies
+    ``dcm_dot = -dcm [omega x]`` with the inertial angular velocity ``omega``."""
+    _, dcm, dcmDot = _propagate(stepSeconds, spinning=True)
+
+    angle = OMEGA_PLANET * SIM_TIME  # [rad]
+    # the message rate dcm_dot = OMEGA * [[0, 1, 0], [-1, 0, 0], [0, 0, 0]] at the identity orientation is the rate of
+    # [PN] = exp(-[omega x] t) for an inertial angular velocity omega = OMEGA * z
+    expected = np.array([[np.cos(angle), np.sin(angle), 0.0],
+                         [-np.sin(angle), np.cos(angle), 0.0],
+                         [0.0, 0.0, 1.0]])
+    skewOmega = OMEGA_PLANET * np.array([[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 0.0]])  # [rad/s]
+
+    np.testing.assert_allclose(dcm, expected, atol=1e-9)
+    np.testing.assert_allclose(dcmDot, -dcm @ skewOmega, atol=1e-12)
 
 
 if __name__ == "__main__":

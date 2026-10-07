@@ -156,9 +156,7 @@ def radiationPressureIntegratedTest(show_plots):
 
     # true position of the GEO orbit with point-mass Earth gravity, the Sun as a third body, and cannonball SRP.
     # The values come from an independent integration (scipy DOP853, rtol 1e-13) of these accelerations with the
-    # Sun position from the SPICE kernels, sampled at the logged times. An earlier version of these values differed
-    # by up to 47 m because the gravity effector extrapolated the SPICE planet orientation with a non-orthonormal
-    # matrix, which distorted even the point-mass field.
+    # Sun position from the SPICE kernels, sampled at the logged times.
     true_pos = np.array([[-2.18197848e+07,  3.58872415e+07,  0.00000000e+00]
                         ,[-3.97753164e+07,  1.34888800e+07, -7.27325107e+01]
                         ,[-3.91389742e+07, -1.52401342e+07, -3.04230960e+02]

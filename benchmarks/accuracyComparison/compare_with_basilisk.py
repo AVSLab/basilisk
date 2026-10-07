@@ -341,6 +341,7 @@ def propagateBasilisk(spec, case, gravityFile, kernelDir=None, durationSeconds=N
 
         wind = zeroWindModel.ZeroWindModel()  # atmosphere co-rotating with the planet
         wind.ModelTag = "zeroWind"
+        wind.setExtrapolateScStateToStepMidpoint(True)  # same task period as the spacecraft, as for the atmosphere
         wind.planetPosInMsg.subscribeTo(earthPlanetMsg)
         wind.addSpacecraftToModel(scObject.scStateOutMsg)
         scSim.AddModelToTask("dynamicsTask", wind, 85)

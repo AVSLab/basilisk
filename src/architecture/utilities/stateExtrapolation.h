@@ -64,6 +64,29 @@ extrapolateDcm(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfi
     return Eigen::AngleAxisd(rotationAngle, omega_N.normalized()).toRotationMatrix() * dcm_NPfix;
 }
 
+/*! @brief Advance the time derivative of a planet-fixed orientation matrix consistently with extrapolateDcm().
+ *
+ * With a constant inertial angular velocity, `dcm_NPfix_dot = [omega_N x] dcm_NPfix` holds at every epoch, so the
+ * derivative at the advanced epoch is `[omega_N x] dcmAdvanced_NPfix`, with `[omega_N x] = dcm_NPfix_dot * dcm_NPfix^T`.
+ * This assumes that `dcm_NPfix_dot * dcm_NPfix^T` is skew-symmetric, which holds for a consistent orientation and rate
+ * pair.
+ *
+ * @param dcm_NPfix [-] [NP] orientation before the advance
+ * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix before the advance
+ * @param dcmAdvanced_NPfix [-] [NP] orientation after the advance, from extrapolateDcm()
+ * @return [1/s] the derivative at the advanced epoch, or dcm_NPfix_dot if it is zero
+ */
+static inline Eigen::Matrix3d
+extrapolateDcmDot(const Eigen::Matrix3d& dcm_NPfix,
+                  const Eigen::Matrix3d& dcm_NPfix_dot,
+                  const Eigen::Matrix3d& dcmAdvanced_NPfix)
+{
+    if (dcm_NPfix_dot.isZero()) {
+        return dcm_NPfix_dot;
+    }
+    return dcm_NPfix_dot * dcm_NPfix.transpose() * dcmAdvanced_NPfix;
+}
+
 /*! @brief Returns true if a spacecraft state message is the output of the previous update of the environment module.
  *
  * The message-age based extrapolation is only valid if the spacecraft message was written at the previous update of
@@ -157,10 +180,8 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
     const Eigen::Matrix3d dcm_NPfix_dot = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
     const Eigen::Matrix3d dcmAdvanced_NPfix = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix[0][0]) = dcmAdvanced_NPfix.transpose();
-    // keep the derivative consistent with the advanced matrix: dcm_NPfix_dot = [omega_N x] dcm_NPfix, with the
-    // inertial angular velocity unchanged, so dcm_NPfix_dot advances as [omega_N x] dcmAdvanced_NPfix
-    const Eigen::Matrix3d omegaTilde_N = dcm_NPfix_dot * dcm_NPfix.transpose();
-    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = omegaTilde_N * dcmAdvanced_NPfix;
+    // keep the derivative consistent with the advanced matrix, with the inertial angular velocity unchanged
+    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, dcmAdvanced_NPfix);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix_dot[0][0]) = dcmAdvanced_NPfix_dot.transpose();
     return extrapolated;
 }
@@ -172,9 +193,9 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
  * states are extrapolated with extrapolateScStateToStepMidpoint() and the planets with
  * extrapolatePlanetStateToEpoch() only if all spacecraft messages were written at the previous module update and two
  * successive write times were observed with an interval equal to the module update interval. The extrapolation is
- * therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If
- * one of them was not nothing is extrapolated, so the spacecraft and the shared planets stay at one epoch, and a warning is
- * logged once.
+ * therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If any
+ * spacecraft state message does not satisfy these conditions, nothing is extrapolated, so the spacecraft and the shared
+ * planets stay at one epoch, and a warning is logged once if a task period mismatch is detected.
  */
 class ScStateExtrapolation
 {
@@ -235,7 +256,7 @@ class ScStateExtrapolation
             this->seen.resize(timesWrittenNanos.size(), false);
         }
         const uint64_t moduleIntervalNanos = currentSimNanos - previousUpdateNanos; // [ns]
-        bool allLagged = true;
+        bool allLagged = timesWrittenNanos.size() > 0;
         bool mismatch = false;
         for (std::size_t index = 0; index < timesWrittenNanos.size(); index++) {
             const uint64_t timeWrittenNanos = timesWrittenNanos[index];

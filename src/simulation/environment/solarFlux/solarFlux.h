@@ -44,7 +44,7 @@ public:
     void setExtrapolateScStateToStepMidpoint(bool enable);
     bool getExtrapolateScStateToStepMidpoint() const;
 
-  public:
+public:
     ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;       //!< sun state input message
     ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;       //!< spacecraft state input message
     Message<SolarFluxMsgPayload> solarFluxOutMsg;                   //!< solar flux output message

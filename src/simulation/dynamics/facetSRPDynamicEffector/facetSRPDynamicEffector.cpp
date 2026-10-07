@@ -23,8 +23,6 @@
 #include "architecture/utilities/astroConstants.h"
 #include <cmath>
 
-constexpr double AU_M = AU * 1000.0;  // [m] Astronomical unit
-
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
 
  @param currentSimNanos [ns] Time the method is called
@@ -199,7 +197,7 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
     double cosTheta = 0.0;
 
     // Calculate the SRP pressure acting at the current spacecraft location
-    double numAU = AU_M / r_SB_B.norm();  // [-]
+    double numAU = AU2M / r_SB_B.norm();  // [-]
     double SRPPressure = (SOLAR_FLUX_EARTH / SPEED_LIGHT) * numAU * numAU;
 
     // Loop through the facets and calculate the total SRP force and torque acting on the spacecraft about point B
