@@ -7,9 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
-- GitHub issue 1598: clangd does not automatically discover the compilation database in the default ``dist3``
-  build directory. Configure clangd to use the directory containing the generated ``compile_commands.json``;
-  see :ref:`clangdSetup` for the default and custom build-directory settings.
+- GitHub issue 1598: Compilation database export requires Ninja or a Makefile generator; Xcode and Visual Studio
+  ignore the option. Clangd does not automatically discover the generated database in the default ``dist3`` build
+  directory. Configure clangd to use the directory containing ``compile_commands.json``; see :ref:`clangdSetup`
+  for generator selection and the default and custom build-directory settings.
 
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.
