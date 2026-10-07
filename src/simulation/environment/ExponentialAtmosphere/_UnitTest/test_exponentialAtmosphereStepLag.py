@@ -115,7 +115,7 @@ def test_first_update_is_not_extrapolated_before_the_task_period_is_known():
     assert densitySecond < densitySecondStatic
 
 
-def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v):
+def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v, writeBeforeUpdate=False):
     """Return the density of the last module update for a state message that is rewritten during the run.
 
     The state is re-written with the same position at each time in ``writeTimes``, emulating a spacecraft that is
@@ -127,6 +127,8 @@ def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v):
         stopSeconds (float): [s] simulation stop time.
         r (list): [m] spacecraft position written to the state message.
         v (list): [m/s] spacecraft velocity written to the state message.
+        writeBeforeUpdate (bool): if True the state message is written just before the module update at the same
+            time, as a spacecraft that runs before the module in the task does.
     """
     scSim = SimulationBaseClass.SimBaseClass()
     proc = scSim.CreateNewProcess("p")
@@ -146,7 +148,7 @@ def _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r, v):
 
     scSim.InitializeSimulation()
     for writeTime in writeTimes[1:]:
-        scSim.ConfigureStopTime(macros.sec2nano(writeTime))
+        scSim.ConfigureStopTime(macros.sec2nano(writeTime) - (1 if writeBeforeUpdate else 0))  # [ns]
         scSim.ExecuteSimulation()
         scMsg.write(payload, macros.sec2nano(writeTime))
     scSim.ConfigureStopTime(macros.sec2nano(stopSeconds))
@@ -213,6 +215,26 @@ def test_task_period_mismatch_disables_the_extrapolation(moduleStep, writeTimes,
 
     density = _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r0, v0)
     densityStatic = _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r0, [0.0, 0.0, 0.0])
+
+    assert density == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
+
+
+@pytest.mark.parametrize("moduleStep, writeTimes, stopSeconds", [
+    (10.0, [float(t) for t in range(0, 11)], 10.0),  # spacecraft every 1 s, module every 10 s: written at 10 s
+    (10.0, [0.0, 20.0], 20.0),  # spacecraft every 20 s, module every 10 s: written at 20 s
+])
+def test_message_written_at_the_module_update_is_not_extrapolated(moduleStep, writeTimes, stopSeconds):
+    """Verify a message written at the time of the module update is used as written.
+
+    A spacecraft that runs before the module in the task, with a different task period, writes its message at the
+    time of the module update. The message has no age, so it needs no extrapolation, and the sampled write times
+    cannot show the task period mismatch. The density must be that of the written position."""
+    r0 = [(orbitalMotion.REQ_EARTH + 400.0) * 1000.0, 0.0, 0.0]  # [m]
+    v0 = [1.0e3, 0.0, 0.0]  # [m/s] radial
+
+    density = _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r0, v0, writeBeforeUpdate=True)
+    densityStatic = _densityWithRewrittenState(moduleStep, writeTimes, stopSeconds, r0, [0.0, 0.0, 0.0],
+                                               writeBeforeUpdate=True)
 
     assert density == pytest.approx(densityStatic, rel=1e-12, abs=0.0)
 

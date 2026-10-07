@@ -156,7 +156,9 @@ void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused
 /*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next spacecraft
  update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default, in which case the spacecraft
  state message is used as written. The extrapolation assumes that the module and the spacecraft run at the same task
- rate with a constant spacecraft step; a warning is logged once if a different task rate is detected.
+ rate with a constant spacecraft step; a warning is logged once if a spacecraft message was not written at the
+ previous module update, which is typically a task rate mismatch. A mismatch is not always detectable, but a message
+ that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
 void MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)

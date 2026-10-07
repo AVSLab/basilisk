@@ -202,15 +202,17 @@ runModule(ScStateExtrapolation& extrapolation,
           uint64_t modulePeriodNanos,
           uint64_t scPeriodNanos,
           int numUpdates,
-          std::vector<bool>& extrapolated)
+          std::vector<bool>& extrapolated,
+          bool scRunsFirst = false)
 {
     const SCStatesMsgPayload in = makeState();
     uint64_t previousUpdate = 0; // [ns]
     for (int k = 0; k < numUpdates; k++) {
         const uint64_t now = static_cast<uint64_t>(k) * modulePeriodNanos; // [ns]
-        // the spacecraft runs after the module in each task: its newest message is from the last spacecraft update
-        // before the current time
-        const uint64_t written = ((now == 0 ? 0 : now - 1) / scPeriodNanos) * scPeriodNanos; // [ns]
+        // by default the spacecraft runs after the module in each task: its newest message is from the last spacecraft
+        // update before the current time. If it runs first, a spacecraft update at the current time is already visible.
+        const uint64_t written = scRunsFirst ? (now / scPeriodNanos) * scPeriodNanos
+                                             : ((now == 0 ? 0 : now - 1) / scPeriodNanos) * scPeriodNanos; // [ns]
         const SCStatesMsgPayload out = applySingle(extrapolation, in, now, written, previousUpdate, logger);
         extrapolated.push_back(out.r_BN_N[1] != in.r_BN_N[1]);
         previousUpdate = now;
@@ -263,6 +265,49 @@ TEST(ScStateExtrapolation, slowerSpacecraftWarnsAndIsNotExtrapolated)
     // Nothing is extrapolated before the spacecraft period is known (k = 1), nor after two successive write times show
     // a spacecraft interval of 10 s that differs from the 1 s module interval (including the update right after each
     // spacecraft write at 21 s, 31 s, ...).
+    for (std::size_t k = 0; k < extrapolated.size(); k++) {
+        EXPECT_FALSE(extrapolated[k]) << "update " << k;
+    }
+}
+
+TEST(ScStateExtrapolation, fasterSpacecraftWrittenAtTheCurrentTimeIsNeitherExtrapolatedNorWarned)
+{
+    // spacecraft every 1 s running before the module, module every 10 s: the message read at 10, 20, ... s was written
+    // at the same time, so it needs no extrapolation, and the sampled write times (10 s apart) look like a matched
+    // task period, so no warning can be given
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    std::vector<bool> extrapolated;
+    runModule(extrapolation, logger, 10 * SECOND_NANOS, SECOND_NANOS, 6, extrapolated, true);
+
+    EXPECT_FALSE(extrapolation.mismatchDetected());
+    for (std::size_t k = 0; k < extrapolated.size(); k++) {
+        EXPECT_FALSE(extrapolated[k]) << "update " << k;
+    }
+}
+
+TEST(ScStateExtrapolation, slowerSpacecraftWrittenAtTheCurrentTimeIsNeverExtrapolated)
+{
+    // spacecraft every 20 s running before the module, module every 10 s: messages written at 0, 0, 20, 20, 40, 40 s
+    // are read at 0, 10, 20, 30, 40, 50 s
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    std::vector<bool> extrapolated;
+    runModule(extrapolation, logger, 10 * SECOND_NANOS, 20 * SECOND_NANOS, 3, extrapolated, true);
+
+    // up to the update at 20 s the message is read at the time it was written, so there is nothing to warn about
+    EXPECT_FALSE(extrapolation.mismatchDetected());
+
+    extrapolated.clear();
+    ScStateExtrapolation extrapolationLonger;
+    extrapolationLonger.setEnabled(true);
+    runModule(extrapolationLonger, logger, 10 * SECOND_NANOS, 20 * SECOND_NANOS, 8, extrapolated, true);
+
+    // the update at 30 s reads the message written at 20 s, and the observed write interval of 20 s differs from the
+    // 10 s module interval, so the mismatch is detected from there on
+    EXPECT_TRUE(extrapolationLonger.mismatchDetected());
     for (std::size_t k = 0; k < extrapolated.size(); k++) {
         EXPECT_FALSE(extrapolated[k]) << "update " << k;
     }

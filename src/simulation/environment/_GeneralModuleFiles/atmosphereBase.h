@@ -78,11 +78,13 @@ protected:
     std::vector<AtmoPropsMsgPayload> envOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<SCStatesMsgPayload> scStates;  //!< vector of the spacecraft state messages
     SpicePlanetStateMsgPayload planetState; //!< planet state message
-    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect
+                                      //!< stale spacecraft messages
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
 private:
-    double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius, planetRadius must not change after Reset()
+    double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet
+                                     //!< of radius planetRadius, planetRadius must not change after Reset()
     ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
