@@ -65,7 +65,8 @@ private:
     std::vector<SpicePlanetStateMsgPayload> planetBuffer;   //!< buffer of the spacecraft state input messages
     SpicePlanetStateMsgPayload sunInMsgState;               //!< copy of sun input msg
     std::vector<double> eclipseIlluminationFactors;               //!< vector of illumination factor output values
-    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect
+                                      //!< stale spacecraft messages
     ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 
 private:

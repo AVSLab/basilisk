@@ -78,7 +78,8 @@ protected:
 
     std::vector<MagneticFieldMsgPayload> magFieldOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<SCStatesMsgPayload> scStates;//!< vector of the spacecraft state messages
-    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect
+                                      //!< stale spacecraft messages
     SpicePlanetStateMsgPayload planetState;     //!< planet state message
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 

@@ -162,7 +162,10 @@ public:
 
     /*! Enables or disables the extrapolation of the spacecraft state to the middle of the interval the next
      *  spacecraft update integrates, see extrapolateScStateToStepMidpoint(). It is disabled by default and
-     *  assumes that the module and the spacecraft run at the same task rate with a constant spacecraft step.
+     *  assumes that the module and the spacecraft run at the same task rate with a constant spacecraft step. A
+     *  warning is logged once if a spacecraft message was not written at the previous module update, which is
+     *  typically a task rate mismatch. A mismatch is not always detectable, but a message that is not the output of
+     *  the previous module update is never extrapolated.
      *
      * @param enable  If true, extrapolate the spacecraft state.
      */
@@ -178,7 +181,8 @@ protected:
     struct tm epochDateTime{};                   //!< Epoch date/time (Gregorian) for time-dependent models
     std::vector<WindMsgPayload> envOutBuffer{};  //!< Message write buffer for each spacecraft
     std::vector<SCStatesMsgPayload> scStates{};  //!< Cached spacecraft state messages
-    uint64_t previousUpdateNanos = 0; //!< [ns] Time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] Time of the previous module update, used to detect
+                                      //!< stale spacecraft messages
     ScStateExtrapolation scStateExtrapolation{}; //!< Opt-in extrapolation of the spacecraft state to the step midpoint
     SpicePlanetStateMsgPayload planetState{};    //!< Cached planet state message
 

@@ -24,7 +24,7 @@ the reference generators
 and the case definitions :download:`cases.json <../../../../benchmarks/accuracyComparison/cases.json>`.
 The results on this page were produced with Orekit 13.1 and GMAT R2026a, and with Basilisk configured as described in
 the tables below: the environment modules use the spacecraft state extrapolated to the middle of the step
-(``setExtrapolateScStateToStepMidpoint()``, see :ref:`accuracyComparisonScheduling`), and :ref:`exponentialAtmosphere` uses the
+(``setExtrapolateScStateToStepMidpoint()``, see :ref:`atmosphereBase`), and :ref:`exponentialAtmosphere` uses the
 ellipsoidal altitude (``setPlanetPolarRadius()``). The GMAT and Orekit ephemerides are not part
 of the repository: :ref:`accuracyComparisonReproduce` explains how to generate them and run the comparison. Each generated
 ephemeris is accompanied by a manifest that records its provenance, which the comparison validates before it runs
@@ -106,23 +106,6 @@ below). GMAT's model reads its parameters from a table file, which holds one ban
       - Single-scale exponential density :math:`\rho = \rho_0 \exp(-h/H)` with :math:`\rho_0 = 2\times10^{-9}` kg/m\ :sup:`3` at zero altitude and :math:`H = 60` km (``exponential_atmosphere`` in ``cases.json``), in :ref:`exponentialAtmosphere`, Orekit's ``SimpleExponentialAtmosphere`` and GMAT's ``Exponential`` model (configured with ``Drag.InputFile`` as one band from 0 km). The two parameters are passed to each tool as they are, without conversion, and evaluated at the altitude above the ellipsoid of the equatorial radius. The three implementations are compared directly at nine points before any propagation (:ref:`accuracyComparisonDensityProbe`). Each tool uses its own exponential atmosphere model. The model has only two parameters, so all three tools can be given the same density law and the differences come from the propagation and not from the atmosphere
     * - Integrators
       - Basilisk: RKF78 with the relative tolerance :math:`10^{-4}` and the absolute tolerance :math:`10^{-8}` (the library defaults, set explicitly by the script; the tolerance is applied to the position in m, the velocity in m/s and the other states), task period 5 s (0.25 s for the cases with drag). Orekit: Dormand-Prince 8(5,3), tolerances :math:`10^{-10}` m and :math:`10^{-13}`, maximum step 300 s, 10 s with radiation pressure, and 2 s for the box cases (see below). GMAT: Prince-Dormand 7(8), accuracy :math:`10^{-12}`
-
-.. _accuracyComparisonScheduling:
-
-Scheduling requirement of the step extrapolation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The environment modules (atmosphere, wind, eclipse) run before the spacecraft in a task, so they read the state that the
-spacecraft wrote at the end of the previous update. With ``setExtrapolateScStateToStepMidpoint(True)`` they advance the
-position and the planet states by half of the age of that message, which is the middle of the interval that the next spacecraft
-update integrates. This is exact for the position only if the environment module and the spacecraft are updated with the
-**same task period**, because then the message written at the previous module update is exactly one module interval old.
-
-If the spacecraft is updated faster or slower than the module, half of the message age is no longer the middle of the module
-interval; nothing is then extrapolated, neither the spacecraft nor the planets, and a warning is logged. With several spacecraft
-in one module the decision is taken for all of them together: if one spacecraft message was not written at the previous module
-update, no spacecraft and no planet is extrapolated, so that all of them stay at one epoch. All the modules of the comparison run in the same task
-as the spacecraft.
 
 Results
 -------

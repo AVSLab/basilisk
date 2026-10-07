@@ -17,6 +17,7 @@
 
  */
 
+#include <cstring>
 #include <functional>
 
 #include <Eigen/Geometry>
@@ -58,20 +59,12 @@ void GravBodyData::initBody(int64_t moduleID [[maybe_unused]])
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
 {
     double dt = diffNanoToSec(simTimeNanos, this->timeWritten);
-    // The message holds [PN], the rotation from the inertial to the planet-fixed frame. The orientation is advanced
-    // in its transpose [NP].
-    Eigen::Matrix3d dcm_NPfix = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
-    if (dcm_NPfix.isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
-        dcm_NPfix = Eigen::Matrix3d::Identity();
-    }
-
-    const Eigen::Matrix3d dcm_NPfix_dot =
-        c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
+    this->updatePlanetSpinCache();
 
     // Advance the planet orientation by the time since the message was written as a rotation
-    // about the planet angular velocity, see extrapolateDcm().
-    const Eigen::Matrix3d dcmAdvanced_NPfix = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
-    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, dcmAdvanced_NPfix);
+    // about the planet angular velocity, see advanceDcm().
+    const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(this->cachedDcm_NPfix, this->cachedSpin, dt);
+    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = advanceDcmDot(this->cachedSpin, dcmAdvanced_NPfix, this->cachedDcm_NPfix_dot);
 
     // store the current planet orientation and rates as [PN] and [PN_dot], as documented for the properties
     *this->J20002Pfix = dcmAdvanced_NPfix.transpose();
@@ -82,6 +75,30 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64
     Eigen::Vector3d grav_Pfix = this->gravityModel->computeField(r_Pfix);
 
     return dcmAdvanced_NPfix * grav_Pfix;
+}
+
+/*! The planet angular velocity is constant between planet message updates, so it is derived once per
+ * `localPlanet.J20002Pfix` and `localPlanet.J20002Pfix_dot` and reused at every integrator stage. The cache is
+ * keyed on the matrices themselves, so a `localPlanet` that is set directly is picked up as well.
+ */
+void GravBodyData::updatePlanetSpinCache()
+{
+    if (this->planetSpinCached &&
+        std::memcmp(this->cachedKeyDcm, this->localPlanet.J20002Pfix, sizeof(this->cachedKeyDcm)) == 0 &&
+        std::memcmp(this->cachedKeyDcmDot, this->localPlanet.J20002Pfix_dot, sizeof(this->cachedKeyDcmDot)) == 0) {
+        return;
+    }
+    // The message holds [PN], the rotation from the inertial to the planet-fixed frame. The orientation is advanced
+    // in its transpose [NP].
+    this->cachedDcm_NPfix = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
+    if (this->cachedDcm_NPfix.isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
+        this->cachedDcm_NPfix = Eigen::Matrix3d::Identity();
+    }
+    this->cachedDcm_NPfix_dot = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
+    this->cachedSpin = planetSpin(this->cachedDcm_NPfix, this->cachedDcm_NPfix_dot);
+    std::memcpy(this->cachedKeyDcm, this->localPlanet.J20002Pfix, sizeof(this->cachedKeyDcm));
+    std::memcpy(this->cachedKeyDcmDot, this->localPlanet.J20002Pfix_dot, sizeof(this->cachedKeyDcmDot));
+    this->planetSpinCached = true;
 }
 
 void GravBodyData::loadEphemeris()

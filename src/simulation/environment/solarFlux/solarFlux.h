@@ -57,6 +57,7 @@ private:
     double eclipseFactor = 1.0;  //!< [] 1.0 is full sun, 0.0 is full eclipse
     Eigen::Vector3d r_SN_N;  //!< [m] sun position
     Eigen::Vector3d r_ScN_N;  //!< [m] s/c position
-    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
+    uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect
+                                      //!< stale spacecraft messages
     ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 };

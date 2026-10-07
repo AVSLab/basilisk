@@ -146,20 +146,24 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
     // days from the Unix epoch to January 1 of the year, valid for years from 1970
     const int y = year - 1;
     const long daysFromEpoch =
-      365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400);
-    const double julianDate =
-      static_cast<double>(daysFromEpoch + dayOfYear - 1) + 2440587.5 + secondOfDay / 86400.0; // [day]
-    const double T = (julianDate - 2451545.0) / 36525.0;                                      // [century] since J2000
+      365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400); // [day]
+    const double julianDate = static_cast<double>(daysFromEpoch + dayOfYear - 1) + 2440587.5 + // [day] JD of the Unix epoch
+                              secondOfDay / 86400.0;                                           // [day]
+    const double T = (julianDate - 2451545.0) / 36525.0; // [century] since J2000, JD 2451545.0 [day]
+    // mean longitude of the Sun: 280.46646 [deg], 36000.76983 [deg/century], 0.0003032 [deg/century^2]
     const double meanLongitude = std::fmod(280.46646 + 36000.76983 * T + 0.0003032 * T * T, 360.0) * D2R; // [rad]
-    const double meanAnomaly = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * D2R;                   // [rad]
-    const double eccentricity = 0.016708634 - 0.000042037 * T;                                            // [-]
-    const double obliquity = (23.439291 - 0.0130042 * T) * D2R;                                           // [rad]
-    const double y2 = std::pow(std::tan(0.5 * obliquity), 2.0);                                           // [-]
+    // mean anomaly of the Sun: 357.52911 [deg], 35999.05029 [deg/century], 0.0001537 [deg/century^2]
+    const double meanAnomaly = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * D2R; // [rad]
+    // orbit eccentricity of the Earth: 0.016708634 [-], 0.000042037 [1/century]
+    const double eccentricity = 0.016708634 - 0.000042037 * T; // [-]
+    // mean obliquity of the ecliptic: 23.439291 [deg], 0.0130042 [deg/century]
+    const double obliquity = (23.439291 - 0.0130042 * T) * D2R;      // [rad]
+    const double y2 = std::pow(std::tan(0.5 * obliquity), 2.0);       // [-]
     const double equation = y2 * std::sin(2.0 * meanLongitude) - 2.0 * eccentricity * std::sin(meanAnomaly) +
                             4.0 * eccentricity * y2 * std::sin(meanAnomaly) * std::cos(2.0 * meanLongitude) -
                             0.5 * y2 * y2 * std::sin(4.0 * meanLongitude) -
                             1.25 * eccentricity * eccentricity * std::sin(2.0 * meanAnomaly); // [rad]
-    return equation * R2D * 240.0; // [s] one degree of hour angle is 4 minutes
+    return equation * R2D * 240.0; // [s] one degree of hour angle is 240 [s]
 }
 
 /*! This method is used to reset the module.

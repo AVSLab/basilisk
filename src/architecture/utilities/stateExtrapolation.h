@@ -20,6 +20,7 @@
 #ifndef STATE_EXTRAPOLATION_H
 #define STATE_EXTRAPOLATION_H
 
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <vector>
@@ -32,11 +33,95 @@
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/macroDefinitions.h"
 
+/*! @brief Angular velocity of a planet-fixed frame, derived once from an orientation and its derivative.
+ *
+ * The planet angular velocity is constant while an orientation is extrapolated, so a caller that advances the same
+ * orientation repeatedly (for example at every integrator stage) computes it once with planetSpin() and reuses it with
+ * advanceDcm() and advanceDcmDot().
+ */
+struct PlanetSpin
+{
+    Eigen::Matrix3d omegaTilde_N = Eigen::Matrix3d::Zero(); //!< [1/s] `dcm_NPfix_dot * dcm_NPfix^T`, `[omega_N x]`
+    Eigen::Vector3d omega_N = Eigen::Vector3d::Zero();      //!< [rad/s] inertial angular velocity of the planet
+    bool isZero = true;                                     //!< true if the orientation derivative is zero
+};
+
+/*! @brief Extract the inertial angular velocity of a planet-fixed frame from its orientation and derivative.
+ *
+ * `dcm_NPfix_dot = [omega_N x] dcm_NPfix`, hence `[omega_N x] = dcm_NPfix_dot * dcm_NPfix^T`.
+ *
+ * @param dcm_NPfix [-] [NP] orientation of the inertial frame relative to the planet-fixed frame, which maps
+ * planet-fixed components to inertial components
+ * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix
+ * @return the planet spin, with `isZero` set if the derivative is zero
+ */
+static inline PlanetSpin planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+{
+    PlanetSpin spin;
+    if (dcm_NPfix_dot.isZero()) {
+        return spin;
+    }
+    spin.isZero = false;
+    spin.omegaTilde_N = dcm_NPfix_dot * dcm_NPfix.transpose();
+    spin.omega_N = Eigen::Vector3d(0.5 * (spin.omegaTilde_N(2, 1) - spin.omegaTilde_N(1, 2)),
+                                   0.5 * (spin.omegaTilde_N(0, 2) - spin.omegaTilde_N(2, 0)),
+                                   0.5 * (spin.omegaTilde_N(1, 0) - spin.omegaTilde_N(0, 1))); // [rad/s]
+    return spin;
+}
+
+/*! @brief Advance a planet-fixed orientation matrix by a time offset with a precomputed planet spin.
+ *
+ * The orientation is rotated about the planet angular velocity by `|omega| dt`, with the Rodrigues formula, so the
+ * result stays orthonormal. No orientation or rate is recomputed, only the rotation for the given time offset.
+ *
+ * @param dcm_NPfix [-] [NP] orientation to advance
+ * @param spin planet spin from planetSpin() of the same orientation and its derivative
+ * @param dt [s] signed time offset to advance the orientation by
+ * @return the advanced orientation matrix, or dcm_NPfix if the spin or the offset is zero
+ */
+static inline Eigen::Matrix3d advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
+{
+    if (spin.isZero || dt == 0.0) {
+        return dcm_NPfix;
+    }
+    const double omegaNorm = spin.omega_N.norm(); // [rad/s]
+    const double rotationAngle = omegaNorm * dt;  // [rad]
+    if (rotationAngle == 0.0) {
+        return dcm_NPfix;
+    }
+    const Eigen::Vector3d axis_N = spin.omega_N / omegaNorm; // [-]
+    Eigen::Matrix3d axisTilde_N;
+    axisTilde_N << 0.0, -axis_N[2], axis_N[1], axis_N[2], 0.0, -axis_N[0], -axis_N[1], axis_N[0], 0.0;
+    const Eigen::Matrix3d rotation = Eigen::Matrix3d::Identity() + std::sin(rotationAngle) * axisTilde_N +
+                                     (1.0 - std::cos(rotationAngle)) * axisTilde_N * axisTilde_N;
+    return rotation * dcm_NPfix;
+}
+
+/*! @brief Advance the time derivative of a planet-fixed orientation with a precomputed planet spin.
+ *
+ * With a constant inertial angular velocity, `dcm_NPfix_dot = [omega_N x] dcm_NPfix` holds at every epoch, so the
+ * derivative at the advanced epoch is `[omega_N x] dcmAdvanced_NPfix`. This assumes a consistent orientation and rate
+ * pair, for which `dcm_NPfix_dot * dcm_NPfix^T` is skew-symmetric.
+ *
+ * @param spin planet spin from planetSpin()
+ * @param dcmAdvanced_NPfix [-] [NP] orientation after the advance, from advanceDcm()
+ * @param dcm_NPfix_dot [1/s] time derivative before the advance, returned if the spin is zero
+ * @return [1/s] the derivative at the advanced epoch
+ */
+static inline Eigen::Matrix3d advanceDcmDot(const PlanetSpin& spin, const Eigen::Matrix3d& dcmAdvanced_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+{
+    if (spin.isZero) {
+        return dcm_NPfix_dot;
+    }
+    return spin.omegaTilde_N * dcmAdvanced_NPfix;
+}
+
 /*! @brief Advance a planet-fixed orientation matrix by a time offset as a rotation about the planet angular velocity.
  *
  * A first-order update of the matrix elements (`dcm_NPfix + dcm_NPfix_dot * dt`) is not orthonormal. This function
- * extracts the angular velocity from `dcm_NPfix_dot * dcm_NPfix^T` and applies the rotation `AngleAxis(|omega| dt)`,
- * so the result stays orthonormal.
+ * extracts the angular velocity from `dcm_NPfix_dot * dcm_NPfix^T` and applies the rotation by `|omega| dt`, so the
+ * result stays orthonormal. A caller that advances the same orientation repeatedly should use planetSpin() and
+ * advanceDcm() instead.
  *
  * @param dcm_NPfix [-] [NP] orientation of the inertial frame relative to the planet-fixed frame, which maps
  * planet-fixed components to inertial components
@@ -44,24 +129,11 @@
  * @param dt [s] signed time offset to advance the orientation by
  * @return the advanced orientation matrix, or dcm_NPfix if the derivative or the offset is zero
  * @note The callers pass the transpose of `J20002Pfix` (which is [PN]). GravBodyData::computeGravityInertial() holds
- * the same matrix in a variable named `dcm_PfixN`.
+ * the same matrix as `dcm_NPfix`.
  */
-static inline Eigen::Matrix3d
-extrapolateDcm(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot, double dt)
+static inline Eigen::Matrix3d extrapolateDcm(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot, double dt)
 {
-    if (dcm_NPfix_dot.isZero() || dt == 0.0) {
-        return dcm_NPfix;
-    }
-    // dcm_NPfix_dot = [omega_N x] dcm_NPfix, hence [omega_N x] = dcm_NPfix_dot * dcm_NPfix^T
-    const Eigen::Matrix3d omegaTilde_N = dcm_NPfix_dot * dcm_NPfix.transpose();
-    const Eigen::Vector3d omega_N(0.5 * (omegaTilde_N(2, 1) - omegaTilde_N(1, 2)),
-                                  0.5 * (omegaTilde_N(0, 2) - omegaTilde_N(2, 0)),
-                                  0.5 * (omegaTilde_N(1, 0) - omegaTilde_N(0, 1))); // [rad/s]
-    const double rotationAngle = omega_N.norm() * dt;                               // [rad]
-    if (rotationAngle == 0.0) {
-        return dcm_NPfix;
-    }
-    return Eigen::AngleAxisd(rotationAngle, omega_N.normalized()).toRotationMatrix() * dcm_NPfix;
+    return advanceDcm(dcm_NPfix, planetSpin(dcm_NPfix, dcm_NPfix_dot), dt);
 }
 
 /*! @brief Advance the time derivative of a planet-fixed orientation matrix consistently with extrapolateDcm().
@@ -76,15 +148,11 @@ extrapolateDcm(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfi
  * @param dcmAdvanced_NPfix [-] [NP] orientation after the advance, from extrapolateDcm()
  * @return [1/s] the derivative at the advanced epoch, or dcm_NPfix_dot if it is zero
  */
-static inline Eigen::Matrix3d
-extrapolateDcmDot(const Eigen::Matrix3d& dcm_NPfix,
+static inline Eigen::Matrix3d extrapolateDcmDot(const Eigen::Matrix3d& dcm_NPfix,
                   const Eigen::Matrix3d& dcm_NPfix_dot,
                   const Eigen::Matrix3d& dcmAdvanced_NPfix)
 {
-    if (dcm_NPfix_dot.isZero()) {
-        return dcm_NPfix_dot;
-    }
-    return dcm_NPfix_dot * dcm_NPfix.transpose() * dcmAdvanced_NPfix;
+    return advanceDcmDot(planetSpin(dcm_NPfix, dcm_NPfix_dot), dcmAdvanced_NPfix, dcm_NPfix_dot);
 }
 
 /*! @brief Returns true if a spacecraft state message is the output of the previous update of the environment module.
@@ -100,8 +168,7 @@ extrapolateDcmDot(const Eigen::Matrix3d& dcm_NPfix,
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return true if the message is older than the current time and was written at the previous module update
  */
-static inline bool
-isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
+static inline bool isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
 {
     return timeWrittenNanos < currentSimNanos && timeWrittenNanos == previousUpdateNanos;
 }
@@ -129,8 +196,7 @@ isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t p
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return copy of the payload with `r_BN_N` and `r_CN_N` advanced by `v * 0.5 * (currentSimNanos - timeWrittenNanos)`
  */
-static inline SCStatesMsgPayload
-extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
+static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
                                  uint64_t currentSimNanos,
                                  uint64_t timeWrittenNanos,
                                  uint64_t previousUpdateNanos)
@@ -161,8 +227,7 @@ extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
  * the target epoch, with no check on the age of the message. A message written once with a non-zero velocity is
  * projected forward over the whole simulation.
  */
-static inline SpicePlanetStateMsgPayload
-extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
+static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
                               uint64_t targetNanos,
                               uint64_t timeWrittenNanos)
 {
@@ -178,10 +243,11 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
     // J20002Pfix is [PN], it maps inertial to planet-fixed components. Its transpose [NP] is advanced.
     const Eigen::Matrix3d dcm_NPfix = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
     const Eigen::Matrix3d dcm_NPfix_dot = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
-    const Eigen::Matrix3d dcmAdvanced_NPfix = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
+    const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
+    const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix[0][0]) = dcmAdvanced_NPfix.transpose();
     // keep the derivative consistent with the advanced matrix, with the inertial angular velocity unchanged
-    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, dcmAdvanced_NPfix);
+    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = advanceDcmDot(spin, dcmAdvanced_NPfix, dcm_NPfix_dot);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix_dot[0][0]) = dcmAdvanced_NPfix_dot.transpose();
     return extrapolated;
 }
@@ -195,7 +261,10 @@ extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
  * successive write times were observed with an interval equal to the module update interval. The extrapolation is
  * therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If any
  * spacecraft state message does not satisfy these conditions, nothing is extrapolated, so the spacecraft and the shared
- * planets stay at one epoch, and a warning is logged once if a task period mismatch is detected.
+ * planets stay at one epoch, and a warning is logged once if a spacecraft message was not written at the previous
+ * module update, which is typically a task period mismatch. A mismatch is not always detectable: a message written at
+ * the current module update (for example by a faster spacecraft that runs before the module) is used as written and
+ * gives no warning. No message that is not the output of the previous module update is ever extrapolated.
  */
 class ScStateExtrapolation
 {
@@ -210,7 +279,8 @@ class ScStateExtrapolation
      */
     bool isEnabled() const { return this->enabled; }
 
-    /*! @brief Returns whether a task period mismatch between the module and the spacecraft was detected.
+    /*! @brief Returns whether the warning that a spacecraft message was not written at the previous module update was
+     * logged, which is typically a task period mismatch between the module and the spacecraft.
      * @return true if the warning was logged since the last reset
      */
     bool mismatchDetected() const { return this->warned; }
