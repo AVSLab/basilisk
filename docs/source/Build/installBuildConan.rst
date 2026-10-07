@@ -89,8 +89,8 @@ Note that the option names for groupings of Basilisk modules are the same as wit
     * - ``-o "&:exportCompileCommands=<value>"``
       - Boolean
       - True
-      - Exports ``compile_commands.json`` from CMake, which is useful for clangd and other language servers.
-        See :ref:`clangdSetup` for editor configuration.
+      - Exports ``compile_commands.json`` with Ninja or Makefile generators for clangd and other language servers.
+        Xcode and Visual Studio ignore this option. See :ref:`clangdSetup` for generator and editor configuration.
     * - ``-s build_type``
       - Release, Debug
       - Release
@@ -119,9 +119,24 @@ cmake files in directories other than ``dist3/conan``.
 
 Configuring clangd
 ------------------
-With ``exportCompileCommands=True`` and a generator that supports compilation databases, CMake writes
-``compile_commands.json`` into the configured build directory, which is ``dist3`` at the Basilisk repository root
-by default. Clangd does not automatically search ``dist3``, so it must be configured to find the generated database.
+Compilation database export is supported only by CMake's Ninja and Makefile generators. Xcode and Visual Studio
+ignore ``exportCompileCommands``, even when it is ``True``. For a new build directory, ``--buildProject False``
+defaults to Xcode on macOS and Visual Studio on Windows. Windows command-line builds also fall back to Visual Studio
+when Ninja is unavailable.
+
+To configure a new Ninja build without compiling Basilisk, install Ninja and ensure it is available on ``PATH``,
+then run from the Basilisk repository root::
+
+    python3 conanfile.py --generator Ninja --buildProject False
+
+If the existing build directory uses another generator, add ``--clean`` to remove its previous build artifacts
+before configuring Ninja. See :ref:`buildTable1Label` for generator selection details and the
+`CMake export documentation <https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html>`__
+for supported generators.
+
+With ``exportCompileCommands=True`` and a supported generator, CMake writes ``compile_commands.json`` into the
+configured build directory, which is ``dist3`` at the Basilisk repository root by default. Clangd does not
+automatically search ``dist3``, so it must be configured to find the generated database.
 
 Create or update a ``.clangd`` file at the Basilisk repository root with the following setting:
 

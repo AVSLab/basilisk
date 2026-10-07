@@ -1,1 +1,1 @@
-- Conan builds now export ``compile_commands.json`` by default for clangd and other language servers. Set ``exportCompileCommands=False`` to disable it.
+- Conan builds using Ninja or Makefile generators now export ``compile_commands.json`` by default for clangd and other language servers. Xcode and Visual Studio ignore this option. Set ``exportCompileCommands=False`` to disable it.
