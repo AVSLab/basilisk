@@ -192,7 +192,7 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
     if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        std::vector<uint64_t> timesWritten; // [ns]
+        std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
         for (auto& msg : this->scStateInMsgs) {
             timesWritten.push_back(msg.timeWritten());
         }

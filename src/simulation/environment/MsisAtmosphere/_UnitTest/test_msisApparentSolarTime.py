@@ -23,6 +23,7 @@ import numpy as np
 import pytest
 
 from Basilisk.architecture import messaging
+from Basilisk.architecture.bskLogging import BasiliskError
 from Basilisk.simulation import msisAtmosphere
 from Basilisk.utilities import SimulationBaseClass, macros
 
@@ -115,6 +116,16 @@ def test_apparent_solar_time_matches_mean_time_shifted_by_equation_of_time(epoch
     assert apparent != pytest.approx(mean, rel=1e-6, abs=0.0)
 
 
+def test_apparent_solar_time_rejects_epoch_before_1970():
+    """Verify the apparent solar time raises an error for an epoch before 1970, where the series is not valid,
+    while the mean solar time still works."""
+    epoch = datetime.datetime(1969, 7, 20, 12)  # UTC
+    assert _density(epoch, False) > 0.0
+    with pytest.raises(BasiliskError):
+        _density(epoch, True)
+
+
 if __name__ == "__main__":
     test_apparent_solar_time_setter_and_getter()
     test_apparent_solar_time_matches_mean_time_shifted_by_equation_of_time(datetime.datetime(2026, 1, 1, 6))
+    test_apparent_solar_time_rejects_epoch_before_1970()

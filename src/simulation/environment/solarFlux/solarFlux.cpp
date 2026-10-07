@@ -91,8 +91,9 @@ void SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
-    this->scStateExtrapolation.prepare(
-      CurrentSimNanos, this->previousUpdateNanos, { this->spacecraftStateInMsg.timeWritten() }, this->bskLogger);
+    std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
+    timesWritten.push_back(this->spacecraftStateInMsg.timeWritten());
+    this->scStateExtrapolation.prepare(CurrentSimNanos, this->previousUpdateNanos, timesWritten, this->bskLogger);
     scStatesMsgData = this->scStateExtrapolation.apply(this->spacecraftStateInMsg(),
                                                        CurrentSimNanos,
                                                        this->spacecraftStateInMsg.timeWritten(),

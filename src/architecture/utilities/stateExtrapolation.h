@@ -116,45 +116,6 @@ static inline Eigen::Matrix3d advanceDcmDot(const PlanetSpin& spin, const Eigen:
     return spin.omegaTilde_N * dcmAdvanced_NPfix;
 }
 
-/*! @brief Advance a planet-fixed orientation matrix by a time offset as a rotation about the planet angular velocity.
- *
- * A first-order update of the matrix elements (`dcm_NPfix + dcm_NPfix_dot * dt`) is not orthonormal. This function
- * extracts the angular velocity from `dcm_NPfix_dot * dcm_NPfix^T` and applies the rotation by `|omega| dt`, so the
- * result stays orthonormal. A caller that advances the same orientation repeatedly should use planetSpin() and
- * advanceDcm() instead.
- *
- * @param dcm_NPfix [-] [NP] orientation of the inertial frame relative to the planet-fixed frame, which maps
- * planet-fixed components to inertial components
- * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix
- * @param dt [s] signed time offset to advance the orientation by
- * @return the advanced orientation matrix, or dcm_NPfix if the derivative or the offset is zero
- * @note The callers pass the transpose of `J20002Pfix` (which is [PN]). GravBodyData::computeGravityInertial() holds
- * the same matrix as `dcm_NPfix`.
- */
-static inline Eigen::Matrix3d extrapolateDcm(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot, double dt)
-{
-    return advanceDcm(dcm_NPfix, planetSpin(dcm_NPfix, dcm_NPfix_dot), dt);
-}
-
-/*! @brief Advance the time derivative of a planet-fixed orientation matrix consistently with extrapolateDcm().
- *
- * With a constant inertial angular velocity, `dcm_NPfix_dot = [omega_N x] dcm_NPfix` holds at every epoch, so the
- * derivative at the advanced epoch is `[omega_N x] dcmAdvanced_NPfix`, with `[omega_N x] = dcm_NPfix_dot * dcm_NPfix^T`.
- * This assumes that `dcm_NPfix_dot * dcm_NPfix^T` is skew-symmetric, which holds for a consistent orientation and rate
- * pair.
- *
- * @param dcm_NPfix [-] [NP] orientation before the advance
- * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix before the advance
- * @param dcmAdvanced_NPfix [-] [NP] orientation after the advance, from extrapolateDcm()
- * @return [1/s] the derivative at the advanced epoch, or dcm_NPfix_dot if it is zero
- */
-static inline Eigen::Matrix3d extrapolateDcmDot(const Eigen::Matrix3d& dcm_NPfix,
-                  const Eigen::Matrix3d& dcm_NPfix_dot,
-                  const Eigen::Matrix3d& dcmAdvanced_NPfix)
-{
-    return advanceDcmDot(planetSpin(dcm_NPfix, dcm_NPfix_dot), dcmAdvanced_NPfix, dcm_NPfix_dot);
-}
-
 /*! @brief Returns true if a spacecraft state message is the output of the previous update of the environment module.
  *
  * The message-age based extrapolation is only valid if the spacecraft message was written at the previous update of
@@ -217,7 +178,7 @@ static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStates
  *
  * The relative position of the spacecraft with respect to a planet is only meaningful if both are evaluated at the
  * same epoch. The position is advanced with the planet velocity, and the planet-fixed orientation is advanced with
- * extrapolateDcm(). The offset is signed: it is negative if the planet message is newer than the target epoch.
+ * planetSpin() and advanceDcm(). The offset is signed: it is negative if the planet message is newer than the target epoch.
  *
  * @param planetState planet state message payload as read from the message
  * @param targetNanos [ns] epoch to evaluate the planet at
@@ -284,6 +245,16 @@ class ScStateExtrapolation
      * @return true if the warning was logged since the last reset
      */
     bool mismatchDetected() const { return this->warned; }
+
+    /*! @brief Returns an empty reusable buffer for the write times passed to prepare(), which avoids an allocation at
+     * every module update.
+     * @return empty vector, valid until the next call
+     */
+    std::vector<uint64_t>& writeTimesBuffer()
+    {
+        this->timesBuffer.clear();
+        return this->timesBuffer;
+    }
 
     /*! @brief Clear the observed message history and re-arm the warning. */
     void reset()
@@ -408,6 +379,7 @@ class ScStateExtrapolation
     std::vector<uint64_t> lastWriteNanos{};  //!< [ns] last observed write time of each state message
     std::vector<uint64_t> writeIntervalNanos{}; //!< [ns] last observed interval between two write times, 0 if unknown
     std::vector<bool> rewritten{};           //!< true if the state message was seen with more than one write time
+    std::vector<uint64_t> timesBuffer{};        //!< [ns] reusable buffer for the write times passed to prepare()
     std::vector<bool> seen{};                //!< true if the state message was observed in a previous update
 };
 

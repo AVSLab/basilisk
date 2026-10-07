@@ -70,11 +70,6 @@ public:
      */
     void loadEphemeris();
 
-private:
-    /** Recomputes the cached planet orientation and angular velocity if `localPlanet` changed. */
-    void updatePlanetSpinCache();
-
-public:
     /** Creates the following properies in the given statesIn object.
      *
      *      - [planetName].r_PN_N
@@ -107,6 +102,9 @@ public:
     BSKLogger bskLogger; /**< -- BSK Logging */
 
 private:
+    /** Recomputes the cached planet orientation and angular velocity if `localPlanet` changed. */
+    void updatePlanetSpinCache();
+
     Eigen::MatrixXd *r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
     Eigen::MatrixXd *v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
     Eigen::MatrixXd *muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */

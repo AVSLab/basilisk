@@ -109,7 +109,7 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
 
     bool planetRead = this->planetPosInMsg.isWritten();
     if (scRead && planetRead) {
-        std::vector<uint64_t> timesWritten; // [ns]
+        std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
         for (auto& msg : this->scStateInMsgs) {
             timesWritten.push_back(msg.timeWritten());
         }
