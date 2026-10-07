@@ -740,6 +740,10 @@ class BasiliskConan(ConanFile):
         # Generate!
         tc.generate()
 
+        if not self.options.get_safe("exportCompileCommands"):
+            # CMake leaves an existing database behind when export is disabled.
+            (Path(self.build_folder) / "compile_commands.json").unlink(missing_ok=True)
+
     def build(self):
 
         cmake = CMake(self)
