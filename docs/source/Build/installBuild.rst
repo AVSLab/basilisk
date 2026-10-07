@@ -93,6 +93,11 @@ The script accepts the following options to customize this process.
       - True
       - Builds the native GoogleTest executables and registers them with CTest. Pip and wheel builds disable this
         option because published packages do not run the native test executables.
+    * - ``exportCompileCommands``
+      - Boolean
+      - True
+      - Exports ``dist3/compile_commands.json`` with Ninja or Makefile generators for clangd and other language
+        servers. Xcode and Visual Studio ignore this option. See :ref:`clangdSetup` for editor configuration.
     * - ``buildType``
       - Release, Debug
       - Release
@@ -142,6 +147,10 @@ The ``buildProject`` argument here is optional as its default value is ``True``.
 Native test targets are also enabled by default for source builds. To omit them when they are not needed, use::
 
     python3 conanfile.py --buildTesting False
+
+Compilation database export is enabled by default with supported generators. To disable it, use::
+
+    python3 conanfile.py --exportCompileCommands False
 
 .. _offlineBuild:
 
