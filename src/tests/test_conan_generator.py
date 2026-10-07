@@ -15,10 +15,12 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
-"""Tests for Basilisk's CMake generator selection."""
+"""Tests for Basilisk's CMake generation and generator selection."""
 
 import importlib
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
@@ -144,3 +146,75 @@ def test_platform_ide_defaults(
     )
 
     assert generator == expected_generator
+
+
+@pytest.fixture
+def generation_context(conanfile_module, tmp_path, monkeypatch):
+    """Run recipe generation without resolving or generating dependency toolchains."""
+    recipe_root = tmp_path / "repository"
+    source_root = recipe_root / "src"
+    source_root.mkdir(parents=True)
+    settings = Mock(os="Linux", build_type="Release")
+    settings.get_safe.return_value = None
+    conf = Mock()
+    conf.get.return_value = False
+    recipe = SimpleNamespace(
+        recipe_folder=str(recipe_root),
+        source_folder=str(source_root),
+        options=conanfile_module.BasiliskConan().options,
+        settings=settings,
+        conf=conf,
+    )
+    recipe.options.generator = "Ninja"
+    toolchain = Mock(cache_variables={})
+    monkeypatch.setattr(conanfile_module, "CMakeDeps", Mock())
+    monkeypatch.setattr(conanfile_module, "CMakeToolchain", Mock(return_value=toolchain))
+    return recipe, toolchain
+
+
+@pytest.mark.parametrize("export_option", [None, False], ids=["default", "disabled"])
+@pytest.mark.parametrize("database_exists", [False, True], ids=["missing", "existing"])
+@pytest.mark.parametrize("build_folder", ["dist3", "custom-build"])
+def test_compile_commands_export_cleans_only_the_selected_database(
+        conanfile_module,
+        generation_context,
+        tmp_path,
+        monkeypatch,
+        export_option,
+        database_exists,
+        build_folder,
+):
+    """Remove stale databases only when disabled, honoring Conan's resolved output folder."""
+    recipe, toolchain = generation_context
+    recipe.options.buildFolder = build_folder
+    if export_option is not None:
+        recipe.options.exportCompileCommands = export_option
+    selected_build = tmp_path / "conan-output" / build_folder
+    recipe.build_folder = str(selected_build)
+    recipe.generators_folder = str(selected_build / "Release" / "generators")
+    conanfile_module.write_basilisk_build_marker(Path(recipe.source_folder), selected_build)
+
+    database = selected_build / "compile_commands.json"
+    database_contents = '[{"file": "previous.cpp"}]\n'
+    if database_exists:
+        database.write_text(database_contents, encoding="utf-8")
+    retained_artifact = selected_build / "existing-library.a"
+    retained_artifact.write_text("retain", encoding="utf-8")
+    unselected_database = Path(recipe.recipe_folder) / "dist3" / "compile_commands.json"
+    unselected_database.parent.mkdir(parents=True)
+    unselected_database.write_text(database_contents, encoding="utf-8")
+    monkeypatch.chdir(recipe.recipe_folder)
+
+    conanfile_module.BasiliskConan.generate(recipe)
+
+    export_enabled = export_option is not False
+    assert toolchain.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] is export_enabled
+    assert database.exists() == (database_exists and export_enabled)
+    if database.exists():
+        assert database.read_text(encoding="utf-8") == database_contents
+    assert retained_artifact.read_text(encoding="utf-8") == "retain"
+    assert unselected_database.read_text(encoding="utf-8") == database_contents
+
+    # Repeating the disabled configuration must tolerate the already removed file.
+    conanfile_module.BasiliskConan.generate(recipe)
+    assert database.exists() == (database_exists and export_enabled)

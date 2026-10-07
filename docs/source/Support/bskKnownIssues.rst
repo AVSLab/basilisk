@@ -8,9 +8,10 @@ Version |release|
 -----------------
 
 - GitHub issue 1598: Compilation database export requires Ninja or a Makefile generator; Xcode and Visual Studio
-  ignore the option. Clangd does not automatically discover the generated database in the default ``dist3`` build
+  do not support export. Clangd does not automatically discover the generated database in the default ``dist3`` build
   directory. Configure clangd to use the directory containing ``compile_commands.json``; see :ref:`clangdSetup`
-  for generator selection and the default and custom build-directory settings.
+  for generator selection and the default and custom build-directory settings. Disabling export now removes an
+  existing database from the selected build directory so clangd cannot keep reading stale compilation commands.
 
 - GitHub issue 1587: The ``vscmg`` case in ``benchmarks/dynamics/benchmark_state_effectors.py``
   failed during initialization with two or more components because of left-handed gimbal frames.

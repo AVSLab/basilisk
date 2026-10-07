@@ -97,7 +97,7 @@ The script accepts the following options to customize this process.
       - Boolean
       - True
       - Exports ``dist3/compile_commands.json`` with Ninja or Makefile generators for clangd and other language
-        servers. Xcode and Visual Studio ignore this option. See :ref:`clangdSetup` for editor configuration.
+        servers. Xcode and Visual Studio do not support export. See :ref:`clangdSetup` for editor configuration.
     * - ``buildType``
       - Release, Debug
       - Release
@@ -151,6 +151,9 @@ Native test targets are also enabled by default for source builds. To omit them 
 Compilation database export is enabled by default with supported generators. To disable it, use::
 
     python3 conanfile.py --exportCompileCommands False
+
+Disabling export also removes an existing ``compile_commands.json`` from the configured build directory during
+Conan generation, so clangd cannot keep reading that stale database.
 
 .. _offlineBuild:
 

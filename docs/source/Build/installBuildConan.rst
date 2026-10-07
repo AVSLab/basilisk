@@ -90,7 +90,8 @@ Note that the option names for groupings of Basilisk modules are the same as wit
       - Boolean
       - True
       - Exports ``compile_commands.json`` with Ninja or Makefile generators for clangd and other language servers.
-        Xcode and Visual Studio ignore this option. See :ref:`clangdSetup` for generator and editor configuration.
+        Xcode and Visual Studio do not support export. Setting this option to ``False`` also removes an existing
+        database from the selected build directory. See :ref:`clangdSetup` for generator and editor configuration.
     * - ``-s build_type``
       - Release, Debug
       - Release
@@ -120,7 +121,7 @@ cmake files in directories other than ``dist3/conan``.
 Configuring clangd
 ------------------
 Compilation database export is supported only by CMake's Ninja and Makefile generators. Xcode and Visual Studio
-ignore ``exportCompileCommands``, even when it is ``True``. For a new build directory, ``--buildProject False``
+do not export a database, even when ``exportCompileCommands=True``. For a new build directory, ``--buildProject False``
 defaults to Xcode on macOS and Visual Studio on Windows. Windows command-line builds also fall back to Visual Studio
 when Ninja is unavailable.
 
@@ -137,6 +138,10 @@ for supported generators.
 With ``exportCompileCommands=True`` and a supported generator, CMake writes ``compile_commands.json`` into the
 configured build directory, which is ``dist3`` at the Basilisk repository root by default. Clangd does not
 automatically search ``dist3``, so it must be configured to find the generated database.
+
+Setting ``-o "&:exportCompileCommands=False"`` removes an existing ``compile_commands.json`` from the selected build
+directory during ``conan install`` or ``conan build`` generation, including when using a custom ``buildFolder`` or
+Conan output folder. This cleanup applies to every generator. Separately copied databases must be removed manually.
 
 Create or update a ``.clangd`` file at the Basilisk repository root with the following setting:
 
