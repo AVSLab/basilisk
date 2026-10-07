@@ -89,7 +89,8 @@ Note that the option names for groupings of Basilisk modules are the same as wit
     * - ``-o "&:exportCompileCommands=<value>"``
       - Boolean
       - True
-      - Exports ``compile_commands.json`` from CMake, which is useful for clangd and other language servers
+      - Exports ``compile_commands.json`` from CMake, which is useful for clangd and other language servers.
+        See :ref:`clangdSetup` for editor configuration.
     * - ``-s build_type``
       - Release, Debug
       - Release
@@ -112,6 +113,34 @@ but no :ref:`vizInterface`, and using a clean distribution folder, and that is b
 
 Note how much more verbose this is, but it gives you full control if you want to store the compiled binaries and
 cmake files in directories other than ``dist3/conan``.
+
+
+.. _clangdSetup:
+
+Configuring clangd
+------------------
+With ``exportCompileCommands=True`` and a generator that supports compilation databases, CMake writes
+``compile_commands.json`` into the configured build directory, which is ``dist3`` at the Basilisk repository root
+by default. Clangd does not automatically search ``dist3``, so it must be configured to find the generated database.
+
+Create or update a ``.clangd`` file at the Basilisk repository root with the following setting:
+
+.. code-block:: yaml
+
+    CompileFlags:
+      CompilationDatabase: dist3
+
+The path is relative to the ``.clangd`` file. If that file already has a ``CompileFlags`` section, add
+``CompilationDatabase`` to that section.
+
+For a custom Conan ``buildFolder``, set ``CompilationDatabase`` to the directory containing the generated
+``compile_commands.json``, using either a path relative to ``.clangd`` or an absolute path. For example,
+``-o "&:buildFolder=/absolute/path/to/bsk-build"`` requires ``CompilationDatabase: /absolute/path/to/bsk-build``.
+
+Alternatively, add ``--compile-commands-dir=/absolute/path/to/basilisk/dist3`` to the arguments your editor passes
+to clangd. Replace the example path with the absolute path to your actual build directory, including when using a
+custom ``buildFolder``. Both settings name the directory containing the database, rather than the JSON file itself.
+See the `clangd configuration documentation <https://clangd.llvm.org/config#compilationdatabase>`__ for details.
 
 
 Running ``cmake`` Directly
