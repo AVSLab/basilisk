@@ -348,24 +348,28 @@ Both scripts accept case names after the path to generate a subset. They also wr
   its SHA-256 hash,
 - the inertial frame (ICRF),
 - the generator options and integrator settings,
-- the version of the tool,
-- the identifiers and checksums of the external data (``orekit-data.zip`` and the gravity coefficients), and the checksum of the
-  ephemeris file,
+- the version of the tool (the Orekit and ``orekit_jpype`` versions; for GMAT, the release and build date read from
+  the installation rather than from its folder name),
+- the identifiers and checksums of the external data: the gravity coefficients for both tools, the Orekit data
+  folder or archive for Orekit, and the planetary ephemeris, Earth-orientation, nutation and leap-second files
+  listed in ``gmat_startup_file.txt`` for GMAT, together with the checksum of the ephemeris file,
 - a ``variant`` label, which is ``default`` unless an alternative configuration was selected.
 
 Each generator also writes a density probe file (``<tool>_density_probe.csv``) whose manifest entry holds the hash of the probe points and of the atmosphere definition.
 
-``compare_with_basilisk.py`` validates the manifest of every reference before it runs Basilisk. A reference that was generated
-for another epoch, initial state, force model or frame, that was modified after it was generated, or that has no manifest is
-rejected with a message that names the field. A reference generated with ``--oblate-shadow`` or ``--max-step`` has the variant
-``oblate_shadow`` or ``max_step_<value>s`` and is rejected by a default comparison. To compare against it on purpose, give the
-variant with ``--orekit-variant`` (for example ``--orekit-variant oblate_shadow``); the results and the figure file name then
-state the variant. The generators overwrite the ephemeris of a case of the same name, so generate the alternative into its own
-``--output-dir`` and use the same folder with ``--data-dir``. The cases without GMAT reference (``references`` in ``cases.json``) are skipped by
-the GMAT generator. ``generate_orekit_reference.py`` also accepts ``--max-step`` (the maximum integrator step, which ``orekit_max_step_s`` of
-each case sets by default) and ``--oblate-shadow``. GMAT stops a propagation within about
-:math:`10^{-6}` s of the requested time, so the generator shifts each sample back to the nominal time using the sample's
-own velocity.
+``compare_with_basilisk.py`` validates the manifest of every reference before it runs Basilisk. A reference is
+rejected, with a message that names the field, if it was generated for another epoch, initial state, force model or
+frame, if it was modified after it was generated, if it was generated with different gravity coefficients from the
+file that Basilisk reads now (even under the same file name), or if it has no manifest. A reference generated with
+``--oblate-shadow`` or ``--max-step`` has the variant ``oblate_shadow`` or ``max_step_<value>s`` and is rejected by a
+default comparison. To compare against it on purpose, give the variant with ``--orekit-variant`` (for example
+``--orekit-variant oblate_shadow``); the results and the figure file name then state the variant. The generators
+overwrite the ephemeris of a case of the same name, so generate the alternative into its own ``--output-dir`` and use
+the same folder with ``--data-dir``. The cases without a GMAT reference (``references`` in ``cases.json``) are skipped
+by the GMAT generator. ``generate_orekit_reference.py`` also accepts ``--max-step`` (the maximum integrator step,
+which ``orekit_max_step_s`` of each case sets by default) and ``--oblate-shadow``. GMAT stops a propagation within
+about :math:`10^{-6}` s of the requested time, so the generator shifts each sample back to the nominal time using
+the sample's own velocity.
 
 **3. Run the comparison**
 

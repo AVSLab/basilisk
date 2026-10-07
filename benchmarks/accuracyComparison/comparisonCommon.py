@@ -154,6 +154,15 @@ def fileSha256(path):
     return digest.hexdigest()
 
 
+def gravityCoefficientsRecord(spec):
+    """Return the identifier and SHA-256 hash of the gravity coefficient file that every tool reads.
+
+    Args:
+        spec (dict): parsed ``cases.json`` content.
+    """
+    return {"id": spec["gravity_coefficients_file"], "sha256": fileSha256(HERE / spec["gravity_coefficients_file"])}
+
+
 def manifestPath(dataDir, tool):
     """Return the path of the reference manifest of a tool.
 
@@ -201,7 +210,8 @@ def validateManifestEntry(dataDir, tool, spec, name, csvPath, allowedVariant=DEF
     """Check that a reference ephemeris was generated for the current definition of a case.
 
     The manifest of the tool must hold an entry of the case whose configuration hash, inertial frame and ephemeris
-    checksum match the current ``cases.json`` and the file on disk. A reference generated with an alternative
+    checksum match the current ``cases.json`` and the file on disk, and whose recorded gravity coefficient checksum
+    matches the coefficient file read. A reference generated with an alternative
     configuration (e.g. ``--oblate-shadow``) is rejected unless that variant is explicitly allowed.
 
     Args:
@@ -239,6 +249,14 @@ def validateManifestEntry(dataDir, tool, spec, name, csvPath, allowedVariant=DEF
     if entry["csv_sha256"] != fileSha256(csvPath):
         raise ValueError(f"{csvPath} does not match the checksum recorded in the manifest (csv_sha256): the file was "
                          "modified or overwritten after it was generated.")
+    recorded = entry.get("external_data", {}).get("gravity_coefficients")
+    current = gravityCoefficientsRecord(spec)
+    if recorded is None:
+        raise ValueError(f"{where} records no gravity_coefficients checksum (external_data): regenerate it.")
+    if recorded["sha256"] != current["sha256"]:
+        raise ValueError(f"{where} was generated with a different gravity coefficient file than the one Basilisk "
+                         f"reads (external_data.gravity_coefficients.sha256 of {current['id']}): the coefficients "
+                         "changed without a change of the file name or of cases.json. Regenerate the reference.")
     return entry
 
 
