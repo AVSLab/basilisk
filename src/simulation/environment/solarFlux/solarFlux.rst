@@ -99,8 +99,9 @@ the simulation.
     before the module, is used as written and gives no warning. No message that is not the output of the previous module
     update is ever extrapolated. A task period that changes during the simulation has the same effect. The extrapolation
     only starts once two write times of the spacecraft state message have been observed and their interval equals the
-    module update interval, so the first updates are not extrapolated. Run the module in the same task as the
-    spacecraft, or at the same period.
+    module update interval, so the first updates are not extrapolated. Until then the spacecraft state is used as
+    written and the sun is moved back to the epoch of that state, so the relative geometry stays consistent. Run the
+    module in the same task as the spacecraft, or at the same period.
 
 When the extrapolation is enabled the position and the orientation of the planet (or of the sun and the planets for
 the eclipse) are advanced, or moved back, with their message velocity and angular rate to the same middle of the

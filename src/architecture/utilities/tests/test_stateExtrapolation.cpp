@@ -378,6 +378,36 @@ TEST(PlanetStateExtrapolation, translatingPlanetFollowsTheSpacecraftToTheStepMid
     EXPECT_NEAR(separation, 7.0e6 + 1.0e7, 1e-6);
 }
 
+TEST(PlanetStateExtrapolation, translatingPlanetKeepsTheSeparationAtEveryUpdateIncludingTheStartup)
+{
+    // The spacecraft and the planet translate together at 30 km/s, 400 km apart radially. The module runs before the
+    // spacecraft: at update k it reads the spacecraft written at the previous update and the planet written now.
+    const double speed = 3.0e4;       // [m/s]
+    const double separation0 = 4.0e5; // [m]
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    for (uint64_t k = 0; k < 6; k++) {
+        const uint64_t now = k * step;                      // [ns]
+        const uint64_t previous = k == 0 ? 0 : (k - 1) * step; // [ns]
+        const uint64_t scWritten = previous;                // [ns]
+        SCStatesMsgPayload sc = makeState();
+        sc.r_BN_N[0] = separation0 + speed * diffNanoToSec(scWritten, 0); // [m]
+        sc.v_BN_N[0] = speed;                                             // [m/s]
+        SpicePlanetStateMsgPayload planet{};
+        planet.PositionVector[0] = speed * diffNanoToSec(now, 0); // [m]
+        planet.VelocityVector[0] = speed;                         // [m/s]
+        for (int i = 0; i < 3; i++) {
+            planet.J20002Pfix[i][i] = 1.0; // [-]
+        }
+        extrapolation.prepare(now, previous, { scWritten }, logger);
+        const SCStatesMsgPayload scOut = extrapolation.apply(sc, now, scWritten, previous);
+        const SpicePlanetStateMsgPayload planetOut = extrapolation.applyPlanet(planet, now, now, previous);
+        EXPECT_NEAR(scOut.r_BN_N[0] - planetOut.PositionVector[0], separation0, 1e-6) << "update " << k;
+    }
+}
+
 TEST(PlanetStateExtrapolation, planetIsNotMovedIfTheSpacecraftStateIsNotExtrapolated)
 {
     SpicePlanetStateMsgPayload planet{};

@@ -62,7 +62,7 @@ from pathlib import Path
 import numpy as np
 
 from comparisonCommon import (HERE, caseDuration, caseEpoch, caseReferences, fileSha256, gravityCoefficientsRecord,
-                              loadSpec, probePoints, writeGmatCof, writeGmatExponentialAtmosphere,
+                              loadSpec, probePoints, requireIcrf, writeGmatCof, writeGmatExponentialAtmosphere,
                               writeManifestEntry, writeProbe)
 
 KM = 1000.0  # [m/km]
@@ -340,6 +340,7 @@ def main():
     args = parser.parse_args()
 
     spec = loadSpec()
+    requireIcrf(spec, "gmat")
     outDir = args.output_dir
     outDir.mkdir(parents=True, exist_ok=True)
     console = args.gmatRoot / "bin" / "GmatConsole"

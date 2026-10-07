@@ -221,11 +221,13 @@ static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const Spi
  * extrapolatePlanetStateToEpoch() only if all spacecraft messages were written at the previous module update and two
  * successive write times were observed with an interval equal to the module update interval. The extrapolation is
  * therefore deferred until the spacecraft period is known (the first updates are never extrapolated). If any
- * spacecraft state message does not satisfy these conditions, nothing is extrapolated, so the spacecraft and the shared
- * planets stay at one epoch, and a warning is logged once if a spacecraft message was not written at the previous
- * module update, which is typically a task period mismatch. A mismatch is not always detectable: a message written at
- * the current module update (for example by a faster spacecraft that runs before the module) is used as written and
- * gives no warning. No message that is not the output of the previous module update is ever extrapolated.
+ * spacecraft state message does not satisfy these conditions, no spacecraft is extrapolated, and a warning is logged
+ * once if a spacecraft message was not written at the previous module update, which is typically a task period
+ * mismatch. While no spacecraft state is extrapolated but all were written at the previous module update, the planets
+ * are moved back to that epoch, so the relative geometry stays consistent during the startup and under a period
+ * mismatch. A mismatch is not always detectable: a message written at the current module update (for example by a
+ * faster spacecraft that runs before the module) is used as written and gives no warning. No message that is not the
+ * output of the previous module update is ever extrapolated.
  */
 class ScStateExtrapolation
 {
@@ -265,6 +267,7 @@ class ScStateExtrapolation
         this->seen.clear();
         this->warned = false;
         this->lagConsistent = false;
+        this->allStepLag = false;
     }
 
     /*! @brief Decide once per module update whether the extrapolation applies to all spacecraft and the planets.
@@ -273,7 +276,8 @@ class ScStateExtrapolation
      * spacecraft: a planet moved to the step midpoint is inconsistent with a spacecraft left at the message epoch, and
      * the other way around. The extrapolation is therefore applied to every spacecraft and to the planets only if all
      * spacecraft state messages were written at the previous module update (see isStepLagMessage()). If one of them
-     * was not, nothing is extrapolated and a warning is logged once.
+     * was not, no spacecraft is extrapolated and a warning is logged once. The planets are still moved to the common
+     * epoch of the spacecraft messages if all of them were written at the previous module update.
      *
      * Must be called once per update, before apply() and applyPlanet().
      * @param currentSimNanos [ns] current simulation time
@@ -287,6 +291,7 @@ class ScStateExtrapolation
                  BSKLogger& logger)
     {
         this->lagConsistent = false;
+        this->allStepLag = false;
         if (!this->enabled) {
             return;
         }
@@ -298,6 +303,7 @@ class ScStateExtrapolation
         }
         const uint64_t moduleIntervalNanos = currentSimNanos - previousUpdateNanos; // [ns]
         bool allLagged = timesWrittenNanos.size() > 0;
+        bool allStepLagMessages = timesWrittenNanos.size() > 0;
         bool mismatch = false;
         for (std::size_t index = 0; index < timesWrittenNanos.size(); index++) {
             const uint64_t timeWrittenNanos = timesWrittenNanos[index];
@@ -316,17 +322,20 @@ class ScStateExtrapolation
             const bool lagged = periodKnown && !periodDiffers &&
                                 isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
             allLagged = allLagged && lagged;
+            allStepLagMessages = allStepLagMessages &&
+                                 isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
             mismatch = mismatch ||
                        (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
         }
         this->lagConsistent = allLagged;
+        this->allStepLag = allStepLagMessages;
         if (mismatch && !this->warned) {
             this->warned = true;
             logger.bskLog(BSK_WARNING,
                           "The spacecraft state extrapolation is enabled, but a spacecraft state message was not "
                           "written at the previous module update. The module and the spacecraft are not updated with "
-                          "the same task period (spacecraft slower or faster than the module): no spacecraft state "
-                          "and no planet state is extrapolated.");
+                          "the same task period (spacecraft slower or faster than the module): the spacecraft state "
+                          "is not extrapolated to the step midpoint.");
         }
     }
 
@@ -352,7 +361,9 @@ class ScStateExtrapolation
      *
      * The planet is moved to the middle of the module update interval only if prepare() found the extrapolation
      * applicable to all spacecraft, so that the relative geometry of every spacecraft is evaluated at one epoch.
-     * Otherwise the planet is returned as written.
+     * If all spacecraft messages were written at the previous module update but the extrapolation does not apply (the
+     * spacecraft period is not yet known, or differs from the module period), the spacecraft states stay at that
+     * epoch and the planet is moved back to it. Otherwise the planet is returned as written.
      * @param planetState planet state message payload as read from the message
      * @param currentSimNanos [ns] current simulation time
      * @param timeWrittenNanos [ns] time the planet state message was written
@@ -366,6 +377,13 @@ class ScStateExtrapolation
                                            uint64_t previousUpdateNanos) const
     {
         if (!this->lagConsistent) {
+            if (this->allStepLag) {
+                // The spacecraft states stay at the message epoch, which is the previous module update for every
+                // spacecraft, for example while the spacecraft period is not yet known. The planet is moved to that
+                // epoch, so the relative geometry is still evaluated at one epoch. The offset is signed: negative for a planet
+                // written at the current update, zero for one written at the previous update.
+                return extrapolatePlanetStateToEpoch(planetState, previousUpdateNanos, timeWrittenNanos);
+            }
             return planetState;
         }
         const uint64_t midpointNanos = previousUpdateNanos + (currentSimNanos - previousUpdateNanos) / 2; // [ns]
@@ -376,6 +394,8 @@ class ScStateExtrapolation
     bool enabled = false;                    //!< true if the spacecraft state is extrapolated
     bool warned = false;                     //!< true once the rate mismatch warning was logged
     bool lagConsistent = false;              //!< true if all spacecraft messages were written at the previous update
+                                             //!< and their period is known
+    bool allStepLag = false;                 //!< true if all spacecraft messages were written at the previous update
     std::vector<uint64_t> lastWriteNanos{};  //!< [ns] last observed write time of each state message
     std::vector<uint64_t> writeIntervalNanos{}; //!< [ns] last observed interval between two write times, 0 if unknown
     std::vector<bool> rewritten{};           //!< true if the state message was seen with more than one write time
