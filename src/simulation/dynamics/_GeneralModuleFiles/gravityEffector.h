@@ -104,8 +104,8 @@ private:
     Eigen::MatrixXd *r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
     Eigen::MatrixXd *v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
     Eigen::MatrixXd *muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
-    Eigen::MatrixXd *J20002Pfix;     /**< [m/s]    (state engine property) planet attitude [PN] */
-    Eigen::MatrixXd *J20002Pfix_dot; /**< [m/s]    (state engine property) planet attitude rate [PN_dot] */
+    Eigen::MatrixXd *J20002Pfix;     /**< [-]      (state engine property) planet attitude [PN] */
+    Eigen::MatrixXd *J20002Pfix_dot; /**< [1/s]    (state engine property) planet attitude rate [PN_dot] */
 
     uint64_t timeWritten = 0; /**< [ns]     time the input planet state message was written */
 };

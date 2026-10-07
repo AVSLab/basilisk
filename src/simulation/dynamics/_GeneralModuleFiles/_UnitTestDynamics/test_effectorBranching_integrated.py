@@ -827,7 +827,7 @@ def facetSRPLoad_P(srpProps, sigma_PN, r_PN_N):
     """Reference faceted SRP force and moment about the parent frame origin."""
     SOLAR_RAD_FLUX = 1361.0  # [W/m^2] solar radiation flux at 1 AU, as the module defines it
     SPEED_LIGHT = 299792458.0  # [m/s]
-    ASTRONOMICAL_UNIT = 149597870693.0  # [m] AU_M as defined in astroConstants.h
+    ASTRONOMICAL_UNIT = 149597870693.0  # [m] AU2M of astroConstants.h
 
     dcm_PN = rbk.MRP2C(sigma_PN)
     r_SP_P = dcm_PN @ (np.array(srpProps.r_SN_N) - np.array(r_PN_N))

@@ -275,7 +275,7 @@ Basilisk with ``setPlanetPolarRadius()``; GMAT's altitude differs by up to 0.64 
       - 53
     * - ``sso_drag``
       - 0.11
-      - 0.81
+      - 0.82
       - 0.70
     * - ``sso_all``
       - 0.24
@@ -292,7 +292,7 @@ period, with the spacecraft state extrapolated to the middle of the period. The 
 ``leo_drag`` over 10 days the maximum position difference to Orekit is 28 m for a 1 s period, 7.1 m for 0.5 s and 1.8 m
 for 0.25 s, and for ``leo_all`` over 30 days it is 303 m for 1 s and 18 m for 0.25 s. The cases with drag therefore use a 0.25 s
 task period. A larger period needs far fewer steps but gives a proportionally larger difference. In the same way the box cases drop
-from 7.6 m and 6.5 m with a 1 s period to 0.34 m and 0.27 m with 0.25 s, and the 700 km cases are at 0.11 m and 0.24 m.
+from 8.4 m and 6.5 m with a 1 s period to 0.53 m and 0.28 m with 0.25 s, and the 700 km cases are at 0.11 m and 0.24 m.
 
 .. figure:: /_images/accuracyComparison/accuracyComparison_leo_drag.svg
    :align: center
@@ -313,9 +313,9 @@ GMAT's drag model is a cannonball, and its attitude-dependent radiation pressure
     * - Case
       - Basilisk - Orekit [m]
     * - ``leo_box_fixed``
-      - 0.34
+      - 0.53
     * - ``leo_box_spin``
-      - 0.27
+      - 0.28
     * - ``geo_box_spin``
       - 0.0011
 

@@ -48,7 +48,7 @@ public:
     void setUseApHistory(bool useHistory);
     bool getUseApHistory() const;
 
-  private:
+private:
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
     void customReset(uint64_t CurrentClock);
@@ -59,7 +59,7 @@ public:
     void customSetEpochFromVariable();
     static double equationOfTime(int year, int dayOfYear, double secondOfDay);
 
-  public:
+public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs; //!< Vector of space weather input message names
     int epochDoy;                               //!< [day] Day-of-Year at epoch
     BSKLogger bskLogger;                        //!< -- BSK Logging

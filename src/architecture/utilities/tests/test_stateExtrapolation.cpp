@@ -24,6 +24,7 @@
 
 #include <Eigen/Dense>
 
+#include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/stateExtrapolation.h"
 
 namespace {
@@ -351,7 +352,7 @@ TEST(PlanetStateExtrapolation, planetIsNotMovedIfTheSpacecraftStateIsNotExtrapol
 
 TEST(PlanetStateExtrapolation, spinningPlanetOrientationStaysOrthonormal)
 {
-    const double spinRate = 7.2921159e-5; // [rad/s] Earth rotation rate
+    const double spinRate = OMEGA_EARTH; // [rad/s] Earth rotation rate
     SpicePlanetStateMsgPayload planet{};
     planet.J20002Pfix[0][0] = 1.0;       // [-]
     planet.J20002Pfix[1][1] = 1.0;       // [-]
@@ -374,7 +375,7 @@ TEST(PlanetStateExtrapolation, spinningPlanetOrientationStaysOrthonormal)
 
 TEST(PlanetStateExtrapolation, spinningPlanetKeepsTheAngularVelocityConsistent)
 {
-    const double spinRate = 7.2921159e-5; // [rad/s] Earth rotation rate
+    const double spinRate = OMEGA_EARTH; // [rad/s] Earth rotation rate
     SpicePlanetStateMsgPayload planet{};
     planet.J20002Pfix[0][0] = 1.0;           // [-]
     planet.J20002Pfix[1][1] = 1.0;           // [-]
@@ -504,4 +505,41 @@ TEST(ScStateExtrapolation, theOrderOfTheSpacecraftDoesNotChangeTheDecision)
     EXPECT_DOUBLE_EQ(r.first.r_BN_N[1], in.r_BN_N[1]);
     EXPECT_DOUBLE_EQ(r.second.r_BN_N[1], in.r_BN_N[1]);
     EXPECT_DOUBLE_EQ(r.planet.PositionVector[0], planet.PositionVector[0]);
+}
+
+TEST(ScStateExtrapolation, noSpacecraftIsNeverExtrapolated)
+{
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    SpicePlanetStateMsgPayload planet{};
+    planet.PositionVector[0] = 1.0e9; // [m]
+    planet.VelocityVector[0] = 1.0e3; // [m/s]
+
+    extrapolation.prepare(20 * SECOND_NANOS, 10 * SECOND_NANOS, {}, logger);
+    const SpicePlanetStateMsgPayload out = extrapolation.applyPlanet(planet, 20 * SECOND_NANOS, 0, 10 * SECOND_NANOS);
+
+    EXPECT_DOUBLE_EQ(out.PositionVector[0], planet.PositionVector[0]);
+}
+
+TEST(DcmExtrapolation, advancedRateIsTheRotatedRate)
+{
+    const double spinRate = OMEGA_EARTH; // [rad/s] Earth rotation rate
+    const double dt = 3600.0;            // [s]
+    // [NP] of a planet spinning about +z, from the identity orientation
+    Eigen::Matrix3d dcm_NPfix = Eigen::Matrix3d::Identity();
+    Eigen::Matrix3d dcm_NPfix_dot = Eigen::Matrix3d::Zero();
+    dcm_NPfix_dot(0, 1) = -spinRate; // [1/s]
+    dcm_NPfix_dot(1, 0) = spinRate;  // [1/s]
+
+    const Eigen::Matrix3d advanced = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
+    const Eigen::Matrix3d advancedDot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, advanced);
+
+    // the rate of a rotation about +z at the advanced epoch
+    EXPECT_NEAR(advancedDot(0, 0), -spinRate * std::sin(spinRate * dt), 1e-15);
+    EXPECT_NEAR(advancedDot(0, 1), -spinRate * std::cos(spinRate * dt), 1e-15);
+    EXPECT_NEAR(advancedDot(1, 0), spinRate * std::cos(spinRate * dt), 1e-15);
+    EXPECT_NEAR(advancedDot(1, 1), -spinRate * std::sin(spinRate * dt), 1e-15);
+    // a zero rate stays zero
+    EXPECT_TRUE(extrapolateDcmDot(dcm_NPfix, Eigen::Matrix3d::Zero(), advanced).isZero());
 }

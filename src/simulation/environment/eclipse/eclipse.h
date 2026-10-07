@@ -68,7 +68,7 @@ private:
     uint64_t previousUpdateNanos = 0; //!< [ns] time of the previous module update, used to detect stale spacecraft messages
     ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
 
-  private:
+private:
     void readInputMessages(uint64_t CurrentSimNanos);
     double computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
     double getPlanetEquatorialRadius(std::string planetSpiceName);

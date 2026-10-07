@@ -49,7 +49,7 @@ public:
     void setExtrapolateScStateToStepMidpoint(bool enable);
     bool getExtrapolateScStateToStepMidpoint() const;
 
-  protected:
+protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages(uint64_t CurrentSimNanos);
     void updateLocalAtmosphere(double currentTime);
@@ -82,10 +82,10 @@ protected:
     struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
 
 private:
-  double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius, planetRadius must not change after Reset()
-  ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
-  // Public output-message vectors are borrowed views; only these smart pointers own the messages.
-  std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
+    double planetPolarRadius = -1.0; //!< [m] polar radius of the planet; a negative value selects a spherical planet of radius planetRadius, planetRadius must not change after Reset()
+    ScStateExtrapolation scStateExtrapolation; //!< opt-in extrapolation of the spacecraft state to the step midpoint
+    // Public output-message vectors are borrowed views; only these smart pointers own the messages.
+    std::vector<std::unique_ptr<Message<AtmoPropsMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.
 };
 
 

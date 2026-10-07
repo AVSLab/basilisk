@@ -19,10 +19,10 @@ import numpy as np
 
 from Basilisk.architecture import messaging
 from Basilisk.simulation import zeroWindModel
-from Basilisk.utilities import SimulationBaseClass, macros
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 
 STEP = 10.0  # [s] module update period
-OMEGA_PLANET = np.array([0.0, 0.0, 7.2921150e-5])  # [rad/s]
+OMEGA_PLANET = np.array([0.0, 0.0, orbitalMotion.OMEGA_EARTH])  # [rad/s]
 
 
 def _airVelocity(r, v, timeNanos):

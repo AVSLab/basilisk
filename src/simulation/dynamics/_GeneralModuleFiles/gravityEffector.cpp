@@ -58,29 +58,30 @@ void GravBodyData::initBody(int64_t moduleID [[maybe_unused]])
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos)
 {
     double dt = diffNanoToSec(simTimeNanos, this->timeWritten);
-    Eigen::Matrix3d dcm_PfixN = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
-    if (dcm_PfixN
-            .isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
-        dcm_PfixN = Eigen::Matrix3d::Identity();
+    // The message holds [PN], the rotation from the inertial to the planet-fixed frame. The orientation is advanced
+    // in its transpose [NP].
+    Eigen::Matrix3d dcm_NPfix = c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix).transpose();
+    if (dcm_NPfix.isZero()) { // Sanity check for connected messages that do not initialize J20002Pfix
+        dcm_NPfix = Eigen::Matrix3d::Identity();
     }
 
-    Eigen::Matrix3d dcm_PfixN_dot =
+    const Eigen::Matrix3d dcm_NPfix_dot =
         c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot).transpose();
 
     // Advance the planet orientation by the time since the message was written as a rotation
     // about the planet angular velocity, see extrapolateDcm().
-    dcm_PfixN = extrapolateDcm(dcm_PfixN, dcm_PfixN_dot, dt);
+    const Eigen::Matrix3d dcmAdvanced_NPfix = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
+    const Eigen::Matrix3d dcmAdvanced_NPfix_dot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, dcmAdvanced_NPfix);
 
-    // store the current planet orientation and rates
-    *this->J20002Pfix = dcm_PfixN;
-    *this->J20002Pfix_dot = dcm_PfixN_dot;
+    // store the current planet orientation and rates as [PN] and [PN_dot], as documented for the properties
+    *this->J20002Pfix = dcmAdvanced_NPfix.transpose();
+    *this->J20002Pfix_dot = dcmAdvanced_NPfix_dot.transpose();
 
     // Compute position in the body-fixed reference frame and compute the gravity
-    Eigen::Matrix3d dcm_NPfix = dcm_PfixN.transpose();
-    Eigen::Vector3d r_Pfix = dcm_NPfix * r_I;
+    Eigen::Vector3d r_Pfix = dcmAdvanced_NPfix.transpose() * r_I;
     Eigen::Vector3d grav_Pfix = this->gravityModel->computeField(r_Pfix);
 
-    return dcm_PfixN * grav_Pfix;
+    return dcmAdvanced_NPfix * grav_Pfix;
 }
 
 void GravBodyData::loadEphemeris()
