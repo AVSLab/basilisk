@@ -577,8 +577,9 @@ TEST(DcmExtrapolation, advancedRateIsTheRotatedRate)
     dcm_NPfix_dot(0, 1) = -spinRate; // [1/s]
     dcm_NPfix_dot(1, 0) = spinRate;  // [1/s]
 
-    const Eigen::Matrix3d advanced = extrapolateDcm(dcm_NPfix, dcm_NPfix_dot, dt);
-    const Eigen::Matrix3d advancedDot = extrapolateDcmDot(dcm_NPfix, dcm_NPfix_dot, advanced);
+    const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
+    const Eigen::Matrix3d advanced = advanceDcm(dcm_NPfix, spin, dt);
+    const Eigen::Matrix3d advancedDot = advanceDcmDot(spin, advanced, dcm_NPfix_dot);
 
     // the rate of a rotation about +z at the advanced epoch
     EXPECT_NEAR(advancedDot(0, 0), -spinRate * std::sin(spinRate * dt), 1e-15);
@@ -586,5 +587,6 @@ TEST(DcmExtrapolation, advancedRateIsTheRotatedRate)
     EXPECT_NEAR(advancedDot(1, 0), spinRate * std::cos(spinRate * dt), 1e-15);
     EXPECT_NEAR(advancedDot(1, 1), -spinRate * std::sin(spinRate * dt), 1e-15);
     // a zero rate stays zero
-    EXPECT_TRUE(extrapolateDcmDot(dcm_NPfix, Eigen::Matrix3d::Zero(), advanced).isZero());
+    const PlanetSpin zeroSpin = planetSpin(dcm_NPfix, Eigen::Matrix3d::Zero());
+    EXPECT_TRUE(advanceDcmDot(zeroSpin, advanced, Eigen::Matrix3d::Zero()).isZero());
 }

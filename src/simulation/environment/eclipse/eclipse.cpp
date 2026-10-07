@@ -86,7 +86,7 @@ bool Eclipse::getExtrapolateScStateToStepMidpoint() const
  */
 void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
-    std::vector<uint64_t> timesWritten; // [ns]
+    std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
     for (auto& msg : this->positionInMsgs) {
         timesWritten.push_back(msg.timeWritten());
     }

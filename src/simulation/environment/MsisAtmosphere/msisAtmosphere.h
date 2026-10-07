@@ -57,7 +57,7 @@ private:
     void updateSwIndices();
     void evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime);
     void customSetEpochFromVariable();
-    static double equationOfTime(int year, int dayOfYear, double secondOfDay);
+    double equationOfTime(int year, int dayOfYear, double secondOfDay);
 
 public:
     std::vector<ReadFunctor<SwDataMsgPayload>> swDataInMsgs; //!< Vector of space weather input message names
