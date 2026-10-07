@@ -46,21 +46,24 @@ compares with Basilisk and Orekit before it propagates anything. Cases that GMAT
 (a box spacecraft with attitude-dependent drag) do not list ``gmat`` in their ``references`` and are skipped.
 
 Next to the ephemerides, ``<output-dir>/gmat_manifest.json`` records for every case the effective configuration and its
-hash, the frame, the tool version, the checksums of the external data and of the ephemeris, and a ``variant`` label,
-which ``compare_with_basilisk.py`` validates before running Basilisk.
+hash, the frame, the GMAT release and build date, the checksums of the gravity coefficients and of the GMAT
+ephemeris, Earth-orientation, nutation and time files (from ``gmat_startup_file.txt``) and of the ephemeris, and a
+``variant`` label, which ``compare_with_basilisk.py`` validates before running Basilisk.
 """
 
 import argparse
 import csv
 import math
+import re
 import subprocess
 import tempfile
 from pathlib import Path
 
 import numpy as np
 
-from comparisonCommon import (HERE, caseDuration, caseEpoch, caseReferences, fileSha256, loadSpec,
-                              probePoints, writeGmatCof, writeGmatExponentialAtmosphere, writeManifestEntry, writeProbe)
+from comparisonCommon import (HERE, caseDuration, caseEpoch, caseReferences, fileSha256, gravityCoefficientsRecord,
+                              loadSpec, probePoints, writeGmatCof, writeGmatExponentialAtmosphere,
+                              writeManifestEntry, writeProbe)
 
 KM = 1000.0  # [m/km]
 GMAT_BODY = {"sun": "Sun", "moon": "Luna"}
@@ -271,6 +274,63 @@ def gmatProbeScript(spec, cofPath, atmospherePath, reportPath):
     return "\n".join(lines) + "\n"
 
 
+# gmat_startup_file.txt keys of the ephemeris, Earth-orientation, nutation and time files that GMAT reads
+GMAT_DATA_KEYS = ("PLANETARY_SPK_FILE", "DE405_FILE", "DE421_FILE", "DE424_FILE", "EOP_FILE", "NUTATION_COEFF_FILE",
+                  "PLANETARY_PCK_FILE", "EARTH_LATEST_PCK_FILE", "EARTH_PCK_PREDICTED_FILE", "EARTH_PCK_CURRENT_FILE",
+                  "LUNA_PCK_CURRENT_FILE", "LUNA_FRAME_KERNEL_FILE", "LEAP_SECS_FILE", "LSK_FILE")
+
+
+def gmatVersion(gmatRoot, console):
+    """Return the release and the build date of a GMAT installation, independent of the name of its folder.
+
+    The release is the suffix of ``libGmatBase.so.<release>``, the build date is printed in the banner of the console.
+
+    Args:
+        gmatRoot (Path): GMAT installation folder.
+        console (Path): ``GmatConsole`` executable.
+    """
+    banner = subprocess.run([str(console), "--help"], cwd=console.parent, capture_output=True, text=True, check=False,
+                            stdin=subprocess.DEVNULL, timeout=120).stdout
+    build = re.search(r"Build Date:\s*(.+)", banner)
+    libraries = sorted((gmatRoot / "bin").glob("libGmatBase.so.*")) + sorted((gmatRoot / "bin").glob("GMAT-R*"))
+    release = re.search(r"R\d{4}[a-z]", " ".join(p.name for p in libraries))
+    if build is None or release is None:
+        raise RuntimeError(f"Cannot determine the GMAT release and build date of {gmatRoot}.")
+    return f"GMAT {release.group(0)}, build {build.group(1).strip()}"
+
+
+def gmatExternalData(gmatRoot, spec):
+    """Return the identifier and SHA-256 hash of the gravity coefficients and of the GMAT ephemeris and
+    Earth-orientation files listed in ``gmat_startup_file.txt``.
+
+    Args:
+        gmatRoot (Path): GMAT installation folder.
+        spec (dict): parsed ``cases.json`` content.
+    """
+    binDir = gmatRoot / "bin"
+    startup = {}
+    for line in (binDir / "gmat_startup_file.txt").read_text().splitlines():
+        key, sep, value = line.partition("=")
+        if sep and not line.lstrip().startswith("#"):
+            startup[key.strip()] = value.strip()
+
+    def resolve(value):
+        """Expand the ``NAME/`` path variables of the startup file."""
+        head, _, tail = value.partition("/")
+        return resolve(startup[head] + "/" + tail) if head in startup else value
+
+    data = {"gravity_coefficients": gravityCoefficientsRecord(spec)}
+    for key in GMAT_DATA_KEYS:
+        if key in startup:
+            path = (binDir / resolve(startup[key])).resolve()
+            if path.is_file():
+                data[key.lower()] = {"id": path.name, "sha256": fileSha256(path)}
+    missing = [k for k in ("DE405_FILE", "EOP_FILE", "LEAP_SECS_FILE") if k.lower() not in data]
+    if missing:
+        raise RuntimeError(f"GMAT data files {missing} listed in gmat_startup_file.txt were not found.")
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[1])
     parser.add_argument("gmatRoot", type=Path, help="GMAT installation folder (contains bin/)")
@@ -284,9 +344,8 @@ def main():
     outDir.mkdir(parents=True, exist_ok=True)
     console = args.gmatRoot / "bin" / "GmatConsole"
 
-    gmatVersion = f"GMAT (install folder {args.gmatRoot.resolve().name})"
-    externalData = {"gravity_coefficients": {"id": spec["gravity_coefficients_file"],
-                                             "sha256": fileSha256(HERE / spec["gravity_coefficients_file"])}}
+    toolVersion = gmatVersion(args.gmatRoot, console)
+    externalData = gmatExternalData(args.gmatRoot, spec)
     options = {"propagator": "PrinceDormand78", "initial_step_s": 10.0, "accuracy": 1.0e-12, "min_step_s": 1.0e-6,
                "max_step_s": 300.0, "srp_model": "Spherical", "third_body_model": "point mass",
                "atmosphere": "Exponential, single band from 0 km"}
@@ -304,7 +363,7 @@ def main():
             if line.strip():
                 x, y, z, altitude, density = (float(v) for v in line.split(","))
                 probeRows.append((x * KM, y * KM, z * KM, altitude * KM, density / KM**3))  # [m] x3, [m], [kg/m^3]
-        writeProbe(outDir, "gmat", spec, probeRows, gmatVersion,
+        writeProbe(outDir, "gmat", spec, probeRows, toolVersion,
                    {"atmosphere": "Exponential, single band from 0 km", "probe_step_s": 0.001})
         print(f"density probe: {len(probeRows)} points")
 
@@ -339,7 +398,7 @@ def main():
                     if not case["earth_rotation"]:  # propagated in MJ2000Eq, reported in ICRF
                         r, v = BIAS_ICRF_TO_MJ2000.T @ r, BIAS_ICRF_TO_MJ2000.T @ v
                     writer.writerow([f"{tNominal:.1f}"] + [f"{c:.9f}" for c in r] + [f"{c:.9f}" for c in v])
-            writeManifestEntry(outDir, "gmat", spec, name, csvPath, spec["inertial_frame"], gmatVersion, options,
+            writeManifestEntry(outDir, "gmat", spec, name, csvPath, spec["inertial_frame"], toolVersion, options,
                                externalData)
             print(f"{name}: {len(rows)} samples")
 

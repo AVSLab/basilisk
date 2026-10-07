@@ -40,7 +40,8 @@ def reference(tmp_path):
     csv = tmp_path / f"orekit_{CASE}.csv"
     csv.write_text("t_s,x_m,y_m,z_m,vx_m_s,vy_m_s,vz_m_s\n0.0,1,2,3,4,5,6\n")
     common.writeManifestEntry(tmp_path, "orekit", spec, CASE, csv, spec["inertial_frame"], "Orekit test",
-                              {"oblate_shadow": False}, {})
+                              {"oblate_shadow": False},
+                              {"gravity_coefficients": common.gravityCoefficientsRecord(spec)})
     return spec, tmp_path, csv
 
 
@@ -50,6 +51,33 @@ def test_matching_reference_is_accepted(reference):
     entry = common.validateManifestEntry(folder, "orekit", spec, CASE, csv)
     assert entry["variant"] == common.DEFAULT_VARIANT
     assert entry["frame"] == "ICRF"
+
+
+def test_changed_gravity_coefficients_are_rejected(reference, tmp_path, monkeypatch):
+    """Verify that changing a coefficient without changing the file name or cases.json invalidates the reference."""
+    spec, folder, csv = reference
+    source = common.HERE / spec["gravity_coefficients_file"]
+    copy_dir = tmp_path / "current_input"
+    (copy_dir / source.parent.relative_to(common.HERE)).mkdir(parents=True)
+    lines = source.read_text().splitlines()
+    n, m, c20, s20 = lines[1].split(",")  # first data row: n = 2, m = 0
+    assert (n, m) == ("2", "0")
+    c20 = repr(float(c20) * 1.01)  # [-] 1 % change of the normalized C20
+    lines[1] = ",".join((n, m, c20, s20))
+    (copy_dir / spec["gravity_coefficients_file"]).write_text("\n".join(lines) + "\n")
+    monkeypatch.setattr(common, "HERE", copy_dir)  # same relative path, different content
+    with pytest.raises(ValueError, match="gravity_coefficients"):
+        common.validateManifestEntry(folder, "orekit", spec, CASE, csv)
+
+
+def test_missing_gravity_checksum_is_rejected(tmp_path):
+    """Verify that a manifest entry without the gravity coefficient checksum is not accepted."""
+    spec = common.loadSpec()
+    csv = tmp_path / f"orekit_{CASE}.csv"
+    csv.write_text("t_s,x_m,y_m,z_m,vx_m_s,vy_m_s,vz_m_s\n0.0,1,2,3,4,5,6\n")
+    common.writeManifestEntry(tmp_path, "orekit", spec, CASE, csv, spec["inertial_frame"], "Orekit test", {}, {})
+    with pytest.raises(ValueError, match="gravity_coefficients"):
+        common.validateManifestEntry(tmp_path, "orekit", spec, CASE, csv)
 
 
 def test_changed_epoch_is_rejected(reference):
@@ -85,7 +113,8 @@ def test_alternative_variant_is_rejected_unless_requested(tmp_path):
     csv = tmp_path / f"orekit_{CASE}.csv"
     csv.write_text("t_s,x_m\n0.0,1\n")
     common.writeManifestEntry(tmp_path, "orekit", spec, CASE, csv, spec["inertial_frame"], "Orekit test",
-                              {"oblate_shadow": True}, {}, "oblate_shadow")
+                              {"oblate_shadow": True},
+                              {"gravity_coefficients": common.gravityCoefficientsRecord(spec)}, "oblate_shadow")
     with pytest.raises(ValueError, match="variant"):
         common.validateManifestEntry(tmp_path, "orekit", spec, CASE, csv)
     entry = common.validateManifestEntry(tmp_path, "orekit", spec, CASE, csv, "oblate_shadow")

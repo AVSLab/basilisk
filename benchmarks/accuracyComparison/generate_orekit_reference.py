@@ -61,8 +61,8 @@ from pathlib import Path
 
 import orekit_jpype
 
-from comparisonCommon import (DEFAULT_VARIANT, HERE, caseDuration, caseEpoch, fileSha256, loadSpec, mrp2dcm,
-                              probePoints, writeManifestEntry, writeOrekitGfc, writeProbe)
+from comparisonCommon import (DEFAULT_VARIANT, HERE, caseDuration, caseEpoch, fileSha256, gravityCoefficientsRecord,
+                              loadSpec, mrp2dcm, probePoints, writeManifestEntry, writeOrekitGfc, writeProbe)
 
 SPEED_OF_LIGHT = 299792458.0  # [m/s]
 
@@ -131,8 +131,7 @@ def main():
     toolVersion = f"Orekit {orekitJar or 'unknown'}, orekit_jpype {metadata.version('orekit_jpype')}"
     externalData = {
         "orekit_data": {"id": args.orekitData.name, "sha256": fileSha256(args.orekitData)},
-        "gravity_coefficients": {"id": spec["gravity_coefficients_file"],
-                                 "sha256": fileSha256(HERE / spec["gravity_coefficients_file"])},
+        "gravity_coefficients": gravityCoefficientsRecord(spec),
     }
 
     with tempfile.TemporaryDirectory() as tmp:
