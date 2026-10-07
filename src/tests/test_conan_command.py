@@ -99,8 +99,9 @@ def test_single_command_installs_missing_dependencies_and_builds(conanfile_modul
 
 
 @pytest.mark.parametrize("script_path_kind", ["absolute", "relative"])
+@pytest.mark.parametrize("export_option", [None, False], ids=["default", "disabled"])
 def test_script_builds_repository_from_another_directory(
-        conanfile_module, tmp_path, monkeypatch, script_path_kind,
+        conanfile_module, tmp_path, monkeypatch, script_path_kind, export_option,
 ):
     """Resolve the recipe at dispatch while keeping external paths relative to the caller."""
     repo_root = Path(__file__).resolve().parents[2]
@@ -126,9 +127,12 @@ def test_script_builds_repository_from_another_directory(
     script_path = repo_root / "conanfile.py"
     if script_path_kind == "relative":
         script_path = os.path.relpath(script_path, caller_directory)
-    monkeypatch.setattr(sys, "argv", [
+    arguments = [
         str(script_path), "--offline", "--pathToExternalModules", "external modules",
-    ])
+    ]
+    if export_option is not None:
+        arguments.extend(["--exportCompileCommands", str(export_option)])
+    monkeypatch.setattr(sys, "argv", arguments)
     monkeypatch.setattr(sys, "path", sys.path.copy())
     monkeypatch.setattr(conanfile_module.subprocess, "check_output", Mock(return_value=b""))
     generator = conanfile_module.makeDraftModule.moduleGenerator
@@ -146,6 +150,10 @@ def test_script_builds_repository_from_another_directory(
     recipe_directory = (build_directory / command[4]).resolve()
     assert recipe_directory == repo_root.resolve()
     assert f"&:pathToExternalModules={external_modules}" in option_values(command, "-o")
+    assert (
+        f"&:exportCompileCommands={export_option is not False}"
+        in option_values(command, "-o")
+    )
     assert subprocess_options["check"] is True
     assert subprocess_options["env"]["CARGO_NET_OFFLINE"] == "true"
     assert Path.cwd() == caller_directory
