@@ -17,52 +17,81 @@
 #
 
 r"""
-It's recommended to review the following scenario(s) first (and any
-recommended scenario(s) that they may have):
+Review these prerequisite examples first:
 
-#. ``examples/scenarioMomentumDumping.py``
-#. ``examples/mujoco/scenarioAttitudeFeedbackRWMuJoCo.py``
+#. :ref:`scenarioMomentumDumping` for the classic momentum-dumping sequence.
+#. :ref:`scenarioAttitudeFeedbackRWMuJoCo` for reaction-wheel control with MuJoCo.
 
 This script demonstrates how to run a reaction wheel momentum dumping
-scenario, stranslated from the classic Basilisk ``scenarioMomentumDumping.py``
+scenario, translated from the classic Basilisk :ref:`scenarioMomentumDumping`
 example, using MuJoCo dynamics via :ref:`MJScene<MJScene>` instead of the
 traditional hub-centric Basilisk :ref:`spacecraft` dynamics.
+
+Running the Example
+-------------------
+
+Use a Basilisk installation with MuJoCo support and the example dependencies
+described in :ref:`bskInstall`. When building from source, enable
+``--mujoco True``. With that Python environment active, run from the repository
+root:
+
+.. code-block:: console
+
+   python examples/mujoco/scenarioMomentumDumpingMuJoCo.py
+
+The script displays the result plots. When importing the scenario from
+``examples/mujoco``, call ``run(showPlots=False)`` to run without displaying
+windows; it still returns a dictionary of Matplotlib figures for inspection
+or saving.
+
+Model and Control Setup
+-----------------------
 
 The multi-body system is created programmatically as a MuJoCo XML string.
 It consists of a free-floating spacecraft bus ("hub") carrying 4 reaction
 wheel rigid bodies ("rw1Spin" ... "rw4Spin") mounted at canted spin
 axes, and 8 thrusters attached directly to the hub via fixed sites.
-Each wheel spin DOF is driven by a MuJoCo single-input torque actuator, and
-each thruster site has a MuJoCo motor actuator that applies force along the
-site's z-axis.
+Each wheel spin degree of freedom (DOF) is driven by a MuJoCo single-input
+torque actuator, and each thruster site has a MuJoCo motor actuator that
+applies force along the site's z-axis.
 
-A standard Basilisk FSW stack is used to point the hub at a fixed inertial
-attitude, offload control effort onto the reaction wheels, and dump excess
-wheel momentum with the ACS thrusters once it exceeds a threshold:
+A standard Basilisk flight software (FSW) stack uses the reaction wheels to
+point the hub at a fixed inertial attitude. The attitude control system (ACS)
+thrusters remove excess wheel momentum in an explicitly requested dumping
+sequence:
 
-#. ``inertial3D`` generates a fixed inertial attitude reference.
-#. ``attTrackingError`` computes the attitude and rate tracking errors.
-#. ``mrpFeedback`` computes the commanded body control torque.
-#. ``rwMotorTorque`` maps the commanded body torque into individual wheel
+#. :ref:`inertial3D` generates a fixed inertial attitude reference.
+#. :ref:`attTrackingError` computes the attitude and rate tracking errors.
+#. :ref:`mrpFeedback` computes the commanded body control torque.
+#. :ref:`rwMotorTorque` maps the commanded body torque into individual wheel
    motor torque commands.
-#. ``thrMomentumManagement`` monitors the total wheel momentum and computes
-   a delta-H command once it exceeds a specified maximum.
-#. ``thrForceMapping`` maps the desaturation delta-H command into individual
-   thruster force commands.
-#. ``thrMomentumDumping`` converts the thruster force commands into
-   discrete thruster on-time pulses.
+#. :ref:`thrMomentumManagement` checks the net wheel momentum once on its
+   first update after each ``Reset()``. If the magnitude exceeds ``hs_min``,
+   it requests an angular-momentum change, delta-H [N m s], to reduce it
+   to that level. Otherwise it requests zero change. Later threshold
+   crossings do not trigger another check unless the module is reset again.
+#. :ref:`thrForceMapping` maps the desaturation delta-H request into
+   individual thruster impulse requests [N s].
+#. :ref:`thrMomentumDumping` divides the requested impulses by the configured
+   maximum thrust [N] to obtain firing durations [s], then distributes them
+   over discrete on-time pulses.
 
-   ** See ``scenarioMomentumDumping.py`` for more info on this.
+This chain reuses ``CmdTorqueBodyMsgPayload.torqueRequestBody`` to carry
+angular impulse [N m s], and ``THRArrayCmdForceMsgPayload.thrForce`` to carry
+linear impulse [N s]. Despite their field names, these values represent
+impulses in this application. The subsequent ``thrOnTimeToForce`` adapter
+produces the instantaneous force commands [N] sent to the actuators.
+See :ref:`scenarioMomentumDumping` for more detail on this control sequence.
 
 Several small adapter modules bridge Basilisk messaging to MuJoCo objects:
 
-#. ``arrayMotorTorqueToSingleActuators`` splits the single ``ArrayMotorTorqueMsg`` from
-   ``rwMotorTorque`` into individual ``SingleActuatorMsg`` commands, one per
-   MuJoCo wheel actuator.
-#. ``scalarJointStatesToRWSpeed`` reads each wheel's spin rate directly from its MuJoCo
-   joint state and republishes them as a single ``RWSpeedMsg`` for the
-   momentum-management chain.
-#. ``thrOnTimeToForce`` converts the thruster on-time pulse commands from
+#. :ref:`arrayMotorTorqueToSingleActuators` splits the single
+   ``ArrayMotorTorqueMsg`` from ``rwMotorTorque`` into individual
+   ``SingleActuatorMsg`` commands, one per MuJoCo wheel actuator.
+#. :ref:`scalarJointStatesToRWSpeed` reads each wheel's spin rate directly
+   from its MuJoCo joint state and republishes them as a single ``RWSpeedMsg``
+   for the momentum-management chain.
+#. :ref:`thrOnTimeToForce` converts the thruster on-time pulse commands from
    ``thrMomentumDumping`` into instantaneous force commands for each MuJoCo
    thruster actuator.
 
@@ -70,16 +99,18 @@ Earth gravity is configured using :ref:`NBodyGravity<NBodyGravity>` with a
 :ref:`pointMassGravityModel<pointMassGravityModel>` as the central body,
 applied to the hub only.
 
-The spacecraft is placed on a near-circular LEO orbit, and the wheels are
-initialized above the momentum-dumping threshold. The simulation briefly
-coasts before the momentum management module is reset (since desaturation
-cannot begin exactly at t = 0), then runs for 5 minutes while the wheels
-provide attitude control and the thrusters intermittently fire to dump
-excess wheel momentum.
+The spacecraft is placed on a near-circular low Earth orbit (LEO), and the
+wheels are initialized above the 80 N m s momentum threshold. The simulation
+runs to 10 seconds, then explicitly resets ``thrMomentumManagement``. Its
+next FSW update at 11 seconds publishes a fresh delta-H request. This avoids
+the initial request at time zero, whose timestamp is not recognized as a
+new request by ``thrMomentumDumping`` after initialization. The simulation
+continues to a total elapsed time of 5 minutes while the wheels provide
+attitude control and the thrusters execute the requested dumping sequence.
 
 Attitude error, rate tracking error, individual and total wheel momenta,
-dumped momentum, wheel speeds, thruster impulse requests, thruster on-time
-requests, and delivered thruster forces are plotted at the end.
+requested angular-momentum change, wheel speeds, thruster impulse requests,
+thruster on-time requests, and delivered thruster forces are plotted at the end.
 
 Illustration of Simulation Results
 ----------------------------------
@@ -95,6 +126,10 @@ Illustration of Simulation Results
 
 .. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_DH.svg
    :align: center
+
+The delta-H plot shows the command held between momentum-management resets,
+not the accumulated momentum removed by the thrusters. Use the wheel-momentum
+history above to assess the resulting change in stored wheel momentum.
 
 .. image:: /_images/Scenarios/scenarioMomentumDumpingMuJoCo_rwSpeeds.svg
    :align: center
@@ -186,7 +221,16 @@ def plot_rw_momenta(timeData, dataOmegaRw, RW, numRW):
 
 
 def plot_DH(timeData, dataDH):
-    """Plot the body angular velocity rate tracking errors."""
+    """Plot the requested angular-momentum change in body-frame components.
+
+    :param timeData: Sample times [min].
+    :param dataDH: Requested delta-H vectors [N m s], with one row per sample
+        and columns for the body x, y, and z components. These commands are
+        held between momentum-management resets; they are not measurements
+        of accumulated momentum removal.
+    :returns: Figure showing the three components of the delta-H request.
+    :rtype: matplotlib.figure.Figure
+    """
     fig = plt.figure(num = 4, clear = True)
     ax = fig.gca()
     ax.ticklabel_format(useOffset = False, style = 'plain')
@@ -196,7 +240,7 @@ def plot_DH(timeData, dataDH):
                  label = r'$\Delta H_{' + str(idx+1) + r'}$')
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Dumped momentum (Nms) ')
+    plt.ylabel('Requested momentum change [N m s]')
 
     return fig
 
@@ -303,6 +347,7 @@ def addRWsXML(rwPos: list,
         rw = rwFactory.create('Honeywell_HR16', rwAxis, maxMomentum = maxMomentum)
         RWs.append(rw)
 
+        # XML uses lengths [m], mass [kg], inertia [kg m^2], and motor torque limits [N m].
         # XML string defining RW body: single revolute joint about spin axis, inertial props
         # taken from the factory-created wheel (Jt, Jt, Js), simple cylinder geom for visuals only
         rwTags.append(
@@ -380,7 +425,7 @@ def makeMjXmlString():
     rwAxes = [[c, 0, c], [0, c, c], [-c, 0, c], [0, -c, c]]
 
     # 8 ACS thrusters at hub corners, each aligned with a principal body axis
-    a, b = 1.0, 1.28
+    a, b = 1.0, 1.28  # [m]
     thrustLocs = [
         [-a, -a,  b], [ a, -a, -b], [ a, -a,  b], [ a,  a, -b],
         [ a,  a,  b], [-a,  a, -b], [-a,  a,  b], [-a, -a, -b],
@@ -397,6 +442,7 @@ def makeMjXmlString():
     rwBodies, rwActs, RWs = addRWsXML(rwPos, rwAxes, rwFactory)
     thrSites, thrActs, THRs = addThrustersXML(thrustLocs, thrustDirs, thrFactory)
 
+    # XML lengths are [m], masses [kg], inertia components [kg m^2], and angles [rad].
     xml = f"""<mujoco model = "busWithRWsAndThrusters">
     <compiler angle = "radian" meshdir = ""/>
 
@@ -425,7 +471,17 @@ def makeMjXmlString():
 
 
 def run(showPlots: bool = False):
-    """Build and run the MJScene momentum dumping simulation."""
+    """Run five minutes of wheel attitude control and requested desaturation.
+
+    :param showPlots: Display the Matplotlib figures and wait for the plot
+        windows to close when True. Defaults to False; figures are still
+        generated and returned in either case.
+    :returns: Dictionary mapping scenario-prefixed names to eight Matplotlib
+        figures: attitude and rate errors, wheel momenta, requested momentum
+        change, wheel speeds, thruster impulses, on-times, and forces.
+        No files are saved by this function.
+    :rtype: dict
+    """
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
@@ -435,9 +491,9 @@ def run(showPlots: bool = False):
     simProcessName = "simProcess"
 
     # Initializing simulation time/time-steps for dynamics/fsw task
-    simulationTime = macros.min2nano(5)
-    simulationTimeStepFsw = macros.sec2nano(1)
-    simulationTimeStepDyn = macros.sec2nano(0.1)
+    simulationTime = macros.min2nano(5)  # [ns]
+    simulationTimeStepFsw = macros.sec2nano(1)  # [ns]
+    simulationTimeStepDyn = macros.sec2nano(0.1)  # [ns]
 
     sim = SimulationBaseClass.SimBaseClass()
 
@@ -455,7 +511,7 @@ def run(showPlots: bool = False):
     sim.AddModelToTask(dynTaskName, scene)
 
     # -------------------------------------------------------------------------
-    # 2) Retrieve spacecraft componenets
+    # 2) Retrieve spacecraft components
     # -------------------------------------------------------------------------
     # Pull handles of hub/RW bodies and actuators from XML
     busBody = scene.getBody("hub")
@@ -490,15 +546,15 @@ def run(showPlots: bool = False):
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000. * 1000  # meters
     oe.a = rLEO
-    oe.e = 0.0001
-    oe.i = 33.3 * macros.D2R
-    oe.Omega = 148.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 335 * macros.D2R
+    oe.e = 0.0001  # [-]
+    oe.i = 33.3 * macros.D2R  # [rad]
+    oe.Omega = 148.2 * macros.D2R  # [rad]
+    oe.omega = 347.8 * macros.D2R  # [rad]
+    oe.f = 335 * macros.D2R  # [rad]
     rN, vN = orbitalMotion.elem2rv(muEarth, oe)
 
     # -------------------------------------------------------------------------
-    # 5) Navitation and FSW
+    # 5) Navigation and FSW
     # -------------------------------------------------------------------------
     # Reading s/c state and publishing standard navigation output
     simpleNavObj = simpleNav.SimpleNav()
@@ -524,8 +580,8 @@ def run(showPlots: bool = False):
     mrpControl.ModelTag = "mrpFeedback"
     sim.AddModelToTask(fswTaskName, mrpControl)
     decayTime = 10.0 # s
-    xi = 1.0
-    I = np.diag([1700, 1700, 1800])
+    xi = 1.0  # [-] Damping ratio.
+    I = np.diag([1700, 1700, 1800])  # [kg m^2]
     mrpControl.Ki = -1  # make value negative to turn off integral feedback
     mrpControl.P = 3 * np.max(I) / decayTime
     mrpControl.K = (mrpControl.P/xi) * (mrpControl.P/xi) / np.max(I)
@@ -544,22 +600,22 @@ def run(showPlots: bool = False):
     thrDesatControl = thrMomentumManagement.thrMomentumManagement()
     thrDesatControl.ModelTag = "thrMomentumManagement"
     sim.AddModelToTask(fswTaskName, thrDesatControl)
-    thrDesatControl.hs_min = 80   # Nms : maximum wheel momentum
+    thrDesatControl.hs_min = 80  # [N m s] Target net wheel momentum after dumping.
 
-    # Setup the thruster force mapping module
+    # Map angular impulse [N m s] to individual thruster impulses [N s].
     thrForceMappingObj = thrForceMapping.thrForceMapping()
     thrForceMappingObj.ModelTag = "thrForceMapping"
     sim.AddModelToTask(fswTaskName, thrForceMappingObj)
     thrForceMappingObj.controlAxes_B = controlAxes_B
     thrForceMappingObj.thrForceSign = 1
-    thrForceMappingObj.angErrThresh = 3.15 # This needs to be larger than pi (180 deg) for the module to work in the momentum dumping scenario
+    thrForceMappingObj.angErrThresh = 3.15  # [rad] Above pi to allow this momentum-dumping mapping.
 
     # Setup the thruster momentum dumping module
     thrDump = thrMomentumDumping.thrMomentumDumping()
     thrDump.ModelTag = "thrDump"
     sim.AddModelToTask(fswTaskName, thrDump)
     thrDump.maxCounterValue = 100 # Number of control periods (simulationTimeStepFsw) to wait between two subsequent on-times
-    thrDump.thrMinFireTime = 0.02
+    thrDump.thrMinFireTime = 0.02  # [s]
 
     # FSW-facing config messages describing all 4 wheels / 8 thrusters
     fswRwParamMsg = rwFactory.getConfigMessage()
@@ -606,7 +662,7 @@ def run(showPlots: bool = False):
     # 6) Message Linking
     # -------------------------------------------------------------------------
     # Inertia tensor passed into config message, vehicle config created
-    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B = [1700,0,0, 0,1700,0, 0,0,1800])
+    vehicleConfigOut = messaging.VehicleConfigMsgPayload(ISCPntB_B = [1700,0,0, 0,1700,0, 0,0,1800])  # [kg m^2]
     vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
     mrpControl.vehConfigInMsg.subscribeTo(vcMsg)
 
@@ -685,17 +741,18 @@ def run(showPlots: bool = False):
     busFree.setVelocity(vN)
 
     # Initial wheel spin rates, chosen so the wheels start above the 80 Nms desat threshold
-    initialOmegas = [4000., 2000., 3500., 0.]
+    initialOmegas = [4000., 2000., 3500., 0.]  # [RPM]
     for i in range(numRWs):
         omega_radps = initialOmegas[i] * macros.RPM
         RWJoints[i].setVelocity(omega_radps)
 
-    # Run first 10s before resetting thrDesatControl, since it cannot dump momentum at t = 0
-    sim.ConfigureStopTime(macros.sec2nano(10.0))
+    # Coast for 10 s before requesting a new momentum check.
+    sim.ConfigureStopTime(macros.sec2nano(10.0))  # [ns]
     sim.ExecuteSimulation()
 
-    # Reset thrDesat module after 10 seconds because momentum cannot be dumped at t = 0
-    thrDesatControl.Reset(macros.sec2nano(10.0))
+    # The next FSW update at 11 s writes a fresh delta-H request. A request
+    # timestamped at zero is not recognized as new by thrMomentumDumping.
+    thrDesatControl.Reset(macros.sec2nano(10.0))  # [ns]
 
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()

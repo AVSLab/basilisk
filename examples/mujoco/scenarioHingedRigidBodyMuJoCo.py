@@ -17,16 +17,35 @@
 #
 
 r"""
-It's recommended to review the following scenario(s) first (and any
-recommended scenario(s) that they may have):
+Review these prerequisite examples first:
 
-#. ``examples/scenarioHingedRigidBody.py``
-#. ``examples/mujoco/scenarioReactionWheel.py``
+#. :ref:`scenarioHingedRigidBody` for the classic hinged-panel model.
+#. :ref:`scenarioReactionWheel` for MuJoCo bodies, joints, and actuators.
 
 This script demonstrates how to run the classic Basilisk
-``scenarioHingedRigidBody.py`` example using MuJoCo dynamics via
+:ref:`scenarioHingedRigidBody` example using MuJoCo dynamics via
 :ref:`MJScene<MJScene>` instead of the traditional hub-centric Basilisk
 :ref:`spacecraft` dynamics.
+
+Running the Example
+-------------------
+
+Use a Basilisk installation with MuJoCo support and the example dependencies
+described in :ref:`bskInstall`. When building from source, enable
+``--mujoco True``. With that Python environment active, run from the repository
+root:
+
+.. code-block:: console
+
+   python examples/mujoco/scenarioHingedRigidBodyMuJoCo.py
+
+The script displays the result plots. When importing the scenario from
+``examples/mujoco``, call ``run(showPlots=False)`` to run without displaying
+windows; it still returns a dictionary of Matplotlib figures for inspection
+or saving.
+
+Model and Force Setup
+---------------------
 
 The multi-body system is created programmatically as a MuJoCo XML string.
 It consists of a free-floating spacecraft bus ("hub") with two solar panel
@@ -34,24 +53,36 @@ rigid bodies ("panel1", "panel2") attached via hinge joints ("hinge1",
 "hinge2"), giving the system 8 total degrees of freedom (3 translational,
 3 rotational, and 2 panel hinge DOFs).
 
-Two small custom system models are added directly to the MuJoCo dynamics task:
+Two existing library modules and a scenario-specific burn command are added
+to the MuJoCo dynamics task:
 
-#. ``MJJointPIDController`` computes a torsional spring-damper restoring
-   torque for a hinge joint from its angle and angular rate, and writes
+#. :ref:`MJJointPIDController <JointPIDController>` computes a torsional
+   spring-damper restoring torque for a hinge joint from its angle and angular
+   rate, and writes
    the result as a ``SingleActuatorMsg`` command. One instance is
    attached to each panel hinge to emulate panel stiffness and damping.
-#. ``MJCmdForceInertialToForceAtSite`` converts a fixed inertial-frame thrust
-   force into a body-frame force at the hub's thruster site, applying it
-   only during a specified burn time window.
+#. ``BurnWindowForceCommand``, defined in this script, publishes a fixed force
+   in inertial frame N during the inclusive interval ``[burnStart, burnEnd]``
+   and zero force outside it.
+#. :ref:`MJCmdForceInertialToForceAtSite <cmdForceInertialToForceAtSite>` converts
+   that command from inertial frame N into the thruster site frame S using
+   the site's current attitude. The site is fixed to the hub and aligned
+   with body frame B in this example. The converter handles the rotation;
+   the burn-command module determines when thrust is requested.
+
+The force message chain is ``BurnWindowForceCommand`` ->
+``MJCmdForceInertialToForceAtSite`` -> the MuJoCo force actuator at
+``thrustSite``. This keeps the requested force direction fixed in inertial
+space even as the spacecraft rotates.
 
 Earth gravity is configured using :ref:`NBodyGravity<NBodyGravity>` with a
 :ref:`pointMassGravityModel<pointMassGravityModel>` as the central body.
 Gravity targets are registered manually for the hub and both panel bodies.
 
-The spacecraft is placed on a near-circular LEO orbit. The simulation runs
-for a short coast phase followed by a finite-duration translational burn,
-during which the panels respond dynamically to the resulting body motion
-through their spring-damper hinges.
+The spacecraft is placed on a near-circular low Earth orbit (LEO). The
+simulation runs for a coast phase lasting 1% of an orbit followed by a
+935-second translational burn, during which the panels respond dynamically
+to the resulting body motion through their spring-damper hinges.
 
 Inertial position, orbital radius, and the two panel hinge angular
 displacements are plotted at the end.
@@ -86,7 +117,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # PLOTTING FUNCTIONS
 # -------------------------------------------------------------------------
 def plotInertialPos(timeAxis: np.ndarray, posData: np.ndarray) -> plt.Figure:
-    """Plots inertial position vector componenets"""
+    """Plot the inertial position vector components."""
     fig = plt.figure(num = 1, clear = True)
     ax = fig.gca()
     ax.ticklabel_format(useOffset = False, style = 'plain')
@@ -128,12 +159,12 @@ def plotAngDisp(timeAxis: np.ndarray, panel1thetaLog: np.ndarray, panel2thetaLog
     ax1.plot(timeAxis * macros.NANO2MIN, panel1thetaLog)
     ax1.set_xlabel("Time [min]")
     ax1.set_ylabel(r'$\theta$ [rad]')
-    ax1.set_title('Panel 1 Angular Displacement [r]')
+    ax1.set_title('Panel 1 Angular Displacement')
 
     ax2.plot(timeAxis * macros.NANO2MIN, panel2thetaLog)
     ax2.set_xlabel("Time [min]")
     ax2.set_ylabel(r'$\theta$ [rad]')
-    ax2.set_title('Panel 2 Angular Displacement [r]')
+    ax2.set_title('Panel 2 Angular Displacement')
 
     fig.tight_layout()
 
@@ -152,6 +183,7 @@ def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float]
     """
     ixx, iyy, izz = busIDiag
 
+    # XML lengths are [m], masses [kg], inertia components [kg m^2], and angles [rad].
     return f"""
     <mujoco model = "busWith2Panels">
         <compiler angle = "radian" meshdir = ""/>
@@ -190,14 +222,23 @@ def makeMjXmlString(hubMass: float = 800.0, busIDiag: Tuple[float, float, float]
 
 
 def run(showPlots: bool = False):
-    """Build and run the MJScene hinged rigid body simulation."""
+    """Run a short orbital coast followed by a 935-second burn.
+
+    :param showPlots: Display the Matplotlib figures and wait for the plot
+        windows to close when True. Defaults to False; figures are still
+        generated and returned in either case.
+    :returns: Dictionary mapping scenario-prefixed names to three Matplotlib
+        figures: inertial position, orbital radius, and panel hinge angles.
+        No files are saved by this function.
+    :rtype: dict
+    """
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
-    timeStep = macros.sec2nano(0.1)
+    timeStep = macros.sec2nano(0.1)  # [ns]
 
     sim = SimulationBaseClass.SimBaseClass()
     dynProcess = sim.CreateNewProcess(simProcessName)
@@ -213,24 +254,24 @@ def run(showPlots: bool = False):
     thrustActuator = scene.addForceActuator("thrustForce", "thrustSite")
 
     # -------------------------------------------------------------------------
-    # 2) Retrieve spacecraft componenets
+    # 2) Retrieve spacecraft components
     # -------------------------------------------------------------------------
     # Pull handles of hub/panel bodies from XML
     busBody = scene.getBody("hub")
     panelBodies = [scene.getBody(name) for name in ("panel1", "panel2")]
     numPanels = len(panelBodies)
 
-    # Pull scalar joints connnecting panels
+    # Pull scalar joints connecting panels
     hinge1 = panelBodies[0].getScalarJoint("hinge1")
     hinge2 = panelBodies[1].getScalarJoint("hinge2")
 
     # -------------------------------------------------------------------------
     # 3) Adding damping/stiffness to panel hinges
     # -------------------------------------------------------------------------
-    # Damping/stiffness values initizalized
+    # Initialize damping and stiffness values.
     k = 1000.0 # Nm/rad
     c = 0.0 # Nms/rad
-    thetaRef = 0.0
+    thetaRef = 0.0  # [rad]
 
     # Keep all springDamper models in list so they remain in scope for whole sim
     springDampers = []
@@ -251,7 +292,7 @@ def run(showPlots: bool = False):
         refPosMsg = messaging.ScalarJointStateMsg().write(refPosMsgPayload)
 
         refVelMsgPayload = messaging.ScalarJointStateMsgPayload()
-        refVelMsgPayload.state = 0.0
+        refVelMsgPayload.state = 0.0  # [rad/s]
         refVelMsg = messaging.ScalarJointStateMsg().write(refVelMsgPayload)
 
         # Connecting reference/current states to desired/measured positions and velocities
@@ -273,15 +314,15 @@ def run(showPlots: bool = False):
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000. * 1000  # meters
     oe.a = rLEO
-    oe.e = 0.0001
-    oe.i = 0.0 * macros.D2R
-    oe.Omega = 48.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 85.3 * macros.D2R
+    oe.e = 0.0001  # [-]
+    oe.i = 0.0 * macros.D2R  # [rad]
+    oe.Omega = 48.2 * macros.D2R  # [rad]
+    oe.omega = 347.8 * macros.D2R  # [rad]
+    oe.f = 85.3 * macros.D2R  # [rad]
     muEarth = 0.3986004415e15  # [m^3/s^2]
     rN, vN = orbitalMotion.elem2rv(muEarth, oe)
 
-    # Adding N-Body gravity model into MJscene
+    # Adding N-Body gravity model into MJScene
     gravity = NBodyGravity.NBodyGravity()
     gravity.ModelTag = "gravity"
     scene.AddModelToDynamicsTask(gravity)
@@ -302,15 +343,15 @@ def run(showPlots: bool = False):
     # Setting simulation time
     n = np.sqrt(muEarth / oe.a / oe.a / oe.a) # mean motion [rad/s]
     P = 2. * np.pi / n # orbital period [s]
-    simulationTimeFactor = 0.01
+    simulationTimeFactor = 0.01  # [-] Fraction of one orbit spent coasting.
     simulationTime = macros.sec2nano(simulationTimeFactor * P)
 
-    T2 = macros.sec2nano(935.) # time it takes to achieve correct deltaV (see original file)
+    T2 = macros.sec2nano(935.)  # [ns] Burn duration from scenarioHingedRigidBody.
     burnStart = simulationTime
     burnEnd = simulationTime + T2
 
     # Scenario-owned burn schedule: publishes the desired inertial force inside burn window
-    burnCommand = BurnWindowForceCommand([-2050.0, -1430.0, -0.00076], burnStart, burnEnd)
+    burnCommand = BurnWindowForceCommand([-2050.0, -1430.0, -0.00076], burnStart, burnEnd)  # force [N]
     burnCommand.ModelTag = "burnCommand"
     scene.AddModelToDynamicsTask(burnCommand)
 
@@ -382,8 +423,16 @@ def run(showPlots: bool = False):
 
 
 class BurnWindowForceCommand(sysModel.SysModel):
-    """ Publishes fixed inertial-frame force request during [burnStart, burnEnd]
-        and zero outside that window."""
+    """Publish an inertial force during a burn window and zero outside it.
+
+    :param force_N: Three-component force expressed in inertial frame N [N].
+    :param burnStartNanos: Inclusive burn start time measured from simulation
+        start [ns].
+    :param burnEndNanos: Inclusive burn end time measured from simulation
+        start [ns].
+    :ivar cmdForceOutMsg: Commanded inertial force consumed by
+        ``MJCmdForceInertialToForceAtSite`` before reaching the actuator.
+    """
 
     def __init__(self, force_N, burnStartNanos, burnEndNanos):
         super().__init__()
