@@ -330,8 +330,8 @@ def addThrustersXML(thrustLocs: list,
         order as ``thrustLocs``.
     :param thrFactory: Factory in which the thruster configuration objects are
         created and registered.
-    :param maxThrust: Maximum thrust specification per thruster [N].
-        Defaults to 5.0 N.
+    :param maxThrust: Maximum thrust per thruster used for the FSW configuration
+        and MuJoCo actuator control limit [N]. Defaults to 5.0 N.
     :param baseIndent: Base number of indentation tabs for the generated XML.
         Defaults to 2; site elements receive one additional tab.
     :returns: A tuple containing the site XML, force-actuator XML, and list of
@@ -355,7 +355,7 @@ def addThrustersXML(thrustLocs: list,
 
         # Site marks thruster location/orientation on hub, motor applies force along site z-axis
         thrustTags.append(f'{pad}\t<site name = "thrusterSite{n}" pos = "{pos[0]} {pos[1]} {pos[2]}" zaxis = "{dirVec[0]} {dirVec[1]} {dirVec[2]}"/>')
-        actTags.append(f'{pad}<motor name = "thruster{n}" site = "thrusterSite{n}" gear = "0 0 1 0 0 0" ctrlrange = "0 5"/>')
+        actTags.append(f'{pad}<motor name = "thruster{n}" site = "thrusterSite{n}" gear = "0 0 1 0 0 0" ctrlrange = "0 {thr.MaxThrust}"/>')
 
     return "\n".join(thrustTags), "\n".join(actTags), THRs
 
