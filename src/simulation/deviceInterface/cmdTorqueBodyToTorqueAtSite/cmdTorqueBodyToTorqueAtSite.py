@@ -59,7 +59,11 @@ class CmdTorqueBodyToTorqueAtSite(sysModel.SysModel):
 
     def Reset(self, CurrentSimNanos):
         self.validateInputMessages()
-        self.torqueOutMsg.write(messaging.TorqueAtSiteMsgPayload())
+        self.torqueOutMsg.write(
+            messaging.TorqueAtSiteMsgPayload(),
+            time=CurrentSimNanos,
+            moduleID=self.moduleID,
+        )
 
     def UpdateState(self, CurrentSimNanos):
         torque_B = np.array(self.cmdTorqueInMsg().torqueRequestBody)
