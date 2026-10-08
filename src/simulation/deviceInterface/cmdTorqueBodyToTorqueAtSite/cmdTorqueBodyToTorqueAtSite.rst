@@ -27,7 +27,8 @@ The output is :math:`{}^{S}\boldsymbol{L} = [SB]\,{}^{B}\boldsymbol{L}`, where
 changes to the caller's array do not affect the module.
 The torque is treated as a pure couple, so the site position
 does not affect the output. ``Reset()`` reports an error if ``cmdTorqueInMsg``
-is not linked.
+is not linked. Otherwise, it publishes zero torque with the reset timestamp
+and the module's writer ID.
 
 
 User Guide

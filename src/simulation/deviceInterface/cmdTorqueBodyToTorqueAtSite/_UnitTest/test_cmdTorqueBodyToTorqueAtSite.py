@@ -93,6 +93,23 @@ def test_dcm_setter_copies_input_matrix():
     np.testing.assert_allclose(outReader().torque_S, torque_B, rtol = 0, atol = 1e-12)
 
 
+def test_reset_writes_zero_torque_and_header():
+    """Reset must publish zero torque with the reset time and module ID.
+
+    Run the module with a nonzero command, then reset at a later time and
+    inspect the output before another update can overwrite its header.
+    """
+    torque_B = [0.4, -1.2, 2.5]  # [N*m]
+    module, outReader = runModule(torque_B)
+    resetTime = macros.sec2nano(2.0)  # [ns]
+
+    module.Reset(resetTime)
+
+    np.testing.assert_array_equal(outReader().torque_S, np.zeros(3))
+    assert outReader.timeWritten() == resetTime
+    assert outReader.moduleID() == module.moduleID
+
+
 def test_reset_rejects_missing_input_message():
     """
     **Validation Test Description**
