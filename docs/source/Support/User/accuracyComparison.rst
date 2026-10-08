@@ -322,10 +322,26 @@ All commands are run from ``benchmarks/accuracyComparison`` of the Basilisk repo
 
 **1. Prerequisites**
 
-- **Orekit** (reference generator): a Java runtime, the Python package ``orekit_jpype`` (``pip install orekit-jpype``), and the
-  ``orekit-data.zip`` file, which can be downloaded with ``orekit_jpype.pyhelpers.download_orekit_data_curdir()`` or from the
-  `Orekit data repository <https://gitlab.orekit.org/orekit/orekit-data>`__. The results use Orekit 13.1.
-- **GMAT** (reference generator): an installation of GMAT R2026a. The generator runs ``bin/GmatConsole`` from the installation folder.
+- **Orekit**: a Java runtime (a JDK 17 was used), the Python package ``orekit_jpype`` 13 or newer
+  (``pip install orekit-jpype``), and the ``orekit-data.zip`` file. ``orekit_jpype`` finds Java through the
+  ``JAVA_HOME`` environment variable, which must point to the JDK folder (on Windows, for example
+  ``C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot``). The data file is downloaded into the current folder
+  with the command below, where the Java virtual machine must be started before the helper is called, or it can be taken
+  from the `Orekit data repository <https://gitlab.orekit.org/orekit/orekit-data>`__:
+
+  .. code-block:: bash
+
+      python -c "import orekit_jpype as o; o.initVM(); from orekit_jpype.pyhelpers import download_orekit_data_curdir as d; d()"
+
+  Without ``initVM()``, the helper fails with ``Attempt to create Java package 'java' without jvm``, and without
+  ``JAVA_HOME`` ``initVM()`` fails with ``No JVM shared library file found``.
+- **GMAT**: an installation of GMAT R2026a that includes the console application
+  (``bin/GmatConsole``, or ``bin\GmatConsole.exe`` on Windows), which the Windows R2020a and R2022a zips do not. The
+  generator runs it from the installation folder. On Windows, download ``gmat-win-R2026a.zip`` from
+  `SourceForge <https://sourceforge.net/projects/gmat/files/GMAT/GMAT-R2026a/gmat-win-R2026a.zip/download>`__
+  and unzip it. The zip has no top-level folder, so extract it into a new folder (for example ``C:\tools\GMAT R2026a``).
+  The folder to pass to the generator is the one that contains ``bin`` directly. Messages that the Python, MATLAB or
+  optimizer plug-in libraries did not open are printed by the console and do not affect the generators.
 - **Earth orientation kernels** (Basilisk, rotating-Earth cases): the NAIF high-precision Earth PCK
   (``earth_000101_260711_260415.bpc`` was used; any ``earth_*.bpc`` that covers all case epochs and their durations, which
   are 2026-01-01 to 2026-06-19, works when the name is updated in ``compare_with_basilisk.py``) from the
@@ -339,7 +355,7 @@ All commands are run from ``benchmarks/accuracyComparison`` of the Basilisk repo
 .. code-block:: bash
 
     python generate_orekit_reference.py /path/to/orekit-data.zip
-    python generate_gmat_reference.py /path/to/GMAT/R2026a
+    python generate_gmat_reference.py /path/to/GMAT/R2026a  # the folder that contains bin/
 
 Both scripts accept case names after the path to generate a subset. They also write ``orekit_manifest.json`` and
 ``gmat_manifest.json``, which record for every case:
