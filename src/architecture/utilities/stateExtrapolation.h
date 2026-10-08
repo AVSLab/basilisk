@@ -184,6 +184,8 @@ static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStates
  * @param targetNanos [ns] epoch to evaluate the planet at
  * @param timeWrittenNanos [ns] time the planet state message was written
  * @return copy of the payload with the position and the orientation advanced to the target epoch
+ * @note An all-zero orientation, as left by a message that only sets position and velocity, is treated as the identity
+ * like in GravBodyData, so the returned orientation is always a valid rotation matrix.
  * @note As in GravBodyData::computeGravityInertial(), the planet is advanced by the time between the message write and
  * the target epoch, with no check on the age of the message. A message written once with a non-zero velocity is
  * projected forward over the whole simulation.
@@ -202,7 +204,10 @@ static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const Spi
     }
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     // J20002Pfix is [PN], it maps inertial to planet-fixed components. Its transpose [NP] is advanced.
-    const Eigen::Matrix3d dcm_NPfix = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
+    Eigen::Matrix3d dcm_NPfix = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
+    if (dcm_NPfix.isZero()) { // position-only planet message that leaves the optional orientation uninitialized
+        dcm_NPfix = Eigen::Matrix3d::Identity();
+    }
     const Eigen::Matrix3d dcm_NPfix_dot = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
     const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
     const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
@@ -388,6 +393,24 @@ class ScStateExtrapolation
         }
         const uint64_t midpointNanos = previousUpdateNanos + (currentSimNanos - previousUpdateNanos) / 2; // [ns]
         return extrapolatePlanetStateToEpoch(planetState, midpointNanos, timeWrittenNanos);
+    }
+
+    /*! @brief Return the epoch the spacecraft and planet states returned by apply() and applyPlanet() are evaluated at.
+     *
+     * Time dependent models (for example the local solar time of an atmosphere model) must use the same epoch as the
+     * geometry. It is the middle of the module update interval if the extrapolation applies, the previous module update
+     * if all spacecraft messages were written then, and the current time otherwise.
+     * @param currentSimNanos [ns] current simulation time
+     * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
+     * @return [ns] evaluation epoch
+     * @note prepare() must be called first in every update.
+     */
+    uint64_t evaluationEpochNanos(uint64_t currentSimNanos, uint64_t previousUpdateNanos) const
+    {
+        if (this->lagConsistent) {
+            return previousUpdateNanos + (currentSimNanos - previousUpdateNanos) / 2;
+        }
+        return this->allStepLag ? previousUpdateNanos : currentSimNanos;
     }
 
   private:

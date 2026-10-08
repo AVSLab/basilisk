@@ -620,3 +620,37 @@ TEST(DcmExtrapolation, advancedRateIsTheRotatedRate)
     const PlanetSpin zeroSpin = planetSpin(dcm_NPfix, Eigen::Matrix3d::Zero());
     EXPECT_TRUE(advanceDcmDot(zeroSpin, advanced, Eigen::Matrix3d::Zero()).isZero());
 }
+
+TEST(PlanetStateExtrapolation, positionOnlyPlanetMessageKeepsAValidOrientation)
+{
+    SpicePlanetStateMsgPayload planet{}; // orientation fields left at their zero value
+    planet.PositionVector[0] = 1.0e9;    // [m]
+    planet.VelocityVector[0] = 1.0e3;    // [m/s]
+
+    const SpicePlanetStateMsgPayload out = extrapolatePlanetStateToEpoch(planet, 10 * SECOND_NANOS, 0);
+
+    EXPECT_DOUBLE_EQ(out.PositionVector[0], 1.0e9 + 1.0e3 * 10.0);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            EXPECT_DOUBLE_EQ(out.J20002Pfix[i][j], i == j ? 1.0 : 0.0); // [-]
+        }
+    }
+}
+
+TEST(ScStateExtrapolation, evaluationEpochFollowsTheGeometry)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+
+    extrapolation.prepare(step, 0, { 0 }, logger); // period not yet known: geometry at the previous update
+    EXPECT_EQ(extrapolation.evaluationEpochNanos(step, 0), 0u);
+
+    extrapolation.prepare(2 * step, step, { step }, logger); // period known: geometry at the midpoint
+    EXPECT_EQ(extrapolation.evaluationEpochNanos(2 * step, step), step + step / 2);
+
+    ScStateExtrapolation disabled;
+    disabled.prepare(2 * step, step, { step }, logger);
+    EXPECT_EQ(disabled.evaluationEpochNanos(2 * step, step), 2 * step);
+}

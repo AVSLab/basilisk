@@ -28,9 +28,9 @@ Usage::
     python generate_orekit_reference.py /path/to/orekit-data.zip [case ...] [--output-dir DIR]
                                         [--oblate-shadow] [--max-step SECONDS]
 
-It requires the ``orekit_jpype`` package and a Java runtime. Every case is propagated and written in the GCRF frame,
-which has the ICRF axes of the DE430 SPICE kernels that Basilisk uses. Cases without Earth rotation
-evaluate the gravity field in the GCRF frame, so the Earth pole is along inertial +Z.
+It requires the ``orekit_jpype`` package, version 13 or newer, and a Java runtime. Every case is propagated and
+written in the GCRF frame, which has the ICRF axes of the DE430 SPICE kernels that Basilisk uses. Cases without
+Earth rotation evaluate the gravity field in the GCRF frame, so the Earth pole is along inertial +Z.
 Cases with Earth rotation evaluate it in ITRF (IERS 2010 conventions). The orekit-data folder
 can be fetched with ``orekit_jpype.pyhelpers.download_orekit_data_curdir()``.
 
@@ -59,12 +59,36 @@ import tempfile
 from importlib import metadata
 from pathlib import Path
 
-import orekit_jpype
-
 from comparisonCommon import (DEFAULT_VARIANT, HERE, caseDuration, caseEpoch, fileSha256, gravityCoefficientsRecord,
                               loadSpec, mrp2dcm, probePoints, requireIcrf, writeManifestEntry, writeOrekitGfc, writeProbe)
 
 SPEED_OF_LIGHT = 299792458.0  # [m/s]
+MIN_OREKIT_MAJOR = 13  # [-] oldest Orekit major release with the API used here (e.g. SpacecraftState.withMass)
+
+
+def requireOrekit(version):
+    """Raise if the installed ``orekit_jpype`` is older than the Orekit release that this generator supports.
+
+    The ``orekit_jpype`` version starts with the version of Orekit that it packages.
+
+    Args:
+        version (str): version of the installed ``orekit_jpype`` package, for example ``"13.1.8.0"``.
+    """
+    if int(version.split(".")[0]) < MIN_OREKIT_MAJOR:
+        raise RuntimeError(f"Orekit {MIN_OREKIT_MAJOR} or newer is required, but orekit_jpype {version} is installed.")
+
+
+def jarPath(location, fileClass):
+    """Return the filesystem path of a jar from the URL of its code source.
+
+    ``URL.getPath()`` keeps the URL escaping and does not give a native Windows path, so the URL is
+    converted through ``java.io.File``, whose path is then explicitly converted to a Python string.
+
+    Args:
+        location (java.net.URL): code source location of the jar.
+        fileClass (type): ``java.io.File`` class.
+    """
+    return Path(str(fileClass(location.toURI()).getPath()))
 
 
 def main():
@@ -80,6 +104,8 @@ def main():
                         help="maximum integrator step in seconds, overriding the case value (default: 300 s)")
     args = parser.parse_args()
 
+    requireOrekit(metadata.version("orekit_jpype"))
+    import orekit_jpype  # imported here so that the helper functions of this module need no Java
     orekit_jpype.initVM()
     from orekit_jpype.pyhelpers import setup_orekit_curdir
     setup_orekit_curdir(str(args.orekitData))
@@ -130,7 +156,7 @@ def main():
     expAtm = spec["exponential_atmosphere"]
     def jarRecord(javaClass):
         """Return the file name and SHA-256 hash of the jar that provides a Java class."""
-        jar = Path(JClass(javaClass).class_.getProtectionDomain().getCodeSource().getLocation().getPath())
+        jar = jarPath(JClass(javaClass).class_.getProtectionDomain().getCodeSource().getLocation(), File)
         return {"id": jar.name, "sha256": fileSha256(jar)}
 
     orekitJar = jarRecord("org.orekit.frames.FramesFactory")

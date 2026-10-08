@@ -77,6 +77,15 @@ ICRF_POLE_RA_DEG = math.degrees(math.atan2(ICRF_POLE_MJ2000[1], ICRF_POLE_MJ2000
 ICRF_POLE_DEC_DEG = math.degrees(math.asin(ICRF_POLE_MJ2000[2]))  # [deg]
 
 
+def gmatPath(path):
+    """Return a file path with forward slashes, which GMAT accepts on every platform inside its quoted script strings.
+
+    Args:
+        path (Path): file path.
+    """
+    return str(path).replace("\\", "/")
+
+
 def gmatScript(spec, case, cofPath, reportPath, atmospherePath=None):
     """Return the GMAT script text for one case.
 
@@ -149,7 +158,7 @@ def gmatScript(spec, case, cofPath, reportPath, atmospherePath=None):
         lines += [
             f"fm.PrimaryBodies = {{{body}}};",
             f"fm.PointMasses = {{{', '.join(thirdBodies)}}};",
-            f"fm.GravityField.{body}.PotentialFile = '{cofPath}';",
+            f"fm.GravityField.{body}.PotentialFile = '{gmatPath(cofPath)}';",
             f"fm.GravityField.{body}.Degree = {degree};",
             f"fm.GravityField.{body}.Order = {case['gravity']['order']};",
             f"fm.GravityField.{body}.TideModel = 'None';",
@@ -169,7 +178,7 @@ def gmatScript(spec, case, cofPath, reportPath, atmospherePath=None):
     if case["drag"]:
         lines += [
             "fm.Drag.AtmosphereModel = Exponential;",
-            f"fm.Drag.InputFile = '{atmospherePath}';",
+            f"fm.Drag.InputFile = '{gmatPath(atmospherePath)}';",
         ]
     else:
         lines += ["fm.Drag = None;"]
@@ -185,7 +194,7 @@ def gmatScript(spec, case, cofPath, reportPath, atmospherePath=None):
         "prop.MaxStep = 300;",
         "prop.MaxStepAttempts = 50;",
         "Create ReportFile rf;",
-        f"rf.Filename = '{reportPath}';",
+        f"rf.Filename = '{gmatPath(reportPath)}';",
         "rf.Precision = 16;",
         "rf.WriteHeaders = false;",
         "rf.LeftJustify = On;",
@@ -235,13 +244,13 @@ def gmatProbeScript(spec, cofPath, atmospherePath, reportPath):
         "fm.CentralBody = Earth;",
         "fm.PrimaryBodies = {Earth};",
         "fm.PointMasses = {};",
-        f"fm.GravityField.Earth.PotentialFile = '{cofPath}';",
+        f"fm.GravityField.Earth.PotentialFile = '{gmatPath(cofPath)}';",
         "fm.GravityField.Earth.Degree = 2;",
         "fm.GravityField.Earth.Order = 0;",
         "fm.GravityField.Earth.TideModel = 'None';",
         "fm.SRP = Off;",
         "fm.Drag.AtmosphereModel = Exponential;",
-        f"fm.Drag.InputFile = '{atmospherePath}';",
+        f"fm.Drag.InputFile = '{gmatPath(atmospherePath)}';",
         "Create Propagator prop;",
         "prop.FM = fm;",
         "prop.Type = PrinceDormand78;",
@@ -250,7 +259,7 @@ def gmatProbeScript(spec, cofPath, atmospherePath, reportPath):
         "prop.MinStep = 1e-6;",
         "prop.MaxStep = 300;",
         "Create ReportFile rf;",
-        f"rf.Filename = '{reportPath}';",
+        f"rf.Filename = '{gmatPath(reportPath)}';",
         "rf.Precision = 16;",
         "rf.WriteHeaders = false;",
         "rf.LeftJustify = On;",
@@ -280,10 +289,47 @@ GMAT_DATA_KEYS = ("PLANETARY_SPK_FILE", "DE405_FILE", "DE421_FILE", "DE424_FILE"
                   "LUNA_PCK_CURRENT_FILE", "LUNA_FRAME_KERNEL_FILE", "LEAP_SECS_FILE", "LSK_FILE")
 
 
+def gmatConsole(gmatRoot):
+    """Return the ``GmatConsole`` executable of a GMAT installation.
+
+    Args:
+        gmatRoot (Path): GMAT installation folder.
+    """
+    binDir = gmatRoot / "bin"
+    windows = binDir / "GmatConsole.exe"
+    console = windows if windows.is_file() else binDir / "GmatConsole"
+    if not console.is_file():
+        raise RuntimeError(f"No GmatConsole executable in {binDir}. The console application is not part of every "
+                           "GMAT distribution (for example, it is missing in the Windows R2020a and R2022a zips).")
+    return console
+
+
+def gmatRelease(gmatRoot):
+    """Return the release (e.g. ``R2026a``) of a GMAT installation, or ``None`` if it cannot be found.
+
+    The release is read from the file names of the Linux libraries (``libGmatBase.so.<release>``) and of the macOS
+    application (``GMAT-R<release>``). The Windows distribution has no versioned file names, so the ``README.txt``
+    at the root of every distribution, which states ``Version <release>`` in its copyright notice, is used last.
+
+    Args:
+        gmatRoot (Path): GMAT installation folder.
+    """
+    binDir = gmatRoot / "bin"
+    names = [p.name for p in sorted(binDir.glob("libGmatBase.so.*")) + sorted(binDir.glob("GMAT-R*"))]
+    release = re.search(r"R\d{4}[a-z]", " ".join(names))
+    if release is None:
+        readme = gmatRoot / "README.txt"
+        if readme.is_file():
+            release = re.search(r"Version\s+(R\d{4}[a-z])", readme.read_text(encoding="utf-8", errors="replace"))
+            return release.group(1) if release else None
+        return None
+    return release.group(0)
+
+
 def gmatVersion(gmatRoot, console):
     """Return the release and the build date of a GMAT installation, independent of the name of its folder.
 
-    The release is the suffix of ``libGmatBase.so.<release>``, the build date is printed in the banner of the console.
+    The release is taken from :func:`gmatRelease`, the build date is printed in the banner of the console.
 
     Args:
         gmatRoot (Path): GMAT installation folder.
@@ -292,11 +338,10 @@ def gmatVersion(gmatRoot, console):
     banner = subprocess.run([str(console), "--help"], cwd=console.parent, capture_output=True, text=True, check=False,
                             stdin=subprocess.DEVNULL, timeout=120).stdout
     build = re.search(r"Build Date:\s*(.+)", banner)
-    libraries = sorted((gmatRoot / "bin").glob("libGmatBase.so.*")) + sorted((gmatRoot / "bin").glob("GMAT-R*"))
-    release = re.search(r"R\d{4}[a-z]", " ".join(p.name for p in libraries))
+    release = gmatRelease(gmatRoot)
     if build is None or release is None:
         raise RuntimeError(f"Cannot determine the GMAT release and build date of {gmatRoot}.")
-    return f"GMAT {release.group(0)}, build {build.group(1).strip()}"
+    return f"GMAT {release}, build {build.group(1).strip()}"
 
 
 def gmatExternalData(gmatRoot, spec):
@@ -343,7 +388,7 @@ def main():
     requireIcrf(spec, "gmat")
     outDir = args.output_dir
     outDir.mkdir(parents=True, exist_ok=True)
-    console = args.gmatRoot / "bin" / "GmatConsole"
+    console = gmatConsole(args.gmatRoot)
 
     toolVersion = gmatVersion(args.gmatRoot, console)
     externalData = gmatExternalData(args.gmatRoot, spec)

@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdlib>
+#include <string>
 
 #include "architecture/utilities/utcTime.h"
 
@@ -64,6 +65,8 @@ TEST(UtcTime, isIndependentOfTheTimeZoneAcrossADaylightSavingTransition)
 {
     // Europe/Rome changes to summer time on 2026-03-29. The date is advanced like the environment modules do: the
     // epoch is normalized once, then the elapsed seconds are added to a copy that is normalized again.
+    const char* previousTz = getenv("TZ");
+    const std::string savedTz = previousTz ? previousTz : "";
     setenv("TZ", "Europe/Rome", 1);
     tzset();
 
@@ -78,5 +81,12 @@ TEST(UtcTime, isIndependentOfTheTimeZoneAcrossADaylightSavingTransition)
     EXPECT_EQ(later.tm_hour, 0);
     EXPECT_EQ(later.tm_min, 0);
     EXPECT_EQ(later.tm_yday, 31 + 28 + 30 - 1);
+
+    if (previousTz) {
+        setenv("TZ", savedTz.c_str(), 1);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
 }
 #endif

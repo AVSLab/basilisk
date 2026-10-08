@@ -361,7 +361,9 @@ void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
     }
     //! - update local neutral density information
     if (this->readMessages(CurrentSimNanos)) {
-        this->updateLocalAtmosphere(static_cast<double>(CurrentSimNanos) * NANO2SEC);
+        // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
+        const uint64_t epochNanos = this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+        this->updateLocalAtmosphere(static_cast<double>(epochNanos) * NANO2SEC);
     }
 
     //! - write out neutral density message
