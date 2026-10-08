@@ -102,9 +102,6 @@ public:
     BSKLogger bskLogger; /**< -- BSK Logging */
 
 private:
-    /** Recomputes the cached planet orientation and angular velocity if `localPlanet` changed. */
-    void updatePlanetSpinCache();
-
     Eigen::MatrixXd *r_PN_N;         /**< [m]      (state engine property) planet inertial position vector */
     Eigen::MatrixXd *v_PN_N;         /**< [m/s]    (state engine property) planet inertial velocity vector */
     Eigen::MatrixXd *muPlanet;       /**< [m/s]    (state engine property) planet inertial velocity vector */
@@ -112,13 +109,6 @@ private:
     Eigen::MatrixXd *J20002Pfix_dot; /**< [1/s]    (state engine property) planet attitude rate [PN_dot] */
 
     uint64_t timeWritten = 0; /**< [ns]     time the input planet state message was written */
-
-    bool planetSpinCached = false;                  /**< [-] true if the cached planet spin matches `localPlanet` */
-    double cachedKeyDcm[3][3] = {};                 /**< [-] `J20002Pfix` the cache was computed from */
-    double cachedKeyDcmDot[3][3] = {};              /**< [1/s] `J20002Pfix_dot` the cache was computed from */
-    Eigen::Matrix3d cachedDcm_NPfix;                /**< [-] [NP] planet orientation at the message epoch */
-    Eigen::Matrix3d cachedDcm_NPfix_dot;            /**< [1/s] [NP_dot] planet orientation rate at the message epoch */
-    PlanetSpin cachedSpin;                          /**< [rad/s] planet angular velocity at the message epoch */
 };
 
 /*! @brief gravity effector class */

@@ -109,18 +109,14 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
 
     bool planetRead = this->planetPosInMsg.isWritten();
     if (scRead && planetRead) {
-        std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
+        this->scStateExtrapolation.prepareFromMessages(
+          CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
         for (auto& msg : this->scStateInMsgs) {
-            timesWritten.push_back(msg.timeWritten());
+            this->scStates.push_back(
+              this->scStateExtrapolation.applyMessage(msg, CurrentSimNanos, this->previousUpdateNanos));
         }
-        this->scStateExtrapolation.prepare(CurrentSimNanos, this->previousUpdateNanos, timesWritten, this->bskLogger);
-        for (std::size_t c = 0; c < this->scStateInMsgs.size(); c++) {
-            auto& msg = this->scStateInMsgs[c];
-            this->scStates.push_back(this->scStateExtrapolation.apply(
-              msg(), CurrentSimNanos, msg.timeWritten(), this->previousUpdateNanos));
-        }
-        this->planetState = this->scStateExtrapolation.applyPlanet(
-            this->planetPosInMsg(), CurrentSimNanos, this->planetPosInMsg.timeWritten(), this->previousUpdateNanos);
+        this->planetState = this->scStateExtrapolation.applyPlanetMessage(
+          this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
     }
 
     // Update planetOmega_N from SPICE data only if SPICE mode is enabled and planetPosInMsg has ever been written to
@@ -224,7 +220,9 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
     this->envOutBuffer.clear();
 
     if (this->readMessages(CurrentSimNanos)) {
-        this->updateLocalWind(static_cast<double>(CurrentSimNanos) * NANO2SEC);
+        // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
+        const uint64_t epochNanos = this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+        this->updateLocalWind(static_cast<double>(epochNanos) * NANO2SEC);
     } else {
         // Zero outputs when message reads fail to avoid stale data
         for (size_t c = 0; c < this->envOutMsgs.size(); c++) {

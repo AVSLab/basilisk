@@ -54,9 +54,11 @@ the simulation.
 
 When the extrapolation is enabled the position and the orientation of the planet (or of the sun and the planets for
 the eclipse) are advanced, or moved back, with their message velocity and angular rate to the same middle of the
-interval as the spacecraft, so that the relative geometry is evaluated at a single epoch. Other time-dependent inputs,
-such as the epoch used for solar time or a space weather sample, are not shifted and are evaluated at the current
-time.
+interval as the spacecraft, so that the relative geometry is evaluated at a single epoch. Time-dependent models, such
+as the local solar time or the decimal year of the epoch, are evaluated at the same epoch as the geometry: the middle
+of the interval if the extrapolation applies, the epoch of the previous update while the spacecraft state is not yet
+extrapolated, and the current time otherwise. Inputs read from messages, such as a space weather sample, are not
+shifted.
 As in the gravity effector, the planet is advanced by the time since its message was written, whatever the age of the
 message, so a planet message written once with a non-zero velocity is projected forward over the whole simulation.
 
@@ -65,7 +67,8 @@ Planet Shape
 By default the planet is a sphere and the altitude is the distance to the planet center minus ``planetRadius``. If the
 planet polar radius is set with ``setPlanetPolarRadius()``, the altitude (and, for models that use it such as
 :ref:`msisAtmosphere`, the latitude) is computed above the oblate ellipsoid defined by ``planetRadius`` and the polar
-radius, and ``planetPosInMsg`` must be connected to provide the planet orientation. For the Earth use the equatorial
+radius, and ``planetPosInMsg`` must be connected to provide the planet orientation. A planet message that leaves
+``J20002Pfix`` at zero, as one that only sets the position and the velocity does, is treated as the identity. For the Earth use the equatorial
 radius ``REQ_EARTH * 1000`` and the polar radius ``RP_EARTH * 1000`` from ``astroConstants``::
 
     atmosphere.setPlanetPolarRadius(orbitalMotion.RP_EARTH * 1000.0)  # [m]

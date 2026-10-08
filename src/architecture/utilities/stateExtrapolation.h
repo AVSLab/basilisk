@@ -20,6 +20,7 @@
 #ifndef STATE_EXTRAPOLATION_H
 #define STATE_EXTRAPOLATION_H
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -344,6 +345,74 @@ class ScStateExtrapolation
         }
     }
 
+    /*! @brief Call prepare() with the write times read from the spacecraft state input messages.
+     * @tparam Messages range of read functors that provide timeWritten()
+     * @param currentSimNanos [ns] current simulation time
+     * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
+     * @param scStateInMsgs spacecraft state input messages, in the order of the apply() indexes
+     * @param logger logger of the calling module
+     */
+    template <typename Messages>
+    void prepareFromMessages(uint64_t currentSimNanos,
+                             uint64_t previousUpdateNanos,
+                             Messages& scStateInMsgs,
+                             BSKLogger& logger)
+    {
+        std::vector<uint64_t>& timesWritten = this->writeTimesBuffer(); // [ns]
+        for (auto& msg : scStateInMsgs) {
+            timesWritten.push_back(msg.timeWritten());
+        }
+        this->prepare(currentSimNanos, previousUpdateNanos, timesWritten, logger);
+    }
+
+    /*! @brief Call prepare() for a module with a single spacecraft state input message.
+     * @tparam Message read functor that provides timeWritten()
+     * @param currentSimNanos [ns] current simulation time
+     * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
+     * @param scStateInMsg spacecraft state input message
+     * @param logger logger of the calling module
+     */
+    template <typename Message>
+    void prepareFromMessage(uint64_t currentSimNanos,
+                            uint64_t previousUpdateNanos,
+                            Message& scStateInMsg,
+                            BSKLogger& logger)
+    {
+        std::vector<uint64_t>& timesWritten = this->writeTimesBuffer(); // [ns]
+        timesWritten.push_back(scStateInMsg.timeWritten());
+        this->prepare(currentSimNanos, previousUpdateNanos, timesWritten, logger);
+    }
+
+    /*! @brief Read a spacecraft state input message and apply() the extrapolation to it.
+     * @tparam Message read functor that returns an SCStatesMsgPayload and provides timeWritten()
+     * @param scStateInMsg spacecraft state input message
+     * @param currentSimNanos [ns] current simulation time
+     * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
+     * @return the payload, with the position advanced to the step midpoint if the extrapolation applies
+     */
+    template <typename Message>
+    SCStatesMsgPayload applyMessage(Message& scStateInMsg,
+                                    uint64_t currentSimNanos,
+                                    uint64_t previousUpdateNanos) const
+    {
+        return this->apply(scStateInMsg(), currentSimNanos, scStateInMsg.timeWritten(), previousUpdateNanos);
+    }
+
+    /*! @brief Read a planet state input message and applyPlanet() the extrapolation to it.
+     * @tparam Message read functor that returns a SpicePlanetStateMsgPayload and provides timeWritten()
+     * @param planetInMsg planet state input message
+     * @param currentSimNanos [ns] current simulation time
+     * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
+     * @return the planet payload moved to the epoch of the spacecraft states
+     */
+    template <typename Message>
+    SpicePlanetStateMsgPayload applyPlanetMessage(Message& planetInMsg,
+                                                  uint64_t currentSimNanos,
+                                                  uint64_t previousUpdateNanos) const
+    {
+        return this->applyPlanet(planetInMsg(), currentSimNanos, planetInMsg.timeWritten(), previousUpdateNanos);
+    }
+
     /*! @brief Return the spacecraft state, extrapolated if prepare() found all spacecraft consistent.
      * @param scState spacecraft state message payload as read from the message
      * @param currentSimNanos [ns] current simulation time
@@ -381,18 +450,16 @@ class ScStateExtrapolation
                                            uint64_t timeWrittenNanos,
                                            uint64_t previousUpdateNanos) const
     {
-        if (!this->lagConsistent) {
-            if (this->allStepLag) {
-                // The spacecraft states stay at the message epoch, which is the previous module update for every
-                // spacecraft, for example while the spacecraft period is not yet known. The planet is moved to that
-                // epoch, so the relative geometry is still evaluated at one epoch. The offset is signed: negative for a planet
-                // written at the current update, zero for one written at the previous update.
-                return extrapolatePlanetStateToEpoch(planetState, previousUpdateNanos, timeWrittenNanos);
+        SpicePlanetStateMsgPayload planet = this->movePlanetToEpoch(
+            planetState, currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+        // a position-only message leaves the optional orientation at zero: treat it as identity on every path
+        const double* dcmElements = &planet.J20002Pfix[0][0]; // [-]
+        if (std::all_of(dcmElements, dcmElements + 9, [](double e) { return e == 0.0; })) {
+            for (int i = 0; i < 3; i++) {
+                planet.J20002Pfix[i][i] = 1.0; // [-]
             }
-            return planetState;
         }
-        const uint64_t midpointNanos = previousUpdateNanos + (currentSimNanos - previousUpdateNanos) / 2; // [ns]
-        return extrapolatePlanetStateToEpoch(planetState, midpointNanos, timeWrittenNanos);
+        return planet;
     }
 
     /*! @brief Return the epoch the spacecraft and planet states returned by apply() and applyPlanet() are evaluated at.
@@ -424,6 +491,26 @@ class ScStateExtrapolation
     std::vector<bool> rewritten{};           //!< true if the state message was seen with more than one write time
     std::vector<uint64_t> timesBuffer{};        //!< [ns] reusable buffer for the write times passed to prepare()
     std::vector<bool> seen{};                //!< true if the state message was observed in a previous update
+
+    //! Move the planet to the epoch selected by prepare(), see applyPlanet().
+    SpicePlanetStateMsgPayload movePlanetToEpoch(const SpicePlanetStateMsgPayload& planetState,
+                                           uint64_t currentSimNanos,
+                                           uint64_t timeWrittenNanos,
+                                           uint64_t previousUpdateNanos) const
+    {
+        if (!this->lagConsistent) {
+            if (this->allStepLag) {
+                // The spacecraft states stay at the message epoch, which is the previous module update for every
+                // spacecraft, for example while the spacecraft period is not yet known. The planet is moved to that
+                // epoch, so the relative geometry is still evaluated at one epoch. The offset is signed: negative for a planet
+                // written at the current update, zero for one written at the previous update.
+                return extrapolatePlanetStateToEpoch(planetState, previousUpdateNanos, timeWrittenNanos);
+            }
+            return planetState;
+        }
+        const uint64_t midpointNanos = previousUpdateNanos + (currentSimNanos - previousUpdateNanos) / 2; // [ns]
+        return extrapolatePlanetStateToEpoch(planetState, midpointNanos, timeWrittenNanos);
+    }
 };
 
 #endif
