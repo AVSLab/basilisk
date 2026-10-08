@@ -192,17 +192,12 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
     if(this->scStateInMsgs.size() > 0)
     {
         scRead = true;
-        std::vector<uint64_t>& timesWritten = this->scStateExtrapolation.writeTimesBuffer(); // [ns]
-        for (auto& msg : this->scStateInMsgs) {
-            timesWritten.push_back(msg.timeWritten());
-        }
-        this->scStateExtrapolation.prepare(CurrentSimNanos, this->previousUpdateNanos, timesWritten, this->bskLogger);
+        this->scStateExtrapolation.prepareFromMessages(
+          CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
         for (long unsigned int c=0; c<this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
-            scMsg = this->scStateExtrapolation.apply(this->scStateInMsgs.at(c)(),
-                                                     CurrentSimNanos,
-                                                     this->scStateInMsgs.at(c).timeWritten(),
-                                                     this->previousUpdateNanos);
+            scMsg = this->scStateExtrapolation.applyMessage(
+              this->scStateInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -217,10 +212,8 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
     bool planetRead = true;
     if(this->planetPosInMsg.isLinked())
     {
-        this->planetState = this->scStateExtrapolation.applyPlanet(this->planetPosInMsg(),
-                                                                   CurrentSimNanos,
-                                                                   this->planetPosInMsg.timeWritten(),
-                                                                   this->previousUpdateNanos);
+        this->planetState = this->scStateExtrapolation.applyPlanetMessage(
+          this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
         planetRead = this->planetPosInMsg.isWritten();
     }
 
@@ -301,7 +294,9 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     }
     //! - update local neutral density information
     if (this->readMessages(CurrentSimNanos)) {
-        updateLocalMagField(static_cast<double>(CurrentSimNanos) * NANO2SEC);
+        // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
+        const uint64_t epochNanos = this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+        updateLocalMagField(static_cast<double>(epochNanos) * NANO2SEC);
     }
 
     //! - write out neutral density message

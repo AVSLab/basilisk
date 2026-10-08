@@ -113,16 +113,6 @@ TEST(StateExtrapolation, leavesEverythingExceptThePositionsUnchanged)
     EXPECT_DOUBLE_EQ(out.r_BN_N[0], in.r_BN_N[0]); // zero x velocity
 }
 
-TEST(StateExtrapolation, extrapolatesAMessageWrittenExactlyAtThePreviousUpdate)
-{
-    // the usual case: the spacecraft wrote its state during the previous step, at the time of the previous module
-    // update
-    const SCStatesMsgPayload out =
-      extrapolateScStateToStepMidpoint(makeState(), 20000000000ULL, 10000000000ULL, 10000000000ULL);
-
-    EXPECT_DOUBLE_EQ(out.r_BN_N[1], 7.5e3 * 5.0);
-}
-
 TEST(StateExtrapolation, isNoOpForAMessageOneNanosecondBeforeThePreviousUpdate)
 {
     const SCStatesMsgPayload in = makeState();
@@ -352,30 +342,6 @@ TEST(ScStateExtrapolation, disabledExtrapolationNeverWarnsOrModifiesTheState)
     for (bool e : extrapolated) {
         EXPECT_FALSE(e);
     }
-}
-
-TEST(PlanetStateExtrapolation, translatingPlanetFollowsTheSpacecraftToTheStepMidpoint)
-{
-    // spacecraft and planet move together at 30 km/s, so their separation is constant
-    const uint64_t step = 10 * SECOND_NANOS; // [ns]
-    SCStatesMsgPayload sc = makeState();     // written at 10 s
-    sc.v_BN_N[0] = 3.0e4;                    // [m/s]
-    SpicePlanetStateMsgPayload planet{};     // written at 20 s, 10 s after the spacecraft state
-    planet.PositionVector[0] = -1.0e7 + 3.0e4 * 10.0; // [m]
-    planet.VelocityVector[0] = 3.0e4;                 // [m/s]
-    for (int i = 0; i < 3; i++) {
-        planet.J20002Pfix[i][i] = 1.0; // [-]
-    }
-
-    ScStateExtrapolation extrapolation;
-    extrapolation.setEnabled(true);
-    BSKLogger logger;
-    extrapolation.prepare(step, 0, { 0 }, logger); // first write time, the period is known at the next update
-    const SCStatesMsgPayload scOut = applySingle(extrapolation, sc, 2 * step, step, step, logger);
-    const SpicePlanetStateMsgPayload planetOut = extrapolation.applyPlanet(planet, 2 * step, 2 * step, step);
-
-    const double separation = scOut.r_BN_N[0] - planetOut.PositionVector[0]; // [m]
-    EXPECT_NEAR(separation, 7.0e6 + 1.0e7, 1e-6);
 }
 
 TEST(PlanetStateExtrapolation, translatingPlanetKeepsTheSeparationAtEveryUpdateIncludingTheStartup)
@@ -637,6 +603,37 @@ TEST(PlanetStateExtrapolation, positionOnlyPlanetMessageKeepsAValidOrientation)
     }
 }
 
+TEST(ScStateExtrapolation, applyPlanetTreatsPositionOnlyOrientationAsIdentityOnEveryPath)
+{
+    SpicePlanetStateMsgPayload planet{}; // orientation fields left at their zero value
+    planet.PositionVector[0] = 1.0e9;    // [m]
+    planet.VelocityVector[0] = 1.0e3;    // [m/s]
+    BSKLogger logger;
+
+    // disabled: the planet is returned as written, with a valid orientation
+    ScStateExtrapolation disabled;
+    disabled.prepare(20 * SECOND_NANOS, 10 * SECOND_NANOS, { 10 * SECOND_NANOS }, logger);
+    const SpicePlanetStateMsgPayload outDisabled =
+      disabled.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
+    EXPECT_DOUBLE_EQ(outDisabled.PositionVector[0], planet.PositionVector[0]);
+
+    // enabled, dt == 0: the planet is written at the epoch the spacecraft states stay at
+    ScStateExtrapolation startup;
+    startup.setEnabled(true);
+    startup.prepare(20 * SECOND_NANOS, 10 * SECOND_NANOS, { 10 * SECOND_NANOS }, logger);
+    const SpicePlanetStateMsgPayload outStartup =
+      startup.applyPlanet(planet, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS);
+    EXPECT_DOUBLE_EQ(outStartup.PositionVector[0], planet.PositionVector[0]);
+
+    for (const SpicePlanetStateMsgPayload& out : { outDisabled, outStartup }) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                EXPECT_DOUBLE_EQ(out.J20002Pfix[i][j], i == j ? 1.0 : 0.0); // [-]
+            }
+        }
+    }
+}
+
 TEST(ScStateExtrapolation, evaluationEpochFollowsTheGeometry)
 {
     const uint64_t step = 10 * SECOND_NANOS; // [ns]
@@ -653,4 +650,132 @@ TEST(ScStateExtrapolation, evaluationEpochFollowsTheGeometry)
     ScStateExtrapolation disabled;
     disabled.prepare(2 * step, step, { step }, logger);
     EXPECT_EQ(disabled.evaluationEpochNanos(2 * step, step), 2 * step);
+}
+
+namespace {
+/*! Stand-in for a ReadFunctor of a spacecraft state message. */
+struct FakeScStateMsg
+{
+    SCStatesMsgPayload payload{};
+    uint64_t written = 0; // [ns] time the message was written
+
+    SCStatesMsgPayload operator()() { return this->payload; }
+    uint64_t timeWritten() { return this->written; }
+};
+
+/*! Stand-in for a ReadFunctor of a planet state message. */
+struct FakePlanetMsg
+{
+    SpicePlanetStateMsgPayload payload{};
+    uint64_t written = 0; // [ns] time the message was written
+
+    SpicePlanetStateMsgPayload operator()() { return this->payload; }
+    uint64_t timeWritten() { return this->written; }
+};
+} // namespace
+
+TEST(ScStateExtrapolationMessages, prepareFromMessagesExtrapolatesAllSpacecraftWrittenAtThePreviousUpdate)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    std::vector<FakeScStateMsg> msgs(2);
+    for (auto& msg : msgs) {
+        msg.payload = makeState();
+    }
+
+    extrapolation.prepareFromMessages(step, 0, msgs, logger); // first write time observed
+    msgs[0].written = msgs[1].written = step;
+    extrapolation.prepareFromMessages(2 * step, step, msgs, logger); // period known
+
+    for (auto& msg : msgs) {
+        const SCStatesMsgPayload out = extrapolation.applyMessage(msg, 2 * step, step);
+        EXPECT_DOUBLE_EQ(out.r_BN_N[1], 7.5e3 * 5.0); // v * age / 2
+    }
+    EXPECT_FALSE(extrapolation.mismatchDetected());
+}
+
+TEST(ScStateExtrapolationMessages, prepareFromMessagesMatchesPrepareWithTheWriteTimes)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    std::vector<FakeScStateMsg> msgs(2);
+    msgs[0].written = step;
+    msgs[1].written = 0; // stale: disables the extrapolation of both
+
+    ScStateExtrapolation fromMessages;
+    fromMessages.setEnabled(true);
+    ScStateExtrapolation fromTimes;
+    fromTimes.setEnabled(true);
+    BSKLogger loggerMessages;
+    BSKLogger loggerTimes;
+    for (uint64_t now : { step, 2 * step }) {
+        fromMessages.prepareFromMessages(now, now - step, msgs, loggerMessages);
+        fromTimes.prepare(now, now - step, { msgs[0].written, msgs[1].written }, loggerTimes);
+    }
+
+    EXPECT_EQ(fromMessages.mismatchDetected(), fromTimes.mismatchDetected());
+    for (auto& msg : msgs) {
+        msg.payload = makeState();
+        const SCStatesMsgPayload expected = fromTimes.apply(msg.payload, 2 * step, msg.written, step);
+        const SCStatesMsgPayload out = fromMessages.applyMessage(msg, 2 * step, step);
+        EXPECT_DOUBLE_EQ(out.r_BN_N[1], expected.r_BN_N[1]);
+        EXPECT_DOUBLE_EQ(out.r_BN_N[1], msg.payload.r_BN_N[1]); // not extrapolated
+    }
+}
+
+TEST(ScStateExtrapolationMessages, prepareFromMessageHandlesASingleSpacecraft)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    FakeScStateMsg msg;
+    msg.payload = makeState();
+
+    extrapolation.prepareFromMessage(step, 0, msg, logger);
+    msg.written = step;
+    extrapolation.prepareFromMessage(2 * step, step, msg, logger);
+
+    const SCStatesMsgPayload out = extrapolation.applyMessage(msg, 2 * step, step);
+    EXPECT_DOUBLE_EQ(out.r_BN_N[1], 7.5e3 * 5.0);
+    EXPECT_EQ(extrapolation.evaluationEpochNanos(2 * step, step), step + step / 2);
+}
+
+TEST(ScStateExtrapolationMessages, applyMessageDoesNotExtrapolateWhenDisabled)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    BSKLogger logger;
+    FakeScStateMsg msg;
+    msg.payload = makeState();
+    msg.written = step;
+
+    extrapolation.prepareFromMessage(2 * step, step, msg, logger);
+
+    const SCStatesMsgPayload out = extrapolation.applyMessage(msg, 2 * step, step);
+    EXPECT_DOUBLE_EQ(out.r_BN_N[1], msg.payload.r_BN_N[1]);
+}
+
+TEST(ScStateExtrapolationMessages, applyPlanetMessageMovesThePlanetLikeApplyPlanet)
+{
+    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    ScStateExtrapolation extrapolation;
+    extrapolation.setEnabled(true);
+    BSKLogger logger;
+    FakeScStateMsg scMsg;
+    scMsg.payload = makeState();
+    FakePlanetMsg planetMsg;
+    planetMsg.payload = makeMovingPlanet();
+    planetMsg.written = 2 * step;
+
+    extrapolation.prepareFromMessage(step, 0, scMsg, logger);
+    scMsg.written = step;
+    extrapolation.prepareFromMessage(2 * step, step, scMsg, logger);
+
+    const SpicePlanetStateMsgPayload out = extrapolation.applyPlanetMessage(planetMsg, 2 * step, step);
+    const SpicePlanetStateMsgPayload expected =
+      extrapolation.applyPlanet(planetMsg.payload, 2 * step, planetMsg.written, step);
+    EXPECT_DOUBLE_EQ(out.PositionVector[0], expected.PositionVector[0]);
+    EXPECT_DOUBLE_EQ(out.PositionVector[0], 1.0e7 - 3.0e4 * 5.0); // moved back to the step midpoint
 }

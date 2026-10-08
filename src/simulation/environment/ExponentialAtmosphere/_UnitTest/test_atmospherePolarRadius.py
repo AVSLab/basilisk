@@ -27,11 +27,13 @@ RP_EARTH = orbitalMotion.RP_EARTH * 1000.0  # [m] polar radius
 REQ_EARTH = orbitalMotion.REQ_EARTH * 1000.0  # [m] equatorial radius set by simSetPlanetEnvironment
 
 
-def _density(polarRadius):
+def _density(polarRadius, setOrientation=True):
     """Return the density 400 km above the geodetic pole.
 
     Args:
         polarRadius (float): [m] polar radius given to the module, negative for a sphere.
+        setOrientation (bool): if False the planet message leaves ``J20002Pfix`` at zero, as a message that only sets
+            the position and the velocity does.
     """
     scSim = SimulationBaseClass.SimBaseClass()
     proc = scSim.CreateNewProcess("p")
@@ -42,7 +44,8 @@ def _density(polarRadius):
     atmo.setPlanetPolarRadius(polarRadius)
 
     planetPayload = messaging.SpicePlanetStateMsgPayload()
-    planetPayload.J20002Pfix = np.eye(3).tolist()
+    if setOrientation:
+        planetPayload.J20002Pfix = np.eye(3).tolist()
     planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
     atmo.planetPosInMsg.subscribeTo(planetMsg)
 
@@ -80,6 +83,19 @@ def test_polar_radius_selects_geodetic_altitude():
     assert densityEllipsoid < densitySphere
 
 
+def test_position_only_planet_message_gives_a_finite_altitude():
+    """Verify a planet message without an orientation is treated as the identity.
+
+    The message leaves ``J20002Pfix`` at zero. Without the identity fallback the planet-fixed position is zero, the
+    geodetic altitude is not a number and the density is zero."""
+    densityIdentity, _ = _density(RP_EARTH, setOrientation=True)
+    densityPositionOnly, _ = _density(RP_EARTH, setOrientation=False)
+
+    assert np.isfinite(densityPositionOnly)
+    assert densityPositionOnly > 0.0
+    assert densityPositionOnly == pytest.approx(densityIdentity, rel=1e-12, abs=0.0)
+
+
 def test_polar_radius_setter_and_getter():
     """Verify the polar radius defaults to a sphere, round-trips, and rejects zero."""
     for atmo in (exponentialAtmosphere.ExponentialAtmosphere(), msisAtmosphere.MsisAtmosphere()):
@@ -92,4 +108,5 @@ def test_polar_radius_setter_and_getter():
 
 if __name__ == "__main__":
     test_polar_radius_selects_geodetic_altitude()
+    test_position_only_planet_message_gives_a_finite_altitude()
     test_polar_radius_setter_and_getter()

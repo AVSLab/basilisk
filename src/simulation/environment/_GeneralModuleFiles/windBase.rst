@@ -95,8 +95,10 @@ the simulation.
 
 When the extrapolation is enabled the position and the orientation of the planet (or of the sun and the planets for
 the eclipse) are advanced, or moved back, with their message velocity and angular rate to the same middle of the
-interval as the spacecraft, so that the relative geometry is evaluated at a single epoch. Other time-dependent inputs,
-such as the epoch used for solar time or a space weather sample, are not shifted and are evaluated at the current
-time.
+interval as the spacecraft, so that the relative geometry is evaluated at a single epoch. Time-dependent models, such
+as the local solar time or the decimal year of the epoch, are evaluated at the same epoch as the geometry: the middle
+of the interval if the extrapolation applies, the epoch of the previous update while the spacecraft state is not yet
+extrapolated, and the current time otherwise. Inputs read from messages, such as a space weather sample, are not
+shifted.
 As in the gravity effector, the planet is advanced by the time since its message was written, whatever the age of the
 message, so a planet message written once with a non-zero velocity is projected forward over the whole simulation.
