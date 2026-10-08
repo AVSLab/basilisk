@@ -23,7 +23,9 @@ Module Assumptions and Limitations
 ----------------------------------
 The output is :math:`{}^{S}\boldsymbol{L} = [SB]\,{}^{B}\boldsymbol{L}`, where
 ``dcm_SB`` is a constant body-to-site rotation that defaults to identity
-(aligned frames). The torque is treated as a pure couple, so the site position
+(aligned frames). The configured matrix is copied on assignment; subsequent
+changes to the caller's array do not affect the module.
+The torque is treated as a pure couple, so the site position
 does not affect the output. ``Reset()`` reports an error if ``cmdTorqueInMsg``
 is not linked.
 

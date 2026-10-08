@@ -50,7 +50,7 @@ class CmdTorqueBodyToTorqueAtSite(sysModel.SysModel):
             raise ValueError("CmdTorqueBodyToTorqueAtSite.dcm_SB must be a 3x3 matrix.")
         if not np.allclose(dcm @ dcm.T, np.eye(3), atol = 1e-10) or not np.isclose(np.linalg.det(dcm), 1.0, atol = 1e-10):
             raise ValueError("CmdTorqueBodyToTorqueAtSite.dcm_SB must be a proper rotation matrix.")
-        self._dcm_SB = dcm
+        self._dcm_SB = dcm.copy()
 
     def validateInputMessages(self):
         """Raise ``BasiliskError`` if a required input message is not linked."""

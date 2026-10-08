@@ -74,6 +74,25 @@ def test_output_torque_and_header(useRotation):
     assert outReader.moduleID() == module.moduleID
 
 
+def test_dcm_setter_copies_input_matrix():
+    """Changing the caller's matrix must not alter the rotation or output torque.
+
+    Assign an identity rotation, then invalidate the original NumPy array.
+    The module must retain the validated rotation and preserve the commanded
+    torque on its next update.
+    """
+    torque_B = [0.4, -1.2, 2.5]  # [N*m]
+    dcm_SB = np.eye(3)
+    module, outReader = runModule(torque_B, dcm_SB)
+
+    dcm_SB[0, 0] = 2.0  # [-] Deliberately invalidate the caller's matrix.
+    updateTime = macros.sec2nano(2.0)  # [ns]
+    module.UpdateState(updateTime)
+
+    np.testing.assert_array_equal(module.dcm_SB, np.eye(3))
+    np.testing.assert_allclose(outReader().torque_S, torque_B, rtol = 0, atol = 1e-12)
+
+
 def test_reset_rejects_missing_input_message():
     """
     **Validation Test Description**
