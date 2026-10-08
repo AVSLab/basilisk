@@ -337,8 +337,8 @@ def run(showPlots: bool = False):
 
     # Initializing simulation time/time-steps for dynamics/fsw task
     simulationTime = macros.min2nano(10.0)
-    timeStep = macros.sec2nano(0.1)
-    fswTimeStep = macros.sec2nano(0.5)
+    timeStep = macros.sec2nano(0.5)
+    fswTimeStep = macros.sec2nano(1.0)
 
     sim = SimulationBaseClass.SimBaseClass()
     dynProcess = sim.CreateNewProcess(simProcessName)
