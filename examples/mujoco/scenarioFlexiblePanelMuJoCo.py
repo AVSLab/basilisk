@@ -17,62 +17,82 @@
 #
 
 r"""
-It's recommended to review the following scenario(s) first (and any
-recommended scenario(s) that they may have):
+Review these prerequisite examples first:
 
-#. ``examples/scenarioFlexiblePanel.py``
-#. ``examples/mujoco/scenarioHingedRigidBodyMuJoCo.py``
-#. ``examples/mujoco/scenarioAttitudeFeedbackRWMuJoCo.py``
+#. :ref:`scenarioFlexiblePanel` for the classic flexible-panel model.
+#. :ref:`scenarioHingedRigidBodyMuJoCo` for MuJoCo hinge and force setup.
+#. :ref:`scenarioAttitudeFeedbackRWMuJoCo` for attitude control with MuJoCo.
 
 This script demonstrates how to model a flexible, multi-segment solar panel
 using MuJoCo dynamics via :ref:`MJScene<MJScene>` instead of the traditional
 hub-centric Basilisk :ref:`spacecraft` dynamics. This scenario is a translation
-of the classic Basilisk ``scenarioFlexiblePanel.py`` example.
+of the classic Basilisk :ref:`scenarioFlexiblePanel` example.
+
+Running the Example
+-------------------
+
+Use a Basilisk installation with MuJoCo support and the example dependencies
+described in :ref:`bskInstall`. When building from source, enable
+``--mujoco True``. With that Python environment active, run from the repository
+root:
+
+.. code-block:: console
+
+   python examples/mujoco/scenarioFlexiblePanelMuJoCo.py
+
+The script displays the result plots. When importing the scenario from
+``examples/mujoco``, call ``run(showPlots=False)`` to run without displaying
+windows; it still returns a dictionary of Matplotlib figures for inspection
+or saving.
+
+Model and Control Setup
+-----------------------
 
 The multi-body system is created programmatically as a MuJoCo XML string.
 It consists of a free-floating spacecraft bus ("hub") with a single flexible
 panel discretized into ``numberOfSegments`` rigid sub-panel bodies
 ("subPanel1", "subPanel2", ...), connected end-to-end. Each sub-panel is
-connected to its neighbor by two identically-located hinge joints: a "bend" joint
-(bending DOF) and a "twist" joint (torsional DOF), so that the
+connected to its neighbor by two colocated hinge joints: a "bend" joint
+(bending degree of freedom, or DOF) and a "twist" joint (torsional DOF). The
 panel's continuous flexibility is approximated by a discretized series of
 rigid links. As such, this system has 6 + 2 * ``numberOfSegments`` DOFs
-(3 translational, 3 rotational, 2 DOFs per discretized panel)
+(3 translational, 3 rotational, 2 DOFs per panel segment).
 
 A torsional spring-damper torque is applied at every bend and twist joint to
 emulate the panel's structural stiffness and damping:
 
-#. ``MJJointPIDController`` computes a restoring torque from a joint's angle and
-   angular rate about a reference equilibrium angle, and writes the result as
+#. :ref:`MJJointPIDController <JointPIDController>` computes a restoring torque
+   from a joint's angle and angular rate about a reference equilibrium angle,
+   and writes the result as
    a ``SingleActuatorMsg`` command. One instance is attached to each bend and
    twist joint, using separate bending and torsional stiffness/damping
    coefficients.
 
-A standard Basilisk FSW stack is used to point the hub at a fixed inertial
-attitude while the flexible panel dynamically responds to the resulting
-motion:
+A standard Basilisk flight software (FSW) stack is used to point the hub at a
+fixed inertial attitude while the flexible panel dynamically responds to
+the resulting motion:
 
-#. ``simpleNav`` provides the spacecraft's navigation attitude solution.
-#. ``inertial3D`` generates a fixed inertial attitude reference.
-#. ``attTrackingError`` computes the attitude and rate tracking errors.
-#. ``mrpFeedback`` computes the commanded body torque, using an inertia
+#. :ref:`simpleNav` provides the spacecraft's navigation attitude solution.
+#. :ref:`inertial3D` generates a fixed inertial attitude reference.
+#. :ref:`attTrackingError` computes the attitude and rate tracking errors.
+#. :ref:`mrpFeedback` computes the commanded body torque, using an inertia
    tensor for the hub plus panel computed via the parallel axis theorem.
 
 A small adapter module bridges the FSW torque command to the MuJoCo torque
 actuator:
 
-#. ``cmdTorqueBodyToTorqueAtSite`` relays the commanded body-frame torque as a
+#. :ref:`cmdTorqueBodyToTorqueAtSite` relays the commanded body-frame torque as a
    ``TorqueAtSiteMsg`` (site and body frames are aligned, so the default
-   identity ``dcm_SB`` is used), consumed by a torque actuator at the hub site
+   identity ``dcm_SB`` is used), consumed by a torque actuator at the hub site.
 
 Earth gravity is configured using :ref:`NBodyGravity<NBodyGravity>` with a
 :ref:`pointMassGravityModel<pointMassGravityModel>` as the central body.
 Gravity targets are registered manually for the hub and every sub-panel body.
 
-The spacecraft is placed on an elliptical orbit and released from rest (all
-bend/twist angles initialized to zero) while the attitude controller
-maneuvers the hub to the commanded reference orientation. The simulation
-runs for 10 minutes.
+The spacecraft is placed on an elliptical orbit with the panel initially
+undeformed and stationary relative to the hub (all bend/twist angles and
+rates initialized to zero) while the attitude controller maneuvers the hub
+to the commanded reference orientation. The simulation runs for 10 minutes.
 
 Bending angles, torsional angles, and their rates are plotted for every
 sub-panel segment, along with the attitude error and attitude error rate
@@ -213,25 +233,30 @@ def plotAttitudeErrorRate(timeAxis: np.ndarray, omega_BR_B: np.ndarray) -> plt.F
                  label = r'$\omega_' + str(idx) + '$')
     plt.legend(loc = 'lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel(r'$\omega_{B/R}$')
+    plt.ylabel(r'$\omega_{B/R}$ [rad/s]')
     plt.title("Attitude Error Rate")
 
     return fig
 
 
 class geometryClass:
-    """Specifies geometry of hub and flexible panel, minor calcs for sub-panel geometry as well"""
-    massHub = 1000
-    lengthHub = 3
-    widthHub = 3
-    heightHub = 6
-    lengthPanel = 18.0
-    widthPanel = 3.0
-    thicknessPanel = 0.3
-    massPanel = 100.0
+    """Store hub and panel dimensions and derive equal-sized panel segments.
+
+    :param numberOfSegments: Positive number of rigid segments used to
+        approximate the flexible panel. The total panel length and mass
+        are divided equally among these segments.
+    """
+    massHub = 1000  # [kg]
+    lengthHub = 3  # [m]
+    widthHub = 3  # [m]
+    heightHub = 6  # [m]
+    lengthPanel = 18.0  # [m]
+    widthPanel = 3.0  # [m]
+    thicknessPanel = 0.3  # [m]
+    massPanel = 100.0  # [kg]
 
     def __init__(self, numberOfSegments):
-        """Initialize"""
+        """Derive the mass and dimensions of each panel segment."""
         self.numberOfSegments = numberOfSegments
         self.massSubPanel = self.massPanel / self.numberOfSegments
         self.lengthSubPanel = self.lengthPanel / self.numberOfSegments
@@ -326,7 +351,16 @@ def makeMjXmlString(scGeometry: geometryClass):
 
 
 def run(showPlots: bool = False):
-    """Build and run the MJScene flexible panel simulation."""
+    """Run 10 minutes of attitude control with a flexible solar panel.
+
+    :param showPlots: Display the Matplotlib figures and wait for the plot
+        windows to close when True. Defaults to False; figures are still
+        generated and returned in either case.
+    :returns: Dictionary mapping scenario-prefixed names to six Matplotlib
+        figures: bending and twisting angles, their rates, attitude error,
+        and angular-rate tracking error. No files are saved by this function.
+    :rtype: dict
+    """
     # -------------------------------------------------------------------------
     # 1) Simulation configuration and MJScene dynamics model
     # -------------------------------------------------------------------------
@@ -336,9 +370,9 @@ def run(showPlots: bool = False):
     fswProcessName = "fswProcess"
 
     # Initializing simulation time/time-steps for dynamics/fsw task
-    simulationTime = macros.min2nano(10.0)
-    timeStep = macros.sec2nano(0.5)
-    fswTimeStep = macros.sec2nano(1.0)
+    simulationTime = macros.min2nano(10.0)  # [ns]
+    timeStep = macros.sec2nano(0.5)  # [ns]
+    fswTimeStep = macros.sec2nano(1.0)  # [ns]
 
     sim = SimulationBaseClass.SimBaseClass()
     dynProcess = sim.CreateNewProcess(simProcessName)
@@ -369,9 +403,9 @@ def run(showPlots: bool = False):
     # 3) Adding damping/stiffness to subpanels (bend & twist)
     # -------------------------------------------------------------------------
     # Initializing stiffness/damping coefficients of bending/twisting DOFs
-    kBend, cBend = 10.0, 8.0
-    kTwist, cTwist = 1.0, 0.8
-    thetaRef = 0.0
+    kBend, cBend = 10.0, 8.0  # stiffness [N m/rad], damping [N m s/rad]
+    kTwist, cTwist = 1.0, 0.8  # stiffness [N m/rad], damping [N m s/rad]
+    thetaRef = 0.0  # [rad]
 
     # Keep all springDamper/refMsgs in list so they remain in scope for whole sim
     springDampers = []
@@ -395,7 +429,7 @@ def run(showPlots: bool = False):
                 refPosMsg = messaging.ScalarJointStateMsg().write(refPosMsgPayload)
 
                 refVelMsgPayload = messaging.ScalarJointStateMsgPayload()
-                refVelMsgPayload.state = 0.0
+                refVelMsgPayload.state = 0.0  # [rad/s]
                 refVelMsg = messaging.ScalarJointStateMsg().write(refVelMsgPayload)
 
                 refMsgs.extend([refPosMsg, refVelMsg])
@@ -418,15 +452,15 @@ def run(showPlots: bool = False):
     # -------------------------------------------------------------------------
     oe = orbitalMotion.ClassicElements()
     oe.a = 8e6  # meters
-    oe.e = 0.1
-    oe.i = 0.0 * macros.D2R
-    oe.Omega = 0.0 * macros.D2R
-    oe.omega = 0.0 * macros.D2R
-    oe.f = 0.0 * macros.D2R
+    oe.e = 0.1  # [-]
+    oe.i = 0.0 * macros.D2R  # [rad]
+    oe.Omega = 0.0 * macros.D2R  # [rad]
+    oe.omega = 0.0 * macros.D2R  # [rad]
+    oe.f = 0.0 * macros.D2R  # [rad]
     muEarth = 0.3986004415e15  # [m^3/s^2]
     rN, vN = orbitalMotion.elem2rv(muEarth, oe)
 
-    # Adding N-Body gravity model into MJscene
+    # Adding N-Body gravity model into MJScene
     gravity = NBodyGravity.NBodyGravity()
     gravity.ModelTag = "gravity"
     scene.AddModelToDynamicsTask(gravity)
@@ -450,16 +484,16 @@ def run(showPlots: bool = False):
     simpleNavObj.scStateInMsg.subscribeTo(busBody.getCenterOfMass().stateOutMsg)
     sim.AddModelToTask(simTaskName, simpleNavObj)
 
-    # Identifies inertial frame of s/c for attitude determination
+    # Define the desired inertial attitude using modified Rodrigues parameters.
     inertial3DObj = inertial3D.inertial3D()
     inertial3DObj.ModelTag = "inertial3D"
-    inertial3DObj.sigma_R0N = [0.3, 0.4, 0.5]
+    inertial3DObj.sigma_R0N = [0.3, 0.4, 0.5]  # [-]
     sim.AddModelToTask(fswTaskName, inertial3DObj)
 
     # Tracks attitude error of s/c
     attError = attTrackingError.attTrackingError()
     attError.ModelTag = "attTrackingError"
-    attError.attNavInMsg.subscribeTo(simpleNavObj.attOutMsg) # feed in navigation commands (current attitude)
+    attError.attNavInMsg.subscribeTo(simpleNavObj.attOutMsg) # feed in the current navigation attitude
     attError.attRefInMsg.subscribeTo(inertial3DObj.attRefOutMsg) # feed in inertial frame (reference attitude)
     sim.AddModelToTask(fswTaskName, attError)
 
@@ -474,14 +508,14 @@ def run(showPlots: bool = False):
     # Position of panel's CoM relative to hub point B, in body frame
     r_ScB_B = [0.0, scGeometry.lengthHub/2 + scGeometry.lengthPanel/2,
            scGeometry.heightHub/2 - scGeometry.thicknessSubPanel/2]
-    # Combining into single inertia tensor abour hub reference point B (parallel axis thm)
+    # Combine into a single inertia tensor about hub reference point B (parallel axis theorem).
     IHubPntB_B =  IHubPntBc_B + IPanelPntSc_B - scGeometry.massPanel * np.array(rbk.v3Tilde(r_ScB_B)) @ np.array(rbk.v3Tilde(r_ScB_B))
 
-    # MRP (Modified Rodriguez Parameter) attitude control applied to s/c
+    # Apply modified Rodrigues parameter (MRP) attitude control to the spacecraft.
     mrpControl = mrpFeedback.mrpFeedback()
     mrpControl.ModelTag = "mrpFeedback"
-    decayTime = 50
-    xi = 0.9
+    decayTime = 50  # [s]
+    xi = 0.9  # [-] Damping ratio.
     mrpControl.P = 2 * np.max(IHubPntB_B) / decayTime
     mrpControl.K = (mrpControl.P / xi) ** 2 / np.max(IHubPntB_B)
     mrpControl.guidInMsg.subscribeTo(attError.attGuidOutMsg)
@@ -496,7 +530,7 @@ def run(showPlots: bool = False):
     # Torque actuator at hub site for FSW-commanded control torques
     torqueActuator = scene.addTorqueActuator("hubTorqueAct", "hubSite")
 
-    # Adapter module (defined below) to forward body frame torque to TorqueAtSite msg
+    # Library adapter converts body-frame torque into a TorqueAtSite message.
     torqueBridge = cmdTorqueBodyToTorqueAtSite.CmdTorqueBodyToTorqueAtSite()
     torqueBridge.ModelTag = "torqueBridge"
     torqueBridge.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
@@ -536,7 +570,7 @@ def run(showPlots: bool = False):
     busBody.setPosition(rN)
     busFree.setVelocity(vN)
 
-    thetaInit = 0.0
+    thetaInit = 0.0  # [rad]
     for i in range(numberOfSegments):
         bendJoints[i].setPosition(thetaInit)
         twistJoints[i].setPosition(thetaInit)
@@ -576,24 +610,6 @@ def run(showPlots: bool = False):
         plt.show()
 
     return figureList
-
-
-# class CmdTorqueToSiteActuator(sysModel.SysModel):
-#     """ CmdTorqueToSiteActuator: custom sys model to relay commanded body-frame torque
-#         to TorqueAtSite message for actuator to consume"""
-
-#     def __init__(self):
-#         """Initialize"""
-#         super().__init__()
-#         self.cmdTorqueInMsg = messaging.CmdTorqueBodyMsgReader() # FSW command torque
-#         self.torqueOutMsg = messaging.TorqueAtSiteMsg() # torque expressed at site
-
-#     def UpdateState(self, CurrentSimNanos):
-#         """Convert message type at each simulation step"""
-#         cmd = self.cmdTorqueInMsg()
-#         # Site frame == body frame
-#         payload = messaging.TorqueAtSiteMsgPayload(torque_S = cmd.torqueRequestBody)
-#         self.torqueOutMsg.write(payload, time=CurrentSimNanos, moduleID=self.moduleID)
 
 
 if __name__ == "__main__":

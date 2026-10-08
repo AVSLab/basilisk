@@ -13,10 +13,10 @@ The following diagram and table list the module input and output messages.
     :caption: Module I/O Messages
 
     input cmdTorqueInMsg CmdTorqueBodyMsgPayload
-        Input commanded torque ``torqueRequestBody``, expressed in body frame B.
+        Input commanded torque ``torqueRequestBody`` [N m], expressed in body frame B.
 
     output torqueOutMsg TorqueAtSiteMsgPayload
-        Output torque ``torque_S``, expressed in site frame S.
+        Output torque ``torque_S`` [N m], expressed in site frame S.
 
 
 Module Assumptions and Limitations
@@ -34,12 +34,43 @@ and the module's writer ID.
 User Guide
 ----------
 
+The following setup assumes that ``scene`` is an :ref:`MJScene` already added
+to the simulation, its XML defines a site named ``hubSite``, and ``mrpControl``
+is a configured :ref:`mrpFeedback` controller scheduled on an FSW task.
+Here the site frame S is aligned with the hub body frame B, so the default
+identity rotation is sufficient. Configure the connections and schedule the
+adapter before calling ``InitializeSimulation()``:
+
 .. code-block:: python
 
     from Basilisk.simulation import cmdTorqueBodyToTorqueAtSite
 
+    torqueActuator = scene.addTorqueActuator("hubTorqueAct", "hubSite")
     torqueBridge = cmdTorqueBodyToTorqueAtSite.CmdTorqueBodyToTorqueAtSite()
     torqueBridge.ModelTag = "torqueBridge"
-    torqueBridge.dcm_SB = dcm_SB  # optional, 3x3 proper rotation matrix
     torqueBridge.cmdTorqueInMsg.subscribeTo(mrpControl.cmdTorqueOutMsg)
+    scene.AddModelToDynamicsTask(torqueBridge)
     torqueActuator.torqueInMsg.subscribeTo(torqueBridge.torqueOutMsg)
+
+Adding the adapter to the scene's dynamics task makes it convert the latest
+FSW torque command during dynamics evaluation. Connecting messages alone does
+not schedule a module. See :ref:`scenarioFlexiblePanelMuJoCo` for a complete
+simulation using this setup.
+
+For a site with a fixed orientation relative to the body, assign a proper
+rotation matrix to ``torqueBridge.dcm_SB`` before initialization. Its rows are
+the site axes expressed in body coordinates, so it maps body components to
+site components. For example, for site axes Sx = By, Sy = -Bx, and Sz = Bz:
+
+.. code-block:: python
+
+    torqueBridge.dcm_SB = [
+        [0.0, 1.0, 0.0],
+        [-1.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0],
+    ]  # [-]
+
+The matrix must match the site's orientation in the scene; assigning it only
+configures the conversion and does not rotate the site itself. A site on a
+moving appendage requires a time-varying transformation, which this constant
+rotation adapter does not compute.
