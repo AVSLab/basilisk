@@ -398,7 +398,7 @@ the sample's own velocity.
 
 .. code-block:: bash
 
-    python compare_with_basilisk.py --kernel-dir /path/to/kernels                     # all cases, 30 days
+    python compare_with_basilisk.py --kernel-dir /path/to/kernels                     # all cases, using their configured durations
     python compare_with_basilisk.py --cases leo_all geo_all --duration-days 5 --kernel-dir /path/to/kernels
     python compare_with_basilisk.py --kernel-dir /path/to/kernels --figures-dir figures      # also save SVG figures
     python compare_with_basilisk.py --cases leo_srp --data-dir oblate --orekit-variant oblate_shadow --kernel-dir /path/to/kernels
