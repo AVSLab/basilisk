@@ -25,16 +25,15 @@ import subprocess
 import sys
 
 import pytest
-from Basilisk import fswAlgorithms, getBuildInfo, simulation
+from Basilisk import fswAlgorithms, hasBuildFeature, simulation
 
 
-BUILD_FEATURES = getBuildInfo()["features"]
 GROUPS = (
     ("Basilisk.simulation._simulationCoreNative", "simulation", "spacecraft", "Spacecraft"),
     pytest.param("Basilisk.simulation._mujocoNative", "simulation", "thrOnTimeToForce", "ThrOnTimeToForce",
-                 marks=pytest.mark.skipif(not BUILD_FEATURES["mujoco"], reason="MuJoCo support is disabled")),
+                 marks=pytest.mark.skipif(not hasBuildFeature("mujoco"), reason="MuJoCo support is disabled")),
     pytest.param("Basilisk._opNavNative", "simulation", "camera", "Camera",
-                 marks=pytest.mark.skipif(not BUILD_FEATURES["opNav"], reason="OpenCV support is disabled")),
+                 marks=pytest.mark.skipif(not hasBuildFeature("opNav"), reason="OpenCV support is disabled")),
 )
 
 
