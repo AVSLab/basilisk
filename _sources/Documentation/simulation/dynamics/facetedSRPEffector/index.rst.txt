@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_facetedSRPEffector:
+
+facetedSRPEffector
+==================
+
+:doc:`Module documentation <facetedSRPEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

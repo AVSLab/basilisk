@@ -1,0 +1,450 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.1 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.0 Release Notes" href="2.0.html" />
+    <link rel="prev" title="Version 2.2 Release Notes" href="2.2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.12.html">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.1 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-1-release-notes">
+<h1>Version 2.1 Release Notes<a class="headerlink" href="#version-2-1-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-1-7-march-24-2023">
+<span id="bsk-release-2-1-7"></span><h2>Version 2.1.7 (March 24, 2023)<a class="headerlink" href="#version-2-1-7-march-24-2023" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">CMake/conan</span></code> case sensitivty issue when compiling Basilisk with <code class="docutils literal notranslate"><span class="pre">opNav</span></code> flag set to <code class="docutils literal notranslate"><span class="pre">True</span></code> on Linux platforms</p></li>
+<li><p>Created fsw <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/hingedRigidBodyPIDMotor/hingedRigidBodyPIDMotor.html#hingedrigidbodypidmotor"><span class="std std-ref">C Module: hingedRigidBodyPIDMotor</span></a> to compute the commanded torque to <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a> using a proportional-integral-derivative controller.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/torqueScheduler/torqueScheduler.html#torquescheduler"><span class="std std-ref">C Module: torqueScheduler</span></a> to combine two <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.html#arraymotortorquemsgpayload"><span class="std std-ref">ArrayMotorTorqueMsgPayload</span></a> into one and implement effector locking logic.</p></li>
+<li><p>Refactored how <code class="docutils literal notranslate"><span class="pre">Custom.cmake</span></code> files are included and how they are to be constructed. <code class="docutils literal notranslate"><span class="pre">Custom.cmake</span></code> files
+should no longer include an include guard (e.g. <code class="docutils literal notranslate"><span class="pre">if(BUILD_OPNAV)</span> <span class="pre">...</span> <span class="pre">endif(BUILD_OPNAV)</span></code> ). Rather, to add
+optionally compile a module, its directory name should be added to a list in
+<code class="docutils literal notranslate"><span class="pre">src/cmake/bskTargetExcludeBuildOptions.cmake</span></code>. Most importantly, the build target is now accessible within the
+a <code class="docutils literal notranslate"><span class="pre">Custom.cmake</span></code> file as <code class="docutils literal notranslate"><span class="pre">${TARGET_NAME}</span></code>. This enables appropriate modularization of build target specific
+includes, dependencies, and compiler flags. For an example of the implications of this refactor review the before
+and after of the <code class="docutils literal notranslate"><span class="pre">src/cmake/usingOpenCV.cmake</span></code> file.</p></li>
+<li><p>updated <a class="reference internal" href="../../Documentation/utilities/unitTestSupport.html#unittestsupport"><span class="std std-ref">unitTestSupport</span></a> to create the file path in a platform agnostic manner</p></li>
+<li><p>Created a <a class="reference internal" href="../../Documentation/simulation/thermal/sensorThermal/sensorThermal.html#sensorthermal"><span class="std std-ref">C++ Module: sensorThermal</span></a> module to model the temperature of a sensor using radiative heat transfer</p></li>
+<li><p>Created a <a class="reference internal" href="../../Documentation/simulation/deviceInterface/tempMeasurement/tempMeasurement.html#tempmeasurement"><span class="std std-ref">C++ Module: tempMeasurement</span></a> module to add sensor noise/bias and fault capabilities to temperature readings</p></li>
+<li><p>Added a <code class="docutils literal notranslate"><span class="pre">terminal</span></code> flag to the event handlers that cause the simulation to terminate when triggered; demonstrated
+use of flag in update to <a class="reference internal" href="../../examples/scenarioDragDeorbit.html#scenariodragdeorbit"><span class="std std-ref">scenarioDragDeorbit</span></a>.</p></li>
+<li><p>Created a <a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">C++ Module: prescribedMotionStateEffector</span></a> dynamics module for appending rigid bodies with prescribed motion
+to the spacecraft hub.</p></li>
+<li><p>Created a <code class="docutils literal notranslate"><span class="pre">prescribedRot1DOF</span></code> fsw module to profile a prescribed rotational maneuver for a secondary rigid body
+connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+<a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">C++ Module: prescribedMotionStateEffector</span></a> dynamics module.</p></li>
+<li><p>Created a <code class="docutils literal notranslate"><span class="pre">prescribedTrans</span></code> fsw module to profile a prescribed translational maneuver for a secondary rigid body
+connected to the spacecraft hub. To simulate the maneuver, this module must be connected to the
+<a class="reference internal" href="../../Documentation/simulation/dynamics/prescribedMotion/prescribedMotionStateEffector.html#prescribedmotionstateeffector"><span class="std std-ref">C++ Module: prescribedMotionStateEffector</span></a> dynamics module.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/solarArrayReference/solarArrayReference.html#solararrayreference"><span class="std std-ref">C Module: solarArrayReference</span></a> to compute the reference angle and angle rate for a rotating solar array.</p></li>
+<li><p>Update python dependency documentation and check to not use <code class="docutils literal notranslate"><span class="pre">conan</span></code> version 2.0.0 for now</p></li>
+<li><p>Changed the <code class="docutils literal notranslate"><span class="pre">SpinningBodyStateEffector</span></code> module name to <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a>.</p></li>
+<li><p>Added the ability to lock the axis on the <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a> module.</p></li>
+<li><p>Added two new unit tests to <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesOneDOF/spinningBodyOneDOFStateEffector.html#spinningbodyonedofstateeffector"><span class="std std-ref">C++ Module: spinningBodyOneDOFStateEffector</span></a>.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/simulation/environment/magneticFieldWMM/magneticFieldWMM.html#magneticfieldwmm"><span class="std std-ref">C++ Module: magneticFieldWMM</span></a> to use the latest WMM coefficient file and evaluation software</p></li>
+<li><p>Added a <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">C++ Module: spinningBodyTwoDOFStateEffector</span></a> module that simulates a two-axis rotating rigid component.</p></li>
+<li><p>Created <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/oneAxisSolarArrayPoint/oneAxisSolarArrayPoint.html#oneaxissolararraypoint"><span class="std std-ref">C Module: oneAxisSolarArrayPoint</span></a> to generate the reference attitude for a spacecraft that needs to point a body-fixed
+axis along an inertial direction while ensuring maximum power generation on the solar arrays</p></li>
+<li><p>Added a maximum power parameter <code class="docutils literal notranslate"><span class="pre">maxPower</span></code> to <a class="reference internal" href="../../Documentation/simulation/dynamics/reactionWheels/reactionWheelStateEffector.html#reactionwheelstateeffector"><span class="std std-ref">C++ Module: reactionWheelStateEffector</span></a> for limiting supplied
+power, independent of the modules in simulation/power.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/thrusterPlatformReference/thrusterPlatformReference.html#thrusterplatformreference"><span class="std std-ref">C Module: thrusterPlatformReference</span></a> to align the dual-gimballed thruster with the system’s center of mass, or at an offset thereof to perform momentum dumping.</p></li>
+<li><p>Improved reliability of opNav scenario communication between <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> and Vizard</p></li>
+<li><p>provide support or Vizard 2.1.4 features</p></li>
+</ul>
+</section>
+<section id="version-2-1-6-jan-21-2023">
+<span id="bsk-release-2-1-6"></span><h2>Version 2.1.6 (Jan. 21, 2023)<a class="headerlink" href="#version-2-1-6-jan-21-2023" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Refactored <a class="reference internal" href="../../Documentation/architecture/utilities/keplerianOrbit.html#keplerianorbit"><span class="std std-ref">keplerianOrbit</span></a> to not depend on the <code class="docutils literal notranslate"><span class="pre">gravityEffector</span></code> class</p></li>
+<li><p>Updated Basilisk install documentation to discuss accessing source code from GitHub.com</p></li>
+<li><p>Fixed an issue where attaching a thruster to a body different than the hub when using <code class="docutils literal notranslate"><span class="pre">zeroBase</span></code> would yield very large offsets.</p></li>
+<li><p>Added documentation in <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-4.html#bskprinciples-4"><span class="std std-ref">Recording Messages</span></a> on how to read the current message values</p></li>
+<li><p>Highlighted the challege of setting up a <code class="docutils literal notranslate"><span class="pre">recorder</span></code> on a re-directed message in <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-7.html#bskprinciples-7"><span class="std std-ref">Advanced: Redirecting Module Output to Stand-Alone Message</span></a></p></li>
+<li><p>added the ability to add a <code class="docutils literal notranslate"><span class="pre">recorder()</span></code> to a C-wrapped module input message</p></li>
+<li><p>Fix an issue in in <a class="reference internal" href="../../Documentation/simulation/environment/magneticFieldWMM/magneticFieldWMM.html#magneticfieldwmm"><span class="std std-ref">C++ Module: magneticFieldWMM</span></a> where a fixed width array holding a file path would result in a cutoff
+path when basilisk is located in a directory path of greater than 100 characters.</p></li>
+<li><p>Updated the build system to use newer versions of <code class="docutils literal notranslate"><span class="pre">eigen</span></code>, <code class="docutils literal notranslate"><span class="pre">protobuf</span></code>, <code class="docutils literal notranslate"><span class="pre">cppzmq</span></code>
+and <code class="docutils literal notranslate"><span class="pre">opencv</span></code>.  This corrects some build issues with new compilers.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code>, <code class="docutils literal notranslate"><span class="pre">rigidBodyKinematics</span></code>, <code class="docutils literal notranslate"><span class="pre">orbitalMotion</span></code> were mistakenly exposed as part of the
+<a class="reference internal" href="../../Documentation/architecture/system_model/sim_model.html#sim-model"><span class="std std-ref">sim_model</span></a> module’s API. They have been removed and the functions they provided are still found in
+<code class="docutils literal notranslate"><span class="pre">Basilisk.utilities.orbitalMotion</span></code>, <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.linearAlgebra</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.rigidBodyKinematics</span></code>.</p></li>
+<li><p>Fixed an issued recording the <code class="docutils literal notranslate"><span class="pre">timeWritten</span></code> information of a C-wrapped message
+with a <code class="docutils literal notranslate"><span class="pre">recorder()</span></code> module.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Build/pullCloneBSK.html#pullclonebsk"><span class="std std-ref">Download Source Code</span></a> to ask the user to first install <code class="docutils literal notranslate"><span class="pre">lfs</span></code> before pulling a copy
+of the Basilisk repo due to some large files being stored in the GitHub large file storage
+system.</p></li>
+<li><p>Updated <a class="reference internal" href="../../examples/scenarioGroundLocationImaging.html#scenariogroundlocationimaging"><span class="std std-ref">scenarioGroundLocationImaging</span></a> to properly save off the ground location
+information for Vizard</p></li>
+<li><p>Added a new helper function to convert C arrays to <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd</span></code> and vice-versa inside <code class="docutils literal notranslate"><span class="pre">avsEigenSupport</span></code>.</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">SpinningBodyStateEffector</span></code> to use the <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.html#hingedrigidbodymsgpayload"><span class="std std-ref">HingedRigidBodyMsgPayload</span></a> output message type for compatibility with other modules</p></li>
+<li><p>Added the ability to set an inertial heading in the <a class="reference internal" href="../../Documentation/simulation/dynamics/DynOutput/boreAngCalc/boreAngCalc.html#boreangcalc"><span class="std std-ref">C++ Module: boreAngCalc</span></a> module. Changed the internal module logic to use <code class="docutils literal notranslate"><span class="pre">Eigen</span></code> library variables and functions instead of C-style arrays and methods.</p></li>
+<li><p>Added support for Vizard v2.1.3</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/fswAlgorithms/sensorInterfaces/simpleInstrumentController/simpleInstrumentController.html#simpleinstrumentcontroller"><span class="std std-ref">C Module: simpleInstrumentController</span></a> to provide the option to consider the angular velocity tracking error norm
+when considering to take an image.</p></li>
+</ul>
+</section>
+<section id="version-2-1-5-dec-13-2022">
+<span id="bsk-release-2-1-5"></span><h2>Version 2.1.5 (Dec. 13, 2022)<a class="headerlink" href="#version-2-1-5-dec-13-2022" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Made the external module custom message definitions work again with the
+latest build system.</p></li>
+<li><p>Fixed the custom RW in <a class="reference internal" href="../../Documentation/utilities/simIncludeRW.html#simincluderw"><span class="std std-ref">simIncludeRW</span></a> to store the information regarding <code class="docutils literal notranslate"><span class="pre">u_min</span></code> in the RW class.</p></li>
+<li><p>provide support for the swig 4.1 software</p></li>
+<li><p>Added the ability in both <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterDynamicEffector/thrusterDynamicEffector.html#thrusterdynamiceffector"><span class="std std-ref">C++ Module: thrusterDynamicEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> to connect a thruster to a moving body different than the hub.</p></li>
+<li><p>The thrusters now have an additional variable called <code class="docutils literal notranslate"><span class="pre">MaxSwirlTorque</span></code>. Useful for ion thrusters, it adds a torque about the thrust axis proportional to the current thrust factor.</p></li>
+<li><p>Added a torsional spring and damper to the <code class="docutils literal notranslate"><span class="pre">SpinningBodyStateEffector</span></code> module.</p></li>
+<li><p>Added support for having multiple Vizard instrument cameras setup in <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a></p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The support for having multiple Vizard instrument cameras requires a change in <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a>,
+and thus breaks existing code that using direct Vizard communication.  The
+image output message is now a vector of output messages, and the <code class="docutils literal notranslate"><span class="pre">cameraConfigBuffer</span></code> class variable
+can no longer be set directly.  Rather, the camera configuration message should be added
+using the <code class="docutils literal notranslate"><span class="pre">viz.addCamMsgToModule()</span></code>, or the message can be created and added using the convenience method
+<code class="docutils literal notranslate"><span class="pre">vizSupport.createCameraConfigMsg()</span></code>.</p>
+</div>
+<ul class="simple">
+<li><p>Updated <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> such that
+the effector inertial states are relative to the inertial frame of the simulation, not the
+central body frame.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">color</span></code> keyword support to the <code class="docutils literal notranslate"><span class="pre">vizSupport.createCustomModel()</span></code> method</p></li>
+<li><p>Updated <a class="reference internal" href="../../Learn/makingModules/cppModules/cppModules-4.html#cppmodules-4"><span class="std std-ref">Swig Interface File</span></a> to explain how now the swig interface to vectors of input/output messages
+are now auto-generated when making Basilisk project</p></li>
+<li><p>added documentation about creating and importing custom Unity addressable assets
+in <a class="reference internal" href="../../Vizard/vizardAdvanced/vizardCustomModels.html#vizardcustomunitymodels"><span class="std std-ref">Custom Unity Models</span></a>.</p></li>
+<li><p>fixed <a class="reference internal" href="../../examples/scenarioAttLocPoint.html#scenarioattlocpoint"><span class="std std-ref">scenarioAttLocPoint</span></a> to display the Earth location and the associated cone
+again in Vizard.  Updated <a class="reference internal" href="../../Vizard/vizardAdvanced/vizardSettings.html#vizardsettings"><span class="std std-ref">BSK Scripting Settings</span></a> description of <code class="docutils literal notranslate"><span class="pre">addLocation()</span></code> method.</p></li>
+<li><p>Added experimental support to build Basilisk on Linux with a computer using an ARM processor.</p></li>
+<li><p>Updated <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/CameraConfigMsgPayload.html#cameraconfigmsgpayload"><span class="std std-ref">CameraConfigMsgPayload</span></a> to support the Vizard flag <code class="docutils literal notranslate"><span class="pre">updateCameraParameters</span></code> which
+allows the camera parameters to be updated live.</p></li>
+<li><p>Updated documentation to discuss downloading Basilisk from GitHub</p></li>
+</ul>
+</section>
+<section id="version-2-1-4-oct-1-2022">
+<span id="bsk-release-2-1-4"></span><h2>Version 2.1.4 (Oct. 1, 2022)<a class="headerlink" href="#version-2-1-4-oct-1-2022" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>revised how the build system swig’s all the message objects.  This leads to compile time improvements across all
+platforms.  In Linux in particular we are seeing a 2x reduction in compile time.  These changes also reduce
+the memory requirements when compiling. Note: The <code class="docutils literal notranslate"><span class="pre">basilisk.architecture.cMsgCInterfacePy</span></code> content is
+now included in <code class="docutils literal notranslate"><span class="pre">basilisk.architecture.messaging</span></code> package.  Prior scripts using <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code>
+still run as a link has been created.  However, the use of <code class="docutils literal notranslate"><span class="pre">cMsgCInterfacePy</span></code> is depreciated and code
+should be updated to using <code class="docutils literal notranslate"><span class="pre">messaging</span></code> instead.</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/sensors/hingedRigidBodyMotorSensor/hingedRigidBodyMotorSensor.html#hingedrigidbodymotorsensor"><span class="std std-ref">C++ Module: hingedRigidBodyMotorSensor</span></a> for adding noise, bias, and discretization to panel state message</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/sensors/simpleVoltEstimator/simpleVoltEstimator.html#simplevoltestimator"><span class="std std-ref">C++ Module: simpleVoltEstimator</span></a> to provide simulated voltage measurements of a neighboring space object</p></li>
+<li><p>added the ability to have a RW motor torque break slow down the wheel speed if saturated.  The motor torque
+is set to zero if it is trying to increase the wheel speed in saturation conditions.</p></li>
+<li><p>updated Windows install instructions about setting path variables</p></li>
+<li><p>enhanced Windows install instructions to highlight adding <code class="docutils literal notranslate"><span class="pre">cmake</span></code> binary to the command line path</p></li>
+<li><p>added new training videos to <a class="reference internal" href="../../examples/BskSim/scenarios/scenario_BasicOrbit.html#scenario-basicorbit"><span class="std std-ref">scenario_BasicOrbit</span></a>, <a class="reference internal" href="../../examples/BskSim/scenarios/scenario_FeedbackRW.html#scenario-feedbackrw"><span class="std std-ref">scenario_FeedbackRW</span></a> to discuss how to
+create class based Basilisk simulations</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/environment/groundMapping/groundMapping.html#groundmapping"><span class="std std-ref">C++ Module: groundMapping</span></a> for mapping points on the surface of a spherical body.</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/onboardDataHandling/instrument/mappingInstrument/mappingInstrument.html#mappinginstrument"><span class="std std-ref">C++ Module: mappingInstrument</span></a> to pass along access from a vector of map points to a storage unit.</p></li>
+<li><p>updated <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/locationPointing/locationPointing.html#locationpointing"><span class="std std-ref">C Module: locationPointing</span></a> to allow for spacecraft targeting as well</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioGroundMapping.html#scenariogroundmapping"><span class="std std-ref">scenarioGroundMapping</span></a> scenario to demonstrate the new mapping capabilities.</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioRendezVous.html#scenariorendezvous"><span class="std std-ref">scenarioRendezVous</span></a> scenario illustrating a servicer approaching
+a debris object and engage several flight modes.</p></li>
+<li><p>added new scenario <a class="reference internal" href="../../examples/scenarioDragDeorbit.html#scenariodragdeorbit"><span class="std std-ref">scenarioDragDeorbit</span></a></p></li>
+<li><p>added new scenario <a class="reference internal" href="../../examples/scenarioLagrangePointOrbit.html#scenariolagrangepointorbit"><span class="std std-ref">scenarioLagrangePointOrbit</span></a></p></li>
+<li><p>added Vizard 2.1.1 support for spacecraft ellipsoid shapes, Unity camera parameters</p></li>
+<li><p>added support for the polynomial gravity model to <a class="reference internal" href="../../Documentation/simulation/dynamics/_GeneralModuleFiles/gravityEffector.html#gravityeffector"><span class="std std-ref">C++ Module: gravityEffector</span></a></p></li>
+<li><p>updated the <code class="docutils literal notranslate"><span class="pre">conanFile.py</span></code> to fix configuration and building issues with the latest
+version of python</p></li>
+<li><p>fixed issue computing latitude angle in <code class="docutils literal notranslate"><span class="pre">PCPF2LLA()</span></code> in <a class="reference internal" href="../../Documentation/architecture/utilities/geodeticConversion.html#geodeticconversion"><span class="std std-ref">geodeticConversion</span></a>.  This was used
+in the helper method <code class="docutils literal notranslate"><span class="pre">specifyLocationPCPF()</span></code> method inside <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a>, as well as
+<a class="reference internal" href="../../Documentation/simulation/environment/MsisAtmosphere/msisAtmosphere.html#msisatmosphere"><span class="std std-ref">C++ Module: msisAtmosphere</span></a> and <a class="reference internal" href="../../Documentation/simulation/environment/albedo/albedo.html#albedo"><span class="std std-ref">C++ Module: albedo</span></a>.</p></li>
+<li><p>fixed an issue in the RKF45 variable time step integrator where one of the constants had the wrong sign.</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioMomentumDumping.html#scenariomomentumdumping"><span class="std std-ref">scenarioMomentumDumping</span></a> to illustrate how to perform momentum dumping using thrusters.</p></li>
+<li><p>updated <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> to allow for an optional panel reference state input message</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioDeployingPanel.html#scenariodeployingpanel"><span class="std std-ref">scenarioDeployingPanel</span></a> to demonstrate panel deployment using panel reference message</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a> which is compatible with a variable time step integrator.  Here
+the thrust on-off command is passed through a first order low-pass filter to provide smooth on- and
+off-ramping.</p></li>
+<li><p>added new attitude pointing scenario <a class="reference internal" href="../../examples/scenarioAttitudeFeedback2T_stateEffTH.html#scenarioattitudefeedback2t-stateeffth"><span class="std std-ref">scenarioAttitudeFeedback2T_stateEffTH</span></a> that uses
+the new <a class="reference internal" href="../../Documentation/simulation/dynamics/Thrusters/thrusterStateEffector/thrusterStateEffector.html#thrusterstateeffector"><span class="std std-ref">C++ Module: thrusterStateEffector</span></a></p></li>
+<li><p>added ability to simulate faults within <a class="reference internal" href="../../Documentation/simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">C++ Module: coarseSunSensor</span></a> module</p></li>
+<li><p>created a 1-DoF rotating rigid body class <code class="docutils literal notranslate"><span class="pre">SpinningBodyStateEffector</span></code>. It is built in a general way to simulate
+any effector with a single spinning axis.</p></li>
+</ul>
+</section>
+<section id="version-2-1-3-may-25-2022">
+<span id="bsk-release-2-1-3"></span><h2>Version 2.1.3 (May 25, 2022)<a class="headerlink" href="#version-2-1-3-may-25-2022" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>corrected how <a class="reference internal" href="../../Documentation/simulation/environment/planetEphemeris/planetEphemeris.html#planetephemeris"><span class="std std-ref">C++ Module: planetEphemeris</span></a> computes the celestial body orientation</p></li>
+<li><p>corrected issue in Monte Carlo controller class where if a single run is called that fails,
+this was not reported</p></li>
+<li><p>updated Basilisk documentation CSS to work with the latest version of <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> and <code class="docutils literal notranslate"><span class="pre">breathe</span></code></p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/environment/TabularAtmosphere/tabularAtmosphere.html#tabularatmosphere"><span class="std std-ref">C++ Module: tabularAtmosphere</span></a> to calculate atmospheric density using atmosphere tables</p></li>
+<li><p>created new <a class="reference internal" href="../../Documentation/fswAlgorithms/smallBodyNavigation/smallBodyNavUKF/smallBodyNavUKF.html#smallbodynavukf"><span class="std std-ref">C++ Module: smallBodyNavUKF</span></a> to make an UKF filter for small body navigation</p></li>
+<li><p>created new example script <a class="reference internal" href="../../examples/scenarioSmallBodyNavUKF.html#scenariosmallbodynavukf"><span class="std std-ref">scenarioSmallBodyNavUKF</span></a> to demonstrate the use of <a class="reference internal" href="../../Documentation/fswAlgorithms/smallBodyNavigation/smallBodyNavUKF/smallBodyNavUKF.html#smallbodynavukf"><span class="std std-ref">C++ Module: smallBodyNavUKF</span></a></p></li>
+<li><p>added a function titled <code class="docutils literal notranslate"><span class="pre">SpherePlot()</span></code> that allows for plotting of charged spheres based
+on the MSM model <a class="reference internal" href="../../Documentation/simulation/dynamics/msmForceTorque/msmForceTorque.html#msmforcetorque"><span class="std std-ref">C++ Module: msmForceTorque</span></a></p></li>
+<li><p>created new <a class="reference internal" href="../../Documentation/fswAlgorithms/orbitControl/smallBodyWaypointFeedback/smallBodyWaypointFeedback.html#smallbodywaypointfeedback"><span class="std std-ref">C++ Module: smallBodyWaypointFeedback</span></a> module for waypoint-to-waypoint control about a small body</p></li>
+<li><p>created new example script <a class="reference internal" href="../../examples/scenarioSmallBodyFeedbackControl.html#scenariosmallbodyfeedbackcontrol"><span class="std std-ref">scenarioSmallBodyFeedbackControl</span></a> to demonstrate the new module</p></li>
+<li><p>added <a class="reference internal" href="../../examples/BskSim/scenarios/scenario_AddRWFault.html#scenario-addrwfault"><span class="std std-ref">scenario_AddRWFault</span></a> to show how to use event handlers to add faults</p></li>
+<li><p>added <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.html#constrainedattitudemaneuver"><span class="std std-ref">C++ Module: constrainedAttitudeManeuver</span></a> with MRP-cartesian-distance- and effort-based A* graph search algorithms</p></li>
+<li><p>added <a class="reference internal" href="../../examples/scenarioAttitudeConstrainedManeuver.html#scenarioattitudeconstrainedmaneuver"><span class="std std-ref">scenarioAttitudeConstrainedManeuver</span></a> to illustrate how to use <a class="reference internal" href="../../Documentation/fswAlgorithms/attGuidance/constrainedAttitudeManeuver/constrainedAttitudeManeuver.html#constrainedattitudemaneuver"><span class="std std-ref">C++ Module: constrainedAttitudeManeuver</span></a></p></li>
+<li><p>added <code class="docutils literal notranslate"><span class="pre">specifyLocationPCPF()</span></code> method to <a class="reference internal" href="../../Documentation/simulation/environment/groundLocation/groundLocation.html#groundlocation"><span class="std std-ref">C++ Module: groundLocation</span></a> for specifying ground locations in planet-centered,
+planet-fixed coordinates</p></li>
+<li><p>updated <a class="reference internal" href="../../Documentation/simulation/environment/spacecraftLocation/spacecraftLocation.html#spacecraftlocation"><span class="std std-ref">C++ Module: spacecraftLocation</span></a> to handle cases where the closed approach point to
+the planet is outside the spacecraft-spacecraft interval</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioAerocapture.html#scenarioaerocapture"><span class="std std-ref">scenarioAerocapture</span></a> which simulates an aerocapture scenario</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/deviceInterface/hingedBodyLinearProfiler/hingedBodyLinearProfiler.html#hingedbodylinearprofiler"><span class="std std-ref">C++ Module: hingedBodyLinearProfiler</span></a> to provide a panel deployment angular profile</p></li>
+<li><p>added new <a class="reference internal" href="../../Documentation/simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.html#hingedrigidbodymotor"><span class="std std-ref">C++ Module: hingedRigidBodyMotor</span></a> to provide panel motor torque control</p></li>
+<li><p>added new training videos to <a class="reference internal" href="../../Build/installBuild.html#configurebuild"><span class="std std-ref">Building the Software Framework</span></a>, installOptionalPackages, <a class="reference internal" href="../../examples/scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a>,
+<a class="reference internal" href="../../examples/scenarioOrbitManeuver.html#scenarioorbitmaneuver"><span class="std std-ref">scenarioOrbitManeuver</span></a>, <a class="reference internal" href="../../examples/scenarioOrbitMultiBody.html#scenarioorbitmultibody"><span class="std std-ref">scenarioOrbitMultiBody</span></a>, <a class="reference internal" href="../../examples/scenarioCustomGravBody.html#scenariocustomgravbody"><span class="std std-ref">scenarioCustomGravBody</span></a></p></li>
+<li><p>added support for Vizard 2.1 scripting</p></li>
+</ul>
+</section>
+<section id="version-2-1-2-march-12-2022">
+<span id="bsk-release-2-1-2"></span><h2>Version 2.1.2 (March 12, 2022)<a class="headerlink" href="#version-2-1-2-march-12-2022" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>enhanced <a class="reference internal" href="../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a> to allow Spice spacecraft names to be setup to pull their
+trajectory and attitude states from a spice kernel</p></li>
+<li><p>added <a class="reference internal" href="../../examples/scenarioSpiceSpacecraft.html#scenariospicespacecraft"><span class="std std-ref">scenarioSpiceSpacecraft</span></a> to illustrate using Spice to specify the trajectory of a
+spacecraft while leaving the attitude dynamics unprescribed.</p></li>
+<li><p>fixed a bug where using the generator flag to build on windows would skip a line in the conanfile.py that is crucial for building opNav.</p></li>
+<li><p>added <a class="reference internal" href="../../Documentation/simulation/environment/dentonFluxModel/dentonFluxModel.html#dentonfluxmodel"><span class="std std-ref">C++ Module: dentonFluxModel</span></a> to compute electron and ion fluxes for the GEO regime.</p></li>
+<li><p>fixed build issue with <code class="docutils literal notranslate"><span class="pre">conan</span></code> version 1.44 or newer</p></li>
+<li><p>fixed an issue doing a clean build of <code class="docutils literal notranslate"><span class="pre">opNav</span></code> mode where conan failed to install <code class="docutils literal notranslate"><span class="pre">opencv/4.1.1</span></code>
+with the <code class="docutils literal notranslate"><span class="pre">jasper</span></code> dependency.</p></li>
+<li><p>enhanced ability to set the planet Spice frame in the gravity factory class</p></li>
+<li><p>new ability to set the Vizard celestial body name to be different from the Spice planet body name</p></li>
+<li><p>added support for <code class="docutils literal notranslate"><span class="pre">pytest</span></code> version 7.0.0 and higher</p></li>
+<li><p>updated how <code class="docutils literal notranslate"><span class="pre">pytest</span></code> is run to generate a resulting HTML report</p></li>
+<li><p>modified <a class="reference internal" href="../../Documentation/simulation/dynamics/msmForceTorque/msmForceTorque.html#msmforcetorque"><span class="std std-ref">C++ Module: msmForceTorque</span></a> to create an output message with the MSM charge values for each spacecraft</p></li>
+<li><p>added new <a class="reference internal" href="../../examples/scenarioInertialSpiral.html#scenarioinertialspiral"><span class="std std-ref">scenarioInertialSpiral</span></a> example scenario</p></li>
+<li><p>improved robustness of Basilisk installation script</p></li>
+<li><p>provide support for Vizard 2.0.4 feature scripting</p></li>
+<li><p>added a new heliocentric mission simulation example using custom Spice spacecraft
+trajectory file <a class="reference internal" href="../../examples/scenarioHelioTransSpice.html#scenarioheliotransspice"><span class="std std-ref">scenarioHelioTransSpice</span></a></p></li>
+<li><p>added a new planetary fly-by mission example using a custom Spice translational file and
+attitude pointing modes <a class="reference internal" href="../../examples/scenarioFlybySpice.html#scenarioflybyspice"><span class="std std-ref">scenarioFlybySpice</span></a></p></li>
+<li><p>added a new asteroid arrival mission example with attitude pointing modes <a class="reference internal" href="../../examples/scenarioAsteroidArrival.html#scenarioasteroidarrival"><span class="std std-ref">scenarioAsteroidArrival</span></a></p></li>
+<li><p>added a new scenario <a class="reference internal" href="../../examples/scenarioTwoChargedSC.html#scenariotwochargedsc"><span class="std std-ref">scenarioTwoChargedSC</span></a> illustrating how to apply the MSM spacecraft
+charging model to a relative motion simulation</p></li>
+</ul>
+</section>
+<section id="version-2-1-1-dec-15-2021">
+<span id="bsk-release-2-1-1"></span><h2>Version 2.1.1 (Dec. 15, 2021)<a class="headerlink" href="#version-2-1-1-dec-15-2021" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">OpNav</span></code> mode dependency <code class="docutils literal notranslate"><span class="pre">gettext</span></code> to version 0.21 to allow BSK to be build on Windows
+with <code class="docutils literal notranslate"><span class="pre">OpNav</span></code> support.</p></li>
+<li><p>created two new messages that contain the information regarding scheduled burns for orbit reconfiguration in
+formation flying scenarios. See <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ReconfigBurnInfoMsgPayload.html#reconfigburninfomsgpayload"><span class="std std-ref">ReconfigBurnInfoMsgPayload</span></a> and <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ReconfigBurnArrayInfoMsgPayload.html#reconfigburnarrayinfomsgpayload"><span class="std std-ref">ReconfigBurnArrayInfoMsgPayload</span></a>.</p></li>
+<li><p>the module <a class="reference internal" href="../../Documentation/fswAlgorithms/formationFlying/spacecraftReconfig/spacecraftReconfig.html#spacecraftreconfig"><span class="std std-ref">C Module: spacecraftReconfig</span></a> now outputs a message of type <a class="reference internal" href="../../Documentation/architecture/msgPayloadDefC/ReconfigBurnArrayInfoMsgPayload.html#reconfigburnarrayinfomsgpayload"><span class="std std-ref">ReconfigBurnArrayInfoMsgPayload</span></a>.
+All internal calculation are also done using a buffer of this message type.</p></li>
+<li><p>Added the time standard library to include statements in atmosphereBase.h to fix a build issue found on windows.</p></li>
+<li><p>updated <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> to include an optional translational reference message to specify the trajectory</p></li>
+<li><p>Added a swig array-type <code class="docutils literal notranslate"><span class="pre">ARRAYINTASLIST</span></code> that fixes a double to int conversion error when building the
+<code class="docutils literal notranslate"><span class="pre">FSWdeviceAvailability</span></code> message on windows.</p></li>
+<li><p>Updated dispersions.py to support functionality that was deprecated in python3.10. This change supports
+python versions &gt;=3.3.</p></li>
+<li><p>Updated the Windows build process to fix a static runtime library issue with <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code> found
+in older versions of visual studio.</p></li>
+<li><p>Added scripting support for Vizard 2.0.3</p></li>
+</ul>
+</section>
+<section id="version-2-1-0-nov-13-2021">
+<span id="bsk-release-2-1-0"></span><h2>Version 2.1.0 (Nov. 13, 2021)<a class="headerlink" href="#version-2-1-0-nov-13-2021" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>added BSpline function to <code class="docutils literal notranslate"><span class="pre">utilities</span></code> and related UnitTest.</p></li>
+<li><p>added kinematic relations between angular accelerations and second derivative of MRP set to
+<a class="reference internal" href="../../Documentation/architecture/utilities/rigidBodyKinematics.html#rigidbodykinematicsutilities"><span class="std std-ref">rigidBodyKinematics</span></a> library</p></li>
+<li><p>updated the installation script to function with the latest <code class="docutils literal notranslate"><span class="pre">conan</span></code> program and the recent
+<code class="docutils literal notranslate"><span class="pre">conan</span></code> repo changes.  Note, you will have to delete the <code class="docutils literal notranslate"><span class="pre">.conan</span></code> folder in your home
+directory to create a fresh copy of the software dependencies.</p></li>
+<li><p>added a Developer support page <a class="reference internal" href="../Developer/Debugging.html#debugging"><span class="std std-ref">Accessing the Debugger for C/C++ Basilisk Modules</span></a></p></li>
+<li><p>fixed a memory leak with the Swig layer where an object was not released properly.  Thanks go to
+Stephen Ritter and Toney for tracking down this issue.</p></li>
+<li><p>added a new orbit maneuver example <a class="reference internal" href="../../examples/scenarioJupiterArrival.html#scenariojupiterarrival"><span class="std std-ref">scenarioJupiterArrival</span></a></p></li>
+<li><p>made SWIG interface to the MRP derivative variable</p></li>
+<li><p>added two new variable time step integrators. See <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svIntegratorRKF45.html#svintegratorrkf45"><span class="std std-ref">svIntegratorRKF45</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svIntegratorRKF78.html#svintegratorrkf78"><span class="std std-ref">svIntegratorRKF78</span></a>.</p></li>
+<li><p>updated the state effector base class to also provide the current integration time step in addition to the
+current time</p></li>
+<li><p>added new scenario <a class="reference internal" href="../../examples/scenarioVariableTimeStepIntegrators.html#scenariovariabletimestepintegrators"><span class="std std-ref">scenarioVariableTimeStepIntegrators</span></a></p></li>
+<li><p>updated <a class="reference internal" href="../../examples/scenarioIntegrators.html#scenariointegrators"><span class="std std-ref">scenarioIntegrators</span></a> to include the <code class="docutils literal notranslate"><span class="pre">rkf45</span></code> and <code class="docutils literal notranslate"><span class="pre">rkf78</span></code> options</p></li>
+<li><p>changed the way <a class="reference internal" href="../../Documentation/fswAlgorithms/formationFlying/spacecraftReconfig/spacecraftReconfig.html#spacecraftreconfig"><span class="std std-ref">C Module: spacecraftReconfig</span></a> gets the deputy’s mass properties. It now receives that information
+through a message of the type <code class="docutils literal notranslate"><span class="pre">VehicleConfigMsgPayload</span></code> instead of an internal variable. Relevant example
+scripts have been updated.</p></li>
+<li><p>new tutorial example scenario script <a class="reference internal" href="../../examples/scenarioTAMcomparison.html#scenariotamcomparison"><span class="std std-ref">scenarioTAMcomparison</span></a></p></li>
+<li><p>new mass sensor that converts a <code class="docutils literal notranslate"><span class="pre">simulation</span></code> mass properties message to a <code class="docutils literal notranslate"><span class="pre">FSW</span></code> vehicle configuration message <a class="reference internal" href="../../Documentation/simulation/sensors/simpleMassProps/simpleMassProps.html#simplemassprops"><span class="std std-ref">C++ Module: simpleMassProps</span></a></p></li>
+<li><p>added scripting support for Vizard 2.0.1 and 2.0.2</p></li>
+<li><p>This release provides a new ability to run a single Basilisk simulation in a multi-threaded manner.
+The BSK processes can be spread across multiple threads.  See <a class="reference internal" href="../../examples/MultiSatBskSim/scenariosMultiSat/scenario_BasicOrbitMultiSat_MT.html#scenario-basicorbitmultisat-mt"><span class="std std-ref">scenario_BasicOrbitMultiSat_MT</span></a>
+for an example of how to use this.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The BSK v2.1 multi-threading assumes all processes assigned to a thread can run independently
+from processes in another thread.  Further, cross thread message communication is not yet
+thread safe!</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.2.html" class="btn btn-neutral float-left" title="Version 2.2 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.0.html" class="btn btn-neutral float-right" title="Version 2.0 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

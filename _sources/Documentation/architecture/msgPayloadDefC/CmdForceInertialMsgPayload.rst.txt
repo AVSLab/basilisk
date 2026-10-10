@@ -1,0 +1,10 @@
+.. _CmdForceInertialMsgPayload:
+
+CmdForceInertialMsgPayload
+==========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CmdForceInertialMsgPayload.h
+   :project: msgPayloadDefC
+

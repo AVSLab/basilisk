@@ -1,0 +1,10 @@
+.. _CurrentMsgPayload:
+
+CurrentMsgPayload
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: CurrentMsgPayload.h
+   :project: msgPayloadDefC
+

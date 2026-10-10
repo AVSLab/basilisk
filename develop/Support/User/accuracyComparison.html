@@ -1,0 +1,668 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accuracy Comparison with GMAT and Orekit &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Developer Information" href="../Developer.html" />
+    <link rel="prev" title="FAQ: Microsoft Windows" href="FAQwindows.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../User.html">User Information</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="FAQ.html">FAQ - Frequency Asked Questions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="FAQwindows.html">FAQ: Microsoft Windows</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Accuracy Comparison with GMAT and Orekit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../User.html">User Information</a></li>
+      <li class="breadcrumb-item active">Accuracy Comparison with GMAT and Orekit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/User/accuracyComparison.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="accuracy-comparison-with-gmat-and-orekit">
+<span id="accuracycomparison"></span><h1>Accuracy Comparison with GMAT and Orekit<a class="headerlink" href="#accuracy-comparison-with-gmat-and-orekit" title="Link to this heading"></a></h1>
+<details class="bsk-page-navigation">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ul>
+      
+      <li>
+        <a href="#method">Method</a>
+      </li>
+      
+      <li>
+        <a href="#results">Results</a>
+      </li>
+      
+      <li class="bsk-page-navigation-subsection">
+        <a href="#atmosphere-model-check">Atmosphere model check</a>
+      </li>
+      
+      <li class="bsk-page-navigation-subsection">
+        <a href="#drag">Drag</a>
+      </li>
+      
+      <li class="bsk-page-navigation-subsection">
+        <a href="#attitude-dependent-drag-and-radiation-pressure">Attitude-dependent drag and radiation pressure</a>
+      </li>
+      
+      <li>
+        <a href="#reproducing-the-results">Reproducing the Results</a>
+      </li>
+      
+      <li>
+        <a href="#limitations">Limitations</a>
+      </li>
+      
+    </ul>
+  </nav>
+</details>
+<p>This page documents how Basilisk’s orbit propagation compares with two widely used
+astrodynamics tools, <a class="reference external" href="https://gmat.atlassian.net/wiki/spaces/GW/overview">GMAT</a> and
+<a class="reference external" href="https://www.orekit.org">Orekit</a>. It is intended to help users who need to show
+that Basilisk results agree with an established reference before relying on them.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is a <strong>rough comparison</strong>. The three tools differ in their features and in how each force model is set up, so
+the differences are not a ranking of the tools. The page is not generated automatically: the tables and figures were
+produced by hand with the tool versions named below, and the page will become out of date as GMAT, Orekit and
+Basilisk are released. Run times are deliberately not compared, because they depend on the features each tool
+provides and on step sizes that are not equivalent.</p>
+</div>
+<p>The comparison is reproduced by the scripts in <code class="docutils literal notranslate"><span class="pre">benchmarks/accuracyComparison</span></code>:
+<a class="reference download internal" download="" href="../../_downloads/5717ba6f283058f2a4622cdbe3881293/compare_with_basilisk.py"><code class="xref download docutils literal notranslate"><span class="pre">compare_with_basilisk.py</span></code></a>,
+the reference generators
+<a class="reference download internal" download="" href="../../_downloads/0378490439f2a3a4a7531b717f00a27d/generate_gmat_reference.py"><code class="xref download docutils literal notranslate"><span class="pre">generate_gmat_reference.py</span></code></a> and
+<a class="reference download internal" download="" href="../../_downloads/d20e5b0564f04df644eff673920dabaa/generate_orekit_reference.py"><code class="xref download docutils literal notranslate"><span class="pre">generate_orekit_reference.py</span></code></a>,
+and the case definitions <a class="reference download internal" download="" href="../../_downloads/e7f14314c3582ec0ae9f1ff439ea55d7/cases.json"><code class="xref download docutils literal notranslate"><span class="pre">cases.json</span></code></a>.
+The results on this page were produced with Orekit 13.1 and GMAT R2026a, and with Basilisk configured as described in
+the tables below: the environment modules use the spacecraft state extrapolated to the middle of the step
+(<code class="docutils literal notranslate"><span class="pre">setExtrapolateScStateToStepMidpoint()</span></code>, see <a class="reference internal" href="../../Documentation/simulation/environment/_GeneralModuleFiles/atmosphereBase.html#atmospherebase"><span class="std std-ref">C++ Module: atmosphereBase</span></a>), and <a class="reference internal" href="../../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">C++ Module: exponentialAtmosphere</span></a> uses the
+ellipsoidal altitude (<code class="docutils literal notranslate"><span class="pre">setPlanetPolarRadius()</span></code>). The GMAT and Orekit ephemerides are not part
+of the repository: <a class="reference internal" href="#accuracycomparisonreproduce"><span class="std std-ref">Reproducing the Results</span></a> explains how to generate them and run the comparison. Each generated
+ephemeris is accompanied by a manifest that records its provenance, which the comparison validates before it runs
+Basilisk. The comparison is not part of the automated tests because it needs both tools installed and the run of all cases
+takes several minutes.</p>
+<section id="method">
+<h2>Method<a class="headerlink" href="#method" title="Link to this heading"></a></h2>
+<p>All three tools propagate the same seventeen cases, which are defined once in
+<code class="docutils literal notranslate"><span class="pre">benchmarks/accuracyComparison/cases.json</span></code>. In the first ten cases the perturbations are added one at a time, so a
+disagreement can be traced to a single effect. The other seven extend the comparison to higher-degree gravity, other orbit
+types and epochs, and attitude-dependent drag and radiation pressure. The drag cases use the exponential atmosphere model of each tool (<a class="reference internal" href="../../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">C++ Module: exponentialAtmosphere</span></a>, Orekit’s
+<code class="docutils literal notranslate"><span class="pre">SimpleExponentialAtmosphere</span></code> and GMAT’s <code class="docutils literal notranslate"><span class="pre">Exponential</span></code>), configured with the same single-scale density (see the settings
+below). GMAT’s model reads its parameters from a table file, which holds one band.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Force model</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_twobody</span></code></p></td>
+<td><p>Point-mass gravity, inclined LEO (<span class="math notranslate nohighlight">\(a = 6778\)</span> km, <span class="math notranslate nohighlight">\(i = 51.6^\circ\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_zonal6</span></code></p></td>
+<td><p>Zonal harmonics <span class="math notranslate nohighlight">\(J_2\)</span> to <span class="math notranslate nohighlight">\(J_6\)</span>, same LEO, Earth pole fixed along inertial <span class="math notranslate nohighlight">\(+Z\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gto_zonal6</span></code></p></td>
+<td><p>Same as <code class="docutils literal notranslate"><span class="pre">leo_zonal6</span></code>, in a GTO (<span class="math notranslate nohighlight">\(r_p = 6572\)</span> km, <span class="math notranslate nohighlight">\(e = 0.73\)</span>, <span class="math notranslate nohighlight">\(i = 28.5^\circ\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_egm8x8</span></code></p></td>
+<td><p>EGM96 degree and order 8, rotating Earth</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_sunmoon</span></code></p></td>
+<td><p>Point-mass gravity plus Sun and Moon third-body perturbations</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_srp</span></code></p></td>
+<td><p>Point-mass gravity plus cannonball solar radiation pressure with Earth shadow</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_drag</span></code></p></td>
+<td><p>Point-mass gravity plus exponential-density drag with a co-rotating atmosphere</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_all</span></code></p></td>
+<td><p>EGM96 8x8, Sun and Moon, solar radiation pressure, and drag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gto_all</span></code></p></td>
+<td><p>EGM96 8x8, Sun and Moon, and solar radiation pressure (no drag)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">geo_all</span></code></p></td>
+<td><p>Same as <code class="docutils literal notranslate"><span class="pre">gto_all</span></code>, in a near-equatorial GEO orbit</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_egm70</span></code></p></td>
+<td><p>EGM96 degree and order 70, rotating Earth, same LEO, 7 days</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sso_drag</span></code></p></td>
+<td><p>Point-mass gravity plus drag in a 700 km sun-synchronous orbit (<span class="math notranslate nohighlight">\(i = 98.19^\circ\)</span>), epoch 2026-03-20</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sso_all</span></code></p></td>
+<td><p>Same orbit as <code class="docutils literal notranslate"><span class="pre">sso_drag</span></code> with EGM96 20x20, Sun and Moon, solar radiation pressure, and drag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">molniya_all</span></code></p></td>
+<td><p>EGM96 8x8, Sun and Moon, and solar radiation pressure in a Molniya orbit (<span class="math notranslate nohighlight">\(e = 0.74\)</span>, <span class="math notranslate nohighlight">\(i = 63.4^\circ\)</span>), epoch 2026-05-20</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_box_fixed</span></code></p></td>
+<td><p>Box spacecraft with a fixed inertial attitude, faceted drag and radiation pressure, 7 days (Orekit reference only)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_box_spin</span></code></p></td>
+<td><p>Same box spinning at 1.5 deg/s about a fixed body axis, 7 days (Orekit reference only)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geo_box_spin</span></code></p></td>
+<td><p>The spinning box in GEO with radiation pressure only, 7 days (Orekit reference only)</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Item</p></th>
+<th class="head"><p>Setting</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Duration, sampling</p></td>
+<td><p>30 days from 2026-01-01 00:00:00 UTC, one sample every hour. The cases that list another epoch or duration above override these values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Frame</p></td>
+<td><p>Earth-centered inertial ICRF axes: <code class="docutils literal notranslate"><span class="pre">GCRF</span></code> in Orekit, <code class="docutils literal notranslate"><span class="pre">EarthICRF</span></code> in GMAT, and the <code class="docutils literal notranslate"><span class="pre">J2000</span></code> frame of the DE430 SPICE kernels in Basilisk, which is aligned with the ICRF (see the <a class="reference external" href="https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/frames.html#ICRF%20vs%20J2000">NAIF explanation of ICRF versus J2000</a>). The initial states, the attitudes and the outputs are expressed in this frame in all tools. Orekit’s <code class="docutils literal notranslate"><span class="pre">EME2000</span></code> and GMAT’s <code class="docutils literal notranslate"><span class="pre">MJ2000Eq</span></code> differ from it by the frame bias, a rotation of about 20 mas (several meters per 10<sup>7</sup> m) that would otherwise appear as a difference between the tools</p></td>
+</tr>
+<tr class="row-even"><td><p>Gravity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mu = 3.986004415\times10^{14}\)</span> m<sup>3</sup>/s<sup>2</sup>, equatorial radius 6378136.3 m, fully normalized EGM96 coefficients, identical files for all tools</p></td>
+</tr>
+<tr class="row-odd"><td><p>Earth orientation</p></td>
+<td><p>Zonal-only cases: pole fixed along inertial <span class="math notranslate nohighlight">\(+Z\)</span>. Rotating cases: ITRF93 in Basilisk (high-precision NAIF Earth kernel and the ITRF93 frame association kernel, requested through <code class="docutils literal notranslate"><span class="pre">spicePlanetFrames</span></code>; see <a class="reference internal" href="#accuracycomparisonreproduce"><span class="std std-ref">Reproducing the Results</span></a>), ITRF with IERS 2010 conventions in Orekit, GMAT’s default Earth orientation</p></td>
+</tr>
+<tr class="row-even"><td><p>Third bodies</p></td>
+<td><p>Sun and Moon, from DE430 (Basilisk), DE421 (GMAT) and DE440 (Orekit)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Spacecraft</p></td>
+<td><p>1000 kg, <span class="math notranslate nohighlight">\(C_r = 1.5\)</span> with 10 m<sup>2</sup>, <span class="math notranslate nohighlight">\(C_d = 2.2\)</span> with 10 m<sup>2</sup>. The box cases use a 1 m x 2 m x 3 m box without solar arrays, <span class="math notranslate nohighlight">\(C_d = 2.2\)</span>, absorbed, specular and diffuse fractions of 0.6, 0.2 and 0.2, and the center of pressure at the center of mass, so that no torque changes the spin</p></td>
+</tr>
+<tr class="row-even"><td><p>Solar radiation pressure</p></td>
+<td><p>Cannonball model, flux 1361 W/m<sup>2</sup> at 1 AU (Basilisk’s constant, used in all tools), shadow from the conical Earth model. The occulting body is a sphere of the equatorial radius in all tools (Orekit’s default is the oblate Earth, see below)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Atmosphere</p></td>
+<td><p>Single-scale exponential density <span class="math notranslate nohighlight">\(\rho = \rho_0 \exp(-h/H)\)</span> with <span class="math notranslate nohighlight">\(\rho_0 = 2\times10^{-9}\)</span> kg/m<sup>3</sup> at zero altitude and <span class="math notranslate nohighlight">\(H = 60\)</span> km (<code class="docutils literal notranslate"><span class="pre">exponential_atmosphere</span></code> in <code class="docutils literal notranslate"><span class="pre">cases.json</span></code>), in <a class="reference internal" href="../../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">C++ Module: exponentialAtmosphere</span></a>, Orekit’s <code class="docutils literal notranslate"><span class="pre">SimpleExponentialAtmosphere</span></code> and GMAT’s <code class="docutils literal notranslate"><span class="pre">Exponential</span></code> model (configured with <code class="docutils literal notranslate"><span class="pre">Drag.InputFile</span></code> as one band from 0 km). The two parameters are passed to each tool as they are, without conversion, and evaluated at the altitude above the ellipsoid of the equatorial radius. The three implementations are compared directly at nine points before any propagation (<a class="reference internal" href="#accuracycomparisondensityprobe"><span class="std std-ref">Atmosphere model check</span></a>). Each tool uses its own exponential atmosphere model. The model has only two parameters, so all three tools can be given the same density law and the differences come from the propagation and not from the atmosphere</p></td>
+</tr>
+<tr class="row-even"><td><p>Integrators</p></td>
+<td><p>Basilisk: RKF78 with the relative tolerance <span class="math notranslate nohighlight">\(10^{-4}\)</span> and the absolute tolerance <span class="math notranslate nohighlight">\(10^{-8}\)</span> (the library defaults, set explicitly by the script; the tolerance is applied to the position in m, the velocity in m/s and the other states), task period 5 s (0.25 s for the cases with drag). Orekit: Dormand-Prince 8(5,3), tolerances <span class="math notranslate nohighlight">\(10^{-10}\)</span> m and <span class="math notranslate nohighlight">\(10^{-13}\)</span>, maximum step 300 s, 10 s with radiation pressure, and 2 s for the box cases (see below). GMAT: Prince-Dormand 7(8), accuracy <span class="math notranslate nohighlight">\(10^{-12}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>The table lists the maximum position difference in meters over the propagation time (30 days, except <code class="docutils literal notranslate"><span class="pre">leo_egm70</span></code> with
+7 days) between each pair of tools. The <code class="docutils literal notranslate"><span class="pre">Basilisk</span> <span class="pre">-</span> <span class="pre">GMAT</span></code> and <code class="docutils literal notranslate"><span class="pre">Basilisk</span> <span class="pre">-</span> <span class="pre">Orekit</span></code> columns are the quantity of
+interest. <code class="docutils literal notranslate"><span class="pre">GMAT</span> <span class="pre">-</span> <span class="pre">Orekit</span></code> shows how well the two reference tools agree with each other and
+is the natural yardstick for the other columns.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 24.0%" />
+<col style="width: 24.0%" />
+<col style="width: 24.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Basilisk - Orekit [m]</p></th>
+<th class="head"><p>Basilisk - GMAT [m]</p></th>
+<th class="head"><p>GMAT - Orekit [m]</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_twobody</span></code></p></td>
+<td><p>0.017</p></td>
+<td><p>0.27</p></td>
+<td><p>0.25</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_zonal6</span></code></p></td>
+<td><p>0.018</p></td>
+<td><p>0.29</p></td>
+<td><p>0.27</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gto_zonal6</span></code></p></td>
+<td><p>0.23</p></td>
+<td><p>0.35</p></td>
+<td><p>0.57</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_egm8x8</span></code></p></td>
+<td><p>1.1</p></td>
+<td><p>0.59</p></td>
+<td><p>0.57</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_sunmoon</span></code></p></td>
+<td><p>0.017</p></td>
+<td><p>0.24</p></td>
+<td><p>0.22</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_srp</span></code></p></td>
+<td><p>0.52</p></td>
+<td><p>0.66</p></td>
+<td><p>1.2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gto_all</span></code></p></td>
+<td><p>0.27</p></td>
+<td><p>0.44</p></td>
+<td><p>0.24</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">geo_all</span></code></p></td>
+<td><p>0.046</p></td>
+<td><p>0.36</p></td>
+<td><p>0.32</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_egm70</span></code></p></td>
+<td><p>0.48</p></td>
+<td><p>0.33</p></td>
+<td><p>0.80</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">molniya_all</span></code></p></td>
+<td><p>7.3</p></td>
+<td><p>31</p></td>
+<td><p>39</p></td>
+</tr>
+</tbody>
+</table>
+<p>Without drag, all three tools agree at the meter level over a month, except for <code class="docutils literal notranslate"><span class="pre">molniya_all</span></code> (see below), and GMAT and
+Orekit agree with each other at the same level as they agree with Basilisk. This includes solar radiation pressure with
+eclipses (0.5 to 1.2 m). All tools use the same inertial frame (ICRF axes). The Orekit reference is set up like the other two
+tools for the radiation pressure:</p>
+<ul class="simple">
+<li><p><strong>Occulting body.</strong> The conical shadow uses a sphere of the equatorial radius, as in Basilisk and GMAT. Orekit’s default is the
+oblate Earth, which changes the result of <code class="docutils literal notranslate"><span class="pre">leo_srp</span></code> by 178 m and that of <code class="docutils literal notranslate"><span class="pre">gto_all</span></code> by 49 m over 30 days (the Orekit
+reference compared with the default one, and equally the difference to Basilisk). <code class="docutils literal notranslate"><span class="pre">--oblate-shadow</span></code> selects it, and the reference is then labeled as the variant <code class="docutils literal notranslate"><span class="pre">oblate_shadow</span></code>, see
+<a class="reference internal" href="#accuracycomparisonreproduce"><span class="std std-ref">Reproducing the Results</span></a>.</p></li>
+<li><p><strong>Integrator step.</strong> The shadow entry and exit make the force non-smooth, and the adaptive step control of Orekit needs a
+small maximum step to resolve it. The SRP cases use 10 s. With a maximum step of 300 s the difference to Basilisk in <code class="docutils literal notranslate"><span class="pre">leo_srp</span></code>
+is 152 m, with 60 s it is 12 m, and with 10 s 0.5 m. GMAT agrees with Basilisk with its 300 s maximum step.</p></li>
+</ul>
+<p>The agreement does not degrade with the gravity degree: with EGM96 degree and order 70 the three tools agree to better than
+1 m after 7 days. <code class="docutils literal notranslate"><span class="pre">molniya_all</span></code> is the exception: Basilisk is 7.3 m from Orekit and 31 m from GMAT, and GMAT is 39 m from
+Orekit. This is not a Basilisk time step effect (7.3, 7.0 and 6.8 m for steps of 5, 2.5 and 1.25 s), and it is not an effect of the
+GMAT step either: with a GMAT maximum step of 300 s, 10 s and 2 s the GMAT ephemeris changes by at most 0.6 m and the
+difference to Orekit stays between 38.0 and 38.6 m. Its cause has not been isolated.</p>
+<p>The cases without Earth rotation need the same gravity pole in all tools. GMAT’s built-in ICRF axes about the user-defined
+planet gave a gravity pole that was not consistent with the other tools (up to 1.6 m for <code class="docutils literal notranslate"><span class="pre">leo_zonal6</span></code> in a month), so the
+generator propagates these cases in GMAT’s <code class="docutils literal notranslate"><span class="pre">MJ2000Eq</span></code> axes about that planet and rotates the states with the frame bias matrix,
+see <code class="docutils literal notranslate"><span class="pre">generate_gmat_reference.py</span></code>. With this, <code class="docutils literal notranslate"><span class="pre">leo_zonal6</span></code> agrees to 0.29 m.</p>
+<figure class="align-center" id="id1">
+<img alt="../../_images/accuracyComparison_geo_all.svg" src="../../_images/accuracyComparison_geo_all.svg" />
+<figcaption>
+<p><span class="caption-text">Position differences for the GEO case with all perturbations.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<img alt="../../_images/accuracyComparison_leo_srp.svg" src="../../_images/accuracyComparison_leo_srp.svg" />
+<figcaption>
+<p><span class="caption-text">Position differences for the LEO case with solar radiation pressure only. The three tools agree to 1.2 m.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id3">
+<img alt="../../_images/accuracyComparison_molniya_all.svg" src="../../_images/accuracyComparison_molniya_all.svg" />
+<figcaption>
+<p><span class="caption-text">Position differences for the Molniya case. GMAT differs from both other tools.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="atmosphere-model-check">
+<span id="accuracycomparisondensityprobe"></span><h3>Atmosphere model check<a class="headerlink" href="#atmosphere-model-check" title="Link to this heading"></a></h3>
+<p>Giving the three tools the same two parameters does not guarantee that they evaluate the same density, for example if they
+define the altitude differently. Before the first propagation with drag, the comparison therefore evaluates the atmosphere of
+each tool at nine points (<code class="docutils literal notranslate"><span class="pre">density_probe</span></code> in <code class="docutils literal notranslate"><span class="pre">cases.json</span></code>: altitudes from 200 to 800 km, at the equator, at mid-latitudes
+and near both poles). At each point the GMAT and Orekit generators report the altitude above the ellipsoid and the density that
+their own tool computes (<code class="docutils literal notranslate"><span class="pre">gmat_density_probe.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">orekit_density_probe.csv</span></code>), and <code class="docutils literal notranslate"><span class="pre">compare_with_basilisk.py</span></code>
+evaluates <a class="reference internal" href="../../Documentation/simulation/environment/ExponentialAtmosphere/exponentialAtmosphere.html#exponentialatmosphere"><span class="std std-ref">C++ Module: exponentialAtmosphere</span></a> at the same positions. The comparison stops if</p>
+<ul class="simple">
+<li><p>the altitude reported by a tool differs from the geodetic altitude of the point by more than <code class="docutils literal notranslate"><span class="pre">altitude_tolerance_m</span></code>
+(the altitude definition differs, for example a spherical instead of an ellipsoidal one), or</p></li>
+<li><p>the density of Basilisk and of a tool differ by more than <code class="docutils literal notranslate"><span class="pre">density_rel_tolerance</span></code> (relative; the models differ).</p></li>
+</ul>
+<p>Orekit and Basilisk agree to better than <span class="math notranslate nohighlight">\(10^{-10}\)</span> in density at all nine points. GMAT reports an altitude up to
+0.64 m lower than the geodetic altitude away from the equator, and its density differs from Basilisk by exactly
+<span class="math notranslate nohighlight">\(\Delta h/H\)</span>, up to <span class="math notranslate nohighlight">\(1.1\times10^{-5}\)</span>. This is a difference in the altitude definition and not in the atmosphere
+model, and it is the reason for the tolerance of <span class="math notranslate nohighlight">\(2\times10^{-5}\)</span>. At these altitudes it changes the drag of GMAT by about
+<span class="math notranslate nohighlight">\(10^{-5}\)</span> relative. Since the densities agree at these points, a difference in the drag cases below comes from the
+propagation and not from the atmosphere.</p>
+</section>
+<section id="drag">
+<h3>Drag<a class="headerlink" href="#drag" title="Link to this heading"></a></h3>
+<p>The drag cases use the exponential atmosphere model of each tool, configured with the density at zero altitude and the scale
+height of the settings table. The comparison therefore does not depend on how each tool sets up an empirical atmosphere
+model. GMAT’s <code class="docutils literal notranslate"><span class="pre">Exponential</span></code> model is configured with a table of one band, which gives the same density law as the other
+tools at every altitude. All tools use the same drag law,
+cross-section, drag coefficient, mass and co-rotating atmosphere, and the altitude above the ellipsoid (set in
+Basilisk with <code class="docutils literal notranslate"><span class="pre">setPlanetPolarRadius()</span></code>; GMAT’s altitude differs by up to 0.64 m, see above).</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 24.0%" />
+<col style="width: 24.0%" />
+<col style="width: 24.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Basilisk - Orekit [m]</p></th>
+<th class="head"><p>Basilisk - GMAT [m]</p></th>
+<th class="head"><p>GMAT - Orekit [m]</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_drag</span></code></p></td>
+<td><p>17</p></td>
+<td><p>63</p></td>
+<td><p>46</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_all</span></code></p></td>
+<td><p>18</p></td>
+<td><p>72</p></td>
+<td><p>53</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sso_drag</span></code></p></td>
+<td><p>0.11</p></td>
+<td><p>0.82</p></td>
+<td><p>0.70</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sso_all</span></code></p></td>
+<td><p>0.24</p></td>
+<td><p>0.90</p></td>
+<td><p>1.1</p></td>
+</tr>
+</tbody>
+</table>
+<p>In the 700 km cases all three tools agree to about 1 m. In the 400 km cases, where the drag is larger and the orbit decays
+faster, Basilisk and Orekit agree to 18 m, but GMAT differs from both by 46 to 72 m although the density law is the same and the density
+probe agrees to about <span class="math notranslate nohighlight">\(10^{-5}\)</span>. The cause of the GMAT difference has not been isolated. It is not the GMAT integrator step: with a
+maximum step of 300 s and 10 s the GMAT ephemeris of <code class="docutils literal notranslate"><span class="pre">leo_drag</span></code> changes by 0.9 m and the difference to Orekit stays between 45 and 46 m.</p>
+<p>The difference between Basilisk and Orekit is the discretization of the atmosphere and the drag in Basilisk, which are evaluated once per task
+period, with the spacecraft state extrapolated to the middle of the period. The error is second order in the period. For
+<code class="docutils literal notranslate"><span class="pre">leo_drag</span></code> over 10 days the maximum position difference to Orekit is 28 m for a 1 s period, 7.1 m for 0.5 s and 1.8 m
+for 0.25 s, and for <code class="docutils literal notranslate"><span class="pre">leo_all</span></code> over 30 days it is 303 m for 1 s and 18 m for 0.25 s. The cases with drag therefore use a 0.25 s
+task period. A larger period needs far fewer steps but gives a proportionally larger difference. In the same way the box cases drop
+from 8.4 m and 6.5 m with a 1 s period to 0.53 m and 0.28 m with 0.25 s, and the 700 km cases are at 0.11 m and 0.24 m.</p>
+<figure class="align-center" id="id4">
+<img alt="../../_images/accuracyComparison_leo_drag.svg" src="../../_images/accuracyComparison_leo_drag.svg" />
+<figcaption>
+<p><span class="caption-text">Position differences for the LEO case with drag only, with a 0.25 s Basilisk task period.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="attitude-dependent-drag-and-radiation-pressure">
+<h3>Attitude-dependent drag and radiation pressure<a class="headerlink" href="#attitude-dependent-drag-and-radiation-pressure" title="Link to this heading"></a></h3>
+<p>The box cases use <a class="reference internal" href="../../Documentation/simulation/dynamics/facetDragEffector/facetDragDynamicEffector.html#facetdragdynamiceffector"><span class="std std-ref">C++ Module: facetDragDynamicEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> in Basilisk and Orekit’s
+<code class="docutils literal notranslate"><span class="pre">BoxAndSolarArraySpacecraft</span></code> (without solar array) with a <code class="docutils literal notranslate"><span class="pre">FixedRate</span></code> attitude. They are compared with Orekit only:
+GMAT’s drag model is a cannonball, and its attitude-dependent radiation pressure needs a SPAD file.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Basilisk - Orekit [m]</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leo_box_fixed</span></code></p></td>
+<td><p>0.53</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">leo_box_spin</span></code></p></td>
+<td><p>0.28</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geo_box_spin</span></code></p></td>
+<td><p>0.0011</p></td>
+</tr>
+</tbody>
+</table>
+<p>The facet models and the attitude handling of the two tools agree: the radiation pressure on the spinning box agrees to 1 mm after
+7 days in GEO, and the box cases with drag to below 1 m in LEO with a 0.25 s task period.</p>
+<p>The facets that turn in and out of view make the force non-smooth, so the box cases use a 2 s maximum step for Orekit, as
+described above for the radiation pressure.</p>
+<figure class="align-center" id="id5">
+<img alt="../../_images/accuracyComparison_leo_box_spin.svg" src="../../_images/accuracyComparison_leo_box_spin.svg" />
+<figcaption>
+<p><span class="caption-text">Position difference between Basilisk and Orekit for the spinning box in LEO with drag and radiation pressure.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="reproducing-the-results">
+<span id="accuracycomparisonreproduce"></span><h2>Reproducing the Results<a class="headerlink" href="#reproducing-the-results" title="Link to this heading"></a></h2>
+<p>All commands are run from <code class="docutils literal notranslate"><span class="pre">benchmarks/accuracyComparison</span></code> of the Basilisk repository.</p>
+<p><strong>1. Prerequisites</strong></p>
+<ul>
+<li><p><strong>Orekit</strong>: a Java runtime (a JDK 17 was used), the Python package <code class="docutils literal notranslate"><span class="pre">orekit_jpype</span></code> 13 or newer
+(<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">orekit-jpype</span></code>), and the <code class="docutils literal notranslate"><span class="pre">orekit-data.zip</span></code> file. <code class="docutils literal notranslate"><span class="pre">orekit_jpype</span></code> finds Java through the
+<code class="docutils literal notranslate"><span class="pre">JAVA_HOME</span></code> environment variable, which must point to the JDK folder (on Windows, for example
+<code class="docutils literal notranslate"><span class="pre">C:\Program</span> <span class="pre">Files\Eclipse</span> <span class="pre">Adoptium\jdk-17.0.20.101-hotspot</span></code>). The data file is downloaded into the current folder
+with the command below, where the Java virtual machine must be started before the helper is called, or it can be taken
+from the <a class="reference external" href="https://gitlab.orekit.org/orekit/orekit-data">Orekit data repository</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import orekit_jpype as o; o.initVM(); from orekit_jpype.pyhelpers import download_orekit_data_curdir as d; d()"</span>
+</pre></div>
+</div>
+<p>Without <code class="docutils literal notranslate"><span class="pre">initVM()</span></code>, the helper fails with <code class="docutils literal notranslate"><span class="pre">Attempt</span> <span class="pre">to</span> <span class="pre">create</span> <span class="pre">Java</span> <span class="pre">package</span> <span class="pre">'java'</span> <span class="pre">without</span> <span class="pre">jvm</span></code>, and without
+<code class="docutils literal notranslate"><span class="pre">JAVA_HOME</span></code> <code class="docutils literal notranslate"><span class="pre">initVM()</span></code> fails with <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">JVM</span> <span class="pre">shared</span> <span class="pre">library</span> <span class="pre">file</span> <span class="pre">found</span></code>.</p>
+</li>
+<li><p><strong>GMAT</strong>: an installation of GMAT R2026a that includes the console application
+(<code class="docutils literal notranslate"><span class="pre">bin/GmatConsole</span></code>, or <code class="docutils literal notranslate"><span class="pre">bin\GmatConsole.exe</span></code> on Windows), which the Windows R2020a and R2022a zips do not. The
+generator runs it from the installation folder. On Windows, download <code class="docutils literal notranslate"><span class="pre">gmat-win-R2026a.zip</span></code> from
+<a class="reference external" href="https://sourceforge.net/projects/gmat/files/GMAT/GMAT-R2026a/gmat-win-R2026a.zip/download">SourceForge</a>
+and unzip it. The zip has no top-level folder, so extract it into a new folder (for example <code class="docutils literal notranslate"><span class="pre">C:\tools\GMAT</span> <span class="pre">R2026a</span></code>).
+The folder to pass to the generator is the one that contains <code class="docutils literal notranslate"><span class="pre">bin</span></code> directly. Messages that the Python, MATLAB or
+optimizer plug-in libraries did not open are printed by the console and do not affect the generators.</p></li>
+<li><p><strong>Earth orientation kernels</strong> (Basilisk, rotating-Earth cases): the NAIF high-precision Earth PCK
+(<code class="docutils literal notranslate"><span class="pre">earth_000101_260711_260415.bpc</span></code> was used; any <code class="docutils literal notranslate"><span class="pre">earth_*.bpc</span></code> that covers all case epochs and their durations, which
+are 2026-01-01 to 2026-06-19, works when the name is updated in <code class="docutils literal notranslate"><span class="pre">compare_with_basilisk.py</span></code>) from the
+<a class="reference external" href="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/">NAIF PCK kernels</a>, and <code class="docutils literal notranslate"><span class="pre">earth_assoc_itrf93.tf</span></code> from the
+<a class="reference external" href="https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/planets/">NAIF FK kernels</a>. Put both in one folder and pass it with
+<code class="docutils literal notranslate"><span class="pre">--kernel-dir</span></code>, or in <code class="docutils literal notranslate"><span class="pre">data/spice</span></code> next to the scripts.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code> and, for figures, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.</p></li>
+</ul>
+<p><strong>2. Generate the reference ephemerides</strong> (the ephemerides are written to <code class="docutils literal notranslate"><span class="pre">data/</span></code>, which is ignored by git, or to the folder given with <code class="docutils literal notranslate"><span class="pre">--output-dir</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>generate_orekit_reference.py<span class="w"> </span>/path/to/orekit-data.zip
+python<span class="w"> </span>generate_gmat_reference.py<span class="w"> </span>/path/to/GMAT/R2026a<span class="w">  </span><span class="c1"># the folder that contains bin/</span>
+</pre></div>
+</div>
+<p>Both scripts accept case names after the path to generate a subset. They also write <code class="docutils literal notranslate"><span class="pre">orekit_manifest.json</span></code> and
+<code class="docutils literal notranslate"><span class="pre">gmat_manifest.json</span></code>, which record for every case:</p>
+<ul class="simple">
+<li><p>the effective case configuration (the global settings merged with the case entry, including the epoch and the duration) and
+its SHA-256 hash,</p></li>
+<li><p>the inertial frame (ICRF),</p></li>
+<li><p>the generator options and integrator settings,</p></li>
+<li><p>the version of the tool (the Orekit and <code class="docutils literal notranslate"><span class="pre">orekit_jpype</span></code> versions; for GMAT, the release and build date read from
+the installation rather than from its folder name),</p></li>
+<li><p>the identifiers and checksums of the external data: the gravity coefficients for both tools, the Orekit data
+folder or archive for Orekit, and the planetary ephemeris, Earth-orientation, nutation and leap-second files
+listed in <code class="docutils literal notranslate"><span class="pre">gmat_startup_file.txt</span></code> for GMAT, together with the checksum of the ephemeris file; for Orekit also
+the Orekit and Hipparchus jar files,</p></li>
+<li><p>a fingerprint of the generator code (the generator script and the shared input writers, ignoring comments and
+docstrings), so that a changed constant, integrator setting or force model is detected,</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">variant</span></code> label, which is <code class="docutils literal notranslate"><span class="pre">default</span></code> unless an alternative configuration was selected.</p></li>
+</ul>
+<p>Each generator also writes a density probe file (<code class="docutils literal notranslate"><span class="pre">&lt;tool&gt;_density_probe.csv</span></code>) whose manifest entry holds the hash of the probe points and of the atmosphere definition.</p>
+<p><code class="docutils literal notranslate"><span class="pre">compare_with_basilisk.py</span></code> validates the manifest of every reference before it runs Basilisk. A reference is
+rejected, with a message that names the field, if it was generated for another epoch, initial state, force model or
+frame, if it was modified after it was generated, if it was generated with different gravity coefficients from the
+file that Basilisk reads, if it was generated by other generator code, if it
+has no identifiable tool build or no checksum of its external data, if the references used together come from
+different tool builds or data sets, if its first sample is not the initial state of the case or it holds non-finite
+values, or if it has no manifest. The density probes are required only for the reference tools of the selected cases
+with drag, so an Orekit-only selection needs no GMAT data. A reference generated with
+<code class="docutils literal notranslate"><span class="pre">--oblate-shadow</span></code> or <code class="docutils literal notranslate"><span class="pre">--max-step</span></code> has the variant <code class="docutils literal notranslate"><span class="pre">oblate_shadow</span></code> or <code class="docutils literal notranslate"><span class="pre">max_step_&lt;value&gt;s</span></code> and is rejected by a
+default comparison. To compare against it on purpose, give the variant with <code class="docutils literal notranslate"><span class="pre">--orekit-variant</span></code> (for example
+<code class="docutils literal notranslate"><span class="pre">--orekit-variant</span> <span class="pre">oblate_shadow</span></code>); the results and the figure file name then state the variant. The generators
+overwrite the ephemeris of a case of the same name, so generate the alternative into its own <code class="docutils literal notranslate"><span class="pre">--output-dir</span></code> and use
+the same folder with <code class="docutils literal notranslate"><span class="pre">--data-dir</span></code>. The cases without a GMAT reference (<code class="docutils literal notranslate"><span class="pre">references</span></code> in <code class="docutils literal notranslate"><span class="pre">cases.json</span></code>) are skipped
+by the GMAT generator. <code class="docutils literal notranslate"><span class="pre">generate_orekit_reference.py</span></code> also accepts <code class="docutils literal notranslate"><span class="pre">--max-step</span></code> (the maximum integrator step,
+which <code class="docutils literal notranslate"><span class="pre">orekit_max_step_s</span></code> of each case sets by default) and <code class="docutils literal notranslate"><span class="pre">--oblate-shadow</span></code>. GMAT stops a propagation within
+about <span class="math notranslate nohighlight">\(10^{-6}\)</span> s of the requested time, so the generator shifts each sample back to the nominal time using
+the sample’s own velocity.</p>
+<p><strong>3. Run the comparison</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>compare_with_basilisk.py<span class="w"> </span>--kernel-dir<span class="w"> </span>/path/to/kernels<span class="w">                     </span><span class="c1"># all cases, using their configured durations</span>
+python<span class="w"> </span>compare_with_basilisk.py<span class="w"> </span>--cases<span class="w"> </span>leo_all<span class="w"> </span>geo_all<span class="w"> </span>--duration-days<span class="w"> </span><span class="m">5</span><span class="w"> </span>--kernel-dir<span class="w"> </span>/path/to/kernels
+python<span class="w"> </span>compare_with_basilisk.py<span class="w"> </span>--kernel-dir<span class="w"> </span>/path/to/kernels<span class="w"> </span>--figures-dir<span class="w"> </span>figures<span class="w">      </span><span class="c1"># also save SVG figures</span>
+python<span class="w"> </span>compare_with_basilisk.py<span class="w"> </span>--cases<span class="w"> </span>leo_srp<span class="w"> </span>--data-dir<span class="w"> </span>oblate<span class="w"> </span>--orekit-variant<span class="w"> </span>oblate_shadow<span class="w"> </span>--kernel-dir<span class="w"> </span>/path/to/kernels
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> if the reference ephemerides are not in <code class="docutils literal notranslate"><span class="pre">data/</span></code>. <code class="docutils literal notranslate"><span class="pre">--duration-days</span></code> limits the duration of every case. The script prints the maximum position and velocity
+differences of each case between Basilisk, GMAT, and Orekit, and optionally saves a figure of the position difference versus
+time. The all-case run takes about fifteen minutes.</p>
+<p><strong>4. What to expect</strong></p>
+<p>The differences should match the tables on this page. Exact values depend on the GMAT, Orekit, and kernel versions, so compare
+the level of agreement and not the last digits.</p>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h2>
+<p>The box cases (attitude-dependent drag and radiation pressure) are compared with Orekit only, and use a constant-rate spin without
+torque. The 46 to 72 m difference of GMAT in the 400 km drag cases is not explained. The comparison does not compare run times.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="FAQwindows.html" class="btn btn-neutral float-left" title="FAQ: Microsoft Windows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../Developer.html" class="btn btn-neutral float-right" title="Developer Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+.. _MJSceneStateMsgPayload:
+
+MJSceneStateMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MJSceneStateMsgPayload.h
+   :project: msgPayloadDefCpp
+

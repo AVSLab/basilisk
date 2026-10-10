@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_exponentialAtmosphereStepLag &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="test_integratedExponentialAtmosphere" href="test_integratedExponentialAtmosphere.html" />
+    <link rel="prev" title="test_atmospherePolarRadius" href="test_atmospherePolarRadius.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../dynamics/index.html">dynamics</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html">environment</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_GeneralModuleFiles/index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../albedo/albedo.html">albedo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dentonFluxModel/dentonFluxModel.html">dentonFluxModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../earthRadiationModel/earthRadiationModel.html">earthRadiationModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../eclipse/eclipse.html">eclipse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ephemerisConverter/ephemerisConverter.html">ephemerisConverter</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../exponentialAtmosphere.html">exponentialAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundLocation/groundLocation.html">groundLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../groundMapping/groundMapping.html">groundMapping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldCenteredDipole/magneticFieldCenteredDipole.html">magneticFieldCenteredDipole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../magneticFieldWMM/magneticFieldWMM.html">magneticFieldWMM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../MsisAtmosphere/msisAtmosphere.html">msisAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../planetEphemeris/planetEphemeris.html">planetEphemeris</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../solarFlux/solarFlux.html">solarFlux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingDynamics/spacecraftChargingDynamics.html">spacecraftChargingDynamics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftChargingEquilibrium/spacecraftChargingEquilibrium.html">spacecraftChargingEquilibrium</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spacecraftLocation/spacecraftLocation.html">spacecraftLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spaceWeatherData/spaceWeatherData.html">spaceWeatherData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spiceInterface/spiceInterface.html">spiceInterface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../stripLocation/stripLocation.html">stripLocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../TabularAtmosphere/tabularAtmosphere.html">tabularAtmosphere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ZeroWindModel/zeroWindModel.html">zeroWindModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">environment</a></li>
+          <li class="breadcrumb-item"><a href="../exponentialAtmosphere.html"><span class="module-type-label module-type-cpp">C++</span> Module: exponentialAtmosphere</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_UnitTest</a></li>
+      <li class="breadcrumb-item active">test_exponentialAtmosphereStepLag</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/Documentation/simulation/environment/ExponentialAtmosphere/_UnitTest/test_exponentialAtmosphereStepLag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-exponentialatmospheresteplag">
+<span id="id1"></span><h1>test_exponentialAtmosphereStepLag<a class="headerlink" href="#test-exponentialatmospheresteplag" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p id="module-test_exponentialAtmosphereStepLag">Test that the atmosphere base class evaluates the spacecraft state extrapolated to the step midpoint.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_density_is_evaluated_at_extrapolated_position">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_density_is_evaluated_at_extrapolated_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_density_is_evaluated_at_extrapolated_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_density_is_evaluated_at_extrapolated_position" title="Link to this definition"></a></dt>
+<dd><p>Verify the density uses the state advanced by half of the message age.</p>
+<p>A state with a radial velocity, written at the start of the simulation and
+rewritten one step later, must give the density of
+the position advanced by v * dt / 2. The same state written at the current time, or a
+zero velocity, is not advanced.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_first_update_is_not_extrapolated_before_the_task_period_is_known">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_first_update_is_not_extrapolated_before_the_task_period_is_known</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_first_update_is_not_extrapolated_before_the_task_period_is_known"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_first_update_is_not_extrapolated_before_the_task_period_is_known" title="Link to this definition"></a></dt>
+<dd><p>Verify the extrapolation waits for two spacecraft write times.</p>
+<p>The state is written at 0 s and rewritten at 10 s. The update at 10 s has seen one write time only and is not
+extrapolated; the update at 20 s has seen an interval equal to the module period and is.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_message_written_at_the_module_update_is_not_extrapolated">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_message_written_at_the_module_update_is_not_extrapolated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moduleStep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeTimes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopSeconds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_message_written_at_the_module_update_is_not_extrapolated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_message_written_at_the_module_update_is_not_extrapolated" title="Link to this definition"></a></dt>
+<dd><p>Verify a message written at the time of the module update is used as written.</p>
+<p>A spacecraft that runs before the module in the task, with a different task period, writes its message at the
+time of the module update. The message has no age, so it needs no extrapolation, and the sampled write times
+cannot show the task period mismatch. The density must be that of the written position.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_one_mismatched_spacecraft_disables_the_extrapolation_of_all">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_one_mismatched_spacecraft_disables_the_extrapolation_of_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_one_mismatched_spacecraft_disables_the_extrapolation_of_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_one_mismatched_spacecraft_disables_the_extrapolation_of_all" title="Link to this definition"></a></dt>
+<dd><p>Verify the extrapolation is applied to all spacecraft of a module or to none.</p>
+<p>The planet state is shared by all spacecraft, so moving it for one spacecraft would make the geometry of another
+one inconsistent. With both messages written at the previous module update (0 s) the first spacecraft is
+extrapolated. If the second message was last written at 15 s, which is not the previous module update, the first
+spacecraft is not extrapolated either.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_stale_message_is_never_extrapolated">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_stale_message_is_never_extrapolated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_stale_message_is_never_extrapolated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_stale_message_is_never_extrapolated" title="Link to this definition"></a></dt>
+<dd><p>Verify a state written once at the start of the simulation is not extrapolated.</p>
+<p>The module updates at 0, 10 and 20 s. A state that is never rewritten has no observed spacecraft task period and
+is stale after the first update, so the density must be that of the written position.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_task_period_mismatch_disables_the_extrapolation">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_task_period_mismatch_disables_the_extrapolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moduleStep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeTimes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopSeconds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_task_period_mismatch_disables_the_extrapolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_task_period_mismatch_disables_the_extrapolation" title="Link to this definition"></a></dt>
+<dd><p>Verify a spacecraft updated faster or slower than the module is not extrapolated.</p>
+<p>The state written by the spacecraft is not the output of the previous module update, so half of its age is not
+the middle of the module interval. The density must be that of the written position, whichever direction the
+task period mismatch goes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="test_exponentialAtmosphereStepLag.test_translating_planet_does_not_change_the_density">
+<span class="sig-prename descclassname"><span class="pre">test_exponentialAtmosphereStepLag.</span></span><span class="sig-name descname"><span class="pre">test_translating_planet_does_not_change_the_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_exponentialAtmosphereStepLag.html#test_translating_planet_does_not_change_the_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_exponentialAtmosphereStepLag.test_translating_planet_does_not_change_the_density" title="Link to this definition"></a></dt>
+<dd><p>Verify the spacecraft and the planet are evaluated at the same epoch at every update, including the startup.</p>
+<p>The spacecraft and the planet move together at 30 km/s, so the altitude is constant. At every update the planet
+message is written at the current time while the spacecraft message is one step old. Before the task period of
+the spacecraft is known (the first updates) the spacecraft is not extrapolated, so the planet must be moved back
+to the epoch of the spacecraft message. Extrapolating only one of them would shift the relative position by up to
+v * dt and change the density. The density is checked at the update at 0 s, at the first positive-time update
+and at all the following ones.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="test_atmospherePolarRadius.html" class="btn btn-neutral float-left" title="test_atmospherePolarRadius" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test_integratedExponentialAtmosphere.html" class="btn btn-neutral float-right" title="test_integratedExponentialAtmosphere" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_mappingInstrument:
+
+mappingInstrument
+=================
+
+:doc:`Module documentation <mappingInstrument>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

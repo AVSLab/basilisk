@@ -1,0 +1,10 @@
+.. _nrlmsise-00:
+
+nrlmsise-00
+===========
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: nrlmsise-00.h
+   :project: MsisAtmosphere
+

@@ -1,0 +1,10 @@
+.. _ElectronBeamMsgPayload:
+
+ElectronBeamMsgPayload
+======================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: ElectronBeamMsgPayload.h
+   :project: msgPayloadDefC
+

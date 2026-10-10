@@ -1,0 +1,420 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Version 2.12 Release Notes &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Version 2.11 Release Notes" href="2.11.html" />
+    <link rel="prev" title="Version 2.13 Release Notes" href="2.13.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../Support.html">Support</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../bskReleaseNotes.html">Basilisk Release Notes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2.13.html">2.13</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.11.html">2.11</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.10.html">2.10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.9.html">2.9</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.8.html">2.8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.7.html">2.7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.6.html">2.6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.5.html">2.5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.4.html">2.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.3.html">2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.2.html">2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.1.html">2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2.0.html">2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="1.x-and-earlier.html">Version 1.x and earlier</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../bskKnownIssues.html">Basilisk Known Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../User.html">User Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Developer.html">Developer Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../Support.html">Support</a></li>
+          <li class="breadcrumb-item"><a href="../bskReleaseNotes.html">Basilisk Release Notes</a></li>
+      <li class="breadcrumb-item active">Version 2.12 Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Support/bskReleaseNotes/2.12.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="version-2-12-release-notes">
+<h1>Version 2.12 Release Notes<a class="headerlink" href="#version-2-12-release-notes" title="Link to this heading"></a></h1>
+<section id="version-2-12-0-september-21-2026">
+<span id="bsk-release-2-12-0"></span><h2>Version 2.12.0 (September 21, 2026)<a class="headerlink" href="#version-2-12-0-september-21-2026" title="Link to this heading"></a></h2>
+<section id="compatibility-and-migration">
+<h3>Compatibility and migration<a class="headerlink" href="#compatibility-and-migration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Removed the deprecated <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.cMsgCInterfacePy</span></code> compatibility package; import C message wrappers from <code class="docutils literal notranslate"><span class="pre">Basilisk.architecture.messaging</span></code> instead.</p></li>
+<li><p>Removed the expired <code class="docutils literal notranslate"><span class="pre">GravBodyData.useSphericalHarmParams</span></code> and <code class="docutils literal notranslate"><span class="pre">GravBodyData.usePolyhedral</span></code> setters; configure gravity models with <code class="docutils literal notranslate"><span class="pre">useSphericalHarmonicsGravityModel()</span></code>, <code class="docutils literal notranslate"><span class="pre">usePolyhedralGravityModel()</span></code>, or <code class="docutils literal notranslate"><span class="pre">usePointMassGravityModel()</span></code>.</p></li>
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">RetentionPolicy.addVariableLog()</span></code> to retain complete direct module variables through the supported logger API and deprecated its legacy component/type arguments; nested and computed histories require an explicit <code class="docutils literal notranslate"><span class="pre">PythonVariableLogger</span></code>.</p></li>
+<li><p>Sped up low-DOF simulations by removing repeated whole-map copies and rehashing of the integrator state container on every Runge-Kutta stage. Changing the return type of <code class="docutils literal notranslate"><span class="pre">ExtendedStateVector::operator+=</span></code> increments the SDK extension ABI to version 2.</p></li>
+<li><p>Concrete state and dynamic effector implementations are now declared <code class="docutils literal notranslate"><span class="pre">final</span></code> to make their existing non-extension contract explicit.  External C++ code should compose these effectors rather than inherit from them.</p></li>
+<li><p>Message payload structs now reject assignment of a field name that does not already exist, raising a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> instead of silently creating a new Python attribute (issue #305). This gives payloads the same typo protection that SWIG-wrapped modules already have, so a mistake such as <code class="docutils literal notranslate"><span class="pre">payload.sigm_BN</span> <span class="pre">=</span> <span class="pre">...</span></code> is caught immediately. Only the <code class="docutils literal notranslate"><span class="pre">*Payload</span></code> data classes are frozen; the message, reader, recorder, writer and vector wrapper classes are intentionally left unfrozen.</p></li>
+<li><p>ExtPulsedTorque now evaluates its pulse sequence from simulation time using the new pulseInterval parameter in seconds, independent of integrator evaluations and task scheduling. Set pulseInterval to the desired duration of one count in existing configurations. Add safe defaults and configuration validation; repeated resets preserve the phase anchored at time zero.</p></li>
+<li><p>Refactored MRP conversion helpers and selected attitude reads to use <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd</span></code> directly; <code class="docutils literal notranslate"><span class="pre">eigenMRPd2CArray()</span></code> now takes <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">Eigen::MRPd&amp;</span></code> instead of <code class="docutils literal notranslate"><span class="pre">Eigen::Vector3d&amp;</span></code>.</p></li>
+<li><p>Updated the C++ <code class="docutils literal notranslate"><span class="pre">StateEffector</span></code> attitude interfaces to pass <code class="docutils literal notranslate"><span class="pre">sigma_BN</span></code> as <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd</span></code> for <code class="docutils literal notranslate"><span class="pre">updateContributions()</span></code> and <code class="docutils literal notranslate"><span class="pre">computeDerivatives()</span></code>; custom state effectors must update matching overrides.</p></li>
+<li><p>Removed deprecated Python-environment management from <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code>. Clone-based builds now leave Python package installation to explicit pip setup steps, matching wheel and editable-install behavior.</p></li>
+</ul>
+</section>
+<section id="build-installation-and-ci">
+<h3>Build, installation, and CI<a class="headerlink" href="#build-installation-and-ci" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added an opt-in <code class="docutils literal notranslate"><span class="pre">--strictWarnings</span> <span class="pre">True</span></code> build mode that applies additional compiler diagnostics consistently across CMake generators.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span> <span class="pre">--clean</span></code> now removes Basilisk Numba cache artifacts in addition to <code class="docutils literal notranslate"><span class="pre">dist3</span></code>, preventing stale compiled Numba objects from surviving clean source builds.</p></li>
+<li><p>Added a strict <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span> <span class="pre">--offline</span></code> mode for clean and incremental builds using prepared Conan, CMake support-source, and Rust Cargo caches.</p></li>
+<li><p>Fixed a benign macOS linker alignment warning when building <a class="reference internal" href="../../Documentation/simulation/communication/simpleAntenna/simpleAntenna.html#simpleantenna"><span class="std std-ref">C++ Module: simpleAntenna</span></a> by compiling cfitsio with <code class="docutils literal notranslate"><span class="pre">-fno-common</span></code> and tracking the flag in its Conan package ID.</p></li>
+<li><p>Fixed invoking <code class="docutils literal notranslate"><span class="pre">conanfile.py</span></code> from outside the Basilisk repository so Conan selects the correct recipe and builds in the repository’s <code class="docutils literal notranslate"><span class="pre">dist3</span></code> folder.</p></li>
+<li><p>Fixed optional wheel generation for beta versions whose Python package metadata uses canonical prerelease version spelling.</p></li>
+<li><p>Added optional <code class="docutils literal notranslate"><span class="pre">vizInterface</span></code>, <code class="docutils literal notranslate"><span class="pre">opNav</span></code>, and <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> capability flags to <code class="docutils literal notranslate"><span class="pre">Basilisk.getBuildInfo()</span></code> and the new <code class="docutils literal notranslate"><span class="pre">Basilisk.hasBuildFeature()</span></code> query. Scenarios and tests now use these flags to guard optional imports and skip cleanly when a capability was not built.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">Basilisk.getBuildInfo()</span></code> and <code class="docutils literal notranslate"><span class="pre">Basilisk.printBuildInfo()</span></code> to report build diagnostics and a compiled,
+versioned C/C++ ABI descriptor for an installed Basilisk package.  The public descriptor contract is shared with
+BSK-SDK headers, module-only builds refresh the compiled ABI metadata, and CMake uses the Python interpreter from
+the environment that invoked the build.</p></li>
+<li><p>Parallelized distribution wheel builds and added compiler and Conan caching to wheel CI.</p></li>
+<li><p>Reduced clean-build time and Conan deprecation warnings by omitting unused OpenCV contrib and JPEG 2000 modules and CSPICE command-line utilities.</p></li>
+<li><p>Reused Conan retry and source-backup configuration in the release container build to reduce transient external source download failures.</p></li>
+<li><p>Generated Python message package imports now use the exact sorted <code class="docutils literal notranslate"><span class="pre">*Payload.h</span></code> inventory built by CMake, keeping split wheel builds compatible across independent runners, rejecting duplicate payload names, and pruning generated artifacts for removed or renamed payloads.</p></li>
+<li><p>Prevented strict compiler warnings from being applied to generated Rust SWIG wrapper sources.</p></li>
+<li><p>Improved incremental builds by inventorying wrapper sources once per package root and tracking transitive SWIG includes, source discovery changes, protobuf tools, and Rust FFI headers without regenerating wrappers for unrelated source changes.</p></li>
+<li><p>Made fixed-width integer and Eigen headers self-contained instead of relying on transitive includes.</p></li>
+<li><p>Prevented unchanged Rust-enabled builds from recompiling generated message bindings and Rust modules.</p></li>
+<li><p>Reduced clean-build work by compiling architecture framework sources in one package library instead of ten.</p></li>
+<li><p>Removed redundant source compilation from SWIG wrappers when a linked package library already owns those sources.</p></li>
+<li><p>Removed redundant transitive architecture libraries from generated package and wrapper link inputs.</p></li>
+<li><p>Assigned local implementations explicitly in directories containing multiple SWIG interfaces.</p></li>
+<li><p>Consolidated common message-wrapper helpers into one support extension while preserving their Python names.</p></li>
+<li><p>Removed the unused logging dependency from the common <code class="docutils literal notranslate"><span class="pre">SysModel</span></code> header.</p></li>
+<li><p>Prevented header-only package groups from producing empty shared libraries and restored shared <code class="docutils literal notranslate"><span class="pre">_GeneralModuleFiles/Custom.cmake</span></code> hooks for built-in and external wrappers.</p></li>
+<li><p>Made Conan recipe imports and version-file lookup independent of the current working directory.</p></li>
+<li><p>Allowed integrated external projects to omit unused C and C++ custom-message directories.</p></li>
+<li><p>Fixed nightly optional-wheel packaging failures caused by wheel build output changing the recorded source-dirty state between core and extension builds.</p></li>
+<li><p>Allow optional-wheel packaging to continue when independently built inputs differ only in compiler-cache launcher diagnostics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Basilisk.hasBuildFeature()</span></code> now aggregates capabilities from the core artifact and compatible installed optional Basilisk distributions, allowing the same feature guards to work with monolithic and split-wheel installations.</p></li>
+<li><p>Reduced clean configuration and build time by automatically using Ninja for new builds on every platform when it is available, while preserving explicit, existing, and requested IDE generator choices.</p></li>
+<li><p>Clean Conan builds now remove the resolved Conan output folder rather than always removing <code class="docutils literal notranslate"><span class="pre">dist3</span></code>, while rejecting symlink traversal and build trees owned by another CMake project.</p></li>
+<li><p>Fixed Rust-enabled macOS builds mixing Xcode and Command Line Tools SDKs by removing Corrosion’s hard-coded SDK library search path and respecting CMake’s selected SDK.</p></li>
+<li><p>macOS builds now use a shared protobuf dependency, preventing interpreter-shutdown crashes when OpenCV-backed OpNav modules and <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> are loaded in the same process.</p></li>
+<li><p>Reduced <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">conanfile.py</span></code> setup time by using one Conan dependency-and-build pass instead of repeating dependency resolution, generator creation, and environment checks across separate install and build commands.</p></li>
+<li><p>Aligned the Conan build profile’s C++ standard with the C++17 host profile so cached build tools such as Protocol Buffers resolve directly without unnecessary compatibility searches or remote queries.</p></li>
+<li><p>Stopped fetching GoogleTest and compiling native C++ test executables during wheel builds. Direct source builds and source CI continue to build them by default through the standard <code class="docutils literal notranslate"><span class="pre">BUILD_TESTING</span></code> option.</p></li>
+<li><p>Added compatibility with Setuptools 84’s dataclass-backed extension metadata while retaining support for earlier Setuptools releases.</p></li>
+</ul>
+</section>
+<section id="simulation-framework-and-module-development">
+<h3>Simulation framework and module development<a class="headerlink" href="#simulation-framework-and-module-development" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><span class="beta-label">[BETA]</span> Native Rust Modules: Added optional support for developing and building Basilisk modules in Rust, including generated Python and C-message interfaces, Cargo and Corrosion build integration, module templates, documentation, and CI and wheel coverage.</p></li>
+<li><p>Updated the downloadable external-module example for the current Rust message-output API.</p></li>
+<li><p>Updated the BSK-SDK documentation to call out-of-tree BSK-SDK wheels extensions.</p></li>
+<li><p>Updated documentation on BSK-SDK extension overview, installing and writing</p></li>
+<li><p>Updated the BSK-SDK release and extension-writing guides to run the complete test suites and document nightly Basilisk wheel installation.</p></li>
+<li><p>C++ message and reader wrappers now provide borrowed raw header and payload addresses through <code class="docutils literal notranslate"><span class="pre">GetPointers()</span></code>; these addresses remain valid only for the documented owner and source lifetimes.</p></li>
+<li><p>Python message and reader wrappers now share common <code class="docutils literal notranslate"><span class="pre">MessageBase</span></code> and <code class="docutils literal notranslate"><span class="pre">ReadFunctorBase</span></code> types across all generated payload modules, enabling reliable cross-message <code class="docutils literal notranslate"><span class="pre">isinstance()</span></code> checks.</p></li>
+<li><p>Fixed use-after-free paths involving Python-owned C messages (issue #1433). A C module input message (a <code class="docutils literal notranslate"><span class="pre">Msg_C</span></code> reader) now keeps its subscribed source alive for as long as the subscription is live, and a recorder created from a <code class="docutils literal notranslate"><span class="pre">Msg_C</span></code> keeps the stand-alone message or embedded-message owner alive for the recorder’s lifetime. Subscription references are released on <code class="docutils literal notranslate"><span class="pre">unsubscribe()</span></code>, on re-subscribe, or when the subscriber owner is garbage-collected; recorder references are released when the recorder is garbage-collected. This completes the message keep-alive started for the C++ reader and recorder direction in issue #676.</p></li>
+<li><p>Fixed unbounded epoch-message retention in <code class="docutils literal notranslate"><span class="pre">simHelpers.timeStringToGregorianUTCMsg()</span></code> and its deprecated <code class="docutils literal notranslate"><span class="pre">unitTestSupport</span></code> wrapper. Messages are now released when their callers, subscribers, recorders, and payload views no longer retain them, preventing memory growth during repeated SPICE interface setup.</p></li>
+<li><p>Python <code class="docutils literal notranslate"><span class="pre">Message.read()</span></code> and C++ message reader calls now return live payload views that retain their original source through a Python reference. Payloads remain valid after temporary messages leave scope or readers unsubscribe, change subscriptions, or are destroyed. Sources are released when the last owner releases them, including when Python collects a message that caches its own payload view.</p></li>
+<li><p>Fixed a long-standing memory-safety bug (issue #676) where a stand-alone message that went out of scope in Python could be garbage collected while a C++ module input message (<code class="docutils literal notranslate"><span class="pre">ReadFunctor</span></code>), reader returned by <code class="docutils literal notranslate"><span class="pre">Message.addSubscriber()</span></code>, or recorder still pointed into it, causing freed/garbage memory to be read. These C++ readers and recorders now keep the source message alive for as long as they exist, so messages created inside Python setup or helper functions no longer need to be manually retained. The reference counting is done entirely in the SWIG layer; the core <code class="docutils literal notranslate"><span class="pre">messaging.h</span></code> header remains free of <code class="docutils literal notranslate"><span class="pre">&lt;Python.h&gt;</span></code> so the C/C++ core still builds without the Python development headers.</p></li>
+<li><p>Improved event-checking performance in <code class="docutils literal notranslate"><span class="pre">SimulationBaseClass</span></code> by caching the list of active events and rebuilding it only when event activity changes. Simulations that register many inactive event handlers while checking an active event frequently no longer pay an <code class="docutils literal notranslate"><span class="pre">O(total</span> <span class="pre">events)</span></code> rescan on every check cycle (issue #455).</p></li>
+<li><p>Hardened the BskSim, MultiSat, OpNav, and MuJoCo example master classes against uninitialized, repeated, and failed model setup while preserving their existing getters and direct-read model access.</p></li>
+<li><p>Made the Python <code class="docutils literal notranslate"><span class="pre">BSKLogger.bskLog</span></code> method treat messages as literal text instead of C format strings.</p></li>
+<li><p>Updated <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd</span></code> DCM and angle-axis conversions to return the equivalent short-rotation MRP set.</p></li>
+<li><p>Documented that <code class="docutils literal notranslate"><span class="pre">Eigen::MRPd::FromTwoVectors()</span></code> returns the identity MRP when either input vector has zero or underflow-level norm.</p></li>
+<li><p>Reduced heap allocation in fixed-dimension Eigen operations used by Lambert propagation, navigation models and filters, VSCMG steering, magnetic torque bars, hinged-joint controllers, coordinate conversions, and common numerical support utilities.</p></li>
+<li><p>Enforced the abstract interfaces for Monte Carlo scalar and vector dispersion base classes under Python 3.</p></li>
+</ul>
+</section>
+<section id="spacecraft-dynamics-and-effectors">
+<h3>Spacecraft dynamics and effectors<a class="headerlink" href="#spacecraft-dynamics-and-effectors" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added support for <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> to be the parent for dynamic effectors.</p></li>
+<li><p>Added support for <a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a> to be the parent for dynamic effectors.</p></li>
+<li><p>Added panel state and panel configuration log output messages to <a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a>.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/NHingedRigidBodies/nHingedRigidBodyStateEffector.html#nhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: nHingedRigidBodyStateEffector</span></a> now rejects a massless panel and a panel chain whose panels differ in mass or length.</p></li>
+<li><p>Added support for <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> to be the parent for dynamic effectors.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> now rejects a chain whose joint mass matrix is singular, an empty chain, and an invalid rotation matrix or inertia tensor.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.html#lineartranslationonedofstateeffector"><span class="std std-ref">C++ Module: linearTranslationOneDOFStateEffector</span></a> now rejects an invalid rotation matrix or inertia tensor, matching the spinning body effectors.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> translating body configuration log, which reported an attitude lagging the hub by an integrator substep.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> now accepts a zero body mass, which its massless joint setup documented but the setter rejected.</p></li>
+<li><p>Fixed a memory leak of the per body output messages in <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesNDOF/linearTranslationNDOFStateEffector.html#lineartranslationndofstateeffector"><span class="std std-ref">C++ Module: linearTranslationNDOFStateEffector</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a>.</p></li>
+<li><p>Enabled <a class="reference internal" href="../../Documentation/simulation/dynamics/facetDragEffector/facetDragDynamicEffector.html#facetdragdynamiceffector"><span class="std std-ref">C++ Module: facetDragDynamicEffector</span></a> to be attached to a branching state effector.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/sphericalPendulum/sphericalPendulum.html#sphericalpendulum"><span class="std std-ref">C++ Module: sphericalPendulum</span></a> fuel-slosh damping which omitted the pendulum moment arm (issue #1484).</p></li>
+<li><p>Added initialization validation requiring the <a class="reference internal" href="../../Documentation/simulation/dynamics/sphericalPendulum/sphericalPendulum.html#sphericalpendulum"><span class="std std-ref">C++ Module: sphericalPendulum</span></a> damping matrix <code class="docutils literal notranslate"><span class="pre">D</span></code> to be symmetric positive semidefinite.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> propellant depletion when fuel slosh particles are attached. The tank and each slosh particle now drain their correct share of the mass flow regardless of how the propellant is partitioned.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> mass-depletion torque ignoring the tank orientation (<code class="docutils literal notranslate"><span class="pre">dcm_TB</span></code>) and offset (<code class="docutils literal notranslate"><span class="pre">r_TB_B</span></code>). The depletion torque is now formed so a rotated or offset depleting tank produces the correct attitude dynamics.</p></li>
+<li><p>Corrected <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> emptying-model center-of-mass and inertia derivatives away from the half-full condition, including the second derivative of the moving fuel center of mass.</p></li>
+<li><p>Sped up high-DOF dynamics by giving Backsubstitution coefficient matrices a compile-time column count in the spinning, translating, and hinged state effectors.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> panel and hinge velocity outputs, which were wrong for a rotated spacecraft hub.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/HingedRigidBodies/hingedRigidBodyStateEffector.html#hingedrigidbodystateeffector"><span class="std std-ref">C++ Module: hingedRigidBodyStateEffector</span></a> published panel kinematics, which were built on a hub angular velocity a step old.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> panel velocity outputs, which were wrong for a rotated spacecraft hub.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> panel 2 angular velocity output, which used panel 1’s attitude and omitted the first hinge rate.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html#dualhingedrigidbodystateeffector"><span class="std std-ref">C++ Module: dualHingedRigidBodyStateEffector</span></a> second hinge motor torque, which was applied without its reaction on panel 1.</p></li>
+<li><p>Fixed the sign of an attached effector’s upper body torque in the <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesTwoDOF/spinningBodyTwoDOFStateEffector.html#spinningbodytwodofstateeffector"><span class="std std-ref">C++ Module: spinningBodyTwoDOFStateEffector</span></a> lower body equation of motion.</p></li>
+<li><p>Fixed the <a class="reference internal" href="../../Documentation/simulation/dynamics/linearTranslationalBodies/linearTranslationBodiesOneDOF/linearTranslationOneDOFStateEffector.html#lineartranslationonedofstateeffector"><span class="std std-ref">C++ Module: linearTranslationOneDOFStateEffector</span></a> inertial velocity and angular velocity properties, which were wrong for attached effectors.</p></li>
+<li><p>Fixed state effector identifier reuse that could give two live effectors colliding state names.</p></li>
+<li><p>Branching parents now publish their attachment frame kinematics at the current integrator substep rather than once per task step.</p></li>
+<li><p>Attached dynamic effectors’ inertial-frame force is now applied by every state effector that can act as a parent.</p></li>
+<li><p>Tightened <code class="docutils literal notranslate"><span class="pre">eigenIsValidInertiaMatrix</span></code> in <code class="docutils literal notranslate"><span class="pre">avsEigenSupport</span></code> so an inertia tensor must also be finite, have at most one zero principal inertia, and its principal inertias must satisfy the triangle inequality.</p></li>
+<li><p>Added support for <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> to be attached to a branching state effector.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> now rejects a facet count that does not match the facets added.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/dynamics/facetSRPDynamicEffector/facetSRPDynamicEffector.html#facetsrpdynamiceffector"><span class="std std-ref">C++ Module: facetSRPDynamicEffector</span></a> applying one facet’s articulation angle to another when only some articulation messages had been written.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/utilities/simIncludeThruster.html#simincludethruster"><span class="std std-ref">simIncludeThruster</span></a> defaulting <code class="docutils literal notranslate"><span class="pre">addToSpacecraftSubcomponent()</span></code> to a segment that every parent effector rejects.</p></li>
+<li><p>Documented the branching setup in each effector that supports it, which previously appeared only on the dynamic effector side.</p></li>
+<li><p>Reorganized the effector branching compatibility table in <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-11.html#bskprinciples-11"><span class="std std-ref">Advanced: Effector Module Branching</span></a> into lists of supported parents, supported children, and effectors not supported for branching.</p></li>
+<li><p>Configuration validation for affected state and dynamic effectors now runs during spacecraft initialization as well as <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>, so attached-only effectors reject invalid setups without requiring separate task scheduling.</p></li>
+<li><p>Concrete effector API documentation now includes complete Doxygen parameter descriptions, with matching declaration and definition names so parameter tables render consistently.</p></li>
+<li><p>Added <a class="reference internal" href="../../Learn/makingModules/writingEffectors.html#writingeffectors"><span class="std std-ref">Writing Dynamic and State Effectors</span></a> with guidance on dynamics callbacks, attachment and task scheduling, configuration initialization, and testing; the branching guide now links to the shared initialization guidance.</p></li>
+<li><p>ConstraintDynamicEffector now recomputes derived gains from updated alpha and beta on reset or attachment initialization while preserving explicit individual-gain overrides. Gain setters reject non-finite values, and derived-gain overflow fails before replacing active gains. Document the physical gain units and shared numerical tuning convention.</p></li>
+<li><p>Guard effector dimensions before native accesses: validate magnetic torque bar counts, thruster initial-state vectors, faceted SRP message vectors, radiation-pressure lookup tables, and wheel/thruster command and output capacities. Invalid configurations now raise <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code>; larger thruster sets remain supported with no array command input connected.</p></li>
+<li><p>Reject state-thruster and reaction-wheel count changes after state registration, including direct configuration-vector edits before dynamics access. Reaction wheels also preserve each wheel’s jitter-angle state allocation. Add all devices and select their models before <code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code>; <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> preserves the registered state dimensions.</p></li>
+<li><p>Spinning-body, translation, and hub validators now reject non-finite configured values, including during point-mass spacecraft initialization. Point-mass mode preserves finite zero or singular inertia support and enforces an exactly zero center offset. Spin and translation axes normalize safely at large finite magnitudes, and translation validation precedes state registration while preserving existing mass bounds and integrated states.</p></li>
+<li><p>Hinged-body, prescribed-motion, and slosh effectors now reject negative or non-finite configured masses before state registration and from <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> while preserving supported zero-mass configurations and integrated states. Hinged-body effectors also validate hinge-frame rotation matrices, dual-hinged bodies require positive finite combined mass, and N-hinged chains require finite positive uniform panel masses and finite uniform distances. Prescribed-motion mass setters preserve the prior value on invalid input, and spherical-pendulum damping validation now also runs from <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>.</p></li>
+<li><p>Initialize all <a class="reference internal" href="../../Documentation/simulation/dynamics/extForceTorque/extForceTorque.html#extforcetorque"><span class="std std-ref">C++ Module: extForceTorque</span></a> command buffers to zero at construction so attached effectors can safely evaluate loads before scheduled reset or input processing. Document static-load, command-sampling, and repeated-reset behavior for hub and appendage attachment.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/VSCMGs/vscmgStateEffector.html#vscmgstateeffector"><span class="std std-ref">C++ Module: vscmgStateEffector</span></a> now validates and initializes its configuration through spacecraft attachment as well as <code class="docutils literal notranslate"><span class="pre">Reset()</span></code>, including axes, frame consistency, mass constraints, basic inertias, message capacity, and finite motor settings; zero-mass balanced and simple jitter devices retain finite mass fractions.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/dynamics/VSCMGs/vscmgStateEffector.html#vscmgstateeffector"><span class="std std-ref">C++ Module: vscmgStateEffector</span></a> now rejects invalid coupled dynamics divisors and non-finite torque commands, guards linear friction divisors, and uses the gimbal’s own smoothing ratio for gimbal friction.</p></li>
+<li><p>Fixed wheel-angle output indexing in <a class="reference internal" href="../../Documentation/simulation/dynamics/VSCMGs/vscmgStateEffector.html#vscmgstateeffector"><span class="std std-ref">C++ Module: vscmgStateEffector</span></a> arrays that mix balanced and jitter models.</p></li>
+<li><p>Fixed out-of-bounds lock and motor torque command reads in <a class="reference internal" href="../../Documentation/simulation/dynamics/spinningBodies/spinningBodiesNDOF/spinningBodyNDOFStateEffector.html#spinningbodyndofstateeffector"><span class="std std-ref">C++ Module: spinningBodyNDOFStateEffector</span></a> by rejecting chains larger than <code class="docutils literal notranslate"><span class="pre">MAX_EFF_CNT</span></code> when either array input is linked, including subscriptions added after initialization.</p></li>
+<li><p>Clarified lock and motor torque array indexing within spinning-body modules, documented independent lock messages for separate instances and the current NDOF command-array capacity limit, and corrected the OneDOF, TwoDOF, and NDOF setup examples.</p></li>
+<li><p>Added optional performance benchmarks for Eigen versus <code class="docutils literal notranslate"><span class="pre">linearAlgebra</span></code> and dynamics effectors, with smoke tests to keep benchmark entry points fresh.</p></li>
+<li><p>Improved selected dynamics effector performance by replacing hot-path skew-matrix vector products with equivalent Eigen <code class="docutils literal notranslate"><span class="pre">cross()</span></code> operations.</p></li>
+<li><p>Added point mass and single rigid body modes to spacecraft to speed up dynamics evaluation</p></li>
+<li><p>Added a series of example scenarios comparing the Backsubstitution <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> dynamics engine against the MuJoCo-based <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> engine on equivalent problems of increasing complexity: <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareOrbit.html#scenariocompareorbit"><span class="std std-ref">scenarioCompareOrbit</span></a>, <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareTorque.html#scenariocomparetorque"><span class="std std-ref">scenarioCompareTorque</span></a>, <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareRwPanels.html#scenariocomparerwpanels"><span class="std std-ref">scenarioCompareRwPanels</span></a>, <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareFlexPanels.html#scenariocompareflexpanels"><span class="std std-ref">scenarioCompareFlexPanels</span></a>, <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareOrbitMultibody.html#scenariocompareorbitmultibody"><span class="std std-ref">scenarioCompareOrbitMultibody</span></a>, and <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareVariableMass.html#scenariocomparevariablemass"><span class="std std-ref">scenarioCompareVariableMass</span></a>.</p></li>
+<li><p>Added accuracy-versus-runtime Pareto (work-precision) studies that sweep integrators and time steps or tolerances for both dynamics engines: <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareParetoRwPanels.html#scenariocompareparetorwpanels"><span class="std std-ref">scenarioCompareParetoRwPanels</span></a> and <a class="reference internal" href="../../examples/dynamicsComparison/scenarioCompareParetoFlexPanels.html#scenariocompareparetoflexpanels"><span class="std std-ref">scenarioCompareParetoFlexPanels</span></a>.</p></li>
+<li><p>Corrected <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> center-of-mass derivatives and allowed <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> update-only depletion to report retained mass-property derivatives while excluding depletion-dependent rate terms from the equations of motion.</p></li>
+<li><p>Made <a class="reference internal" href="../../Documentation/simulation/dynamics/FuelTank/fuelTank.html#fueltank"><span class="std std-ref">C++ Module: fuelTank</span></a> allocate flow from current integration-stage masses before reporting tank and slosh retained mass-property derivatives.</p></li>
+<li><p>Documented that state effectors using dynamics-rate overrides require direct attachment to <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> and reject unsupported nested prescribed-motion configurations.</p></li>
+<li><p>Corrected the <a class="reference internal" href="../../Documentation/simulation/dynamics/spacecraft/spacecraft.html#spacecraft"><span class="std std-ref">C++ Module: spacecraft</span></a> coupled-depletion center-of-mass rate, which divided its mass-rate term by total mass twice.</p></li>
+<li><p>Added <a class="reference internal" href="../../Documentation/simulation/forceTorque/twoHingeDamper/twoHingeDamper.html#twohingedamper"><span class="std std-ref">C++ Module: twoHingeDamper</span></a> to apply isotropic Cartesian bob damping as generalized torques for a two-hinge spherical pendulum.</p></li>
+</ul>
+</section>
+<section id="environment-gravity-and-ephemerides">
+<h3>Environment, gravity, and ephemerides<a class="headerlink" href="#environment-gravity-and-ephemerides" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed the documented Mars spherical-harmonics configuration in <a class="reference internal" href="../../examples/scenarioBasicOrbit.html#scenariobasicorbit"><span class="std std-ref">scenarioBasicOrbit</span></a> to use a packaged zonal <span class="math notranslate nohighlight">\(J_2\)</span> field instead of requesting an unsupported gravity-field degree.</p></li>
+<li><p>Corrected <a class="reference internal" href="../../examples/scenarioDragRendezvous.html#scenariodragrendezvous"><span class="std std-ref">scenarioDragRendezvous</span></a> to load a zonal-only gravity field when <code class="docutils literal notranslate"><span class="pre">useJ2=True</span></code>, avoiding orientation-dependent tesseral terms when planet rotation is not configured.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">gravBodyFactory.addBodiesTo()</span></code> support for configuring gravity sources and targets on MuJoCo scenes.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">zeroBase</span></code> support to <a class="reference internal" href="../../Documentation/simulation/environment/planetEphemeris/planetEphemeris.html#planetephemeris"><span class="std std-ref">C++ Module: planetEphemeris</span></a> for expressing all outputs relative to a body propagated by the same module instance.</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/mujoco/scenarioMJEarthMoonGravity.html#scenariomjearthmoongravity"><span class="std std-ref">scenarioMJEarthMoonGravity</span></a>, a MuJoCo Earth-Moon gravity tutorial with selectable SPICE or <a class="reference internal" href="../../Documentation/simulation/environment/planetEphemeris/planetEphemeris.html#planetephemeris"><span class="std std-ref">C++ Module: planetEphemeris</span></a> planet states.</p></li>
+<li><p>Added opt-in ephemeris <strong>reconstruction</strong> to <a class="reference internal" href="../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a>: each planet’s position and orientation channels can independently reconstruct their state from a coarse grid of cached SPICE samples (or be disabled) instead of querying SPICE at the exact time on every call, cutting SPICE evaluations to roughly <code class="docutils literal notranslate"><span class="pre">horizon</span> <span class="pre">/</span> <span class="pre">knotStep</span></code> per channel. The default behavior is unchanged and bit-for-bit identical.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">getPlanetSpiceQueryCount</span></code> to <a class="reference internal" href="../../Documentation/simulation/environment/spiceInterface/spiceInterface.html#spiceinterface"><span class="std std-ref">C++ Module: spiceInterface</span></a>, returning the <code class="docutils literal notranslate"><span class="pre">{position,</span> <span class="pre">orientation}</span></code> SPICE query counts accumulated over a run.</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/scenarioSpiceReconstruction.html#scenariospicereconstruction"><span class="std std-ref">scenarioSpiceReconstruction</span></a>, a lunar-flyby tutorial that trades SPICE queries for accuracy on the Moon’s position and shows the region below the integrator error where the trade is free.</p></li>
+<li><p>Added <a class="reference internal" href="../../examples/scenarioVestaOrientation.html#scenariovestaorientation"><span class="std std-ref">scenarioVestaOrientation</span></a>, showing that a constant-rate spinner’s orientation can be reconstructed exactly from a single SPICE query.</p></li>
+<li><p>Added the <a class="reference internal" href="../../Learn/makingModules/advancedTopics/spiceReconstruction.html#spicereconstruction"><span class="std std-ref">Optimizing performance when using SPICE</span></a> guide covering when SPICE is a bottleneck and how to tune the reconstruction knobs.</p></li>
+</ul>
+</section>
+<section id="sensors-and-flight-software">
+<h3>Sensors and flight software<a class="headerlink" href="#sensors-and-flight-software" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../Documentation/simulation/sensors/coarseSunSensor/coarseSunSensor.html#coarsesunsensor"><span class="std std-ref">C++ Module: coarseSunSensor</span></a> now produces white measurement noise by default when <code class="docutils literal notranslate"><span class="pre">senNoiseStd</span></code> is set, while explicit propagation matrices still support correlated noise and bounded random walks; its Python <code class="docutils literal notranslate"><span class="pre">setAMatrix()</span></code> and <code class="docutils literal notranslate"><span class="pre">getAMatrix()</span></code> bindings are now usable without an opaque-object memory-leak warning.</p></li>
+<li><p>Reseeding the <code class="docutils literal notranslate"><span class="pre">GaussMarkov</span></code> utility now clears cached normal variates, and secondary sensor-noise streams use deterministic seeds that remain distinct when <code class="docutils literal notranslate"><span class="pre">RNGSeed</span></code> is zero.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/sensors/imuSensor/imuSensor.html#imusensor"><span class="std std-ref">C++ Module: imuSensor</span></a> accelerometer and gyro now both produce white Gaussian noise by default when their <code class="docutils literal notranslate"><span class="pre">PMatrix</span></code> is configured, and use distinct repeatable random streams for every <code class="docutils literal notranslate"><span class="pre">RNGSeed</span></code> value, including zero. Correlated and bounded-random-walk propagation remains available through the explicit <code class="docutils literal notranslate"><span class="pre">AMatrix</span></code> and error-bound setters.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/sensors/magnetometer/magnetometer.html#magnetometer"><span class="std std-ref">C++ Module: magnetometer</span></a> now produces white Gaussian noise by default when <code class="docutils literal notranslate"><span class="pre">senNoiseStd</span></code> is configured, supports explicit correlated and bounded-random-walk propagation through <code class="docutils literal notranslate"><span class="pre">setAMatrix()</span></code>, and honors <code class="docutils literal notranslate"><span class="pre">RNGSeed</span></code> during reset.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/sensors/starTracker/starTracker.html#startracker"><span class="std std-ref">C++ Module: starTracker</span></a> now produces white Gaussian attitude errors by default when <code class="docutils literal notranslate"><span class="pre">PMatrix</span></code> is configured. Correlated and bounded-random-walk propagation remains available through explicit <code class="docutils literal notranslate"><span class="pre">setAMatrix()</span></code> and <code class="docutils literal notranslate"><span class="pre">setWalkBounds()</span></code> calls.</p></li>
+<li><p>The <a class="reference internal" href="../../Documentation/simulation/deviceInterface/tempMeasurement/tempMeasurement.html#tempmeasurement"><span class="std std-ref">C++ Module: tempMeasurement</span></a> module now produces white Gaussian noise by default when <code class="docutils literal notranslate"><span class="pre">senNoiseStd</span></code> is configured, supports explicit correlated and bounded-random-walk propagation through <code class="docutils literal notranslate"><span class="pre">setAMatrix()</span></code>, and uses separately seeded repeatable streams for measurement noise and spike faults.</p></li>
+<li><p>Corrected the <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/sunlineEKF/sunlineEKF.html#sunlineekf"><span class="std std-ref">C Module: sunlineEKF</span></a>, <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/okeefeEKF/okeefeEKF.html#okeefeekf"><span class="std std-ref">C Module: okeefeEKF</span></a>, and <a class="reference internal" href="../../Documentation/fswAlgorithms/attDetermination/sunlineSEKF/sunlineSEKF.html#sunlinesekf"><span class="std std-ref">C Module: sunlineSEKF</span></a> state-update unit tests, which injected measurement noise using <code class="docutils literal notranslate"><span class="pre">qObsVal</span></code> (a variance) as the standard deviation and so exercised the filters at a fraction of the intended measurement noise. The tests now draw noise with <code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">=</span> <span class="pre">sqrt(qObsVal)</span></code> from a local seeded generator and check convergence against a noise-appropriate tolerance (issue #1461).</p></li>
+<li><p>Added optional desired-time bounds to <a class="reference internal" href="../../Documentation/fswAlgorithms/sensorInterfaces/simpleInstrumentController/simpleInstrumentController.html#simpleinstrumentcontroller"><span class="std std-ref">C Module: simpleInstrumentController</span></a> for constraining when an image may be captured.</p></li>
+<li><p>Corrected <a class="reference internal" href="../../Documentation/fswAlgorithms/imageProcessing/horizonOpNav/horizonOpNav.html#horizonopnav"><span class="std std-ref">C Module: horizonOpNav</span></a> to use a planet’s polar radius along its polar axis instead of applying the equatorial radius to all three axes.</p></li>
+<li><p>Added configurable joint-angle wrapping and opt-in shortest-path joint profiling to <a class="reference internal" href="../../Documentation/simulation/deviceInterface/jointArrayRefProfiler/jointArrayRefProfiler.html#jointarrayrefprofiler"><span class="std std-ref">C++ Module: jointArrayRefProfiler</span></a>.</p></li>
+<li><p>Enhanced <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/jointThrAllocation.html#jointthrallocation"><span class="std std-ref">Python Module: jointThrAllocation</span></a> to evaluate all successful optimizer seeds and select the minimum-cost solution.</p></li>
+<li><p>Added optional current-joint-state motion penalties to <a class="reference internal" href="../../Documentation/fswAlgorithms/effectorInterfaces/jointThrAllocation/jointThrAllocation.html#jointthrallocation"><span class="std std-ref">Python Module: jointThrAllocation</span></a> allocations.</p></li>
+<li><p>Improved <a class="reference internal" href="../../Documentation/simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.html#hingedrigidbodymotor"><span class="std std-ref">C++ Module: hingedRigidBodyMotor</span></a> documentation, gain and torque-limit configuration, parameter validation, and unit-test coverage.</p></li>
+<li><p>Added the Python-accessible <code class="docutils literal notranslate"><span class="pre">elapsedTime</span></code> state to <a class="reference internal" href="../../Documentation/fswAlgorithms/sensorInterfaces/simpleInstrumentController/simpleInstrumentController.html#simpleinstrumentcontroller"><span class="std std-ref">C Module: simpleInstrumentController</span></a> for duration-based imaging attempts.</p></li>
+</ul>
+</section>
+<section id="mujoco-and-stochastic-integration">
+<h3>MuJoCo and stochastic integration<a class="headerlink" href="#mujoco-and-stochastic-integration" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>MuJoCo support is now generally available. Removed its beta labels and preliminary-use warnings from the documentation.</p></li>
+<li><p>Upgraded the bundled MuJoCo dependency from 3.7.0 to 3.11.0.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> reporting a body’s position pinned at the model reference pose when its mass changed (for example a depleting fuel tank); the integrator state is now restored after the per-step <code class="docutils literal notranslate"><span class="pre">mj_setConst</span></code> refresh.</p></li>
+<li><p>Sped up <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.html#mjscene"><span class="std std-ref">MJScene</span></a> equations-of-motion evaluation by caching the <code class="docutils literal notranslate"><span class="pre">mjModel</span></code>/<code class="docutils literal notranslate"><span class="pre">mjData</span></code> pointers for the duration of the call instead of re-fetching them through the recompile-checking accessor on every access.</p></li>
+<li><p>Corrected <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/MJSystemCoM/MJSystemCoM.html#mjsystemcom"><span class="std std-ref">C++ Module: MJSystemCoM</span></a> to report the time derivative of its center-of-mass position when MuJoCo body masses change.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added a pluggable Gaussian noise-generator abstraction (<code class="docutils literal notranslate"><span class="pre">GaussianNoiseGenerator</span></code>) with a random Mersenne-Twister source for production and a prescribed-replay source for tests, shared by all stochastic integrators through the <code class="docutils literal notranslate"><span class="pre">StochasticRKIntegratorBase</span></code> base class.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added the Roessler strong-order-1.5 stochastic Runge-Kutta integrators <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorSRIW1.html#svstochasticintegratorsriw1"><span class="std std-ref">svStochasticIntegratorSRIW1</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorSOSRI.html#svstochasticintegratorsosri"><span class="std std-ref">svStochasticIntegratorSOSRI</span></a> (diagonal/scalar-noise Ito), and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorSRA1.html#svstochasticintegratorsra1"><span class="std std-ref">svStochasticIntegratorSRA1</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorSOSRA.html#svstochasticintegratorsosra"><span class="std std-ref">svStochasticIntegratorSOSRA</span></a> (additive-noise Ito). The stability-optimized <code class="docutils literal notranslate"><span class="pre">SOSRI</span></code>/<code class="docutils literal notranslate"><span class="pre">SOSRA</span></code> are the recommended strong-order methods.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added the strong-order Stratonovich <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorEulerHeun.html#svstochasticintegratoreulerheun"><span class="std std-ref">svStochasticIntegratorEulerHeun</span></a> (Euler-Heun) and the derivative-free strong-order-1.0 <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorRKMil.html#svstochasticintegratorrkmil"><span class="std std-ref">svStochasticIntegratorRKMil</span></a> (Runge-Kutta Milstein, diagonal/scalar noise).</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added the weak-order-2 Ito integrators <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorDRI1.html#svstochasticintegratordri1"><span class="std std-ref">svStochasticIntegratorDRI1</span></a> and its non-mixing variant <code class="docutils literal notranslate"><span class="pre">svStochasticIntegratorDRI1NM</span></code> (Debrabant-Roessler), the Roessler <code class="docutils literal notranslate"><span class="pre">RI1</span></code>/<code class="docutils literal notranslate"><span class="pre">RI3</span></code>/<code class="docutils literal notranslate"><span class="pre">RI5</span></code>/<code class="docutils literal notranslate"><span class="pre">RI6</span></code> family, and the Tocino &amp; Vigo-Aguiar <code class="docutils literal notranslate"><span class="pre">SIEA</span></code>/<code class="docutils literal notranslate"><span class="pre">SMEA</span></code>/<code class="docutils literal notranslate"><span class="pre">SIEB</span></code>/<code class="docutils literal notranslate"><span class="pre">SMEB</span></code> family; plus the weak-order-1 <code class="docutils literal notranslate"><span class="pre">svStochasticIntegratorRDI1WM</span></code>. <code class="docutils literal notranslate"><span class="pre">DRI1</span></code> is the recommended general-purpose weak-order solver and handles non-commutative noise.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added the weak-order-2 Stratonovich integrators <code class="docutils literal notranslate"><span class="pre">svStochasticIntegratorRS1</span></code> and <code class="docutils literal notranslate"><span class="pre">svStochasticIntegratorRS2</span></code> (Roessler), for non-commutative Stratonovich noise.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Re-implemented <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorW2Ito1.html#svstochasticintegratorw2ito1"><span class="std std-ref">svStochasticIntegratorW2Ito1</span></a> and <a class="reference internal" href="../../Documentation/simulation/dynamics/Integrators/svStochasticIntegratorW2Ito2.html#svstochasticintegratorw2ito2"><span class="std std-ref">svStochasticIntegratorW2Ito2</span></a> (Tang &amp; Xiao weak-order-2) onto the shared noise-generator architecture so they support non-commutative noise and are checked for numerical equivalence against reference trajectories.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added the <a class="reference internal" href="../../Learn/bskPrinciples/bskPrinciples-12.html#bskprinciples-12"><span class="std std-ref">Advanced: Stochastic Integration</span></a> guide explaining what stochastic integration is, the supported methods, and how to choose one (weak vs. strong order, Itô vs Stratonovich, noise structure, and stiffness resilience).</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/inhomogeneousGeometricBrownianMotion.html#inhomogeneousgeometricbrownianmotion"><span class="std std-ref">C++ Module: inhomogeneousGeometricBrownianMotion</span></a>, a MuJoCo dynamics-task base class (importable as <code class="docutils literal notranslate"><span class="pre">MJInhomogeneousGeometricBrownianMotion</span></code> for Python subclassing) that models a mean-reverting process with multiplicative noise (IGBM), configured in stationary form (mean, time constant, stationary standard deviation) like <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.html#meanrevertingnoise"><span class="std std-ref">C++ Module: meanRevertingNoise</span></a>. The exact process is positive; it is integrated as written, so consumers that need positivity clamp the derived quantity downstream.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/igbmAtmDensity/igbmAtmDensity.html#igbmatmdensity"><span class="std std-ref">C++ Module: igbmAtmDensity</span></a> (<code class="docutils literal notranslate"><span class="pre">MJIgbmAtmDensity</span></code>), the multiplicative-noise counterpart to <a class="reference internal" href="../../Documentation/simulation/mujocoDynamics/stochasticAtmDensity/stochasticAtmDensity.html#stochasticatmdensity"><span class="std std-ref">C++ Module: stochasticAtmDensity</span></a>: it scales atmospheric density by the IGBM factor and clamps the corrected density to be non-negative.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: Added <a class="reference internal" href="../../Documentation/simulation/dynamics/igbmNoiseStateEffector/igbmNoiseStateEffector.html#igbmnoisestateeffector"><span class="std std-ref">C++ Module: igbmNoiseStateEffector</span></a>, the multiplicative-noise counterpart to <a class="reference internal" href="../../Documentation/simulation/dynamics/meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html#meanrevertingnoisestateeffector"><span class="std std-ref">C++ Module: meanRevertingNoiseStateEffector</span></a>: it propagates an IGBM <code class="docutils literal notranslate"><span class="pre">(1</span> <span class="pre">+</span> <span class="pre">x)</span></code> density-correction factor for <code class="docutils literal notranslate"><span class="pre">spacecraft.Spacecraft</span></code> dynamics, compatible with <code class="docutils literal notranslate"><span class="pre">DragDynamicEffector</span></code>’s <code class="docutils literal notranslate"><span class="pre">densityCorrectionStateName</span></code>.</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: <a class="reference internal" href="../../Documentation/simulation/dynamics/dragEffector/dragDynamicEffector.html#dragdynamiceffector"><span class="std std-ref">C++ Module: dragDynamicEffector</span></a> now clamps its optional density correction so the density used for drag is never negative (a multiplicative correction state can, under an explicit integrator, momentarily make <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">correction</span></code> negative).</p></li>
+<li><p><span class="beta-label">[BETA]</span> Stochastic Integration: The <a class="reference internal" href="../../examples/mujoco/scenarioStochasticDrag.html#scenariostochasticdrag"><span class="std std-ref">scenarioStochasticDrag</span></a> and <a class="reference internal" href="../../examples/scenarioStochasticDragSpacecraft.html#scenariostochasticdragspacecraft"><span class="std std-ref">scenarioStochasticDragSpacecraft</span></a> examples take a <code class="docutils literal notranslate"><span class="pre">useIgbm</span></code> option to model the stochastic density with the multiplicative IGBM process instead of the additive Ornstein-Uhlenbeck correction.</p></li>
+<li><p>Stochastic effector setters now reject non-finite parameters and state values without replacing prior values. Drift and diffusion calculations avoid intermediate overflow and report non-finite results through <code class="docutils literal notranslate"><span class="pre">BasiliskError</span></code> before storing them.</p></li>
+</ul>
+</section>
+<section id="visualization-and-data-handling">
+<h3>Visualization and data handling<a class="headerlink" href="#visualization-and-data-handling" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Prevented signed integer overflow when storage units integrate or directly add very large data quantities, while preserving exact 64-bit Python integer inputs.</p></li>
+<li><p>Ensured that simple storage units evaluate each data node against the current storage level without exceeding capacity.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> leaking its protobuffer message when a frame did not reach a successful save-file write, including live-stream-only, broadcast-only, and camera-image early-return paths.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> leaking the serialized protobuffer buffer on broadcast-only frames and orphaning it when the message was re-serialized after its settings block was removed.</p></li>
+<li><p>Fixed <a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> leaking the copied synchronization-settings broadcast buffer and a heap allocation for every Vizard event reply.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> no longer calls <code class="docutils literal notranslate"><span class="pre">google::protobuf::ShutdownProtobufLibrary()</span></code> after qualifying successful save-file frames, which released protobuf’s internal state while the module was still running.</p></li>
+<li><p><a class="reference internal" href="../../Documentation/simulation/vizard/vizInterface/vizInterface.html#vizinterface"><span class="std std-ref">C++ Module: vizInterface</span></a> now owns and closes its protobuf output stream, preventing file-handle leaks and Windows cleanup failures after saving Vizard data.</p></li>
+</ul>
+</section>
+<section id="documentation-examples-and-validation">
+<h3>Documentation, examples, and validation<a class="headerlink" href="#documentation-examples-and-validation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Improved BSK documentation readability and navigation with refined light and dark styling, a searchable module catalog, and easier access to module guides, tests, and example scenarios.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">EXPECT_NEAR_REL</span></code>, <code class="docutils literal notranslate"><span class="pre">EXPECT_VECTOR3_NEAR</span></code>, and <code class="docutils literal notranslate"><span class="pre">EXPECT_VECTOR3_NEAR_REL</span></code> GoogleTest assertions with operand diagnostics, explicit zero-reference behavior, and rejection of non-finite values and invalid tolerances. Shared scalar test comparators now reject invalid inputs as well.</p></li>
+<li><p>Updated the BSK and BSK-SDK release guides.</p></li>
+<li><p>Added a Sphinx single-page documentation build mode for targeted local HTML previews.</p></li>
+<li><p>Updated the BSK and BSK-SDK release guide pages.</p></li>
+<li><p>Clarified contributor guidance for unit comments, release-note snippets, and known-issue updates.</p></li>
+<li><p>Preserved unchanged generated documentation sources and cached Doxygen XML by module so Sphinx can reuse them during incremental HTML builds.</p></li>
+<li><p>Made XML cache reuse account for transitive local includes even with <code class="docutils literal notranslate"><span class="pre">SEARCH_INCLUDES=NO</span></code>, honor Sphinx configuration overrides, bypass reuse for environment-dependent settings, and recover safely after interrupted cache updates.</p></li>
+<li><p>Made <code class="docutils literal notranslate"><span class="pre">make.bat</span> <span class="pre">clean</span></code> remove all generated documentation artifacts, including the Doxygen cache, on Windows.</p></li>
+<li><p>Kept XML caches inside the selected build directory so cleaning an alternate <code class="docutils literal notranslate"><span class="pre">BUILDDIR</span></code> also removes its cache.</p></li>
+<li><p>Resolved relative Doxygen input settings from the Sphinx configuration directory and tracked headers found there for cache invalidation, while keeping XML output in cache staging directories.</p></li>
+<li><p>Preserved Doxygen configuration option order and prevented stale XML when bibliography settings, documentation commands, or aliases reference external files, even with preprocessing disabled.</p></li>
+<li><p>Preserved XML dependency tracking across parallel Sphinx workers and refreshed older saved environments to prevent stale API pages after header edits.</p></li>
+<li><p>Removed the obsolete Python 2-to-3 migration guide now that Basilisk supports Python 3 exclusively.</p></li>
+<li><p>Removed the obsolete Basilisk 1.x-to-2.x user and module migration guides.</p></li>
+<li><p>Added daily PyPI and GitHub usage-metrics collection with durable CSV history, a generated summary, and a live documentation plot sourced from the <code class="docutils literal notranslate"><span class="pre">usage-metrics</span></code> branch.</p></li>
+<li><p>Protected retained usage history against restore failures, preserved independent source observations during outages with explicit freshness reporting, filtered identifiable non-distribution PyPI requests, and required complete seven-day windows for usage plots.</p></li>
+<li><p>Retried interrupted usage-metrics HTTP response reads and preserved healthy-source data when those retries are exhausted.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2.13.html" class="btn btn-neutral float-left" title="Version 2.13 Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.11.html" class="btn btn-neutral float-right" title="Version 2.11 Release Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

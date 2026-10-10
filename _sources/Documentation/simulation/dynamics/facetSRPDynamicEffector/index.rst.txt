@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_facetSRPDynamicEffector:
+
+facetSRPDynamicEffector
+=======================
+
+:doc:`Module documentation <facetSRPDynamicEffector>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

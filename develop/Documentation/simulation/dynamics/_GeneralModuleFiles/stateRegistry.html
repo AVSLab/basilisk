@@ -1,0 +1,1026 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Module: stateRegistry &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="C++ Module: stateVecIntegrator" href="stateVecIntegrator.html" />
+    <link rel="prev" title="C++ Module: stateEffector" href="stateEffector.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../moduleTemplates/index.html">moduleTemplates</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../communication/index.html">communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deviceInterface/index.html">deviceInterface</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">dynamics</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">_GeneralModuleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constraintEffector/constraintDynamicEffector.html">constraintDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dragEffector/dragDynamicEffector.html">dragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dualHingedRigidBodies/dualHingedRigidBodyStateEffector.html">dualHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../DynOutput/index.html">DynOutput</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extForceTorque/extForceTorque.html">extForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ExtPulsedTorque/ExtPulsedTorque.html">ExtPulsedTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetDragEffector/facetDragDynamicEffector.html">facetDragDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetedSRPEffector/facetedSRPEffector.html">facetedSRPEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../facetSRPDynamicEffector/facetSRPDynamicEffector.html">facetSRPDynamicEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../FuelTank/fuelTank.html">fuelTank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../GravityGradientEffector/GravityGradientEffector.html">GravityGradientEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../hingedRigidBodyMotor/hingedRigidBodyMotor.html">hingedRigidBodyMotor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../HingedRigidBodies/hingedRigidBodyStateEffector.html">hingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../igbmNoiseStateEffector/igbmNoiseStateEffector.html">igbmNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Integrators/index.html">Integrators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../LinearSpringMassDamper/linearSpringMassDamper.html">linearSpringMassDamper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../linearTranslationalBodies/index.html">linearTranslationalBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../meanRevertingNoiseStateEffector/meanRevertingNoiseStateEffector.html">meanRevertingNoiseStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../msmForceTorque/msmForceTorque.html">msmForceTorque</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../MtbEffector/MtbEffector.html">MtbEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../NHingedRigidBodies/nHingedRigidBodyStateEffector.html">nHingedRigidBodyStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../gravityEffector/polyhedralGravityModel.html">polyhedralGravityModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../prescribedMotion/prescribedMotionStateEffector.html">prescribedMotionStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../RadiationPressure/radiationPressure.html">radiationPressure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reactionWheels/reactionWheelStateEffector.html">reactionWheelStateEffector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spacecraft/spacecraft.html">spacecraft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sphericalPendulum/sphericalPendulum.html">sphericalPendulum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spinningBodies/index.html">spinningBodies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../stateArchitecture/index.html">stateArchitecture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../Thrusters/index.html">Thrusters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../VSCMGs/vscmgStateEffector.html">vscmgStateEffector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../environment/index.html">environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../forceTorque/index.html">forceTorque</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mujocoDynamics/index.html">mujocoDynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../navigation/index.html">navigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../onboardDataHandling/index.html">onboardDataHandling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../power/index.html">power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../sensors/index.html">sensors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../simSynch/simSynch.html">simSynch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../thermal/index.html">thermal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../vizard/index.html">vizard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">simulation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">dynamics</a></li>
+          <li class="breadcrumb-item"><a href="index.html">_GeneralModuleFiles</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-cpp">C++</span> Module: stateRegistry</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/Documentation/simulation/dynamics/_GeneralModuleFiles/stateRegistry.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-stateregistry">
+<span id="stateregistry"></span><h1><span class="module-type-label module-type-cpp">C++</span> Module: stateRegistry<a class="headerlink" href="#c-module-stateregistry" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<p>Shared by the modules in this folder.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTestDynamics/index.html"><span class="doc">_UnitTestDynamics</span></a></p></li>
+<li><p><a class="reference internal" href="BodyToHubInfo.html"><span class="doc">BodyToHubInfo</span></a></p></li>
+<li><p><a class="reference internal" href="fuelSlosh.html"><span class="doc">fuelSlosh</span></a></p></li>
+<li><p><a class="reference internal" href="gravityModel.html"><span class="doc">gravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="interpolator.html"><span class="doc">interpolator</span></a></p></li>
+<li><p><a class="reference internal" href="pointMassGravityModel.html"><span class="doc">pointMassGravityModel</span></a></p></li>
+<li><p><a class="reference internal" href="RWConfigPayload.html"><span class="doc">RWConfigPayload</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticNoiseGenerator.html"><span class="doc">stochasticNoiseGenerator</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticTableauValidation.html"><span class="doc">stochasticTableauValidation</span></a></p></li>
+<li><p><a class="reference internal" href="stochasticWeakRandomVariables.html"><span class="doc">stochasticWeakRandomVariables</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRA.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRA</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorStrongStochasticRungeKuttaSRI.html"><span class="doc">svIntegratorStrongStochasticRungeKuttaSRI</span></a></p></li>
+<li><p><a class="reference internal" href="svIntegratorWeakSIESME.html"><span class="doc">svIntegratorWeakSIESME</span></a></p></li>
+<li><p><a class="reference internal" href="THROperation.html"><span class="doc">THROperation</span></a></p></li>
+<li><p><a class="reference internal" href="THRSimConfig.html"><span class="doc">THRSimConfig</span></a></p></li>
+<li><p><a class="reference internal" href="THRTimePair.html"><span class="doc">THRTimePair</span></a></p></li>
+</ul>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">StateRegistry</span></code> implements the state storage owned by <a class="reference internal" href="dynParamManager.html#dynparammanager"><span class="std std-ref">C++ Module: dynParamManager</span></a>.
+It owns named handles, update policies, layouts, value buffers, and noise connections.</p>
+<p>Registration creates temporary matrices. First finalization computes offsets,
+allocates contiguous buffers, and redirects handles into those buffers. The layout
+then remains fixed. Later registration retrieves existing states by name and checks
+that their declarations match; values are updated in place without staging or rollback.</p>
+<p>Construction and registration are controlled by the manager. C++ callers inspect
+and resolve storage through <code class="docutils literal notranslate"><span class="pre">DynParamManager::getStateRegistry()</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StateLayout</span></code> offsets address the registry’s own arrays of doubles. They differ
+from the integrator-global offsets in <code class="docutils literal notranslate"><span class="pre">FlatStateBinding</span></code>. <code class="docutils literal notranslate"><span class="pre">StateBufferSegment</span></code>
+identifies its registry, buffer kind, and scalar range. The registry must remain alive
+while a segment or a pointer resolved from it is in use.</p>
+<p><code class="docutils literal notranslate"><span class="pre">getSegment(kind,</span> <span class="pre">firstSlot,</span> <span class="pre">elementCount)</span></code> addresses state, derivative, and
+diffusion storage through the same interface. <code class="docutils literal notranslate"><span class="pre">segmentView(segment)</span></code> returns a
+borrowed column matrix whose writes update the live buffer. Calling it on a const
+registry returns a read-only view. Typed segment constructors and pointer accessors
+remain available when the buffer kind is known.</p>
+<p>A segment starts at a registration slot and ends at a complete record boundary.
+For diffusion, one record contains all local noise tangents for that state.
+States without noise contribute no diffusion scalars. For example, if state A has
+two scalar tangents and state B has one, their diffusion segment contains
+<code class="docutils literal notranslate"><span class="pre">[A/source0,</span> <span class="pre">A/source1,</span> <span class="pre">B/source0]</span></code>. Shared sources still occupy separate local
+contributions. Stochastic workspaces gather them into global source order during
+capture.</p>
+<p>Acquire segment views after finalization. Their addresses remain stable across
+later resets, and the registry must outlive them. Module callbacks can continue
+to use <code class="docutils literal notranslate"><span class="pre">StateData::stateView()</span></code>, <code class="docutils literal notranslate"><span class="pre">derivativeView()</span></code>, and <code class="docutils literal notranslate"><span class="pre">diffusionView(index)</span></code>
+for shaped access to individual records.</p>
+<p>See <a class="reference internal" href="../../../../Learn/makingModules/advancedTopics/integratorArchitecture.html#integratorarchitecture"><span class="std std-ref">Dynamics state and integrator architecture</span></a> for the complete storage and integration call path.</p>
+<hr class="docutils" />
+<p>Native state-registration lifecycle, immutable layouts, and buffer access. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv415StateBufferKind">
+<span id="_CPPv315StateBufferKind"></span><span id="_CPPv215StateBufferKind"></span><span class="target" id="state_registry_8h_1ac5718475f97a9a1e83c33d121d27a290"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateBufferKind</span></span></span><a class="headerlink" href="#_CPPv415StateBufferKind" title="Link to this definition"></a><br /></dt>
+<dd><p>Select the buffer addressed by a <a class="reference internal" href="#struct_state_buffer_segment"><span class="std std-ref">StateBufferSegment</span></a>. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15StateBufferKind5StateE">
+<span id="_CPPv3N15StateBufferKind5StateE"></span><span id="_CPPv2N15StateBufferKind5StateE"></span><span class="target" id="state_registry_8h_1ac5718475f97a9a1e83c33d121d27a290a46a2a41cc6e552044816a2d04634545d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">State</span></span></span><a class="headerlink" href="#_CPPv4N15StateBufferKind5StateE" title="Link to this definition"></a><br /></dt>
+<dd><p>State values. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15StateBufferKind10DerivativeE">
+<span id="_CPPv3N15StateBufferKind10DerivativeE"></span><span id="_CPPv2N15StateBufferKind10DerivativeE"></span><span class="target" id="state_registry_8h_1ac5718475f97a9a1e83c33d121d27a290a70ae6e285cc14c8486e3cf5bec39d1fd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Derivative</span></span></span><a class="headerlink" href="#_CPPv4N15StateBufferKind10DerivativeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Time derivatives. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N15StateBufferKind9DiffusionE">
+<span id="_CPPv3N15StateBufferKind9DiffusionE"></span><span id="_CPPv2N15StateBufferKind9DiffusionE"></span><span class="target" id="state_registry_8h_1ac5718475f97a9a1e83c33d121d27a290ac9fc4714730359980e89007f327c5b7d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Diffusion</span></span></span><a class="headerlink" href="#_CPPv4N15StateBufferKind9DiffusionE" title="Link to this definition"></a><br /></dt>
+<dd><p>All local noise tangents, grouped by state and then by source. </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv411StateLayout">
+<span id="_CPPv311StateLayout"></span><span id="_CPPv211StateLayout"></span><span id="StateLayout"></span><span class="target" id="struct_state_layout"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateLayout</span></span></span><a class="headerlink" href="#_CPPv411StateLayout" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateRegistry.h&gt;</em></div>
+<p>Dimensions and scalar offsets of one state in the committed buffers. </p>
+<p>Offsets count doubles, not bytes. Matrices use Eigen’s column-major ordering. State, derivative, and diffusion shapes may differ for a special update policy. Layouts are immutable after the first successful registration. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout9stateRowsE">
+<span id="_CPPv3N11StateLayout9stateRowsE"></span><span id="_CPPv2N11StateLayout9stateRowsE"></span><span id="StateLayout::stateRows__uint32_t"></span><span class="target" id="struct_state_layout_1af466bf8b6dc9f8be2b79dac695026003"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout9stateRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in the state matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout9stateColsE">
+<span id="_CPPv3N11StateLayout9stateColsE"></span><span id="_CPPv2N11StateLayout9stateColsE"></span><span id="StateLayout::stateCols__uint32_t"></span><span class="target" id="struct_state_layout_1aa85ee122ab26cff61d4a5ed81f80fa9d"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCols</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout9stateColsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in the state matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout11stateOffsetE">
+<span id="_CPPv3N11StateLayout11stateOffsetE"></span><span id="_CPPv2N11StateLayout11stateOffsetE"></span><span id="StateLayout::stateOffset__s"></span><span class="target" id="struct_state_layout_1ab1508d8e0ad2d9c89a65b846590176af"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout11stateOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First state scalar in <a class="reference internal" href="#struct_state_buffers_1a221586698fdef4afccbcb0b376b54a07"><span class="std std-ref">StateBuffers::states</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout10stateCountE">
+<span id="_CPPv3N11StateLayout10stateCountE"></span><span id="_CPPv2N11StateLayout10stateCountE"></span><span id="StateLayout::stateCount__s"></span><span class="target" id="struct_state_layout_1a786f484dfb653f1bdeb6bb7b0b0ff4b6"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout10stateCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of state scalars, equal to rows times columns. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout9derivRowsE">
+<span id="_CPPv3N11StateLayout9derivRowsE"></span><span id="_CPPv2N11StateLayout9derivRowsE"></span><span id="StateLayout::derivRows__uint32_t"></span><span class="target" id="struct_state_layout_1a5359529d65dc178e19c27c21ad690dd8"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout9derivRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in the time-derivative matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout9derivColsE">
+<span id="_CPPv3N11StateLayout9derivColsE"></span><span id="_CPPv2N11StateLayout9derivColsE"></span><span id="StateLayout::derivCols__uint32_t"></span><span class="target" id="struct_state_layout_1a7392ed0f3e0fa67d4b61c915505a516a"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivCols</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout9derivColsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in the time-derivative matrix. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout11derivOffsetE">
+<span id="_CPPv3N11StateLayout11derivOffsetE"></span><span id="_CPPv2N11StateLayout11derivOffsetE"></span><span id="StateLayout::derivOffset__s"></span><span class="target" id="struct_state_layout_1a17b641799cd88051579614b22a0e484d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout11derivOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First derivative scalar in <a class="reference internal" href="#struct_state_buffers_1a949c386097374f8f4d82c0b9258aced0"><span class="std std-ref">StateBuffers::derivatives</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout10derivCountE">
+<span id="_CPPv3N11StateLayout10derivCountE"></span><span id="_CPPv2N11StateLayout10derivCountE"></span><span id="StateLayout::derivCount__s"></span><span class="target" id="struct_state_layout_1a8108b6f792c85813f4f64bc559ee357c"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout10derivCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of derivative scalars. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout13diffusionRowsE">
+<span id="_CPPv3N11StateLayout13diffusionRowsE"></span><span id="_CPPv2N11StateLayout13diffusionRowsE"></span><span id="StateLayout::diffusionRows__uint32_t"></span><span class="target" id="struct_state_layout_1a5463e7d166a6107030b68ee06889775a"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionRows</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout13diffusionRowsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Rows in each local noise tangent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout13diffusionColsE">
+<span id="_CPPv3N11StateLayout13diffusionColsE"></span><span id="_CPPv2N11StateLayout13diffusionColsE"></span><span id="StateLayout::diffusionCols__uint32_t"></span><span class="target" id="struct_state_layout_1aa57ba41c37dbb2b4c1427584a5f5a34a"></span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionCols</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout13diffusionColsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Columns in each local noise tangent. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout15diffusionOffsetE">
+<span id="_CPPv3N11StateLayout15diffusionOffsetE"></span><span id="_CPPv2N11StateLayout15diffusionOffsetE"></span><span id="StateLayout::diffusionOffset__s"></span><span class="target" id="struct_state_layout_1a15cd9776fcc2f6508aee4cf02736bfa8"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionOffset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout15diffusionOffsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First tangent scalar in <a class="reference internal" href="#struct_state_buffers_1afe7bc482ae5e89dec6980732633d3532"><span class="std std-ref">StateBuffers::diffusions</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout23diffusionCountPerSourceE">
+<span id="_CPPv3N11StateLayout23diffusionCountPerSourceE"></span><span id="_CPPv2N11StateLayout23diffusionCountPerSourceE"></span><span id="StateLayout::diffusionCountPerSource__s"></span><span class="target" id="struct_state_layout_1a5e874faaf78daa993d21071b1328203a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusionCountPerSource</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout23diffusionCountPerSourceE" title="Link to this definition"></a><br /></dt>
+<dd><p>Scalars per tangent; local sources occupy consecutive blocks. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout10noiseCountE">
+<span id="_CPPv3N11StateLayout10noiseCountE"></span><span id="_CPPv2N11StateLayout10noiseCountE"></span><span id="StateLayout::noiseCount__s"></span><span class="target" id="struct_state_layout_1a872cf198052a1f41018af3039426206d"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">noiseCount</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11StateLayout10noiseCountE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of local noise sources declared for this state. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout12errorControlE">
+<span id="_CPPv3N11StateLayout12errorControlE"></span><span id="_CPPv2N11StateLayout12errorControlE"></span><span id="StateLayout::errorControl__ErrorControlMode"></span><span class="target" id="struct_state_layout_1a3b2b05a5318c1fec0e6b25219bba098c"></span><a class="reference internal" href="stateData.html#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">errorControl</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv416ErrorControlMode" title="ErrorControlMode"><span class="n"><span class="pre">ErrorControlMode</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="stateData.html#_CPPv4N16ErrorControlMode10WholeStateE" title="ErrorControlMode::WholeState"><span class="n"><span class="pre">WholeState</span></span></a><a class="headerlink" href="#_CPPv4N11StateLayout12errorControlE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adaptive error scaling for this record. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout10updateKindE">
+<span id="_CPPv3N11StateLayout10updateKindE"></span><span id="_CPPv2N11StateLayout10updateKindE"></span><span id="StateLayout::updateKind__StateUpdateKind"></span><span class="target" id="struct_state_layout_1af6b8dfa58abade1801160dcbefb523d1"></span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateKind</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv415StateUpdateKind" title="StateUpdateKind"><span class="n"><span class="pre">StateUpdateKind</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="stateData.html#_CPPv4N15StateUpdateKind9EuclideanE" title="StateUpdateKind::Euclidean"><span class="n"><span class="pre">Euclidean</span></span></a><a class="headerlink" href="#_CPPv4N11StateLayout10updateKindE" title="Link to this definition"></a><br /></dt>
+<dd><p>Ordinary addition or a special update rule. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11StateLayout13specialUpdateE">
+<span id="_CPPv3N11StateLayout13specialUpdateE"></span><span id="_CPPv2N11StateLayout13specialUpdateE"></span><span id="StateLayout::specialUpdate__StateUpdatePolicyCP"></span><span class="target" id="struct_state_layout_1a9f60e0ef00b57b55cafd063e3447168e"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">specialUpdate</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N11StateLayout13specialUpdateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrowed immutable policy, or nullptr for Euclidean states. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv412StateBuffers">
+<span id="_CPPv312StateBuffers"></span><span id="_CPPv212StateBuffers"></span><span id="StateBuffers"></span><span class="target" id="struct_state_buffers"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateBuffers</span></span></span><a class="headerlink" href="#_CPPv412StateBuffers" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateRegistry.h&gt;</em></div>
+<p>Contiguous state, derivative, and diffusion buffers allocated at finalization. Their addresses remain stable for the registry’s lifetime. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StateBuffers6statesE">
+<span id="_CPPv3N12StateBuffers6statesE"></span><span id="_CPPv2N12StateBuffers6statesE"></span><span id="StateBuffers::states__Eigen::VectorXd"></span><span class="target" id="struct_state_buffers_1a221586698fdef4afccbcb0b376b54a07"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">states</span></span></span><a class="headerlink" href="#_CPPv4N12StateBuffers6statesE" title="Link to this definition"></a><br /></dt>
+<dd><p>State values in registration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StateBuffers11derivativesE">
+<span id="_CPPv3N12StateBuffers11derivativesE"></span><span id="_CPPv2N12StateBuffers11derivativesE"></span><span id="StateBuffers::derivatives__Eigen::VectorXd"></span><span class="target" id="struct_state_buffers_1a949c386097374f8f4d82c0b9258aced0"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivatives</span></span></span><a class="headerlink" href="#_CPPv4N12StateBuffers11derivativesE" title="Link to this definition"></a><br /></dt>
+<dd><p>Time derivatives in registration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N12StateBuffers10diffusionsE">
+<span id="_CPPv3N12StateBuffers10diffusionsE"></span><span id="_CPPv2N12StateBuffers10diffusionsE"></span><span id="StateBuffers::diffusions__Eigen::VectorXd"></span><span class="target" id="struct_state_buffers_1afe7bc482ae5e89dec6980732633d3532"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VectorXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusions</span></span></span><a class="headerlink" href="#_CPPv4N12StateBuffers10diffusionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Noise tangents grouped by state, then by local source. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv418StateBufferSegment">
+<span id="_CPPv318StateBufferSegment"></span><span id="_CPPv218StateBufferSegment"></span><span id="StateBufferSegment"></span><span class="target" id="struct_state_buffer_segment"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateBufferSegment</span></span></span><a class="headerlink" href="#_CPPv418StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateRegistry.h&gt;</em></div>
+<p>Consecutive complete records in one registry’s buffer. The registry must outlive the segment and every pointer resolved from it. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18StateBufferSegment8registryE">
+<span id="_CPPv3N18StateBufferSegment8registryE"></span><span id="_CPPv2N18StateBufferSegment8registryE"></span><span id="StateBufferSegment::registry__StateRegistryCP"></span><span class="target" id="struct_state_buffer_segment_1acb78ed39653b00456781f77ef906af33"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registry</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><a class="headerlink" href="#_CPPv4N18StateBufferSegment8registryE" title="Link to this definition"></a><br /></dt>
+<dd><p>Owner of the referenced storage. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18StateBufferSegment10bufferKindE">
+<span id="_CPPv3N18StateBufferSegment10bufferKindE"></span><span id="_CPPv2N18StateBufferSegment10bufferKindE"></span><span id="StateBufferSegment::bufferKind__StateBufferKind"></span><span class="target" id="struct_state_buffer_segment_1a6188a5d6b04c7ad5420cf4f9db3ab24a"></span><a class="reference internal" href="#_CPPv415StateBufferKind" title="StateBufferKind"><span class="n"><span class="pre">StateBufferKind</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bufferKind</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415StateBufferKind" title="StateBufferKind"><span class="n"><span class="pre">StateBufferKind</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N15StateBufferKind5StateE" title="StateBufferKind::State"><span class="n"><span class="pre">State</span></span></a><a class="headerlink" href="#_CPPv4N18StateBufferSegment10bufferKindE" title="Link to this definition"></a><br /></dt>
+<dd><p>Buffer containing the scalar range. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18StateBufferSegment6offsetE">
+<span id="_CPPv3N18StateBufferSegment6offsetE"></span><span id="_CPPv2N18StateBufferSegment6offsetE"></span><span id="StateBufferSegment::offset__s"></span><span class="target" id="struct_state_buffer_segment_1a88e01905f29bb4cda97112021ff82a78"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">offset</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18StateBufferSegment6offsetE" title="Link to this definition"></a><br /></dt>
+<dd><p>First scalar in the buffer. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18StateBufferSegment5countE">
+<span id="_CPPv3N18StateBufferSegment5countE"></span><span id="_CPPv2N18StateBufferSegment5countE"></span><span id="StateBufferSegment::count__s"></span><span class="target" id="struct_state_buffer_segment_1a4cd80ff26b5623a9a5c0d71375b3a71f"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">count</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N18StateBufferSegment5countE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of consecutive scalars. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv413StateRegistry">
+<span id="_CPPv313StateRegistry"></span><span id="_CPPv213StateRegistry"></span><span id="StateRegistry"></span><span class="target" id="class_state_registry"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateRegistry</span></span></span><a class="headerlink" href="#_CPPv413StateRegistry" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;stateRegistry.h&gt;</em></div>
+<p>State declarations and contiguous storage owned by <a class="reference internal" href="dynParamManager.html#class_dyn_param_manager"><span class="std std-ref">DynParamManager</span></a>. </p>
+<p>Registration creates named handles with temporary matrices. finalizeStates() computes offsets, allocates the buffers, and redirects those handles to the contiguous storage. This transition happens once. Later declarations look up the existing state by name and must match its dimensions and update policy. Values can be reset directly without moving storage or rebuilding integrators.</p>
+<p>Setup is not transactional. An exception may leave partially initialized values; callers must complete setup successfully before running the simulation. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13NoiseEndpointE">
+<span id="_CPPv3N13StateRegistry13NoiseEndpointE"></span><span id="_CPPv2N13StateRegistry13NoiseEndpointE"></span><span class="target" id="class_state_registry_1aea42fffb2fd061bf61532138f1e2c64f"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NoiseEndpoint</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry13NoiseEndpointE" title="Link to this definition"></a><br /></dt>
+<dd><p>Registration slot and local noise-source index. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry10NoiseGroupE">
+<span id="_CPPv3N13StateRegistry10NoiseGroupE"></span><span id="_CPPv2N13StateRegistry10NoiseGroupE"></span><span class="target" id="class_state_registry_1a7335e76ca4e88299b6a54274e2817c11"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NoiseGroup</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N13StateRegistry13NoiseEndpointE" title="StateRegistry::NoiseEndpoint"><span class="n"><span class="pre">NoiseEndpoint</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry10NoiseGroupE" title="Link to this definition"></a><br /></dt>
+<dd><p>Endpoints driven by one shared process. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13NoiseTopologyE">
+<span id="_CPPv3N13StateRegistry13NoiseTopologyE"></span><span id="_CPPv2N13StateRegistry13NoiseTopologyE"></span><span class="target" id="class_state_registry_1a0b6fda9ceddb0dcbac42bd4f66fa282d"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NoiseTopology</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N13StateRegistry10NoiseGroupE" title="StateRegistry::NoiseGroup"><span class="n"><span class="pre">NoiseGroup</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry13NoiseTopologyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Canonically sorted shared-noise groups. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistryD0Ev">
+<span id="_CPPv3N13StateRegistryD0Ev"></span><span id="_CPPv2N13StateRegistryD0Ev"></span><span id="StateRegistry::~StateRegistry"></span><span class="target" id="class_state_registry_1a23f07240efde5995a38ae09a5a67c72d"></span><span class="sig-name descname"><span class="n"><span class="pre">~StateRegistry</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13StateRegistryD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Release states, their update policies, and the buffers. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13StateRegistryERK13StateRegistry">
+<span id="_CPPv3N13StateRegistry13StateRegistryERK13StateRegistry"></span><span id="_CPPv2N13StateRegistry13StateRegistryERK13StateRegistry"></span><span id="StateRegistry::StateRegistry__StateRegistryCR"></span><span class="target" id="class_state_registry_1a8356b401f8c00f80e9c2ebc2d652c424"></span><span class="sig-name descname"><span class="n"><span class="pre">StateRegistry</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N13StateRegistry13StateRegistryERK13StateRegistry" title="StateRegistry::StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry13StateRegistryERK13StateRegistry" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistryaSERK13StateRegistry">
+<span id="_CPPv3N13StateRegistryaSERK13StateRegistry"></span><span id="_CPPv2N13StateRegistryaSERK13StateRegistry"></span><span id="StateRegistry::assign-operator__StateRegistryCR"></span><span class="target" id="class_state_registry_1ae718485c30106bdd70e1b42011facf73"></span><a class="reference internal" href="#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13StateRegistryaSERK13StateRegistry" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13StateRegistryERR13StateRegistry">
+<span id="_CPPv3N13StateRegistry13StateRegistryERR13StateRegistry"></span><span id="_CPPv2N13StateRegistry13StateRegistryERR13StateRegistry"></span><span id="StateRegistry::StateRegistry__StateRegistryRR"></span><span class="target" id="class_state_registry_1a9fff70e211ac9fb376d29895107baf55"></span><span class="sig-name descname"><span class="n"><span class="pre">StateRegistry</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N13StateRegistry13StateRegistryERR13StateRegistry" title="StateRegistry::StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry13StateRegistryERR13StateRegistry" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistryaSERR13StateRegistry">
+<span id="_CPPv3N13StateRegistryaSERR13StateRegistry"></span><span id="_CPPv2N13StateRegistryaSERR13StateRegistry"></span><span id="StateRegistry::assign-operator__StateRegistryRR"></span><span class="target" id="class_state_registry_1ab89615d4ca2423f024f924525632c709"></span><a class="reference internal" href="#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413StateRegistry" title="StateRegistry"><span class="n"><span class="pre">StateRegistry</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">delete</span></span><a class="headerlink" href="#_CPPv4N13StateRegistryaSERR13StateRegistry" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry18statesAreFinalizedEv">
+<span id="_CPPv3NK13StateRegistry18statesAreFinalizedEv"></span><span id="_CPPv2NK13StateRegistry18statesAreFinalizedEv"></span><span id="StateRegistry::statesAreFinalizedC"></span><span class="target" id="class_state_registry_1ac707c0ac95349523aa15936f18c0cc74"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">statesAreFinalized</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry18statesAreFinalizedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Report whether the fixed layout and contiguous buffers are available. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry13getStateCountEv">
+<span id="_CPPv3NK13StateRegistry13getStateCountEv"></span><span id="_CPPv2NK13StateRegistry13getStateCountEv"></span><span id="StateRegistry::getStateCountC"></span><span class="target" id="class_state_registry_1a1b6b45ed48726b34e06ffc45fbdbc0cb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateCount</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry13getStateCountEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of named states. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry25getStateRegistrationOrderEv">
+<span id="_CPPv3NK13StateRegistry25getStateRegistrationOrderEv"></span><span id="_CPPv2NK13StateRegistry25getStateRegistrationOrderEv"></span><span id="StateRegistry::getStateRegistrationOrderC"></span><span class="target" id="class_state_registry_1a33f2b2458429ec8f7159824578477d9d"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getStateRegistrationOrder</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry25getStateRegistrationOrderEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow handles in registration order; requires finalized registration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry15getStateLayoutsEv">
+<span id="_CPPv3NK13StateRegistry15getStateLayoutsEv"></span><span id="_CPPv2NK13StateRegistry15getStateLayoutsEv"></span><span id="StateRegistry::getStateLayoutsC"></span><span class="target" id="class_state_registry_1aabee8b0b7ebb3308e5259f581c825a23"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411StateLayout" title="StateLayout"><span class="n"><span class="pre">StateLayout</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getStateLayouts</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry15getStateLayoutsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow immutable layouts in registration order; requires finalized registration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry22getSharedNoiseTopologyEv">
+<span id="_CPPv3NK13StateRegistry22getSharedNoiseTopologyEv"></span><span id="_CPPv2NK13StateRegistry22getSharedNoiseTopologyEv"></span><span id="StateRegistry::getSharedNoiseTopologyC"></span><span class="target" id="class_state_registry_1aab84c7cd7ea690bb9035bb6e1a535588"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N13StateRegistry13NoiseTopologyE" title="StateRegistry::NoiseTopology"><span class="n"><span class="pre">NoiseTopology</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getSharedNoiseTopology</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry22getSharedNoiseTopologyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow canonical shared-noise groups; requires finalized registration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry10getSegmentE15StateBufferKind6size_t6size_t">
+<span id="_CPPv3NK13StateRegistry10getSegmentE15StateBufferKind6size_t6size_t"></span><span id="_CPPv2NK13StateRegistry10getSegmentE15StateBufferKind6size_t6size_t"></span><span id="StateRegistry::getSegment__StateBufferKind.s.sC"></span><span class="target" id="class_state_registry_1aebc151ebee8f4da391617102b84afe88"></span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getSegment</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415StateBufferKind" title="StateBufferKind"><span class="n"><span class="pre">StateBufferKind</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">kind</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">firstSlot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">elementCount</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry10getSegmentE15StateBufferKind6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Issue a segment of any buffer spanning complete state records. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Diffusion segments retain state/local-source order. They do not group shared sources. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> – State, derivative, or diffusion storage. </p></li>
+<li><p><strong>firstSlot</strong> – Zero-based registration slot at the start of the span. </p></li>
+<li><p><strong>elementCount</strong> – Number of scalars, ending at a complete record boundary. A diffusion record includes every local noise tangent of one state; states without noise contribute no scalars. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">exception</span></span></span> – If storage is not finalized, kind is invalid, or the span is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Segment referring to this registry’s fixed storage. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11segmentViewERK18StateBufferSegment">
+<span id="_CPPv3N13StateRegistry11segmentViewERK18StateBufferSegment"></span><span id="_CPPv2N13StateRegistry11segmentViewERK18StateBufferSegment"></span><span id="StateRegistry::segmentView__StateBufferSegmentCR"></span><span class="target" id="class_state_registry_1af90fa832f9921b261b8a4fe510f3468f"></span><a class="reference internal" href="stateData.html#_CPPv417MutableMatrixView" title="MutableMatrixView"><span class="n"><span class="pre">MutableMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">segmentView</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry11segmentViewERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow a segment of any buffer as a writable column matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>View with segment.count rows and one column; no values are copied. The view remains valid until the registry is destroyed. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry11segmentViewERK18StateBufferSegment">
+<span id="_CPPv3NK13StateRegistry11segmentViewERK18StateBufferSegment"></span><span id="_CPPv2NK13StateRegistry11segmentViewERK18StateBufferSegment"></span><span id="StateRegistry::segmentView__StateBufferSegmentCRC"></span><span class="target" id="class_state_registry_1ac63c49e7bfa5c66d44eeb3a3b0b77ac5"></span><a class="reference internal" href="stateData.html#_CPPv415ConstMatrixView" title="ConstMatrixView"><span class="n"><span class="pre">ConstMatrixView</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">segmentView</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry11segmentViewERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow a segment of any buffer as a read-only column matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>View with segment.count rows and one column, valid while the registry exists. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry15getStateSegmentE6size_t6size_t">
+<span id="_CPPv3NK13StateRegistry15getStateSegmentE6size_t6size_t"></span><span id="_CPPv2NK13StateRegistry15getStateSegmentE6size_t6size_t"></span><span id="StateRegistry::getStateSegment__s.sC"></span><span class="target" id="class_state_registry_1a6d61660739e2d6f839eb3df23d90f499"></span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getStateSegment</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">firstSlot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">elementCount</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry15getStateSegmentE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Issue a segment spanning complete state records. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>firstSlot</strong> – Zero-based registration slot at the start of the span. </p></li>
+<li><p><strong>elementCount</strong> – Total number of scalars, ending at a record boundary. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">exception</span></span></span> – If registration is not finalized or the span is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Segment referring to this registry’s fixed storage. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry20getDerivativeSegmentE6size_t6size_t">
+<span id="_CPPv3NK13StateRegistry20getDerivativeSegmentE6size_t6size_t"></span><span id="_CPPv2NK13StateRegistry20getDerivativeSegmentE6size_t6size_t"></span><span id="StateRegistry::getDerivativeSegment__s.sC"></span><span class="target" id="class_state_registry_1a5fd43fca6290ddc7c2eec432b622b987"></span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDerivativeSegment</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">firstSlot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">elementCount</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry20getDerivativeSegmentE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Issue a segment spanning complete derivative records. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>firstSlot</strong> – Zero-based registration slot at the start of the span. </p></li>
+<li><p><strong>elementCount</strong> – Total derivative scalars, ending at a record boundary. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">exception</span></span></span> – If registration is not finalized or the span is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Derivative segment owned by this registry. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry19getDiffusionSegmentE6size_t6size_t">
+<span id="_CPPv3NK13StateRegistry19getDiffusionSegmentE6size_t6size_t"></span><span id="_CPPv2NK13StateRegistry19getDiffusionSegmentE6size_t6size_t"></span><span id="StateRegistry::getDiffusionSegment__s.sC"></span><span class="target" id="class_state_registry_1a385c3b1be8f119d21767c06e8d5dbc45"></span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getDiffusionSegment</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">firstSlot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">elementCount</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry19getDiffusionSegmentE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Issue a segment spanning complete diffusion records. </p>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#class_state_registry_1aebc151ebee8f4da391617102b84afe88"><span class="std std-ref">getSegment()</span></a></p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>firstSlot</strong> – Zero-based registration slot at the start of the span. </p></li>
+<li><p><strong>elementCount</strong> – Total scalars across all local tangents of the selected states. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Diffusion segment in state/local-source order. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry16stateSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3N13StateRegistry16stateSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2N13StateRegistry16stateSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::stateSegmentData__StateBufferSegmentCR"></span><span class="target" id="class_state_registry_1a4fe13b7eff9903f227a7cdbeefe5ed3f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">stateSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry16stateSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a live state segment without allocating or copying. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment has the wrong owner, kind, or bounds. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Borrowed pointer into the committed state buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry16stateSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3NK13StateRegistry16stateSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2NK13StateRegistry16stateSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::stateSegmentData__StateBufferSegmentCRC"></span><span class="target" id="class_state_registry_1a5f7a70066d8adeda44de0474cc1f62fb"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">stateSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry16stateSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a state segment for read-only access. </p>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#class_state_registry_1a4fe13b7eff9903f227a7cdbeefe5ed3f"><span class="std std-ref">stateSegmentData()</span></a></p>
+</div>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry21derivativeSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3N13StateRegistry21derivativeSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2N13StateRegistry21derivativeSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::derivativeSegmentData__StateBufferSegmentCR"></span><span class="target" id="class_state_registry_1ab5b01192bcd6a56ac615d5cefe92d172"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">derivativeSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry21derivativeSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a live derivative segment without allocating or copying. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Derivative segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Borrowed pointer into the committed derivative buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry21derivativeSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3NK13StateRegistry21derivativeSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2NK13StateRegistry21derivativeSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::derivativeSegmentData__StateBufferSegmentCRC"></span><span class="target" id="class_state_registry_1a0d92dcc7621b930740a2d4b0c57f6608"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">derivativeSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry21derivativeSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a derivative segment for read-only access. </p>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#class_state_registry_1ab5b01192bcd6a56ac615d5cefe92d172"><span class="std std-ref">derivativeSegmentData()</span></a></p>
+</div>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry20diffusionSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3N13StateRegistry20diffusionSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2N13StateRegistry20diffusionSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::diffusionSegmentData__StateBufferSegmentCR"></span><span class="target" id="class_state_registry_1a346d0bcea07865b3a1ee89dd55b483c5"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">diffusionSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry20diffusionSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a live diffusion segment without allocating or copying. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Diffusion segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Borrowed pointer into diffusion storage; may be null for an empty buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry20diffusionSegmentDataERK18StateBufferSegment">
+<span id="_CPPv3NK13StateRegistry20diffusionSegmentDataERK18StateBufferSegment"></span><span id="_CPPv2NK13StateRegistry20diffusionSegmentDataERK18StateBufferSegment"></span><span id="StateRegistry::diffusionSegmentData__StateBufferSegmentCRC"></span><span class="target" id="class_state_registry_1ac4a34f00662dc54b0b8c397a1ec063e6"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">diffusionSegmentData</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv418StateBufferSegment" title="StateBufferSegment"><span class="n"><span class="pre">StateBufferSegment</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry20diffusionSegmentDataERK18StateBufferSegment" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve a diffusion segment for read-only access. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> – Diffusion segment previously issued by this registry. </p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">logic_error</span></span></span> – If storage is not finalized or the segment is invalid. </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Borrowed pointer into diffusion storage; may be null for an empty buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13StateRegistryEv">
+<span id="_CPPv3N13StateRegistry13StateRegistryEv"></span><span id="_CPPv2N13StateRegistry13StateRegistryEv"></span><span id="StateRegistry::StateRegistry"></span><span class="target" id="class_state_registry_1a5e12d18aa8288b980b96a1a66d036c59"></span><span class="sig-name descname"><span class="n"><span class="pre">StateRegistry</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry13StateRegistryEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct a registry that accepts new state declarations. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry14finalizeStatesEv">
+<span id="_CPPv3N13StateRegistry14finalizeStatesEv"></span><span id="_CPPv2N13StateRegistry14finalizeStatesEv"></span><span id="StateRegistry::finalizeStates"></span><span class="target" id="class_state_registry_1a7c53c92fd47fc0ea53317660533a483b"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">finalizeStates</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry14finalizeStatesEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate fixed storage once; subsequent calls have no effect. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13registerStateENSt6stringERK9StateSpec">
+<span id="_CPPv3N13StateRegistry13registerStateENSt6stringERK9StateSpec"></span><span id="_CPPv2N13StateRegistry13registerStateENSt6stringERK9StateSpec"></span><span id="StateRegistry::registerState__ss.StateSpecCR"></span><span class="target" id="class_state_registry_1a9f6c440eddf35b895397cea982a6397c"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registerState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry13registerStateENSt6stringERK9StateSpec" title="Link to this definition"></a><br /></dt>
+<dd><p>Declare a state with Euclidean updates and the supplied dimensions and noise count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13registerStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE">
+<span id="_CPPv3N13StateRegistry13registerStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE"></span><span id="_CPPv2N13StateRegistry13registerStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE"></span><span id="StateRegistry::registerState__ss.StateSpecCR.std::unique_ptr:StateUpdatePolicy:"></span><span class="target" id="class_state_registry_1ab7e024d738460613ce764ff5f07fba39"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registerState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">policy</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry13registerStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Declare a special-policy state, taking ownership of the policy. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13registerStateE8uint32_t8uint32_tNSt6stringE">
+<span id="_CPPv3N13StateRegistry13registerStateE8uint32_t8uint32_tNSt6stringE"></span><span id="_CPPv2N13StateRegistry13registerStateE8uint32_t8uint32_tNSt6stringE"></span><span id="StateRegistry::registerState__uint32_t.uint32_t.ss"></span><span class="target" id="class_state_registry_1a1d1df83a17a31bc1c118fe783153ba7e"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registerState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nRow</span></span>, <span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nCol</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry13registerStateE8uint32_t8uint32_tNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Preserve the legacy equal-shape declaration and its repeated-registration defaults. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry14getStateObjectERKNSt6stringE">
+<span id="_CPPv3NK13StateRegistry14getStateObjectERKNSt6stringE"></span><span id="_CPPv2NK13StateRegistry14getStateObjectERKNSt6stringE"></span><span id="StateRegistry::getStateObject__ssCRC"></span><span class="target" id="class_state_registry_1a8282909597658cdd0b07a42231d1b708"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getStateObject</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateName</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry14getStateObjectERKNSt6stringE" title="Link to this definition"></a><br /></dt>
+<dd><p>Find a handle without logging; the manager reports a missing name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry25registerSharedNoiseSourceENSt6vectorINSt4pairIRK9StateData6size_tEEEE">
+<span id="_CPPv3N13StateRegistry25registerSharedNoiseSourceENSt6vectorINSt4pairIRK9StateData6size_tEEEE"></span><span id="_CPPv2N13StateRegistry25registerSharedNoiseSourceENSt6vectorINSt4pairIRK9StateData6size_tEEEE"></span><span id="StateRegistry::registerSharedNoiseSource__std::vector:std::pair:StateDataCR.s::"></span><span class="target" id="class_state_registry_1a8b3bc6fefc30148a8299de40ab3349c5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registerSharedNoiseSource</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">sharedNoises</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry25registerSharedNoiseSourceENSt6vectorINSt4pairIRK9StateData6size_tEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stage shared-noise endpoints after checking ownership and local source bounds. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry20registerManagedStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE">
+<span id="_CPPv3N13StateRegistry20registerManagedStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE"></span><span id="_CPPv2N13StateRegistry20registerManagedStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE"></span><span id="StateRegistry::registerManagedState__ss.StateSpecCR.std::unique_ptr:StateUpdatePolicy:"></span><span class="target" id="class_state_registry_1a81a7848c682c7c87cf882522b045db20"></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">registerManagedState</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">stateName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">policy</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry20registerManagedStateENSt6stringERK9StateSpecNSt10unique_ptrI17StateUpdatePolicyEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a named state or return its existing handle after validating the declaration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry12validateSpecERKNSt6stringERK9StateSpecPK17StateUpdatePolicy">
+<span id="_CPPv3NK13StateRegistry12validateSpecERKNSt6stringERK9StateSpecPK17StateUpdatePolicy"></span><span id="_CPPv2NK13StateRegistry12validateSpecERKNSt6stringERK9StateSpecPK17StateUpdatePolicy"></span><span id="StateRegistry::validateSpec__ssCR.StateSpecCR.StateUpdatePolicyCPC"></span><span class="target" id="class_state_registry_1aebb4e95afb77f0ee1dd654392114911e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">validateSpec</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">stateName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">spec</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">policy</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry12validateSpecERKNSt6stringERK9StateSpecPK17StateUpdatePolicy" title="Link to this definition"></a><br /></dt>
+<dd><p>Check nonzero shapes, safe storage sizes, and compatibility with the update policy. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry22canonicalNoiseTopologyEv">
+<span id="_CPPv3NK13StateRegistry22canonicalNoiseTopologyEv"></span><span id="_CPPv2NK13StateRegistry22canonicalNoiseTopologyEv"></span><span id="StateRegistry::canonicalNoiseTopologyC"></span><span class="target" id="class_state_registry_1a1a884567aabce5f1e6af7a100283e733"></span><a class="reference internal" href="#_CPPv4N13StateRegistry13NoiseTopologyE" title="StateRegistry::NoiseTopology"><span class="n"><span class="pre">NoiseTopology</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">canonicalNoiseTopology</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry22canonicalNoiseTopologyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Sort shared-noise groups and reject ambiguous memberships. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry15allocateBuffersEv">
+<span id="_CPPv3N13StateRegistry15allocateBuffersEv"></span><span id="_CPPv2N13StateRegistry15allocateBuffersEv"></span><span id="StateRegistry::allocateBuffers"></span><span class="target" id="class_state_registry_1a97c1cfc638e240fac76849b2e651cc1f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allocateBuffers</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry15allocateBuffersEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Compute offsets and allocate buffers from the initial declarations. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry16requireFinalizedEPKc">
+<span id="_CPPv3NK13StateRegistry16requireFinalizedEPKc"></span><span id="_CPPv2NK13StateRegistry16requireFinalizedEPKc"></span><span id="StateRegistry::requireFinalized__cCPC"></span><span class="target" id="class_state_registry_1aa4005cd6e11aeddf2150517c400cb8d6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">requireFinalized</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">operation</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry16requireFinalizedEPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Throw with the operation name unless live buffers are available for integration. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry10handleNameE6size_t">
+<span id="_CPPv3NK13StateRegistry10handleNameE6size_t"></span><span id="_CPPv2NK13StateRegistry10handleNameE6size_t"></span><span id="StateRegistry::handleName__sC"></span><span class="target" id="class_state_registry_1ad56b1be8f424ac7e8a069ae53d6eef8d"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">handleName</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry10handleNameE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Look up the immutable name of a valid handle’s registration slot. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry10handleSpecE6size_t">
+<span id="_CPPv3NK13StateRegistry10handleSpecE6size_t"></span><span id="_CPPv2NK13StateRegistry10handleSpecE6size_t"></span><span id="StateRegistry::handleSpec__sC"></span><span class="target" id="class_state_registry_1a2f7d371933f53e01f33cdc9b2f8a25d6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">handleSpec</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry10handleSpecE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Borrow the declaration associated with a valid handle’s slot. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry19setHandleNoiseCountE6size_t6size_t">
+<span id="_CPPv3N13StateRegistry19setHandleNoiseCountE6size_t6size_t"></span><span id="_CPPv2N13StateRegistry19setHandleNoiseCountE6size_t6size_t"></span><span id="StateRegistry::setHandleNoiseCount__s.s"></span><span class="target" id="class_state_registry_1a50e6a0acab3f628bcacf6c6413b7b4cd"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setHandleNoiseCount</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">numSources</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry19setHandleNoiseCountE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Support registration-time noise-count changes; established topology accepts only its existing count. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry19activeDiffusionDataE6size_t6size_t">
+<span id="_CPPv3N13StateRegistry19activeDiffusionDataE6size_t6size_t"></span><span id="_CPPv2N13StateRegistry19activeDiffusionDataE6size_t6size_t"></span><span id="StateRegistry::activeDiffusionData__s.s"></span><span class="target" id="class_state_registry_1a078012f3522d9a6bb5d53c5dcac177f0"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">activeDiffusionData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry19activeDiffusionDataE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve one diffusion tangent in temporary matrices or the finalized buffer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry19activeDiffusionDataE6size_t6size_t">
+<span id="_CPPv3NK13StateRegistry19activeDiffusionDataE6size_t6size_t"></span><span id="_CPPv2NK13StateRegistry19activeDiffusionDataE6size_t6size_t"></span><span id="StateRegistry::activeDiffusionData__s.sC"></span><span class="target" id="class_state_registry_1a826200866fbe24b713cb635d57d8e79e"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">activeDiffusionData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry19activeDiffusionDataE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve one diffusion tangent for read-only access. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry13liveStateDataE6size_t">
+<span id="_CPPv3N13StateRegistry13liveStateDataE6size_t"></span><span id="_CPPv2N13StateRegistry13liveStateDataE6size_t"></span><span id="StateRegistry::liveStateData__s"></span><span class="target" id="class_state_registry_1af17472d30b40f094a6664322f81b0837"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">liveStateData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry13liveStateDataE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve one record in finalized live state storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry18liveDerivativeDataE6size_t">
+<span id="_CPPv3N13StateRegistry18liveDerivativeDataE6size_t"></span><span id="_CPPv2N13StateRegistry18liveDerivativeDataE6size_t"></span><span id="StateRegistry::liveDerivativeData__s"></span><span class="target" id="class_state_registry_1ad12340d175285384392d0903c7e15cce"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">liveDerivativeData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry18liveDerivativeDataE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve one record in finalized live derivative storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry17liveDiffusionDataE6size_t6size_t">
+<span id="_CPPv3N13StateRegistry17liveDiffusionDataE6size_t6size_t"></span><span id="_CPPv2N13StateRegistry17liveDiffusionDataE6size_t6size_t"></span><span id="StateRegistry::liveDiffusionData__s.s"></span><span class="target" id="class_state_registry_1a725b85689f26e350ea34854fd1dc4ffc"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">liveDiffusionData</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">slot</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">localNoiseIndex</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13StateRegistry17liveDiffusionDataE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Resolve one local source in finalized live diffusion storage. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13StateRegistry16requireRawAccessEPKc">
+<span id="_CPPv3NK13StateRegistry16requireRawAccessEPKc"></span><span id="_CPPv2NK13StateRegistry16requireRawAccessEPKc"></span><span id="StateRegistry::requireRawAccess__cCPC"></span><span class="target" id="class_state_registry_1a76da01052500107ae3f58dacc7ef117e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">requireRawAccess</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">field</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13StateRegistry16requireRawAccessEPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Reject buffer access before storage has been allocated. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry9finalizedE">
+<span id="_CPPv3N13StateRegistry9finalizedE"></span><span id="_CPPv2N13StateRegistry9finalizedE"></span><span id="StateRegistry::finalized__b"></span><span class="target" id="class_state_registry_1a754ddfa3ee6fa48cde769d7e99628724"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">finalized</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><a class="headerlink" href="#_CPPv4N13StateRegistry9finalizedE" title="Link to this definition"></a><br /></dt>
+<dd><p>True after the one-time layout and buffer allocation. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry15stateSlotByNameE">
+<span id="_CPPv3N13StateRegistry15stateSlotByNameE"></span><span id="_CPPv2N13StateRegistry15stateSlotByNameE"></span><span id="StateRegistry::stateSlotByName__std::unordered_map:ss.s:"></span><span class="target" id="class_state_registry_1a6751bc814deef0ae4ae00c0c56548085"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateSlotByName</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry15stateSlotByNameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Name to stable registration slot. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry12stateRecordsE">
+<span id="_CPPv3N13StateRegistry12stateRecordsE"></span><span id="_CPPv2N13StateRegistry12stateRecordsE"></span><span id="StateRegistry::stateRecords__std::vector:StateRecord:"></span><span class="target" id="class_state_registry_1a2be45dd261bd5bc89dec9e3a2aaafe90"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N13StateRegistry11StateRecordE" title="StateRegistry::StateRecord"><span class="n"><span class="pre">StateRecord</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateRecords</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry12stateRecordsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Owned handles, declarations, initial matrices, and policies. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry21registrationOrderViewE">
+<span id="_CPPv3N13StateRegistry21registrationOrderViewE"></span><span id="_CPPv2N13StateRegistry21registrationOrderViewE"></span><span id="StateRegistry::registrationOrderView__std::vector:StateDataP:"></span><span class="target" id="class_state_registry_1a1041aad740b5ad7e30274944610a72ef"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">registrationOrderView</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry21registrationOrderViewE" title="Link to this definition"></a><br /></dt>
+<dd><p>Handles in first-declaration order. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry15stateLayoutViewE">
+<span id="_CPPv3N13StateRegistry15stateLayoutViewE"></span><span id="_CPPv2N13StateRegistry15stateLayoutViewE"></span><span id="StateRegistry::stateLayoutView__std::vector:StateLayout:"></span><span class="target" id="class_state_registry_1a1a38134fbbd12b6281161da8bc87dfbf"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv411StateLayout" title="StateLayout"><span class="n"><span class="pre">StateLayout</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stateLayoutView</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry15stateLayoutViewE" title="Link to this definition"></a><br /></dt>
+<dd><p>Fixed shapes and scalar offsets. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11liveBuffersE">
+<span id="_CPPv3N13StateRegistry11liveBuffersE"></span><span id="_CPPv2N13StateRegistry11liveBuffersE"></span><span id="StateRegistry::liveBuffers__StateBuffers"></span><span class="target" id="class_state_registry_1ac69e98dac556b28b38cc62a8e592cc35"></span><a class="reference internal" href="#_CPPv412StateBuffers" title="StateBuffers"><span class="n"><span class="pre">StateBuffers</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">liveBuffers</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11liveBuffersE" title="Link to this definition"></a><br /></dt>
+<dd><p>Values used by modules and integrators; never resized after finalization. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry22finalizedNoiseTopologyE">
+<span id="_CPPv3N13StateRegistry22finalizedNoiseTopologyE"></span><span id="_CPPv2N13StateRegistry22finalizedNoiseTopologyE"></span><span id="StateRegistry::finalizedNoiseTopology__NoiseTopology"></span><span class="target" id="class_state_registry_1af4f41bf3b48b98865f9fda11dbe9b102"></span><a class="reference internal" href="#_CPPv4N13StateRegistry13NoiseTopologyE" title="StateRegistry::NoiseTopology"><span class="n"><span class="pre">NoiseTopology</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">finalizedNoiseTopology</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry22finalizedNoiseTopologyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Canonical shared-noise groups fixed at finalization. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry18pendingNoiseGroupsE">
+<span id="_CPPv3N13StateRegistry18pendingNoiseGroupsE"></span><span id="_CPPv2N13StateRegistry18pendingNoiseGroupsE"></span><span id="StateRegistry::pendingNoiseGroups__NoiseTopology"></span><span class="target" id="class_state_registry_1ad76436d6c8bd760b58a4b0fa676c2bba"></span><a class="reference internal" href="#_CPPv4N13StateRegistry13NoiseTopologyE" title="StateRegistry::NoiseTopology"><span class="n"><span class="pre">NoiseTopology</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pendingNoiseGroups</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry18pendingNoiseGroupsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Shared-noise declarations collected before finalization. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
+<dl>
+<dt class="sig sig-object cpp">
+<span class="property"><span class="pre">friend</span> <span class="pre">class</span></span> <span class="pre">DynParamManager</span></dt>
+</dl>
+
+<dl>
+<dt class="sig sig-object cpp">
+<span class="property"><span class="pre">friend</span> <span class="pre">class</span></span> <span class="pre">StateData</span></dt>
+</dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry9StateSeedE">
+<span id="_CPPv3N13StateRegistry9StateSeedE"></span><span id="_CPPv2N13StateRegistry9StateSeedE"></span><span id="StateRegistry::StateSeed"></span><span class="target" id="struct_state_registry_1_1_state_seed"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateSeed</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry9StateSeedE" title="Link to this definition"></a><br /></dt>
+<dd><p>Temporary matrices used only before buffer dimensions are established. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry9StateSeed5stateE">
+<span id="_CPPv3N13StateRegistry9StateSeed5stateE"></span><span id="_CPPv2N13StateRegistry9StateSeed5stateE"></span><span id="StateRegistry::StateSeed::state__Eigen::MatrixXd"></span><span class="target" id="struct_state_registry_1_1_state_seed_1a2effcb986c920a95704289c1b7c4483a"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">state</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry9StateSeed5stateE" title="Link to this definition"></a><br /></dt>
+<dd><p>Initial state values, writable through the new handle. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry9StateSeed10derivativeE">
+<span id="_CPPv3N13StateRegistry9StateSeed10derivativeE"></span><span id="_CPPv2N13StateRegistry9StateSeed10derivativeE"></span><span id="StateRegistry::StateSeed::derivative__Eigen::MatrixXd"></span><span class="target" id="struct_state_registry_1_1_state_seed_1a9ce38897be6dbcb29e9b919cb1c15c77"></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">derivative</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry9StateSeed10derivativeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Initial derivative values. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry9StateSeed10diffusionsE">
+<span id="_CPPv3N13StateRegistry9StateSeed10diffusionsE"></span><span id="_CPPv2N13StateRegistry9StateSeed10diffusionsE"></span><span id="StateRegistry::StateSeed::diffusions__std::vector:Eigen::MatrixXd:"></span><span class="target" id="struct_state_registry_1_1_state_seed_1a6036b38b836bddaaddfb2b96c336bb33"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../../mujocoDynamics/_GeneralModuleFiles/MJSpec.html#_CPPv45Eigen" title="Eigen"><span class="n"><span class="pre">Eigen</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">MatrixXd</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">diffusions</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry9StateSeed10diffusionsE" title="Link to this definition"></a><br /></dt>
+<dd><p>Initial tangent for each local noise source. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecordE">
+<span id="_CPPv3N13StateRegistry11StateRecordE"></span><span id="_CPPv2N13StateRegistry11StateRecordE"></span><span id="StateRegistry::StateRecord"></span><span class="target" id="struct_state_registry_1_1_state_record"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateRecord</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecordE" title="Link to this definition"></a><br /></dt>
+<dd><p>Own one state’s identity, immutable declaration, and optional update rule. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecord6handleE">
+<span id="_CPPv3N13StateRegistry11StateRecord6handleE"></span><span id="_CPPv2N13StateRegistry11StateRecord6handleE"></span><span id="StateRegistry::StateRecord::handle__std::unique_ptr:StateData:"></span><span class="target" id="struct_state_registry_1_1_state_record_1a0beb399fc7270b4eb13b2eea8bab1d27"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv49StateData" title="StateData"><span class="n"><span class="pre">StateData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecord6handleE" title="Link to this definition"></a><br /></dt>
+<dd><p>Stable module-facing access object. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecord4nameE">
+<span id="_CPPv3N13StateRegistry11StateRecord4nameE"></span><span id="_CPPv2N13StateRegistry11StateRecord4nameE"></span><span id="StateRegistry::StateRecord::name__ss"></span><span class="target" id="struct_state_registry_1_1_state_record_1ae815268c9a5f5dfdde0b783ac8edf1f8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecord4nameE" title="Link to this definition"></a><br /></dt>
+<dd><p>Unique lookup key and repeated-registration identity. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecord4specE">
+<span id="_CPPv3N13StateRegistry11StateRecord4specE"></span><span id="_CPPv2N13StateRegistry11StateRecord4specE"></span><span id="StateRegistry::StateRecord::spec__StateSpec"></span><span class="target" id="struct_state_registry_1_1_state_record_1a3b9392843979f771042f3b40dedfc23a"></span><a class="reference internal" href="stateData.html#_CPPv49StateSpec" title="StateSpec"><span class="n"><span class="pre">StateSpec</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">spec</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecord4specE" title="Link to this definition"></a><br /></dt>
+<dd><p>Frozen shape, noise count, and integration choices. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecord4seedE">
+<span id="_CPPv3N13StateRegistry11StateRecord4seedE"></span><span id="_CPPv2N13StateRegistry11StateRecord4seedE"></span><span id="StateRegistry::StateRecord::seed__std::unique_ptr:StateSeed:"></span><span class="target" id="struct_state_registry_1_1_state_record_1aa49ba96c6e73f5ce12bee12768acb867"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N13StateRegistry9StateSeedE" title="StateRegistry::StateSeed"><span class="n"><span class="pre">StateSeed</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">seed</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecord4seedE" title="Link to this definition"></a><br /></dt>
+<dd><p>Present during first collection; released after finalization. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N13StateRegistry11StateRecord12updatePolicyE">
+<span id="_CPPv3N13StateRegistry11StateRecord12updatePolicyE"></span><span id="_CPPv2N13StateRegistry11StateRecord12updatePolicyE"></span><span id="StateRegistry::StateRecord::updatePolicy__std::unique_ptr:StateUpdatePolicy:"></span><span class="target" id="struct_state_registry_1_1_state_record_1a2f41495a64063d494ff7b7e7b9bbaced"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="stateData.html#_CPPv417StateUpdatePolicy" title="StateUpdatePolicy"><span class="n"><span class="pre">StateUpdatePolicy</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updatePolicy</span></span></span><a class="headerlink" href="#_CPPv4N13StateRegistry11StateRecord12updatePolicyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Owned immutable special policy, or nullptr. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stateEffector.html" class="btn btn-neutral float-left" title="C++ Module: stateEffector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stateVecIntegrator.html" class="btn btn-neutral float-right" title="C++ Module: stateVecIntegrator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

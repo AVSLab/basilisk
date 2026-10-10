@@ -1,0 +1,59 @@
+.. Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+Version 2.5 Release Notes
+=========================
+
+.. _bsk-release-2-5-0:
+
+Version 2.5.0 (Sept. 30, 2024)
+------------------------------
+
+- Added swirl torque information to :ref:`THRConfigMsgPayload`, :ref:`thrustCMEstimation`, and :ref:`thrusterPlatformState`
+- Updated required version of `setuptools` to avoid installation error ("invalid command ``bdist_wheel``") on
+  some environments.
+- Made the initial Basilisk build more robust in case ``de430.bsp`` download was interrupted
+- Enhanced :ref:`thrusterDynamicEffector` to allow automatic scaling down of thrust and Isp as fuel mass depletes.
+- Fixed issue with :ref:`vizInterface` not being able to save to file
+- Fixed issue with :ref:`vizInterface` not saving off Vizard protobuffer message on first time step
+- Created an input device status message to toggle the :ref:`constraintDynamicEffector` dynamics module on/off.
+- Created an output message to record constraint forces and torques acting on separate spacecraft connected using a :ref:`constraintDynamicEffector` dynamics module.
+- Added in a low-pass filter to filter the output forces and torques of the :ref:`constraintDynamicEffector` dynamics module.
+- Removed deprecated way to log Basilisk module variables
+- Removed deprecated way to create C-wrapped Basilisk modules
+- Corrected Equations (11) and (12) in the :ref:`celestialTwoBodyPoint` PDF documentation
+- Expanded the GitHub CI tests to run scenario script tests
+- Untangled :ref:`ClassicElementsMsgPayload` which was used both as a message payload definition
+  and as a data structure inside modules.  The use of ``classicElements()`` is now depreciated
+  for the use of ``ClassicElements()`` defined in :ref:`orbitalMotionutilities`.
+- Added ``packaging>=22`` dependency for installing Basilisk to solve an incompatibility issue with ``setuptools``.
+- Added support for macOS to the CI test builds, including opNav for all three platforms
+- Added CI support to test Linux on latest Ubuntu with opNav
+- Added CI support to build and test Basilisk documentation on the GitHub macOS platform
+- Added new scenario :ref:`scenarioOrbitManeuverTH` to do Hohmann transfer using thrusters
+- Refactored :ref:`pyswice_ck_utilities` utility file, added unit test
+- Made sure that :ref:`astroFunctions` and :ref:`simIncludeGravBody` now all pull from the same set of
+  astronautical data in :ref:`astroConstants`.  These tools now all use a consisten set of planet data
+  referenced from NASA sources.
+- Updated :ref:`simIncludeRW` to allow values of ``fCoulomb``, ``fStatic`` and ``cViscous`` to be
+  specified even if a prebuilt RW data set is used.
+- If ``messaging`` was not imported then the msg ``recorder()`` modules couldn't be setup.  Now
+  ``messaging`` is imported as part of the Basilisk package so the ``recorder()`` modules always work.
+- Added the ability for GitHub to rebuild the BSK documentation each time a branch is merged back into develop.
+  This way the online documentation for develop is up to date for each contribution, not just for the hand-built
+  documentation we did with major tagged releases.  The new Basilisk online documentation list is now
+  `<https://avslab.github.io/basilisk>`__.
+- Small updates to the Cmake build process to remove unneeded policies and python 3 swig overwriting scripts
+- Added a Lambert's problem based FSW package to compute the DV maneuver required to get to a desired location at a
+  desired time. At that location, another maneuver may be performed to match the surface velocity of a celestial body.
+  This FSW package consists of the modules :ref:`lambertSolver` to solve Lambert's problem, :ref:`lambertPlanner` to
+  set up and define the Lambert problem, :ref:`lambertValidator` to check if the solution from the :ref:`lambertSolver`
+  module violates any constraints before a Delta-V is commanded, :ref:`lambertSurfaceRelativeVelocity` to compute the
+  inertial velocity required to match the surface velocity of the central body, and :ref:`lambertSecondDV` to compute
+  the DV maneuver required to match the surface velocity.
+- Added :ref:`scenarioLambertSolver` scenario to illustrate the Lambert's problem FSW module package
+- Added :ref:`scenario_LambertGuidance` BSK-Sim scenario to illustrate the Lambert modules in different flight modes
+- Added new scenario :ref:`scenarioSweepingSpacecraft` to perform sweeping maneuvers.
+- Added a new :math:`N`-axis translating effector :ref:`linearTranslationNDOFStateEffector` and a corresponding scenario
+  :ref:`scenarioExtendingBoom`.
+- Enhanced :ref:`scenarioSepMomentumManagement` with the options to model the thruster swirl torque and to use
+  :ref:`solarArrayReference` in momentum management mode.

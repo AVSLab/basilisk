@@ -1,0 +1,46 @@
+.. _svIntegratorRK4:
+
+:module-type:`C++` Module: svIntegratorRK4
+==========================================
+
+.. sidebar:: Auxiliary Files
+   :class: bsk-module-auxiliary
+
+   Shared by the modules in this folder.
+
+   * :doc:`_UnitTestDynamics <_UnitTestDynamics/index>`
+   * :doc:`BodyToHubInfo <BodyToHubInfo>`
+   * :doc:`fuelSlosh <fuelSlosh>`
+   * :doc:`gravityModel <gravityModel>`
+   * :doc:`interpolator <interpolator>`
+   * :doc:`pointMassGravityModel <pointMassGravityModel>`
+   * :doc:`RWConfigPayload <RWConfigPayload>`
+   * :doc:`stochasticNoiseGenerator <stochasticNoiseGenerator>`
+   * :doc:`stochasticTableauValidation <stochasticTableauValidation>`
+   * :doc:`stochasticWeakRandomVariables <stochasticWeakRandomVariables>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRA <svIntegratorStrongStochasticRungeKuttaSRA>`
+   * :doc:`svIntegratorStrongStochasticRungeKuttaSRI <svIntegratorStrongStochasticRungeKuttaSRI>`
+   * :doc:`svIntegratorWeakSIESME <svIntegratorWeakSIESME>`
+   * :doc:`THROperation <THROperation>`
+   * :doc:`THRSimConfig <THRSimConfig>`
+   * :doc:`THRTimePair <THRTimePair>`
+
+
+Classical fourth-order Runge--Kutta integrator. It supplies the four-stage tableau
+to ``svIntegratorRungeKutta``, which handles flat storage, stage evaluation, special
+state updates, and rollback. See :ref:`integratorArchitecture` for the shared
+integration lifecycle.
+
+The module
+:download:`PDF Description </../../src/simulation/dynamics/Integrators/_Documentation/Basilisk-Integrators20170724.pdf>`
+contains further information on this module's function,
+how to run it, as well as testing.
+
+
+----
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: svIntegratorRK4.h
+   :project: _GeneralModuleFiles4
+

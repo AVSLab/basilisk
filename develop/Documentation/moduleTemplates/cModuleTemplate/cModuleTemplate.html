@@ -1,0 +1,412 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Module: cModuleTemplate &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=3cd7d658"></script>
+      <script>window.MathJax = {"svg": {"fontCache": "global"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+      <script src="../../../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../../../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../../../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="_UnitTest" href="_UnitTest/index.html" />
+    <link rel="prev" title="test_autoCppModule" href="../autoCppModule/_UnitTest/test_autoCppModule.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../architecture/index.html">architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fswAlgorithms/index.html">fswAlgorithms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">moduleTemplates</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../autoCModule/autoCModule.html">autoCModule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoCppModule/autoCppModule.html">autoCppModule</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">cModuleTemplate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_UnitTest/index.html">Unit tests</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cppModuleTemplate/cppModuleTemplate.html">cppModuleTemplate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../rustModuleTemplate/rustModuleTemplate.html">rustModuleTemplate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../simulation/index.html">simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../utilities/index.html">utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">moduleTemplates</a></li>
+      <li class="breadcrumb-item active"><span class="module-type-label module-type-c">C</span> Module: cModuleTemplate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Documentation/moduleTemplates/cModuleTemplate/cModuleTemplate.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-module-cmoduletemplate">
+<span id="cmoduletemplate"></span><h1><span class="module-type-label module-type-c">C</span> Module: cModuleTemplate<a class="headerlink" href="#c-module-cmoduletemplate" title="Link to this heading"></a></h1>
+<aside class="bsk-module-auxiliary sidebar">
+<p class="sidebar-title">Auxiliary Files</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_UnitTest/index.html"><span class="doc">Unit tests</span></a></p></li>
+</ul>
+<p><strong>Example usage</strong></p>
+<ul class="bsk-module-examples simple">
+<li><p><a class="reference internal" href="../../../examples/scenarioBskLog.html">scenario<wbr>Bsk<wbr>Log</a></p></li>
+</ul>
+</aside>
+<div class="toctree-wrapper compound">
+</div>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The C module template demonstrates message handling, a simple vector calculation, reset
+behavior, and variable logging. On every update, it copies an optional input vector and
+adds an increasing counter to the first component. It is a working starting point for
+new C modules; <a class="reference internal" href="../cppModuleTemplate/cppModuleTemplate.html#cppmoduletemplate"><span class="std std-ref">C++ Module: cppModuleTemplate</span></a> implements the same example in C++.</p>
+<p>This page also serves as an example of module documentation. See <a class="reference internal" href="../../../Learn/makingModules/makingModules-3.html#makingmodules-3"><span class="std std-ref">Module RST Documentation</span></a>
+for the RST authoring tutorial, including equations, figures, tables, and code blocks.</p>
+</section>
+<section id="module-assumptions-and-limitations">
+<h2>Module Assumptions and Limitations<a class="headerlink" href="#module-assumptions-and-limitations" title="Link to this heading"></a></h2>
+<p>The calculation is an instructional example with dimensionless vectors and a dimensionless
+counter. It does not model a physical system. The counter advances once per scheduled
+update, independently of the task period. No configuration is required to run the module.</p>
+<p>The input is optional. When connected, the module uses the latest message payload; it
+does not check its age or whether the publisher has written a new value since the last
+update. When disconnected, the input vector is zero.</p>
+</section>
+<section id="message-connection-descriptions">
+<h2>Message Connection Descriptions<a class="headerlink" href="#message-connection-descriptions" title="Link to this heading"></a></h2>
+<p>Connect the input from Python using <code class="docutils literal notranslate"><span class="pre">subscribeTo()</span></code>. Both messages use the three-element
+<code class="docutils literal notranslate"><span class="pre">dataVector</span></code> field of <a class="reference internal" href="../../architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a>.</p>
+<div align="center" class="align-center"><div class="graphviz"><object data="../../../_images/graphviz-2e948c47816a219c0931e4ae2134e22bed3bb811.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">cModuleTemplate module input and output messages</p></object></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Module I/O Messages</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Msg Variable Name</p></th>
+<th class="head"><p>Msg Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>dataInMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>Optional dimensionless input vector. Uses a zero vector when disconnected.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dataOutMsg</p></td>
+<td><p><a class="reference internal" href="../../architecture/msgPayloadDefC/CModuleTemplateMsgPayload.html#cmoduletemplatemsgpayload"><span class="std std-ref">CModuleTemplateMsgPayload</span></a></p></td>
+<td><p>Dimensionless input vector with the update counter added to its first component. Reset publishes a zero vector; each update publishes the calculated vector.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-module-description">
+<h2>Detailed Module Description<a class="headerlink" href="#detailed-module-description" title="Link to this heading"></a></h2>
+<p>Let <span class="math notranslate nohighlight">\(\mathbf{x}_k\)</span> be the input vector at update <span class="math notranslate nohighlight">\(k\)</span>, <span class="math notranslate nohighlight">\(c_k\)</span> the counter,
+and <span class="math notranslate nohighlight">\(\mathbf{y}_k\)</span> the output. After reset, <span class="math notranslate nohighlight">\(c_0 = 0\)</span>; the first update is
+<span class="math notranslate nohighlight">\(k = 1\)</span>. Each update computes</p>
+<div class="math notranslate nohighlight" id="equation-eq-cmoduletemplate-update">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-cmoduletemplate-update" title="Link to this equation"></a></span>\[c_k = c_{k-1} + 1, \qquad
+\mathbf{y}_k = \mathbf{x}_k + \begin{bmatrix} c_k &amp; 0 &amp; 0 \end{bmatrix}^{T}.\]</div>
+<p>For a disconnected input, <span class="math notranslate nohighlight">\(\mathbf{x}_k = \mathbf{0}\)</span> and the output is
+<span class="math notranslate nohighlight">\([c_k, 0, 0]^T\)</span>. The implementation demonstrates <code class="docutils literal notranslate"><span class="pre">v3SetZero()</span></code> and <code class="docutils literal notranslate"><span class="pre">v3Copy()</span></code>
+from <a class="reference internal" href="../../architecture/utilities/linearAlgebra.html#linearalgebra"><span class="std std-ref">linearAlgebra</span></a>, and zeroes the output payload before populating it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SelfInit()</span></code> initializes the C output message. <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> clears the counter and writes
+a zero output payload at the reset time. It preserves the sample configuration vector.
+The next update starts the counter at one and evaluates Eq. <a class="reference internal" href="#equation-eq-cmoduletemplate-update">(1)</a>.</p>
+<section id="configuration-and-runtime-state">
+<span id="moduletemplatevariableroles"></span><h3>Configuration and Runtime State<a class="headerlink" href="#configuration-and-runtime-state" title="Link to this heading"></a></h3>
+<p>Configuration holds values supplied by the user, while runtime state holds values the module updates
+as the simulation runs. The C configuration structure contains both kinds of data; all its members
+are public. The sample variables in the C and C++ templates have these roles:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">updateCounter</span></code> is a dimensionless runtime counter. <code class="docutils literal notranslate"><span class="pre">Reset()</span></code> clears it, including any value assigned
+before <code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code>. Each update increments it and adds it to the first component
+of the input vector to form the output. The C++ setter demonstrates scalar validation and access.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampleConfigVector</span></code> is a dimensionless sample configuration vector used to demonstrate assignment and
+variable logging. Resets and updates preserve it, and it does not affect the output calculation.
+Python-created modules default this vector to zero; the C++ setter requires positive components
+when used.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inputVector</span></code> is scratch storage for the current input. Each update overwrites it with the
+connected input vector or zeros if the optional input is disconnected. C stores it in the
+module structure; C++ uses a local array.</p></li>
+</ul>
+<p>See <a class="reference internal" href="../../../Learn/bskPrinciples/bskPrinciples-6.html#bskprinciples-6"><span class="std std-ref">Setting and Recording Module Variables</span></a> for an example of recording the counter and the sample vector.</p>
+</section>
+</section>
+<section id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h2>
+<p>The following complete script runs three updates, at 0, 0.5, and 1 second, and checks the
+output vectors. Add the recorder after the module so it samples the newly written output
+at each task time. <code class="docutils literal notranslate"><span class="pre">InitializeSimulation()</span></code> calls the module’s initialization and reset
+methods before the scheduled updates begin.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.moduleTemplates</span><span class="w"> </span><span class="kn">import</span> <span class="n">cModuleTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span>
+
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+<span class="n">time_step</span> <span class="o">=</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># [ns]</span>
+<span class="n">process</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"exampleProcess"</span><span class="p">)</span>
+<span class="n">process</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">simulation</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"exampleTask"</span><span class="p">,</span> <span class="n">time_step</span><span class="p">))</span>
+
+<span class="n">module</span> <span class="o">=</span> <span class="n">cModuleTemplate</span><span class="o">.</span><span class="n">cModuleTemplate</span><span class="p">()</span>
+<span class="n">module</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"cModuleExample"</span>
+<span class="n">module</span><span class="o">.</span><span class="n">sampleConfigVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>  <span class="c1"># [-] Preserved by reset.</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"exampleTask"</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+
+<span class="n">input_payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsgPayload</span><span class="p">()</span>
+<span class="n">input_payload</span><span class="o">.</span><span class="n">dataVector</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>  <span class="c1"># [-]</span>
+<span class="n">input_message</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CModuleTemplateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">input_payload</span><span class="p">)</span>
+<span class="n">module</span><span class="o">.</span><span class="n">dataInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">input_message</span><span class="p">)</span>
+
+<span class="n">recorder</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">dataOutMsg</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"exampleTask"</span><span class="p">,</span> <span class="n">recorder</span><span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+<span class="n">expected</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]]</span>  <span class="c1"># [-]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">dataVector</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">time_step</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">module</span><span class="o">.</span><span class="n">updateCounter</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>To try the disconnected-input case, omit the <code class="docutils literal notranslate"><span class="pre">subscribeTo()</span></code> call and change <code class="docutils literal notranslate"><span class="pre">expected</span></code>
+to <code class="docutils literal notranslate"><span class="pre">[[1.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0],</span> <span class="pre">[2.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0],</span> <span class="pre">[3.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0]]</span></code>. The initial zero payload
+written by reset is replaced by the first update before the recorder samples at time zero.</p>
+<hr class="docutils" />
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv424SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t">
+<span id="_CPPv324SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t"></span><span id="_CPPv224SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t"></span><span id="SelfInit_cModuleTemplate__cModuleTemplateConfigP.int64_t"></span><span class="target" id="c_module_template_8h_1a9e926604a7ab0b574195d4ce9c90017d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SelfInit_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424SelfInit_cModuleTemplateP21cModuleTemplateConfig7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>This method initializes the output messages for this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with this module </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv422Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t">
+<span id="_CPPv322Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="_CPPv222Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="Update_cModuleTemplate__cModuleTemplateConfigP.uint64_t.int64_t"></span><span class="target" id="c_module_template_8h_1a5dec1042b1dcbfbdc1bf0e03e3e138e4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Update_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422Update_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Add the update counter to the first component of the optional input vector. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – The clock time at which the function was called (nanoseconds) </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv421Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t">
+<span id="_CPPv321Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="_CPPv221Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t"></span><span id="Reset_cModuleTemplate__cModuleTemplateConfigP.uint64_t.int64_t"></span><span class="target" id="c_module_template_8h_1a76e93267aa8739c3f69cca9d5397129d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Reset_cModuleTemplate</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv421cModuleTemplateConfig" title="cModuleTemplateConfig"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">configData</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">callTime</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">moduleID</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421Reset_cModuleTemplateP21cModuleTemplateConfig8uint64_t7int64_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset the runtime counter and publish a zero output payload. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The sampleConfigVector configuration is preserved. The inputVector scratch storage is refreshed on the next update.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configData</strong> – The configuration data associated with the module </p></li>
+<li><p><strong>callTime</strong> – [ns] time the method is called </p></li>
+<li><p><strong>moduleID</strong> – The module identifier </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv421cModuleTemplateConfig">
+<span id="_CPPv321cModuleTemplateConfig"></span><span id="_CPPv221cModuleTemplateConfig"></span><span id="cModuleTemplateConfig"></span><span class="target" id="structc_module_template_config"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cModuleTemplateConfig</span></span></span><a class="headerlink" href="#_CPPv421cModuleTemplateConfig" title="Link to this definition"></a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;cModuleTemplate.h&gt;</em></div>
+<p>Public module data containing runtime state, configuration, and message interfaces. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig13updateCounterE">
+<span id="_CPPv3N21cModuleTemplateConfig13updateCounterE"></span><span id="_CPPv2N21cModuleTemplateConfig13updateCounterE"></span><span id="cModuleTemplateConfig::updateCounter__double"></span><span class="target" id="structc_module_template_config_1a8f6f0834defeead69fd9854666043fdd"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateCounter</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig13updateCounterE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Runtime counter; Reset clears it and Update increments it. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig18sampleConfigVectorE">
+<span id="_CPPv3N21cModuleTemplateConfig18sampleConfigVectorE"></span><span id="_CPPv2N21cModuleTemplateConfig18sampleConfigVectorE"></span><span id="cModuleTemplateConfig::sampleConfigVector__doubleA"></span><span class="target" id="structc_module_template_config_1ad7512bf30fbcbb612d02c07de6766c0f"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sampleConfigVector</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig18sampleConfigVectorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Sample configuration for logging; retained by Reset and unused by Update. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig10dataOutMsgE">
+<span id="_CPPv3N21cModuleTemplateConfig10dataOutMsgE"></span><span id="_CPPv2N21cModuleTemplateConfig10dataOutMsgE"></span><span id="cModuleTemplateConfig::dataOutMsg__CModuleTemplateMsg_C"></span><span class="target" id="structc_module_template_config_1a7193fde02f71fc9f5dedde2e813c85fa"></span><span class="n"><span class="pre">CModuleTemplateMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataOutMsg</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig10dataOutMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sample output message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig9dataInMsgE">
+<span id="_CPPv3N21cModuleTemplateConfig9dataInMsgE"></span><span id="_CPPv2N21cModuleTemplateConfig9dataInMsgE"></span><span id="cModuleTemplateConfig::dataInMsg__CModuleTemplateMsg_C"></span><span class="target" id="structc_module_template_config_1aa2fa7de94f6f0b0cc4c3ad05caf48082"></span><span class="n"><span class="pre">CModuleTemplateMsg_C</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dataInMsg</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig9dataInMsgE" title="Link to this definition"></a><br /></dt>
+<dd><p>sample input message </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig11inputVectorE">
+<span id="_CPPv3N21cModuleTemplateConfig11inputVectorE"></span><span id="_CPPv2N21cModuleTemplateConfig11inputVectorE"></span><span id="cModuleTemplateConfig::inputVector__doubleA"></span><span class="target" id="structc_module_template_config_1ad0f8b879942a9bc00afa1cb81a8c43e7"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inputVector</span></span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig11inputVectorE" title="Link to this definition"></a><br /></dt>
+<dd><p>[-] Input scratch storage; overwritten on every Update. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21cModuleTemplateConfig9bskLoggerE">
+<span id="_CPPv3N21cModuleTemplateConfig9bskLoggerE"></span><span id="_CPPv2N21cModuleTemplateConfig9bskLoggerE"></span><span id="cModuleTemplateConfig::bskLogger__BSKLoggerP"></span><span class="target" id="structc_module_template_config_1addbe70795c8cf4f86f2473569b1c3c3d"></span><span class="n"><span class="pre">BSKLogger</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">bskLogger</span></span></span><a class="headerlink" href="#_CPPv4N21cModuleTemplateConfig9bskLoggerE" title="Link to this definition"></a><br /></dt>
+<dd><p>BSK Logging. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../autoCppModule/_UnitTest/test_autoCppModule.html" class="btn btn-neutral float-left" title="test_autoCppModule" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_UnitTest/index.html" class="btn btn-neutral float-right" title="_UnitTest" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

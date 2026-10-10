@@ -1,0 +1,15 @@
+:orphan:
+
+.. _Folder_MsisAtmosphere:
+
+MsisAtmosphere
+==============
+
+:doc:`Module documentation <msisAtmosphere>`
+
+:doc:`Unit tests <_UnitTest/index>`
+
+:doc:`nrlmsise-00 <nrlmsise-00>`
+
+:doc:`nrlmsise-00_data <nrlmsise-00_data>`
+

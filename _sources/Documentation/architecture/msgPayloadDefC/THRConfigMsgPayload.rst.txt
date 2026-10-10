@@ -1,0 +1,10 @@
+.. _THRConfigMsgPayload:
+
+THRConfigMsgPayload
+===================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: THRConfigMsgPayload.h
+   :project: msgPayloadDefC
+

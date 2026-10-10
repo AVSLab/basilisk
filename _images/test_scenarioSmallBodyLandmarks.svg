@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   viewBox="-21 40 349 281"
+   width="349pt"
+   height="281pt"
+   id="svg159"
+   sodipodi:docname="test_scenarioSmallBodyLandmarks.svg"
+   inkscape:version="1.2.2 (b0a84865, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview161"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="0.55048947"
+     inkscape:cx="-198.91389"
+     inkscape:cy="106.26906"
+     inkscape:window-width="1339"
+     inkscape:window-height="743"
+     inkscape:window-x="0"
+     inkscape:window-y="35"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg159" />
+  <metadata
+     id="metadata2"> Produced by OmniGraffle 7.3 
+    <dc:date>2017-03-31 22:09:07 +0000</dc:date>
+</metadata>
+  <defs
+     id="defs11">
+    <font-face
+       font-family="Helvetica Neue"
+       font-size="9"
+       panose-1="2 0 4 3 0 0 0 2 0 4"
+       units-per-em="1000"
+       underline-position="-100"
+       underline-thickness="50"
+       slope="0"
+       x-height="530"
+       cap-height="728"
+       ascent="966.9952"
+       descent="-212.99744"
+       font-weight="300"
+       id="font-face4">
+      <font-face-src>
+        <font-face-name
+           name="HelveticaNeue-Light" />
+      </font-face-src>
+    </font-face>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-2">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-7" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-1"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-1-1">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-8-4" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-17"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-1">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-8" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-0"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-4">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-2" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-18"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-2-7">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-7-6" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-18-0"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-2-7-9">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-7-6-5" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-28"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-5">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-9" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-18-0-3"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-2-7-9-9">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-7-6-5-0" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-2-18-0-6"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-2-7-9-3">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-7-6-5-6" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-4"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-0">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-4" />
+      </g>
+    </marker>
+    <marker
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       id="SharpArrow_Marker-00"
+       viewBox="-4 -4 9 8"
+       markerWidth="9"
+       markerHeight="8"
+       color="#000000">
+      <g
+         id="g8-9">
+        <path
+           d="M 3.5,0 -2.1,-2.1 0,0 v 0 l -2.1,2.1 z"
+           fill="currentColor"
+           stroke="currentColor"
+           stroke-width="1"
+           id="path6-3" />
+      </g>
+    </marker>
+  </defs>
+  <g
+     stroke="none"
+     stroke-opacity="1"
+     stroke-dasharray="none"
+     fill="none"
+     fill-opacity="1"
+     id="g157"
+     transform="matrix(0.79830697,0,0,0.84617795,-390.78411,-51.698721)">
+    <title
+       id="title13">Canvas 1</title>
+    <rect
+       fill="#ffffff"
+       width="530"
+       height="620"
+       id="rect15"
+       x="594.80853"
+       y="-2.0581613" />
+    <g
+       id="g155"
+       transform="translate(122.46058,79.239199)">
+      <title
+         id="title17">Layer 1</title>
+      <rect
+         x="558.44897"
+         y="104.98666"
+         width="83"
+         height="28"
+         fill="#c0ffc0"
+         id="rect19" />
+      <rect
+         x="558.44897"
+         y="104.98666"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect21" />
+      <text
+         fill="#000000"
+         id="text25"
+         x="571.74243"
+         y="113.35613"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="577.48492"
+           y="122.35613"
+           id="tspan23">spacecraft()</tspan></text>
+      <rect
+         x="453.78311"
+         y="104.41057"
+         width="83"
+         height="28"
+         fill="#c0ffc0"
+         id="rect27" />
+      <rect
+         x="453.78311"
+         y="104.41057"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect29" />
+      <text
+         fill="#000000"
+         id="text33"
+         x="458.78311"
+         y="112.78004"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="465.60562"
+           y="121.78004"
+           id="tspan31">gravityEffector()</tspan></text>
+      <path
+         d="m 568.44897,55.486663 h 63 c 5.52285,0 10,4.47715 10,10 v 8 c 0,5.52285 -4.47715,10 -10,10 h -63 c -5.52285,0 -10,-4.47715 -10,-10 v -8 c 0,-5.52285 4.47715,-10 10,-10 z"
+         fill="#c0ffff"
+         id="path37" />
+      <path
+         d="m 568.44897,55.486663 h 63 c 5.52285,0 10,4.47715 10,10 v 8 c 0,5.52285 -4.47715,10 -10,10 h -63 c -5.52285,0 -10,-4.47715 -10,-10 v -8 c 0,-5.52285 4.47715,-10 10,-10 z"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="path39" />
+      <text
+         fill="#000000"
+         id="text43"
+         x="563.44897"
+         y="63.856133"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="569.36249"
+           y="72.856133"
+           id="tspan41">Simulation Task</tspan></text>
+      <line
+         x1="599.94897"
+         y1="83.486664"
+         x2="599.94897"
+         y2="99.586662"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line45" />
+      <line
+         x1="599.94897"
+         y1="132.98666"
+         x2="599.94897"
+         y2="149.08667"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47" />
+      <rect
+         x="558.44897"
+         y="154.48666"
+         width="83"
+         height="28"
+         fill="#c0ffc0"
+         id="rect49" />
+      <rect
+         x="558.44897"
+         y="154.48666"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect51" />
+      <text
+         fill="#000000"
+         id="text55"
+         x="563.44897"
+         y="157.35614"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="576.198"
+           y="166.35614"
+           id="tspan53">simpleNav()</tspan></text>
+      <rect
+         x="663.43103"
+         y="105.52317"
+         width="83"
+         height="28"
+         fill="#c0ffc0"
+         id="rect57" />
+      <rect
+         x="663.43103"
+         y="105.52317"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect59" />
+      <text
+         fill="#000000"
+         id="text63"
+         x="668.43103"
+         y="113.89264"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="672.1665"
+           y="122.89265"
+           id="tspan61">extForceTorque()</tspan></text>
+      <rect
+         x="558.44897"
+         y="207.98666"
+         width="83"
+         height="28"
+         fill="#ffffc0"
+         id="rect67" />
+      <rect
+         x="558.44897"
+         y="207.98666"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect69" />
+      <text
+         fill="#000000"
+         id="text73"
+         x="563.44897"
+         y="216.35614"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="582.948"
+           y="225.35614"
+           id="tspan71">hillPoint()</tspan></text>
+      <rect
+         x="558.44897"
+         y="257.48666"
+         width="83"
+         height="28"
+         fill="#ffffc0"
+         id="rect75" />
+      <rect
+         x="558.44897"
+         y="257.48666"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect77" />
+      <text
+         fill="#000000"
+         id="text81"
+         x="563.44897"
+         y="265.85614"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="566.76599"
+           y="274.85614"
+           id="tspan79">attTrackingError()</tspan></text>
+      <path
+         d="m 579.19897,182.48666 v 7.4 7.36563 H 547.2842 v 74.23437 h 3.76477 2"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="path83" />
+      <line
+         x1="599.94897"
+         y1="235.98666"
+         x2="599.94897"
+         y2="252.08667"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line85" />
+      <rect
+         x="558.44897"
+         y="306.98666"
+         width="83"
+         height="28"
+         fill="#ffffc0"
+         id="rect87" />
+      <rect
+         x="558.44897"
+         y="306.98666"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect89" />
+      <text
+         fill="#000000"
+         id="text93"
+         x="569.82855"
+         y="315.99408"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="573.20404"
+           y="324.99408"
+           id="tspan91">mrpFeedback()</tspan></text>
+      <line
+         x1="599.94897"
+         y1="285.48666"
+         x2="599.94897"
+         y2="301.58667"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line95" />
+      <path
+         d="m 641.44897,320.98666 h 7.4 l 121.17764,0.63796 -0.63796,-100.32156 0.091,-99.95773 c -21.94591,0.21265 -3.54051,0.74339 -8.01444,0.32008 l -10.77934,-0.0462"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="path97"
+         sodipodi:nodetypes="ccccccc" />
+      <rect
+         x="558.44897"
+         y="173.18666"
+         width="41.5"
+         height="9.2999983"
+         fill="#c0ffc0"
+         id="rect101" />
+      <rect
+         x="558.44897"
+         y="173.18666"
+         width="41.5"
+         height="9.2999983"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect103" />
+      <text
+         fill="#000000"
+         id="text107"
+         x="563.44897"
+         y="172.20613"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="574.19946"
+           y="181.20613"
+           id="tspan105">att</tspan></text>
+      <rect
+         x="599.94897"
+         y="173.18666"
+         width="41.5"
+         height="9.2999983"
+         fill="#c0ffc0"
+         id="rect109" />
+      <rect
+         x="599.94897"
+         y="173.18666"
+         width="41.5"
+         height="9.2999983"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect111" />
+      <text
+         fill="#000000"
+         id="text115"
+         x="604.94897"
+         y="172.20613"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="613.44946"
+           y="181.20613"
+           id="tspan113">pos</tspan></text>
+      <path
+         d="m 620.69897,182.48666 v 7.4 5.35 h -10.375 -10.375 v 5.35 2"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="path117" />
+      <rect
+         x="665.90735"
+         y="228.37775"
+         width="25"
+         height="9.2999983"
+         fill="#c0ffc0"
+         id="rect119" />
+      <rect
+         x="665.90735"
+         y="228.37775"
+         width="25"
+         height="9.2999983"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect121" />
+      <text
+         fill="#000000"
+         id="text125"
+         x="699.90735"
+         y="227.39722"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="699.90735"
+           y="236.39722"
+           id="tspan123">SIM module</tspan></text>
+      <rect
+         x="665.90735"
+         y="242.37775"
+         width="25"
+         height="9.2999983"
+         fill="#ffffc0"
+         id="rect127" />
+      <rect
+         x="665.90735"
+         y="242.37775"
+         width="25"
+         height="9.2999983"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect129" />
+      <text
+         fill="#000000"
+         id="text133"
+         x="699.90735"
+         y="241.39722"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="699.90735"
+           y="250.39722"
+           id="tspan131">FSW module</tspan></text>
+      <line
+         x1="665.90735"
+         y1="260.27774"
+         x2="685.50732"
+         y2="260.27774"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line135" />
+      <line
+         x1="665.81641"
+         y1="273.18683"
+         x2="685.41644"
+         y2="273.18683"
+         marker-end="url(#SharpArrow_Marker)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="line137" />
+      <text
+         fill="#000000"
+         id="text141"
+         x="699.90735"
+         y="254.23813"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="699.90735"
+           y="263.23813"
+           id="tspan139">MPI Path</tspan></text>
+      <rect
+         x="665.81641"
+         y="214.65048"
+         width="25"
+         height="9.2999983"
+         fill="#c0ffff"
+         id="rect143" />
+      <rect
+         x="665.81641"
+         y="214.65048"
+         width="25"
+         height="9.2999983"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect145" />
+      <text
+         fill="#000000"
+         id="text149"
+         x="699.90735"
+         y="213.66995"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="699.90735"
+           y="222.66995"
+           id="tspan147">Python Task</tspan></text>
+      <text
+         fill="#000000"
+         id="text153"
+         x="699.90735"
+         y="268.21539"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="699.90735"
+           y="277.21539"
+           id="tspan151">Interface Path</tspan></text>
+      <line
+         x1="661.98718"
+         y1="119.73016"
+         x2="645.88721"
+         y2="119.73016"
+         marker-end="url(#SharpArrow_Marker-2)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47-3"
+         style="marker-end:url(#SharpArrow_Marker-2)" />
+      <g
+         id="g2509-3"
+         transform="translate(224.81022,18.74074)">
+        <rect
+           x="122.80876"
+           y="134.25731"
+           width="83"
+           height="28"
+           fill="#c0ffc0"
+           id="rect47-9-3" />
+        <g
+           id="g2502-6">
+          <rect
+             x="122.80876"
+             y="134.25731"
+             width="83"
+             height="28"
+             stroke="#000000"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             stroke-width="1"
+             id="rect49-4-0" />
+          <text
+             fill="#000000"
+             id="text53-9-5"
+             x="119.71836"
+             y="141.47099"><tspan
+               font-family="'Helvetica Neue'"
+               font-size="9px"
+               font-weight="300"
+               x="123.45387"
+               y="150.47099"
+               id="tspan51-4-4">ephemerisConverter()</tspan></text>
+        </g>
+      </g>
+      <g
+         id="g2509"
+         transform="translate(225.44817,-29.561376)">
+        <rect
+           x="122.80876"
+           y="134.25731"
+           width="83"
+           height="28"
+           fill="#c0ffc0"
+           id="rect47-9" />
+        <g
+           id="g2502">
+          <rect
+             x="122.80876"
+             y="134.25731"
+             width="83"
+             height="28"
+             stroke="#000000"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             stroke-width="1"
+             id="rect49-4" />
+          <text
+             fill="#000000"
+             id="text53-9"
+             x="127.80876"
+             y="142.62677"><tspan
+               font-family="'Helvetica Neue'"
+               font-size="9px"
+               font-weight="300"
+               x="131.54427"
+               y="151.62677"
+               id="tspan51-4">planetEphemeris()</tspan></text>
+        </g>
+      </g>
+      <rect
+         x="452.84482"
+         y="153.35114"
+         width="83"
+         height="28"
+         fill="#ffffc0"
+         id="rect67-8" />
+      <rect
+         x="452.84482"
+         y="153.35114"
+         width="83"
+         height="28"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="rect69-4" />
+      <text
+         fill="#000000"
+         id="text73-1"
+         x="445.0856"
+         y="161.72061"><tspan
+           font-family="'Helvetica Neue'"
+           font-size="9px"
+           font-weight="300"
+           x="464.58463"
+           y="170.72061"
+           id="tspan71-7">pinholeCamera()</tspan></text>
+      <line
+         x1="537.67151"
+         y1="115.03838"
+         x2="553.77148"
+         y2="115.03838"
+         marker-end="url(#SharpArrow_Marker-2-18)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47-3-0"
+         style="marker-end:url(#SharpArrow_Marker-2-18)" />
+      <line
+         x1="432.40802"
+         y1="119.5041"
+         x2="448.50803"
+         y2="119.5041"
+         marker-end="url(#SharpArrow_Marker-2-18-0)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47-3-0-6"
+         style="marker-end:url(#SharpArrow_Marker-2-18-0)" />
+      <line
+         x1="392.27115"
+         y1="133.48457"
+         x2="392.27115"
+         y2="149.58459"
+         marker-end="url(#SharpArrow_Marker-28)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47-4"
+         style="marker-end:url(#SharpArrow_Marker-28)" />
+      <line
+         x1="431.77005"
+         y1="166.95143"
+         x2="447.87006"
+         y2="166.95143"
+         marker-end="url(#SharpArrow_Marker-2-18-0-6)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         id="line47-3-0-6-3"
+         style="stroke-dasharray:4, 4;stroke-dashoffset:0;marker-end:url(#SharpArrow_Marker-2-18-0-6)" />
+      <path
+         d="m 557.10369,125.75322 h -9.31388 l -0.24632,13.71705 -14.35321,0.15405 -33.8119,0.15045 0.0718,5.41996 -0.0843,3.83496"
+         marker-end="url(#SharpArrow_Marker-4)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="path117-6"
+         style="marker-end:url(#SharpArrow_Marker-4)"
+         sodipodi:nodetypes="ccccccc" />
+      <path
+         d="m 392.60235,181.47787 v 7.4 7.36563 l -0.43949,9.20046 -0.48424,18.06312 h 75.43155 l 86.25689,-0.48424"
+         marker-end="url(#SharpArrow_Marker-00)"
+         stroke="#000000"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         stroke-width="1"
+         stroke-dasharray="4, 4"
+         id="path83-7"
+         style="marker-end:url(#SharpArrow_Marker-00)"
+         sodipodi:nodetypes="ccccccc" />
+    </g>
+  </g>
+</svg>

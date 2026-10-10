@@ -1,0 +1,15 @@
+.. _scenarioPrescribedScrewMotion:
+
+scenarioPrescribedScrewMotion
+=============================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioPrescribedScrewMotion
+   :members:
+   :show-inheritance:
+

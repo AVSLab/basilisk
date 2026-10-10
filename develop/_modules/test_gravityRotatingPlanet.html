@@ -1,0 +1,290 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_gravityRotatingPlanet &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_gravityRotatingPlanet</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_gravityRotatingPlanet</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, PIC4SeR &amp; AVS Lab, Politecnico di Torino &amp; Argotec S.R.L., University of Colorado Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Tests that the gravity effector keeps the extrapolated planet orientation a rotation."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">bskLogging</span><span class="p">,</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">spacecraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationBaseClass</span><span class="p">,</span> <span class="n">macros</span><span class="p">,</span> <span class="n">simIncludeGravBody</span>
+
+<span class="n">OMEGA_PLANET</span> <span class="o">=</span> <span class="mf">7.2921150e-5</span>  <span class="c1"># [rad/s] planet spin rate about the inertial z axis</span>
+<span class="n">MU_EARTH</span> <span class="o">=</span> <span class="mf">3.986004415e14</span>  <span class="c1"># [m^3/s^2]</span>
+<span class="n">R_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.0e6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+<span class="n">V_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0e3</span><span class="p">,</span> <span class="mf">5.5e3</span><span class="p">]</span>  <span class="c1"># [m/s]</span>
+<span class="n">SIM_TIME</span> <span class="o">=</span> <span class="mf">3600.0</span>  <span class="c1"># [s]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_planetMessage</span><span class="p">(</span><span class="n">spinning</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a planet state message with the planet spinning about the inertial z axis.</span>
+
+<span class="sd">    The message is written once at t = 0, so the gravity effector must extrapolate the</span>
+<span class="sd">    orientation by the full elapsed time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        spinning (bool): if False the orientation is the identity with a zero rate.</span>
+<span class="sd">    """</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsgPayload</span><span class="p">()</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">spinning</span><span class="p">:</span>
+        <span class="c1"># J20002Pfix maps inertial components into the planet-fixed frame</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">J20002Pfix_dot</span> <span class="o">=</span> <span class="p">(</span><span class="n">OMEGA_PLANET</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                                           <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                                                           <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_propagate</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">,</span> <span class="n">spinning</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Propagate a point-mass orbit about a planet with the given orientation message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stepSeconds (float): integration time step in seconds.</span>
+<span class="sd">        spinning (bool): whether the planet orientation message carries a spin rate.</span>
+<span class="sd">    """</span>
+    <span class="n">scSim</span> <span class="o">=</span> <span class="n">SimulationBaseClass</span><span class="o">.</span><span class="n">SimBaseClass</span><span class="p">()</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewProcess</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">addTask</span><span class="p">(</span><span class="n">scSim</span><span class="o">.</span><span class="n">CreateNewTask</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">)))</span>
+
+    <span class="n">scObject</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">Spacecraft</span><span class="p">()</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"sc"</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">bskLogger</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="n">bskLogging</span><span class="o">.</span><span class="n">BSK_ERROR</span><span class="p">)</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">AddModelToTask</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="n">scObject</span><span class="p">)</span>
+
+    <span class="n">gravFactory</span> <span class="o">=</span> <span class="n">simIncludeGravBody</span><span class="o">.</span><span class="n">gravBodyFactory</span><span class="p">()</span>
+    <span class="n">planet</span> <span class="o">=</span> <span class="n">gravFactory</span><span class="o">.</span><span class="n">createCustomGravObject</span><span class="p">(</span><span class="s2">"planet"</span><span class="p">,</span> <span class="n">MU_EARTH</span><span class="p">)</span>
+    <span class="n">planet</span><span class="o">.</span><span class="n">isCentralBody</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">planetMsg</span> <span class="o">=</span> <span class="n">_planetMessage</span><span class="p">(</span><span class="n">spinning</span><span class="p">)</span>
+    <span class="n">planet</span><span class="o">.</span><span class="n">planetBodyInMsg</span><span class="o">.</span><span class="n">subscribeTo</span><span class="p">(</span><span class="n">planetMsg</span><span class="p">)</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">gravField</span><span class="o">.</span><span class="n">gravBodies</span> <span class="o">=</span> <span class="n">spacecraft</span><span class="o">.</span><span class="n">GravBodyVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">gravFactory</span><span class="o">.</span><span class="n">gravBodies</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">r_CN_NInit</span> <span class="o">=</span> <span class="n">R_INIT</span>
+    <span class="n">scObject</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">v_CN_NInit</span> <span class="o">=</span> <span class="n">V_INIT</span>
+
+    <span class="n">scSim</span><span class="o">.</span><span class="n">InitializeSimulation</span><span class="p">()</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ConfigureStopTime</span><span class="p">(</span><span class="n">macros</span><span class="o">.</span><span class="n">sec2nano</span><span class="p">(</span><span class="n">SIM_TIME</span><span class="p">))</span>
+    <span class="n">scSim</span><span class="o">.</span><span class="n">ExecuteSimulation</span><span class="p">()</span>
+
+    <span class="n">stateManager</span> <span class="o">=</span> <span class="n">scObject</span><span class="o">.</span><span class="n">dynManager</span>
+    <span class="n">dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stateManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="s2">"planet.J20002Pfix"</span><span class="p">))</span>
+    <span class="n">dcmDot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stateManager</span><span class="o">.</span><span class="n">getPropertyReference</span><span class="p">(</span><span class="s2">"planet.J20002Pfix_dot"</span><span class="p">))</span>
+    <span class="n">r_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scObject</span><span class="o">.</span><span class="n">scStateOutMsg</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">r_BN_N</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r_N</span><span class="p">,</span> <span class="n">dcm</span><span class="p">,</span> <span class="n">dcmDot</span>
+
+
+<div class="viewcode-block" id="test_extrapolated_orientation_is_orthonormal">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravityRotatingPlanet.html#test_gravityRotatingPlanet.test_extrapolated_orientation_is_orthonormal">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"stepSeconds"</span><span class="p">,</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_extrapolated_orientation_is_orthonormal</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify the extrapolated planet orientation remains a proper rotation matrix.</span>
+
+<span class="sd">    A first-order update of the matrix elements loses orthonormality by about</span>
+<span class="sd">    ``(omega * dt)^2 / 2``, which is a few percent after an hour of extrapolation."""</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">dcm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_propagate</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">,</span> <span class="n">spinning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dcm</span> <span class="o">@</span> <span class="n">dcm</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">dcm</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_point_mass_orbit_is_independent_of_planet_spin">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravityRotatingPlanet.html#test_gravityRotatingPlanet.test_point_mass_orbit_is_independent_of_planet_spin">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"stepSeconds"</span><span class="p">,</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_point_mass_orbit_is_independent_of_planet_spin</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify a point-mass orbit does not depend on the planet orientation.</span>
+
+<span class="sd">    The point-mass field is spherically symmetric, so a spinning planet must give the same</span>
+<span class="sd">    trajectory as a non-spinning one. A non-orthonormal orientation scales the evaluated</span>
+<span class="sd">    field and breaks this."""</span>
+    <span class="n">rSpinning</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_propagate</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">,</span> <span class="n">spinning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rFixed</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_propagate</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">,</span> <span class="n">spinning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rSpinning</span><span class="p">,</span> <span class="n">rFixed</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_stored_orientation_and_rate_are_consistent">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/gravityEffector/_UnitTest/test_gravityRotatingPlanet.html#test_gravityRotatingPlanet.test_stored_orientation_and_rate_are_consistent">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"stepSeconds"</span><span class="p">,</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_stored_orientation_and_rate_are_consistent</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify the stored planet orientation and rate are [PN] and [PN_dot] of the same epoch.</span>
+
+<span class="sd">    The planet spins about the inertial z axis and its message is written once at t = 0, so at the final time the</span>
+<span class="sd">    orientation is a rotation by ``OMEGA_PLANET * SIM_TIME`` and the rate satisfies</span>
+<span class="sd">    ``dcm_dot = -dcm [omega x]`` with the inertial angular velocity ``omega``."""</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">dcm</span><span class="p">,</span> <span class="n">dcmDot</span> <span class="o">=</span> <span class="n">_propagate</span><span class="p">(</span><span class="n">stepSeconds</span><span class="p">,</span> <span class="n">spinning</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">OMEGA_PLANET</span> <span class="o">*</span> <span class="n">SIM_TIME</span>  <span class="c1"># [rad]</span>
+    <span class="c1"># the message rate dcm_dot = OMEGA * [[0, 1, 0], [-1, 0, 0], [0, 0, 0]] at the identity orientation is the rate of</span>
+    <span class="c1"># [PN] = exp(-[omega x] t) for an inertial angular velocity omega = OMEGA * z</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">skewOmega</span> <span class="o">=</span> <span class="n">OMEGA_PLANET</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>  <span class="c1"># [rad/s]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">dcmDot</span><span class="p">,</span> <span class="o">-</span><span class="n">dcm</span> <span class="o">@</span> <span class="n">skewOmega</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">test_extrapolated_orientation_is_orthonormal</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">test_point_mass_orbit_is_independent_of_planet_spin</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

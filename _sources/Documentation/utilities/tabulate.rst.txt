@@ -1,0 +1,15 @@
+.. _tabulate:
+
+tabulate
+========
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: tabulate
+   :members:
+   :show-inheritance:
+

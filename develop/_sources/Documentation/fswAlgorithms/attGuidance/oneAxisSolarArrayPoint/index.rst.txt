@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_oneAxisSolarArrayPoint:
+
+oneAxisSolarArrayPoint
+======================
+
+:doc:`Module documentation <oneAxisSolarArrayPoint>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

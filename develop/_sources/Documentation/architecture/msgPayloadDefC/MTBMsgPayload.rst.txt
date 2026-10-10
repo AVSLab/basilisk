@@ -1,0 +1,10 @@
+.. _MTBMsgPayload:
+
+MTBMsgPayload
+=============
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: MTBMsgPayload.h
+   :project: msgPayloadDefC
+

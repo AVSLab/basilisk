@@ -1,0 +1,489 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_outputMessageOwnership &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_outputMessageOwnership</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_outputMessageOwnership</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1"># Distributed under the ISC license; see LICENSE.</span>
+
+<span class="sd">"""Check the Python interfaces of module-owned output-message collections.</span>
+
+<span class="sd">The module remains alive while its borrowed messages, readers, and recorders are</span>
+<span class="sd">used, as in a normal scheduled simulation. Native tests separately check deletion</span>
+<span class="sd">and allocation-failure cleanup; these tests check SWIG access and stable storage.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture</span><span class="w"> </span><span class="kn">import</span> <span class="n">messaging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">simHelpers</span>
+
+
+<span class="c1"># Each message type must exercise data that differs from freshly initialized storage.</span>
+<span class="n">NONZERO_PAYLOAD_FIELDS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"AccessMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"slantRange"</span><span class="p">,</span> <span class="mf">125.5</span><span class="p">),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"AlbedoMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"albedoAtInstrument"</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="s2">"AtmoPropsMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"localTemp"</span><span class="p">,</span> <span class="mf">273.5</span><span class="p">),</span>  <span class="c1"># [K]</span>
+    <span class="s2">"AttRefMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"omega_RN_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">]),</span>  <span class="c1"># [rad/s]</span>
+    <span class="s2">"CameraImageMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"cameraID"</span><span class="p">,</span> <span class="mi">17</span><span class="p">),</span>
+    <span class="s2">"ChargeMsmMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"q"</span><span class="p">,</span> <span class="p">[[</span><span class="mf">1.25e-9</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5e-9</span><span class="p">]]),</span>  <span class="c1"># [C], Eigen column vector</span>
+    <span class="s2">"CmdForceInertialMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"forceRequestInertial"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [N]</span>
+    <span class="s2">"CmdTorqueBodyMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"torqueRequestBody"</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">]),</span>  <span class="c1"># [N*m]</span>
+    <span class="s2">"DataNodeUsageMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"baudRate"</span><span class="p">,</span> <span class="mf">125.5</span><span class="p">),</span>  <span class="c1"># [baud]</span>
+    <span class="s2">"EclipseMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"illuminationFactor"</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">),</span>  <span class="c1"># [-]</span>
+    <span class="s2">"EphemerisMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"r_BdyZero_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"FacetElementBodyMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"area"</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span>  <span class="c1"># [m^2]</span>
+    <span class="s2">"GroundStateMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"r_LN_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"HingedRigidBodyMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"theta"</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">),</span>  <span class="c1"># [rad]</span>
+    <span class="s2">"LandmarkMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"pL"</span><span class="p">,</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">29</span><span class="p">]),</span>  <span class="c1"># [pixel]</span>
+    <span class="s2">"LinearTranslationRigidBodyMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"rho"</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"MagneticFieldMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"magField_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25e-5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5e-5</span><span class="p">,</span> <span class="mf">3.75e-5</span><span class="p">]),</span>  <span class="c1"># [T]</span>
+    <span class="s2">"ProjectedAreaMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"area"</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span>  <span class="c1"># [m^2]</span>
+    <span class="s2">"RWConfigLogMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"Omega"</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span>  <span class="c1"># [rad/s]</span>
+    <span class="s2">"SCStatesMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"r_BN_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"ScChargingCurrentsMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"electronCurrent"</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.25e-6</span><span class="p">),</span>  <span class="c1"># [A]</span>
+    <span class="s2">"SingleActuatorMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"input"</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span>  <span class="c1"># [N or N*m], depending on the actuator</span>
+    <span class="s2">"SpicePlanetStateMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"PositionVector"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"SwDataMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"dataValue"</span><span class="p">,</span> <span class="mf">17.5</span><span class="p">),</span>  <span class="c1"># Units depend on the space-weather output.</span>
+    <span class="s2">"THROutputMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"thrustForce"</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span>  <span class="c1"># [N]</span>
+    <span class="s2">"TransRefMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"r_RN_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m]</span>
+    <span class="s2">"VSCMGConfigMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"Omega"</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span>  <span class="c1"># [rad/s]</span>
+    <span class="s2">"VoltMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voltage"</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">),</span>  <span class="c1"># [V]</span>
+    <span class="s2">"WindMsg"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"v_air_N"</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">]),</span>  <span class="c1"># [m/s]</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_payload</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compare values across the distinct SWIG payload proxy classes."""</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">reader</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="o">.</span><span class="n">__fields__</span><span class="p">():</span>
+        <span class="n">actual_field</span> <span class="o">=</span> <span class="n">field</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"shadowFactor"</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s2">"illuminationFactor"</span>
+            <span class="c1"># Module-specific SWIG payloads may expose only the original field name.</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+                <span class="n">actual_field</span> <span class="o">=</span> <span class="n">field</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">actual_field</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_and_check_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">module_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Verify a nonzero payload through both a subscriber and a recorder."""</span>
+    <span class="n">message_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">messaging</span><span class="p">,</span> <span class="n">message_name</span> <span class="o">+</span> <span class="s2">"Payload"</span><span class="p">)()</span>
+    <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">NONZERO_PAYLOAD_FIELDS</span><span class="p">[</span><span class="n">message_name</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">module_id</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">isWritten</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">timeWritten</span><span class="p">()</span> <span class="o">==</span> <span class="n">timestamp</span>
+    <span class="k">assert</span> <span class="n">reader</span><span class="o">.</span><span class="n">moduleID</span><span class="p">()</span> <span class="o">==</span> <span class="n">module_id</span>
+    <span class="n">_check_payload</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+    <span class="n">recorder</span><span class="o">.</span><span class="n">UpdateState</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">recorder</span><span class="o">.</span><span class="n">times</span><span class="p">())</span> <span class="o">==</span> <span class="p">[</span><span class="n">timestamp</span><span class="p">]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">recorder</span><span class="p">,</span> <span class="n">field</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grow</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read and record every output, including proxies obtained before growth."""</span>
+    <span class="n">snapshots</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">output</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outputs</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">thisown</span>
+            <span class="n">snapshots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">(),</span> <span class="n">output</span><span class="o">.</span><span class="n">recorder</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">grow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grow</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">123</span>  <span class="c1"># [ns]</span>
+    <span class="n">module_id</span> <span class="o">=</span> <span class="mi">17</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">recorder</span> <span class="ow">in</span> <span class="n">snapshots</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">this</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">this</span><span class="p">)</span>
+        <span class="n">_write_and_check_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">module_id</span><span class="p">)</span>
+
+
+<span class="n">ENVIRONMENT_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"exponentialAtmosphere"</span><span class="p">,</span> <span class="s2">"ExponentialAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"msisAtmosphere"</span><span class="p">,</span> <span class="s2">"MsisAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"tabularAtmosphere"</span><span class="p">,</span> <span class="s2">"TabularAtmosphere"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"magneticFieldCenteredDipole"</span><span class="p">,</span> <span class="s2">"MagneticFieldCenteredDipole"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"magneticFieldWMM"</span><span class="p">,</span> <span class="s2">"MagneticFieldWMM"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"zeroWindModel"</span><span class="p">,</span> <span class="s2">"ZeroWindModel"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"envOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"eclipse"</span><span class="p">,</span> <span class="s2">"Eclipse"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"eclipseOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"groundLocation"</span><span class="p">,</span> <span class="s2">"GroundLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"accessOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"spacecraftLocation"</span><span class="p">,</span> <span class="s2">"SpacecraftLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"accessOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"stripLocation"</span><span class="p">,</span> <span class="s2">"StripLocation"</span><span class="p">,</span> <span class="s2">"addSpacecraftToModel"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"accessOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"spacecraftChargingEquilibrium"</span><span class="p">,</span> <span class="s2">"SpacecraftChargingEquilibrium"</span><span class="p">,</span> <span class="s2">"addSpacecraft"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"voltOutMsgs"</span><span class="p">,</span> <span class="s2">"currentsOutMsgs"</span><span class="p">)),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_environment_output_growth">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_environment_output_growth">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name,class_name,method,fields"</span><span class="p">,</span> <span class="n">ENVIRONMENT_CASES</span><span class="p">,</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">ENVIRONMENT_CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_environment_output_growth</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adding spacecraft preserves existing output addresses and Python access."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">grow</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"addSpacecraft"</span> <span class="k">else</span> <span class="mi">16</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="n">grow</span><span class="p">()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grow</span><span class="p">)</span></div>
+
+
+
+<span class="n">EFFECTOR_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"nHingedRigidBodyStateEffector"</span><span class="p">,</span> <span class="s2">"NHingedRigidBodyStateEffector"</span><span class="p">,</span> <span class="s2">"addHingedPanel"</span><span class="p">,</span> <span class="s2">"HingedPanel"</span><span class="p">,</span>
+     <span class="p">(</span><span class="s2">"nHingedRigidBodyOutMsgs"</span><span class="p">,</span> <span class="s2">"nHingedRigidBodyConfigLogOutMsgs"</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"spinningBodyNDOFStateEffector"</span><span class="p">,</span> <span class="s2">"SpinningBodyNDOFStateEffector"</span><span class="p">,</span> <span class="s2">"addSpinningBody"</span><span class="p">,</span> <span class="s2">"SpinningBody"</span><span class="p">,</span>
+     <span class="p">(</span><span class="s2">"spinningBodyOutMsgs"</span><span class="p">,</span> <span class="s2">"spinningBodyConfigLogOutMsgs"</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"linearTranslationNDOFStateEffector"</span><span class="p">,</span> <span class="s2">"LinearTranslationNDOFStateEffector"</span><span class="p">,</span> <span class="s2">"addTranslatingBody"</span><span class="p">,</span> <span class="s2">"TranslatingBody"</span><span class="p">,</span>
+     <span class="p">(</span><span class="s2">"translatingBodyOutMsgs"</span><span class="p">,</span> <span class="s2">"translatingBodyConfigLogOutMsgs"</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"reactionWheelStateEffector"</span><span class="p">,</span> <span class="s2">"ReactionWheelStateEffector"</span><span class="p">,</span> <span class="s2">"addReactionWheel"</span><span class="p">,</span> <span class="s2">"RWConfigPayload"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"rwOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"vscmgStateEffector"</span><span class="p">,</span> <span class="s2">"VSCMGStateEffector"</span><span class="p">,</span> <span class="s2">"AddVSCMG"</span><span class="p">,</span> <span class="s2">"VSCMGConfigMsgPayload"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"vscmgOutMsgs"</span><span class="p">,)),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_effector_output_growth">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_effector_output_growth">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name,class_name,method,config_name,fields"</span><span class="p">,</span> <span class="n">EFFECTOR_CASES</span><span class="p">,</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">EFFECTOR_CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_effector_output_growth</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adding effectors preserves state and configuration output-message proxies."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">grow</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)())</span>
+
+    <span class="n">grow</span><span class="p">()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grow</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_thruster_output_growth">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_thruster_output_growth">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"thrusterDynamicEffector"</span><span class="p">,</span> <span class="s2">"thrusterStateEffector"</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"attached"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_thruster_output_growth</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">attached</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Both thruster-addition overloads preserve existing output messages."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="n">module_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">grow</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">THRSimConfig</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">attached</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="n">grow</span><span class="p">()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="s2">"thrusterOutMsgs"</span><span class="p">,),</span> <span class="n">grow</span><span class="p">)</span></div>
+
+
+
+<span class="n">FIXED_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"spaceWeatherData"</span><span class="p">,</span> <span class="s2">"SpaceWeatherData"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"swDataOutMsgs"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"spinningBodyTwoDOFStateEffector"</span><span class="p">,</span> <span class="s2">"SpinningBodyTwoDOFStateEffector"</span><span class="p">,</span>
+     <span class="p">(</span><span class="s2">"spinningBodyOutMsgs"</span><span class="p">,</span> <span class="s2">"spinningBodyConfigLogOutMsgs"</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"dualHingedRigidBodyStateEffector"</span><span class="p">,</span> <span class="s2">"DualHingedRigidBodyStateEffector"</span><span class="p">,</span>
+     <span class="p">(</span><span class="s2">"dualHingedRigidBodyOutMsgs"</span><span class="p">,</span> <span class="s2">"dualHingedRigidBodyConfigLogOutMsgs"</span><span class="p">)),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_fixed_output_collections">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_fixed_output_collections">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name,class_name,fields"</span><span class="p">,</span> <span class="n">FIXED_CASES</span><span class="p">,</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">FIXED_CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_fixed_output_collections</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Constructor-created output collections retain the existing Python API."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+
+
+<span class="n">CONTROLLER_CASES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"fswAlgorithms.hingedJointArrayMotor"</span><span class="p">,</span> <span class="s2">"HingedJointArrayMotor"</span><span class="p">,</span> <span class="s2">"addHingedJoint"</span><span class="p">,</span> <span class="s2">"motorTorquesOutMsgs"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"fswAlgorithms.thrJointCompensation"</span><span class="p">,</span> <span class="s2">"ThrJointCompensation"</span><span class="p">,</span> <span class="s2">"addHingedJoint"</span><span class="p">,</span> <span class="s2">"motorTorquesOutMsgs"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"fswAlgorithms.jointMotionCompensator"</span><span class="p">,</span> <span class="s2">"JointMotionCompensator"</span><span class="p">,</span> <span class="s2">"addSpacecraft"</span><span class="p">,</span> <span class="s2">"hubTorqueOutMsgs"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"simulation.thrOnTimeToForce"</span><span class="p">,</span> <span class="s2">"ThrOnTimeToForce"</span><span class="p">,</span> <span class="s2">"addThruster"</span><span class="p">,</span> <span class="s2">"thrusterForceOutMsgs"</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="test_controller_output_growth">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_controller_output_growth">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"module_name,class_name,method,field"</span><span class="p">,</span> <span class="n">CONTROLLER_CASES</span><span class="p">,</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">CONTROLLER_CASES</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_controller_output_growth</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Controller output collections remain usable after adding joints or thrusters."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s2">"Basilisk."</span> <span class="o">+</span> <span class="n">module_name</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">grow</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)()</span>
+
+    <span class="n">grow</span><span class="p">()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">field</span><span class="p">,),</span> <span class="n">grow</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_other_output_growth">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_other_output_growth">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"albedo"</span><span class="p">,</span> <span class="s2">"groundMapping"</span><span class="p">,</span> <span class="s2">"ephemerisConverter"</span><span class="p">,</span> <span class="s2">"msmForceTorque"</span><span class="p">,</span>
+                                 <span class="s2">"pinholeCamera"</span><span class="p">,</span> <span class="s2">"mappingInstrument"</span><span class="p">,</span> <span class="s2">"vizInterface"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_other_output_growth</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Instrument, mapping, ephemeris, and electrostatic outputs retain stable storage."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">case</span><span class="p">)</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">case</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"state"</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SCStatesMsg</span><span class="p">(),</span> <span class="s2">"spice"</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">SpicePlanetStateMsg</span><span class="p">(),</span>
+        <span class="s2">"access"</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">AccessMsg</span><span class="p">(),</span> <span class="s2">"camera"</span><span class="p">:</span> <span class="n">messaging</span><span class="o">.</span><span class="n">CameraConfigMsg</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">zero_position</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># [m]</span>
+    <span class="n">unit_direction</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="n">field_of_view</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [rad]</span>
+    <span class="n">sphere_radius</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># [m]</span>
+    <span class="n">cases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"albedo"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"albOutMsgs"</span><span class="p">,),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addInstrumentConfig</span><span class="p">(</span><span class="n">field_of_view</span><span class="p">,</span> <span class="n">unit_direction</span><span class="p">,</span> <span class="n">zero_position</span><span class="p">)),</span>
+        <span class="s2">"groundMapping"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"accessOutMsgs"</span><span class="p">,</span> <span class="s2">"currentGroundStateOutMsgs"</span><span class="p">),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addPointToModel</span><span class="p">(</span><span class="n">zero_position</span><span class="p">)),</span>
+        <span class="s2">"ephemerisConverter"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"ephemOutMsgs"</span><span class="p">,),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addSpiceInputMsg</span><span class="p">(</span><span class="n">sources</span><span class="p">[</span><span class="s2">"spice"</span><span class="p">])),</span>
+        <span class="s2">"msmForceTorque"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"eTorqueOutMsgs"</span><span class="p">,</span> <span class="s2">"eForceOutMsgs"</span><span class="p">,</span> <span class="s2">"chargeMsmOutMsgs"</span><span class="p">),</span>
+                           <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraftToModel</span><span class="p">(</span>
+                               <span class="n">sources</span><span class="p">[</span><span class="s2">"state"</span><span class="p">],</span> <span class="n">messaging</span><span class="o">.</span><span class="n">DoubleVector</span><span class="p">([</span><span class="n">sphere_radius</span><span class="p">]),</span>
+                               <span class="n">simHelpers</span><span class="o">.</span><span class="n">npList2EigenXdVector</span><span class="p">([</span><span class="n">zero_position</span><span class="p">]))),</span>
+        <span class="s2">"pinholeCamera"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"landmarkOutMsgs"</span><span class="p">,),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addLandmark</span><span class="p">(</span><span class="n">zero_position</span><span class="p">,</span> <span class="n">unit_direction</span><span class="p">)),</span>
+        <span class="s2">"mappingInstrument"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"dataNodeOutMsgs"</span><span class="p">,),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addMappingPoint</span><span class="p">(</span><span class="n">sources</span><span class="p">[</span><span class="s2">"access"</span><span class="p">],</span> <span class="s2">"test"</span><span class="p">)),</span>
+        <span class="s2">"vizInterface"</span><span class="p">:</span> <span class="p">((</span><span class="s2">"opnavImageOutMsgs"</span><span class="p">,),</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">addCamMsgToModule</span><span class="p">(</span><span class="n">sources</span><span class="p">[</span><span class="s2">"camera"</span><span class="p">])),</span>
+    <span class="p">}</span>
+    <span class="n">fields</span><span class="p">,</span> <span class="n">add</span> <span class="o">=</span> <span class="n">cases</span><span class="p">[</span><span class="n">case</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">grow</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="n">add</span><span class="p">()</span>
+
+    <span class="n">grow</span><span class="p">()</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">grow</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_reconfigured_outputs">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_reconfigured_outputs">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"case"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"spiceInterface"</span><span class="p">,</span> <span class="s2">"facetedSpacecraftModel"</span><span class="p">,</span> <span class="s2">"facetedSpacecraftProjectedArea"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_reconfigured_outputs</span><span class="p">(</span><span class="n">case</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Replacing an output collection exposes the newly configured messages."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"Basilisk.simulation."</span> <span class="o">+</span> <span class="n">case</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">case</span><span class="p">[</span><span class="mi">1</span><span class="p">:])()</span>
+    <span class="k">if</span> <span class="n">case</span> <span class="o">==</span> <span class="s2">"spiceInterface"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">names</span> <span class="ow">in</span> <span class="p">([</span><span class="s2">"earth"</span><span class="p">,</span> <span class="s2">"moon"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"sun"</span><span class="p">]):</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">addPlanetNames</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">names</span><span class="p">))</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">addSpacecraftNames</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">StringVector</span><span class="p">(</span><span class="n">names</span><span class="p">))</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"planetStateOutMsgs"</span><span class="p">,</span> <span class="s2">"scStateOutMsgs"</span><span class="p">,</span> <span class="s2">"attRefStateOutMsgs"</span><span class="p">,</span> <span class="s2">"transRefStateOutMsgs"</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">method</span><span class="p">,</span> <span class="n">field</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"facetedSpacecraftModel"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"setNumTotalFacets"</span><span class="p">,</span> <span class="s2">"facetElementBodyOutMsgs"</span><span class="p">),</span>
+            <span class="s2">"facetedSpacecraftProjectedArea"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"setNumFacets"</span><span class="p">,</span> <span class="s2">"facetProjectedAreaOutMsgs"</span><span class="p">),</span>
+        <span class="p">}[</span><span class="n">case</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">count</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span> <span class="o">==</span> <span class="n">count</span>
+            <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+                <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">field</span><span class="p">,))</span></div>
+
+
+
+<div class="viewcode-block" id="test_planet_ephemeris_outputs">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_planet_ephemeris_outputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_planet_ephemeris_outputs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Analytical ephemeris messages retain indexing, subscriptions, and recording."""</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">planetEphemeris</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">planetEphemeris</span><span class="o">.</span><span class="n">PlanetEphemeris</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setPlanetNames</span><span class="p">(</span><span class="n">planetEphemeris</span><span class="o">.</span><span class="n">StringVector</span><span class="p">([</span><span class="s2">"earth"</span><span class="p">,</span> <span class="s2">"moon"</span><span class="p">]))</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="s2">"planetOutMsgs"</span><span class="p">,))</span></div>
+
+
+
+<div class="viewcode-block" id="test_nested_visualization_outputs">
+<a class="viewcode-back" href="../Documentation/architecture/messaging/_UnitTest/test_outputMessageOwnership.html#test_outputMessageOwnership.test_nested_visualization_outputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_nested_visualization_outputs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Nested wheel and thruster collections keep the existing two-index Python API."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s2">"Basilisk.simulation.dataFileToViz"</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">DataFileToViz</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">setNumOfSatellites</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">VizThrConfig</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()]),</span> <span class="n">module</span><span class="o">.</span><span class="n">IntVector</span><span class="p">([</span><span class="mi">3</span><span class="p">]))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">appendThrClusterMap</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">VizThrConfig</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="n">ThrClusterMap</span><span class="p">()]),</span> <span class="n">module</span><span class="o">.</span><span class="n">IntVector</span><span class="p">([</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">appendNumOfRWs</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">appendNumOfRWs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">_check_outputs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="s2">"scStateOutMsgs"</span><span class="p">,))</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">counts</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"thrScOutMsgs"</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"rwScOutMsgs"</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))):</span>
+        <span class="k">for</span> <span class="n">spacecraft</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">counts</span><span class="p">):</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">field</span><span class="p">)[</span><span class="n">spacecraft</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="n">count</span>
+            <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">thisown</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">addSubscriber</span><span class="p">()</span>
+                <span class="n">recorder</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">recorder</span><span class="p">()</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="mi">456</span>  <span class="c1"># [ns]</span>
+                <span class="n">_write_and_check_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

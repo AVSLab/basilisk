@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_coarseSunSensor:
+
+coarseSunSensor
+===============
+
+:doc:`Module documentation <coarseSunSensor>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

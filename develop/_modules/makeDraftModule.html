@@ -1,0 +1,1018 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>makeDraftModule &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">makeDraftModule</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for makeDraftModule</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2021, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""</span>
+<span class="sd">This script is used to create a Basilisk module folder given the basic I/O and naming information.</span>
+
+<span class="sd">- Modify either ``fillCppInfo()`` or ``fillCInfo()`` to contain the desired information for the new BSK module.</span>
+<span class="sd">- edit the ``__main__`` routine at the end of the file to call the desired module type with</span>
+<span class="sd">  ``createCppModule()`` or ``createCModule``.</span>
+<span class="sd">- run the script from the command line using ``python3 makeDraftModule.py``</span>
+
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">keyword</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span><span class="p">,</span> <span class="n">mkdtemp</span>
+
+<span class="c1"># assumes this script is in .../basilisk/src/utilities</span>
+<span class="n">pathToSrc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+
+<span class="n">statusColor</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\033</span><span class="s1">[92m'</span>
+<span class="n">warningColor</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\033</span><span class="s1">[93m'</span>
+<span class="n">endColor</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\033</span><span class="s1">[0m'</span>
+
+<div class="viewcode-block" id="moduleGenerator">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">moduleGenerator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    class to generate draft Basilisk modules</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># the following variables must be set for this module generator to function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modulePathRelSrc</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># path to the new module folder relative to basilisk/src</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># lower camel case name of the module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">briefDescription</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># brief module description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copyrightHolder</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># holder of open source copyright</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of input message dictionary list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of input message dictionary list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variableList</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of module variables</span>
+
+        <span class="c1"># module behavior flags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanBuild</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># flag if any prior directories should be deleted automatically</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># flag if the status messages should be printed</span>
+
+        <span class="c1"># private class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># absolute path to the folder which will contain the module folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_newModuleLocation</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># absolute path to the auto-generated Basilisk module folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># BSK open-source license statement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># temporary directory used while generating files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_path</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># source path relative to basilisk/src</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_package</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># top-level Basilisk package for Python imports</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_className</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># derived C++ class name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'end'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">endString</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">endString</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+
+<div class="viewcode-block" id="moduleGenerator.checkPathToNewFolderLocation">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.checkPathToNewFolderLocation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkPathToNewFolderLocation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Check the destination parent without changing the working directory."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">statusColor</span><span class="si">}</span><span class="s2">Checking Module location:</span><span class="si">{</span><span class="n">endColor</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Incorrect path to the new folder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"Done"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate configuration and prepare derived names without filesystem access."""</span>
+        <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"C"</span><span class="p">,</span> <span class="s2">"C++"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"moduleName"</span><span class="p">,</span> <span class="s2">"briefDescription"</span><span class="p">,</span> <span class="s2">"copyrightHolder"</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> must be a nonempty string"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_identifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="p">,</span> <span class="s2">"moduleName"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modulePathRelSrc</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"modulePathRelSrc must be a path relative to basilisk/src"</span><span class="p">)</span>
+        <span class="n">module_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modulePathRelSrc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">module_path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">module_path</span><span class="o">.</span><span class="n">parts</span> <span class="ow">or</span> <span class="s2">".."</span> <span class="ow">in</span> <span class="n">module_path</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"modulePathRelSrc must stay within a package under basilisk/src"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_identifier</span><span class="p">(</span><span class="n">module_path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"Basilisk package name"</span><span class="p">)</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">message_wrappers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"inMsgList"</span><span class="p">,</span> <span class="s2">"outMsgList"</span><span class="p">,</span> <span class="s2">"variableList"</span><span class="p">):</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> must be a list"</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+                <span class="n">required</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"var"</span><span class="p">,</span> <span class="s2">"desc"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">!=</span> <span class="s2">"variableList"</span><span class="p">:</span>
+                    <span class="n">required</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">"wrap"</span><span class="p">,)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> entries require string fields: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">required</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_identifier</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"var"</span><span class="p">],</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> variable"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Duplicate module variable: </span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'var'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"var"</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> type must not be empty"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">!=</span> <span class="s2">"variableList"</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_validate_identifier</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span> <span class="s2">"message type"</span><span class="p">)</span>
+                    <span class="n">allowed_wrappers</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"C"</span><span class="p">,)</span> <span class="k">if</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">"C"</span> <span class="k">else</span> <span class="p">(</span><span class="s2">"C"</span><span class="p">,</span> <span class="s2">"C++"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"wrap"</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_wrappers</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2"> modules require message wrappers in </span><span class="si">{</span><span class="n">allowed_wrappers</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="n">previous</span> <span class="o">=</span> <span class="n">message_wrappers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"wrap"</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">previous</span> <span class="o">!=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"wrap"</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Conflicting wrappers for message type: </span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_path</span> <span class="o">=</span> <span class="n">module_path</span>
+        <span class="c1"># Basilisk flattens modules below each top-level source package.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_package</span> <span class="o">=</span> <span class="n">module_path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_className</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+            <span class="s1">'([a-zA-Z])'</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Resolve the validated destination and check its parent on disk."""</span>
+        <span class="n">source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pathToSrc</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span> <span class="o">=</span> <span class="p">(</span><span class="n">source_path</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="o">.</span><span class="n">is_relative_to</span><span class="p">(</span><span class="n">source_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"modulePathRelSrc must stay within basilisk/src"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkPathToNewFolderLocation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_newModuleLocation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_identifier</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Reject names that cannot be used as generated identifiers or filenames."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[A-Za-z_][A-Za-z0-9_]*"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="n">keyword</span><span class="o">.</span><span class="n">iskeyword</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid </span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return whether replacement of an existing module is authorized."""</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_newModuleLocation</span>
+        <span class="k">if</span> <span class="n">destination</span><span class="o">.</span><span class="n">is_symlink</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The module destination must not be a symbolic link: </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">destination</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">destination</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The module destination is not a directory: </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">warningColor</span><span class="si">}</span><span class="s2">WARNING: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}</span><span class="s2">The new module destination already exists."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanBuild</span> <span class="ow">and</span> <span class="nb">input</span><span class="p">(</span><span class="s2">"Do you want to replace this folder? (y or n): "</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"y"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Module creation cancelled; preserved </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_module_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace_existing</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Stage a complete draft before publishing it at the requested destination."""</span>
+        <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">".</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s2">-draft-"</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="p">)</span> <span class="k">as</span> <span class="n">directory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_publish_module</span><span class="p">(</span><span class="n">replace_existing</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_publish_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace_existing</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Publish staged files, restoring the old directory if installation fails."""</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_newModuleLocation</span>
+        <span class="n">backup_root</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">destination</span><span class="o">.</span><span class="n">is_symlink</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The module destination must not be a symbolic link: </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">destination</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">replace_existing</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">destination</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The module destination already exists: </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="c1"># Keep the backup outside staging so failed recovery cannot delete it.</span>
+            <span class="n">backup_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">".</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s2">-backup-"</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_absPath</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">destination</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">backup_root</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">backup_root</span><span class="o">.</span><span class="n">rmdir</span><span class="p">()</span>
+                <span class="k">raise</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">backup_root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">backup</span> <span class="o">=</span> <span class="n">backup_root</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">backup</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not restore the original module; its files remain at </span><span class="si">{</span><span class="n">backup</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+                <span class="n">backup_root</span><span class="o">.</span><span class="n">rmdir</span><span class="p">()</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">backup_root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">backup_root</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Prepare configuration, render all files, then stage and publish the draft."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_specification</span><span class="p">(</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_destination</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readLicense</span><span class="p">()</span>
+        <span class="n">replace_existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_destination</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">statusColor</span><span class="si">}</span><span class="se">\n</span><span class="s2">Creating </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2"> Module: </span><span class="si">{</span><span class="n">endColor</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_module</span><span class="p">(</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_directory</span><span class="p">(</span><span class="n">replace_existing</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return relative filenames and text for a validated, prepared specification."""</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="k">if</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">"C"</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.h"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_c_header</span><span class="p">(),</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.c"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_c_source</span><span class="p">(),</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.i"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_c_swig</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">"C++"</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.h"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_cpp_header</span><span class="p">(),</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.cpp"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_cpp_source</span><span class="p">(),</span>
+                <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.i"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_cpp_swig</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">files</span><span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.rst"</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_rst</span><span class="p">(</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="n">files</span><span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="s1">'_UnitTest'</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"test_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.py"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_test</span><span class="p">(</span><span class="n">module_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">files</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write rendered files into the active staging directory."""</span>
+        <span class="k">for</span> <span class="n">relative_path</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">statusColor</span><span class="si">}</span><span class="s2">Creating </span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">endColor</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_path</span> <span class="o">/</span> <span class="n">relative_path</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"Done"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="moduleGenerator.readLicense">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.readLicense">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">readLicense</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read the Basilisk license file"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">statusColor</span> <span class="o">+</span> <span class="s2">"Importing License:"</span> <span class="o">+</span> <span class="n">endColor</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">with</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pathToSrc</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"LICENSE"</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"2016"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="s2">"Autonomous Vehicle Systems Lab, University of Colorado at Boulder"</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">copyrightHolder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">"Done"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="moduleGenerator.createRstFile">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.createRstFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createRstFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moduleType</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write the rendered documentation into the active staging directory."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_files</span><span class="p">({</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s2">.rst"</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_rst</span><span class="p">(</span><span class="n">moduleType</span><span class="p">)})</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_rst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the module documentation text without filesystem access."""</span>
+        <span class="n">rstFile</span> <span class="o">=</span> <span class="s1">'Executive Summary</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'-----------------</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">briefDescription</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Module Assumptions and Limitations</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'----------------------------------</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Describe the model assumptions, required inputs, and limits on valid use.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Message Connection Descriptions</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'-------------------------------</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'The following diagram and table list all the module input and output messages.  </span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'The module message connection is set by the user from Python.  </span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'The message type contains a link to the message structure definition, while the description </span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'provides information on what this message is used for.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'.. bsk-module-io:: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'    :caption: Module I/O Messages</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    :module-type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span><span class="p">:</span>
+                <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    input </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="k">for</span> <span class="n">descLine</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">])</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                    <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'        </span><span class="si">{</span><span class="n">descLine</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span><span class="p">:</span>
+                <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    output </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="k">for</span> <span class="n">descLine</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">])</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                    <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'        </span><span class="si">{</span><span class="n">descLine</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'This module does not define input or output messages.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Detailed Module Description</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'---------------------------</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Describe the implemented algorithm and mathematics, including units and reset behavior.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'This section is optional for modules whose behavior is fully explained above.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'User Guide</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'----------</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Provide a runnable Python example with configuration, message connections, and expected results.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'Explain which variables are configuration and which are runtime state.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'Use ``_UnitTest/test_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1">.py`` as a starting point for simulation setup;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'its smoke checks verify execution and publication, not numerical payload values.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'See :ref:`makingModules-3` for RST authoring instructions and :ref:`cModuleTemplate`</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">rstFile</span> <span class="o">+=</span> <span class="s1">'and :ref:`cppModuleTemplate` for completed module documentation examples.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">rstFile</span>
+
+<div class="viewcode-block" id="moduleGenerator.createTestFile">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.createTestFile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createTestFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write the rendered smoke test into the active staging directory."""</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'_UnitTest'</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"test_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s2">.py"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_files</span><span class="p">({</span><span class="n">test_path</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_test</span><span class="p">(</span><span class="n">module_type</span><span class="p">)})</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the smoke test text without filesystem access."""</span>
+        <span class="n">test_file</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">):</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'# </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'import numpy as np</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'from Basilisk.architecture import messaging</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'from Basilisk.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_python_package</span><span class="si">}</span><span class="s1"> import </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1"> as module_under_test</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'from Basilisk.utilities import SimulationBaseClass, macros</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'def test_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1">():</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    """Run the draft module and check its output message publication.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    **Validation Test Description**</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    Connect blank input messages and execute three scheduled updates.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    Check the module call count, output written status, sample times,</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    and message write times. These checks verify scheduling and messaging;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    add numerical payload checks when the module algorithm is implemented.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    """</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    task_name = "unitTask"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    simulation = SimulationBaseClass.SimBaseClass()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    time_step = macros.sec2nano(0.5)  # [ns]</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    process = simulation.CreateNewProcess("TestProcess")</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    process.addTask(simulation.CreateNewTask(task_name, time_step))</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    # Set up the module to be tested.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">if</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">"C++"</span><span class="p">:</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    module = module_under_test.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">elif</span> <span class="n">module_type</span> <span class="o">==</span> <span class="s2">"C"</span><span class="p">:</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    module = module_under_test.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1">()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    module.ModelTag = "</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1">Tag"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    simulation.AddModelToTask(task_name, module)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    # Configure and retain blank input messages, then subscribe the module.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    input_messages = []</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    input_payload = messaging.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload()</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    input_message = messaging.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">().write(input_payload)</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    module.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">.subscribeTo(input_message)</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    input_messages.append(input_message)</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    # Record each output after the module runs in the same task.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    output_readers = {</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'        "</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">": messaging.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Reader(),</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    }</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    output_recorders = </span><span class="si">{}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    for name, reader in output_readers.items():</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        reader.subscribeTo(getattr(module, name))</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        recorder = reader.recorder()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        output_recorders[name] = recorder</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        simulation.AddModelToTask(task_name, recorder)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    simulation.InitializeSimulation()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    simulation.ConfigureStopTime(2 * time_step)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    simulation.ExecuteSimulation()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    expected_times = np.array([0, time_step, 2 * time_step], dtype=np.uint64)  # [ns]</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    assert module.CallCounts == len(expected_times), "Module did not run three times"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    for name, recorder in output_recorders.items():</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        assert output_readers[name].isWritten(), f"</span><span class="si">{name}</span><span class="s1"> was never written"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        np.testing.assert_array_equal(</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'            recorder.times(), expected_times, err_msg=f"</span><span class="si">{name}</span><span class="s1"> recording times"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        )</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        np.testing.assert_array_equal(</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'            recorder.timesWritten(), expected_times, err_msg=f"</span><span class="si">{name}</span><span class="s1"> write times"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'        )</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'    # Add module-specific numerical payload checks here.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="s1">'if __name__ == "__main__":</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">test_file</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    test_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span><span class="si">}</span><span class="s1">()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">test_file</span>
+
+<div class="viewcode-block" id="moduleGenerator.createCppModule">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.createCppModule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createCppModule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a C++ draft, preserving existing files if generation fails."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_module</span><span class="p">(</span><span class="s2">"C++"</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_cpp_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C++ header text without filesystem access."""</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">briefDescription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">briefDescription</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">variableList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variableList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">headerFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#ifndef </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">_H</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#define </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">_H</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#include "architecture/_GeneralModuleFiles/sys_model.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="c1"># loop over message definition includes</span>
+        <span class="n">includedMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="c1"># ensure we don't include message definition files multiple times</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">includedMsgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C'</span><span class="p">:</span>
+                    <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#include "architecture/msgPayloadDefC/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload.h"</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C++'</span><span class="p">:</span>
+                    <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#include "architecture/msgPayloadDefCpp/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload.h"</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">includedMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">])</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#include "architecture/utilities/bskLogging.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#include "architecture/messaging/messaging.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'/*! @brief </span><span class="si">{</span><span class="n">briefDescription</span><span class="si">}</span><span class="se">\n</span><span class="s1"> */</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'class </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">: public SysModel </span><span class="se">{{\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'public:</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">();</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    ~</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">() = default;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'    void Reset(uint64_t CurrentSimNanos);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'    void UpdateState(uint64_t CurrentSimNanos);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'public:</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    ReadFunctor&lt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload&gt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    Message&lt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload&gt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'    BSKLogger bskLogger;              //!&lt; BSK Logging</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variableList</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">variableList</span><span class="p">:</span>
+                <span class="n">varName</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'var'</span><span class="p">];</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    /** setter for `</span><span class="si">{</span><span class="n">varName</span><span class="si">}</span><span class="s2">` property */</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    void set</span><span class="si">{</span><span class="n">varName</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">varName</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">);</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    /** getter for `</span><span class="si">{</span><span class="n">varName</span><span class="si">}</span><span class="s2">` property */</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1"> get</span><span class="si">{</span><span class="n">varName</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">varName</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">() '</span>
+                               <span class="sa">f</span><span class="s1">'const </span><span class="se">{{</span><span class="s1">return this-&gt;</span><span class="si">{</span><span class="n">varName</span><span class="si">}</span><span class="s1">;</span><span class="se">}}\n</span><span class="s1">'</span><span class="p">)</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'private:</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">variableList</span><span class="p">:</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'};</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">#endif</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="n">headerFile</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_cpp_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C++ source text without filesystem access."""</span>
+        <span class="n">modulePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">variableList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variableList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">defFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#include "</span><span class="si">{</span><span class="n">modulePath</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'#include &lt;iostream&gt;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'#include &lt;cstring&gt;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*! This is the constructor for the module class.  It sets default variable</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    values and initializes the various parts of the model */</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_className</span> <span class="o">+</span> <span class="s1">'::'</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_className</span> <span class="o">+</span> <span class="s1">'()</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">variableList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // initialize module variables</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">variableList</span><span class="p">:</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    this-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1"> = </span><span class="se">{{}}</span><span class="s1">;</span><span class="se">\n</span><span class="s1">'</span>
+
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*! This method is used to reset the module and checks that required input messages are connected.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'*/</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">::Reset(uint64_t CurrentSimNanos [[maybe_unused]])</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // check that required input messages are connected</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    if (!this-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">.isLinked()) </span><span class="se">{{\n</span><span class="s1">'</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'        bskLogger.bskError("</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1"> was not linked.");</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    }</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*! This is the main method that gets called every time the module is updated.  '</span> \
+                   <span class="s1">'Provide an appropriate description.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'*/</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">::UpdateState(uint64_t CurrentSimNanos)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer;  //!&lt; local copy of message buffer</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // always zero the output message buffers before assigning values</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer = this-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">.zeroMsgPayload;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // read in the input messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer = this-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">();</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // do some math and stuff to populate the output messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    (void) </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // write to the output messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    this-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">.write(&amp;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer, this-&gt;moduleID, CurrentSimNanos);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+
+        <span class="k">if</span> <span class="n">variableList</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">variableList</span><span class="p">:</span>
+                <span class="n">varName</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'var'</span><span class="p">]</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_className</span><span class="si">}</span><span class="s1">::set</span><span class="si">{</span><span class="n">varName</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">varName</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1"> var)</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    this-&gt;</span><span class="si">{</span><span class="n">varName</span><span class="si">}</span><span class="s1"> = var;</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">defFile</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_cpp_swig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C++ SWIG interface text without filesystem access."""</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">swigFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%module </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "architecture/utilities/bskException.swg"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%d</span><span class="s1">efault_bsk_exception();</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    #include "</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%pythoncode %{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'    from Basilisk.architecture.swig_common_model import *</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "std_string.i"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "swig_conly_data.i"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "sys_model.i"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%include "</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">includedMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="c1"># ensure we don't include message definition files multiple times</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">includedMsgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C'</span><span class="p">:</span>
+                    <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%include "architecture/msgPayloadDefC/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload.h"</span><span class="se">\n</span><span class="s1">'</span>
+                    <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'struct </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C;</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C++'</span><span class="p">:</span>
+                    <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%include "architecture/msgPayloadDefCpp/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload.h"</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">includedMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">])</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%pythoncode %{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'import sys</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'protectAllClasses(sys.modules[__name__])</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">swigFile</span>
+
+<div class="viewcode-block" id="moduleGenerator.createCModule">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.moduleGenerator.createCModule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createCModule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a C draft, preserving existing files if generation fails."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_module</span><span class="p">(</span><span class="s2">"C"</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_c_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C header text without filesystem access."""</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">briefDescription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">briefDescription</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">variableList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variableList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">headerFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#ifndef </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">_H</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#define </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1">_H</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#include &lt;stdint.h&gt;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="c1"># loop over message definition includes</span>
+        <span class="n">includedMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="c1"># ensure we don't include message definition files multiple times</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">includedMsgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C'</span><span class="p">:</span>
+                    <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#include "cMsgCInterface/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C.h"</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">includedMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">])</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#include "architecture/utilities/bskLogging.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'/*! @brief </span><span class="si">{</span><span class="n">briefDescription</span><span class="si">}</span><span class="se">\n</span><span class="s1"> */</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'typedef struct </span><span class="se">{{\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'    /* declare module IO interfaces */</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variableList</span><span class="p">):</span>
+            <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">variableList</span><span class="p">:</span>
+                <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">;  //!&lt; </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"desc"</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'    BSKLogger *bskLogger;  //!&lt; BSK Logging</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'</span><span class="se">}}</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#ifdef __cplusplus</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'extern "C" {</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#endif</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    void SelfInit_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config *configData, int64_t moduleID);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    void Update_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config *configData, uint64_t callTime, int64_t moduleID);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    void Reset_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config *configData, uint64_t callTime, int64_t moduleID);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#ifdef __cplusplus</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#endif</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">headerFile</span> <span class="o">+=</span> <span class="s1">'#endif</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">headerFile</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_c_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C source text without filesystem access."""</span>
+        <span class="n">modulePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">defFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'#include "</span><span class="si">{</span><span class="n">modulePath</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'#include "string.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*!</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    This method initializes the output messages for this module.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param configData The configuration data associated with this module</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param moduleID The module identifier</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' */</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void SelfInit_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config  *configData, int64_t moduleID)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    (void) moduleID;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C_init(&amp;configData-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*! This method performs a complete reset of the module.  Local module variables that retain</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    time varying states between function calls are reset to their default values.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    Check if required input messages are connected.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param configData The configuration data associated with the module</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param callTime [ns] time the method is called</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param moduleID The module identifier</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'*/</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void Reset_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config *configData, uint64_t callTime, int64_t moduleID)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    (void) callTime;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    (void) moduleID;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // check if the required message has not been connected</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    if (!</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C_isLinked(&amp;configData-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">)) </span><span class="se">{{\n</span><span class="s1">'</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'        _bskError(configData-&gt;bskLogger, "Error: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span> \
+                       <span class="o">+</span> <span class="s1">' was not connected.");</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    }</span><span class="se">\n</span><span class="s1">'</span>
+
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'/*! Add a description of what this main Update() routine does for this module</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param configData The configuration data associated with the module</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param callTime The clock time at which the function was called (nanoseconds)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">' @param moduleID The module identifier</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'*/</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'void Update_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">Config *configData, uint64_t callTime, int64_t moduleID)</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer;  //!&lt; local copy of message buffer</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // always zero the output message buffers before assigning values</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer = </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C_zeroMsgPayload();</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // read in the input messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer = </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C_read(&amp;configData-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // do some math and stuff to populate the output messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    (void) </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer;</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'    // write to the output messages</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="n">defFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C_write(&amp;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">Buffer, &amp;configData-&gt;</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"var"</span><span class="p">]</span><span class="si">}</span><span class="s1">, moduleID, callTime);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">defFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">defFile</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_render_c_swig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the C SWIG interface text without filesystem access."""</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">moduleName</span>
+        <span class="n">inMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inMsgList</span>
+        <span class="n">outMsgList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outMsgList</span>
+        <span class="n">licenseC</span> <span class="o">=</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_licenseText</span> <span class="o">+</span> <span class="s2">"*/</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">swigFile</span> <span class="o">=</span> <span class="n">licenseC</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%module </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "architecture/utilities/bskException.swg"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%d</span><span class="s1">efault_bsk_exception();</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'    #include "</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%pythoncode %{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'    from Basilisk.architecture.swig_common_model import *</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%i</span><span class="s1">nclude "swig_c_wrap.i"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%c_wrap(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">);</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%include "</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.h"</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">includedMsgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">inMsgList</span> <span class="o">+</span> <span class="n">outMsgList</span><span class="p">:</span>
+            <span class="c1"># ensure we don't include message definition files multiple times</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">includedMsgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s1">'wrap'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'C'</span><span class="p">:</span>
+                    <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'%include "architecture/msgPayloadDefC/</span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">Payload.h"</span><span class="se">\n</span><span class="s1">'</span>
+                    <span class="n">swigFile</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'struct </span><span class="si">{</span><span class="n">msg</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span><span class="si">}</span><span class="s1">_C;</span><span class="se">\n</span><span class="s1">'</span>
+                <span class="n">includedMsgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s1">'type'</span><span class="p">])</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%pythoncode %{</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'import sys</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'protectAllClasses(sys.modules[__name__])</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'%}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">swigFile</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">swigFile</span></div>
+
+
+
+<div class="viewcode-block" id="fillCppInfo">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.fillCppInfo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fillCppInfo</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fill in the C++ module information.  This should be edited before running to meet the new module needs."""</span>
+    <span class="c1"># define the path where the Basilisk module folder will be</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">modulePathRelSrc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"moduleTemplates"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+
+    <span class="c1"># define module name and brief description</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">moduleName</span> <span class="o">=</span> <span class="s2">"autoCppModule"</span>        <span class="c1"># should be lower camel case</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">briefDescription</span> <span class="o">=</span> <span class="s2">"This is an auto-created sample C++ module.  The description is included with "</span> \
+        <span class="s2">"the module class definition"</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">copyrightHolder</span> <span class="o">=</span> <span class="s2">"Autonomous Vehicle Systems Lab, University of Colorado Boulder"</span>
+
+    <span class="c1"># provide list of input messages</span>
+    <span class="c1"># leave list empty if there are no input messages</span>
+    <span class="n">inMsgList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'someInMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'some2InMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'CSSConfigMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'anotherInMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'CSSConfigLogMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'anotherCppInMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C++'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">inMsgList</span> <span class="o">=</span> <span class="n">inMsgList</span>
+
+    <span class="c1"># provide list of output messages</span>
+    <span class="c1"># leave list empty if there are no input messages</span>
+    <span class="n">outMsgList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">outMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'some2OutMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Output message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">outMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'SCStatesMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'someOutMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Output message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">outMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'DataStorageStatusMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'anotherCppOutMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Output message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C++'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">outMsgList</span> <span class="o">=</span> <span class="n">outMsgList</span>
+
+    <span class="c1"># provide list of module variables</span>
+    <span class="c1"># leave list empty if you are not setting up module variables at this stage</span>
+    <span class="n">variableList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variableList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'double'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'varDouble'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'[units] variable description'</span><span class="p">})</span>
+    <span class="n">variableList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'varInt'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'[units] variable description'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">variableList</span> <span class="o">=</span> <span class="n">variableList</span></div>
+
+
+<div class="viewcode-block" id="fillCInfo">
+<a class="viewcode-back" href="../Documentation/utilities/makeDraftModule.html#makeDraftModule.fillCInfo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fillCInfo</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fill in the C module information.  This should be edited before running to meet the new module needs."""</span>
+    <span class="c1"># define the path where the Basilisk module folder will be</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">modulePathRelSrc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"moduleTemplates"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+
+    <span class="c1"># define module name and brief description</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">moduleName</span> <span class="o">=</span> <span class="s2">"autoCModule"</span>        <span class="c1"># should be lower camel case</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">briefDescription</span> <span class="o">=</span> <span class="s2">"This is an auto-created sample C module.  The description is included with "</span> \
+        <span class="s2">"the module class definition"</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">copyrightHolder</span> <span class="o">=</span> <span class="s2">"Autonomous Vehicle Systems Lab, University of Colorado Boulder"</span>
+
+    <span class="c1"># provide list of input messages</span>
+    <span class="c1"># leave list empty if there are no input messages</span>
+    <span class="n">inMsgList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'someInMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'some2InMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">inMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'CSSConfigMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'anotherInMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Input message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">inMsgList</span> <span class="o">=</span> <span class="n">inMsgList</span>
+
+    <span class="c1"># provide list of output messages</span>
+    <span class="c1"># leave list empty if there are no input messages</span>
+    <span class="n">outMsgList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">outMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'AttRefMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'some2OutMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Output message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">outMsgList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'SCStatesMsg'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'someOutMsg'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'Output message description.'</span><span class="p">,</span> <span class="s1">'wrap'</span><span class="p">:</span> <span class="s1">'C'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">outMsgList</span> <span class="o">=</span> <span class="n">outMsgList</span>
+
+    <span class="c1"># provide list of module variables</span>
+    <span class="c1"># leave list empty if you are not setting up module variables at this stage</span>
+    <span class="n">variableList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">variableList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'double'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'varDouble'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'[units] variable description'</span><span class="p">})</span>
+    <span class="n">variableList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'type'</span><span class="p">:</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'var'</span><span class="p">:</span> <span class="s1">'varInt'</span><span class="p">,</span> <span class="s1">'desc'</span><span class="p">:</span> <span class="s1">'[units] variable description'</span><span class="p">})</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">variableList</span> <span class="o">=</span> <span class="n">variableList</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">makeModule</span> <span class="o">=</span> <span class="n">moduleGenerator</span><span class="p">()</span>
+
+    <span class="n">fillCppInfo</span><span class="p">(</span><span class="n">makeModule</span><span class="p">)</span>
+    <span class="n">makeModule</span><span class="o">.</span><span class="n">createCppModule</span><span class="p">()</span>
+
+    <span class="n">fillCInfo</span><span class="p">(</span><span class="n">makeModule</span><span class="p">)</span>
+    <span class="n">makeModule</span><span class="o">.</span><span class="n">createCModule</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

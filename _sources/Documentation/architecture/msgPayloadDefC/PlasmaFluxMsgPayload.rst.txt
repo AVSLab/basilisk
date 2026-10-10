@@ -1,0 +1,10 @@
+.. _PlasmaFluxMsgPayload:
+
+PlasmaFluxMsgPayload
+====================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PlasmaFluxMsgPayload.h
+   :project: msgPayloadDefC
+

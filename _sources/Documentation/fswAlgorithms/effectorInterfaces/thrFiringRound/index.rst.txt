@@ -1,0 +1,11 @@
+:orphan:
+
+.. _Folder_thrFiringRound:
+
+thrFiringRound
+==============
+
+:doc:`Module documentation <thrFiringRound>`
+
+:doc:`Unit tests <_UnitTest/index>`
+

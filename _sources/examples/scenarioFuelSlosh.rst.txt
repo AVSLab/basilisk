@@ -1,0 +1,15 @@
+.. _scenarioFuelSlosh:
+
+scenarioFuelSlosh
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioFuelSlosh
+   :members:
+   :show-inheritance:
+

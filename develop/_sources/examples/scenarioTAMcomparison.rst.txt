@@ -1,0 +1,15 @@
+.. _scenarioTAMcomparison:
+
+scenarioTAMcomparison
+=====================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Files:
+
+.. bsk-module-guide-end::
+
+.. automodule:: scenarioTAMcomparison
+   :members:
+   :show-inheritance:
+

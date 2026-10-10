@@ -1,0 +1,390 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>test_fuelTankConnections &mdash; Basilisk 2.13.0b0
+ documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=e15c2667" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b7a2d835"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=3cd7d658"></script>
+      <script src="../_static/js/sidebar.js?v=65f09347"></script>
+      <script src="../_static/js/image-viewer.js?v=2f0cd447"></script>
+      <script src="../_static/js/sticky-tables.js?v=230b6c4d"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #CFB87C" >
+  
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/Basilisk-Logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+  
+  <span class="beta-label bsk-logo-beta" role="img"
+        aria-label="Beta documentation for the upcoming Basilisk release"
+        title="Documentation for the upcoming Basilisk release">BETA</span>
+  
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basilisk:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Build.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Learn.html">Learning Basilisk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../supportData.html">Support Data Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ExternalSites.html">External Sites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_SDK:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/overview.html">About Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/installing.html">Installing Basilisk Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Extensions/writing.html">Quick Start: Writing a Basilisk Extension</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">BSK_RL:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://avslab.github.io/bsk_rl/">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Vizard:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/Vizard.html">About Vizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardDownload.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/buildFromSource/index.html">Building from Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardReleaseNotes.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/VizardGUI.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardAdvanced/index.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vizard/vizardGallery.html">Video Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #CFB87C" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Basilisk</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">test_fuelTankConnections</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for test_fuelTankConnections</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ISC License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and/or distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+
+<span class="sd">"""Verify Python lifetimes and native access through fuel-tank connections."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.architecture.bskLogging</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasiliskError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Basilisk.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fuelTank</span><span class="p">,</span>
+    <span class="n">linearSpringMassDamper</span><span class="p">,</span>
+    <span class="n">sphericalPendulum</span><span class="p">,</span>
+    <span class="n">stateArchitecture</span><span class="p">,</span>
+    <span class="n">thrusterDynamicEffector</span><span class="p">,</span>
+    <span class="n">thrusterStateEffector</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="connection">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.connection">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">,</span> <span class="s2">"addThrusterSet"</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">ThrusterStateEffector</span><span class="p">,</span> <span class="s2">"addThrusterSet"</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">linearSpringMassDamper</span><span class="o">.</span><span class="n">LinearSpringMassDamper</span><span class="p">,</span> <span class="s2">"pushFuelSloshParticle"</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">sphericalPendulum</span><span class="o">.</span><span class="n">SphericalPendulum</span><span class="p">,</span> <span class="s2">"pushFuelSloshParticle"</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"dynamicThruster"</span><span class="p">,</span> <span class="s2">"stateThruster"</span><span class="p">,</span> <span class="s2">"springMassDamper"</span><span class="p">,</span> <span class="s2">"pendulum"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">connection</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Supply each concrete effector and its tank connection method."""</span>
+    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">param</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_tank</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Create a tank with a model that can compute finite mass properties."""</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTank</span><span class="p">()</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelConstantVolume</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mf">12.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setTankModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tank</span>
+
+
+<div class="viewcode-block" id="test_tank_retains_connections">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_tank_retains_connections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_tank_retains_connections</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Each connection survives local scope and is released with its tank."""</span>
+    <span class="n">constructor</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">connection</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">():</span>
+        <span class="n">effector</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">tank</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">effector</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">thisown</span>
+        <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+
+    <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(),</span> <span class="n">connect</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="c1"># Fail on the old wrappers without dereferencing their dangling C++ pointers.</span>
+    <span class="k">assert</span> <span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">second</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">tank_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">tank</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">tank</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">tank_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">second</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_connection_survives_tank">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_connection_survives_tank">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_connection_survives_tank</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A tank neither owns nor destroys an effector still held by the caller."""</span>
+    <span class="n">constructor</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">connection</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">tank</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="n">tank_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">tank</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">tank</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">tank_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">thisown</span>
+    <span class="n">effector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">=</span> <span class="s2">"survivingEffector"</span>
+    <span class="k">assert</span> <span class="n">effector</span><span class="o">.</span><span class="n">ModelTag</span> <span class="o">==</span> <span class="s2">"survivingEffector"</span></div>
+
+
+
+<div class="viewcode-block" id="test_connection_cycle_is_collectible">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_connection_cycle_is_collectible">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_connection_cycle_is_collectible</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""User references back to the tank remain visible to garbage collection."""</span>
+    <span class="n">constructor</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">connection</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">tank</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">effector</span><span class="p">,</span> <span class="s2">"tank_reference"</span><span class="p">,</span> <span class="n">tank</span><span class="p">)</span>
+    <span class="n">tank_ref</span><span class="p">,</span> <span class="n">effector_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">tank</span><span class="p">),</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">tank</span><span class="p">,</span> <span class="n">effector</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">tank_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">effector_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="test_thruster_mass_flow_after_scope_exit">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_thruster_mass_flow_after_scope_exit">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"thruster_module"</span><span class="p">,</span> <span class="p">[</span><span class="n">thrusterDynamicEffector</span><span class="p">,</span> <span class="n">thrusterStateEffector</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"dynamicThruster"</span><span class="p">,</span> <span class="s2">"stateThruster"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_thruster_mass_flow_after_scope_exit</span><span class="p">(</span><span class="n">thruster_module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The tank can read thruster flow after the creating helper has returned."""</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">thrust</span> <span class="o">=</span> <span class="mf">9.80665</span>  <span class="c1"># [N]</span>
+    <span class="n">specific_impulse</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># [s]</span>
+    <span class="n">standard_gravity</span> <span class="o">=</span> <span class="mf">9.80665</span>  <span class="c1"># [m/s^2]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">():</span>
+        <span class="n">constructor</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span>
+            <span class="k">if</span> <span class="n">thruster_module</span> <span class="ow">is</span> <span class="n">thrusterDynamicEffector</span>
+            <span class="k">else</span> <span class="n">thrusterStateEffector</span><span class="o">.</span><span class="n">ThrusterStateEffector</span>
+        <span class="p">)</span>
+        <span class="n">effector</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">thruster_module</span><span class="o">.</span><span class="n">THRSimConfig</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">MaxThrust</span> <span class="o">=</span> <span class="n">thrust</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">steadyIsp</span> <span class="o">=</span> <span class="n">specific_impulse</span>
+        <span class="n">effector</span><span class="o">.</span><span class="n">addThruster</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thruster_module</span> <span class="ow">is</span> <span class="n">thrusterDynamicEffector</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">ComputeThrusterFire</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+            <span class="n">manager</span><span class="o">.</span><span class="n">getStateObject</span><span class="p">(</span><span class="n">effector</span><span class="o">.</span><span class="n">nameOfKappaState</span><span class="p">)</span><span class="o">.</span><span class="n">setState</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">]])</span>  <span class="c1"># [-] full thrust</span>
+            <span class="n">effector</span><span class="o">.</span><span class="n">computeDerivatives</span><span class="p">(</span>
+                <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="n">tank</span><span class="o">.</span><span class="n">addThrusterSet</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+
+    <span class="n">effector_ref</span> <span class="o">=</span> <span class="n">connect</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">effector_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">updateEffectorMassProps</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">expected_rate</span> <span class="o">=</span> <span class="o">-</span><span class="n">thrust</span><span class="o">/</span><span class="p">(</span><span class="n">standard_gravity</span><span class="o">*</span><span class="n">specific_impulse</span><span class="p">)</span>  <span class="c1"># [kg/s]</span>
+    <span class="k">assert</span> <span class="n">tank</span><span class="o">.</span><span class="n">effProps</span><span class="o">.</span><span class="n">mEffDot</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_rate</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_slosh_allocation_after_scope_exit">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_slosh_allocation_after_scope_exit">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">"constructor"</span><span class="p">,</span> <span class="p">[</span><span class="n">linearSpringMassDamper</span><span class="o">.</span><span class="n">LinearSpringMassDamper</span><span class="p">,</span>
+                    <span class="n">sphericalPendulum</span><span class="o">.</span><span class="n">SphericalPendulum</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"springMassDamper"</span><span class="p">,</span> <span class="s2">"pendulum"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_slosh_allocation_after_scope_exit</span><span class="p">(</span><span class="n">constructor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The tank can retrieve particle mass and assign its share of fuel flow."""</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+    <span class="n">leak_rate</span> <span class="o">=</span> <span class="mf">0.2</span>  <span class="c1"># [kg/s]</span>
+    <span class="n">particle_mass</span> <span class="o">=</span> <span class="mf">4.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setFuelLeakRate</span><span class="p">(</span><span class="n">leak_rate</span><span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">():</span>
+        <span class="n">particle</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">massInit</span> <span class="o">=</span> <span class="n">particle_mass</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+        <span class="n">tank</span><span class="o">.</span><span class="n">pushFuelSloshParticle</span><span class="p">(</span><span class="n">particle</span><span class="o">=</span><span class="n">particle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+
+    <span class="n">particle_ref</span> <span class="o">=</span> <span class="n">connect</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">particle_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">updateEffectorMassProps</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">tank_mass</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">effProps</span><span class="o">.</span><span class="n">mEff</span>
+    <span class="n">expected_rate</span> <span class="o">=</span> <span class="o">-</span><span class="n">leak_rate</span><span class="o">*</span><span class="n">particle_mass</span><span class="o">/</span><span class="p">(</span><span class="n">tank_mass</span> <span class="o">+</span> <span class="n">particle_mass</span><span class="p">)</span>  <span class="c1"># [kg/s]</span>
+    <span class="k">assert</span> <span class="n">particle_ref</span><span class="p">()</span><span class="o">.</span><span class="n">fuelMass</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">particle_mass</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">particle_ref</span><span class="p">()</span><span class="o">.</span><span class="n">fuelMassDot</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">expected_rate</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">tank</span><span class="o">.</span><span class="n">effProps</span><span class="o">.</span><span class="n">mEffDot</span> <span class="o">+</span> <span class="n">particle_ref</span><span class="p">()</span><span class="o">.</span><span class="n">fuelMassDot</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="o">-</span><span class="n">leak_rate</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_null_connection_is_rejected">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_null_connection_is_rejected">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"method"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"addThrusterSet"</span><span class="p">,</span> <span class="s2">"pushFuelSloshParticle"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_null_connection_is_rejected</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Null connections raise before entering the lists used by mass assembly."""</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">_make_tank</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"non-null"</span><span class="p">):</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">tank</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">updateEffectorMassProps</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">tank</span><span class="o">.</span><span class="n">effProps</span><span class="o">.</span><span class="n">mEffDot</span> <span class="o">==</span> <span class="mf">0.0</span></div>
+
+
+
+<div class="viewcode-block" id="test_dynamic_thruster_requires_tank_model">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/FuelTank/_UnitTest/test_fuelTankConnections.html#test_fuelTankConnections.test_dynamic_thruster_requires_tank_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_dynamic_thruster_requires_tank_model</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A rejected connection is not retained and can be retried after configuration."""</span>
+    <span class="n">tank</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTank</span><span class="p">()</span>
+    <span class="n">effector</span> <span class="o">=</span> <span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">()</span>
+    <span class="n">effector_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">BasiliskError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">"setTankModel"</span><span class="p">):</span>
+        <span class="n">tank</span><span class="o">.</span><span class="n">addThrusterSet</span><span class="p">(</span><span class="n">effector</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">effector</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">effector_ref</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">fuelTank</span><span class="o">.</span><span class="n">FuelTankModelConstantVolume</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">propMassInit</span> <span class="o">=</span> <span class="mf">12.0</span>  <span class="c1"># [kg]</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">radiusTankInit</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m]</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">setTankModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">addThrusterSet</span><span class="p">(</span><span class="n">thrusterDynamicEffector</span><span class="o">.</span><span class="n">ThrusterDynamicEffector</span><span class="p">())</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">stateArchitecture</span><span class="o">.</span><span class="n">DynParamManager</span><span class="p">()</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">registerStates</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+    <span class="n">tank</span><span class="o">.</span><span class="n">updateEffectorMassProps</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">tank</span><span class="o">.</span><span class="n">effProps</span><span class="o">.</span><span class="n">mEffDot</span> <span class="o">==</span> <span class="mf">0.0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Autonomous Vehicle Systems (AVS) Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

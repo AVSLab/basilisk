@@ -1,0 +1,18 @@
+.. _Folder_attDetermination:
+
+attDetermination
+================
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   cssWlsEst <CSSEst/cssWlsEst>
+   headingSuKF <headingSuKF/headingSuKF>
+   inertialUKF <InertialUKF/inertialUKF>
+   okeefeEKF <okeefeEKF/okeefeEKF>
+   sunlineEKF <sunlineEKF/sunlineEKF>
+   sunlineEphem <sunlineEphem/sunlineEphem>
+   sunlineSEKF <sunlineSEKF/sunlineSEKF>
+   sunlineSuKF <sunlineSuKF/sunlineSuKF>
+   sunlineUKF <sunlineUKF/sunlineUKF>

@@ -1,0 +1,10 @@
+.. _PixelLineFilterMsgPayload:
+
+PixelLineFilterMsgPayload
+=========================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: PixelLineFilterMsgPayload.h
+   :project: msgPayloadDefC
+

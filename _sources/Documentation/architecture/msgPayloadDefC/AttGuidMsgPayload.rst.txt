@@ -1,0 +1,10 @@
+.. _AttGuidMsgPayload:
+
+AttGuidMsgPayload
+=================
+
+.. bsk-module-guide-end::
+
+.. doxygenfile:: AttGuidMsgPayload.h
+   :project: msgPayloadDefC
+
