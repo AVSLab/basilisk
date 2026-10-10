@@ -7,6 +7,12 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1309: The :ref:`camera` image-corruption module has no pose-input
+  message. Independently moving cameras can use message-driven prescribed
+  platforms registered as their Vizard parents; see :ref:`scenarioMovingCamera`.
+  This demonstrates the existing moving-platform alternative and does not add
+  a camera pose-input port or validate rendered images.
+
 - The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
   matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order
   :math:`(\omega\,\Delta t)^2`. The orientation is now advanced as a rotation about the planet angular velocity.
