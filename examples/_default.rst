@@ -152,6 +152,14 @@ Planet Albedo
 Spacecraft Sensors
 ------------------
 
+Instrument Cameras
+^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   Independent Moving Camera Platforms <scenarioMovingCamera>
+
 Coarse Sun Sensors
 ^^^^^^^^^^^^^^^^^^
 

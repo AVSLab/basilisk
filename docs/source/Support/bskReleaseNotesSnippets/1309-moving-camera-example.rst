@@ -1,0 +1,1 @@
+- Added :ref:`scenarioMovingCamera`, demonstrating two message-driven instrument camera platforms on a spacecraft with fixed prescribed attitude, with offline pose and visualization-wiring tests. This documents the moving-platform alternative for issue 1309 without adding a camera pose-input port.

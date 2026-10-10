@@ -124,6 +124,35 @@ that should be supplied must be provided a non-zero filter parameter value.
 
 User Guide
 ----------
+Moving a Camera Independently of the Spacecraft
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A camera can be fixed to a moving platform instead of to the spacecraft hub.
+Use :ref:`prescribedMotionStateEffector` with rotation and translation input
+messages, register its ``prescribedMotionConfigLogOutMsg`` with
+``vizSupport.enableUnityVisualization()``, and use that platform's visualization
+name as the camera configuration's ``parentName``. The camera's
+``cameraPos_B`` and ``sigma_CB`` then describe its fixed pose relative to the
+platform, even though the message field names retain B-frame notation.
+The platform's output reports the center-of-mass position; set ``r_PcP_P`` to
+zero when using it as the camera parent-frame origin.
+
+:ref:`scenarioMovingCamera` demonstrates two independently commanded cameras,
+including retargeting through messages, while the host attitude remains fixed.
+The platforms in that example are massless kinematic frames, so they do not
+model actuator dynamics or reaction torques. A physical platform can instead
+include mass and inertia, with the appropriate host attitude control.
+
+This approach uses the existing platform message subscriptions. It does not
+add a pose input to the ``Camera`` image-corruption module. That module's
+``cameraConfigOutMsg`` can still supply the camera's fixed settings, with
+``parentName`` set to the platform's visualization name. Vizard supplies images
+through ``imageInMsg`` as usual. Rendering must be verified with Vizard; the
+offline scenario checks pose messages and visualization wiring only.
+
+Image Corruption Setup
+~~~~~~~~~~~~~~~~~~~~~~
+
 The test and these few lines show an example setup for the module.
 
 .. code-block:: python
