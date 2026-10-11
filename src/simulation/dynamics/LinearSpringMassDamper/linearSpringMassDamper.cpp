@@ -78,12 +78,19 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
  */
 void LinearSpringMassDamper::linkInStates(DynParamManager& states)
 {
-    // - Grab access to gravity
-    this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
 
-    // - Grab access to c_B and cPrime_B
-    this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
-    this->cPrime_B = states.getPropertyReference(this->propName_centerOfMassPrimeSC);
+    // Get access to the hub's states needed for dynamic coupling
+    this->hubOmega = states.getStateObject("hubOmega");
+
+    const std::string gravName = this->propName_vehicleGravity.empty() ? "g_N" : this->propName_vehicleGravity;
+    this->g_N = states.getPropertyReference(gravName);
+
+    if (!this->propName_centerOfMassSC.empty()) {
+        this->c_B = states.getPropertyReference(this->propName_centerOfMassSC);
+    }
+    if (!this->propName_centerOfMassPrimeSC.empty()) {
+        this->cPrime_B = states.getPropertyReference(this->propName_centerOfMassPrimeSC);
+    }
 
     return;
 }
@@ -345,7 +352,7 @@ void LinearSpringMassDamper::addPrescribedMotionCouplingContributions(BackSubMat
     Eigen::Vector3d vecRotTerm5 = - this->massSMD * rTilde_FcB_P * tHat_P * (this->aRho.transpose() * term2)
             - this->massSMD * rTilde_FcB_P * tHat_P * (this->bRho.transpose() * term3);
     backSubContr.vecRot +=
-            + vecRotTerm2
+             vecRotTerm2
             + vecRotTerm3
             + vecRotTerm4
             + vecRotTerm5;
