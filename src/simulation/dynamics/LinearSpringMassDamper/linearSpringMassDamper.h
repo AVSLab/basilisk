@@ -96,6 +96,9 @@ class LinearSpringMassDamper final
                             Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
     void addPrescribedMotionCouplingContributions(BackSubMatrices&
         backSubContr) override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+
+    // Properties required for prescribed motion branching/attachment
+    StateData* hubOmega;       //!< [rad/s] hub inertial angular velocity vector
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
