@@ -290,13 +290,15 @@ def test_AzElR_rates():
 
 
 @pytest.mark.parametrize("tilt_deg", [0.0, 30.0, 60.0])
-def test_planetFixedSpacecraftZeroRates(tilt_deg):
+@pytest.mark.parametrize("v_PN_N", [[0.0, 0.0, 0.0], [3.0e4, -1.0e3, 2.0e3]])  # [m/s]
+def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
     """
     Tests that a spacecraft fixed in the planet frame has zero range, azimuth and elevation rates and zero
     velocity relative to the ground location, when the planet spin axis is tilted away from the inertial
     3-axis.
 
     :param tilt_deg: [deg] angle between the planet spin axis and the inertial 3-axis
+    :param v_PN_N: [m/s] planet velocity relative to the inertial frame origin, in N components
     :return:
     """
     radius = 6378136.3  # [m] planet radius
@@ -313,6 +315,7 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg):
     dcm_PN_dot = -skew(w_PN_P) @ dcm_PN  # [1/s] time derivative of the N to P DCM
 
     planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.VelocityVector = v_PN_N
     planetPayload.J20002Pfix = dcm_PN.tolist()
     planetPayload.J20002Pfix_dot = dcm_PN_dot.tolist()
     planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
@@ -320,7 +323,7 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg):
     r_BN_N = np.array([radius + 600e3, 0.0, 1.0e6])  # [m] spacecraft position, fixed in P
     scPayload = messaging.SCStatesMsgPayload()
     scPayload.r_BN_N = r_BN_N.tolist()
-    scPayload.v_BN_N = np.cross(w_PN_N, r_BN_N).tolist()  # [m/s]
+    scPayload.v_BN_N = (np.array(v_PN_N) + np.cross(w_PN_N, r_BN_N)).tolist()  # [m/s]
     scMsg = messaging.SCStatesMsg().write(scPayload)
 
     scSim = SimulationBaseClass.SimBaseClass()

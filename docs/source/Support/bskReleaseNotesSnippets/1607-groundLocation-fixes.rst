@@ -1,1 +1,2 @@
 - Fixed :ref:`groundLocation` and :ref:`stripLocation` crossing the planet angular velocity, which was expressed in planet-fixed components, with inertial vectors. This affected ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages when the planet spin axis was not aligned with the inertial 3-axis.
+- Fixed :ref:`groundLocation` ignoring the planet translational velocity from ``planetInMsg`` when computing ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages.
