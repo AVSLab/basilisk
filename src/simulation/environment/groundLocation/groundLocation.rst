@@ -90,6 +90,24 @@ The spherical coordinate rates are computed by differentiating the range, azimut
     :label: eq:SEZ_ElDot:7
 
 
+Planet Rotation
+~~~~~~~~~~~~~~~
+The spacecraft velocity :math:`{}^{N}\mathbf{v}_{B/N}` is an inertial quantity, but the rates above are
+those seen from the rotating ground location :math:`L`.  The planet angular velocity is obtained from the
+SPICE planet orientation matrix :math:`[PN]` and its derivative using :math:`[\dot{PN}] = -[\tilde{\boldsymbol{\omega}}_{P/N}][PN]`,
+which gives :math:`\boldsymbol{\omega}_{P/N}` in :math:`P` frame components:
+
+.. math:: [\tilde{\boldsymbol{\omega}}_{P/N}] = -[\dot{PN}][PN]^T
+    :label: eq:gl_wTilde:8
+
+Because it is crossed with the inertial vector :math:`{}^{N}\mathbf{r}_{B/P}`, the angular velocity is first
+expressed in inertial components, :math:`{}^{N}\boldsymbol{\omega}_{P/N} = [PN]^T\,{}^{P}\boldsymbol{\omega}_{P/N}`.
+The spacecraft velocity relative to the rotating location is then
+
+.. math:: {}^{L}\mathbf{v}_{B/L} = [LP][PN]\left({}^{N}\mathbf{v}_{B/N} - {}^{N}\boldsymbol{\omega}_{P/N} \times {}^{N}\mathbf{r}_{B/P}\right)
+    :label: eq:gl_vBL:9
+
+
 User Guide
 ----------
 
