@@ -134,6 +134,29 @@ with respect to the rotating SEZ frame:
     :label: eq:strip_SEZ_ElDot:7
 
 
+Planet Rotation
+~~~~~~~~~~~~~~~
+The planet angular velocity is obtained from the SPICE planet orientation matrix :math:`[PN]` and its
+derivative using :math:`[\dot{PN}] = -[\tilde{\boldsymbol{\omega}}_{P/N}][PN]`, which gives
+:math:`\boldsymbol{\omega}_{P/N}` in :math:`P` frame components:
+
+.. math:: [\tilde{\boldsymbol{\omega}}_{P/N}] = -[\dot{PN}][PN]^T
+    :label: eq:strip_wTilde:8
+
+The angular velocity is always crossed with a vector expressed in the same frame.  The inertial velocity of the
+target point is
+
+.. math:: {}^{N}\mathbf{v}_{L/P} = [PN]^T\left({}^{P}\mathbf{v}_{L/P} + {}^{P}\boldsymbol{\omega}_{P/N} \times {}^{P}\mathbf{r}_{L/P}\right)
+
+and the spacecraft velocity relative to the planet-fixed frame, which is then used to compute the relative
+velocity :math:`{}^{L}\mathbf{v}_{B/L}` and the coordinate rates above, is
+
+.. math:: {}^{P}\mathbf{v}_{B/P} = [PN]\left({}^{N}\mathbf{v}_{B/N} - {}^{N}\mathbf{v}_{P/N}\right) - {}^{P}\boldsymbol{\omega}_{P/N} \times {}^{P}\mathbf{r}_{B/P}
+    :label: eq:strip_vBP:9
+
+where :math:`{}^{P}\mathbf{r}_{B/P} = [PN]\,{}^{N}\mathbf{r}_{B/P}`.
+
+
 User Guide
 ----------
 

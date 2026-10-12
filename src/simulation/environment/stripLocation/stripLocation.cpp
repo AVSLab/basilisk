@@ -328,7 +328,9 @@ void StripLocation::computeAccess()
         Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
         eigenVector3d2CArray(r_BL_L, accessMsgIt->r_BL_L);
         Eigen::Vector3d v_PN_N = cArray2EigenVector3d(this->planetState.VelocityVector);
-        Eigen::Vector3d v_BP_P = this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N)- v_PN_N - this->w_PN.cross(r_BP_N));
+        // w_PN is in P components, so the planet-rotation velocity is evaluated with the P components of r_BP
+        Eigen::Vector3d r_BP_P = this->dcm_PN * r_BP_N;
+        Eigen::Vector3d v_BP_P = this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - v_PN_N) - this->w_PN.cross(r_BP_P);
         Eigen::Vector3d v_BL_L = this->dcm_LP * (v_BP_P - this->v_LP_P);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));

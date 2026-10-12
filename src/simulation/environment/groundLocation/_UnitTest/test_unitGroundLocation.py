@@ -282,6 +282,61 @@ def test_AzElR_rates():
     assert (range_rate_worked and el_rate_worked and az_rate_worked)
 
 
+@pytest.mark.parametrize("tilt_deg", [0.0, 30.0, 60.0])
+def test_planetFixedSpacecraftZeroRates(tilt_deg):
+    """
+    Tests that a spacecraft fixed in the planet frame has zero range, azimuth and elevation rates and zero
+    velocity relative to the ground location, when the planet spin axis is tilted away from the inertial
+    3-axis.
+
+    :param tilt_deg: [deg] angle between the planet spin axis and the inertial 3-axis
+    :return:
+    """
+    radius = 6378136.3  # [m] planet radius
+    omega = 7.2921159e-5  # [rad/s] planet spin rate
+    tilt = np.radians(tilt_deg)  # [rad] angle between the planet spin axis and the inertial 3-axis
+
+    def skew(v):
+        return np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+
+    c, s = np.cos(tilt), np.sin(tilt)
+    dcm_PN = np.array([[c, 0.0, -s], [0.0, 1.0, 0.0], [s, 0.0, c]])  # [-] N to P, the P 3-axis is the spin axis
+    w_PN_P = np.array([0.0, 0.0, omega])  # [rad/s] angular velocity of P relative to N, in P components
+    w_PN_N = dcm_PN.T @ w_PN_P  # [rad/s] same vector in N components
+    dcm_PN_dot = -skew(w_PN_P) @ dcm_PN  # [1/s] time derivative of the N to P DCM
+
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.J20002Pfix = dcm_PN.tolist()
+    planetPayload.J20002Pfix_dot = dcm_PN_dot.tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+
+    r_BN_N = np.array([radius + 600e3, 0.0, 1.0e6])  # [m] spacecraft position, fixed in P
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N = r_BN_N.tolist()
+    scPayload.v_BN_N = np.cross(w_PN_N, r_BN_N).tolist()  # [m/s]
+    scMsg = messaging.SCStatesMsg().write(scPayload)
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))
+    groundStation = groundLocation.GroundLocation()
+    groundStation.planetRadius = radius
+    groundStation.minimumElevation = -np.pi / 2
+    groundStation.specifyLocation(np.radians(10.0), np.radians(20.0), 0.0)
+    groundStation.planetInMsg.subscribeTo(planetMsg)
+    groundStation.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("simTask", groundStation)
+    dataLog = groundStation.accessOutMsgs[0].recorder()
+    scSim.AddModelToTask("simTask", dataLog)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+
+    np.testing.assert_allclose(dataLog.v_BL_L[0], np.zeros(3), atol=1e-6)  # [m/s]
+    assert dataLog.range_dot[0] == pytest.approx(0.0, abs=1e-6)  # [m/s]
+    assert dataLog.az_dot[0] == pytest.approx(0.0, abs=1e-11)  # [rad/s]
+    assert dataLog.el_dot[0] == pytest.approx(0.0, abs=1e-11)  # [rad/s]
+
+
 def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether

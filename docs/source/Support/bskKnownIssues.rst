@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
+- GitHub issue 1605: The :ref:`groundLocation` and :ref:`stripLocation` modules crossed the planet angular velocity,
+  which they computed in planet-fixed components, with inertial vectors when removing the planet rotation from the
+  spacecraft velocity. This caused incorrect relative velocities and range, azimuth, and elevation rates when the
+  planet spin axis was not aligned with the inertial 3-axis. The rotation terms now use consistent frame components.
+
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale
   rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
