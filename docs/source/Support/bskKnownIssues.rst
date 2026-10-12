@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
+- GitHub issue 1606: The :ref:`groundLocation` module did not subtract the planet velocity of ``planetInMsg`` from the spacecraft velocity,
+  so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields were in error by the planet
+  velocity.
+
 - GitHub issue 1605: The :ref:`groundLocation` and :ref:`stripLocation` modules crossed the planet angular velocity,
   which they computed in planet-fixed components, with inertial vectors when removing the planet rotation from the
   spacecraft velocity. This caused incorrect relative velocities and range, azimuth, and elevation rates when the

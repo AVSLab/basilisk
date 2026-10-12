@@ -76,6 +76,7 @@ private:
     Eigen::Matrix3d dcm_PN_dot; //!< Rotation matrix derivative from inertial frame N to planet-centered to planet-fixed frame P.
     Eigen::Vector3d w_PN; //!< [rad/s] Angular velocity of planet-fixed frame P relative to inertial frame N, in inertial frame N components.
     Eigen::Vector3d r_PN_N; //!< [m] Planet position vector relative to inertial frame origin.
+    Eigen::Vector3d v_PN_N; //!< [m/s] Planet velocity vector relative to inertial frame origin, in inertial frame N components.
     Eigen::Vector3d r_LP_P; //!< [m] Ground Location position vector relative to to planet origin vector in planet frame coordinates.
     Eigen::Vector3d r_LP_N; //!< [m] Gound Location position vector relative to planet origin vector in inertial coordinates.
     Eigen::Vector3d rhat_LP_N;//!< [-] Surface normal vector from the target location in inertial coordinates.

@@ -93,7 +93,9 @@ The spherical coordinate rates are computed by differentiating the range, azimut
 Planet Rotation
 ~~~~~~~~~~~~~~~
 The spacecraft velocity :math:`{}^{N}\mathbf{v}_{B/N}` is an inertial quantity, but the rates above are
-those seen from the rotating ground location :math:`L`.  The planet angular velocity is obtained from the
+those seen from the rotating ground location :math:`L`.  The planet velocity :math:`{}^{N}\mathbf{v}_{P/N}` is read
+from the planet state message and removed, so the module is valid for a planet that moves in the inertial frame.
+The planet angular velocity is obtained from the
 SPICE planet orientation matrix :math:`[PN]` and its derivative using :math:`[\dot{PN}] = -[\tilde{\boldsymbol{\omega}}_{P/N}][PN]`,
 which gives :math:`\boldsymbol{\omega}_{P/N}` in :math:`P` frame components:
 
@@ -104,7 +106,7 @@ Because it is crossed with the inertial vector :math:`{}^{N}\mathbf{r}_{B/P}`, t
 expressed in inertial components, :math:`{}^{N}\boldsymbol{\omega}_{P/N} = [PN]^T\,{}^{P}\boldsymbol{\omega}_{P/N}`.
 The spacecraft velocity relative to the rotating location is then
 
-.. math:: {}^{L}\mathbf{v}_{B/L} = [LP][PN]\left({}^{N}\mathbf{v}_{B/N} - {}^{N}\boldsymbol{\omega}_{P/N} \times {}^{N}\mathbf{r}_{B/P}\right)
+.. math:: {}^{L}\mathbf{v}_{B/L} = [LP][PN]\left({}^{N}\mathbf{v}_{B/N} - {}^{N}\mathbf{v}_{P/N} - {}^{N}\boldsymbol{\omega}_{P/N} \times {}^{N}\mathbf{r}_{B/P}\right)
     :label: eq:gl_vBL:9
 
 
