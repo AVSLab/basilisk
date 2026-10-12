@@ -25,14 +25,16 @@ recommended scenario(s) that they may have):
 Overview
 --------
 
-This script demonstrates how to simulate the control of a 6-DOF spacecraft with
-two attached 4-DOF thruster arms using the MuJoCo physics engine within the BSK_Sim architecture.
+This script demonstrates regulation control of a 6-DOF spacecraft with two
+attached 4-DOF thruster arms using the MuJoCo physics engine within the BSK_Sim
+architecture.  Scenario settings, including the spacecraft model, controller
+gains, and task rates, are provided by ``RegulationConfig``.
 
-The multi-body systems is created by importing the MuJoCo XML file ``sat_w_thruster_arms.xml``
-which defines the spacecraft hub and two attached 4-DOF thruster arms. It consists of a central hub
-with two arms each consisting of 4 hinged joints, 2 rigid arm segments, and a thruster at the end.
-MuJoCo single-input actuators are used for each of the spacecraft's thrusters hinged joints, and to apply
-an additional torque capability direct to the spacecraft hub.
+The multi-body system is created from the MuJoCo XML file
+``sat_w_thruster_arms_regulation.xml``.  It consists of a central hub and two
+arms, each with four hinged joints, and an end-mounted
+thruster.  MuJoCo single-input actuators command the hinged joints and
+thrusters, while separate actuators can apply torque directly to the hub.
 
 The script is found in the folder ``basilisk/examples/mujoco`` and executed by using::
 
@@ -47,44 +49,81 @@ modules. The Dynamics process contains a single task with the modules:
 #. ``MJSystemMassMatrix``: extracts the mass matrix of the multi-body system from the MuJoCo scene
 #. ``MJJointReactionForces``: extracts the internal reaction forces and torques of the multi-body system from the MuJoCo scene
 
-The FSW process contains three tasks: the outer loop control task, the joint motion task, and the thruster firing task.
-The modules for the outer loop control task include:
+The FSW process contains four tasks: an outer-loop control task, a joint-motion
+task, a thruster-firing task, and an always-enabled recorder task.  The recorder
+task has no modules by default; scenarios can add recorders that must execute at
+every FSW time step.  The outer-loop control task includes:
 
-#. ``inertial3D``: generates and inertial reference attitude
+#. ``inertial3D``: generates an inertial reference attitude
 #. ``attError``: computes the attitude error between the current and reference attitude
 #. ``mrpFeedback``: computes the attitude control torque
 #. ``inertialCartFeedback``: computes the positional control force
 #. ``jointThrAllocation``: determines the joint angles and thruster forces needed to achieve the desired control torque and force
-#. ``thrFiringRound``: determines thruster firing time based on the thruster forces and a specified minimum impulse bit
+#. ``thrFiringRound``: determines quantized thruster on-times from the allocated thruster forces
 
 The modules for the joint motion task include:
 
 #. ``hingedJointArrayMotor``: determines the motor commands for the hinged joints of the thruster arms
-#. ``jointMotionCompensator``: determines the compensation torques to apply at the spacecraft hub to counteract the reaction torques from moving the thruster arms
+#. ``jointMotionCompensator``: optionally determines hub compensation torques that counter arm-motion reaction torques
+#. ``jointArrayRefProfiler``: optionally profiles allocated joint references before they are sent to the joint motors
 
 The modules for the thruster firing task include:
 
 #. ``thrOnTimeToForce``: converts on time to thruster force
 #. ``thrJointCompensation``: determines the motor commands to hold hinged joints static during thruster firing
 
-The different tasks are enabled and disabled using three events: joint motion, thruster firing, and coasting. The
-condition to trigger each event and action it performs are as follows:
+The joint-motion and thruster-firing tasks are enabled and disabled using three
+events: joint motion, thruster firing, and coasting.  Each new allocation from
+the outer loop begins the event sequence.  The recorder task remains enabled
+through these transitions.
 
 - Joint Motion Event:
 
-    - Condition: New desired joint angles are received from the outer control loop
-    - Action: enables the joint motion task and move the arms to their desired positions
+    - Condition: A new allocated joint-angle and thruster-on-time command is received.
+    - Action: Enables joint motion for a nonzero requested pulse.  A zero-pulse command does not begin a new thrust sequence.
 
 - Thruster Firing Event:
 
-    - Condition: New desired thruster forces are received from the outer control loop and
-      the joints have reached their desired positions
-    - Action: enables the thruster firing task and fire the thrusters to achieve the desired forces
+    - Condition: The joints reach the allocated angle and rate references.
+    - Action: Enables the thruster-firing task and applies the cached on-time command.
 
 - Coasting Event:
 
-    - Condition: The thrusters have finished firing and there is time before the next outer loop update
-    - Action: set commands for all actuators to zero and allow the spacecraft to coast until the next control update
+    - Condition: The requested firing completes, or the outer loop requests no firing.
+    - Action: Zeros actuator commands and allows the spacecraft to coast until the next outer-loop update.
+
+Control-Period Timing and Pulse Truncation
+------------------------------------------
+
+The outer control loop updates every 10 seconds (0.1 Hz).  At each update, it
+allocates a force to each thruster for the coming period.  Since a thruster
+fires at a fixed force rather than continuously varying its output,
+``thrFiringRound`` converts the allocated force into a requested on-time:
+``on-time = 10 s * allocated force / maximum thruster force``.  A request for
+half the maximum force therefore becomes a 5-second pulse.  The module clips
+the requested on-time to the 10-second period, rounds it to the configured
+pulse resolution, and applies the configured minimum on-time.
+
+This calculation uses the *full* outer-loop period; it does not account for
+joint motion.  For a nonzero pulse request, the arms first move to their
+commanded angles and settle within the position and rate tolerances.  Only
+then does firing begin.  The time available to fire is therefore roughly
+``max(0, 10 s - joint-motion time)``, and the delivered pulse cannot exceed that
+remaining time.  At the next outer-loop update, any unfinished pulse is
+stopped and discarded rather than carried into the next period.
+
+For example, if joint motion takes 8 seconds and the requested pulse is
+5 seconds, the thruster fires for only about 2 seconds; the remaining
+3 seconds are not delivered.  If thrusters request different pulse lengths,
+this cutoff can also change the ratio of their delivered impulses.  This is
+an intentional saturation of the available firing window, not a reduction
+of the on-time request itself.
+The controller does not make up the missing impulse within that period.
+At the next update, however, it computes a new command from the current
+spacecraft state, so the resulting control error can affect later commands.
+Because both the requested on-time and the available firing window depend on
+the 10-second period, changing the outer-loop period alone does not preserve
+the same impulse behavior.
 
 
 Illustration of Simulation Results
@@ -92,12 +131,12 @@ Illustration of Simulation Results
 
 ::
 
-    showPlots = True
+    showPlots = True, runTime = 500.0
 
-.. image:: /_images/Scenarios/scenarioThrArmControl_position.svg
+.. image:: ../../../../examples/mujoco/thrArmControlSupport/regulationControl_position.svg
    :align: center
 
-.. image:: /_images/Scenarios/scenarioThrArmControl_attitude.svg
+.. image:: ../../../../examples/mujoco/thrArmControlSupport/regulationControl_attitude.svg
    :align: center
 
 
@@ -121,22 +160,28 @@ fileNameForImages = os.path.basename(os.path.splitext(__file__)[0])
 
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/mujocoModels')
+sys.path.append(path + '/thrArmControlSupport')
 import BSK_MujocoDynamics
 import BSK_MujocoFSW
 from BSK_mujocoMasters import BSKSim, BSKScenario
+from regulationConfig import RegulationConfig
 
 # Create scenario child class
 class scenarioThrArmControl(BSKSim, BSKScenario):
-    def __init__(self, fswRate=0.01, dynRate=0.01):
-        super(scenarioThrArmControl, self).__init__(fswRate=fswRate, dynRate=dynRate)
+    def __init__(self):
+        self.config = RegulationConfig()
+        super(scenarioThrArmControl, self).__init__(
+            fswRate=self.config.fswTimeStep,
+            dynRate=self.config.dynTimeStep,
+        )
         self.name = "scenarioThrArmControl"
 
         # Declare empty class variables
         self.posRec = None
         self.attRec = None
 
-        self.set_DynModel(BSK_MujocoDynamics)
-        self.set_FswModel(BSK_MujocoFSW)
+        self.set_DynModel(BSK_MujocoDynamics, self.config)
+        self.set_FswModel(BSK_MujocoFSW, self.config)
         self.log_outputs()
 
     def configure_initial_conditions(self):
@@ -165,7 +210,7 @@ class scenarioThrArmControl(BSKSim, BSKScenario):
         self.AddModelToTask(DynModel.taskName, self.posRec)
         self.AddModelToTask(DynModel.taskName, self.attRec)
 
-    def pull_outputs(self, showPlots: bool = False):
+    def pull_outputs(self, showPlots: bool = False, savePlots: bool = False):
         times = self.posRec.times() * mc.NANO2SEC
         r_CN_N = self.posRec.r_CN_N
         sigma_BN = self.attRec.sigma_BN
@@ -196,9 +241,18 @@ class scenarioThrArmControl(BSKSim, BSKScenario):
         plt.legend()
         figureList[fileNameForImages + "_attitude"] = fig2
 
+        if savePlots:
+            supportPath = os.path.join(path, "thrArmControlSupport")
+            fig1.savefig(os.path.join(
+                supportPath, "regulationControl_position.svg"
+            ))
+            fig2.savefig(os.path.join(
+                supportPath, "regulationControl_attitude.svg"
+            ))
+
         return figureList
 
-def runScenario(scenario, runTime: float = 320.0):
+def runScenario(scenario, runTime: float = 320.0, showProgressBar: bool = True):
     if vizSupport.vizFound:
         DynModel = scenario.get_DynModel()
         vizSupport.enableUnityVisualization(
@@ -217,24 +271,30 @@ def runScenario(scenario, runTime: float = 320.0):
     # configure the run time and execute the simulation
     simulationTime = mc.sec2nano(runTime)
     scenario.ConfigureStopTime(simulationTime)
+    scenario.SetProgressBar(showProgressBar)
     scenario.ExecuteSimulation()
 
-def run(showPlots: bool = False, timeStep: float = 0.01, runTime: float = 500.0):
-   """
-    The scenarios can be run with the following setups parameters:
+def run(showPlots: bool = False, runTime: float = 500.0,
+        showProgressBar: bool = True, savePlots: bool = False):
+    """
+    The scenario can be run with the following setup parameters:
 
     Args:
-        showPlots (bool): Determines if the script should display plots
+        showPlots (bool): Determines if the script displays plots.
+        runTime (float): Simulation duration in seconds.
+        showProgressBar (bool): Determines if Basilisk displays execution progress.
+        savePlots (bool): Determines if the position and attitude figures are
+            saved as SVG files.
 
-   """
-   scenario = scenarioThrArmControl(fswRate=timeStep, dynRate=timeStep)
-   runScenario(scenario, runTime)
-   figureList = scenario.pull_outputs(showPlots)
+    """
+    scenario = scenarioThrArmControl()
+    runScenario(scenario, runTime, showProgressBar)
+    figureList = scenario.pull_outputs(showPlots, savePlots)
 
-   if showPlots:
+    if showPlots:
         plt.show()
 
-   return figureList
+    return figureList
 
 
 if __name__ == "__main__":
@@ -242,14 +302,13 @@ if __name__ == "__main__":
         parser.add_argument(
         "--showPlots",
         action="store_true",
-        default=True,
         help="Display matplotlib figures."
         )
         parser.add_argument(
-        "--timeStep",
-        type=float,
-        default=0.01,
-        help="FSW and dynamics update period [s]."
+        "--savePlots",
+        action="store_true",
+        default=False,
+        help="Save the position and attitude figures as SVG files."
         )
         parser.add_argument(
         "--runTime",
@@ -257,5 +316,13 @@ if __name__ == "__main__":
         default=500.0,
         help="Simulation run time [s]."
         )
+        parser.add_argument(
+        "--noProgressBar",
+        action="store_false",
+        dest="showProgressBar",
+        default=True,
+        help="Disable the Basilisk simulation progress bar."
+        )
         args = parser.parse_args()
-        run(showPlots=args.showPlots, timeStep=args.timeStep, runTime=args.runTime)
+        run(showPlots=args.showPlots, savePlots=args.savePlots,
+            runTime=args.runTime, showProgressBar=args.showProgressBar)

@@ -16,6 +16,7 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
+
 from Basilisk.architecture import messaging
 from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import (
@@ -24,25 +25,38 @@ from Basilisk.fswAlgorithms import (
     thrJointCompensation,
     inertial3D,
     attTrackingError,
+    locationPointing,
     mrpFeedback,
     inertialCartFeedback,
     jointThrAllocation,
+    inertialCartFeedback,
     thrFiringRound,
+    arcLineHoldRef,
 )
 from Basilisk.simulation import (
     thrOnTimeToForce,
     simpleNav,
     stateMerge,
+    jointArrayRefProfiler,
 )
 
 
 class BSKMujocoFSWModels:
     """Defines the bskSim FSW class"""
-    def __init__(self, SimBase, fswRate):
+    def __init__(self, SimBase, fswRate, config):
+        self.controlObjective = getattr(config, "controlObjective", None)
+        if self.controlObjective not in ("regulation", "tracking"):
+            SimBase.bskLogger.error(
+                "BSKMujocoFSWModels supports only regulation and tracking control objectives."
+            )
+        self.isTracking = self.controlObjective == "tracking"
+        self.config = config
+
         # define empty class variables
         self.vcMsg = None
         self.thrArmConfigMsg = None
         self.transRefMsg = None
+        self.scTargetMsg = None
         self.jointTorqueGateways = []
         self.thrForceGateways = []
         self.bodyTorqueGateway = []
@@ -51,86 +65,83 @@ class BSKMujocoFSWModels:
         # Define process name and task time-steps
         self.processName = SimBase.FSWProcessName
         self.innerLoopTimeStep = mc.sec2nano(fswRate)
-        self.outerLoopTimeStep = mc.sec2nano(10.0)
+        self.outerLoopTimeStep = mc.sec2nano(config.outerLoopPeriod)
 
-        # Define default values for the scenario
-        self.numJoints = 8
-        self.numThrusters = 2
-        self.thrForces = [2.5]*self.numThrusters # [N]
-        if fswRate == 0.01:
-            self.maxJointTorques = [5.0]*self.numJoints # [N*m]
-        else:
-            self.maxJointTorques = [22.5]*self.numJoints # [N*m]
-        self.hubMass = 330.0    # [kg]
-        self.controlWeight = 1.0
-        self.thrustWeight = 1e-6
-
-        # Define the default control gains
-        if fswRate == 0.01:
-            self.pTrans = (2.0*350.0/25.0 * np.eye(3)).flatten().tolist() #[N*s/m]
-            self.kTrans =((2.0*350.0/25.0)**2 / (4*350.0) * np.eye(3)).flatten().tolist()   #[N/m]
-            self.pRot = (2.0*1/3*330.0*(0.79**2+0.69**2))/15.0  #[N*m*s]
-            self.kRot = self.pRot**2/(4*(1/3*330.0*(0.79**2+0.69**2)))  #[N*m]
-            self.kiRot = -1.0
-            self.kTheta = (np.pi**2 * np.eye(8)).flatten().tolist() #[N*m/rad]
-            self.pTheta = (2.0*1.5*np.pi * np.eye(8)).flatten().tolist()    #[N*m*s/rad]
-        else:
-            self.Tpos = 15.0
-            self.Tatt = 10.0
-            self.omegaOuter = 2*np.pi/10
-            self.omegaInner = 5*self.omegaOuter
-            piRot = (2*1/3*330.0*(0.79**2+0.69**2))/self.Tatt
-            self.pRot = piRot #[N*m*s]
-            xiRot = 1.0
-            self.kRot = piRot**2/(4*xiRot**2*(1/3*330.0*(0.79**2+0.69**2))) #[N*m]
-            self.kiRot = -1.0
-            piPos = 2.0*350.0/self.Tpos
-            self.pTrans = (piPos * np.eye(3)).flatten().tolist() #[N*s/m]
-            xiPos = 1.0
-            self.kTrans = (piPos**2/(4*xiPos**2*350.0) * np.eye(3)).flatten().tolist() #[N/m]
-            kiMotor = self.omegaInner**2
-            self.kTheta = (kiMotor * np.eye(8)).flatten().tolist() #[N*m/rad]
-            xiMotor = 1.5
-            piMotor = 2 * xiMotor * self.omegaInner
-            self.pTheta = (piMotor * np.eye(8)).flatten().tolist() #[N*m*s/rad]
-
-
-        # Define the XML object names for later use
-        self.hubName = "hub"
-        self.jointRefs = [
-            ("arm_1_base", "arm_1_joint_1"),
-            ("arm_1_base", "arm_1_joint_2"),
-            ("arm_1_tip",  "arm_1_joint_3"),
-            ("arm_1_tip",  "arm_1_joint_4"),
-            ("arm_2_base", "arm_2_joint_1"),
-            ("arm_2_base", "arm_2_joint_2"),
-            ("arm_2_tip",  "arm_2_joint_3"),
-            ("arm_2_tip",  "arm_2_joint_4"),
-        ]
-        self.jointActNames = ["u_arm_1_joint_1","u_arm_1_joint_2","u_arm_1_joint_3","u_arm_1_joint_4",
-                              "u_arm_2_joint_1","u_arm_2_joint_2","u_arm_2_joint_3","u_arm_2_joint_4"]
-        self.thrActNames = ["F_thruster_1","F_thruster_2"]
-        self.bodyActNames = ["tau_prescribed_1","tau_prescribed_2","tau_prescribed_3"]
+        self.numJoints = config.numJoints
+        self.numThrusters = config.numThrusters
+        self.vehicleMass = getattr(config, "vehicleMass", None)
+        if self.vehicleMass is None:
+            self.vehicleMass = config.scMass
+        self.hubMass = config.hubMass
+        self.hubHalfLengths = config.hubHalfLengths
+        self.thrForces = config.thrForces
+        self.maxJointTorques = config.maxJointTorques
+        self.controlWeight = config.controlWeight
+        self.thrustWeight = config.thrustWeight
+        self.pTrans = config.pTrans
+        self.kTrans = config.kTrans
+        self.pRot = config.pRot
+        self.kRot = config.kRot
+        self.kiRot = config.kiRot
+        self.kTheta = config.kTheta
+        self.pTheta = config.pTheta
+        self.hubName = config.hubName
+        self.jointRefs = config.jointRefs
+        self.jointActNames = config.jointActNames
+        self.thrActNames = config.thrActNames
+        self.bodyActNames = config.bodyActNames
+        self.useJointProfiler = getattr(config, "useJointProfiler", False)
+        self.useJointMotionCompensation = getattr(
+            config, "useJointMotionCompensation", True
+        )
+        self.useThetaAllocPenalty = getattr(config, "useThetaAllocPenalty", False)
+        self.thetaWeight = getattr(config, "thetaWeight", None)
+        self.maxPreTorques = getattr(config, "maxPreTorques", None)
+        if self.useThetaAllocPenalty and self.thetaWeight is None:
+            SimBase.bskLogger.error(
+                "A theta allocation penalty requires a configured thetaWeight."
+            )
+        if self.useJointProfiler and config.jointProfileType is None:
+            SimBase.bskLogger.error(
+                "A joint motion profile requires a configured jointProfileType."
+            )
 
         # Define initial event check values
         self.lastDesAngles = [0.0]*self.numJoints
         self.lastDesAngleRates = [0.0]*self.numJoints
         self.lastDesCmdWriteTime = -1
+        self.pendingOnTimes = [0.0]*self.numThrusters  # [s]
+        self.pendingFiring = False
+        self.firingCancellationPending = False
+        self.jointMotionPhaseActive = False
         self.thrustJustActivated = False
 
         # Instantiate FSW modules as objects
-        self.inertial3D = inertial3D.inertial3D()
+        self.inertial3D = None
+        self.transRef = None
+        self.attRef = None
         self.stateMerge = stateMerge.StateMerge()
         self.navConverter = simpleNav.SimpleNav()
-        self.attError = attTrackingError.attTrackingError()
+        self.attError = None
         self.mrpFeedback = mrpFeedback.mrpFeedback()
         self.inertialCartFeedback = inertialCartFeedback.InertialCartFeedback()
         self.jointThrAllocation = jointThrAllocation.JointThrAllocation()
         self.thrFiringRound = thrFiringRound.ThrFiringRound()
         self.hingedJointArrayMotor = hingedJointArrayMotor.HingedJointArrayMotor()
-        self.jointMotionCompensator = jointMotionCompensator.JointMotionCompensator()
+        self.jointMotionCompensator = None
+        if self.useJointMotionCompensation:
+            self.jointMotionCompensator = jointMotionCompensator.JointMotionCompensator()
         self.thrOnTimeToForce = thrOnTimeToForce.ThrOnTimeToForce()
         self.thrJointCompensation = thrJointCompensation.ThrJointCompensation()
+        self.jointProfiler = None
+        if self.useJointProfiler:
+            self.jointProfiler = jointArrayRefProfiler.JointArrayRefProfiler()
+        if self.isTracking:
+            self.transRef = arcLineHoldRef.ArcLineHoldRef()
+            self.attRef = locationPointing.locationPointing()
+        else:
+            self.inertial3D = inertial3D.inertial3D()
+            self.attError = attTrackingError.attTrackingError()
 
         # Create the FSW module gateway messages
         self.setupGatewayMsgs(SimBase)
@@ -142,22 +153,37 @@ class BSKMujocoFSWModels:
         self.outerLoopTaskName = "outerLoopTask"
         self.jointMotionTaskName = "jointMotionTask"
         self.thrFiringTaskName = "thrFiringTask"
+        self.recorderTaskName = "recorderTask"
         SimBase.fswProc.addTask(SimBase.CreateNewTask(self.outerLoopTaskName, self.outerLoopTimeStep), 100)
         SimBase.fswProc.addTask(SimBase.CreateNewTask(self.jointMotionTaskName, self.innerLoopTimeStep), 99)
         SimBase.fswProc.addTask(SimBase.CreateNewTask(self.thrFiringTaskName, self.innerLoopTimeStep), 98)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask(self.recorderTaskName, self.innerLoopTimeStep), 97)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.inertial3D, 50)
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.stateMerge, 49)
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.navConverter, 48)
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.attError, 47)
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.mrpFeedback, 46)
-        SimBase.AddModelToTask(self.outerLoopTaskName, self.inertialCartFeedback, 45)
+        if self.isTracking:
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.stateMerge, 50)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.navConverter, 49)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.attRef, 48)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.mrpFeedback, 47)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.transRef, 46)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.inertialCartFeedback, 45)
+        else:
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.inertial3D, 50)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.stateMerge, 49)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.navConverter, 48)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.attError, 47)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.mrpFeedback, 46)
+            SimBase.AddModelToTask(self.outerLoopTaskName, self.inertialCartFeedback, 45)
         SimBase.AddModelToTask(self.outerLoopTaskName, self.jointThrAllocation, 44)
         SimBase.AddModelToTask(self.outerLoopTaskName, self.thrFiringRound, 43)
 
-        SimBase.AddModelToTask(self.jointMotionTaskName, self.hingedJointArrayMotor, 50)
-        SimBase.AddModelToTask(self.jointMotionTaskName, self.jointMotionCompensator, 49)
+        if self.useJointProfiler:
+            SimBase.AddModelToTask(self.jointMotionTaskName, self.jointProfiler, 51)
+            SimBase.AddModelToTask(self.jointMotionTaskName, self.hingedJointArrayMotor, 50)
+        else:
+            SimBase.AddModelToTask(self.jointMotionTaskName, self.hingedJointArrayMotor, 50)
+        if self.useJointMotionCompensation:
+            SimBase.AddModelToTask(self.jointMotionTaskName, self.jointMotionCompensator, 49)
 
         SimBase.AddModelToTask(self.thrFiringTaskName, self.thrOnTimeToForce, 50)
         SimBase.AddModelToTask(self.thrFiringTaskName, self.thrJointCompensation, 49)
@@ -166,28 +192,53 @@ class BSKMujocoFSWModels:
         SimBase.fswProc.disableAllTasks()
         self.zeroGatewayMsgs()
         SimBase.enableTask(self.outerLoopTaskName)
+        SimBase.enableTask(self.recorderTaskName)
 
         def conditionJointMotion(self):
-            """Event condition to use the joint motion controller after the outer
-            control loop has been updated"""
+            """Detect and cache one newly allocated control-period command."""
             desAngles = list(self.FSWModels.desAngleReader().states)
             desAngleRates = list(self.FSWModels.desAngleReader().stateDots)
             currentWriteTime = self.FSWModels.desAngleReader.timeWritten()
             if len(desAngles) != self.FSWModels.numJoints or len(desAngleRates) != self.FSWModels.numJoints:
                 return False
-            changed = currentWriteTime != self.FSWModels.lastDesCmdWriteTime
-            if changed:
-                self.FSWModels.lastDesAngles = desAngles[:]
-                self.FSWModels.lastDesAngleRates = desAngleRates[:]
-                self.FSWModels.lastDesCmdWriteTime = currentWriteTime
-            return changed
+            if currentWriteTime == self.FSWModels.lastDesCmdWriteTime:
+                return False
+
+            self.FSWModels.lastDesAngles = desAngles[:]
+            self.FSWModels.lastDesAngleRates = desAngleRates[:]
+            self.FSWModels.lastDesCmdWriteTime = currentWriteTime
+            self.FSWModels.pendingOnTimes = list(
+                self.FSWModels.thrTimeReader().OnTimeRequest
+            )
+            self.FSWModels.pendingFiring = any(
+                onTime > 0.0 for onTime in self.FSWModels.pendingOnTimes
+            )
+            return True
 
         def actionJointMotion(self):
-            """Event action to activate the joint motion controller when there
-            is a change in the desired joint angles or thruster forces"""
+            """Start the next pulse sequence or finish joint motion for a zero pulse."""
             self.fswProc.disableAllTasks()
             self.FSWModels.zeroGatewayMsgs()
             self.enableTask(self.FSWModels.outerLoopTaskName)
+            self.enableTask(self.FSWModels.recorderTaskName)
+
+            if not self.FSWModels.pendingFiring:
+                if self.FSWModels.jointMotionPhaseActive:
+                    self.enableTask(self.FSWModels.jointMotionTaskName)
+                    self.setEventActivity("jointMotion", True)
+                    self.setEventActivity("thrFiring", True)
+                    self.setEventActivity("coast", False)
+                    return
+
+                self.FSWModels.jointMotionPhaseActive = False
+                self.FSWModels.startFiringCancellation(self.TotalSim.CurrentNanos)
+                self.enableTask(self.FSWModels.thrFiringTaskName)
+                self.setEventActivity("jointMotion", True)
+                self.setEventActivity("thrFiring", False)
+                self.setEventActivity("coast", True)
+                return
+
+            self.FSWModels.jointMotionPhaseActive = True
             self.enableTask(self.FSWModels.jointMotionTaskName)
             self.setEventActivity("jointMotion", True)
             self.setEventActivity("thrFiring", True)
@@ -202,8 +253,7 @@ class BSKMujocoFSWModels:
         )
 
         def conditionThrFiring(self):
-            """Event condition to fire the thrusters once the joints have
-            reached the desired angles and stopped"""
+            """Detect when the joints have reached their commanded states."""
             desStates = np.asarray(self.FSWModels.lastDesAngles, dtype=float)
             desStatesDot = np.asarray(self.FSWModels.lastDesAngleRates, dtype=float)
             curStates = np.zeros(self.FSWModels.numJoints)
@@ -214,20 +264,23 @@ class BSKMujocoFSWModels:
             angError = self.FSWModels.wrapAngle(desStates - curStates)
             stateError = np.max(np.abs(angError))
             rateError = np.max(np.abs(desStatesDot - curStatesDot))
-            return (stateError < 1e-3) and (rateError < 1e-3)
+            return (
+                stateError < self.FSWModels.config.jointPositionTolerance
+                and rateError < self.FSWModels.config.jointRateTolerance
+            )
 
         def actionThrFiring(self):
-            """Event action to activate the thruster firing when the joints have
-            reached the desired angles and stopped"""
+            """Begin the requested thruster pulse after joint motion completes."""
             self.FSWModels.thrustJustActivated = True
+            self.FSWModels.jointMotionPhaseActive = False
             self.fswProc.disableAllTasks()
             self.FSWModels.zeroGatewayMsgs()
             self.enableTask(self.FSWModels.outerLoopTaskName)
             self.enableTask(self.FSWModels.thrFiringTaskName)
+            self.enableTask(self.FSWModels.recorderTaskName)
             CurrentSimNanos = self.TotalSim.CurrentNanos
-            thrOnTimes = self.FSWModels.thrTimeReader().OnTimeRequest
             payload = messaging.THRArrayOnTimeCmdMsgPayload()
-            payload.OnTimeRequest = list(thrOnTimes)
+            payload.OnTimeRequest = self.FSWModels.pendingOnTimes[:]
             self.FSWModels.thrFiringTimeGateway.write(payload, CurrentSimNanos)
             self.setEventActivity("jointMotion", True)
             self.setEventActivity("thrFiring", False)
@@ -247,17 +300,22 @@ class BSKMujocoFSWModels:
             thrForces = np.zeros(self.FSWModels.numThrusters)
             for i, reader in enumerate(self.FSWModels.thrForceReaders):
                 thrForces[i] = reader().input
+            if self.FSWModels.firingCancellationPending:
+                self.FSWModels.firingCancellationPending = False
+                return False
             if self.FSWModels.thrustJustActivated:
                 self.FSWModels.thrustJustActivated = False
                 return False
-            return (np.max(np.abs(thrForces)) < 1e-12)
+            return np.max(np.abs(thrForces)) < self.FSWModels.config.thrusterZeroTolerance
 
         def actionCoast(self):
             """Event action to activate coasting (no commands) between the time
             when the thrusters are done firing and the next outer loop update"""
+            self.FSWModels.jointMotionPhaseActive = False
             self.fswProc.disableAllTasks()
             self.FSWModels.zeroGatewayMsgs()
             self.enableTask(self.FSWModels.outerLoopTaskName)
+            self.enableTask(self.FSWModels.recorderTaskName)
             self.setEventActivity("jointMotion", True)
             self.setEventActivity("thrFiring", False)
             self.setEventActivity("coast", False)
@@ -271,75 +329,33 @@ class BSKMujocoFSWModels:
         )
 
     # ------------------------------------------------------------------------------------------- #
+    # These are event-control helper methods
+
+    def startFiringCancellation(self, currentSimNanos):
+        """Latch a zero on-time command to clear internal firing timers."""
+        zeroOnTimePayload = messaging.THRArrayOnTimeCmdMsgPayload()
+        self.thrFiringTimeGateway.write(zeroOnTimePayload, currentSimNanos)
+        self.firingCancellationPending = True
+
+    # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
 
     def SetVehicleConfiguration(self):
         """Set the spacecraft configuration information"""
         vehicleConfigOut = messaging.VehicleConfigMsgPayload()
-        vehicleConfigOut.massSC = 350.0 #[kg]
+        vehicleConfigOut.massSC = self.vehicleMass
         # use the hub inertia for mrp feedback module since will not have instantaneous inertia otherwise
-        vehicleConfigOut.ISCPntB_B = [1/3*self.hubMass*(0.69**2+0.52**2), 0.0, 0.0, 0.0, 1/3*self.hubMass*(0.79**2+0.52**2), 0.0, 0.0, 0.0, 1/3*self.hubMass*(0.79**2+0.69**2)] #[kg*m^2]
+        halfLengthX, halfLengthY, halfLengthZ = self.hubHalfLengths
+        vehicleConfigOut.ISCPntB_B = [
+            self.hubMass / 3.0 * (halfLengthY ** 2 + halfLengthZ ** 2), 0.0, 0.0,
+            0.0, self.hubMass / 3.0 * (halfLengthX ** 2 + halfLengthZ ** 2), 0.0,
+            0.0, 0.0, self.hubMass / 3.0 * (halfLengthX ** 2 + halfLengthY ** 2),
+        ]
         self.vcMsg = messaging.VehicleConfigMsg().write(vehicleConfigOut)
 
     def SetThrArmConfig(self):
         """Set the thruster arm configuration information"""
         thrArmConfigOut = messaging.THRArmConfigMsgPayload()
-        r_BcB_B = [0.0, 0.0, 0.0] #[m]
-        bodyArmIdx = [0, 0, 1, 1]
-        bodyJointIdx = [1, 3, 1, 3]
-        bodyMass = [8.0, 2.0, 8.0, 2.0] #[kg]
-        r_LcP_P = [
-            0.5, 0.0, 0.0,
-            0.05, 0.0, 0.0,
-            0.5, 0.0, 0.0,
-            0.05, 0.0, 0.0,
-        ] #[m]
-        thrArmIdx = [0, 1]
-        thrArmJointIdx = [3, 3]
-        armTreeIdx = [0, 0]
-        armJointCount = [4, 4]
-        r_CP_P = [
-            0.79, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-            -0.79, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-        ] #[m]
-        r_TP_P = [
-            0.1, 0.0, 0.0,
-            0.1, 0.0, 0.0,
-        ] #[m]
-        shat_P = [
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            0.0, 1.0, 0.0,
-        ]
-        fhat_P = [
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-        ]
-        identity = [
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-        ]
-        arm2BaseDcm = [
-            -1.0, 0.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, 0.0, 1.0,
-        ]
-        dcm_C0P = (
-            identity + identity + identity + identity
-            + arm2BaseDcm + identity + identity + identity
-        )
 
         thrArmConfigOut.bodyArmIdx.clear()
         thrArmConfigOut.bodyJointIdx.clear()
@@ -356,48 +372,72 @@ class BSKMujocoFSWModels:
         thrArmConfigOut.dcm_C0P.clear()
 
         thrArmConfigOut.hubMass = self.hubMass
-        for v in r_BcB_B:
+        for v in self.config.r_BcB_B:
             thrArmConfigOut.r_BcB_B.push_back(v)
-        for v in bodyArmIdx:
+        for v in self.config.bodyArmIdx:
             thrArmConfigOut.bodyArmIdx.push_back(v)
-        for v in bodyJointIdx:
+        for v in self.config.bodyJointIdx:
             thrArmConfigOut.bodyJointIdx.push_back(v)
-        for v in bodyMass:
+        for v in self.config.bodyMass:
             thrArmConfigOut.bodyMass.push_back(v)
-        for v in r_LcP_P:
+        for v in self.config.r_LcP_P:
             thrArmConfigOut.r_LcP_P.push_back(v)
-        for v in thrArmIdx:
+        for v in self.config.thrArmIdx:
             thrArmConfigOut.thrArmIdx.push_back(v)
-        for v in thrArmJointIdx:
+        for v in self.config.thrArmJointIdx:
             thrArmConfigOut.thrArmJointIdx.push_back(v)
-        for v in armTreeIdx:
+        for v in self.config.armTreeIdx:
             thrArmConfigOut.armTreeIdx.push_back(v)
-        for v in armJointCount:
+        for v in self.config.armJointCount:
             thrArmConfigOut.armJointCount.push_back(v)
-        for v in r_CP_P:
+        for v in self.config.r_CP_P:
             thrArmConfigOut.r_CP_P.push_back(v)
-        for v in r_TP_P:
+        for v in self.config.r_TP_P:
             thrArmConfigOut.r_TP_P.push_back(v)
-        for v in shat_P:
+        for v in self.config.shat_P:
             thrArmConfigOut.shat_P.push_back(v)
-        for v in fhat_P:
+        for v in self.config.fhat_P:
             thrArmConfigOut.fhat_P.push_back(v)
-        for v in dcm_C0P:
+        for v in self.config.dcm_C0P:
             thrArmConfigOut.dcm_C0P.push_back(v)
         self.thrArmConfigMsg = messaging.THRArmConfigMsg().write(thrArmConfigOut)
 
     def SetTransRef(self):
         """Set the translational reference state information"""
+        if self.isTracking:
+            self.transRef.ModelTag = "arcLineHoldRef"
+            self.transRef.setRadius(self.config.transRadius)
+            self.transRef.setFinalPosition(self.config.finalPosition)
+            self.transRef.setBlendEndPosition(self.config.blendEndPosition)
+            self.transRef.setTCircle(self.config.tCircle)
+            self.transRef.setTTransition(self.config.tTransition)
+            self.transRef.setTLinear(self.config.tLinear)
+            return
+
         transRefOut = messaging.TransRefMsgPayload()
-        transRefOut.r_RN_N = [0.0, 0.0, 0.0] #[m]
-        transRefOut.v_RN_N = [0.0, 0.0, 0.0] #[m/s]
-        transRefOut.a_RN_N = [0.0, 0.0, 0.0] #[m/s^2]
+        transRefOut.r_RN_N = self.config.transRefPosition
+        transRefOut.v_RN_N = self.config.transRefVelocity
+        transRefOut.a_RN_N = self.config.transRefAcceleration
         self.transRefMsg = messaging.TransRefMsg().write(transRefOut)
 
     def SetInertial3D(self):
         """Defined the inertial 3D guidance module"""
         self.inertial3D.ModelTag = "inertial3D"
-        self.inertial3D.sigma_R0N = [0.0,0.0,0.0]
+        self.inertial3D.sigma_R0N = self.config.attRefSigma_R0N
+
+    def SetAttRef(self):
+        """Define the tracking attitude reference pointing module."""
+        self.attRef.ModelTag = "attRef"
+        self.attRef.scAttInMsg.subscribeTo(self.navConverter.attOutMsg)
+        self.attRef.scTransInMsg.subscribeTo(self.navConverter.transOutMsg)
+        targetPayload = messaging.NavTransMsgPayload()
+        targetPayload.r_BN_N = self.config.scTargetPosition
+        self.scTargetMsg = messaging.NavTransMsg().write(targetPayload)
+        self.attRef.scTargetInMsg.subscribeTo(self.scTargetMsg)
+        self.attRef.pHat_B = self.config.pHat_B
+        if self.config.pointingSmallAngle is not None:
+            self.attRef.smallAngle = self.config.pointingSmallAngle
+        self.attRef.useBoresightRateDamping = self.config.useBoresightRateDamping
 
     def SetStateMerge(self, SimBase):
         """Define the state merge module"""
@@ -419,7 +459,10 @@ class BSKMujocoFSWModels:
     def SetMrpFeedback(self):
         """Define the MRP feedback module"""
         self.mrpFeedback.ModelTag = "mrpFeedback"
-        self.mrpFeedback.guidInMsg.subscribeTo(self.attError.attGuidOutMsg)
+        if self.isTracking:
+            self.mrpFeedback.guidInMsg.subscribeTo(self.attRef.attGuidOutMsg)
+        else:
+            self.mrpFeedback.guidInMsg.subscribeTo(self.attError.attGuidOutMsg)
         self.mrpFeedback.vehConfigInMsg.subscribeTo(self.vcMsg)
         self.mrpFeedback.K = self.kRot
         self.mrpFeedback.Ki = self.kiRot
@@ -429,7 +472,10 @@ class BSKMujocoFSWModels:
         """Define the inertial cart feedback module"""
         self.inertialCartFeedback.ModelTag = "inertialCartFeedback"
         self.inertialCartFeedback.deputyNavInMsg.subscribeTo(self.navConverter.transOutMsg)
-        self.inertialCartFeedback.deputyRefInMsg.subscribeTo(self.transRefMsg)
+        if self.isTracking:
+            self.inertialCartFeedback.deputyRefInMsg.subscribeTo(self.transRef.transRefOutMsg)
+        else:
+            self.inertialCartFeedback.deputyRefInMsg.subscribeTo(self.transRefMsg)
         self.inertialCartFeedback.deputyVehicleConfigInMsg.subscribeTo(self.vcMsg)
         self.inertialCartFeedback.setK(self.kTrans)
         self.inertialCartFeedback.setP(self.pTrans)
@@ -441,11 +487,19 @@ class BSKMujocoFSWModels:
         self.jointThrAllocation.hubStatesInMsg.subscribeTo(SimBase.DynModels.scene.getBody(self.hubName).getOrigin().stateOutMsg)
         self.jointThrAllocation.transForceInMsg.subscribeTo(self.inertialCartFeedback.forceOutMsg)
         self.jointThrAllocation.rotTorqueInMsg.subscribeTo(self.mrpFeedback.cmdTorqueOutMsg)
-
         self.jointThrAllocation.setWc(self.controlWeight)
         self.jointThrAllocation.setWf(self.thrustWeight)
+        if self.config.allocationMaxIterations is not None:
+            self.jointThrAllocation.maxiter = self.config.allocationMaxIterations
+        if self.config.allocationFunctionTolerance is not None:
+            self.jointThrAllocation.ftol = self.config.allocationFunctionTolerance
+        if self.useThetaAllocPenalty:
+            self.jointThrAllocation.setWtheta(self.thetaWeight)
+            for index, (bodyName, jointName) in enumerate(self.jointRefs):
+                self.jointThrAllocation.addHingedJoint()
+                joint = SimBase.DynModels.scene.getBody(bodyName).getScalarJoint(jointName)
+                self.jointThrAllocation.jointStatesInMsgs[index].subscribeTo(joint.stateOutMsg)
         self.jointThrAllocation.setThrForceMax(self.thrForces)
-
         self.desAngleReader = messaging.JointArrayStateMsgReader()
         self.desAngleReader.subscribeTo(self.jointThrAllocation.desJointAnglesOutMsg)
 
@@ -454,7 +508,9 @@ class BSKMujocoFSWModels:
         self.thrFiringRound.ModelTag = "thrFiringRound"
         self.thrFiringRound.thrForceInMsg.subscribeTo(self.jointThrAllocation.thrForceOutMsg)
         self.thrFiringRound.setControlPeriodSec(self.outerLoopTimeStep*1e-9)
-        self.thrFiringRound.setOnTimeResolutionSec(self.innerLoopTimeStep*1e-9)
+        self.thrFiringRound.setOnTimeResolutionSec(self.config.pulseResolution)
+        if self.config.minimumOnTime is not None:
+            self.thrFiringRound.setThrMinFireTime(self.config.minimumOnTime)
         self.thrFiringRound.setNumThrusters(self.numThrusters)
         self.thrFiringRound.setThrForceMax(self.thrForces)
         self.thrTimeReader = messaging.THRArrayOnTimeCmdMsgReader()
@@ -465,7 +521,14 @@ class BSKMujocoFSWModels:
         self.hingedJointArrayMotor.ModelTag = "hingedJointArrayMotor"
         self.hingedJointArrayMotor.massMatrixInMsg.subscribeTo(SimBase.DynModels.systemMassMatrix.massMatrixOutMsg)
         self.hingedJointArrayMotor.reactionForcesInMsg.subscribeTo(SimBase.DynModels.jointReactionForces.reactionForcesOutMsg)
-        self.hingedJointArrayMotor.desJointStatesInMsg.subscribeTo(self.jointThrAllocation.desJointAnglesOutMsg)
+        if self.useJointProfiler:
+            self.hingedJointArrayMotor.desJointStatesInMsg.subscribeTo(
+                self.jointProfiler.desJointStatesOutMsg
+            )
+        else:
+            self.hingedJointArrayMotor.desJointStatesInMsg.subscribeTo(
+                self.jointThrAllocation.desJointAnglesOutMsg
+            )
         self.anglesReaders = []
         self.angleRatesReaders = []
         for i, (bodyName, jointName) in enumerate(self.jointRefs):
@@ -498,6 +561,8 @@ class BSKMujocoFSWModels:
         for i in range(3):
             # Redirect the module outputs to each hub motor torque gateway message
             self.jointMotionCompensator.hubTorqueOutMsgs[i] = self.bodyTorqueGateway[i]
+        if self.maxPreTorques is not None:
+            self.jointMotionCompensator.setUMax(self.maxPreTorques)
 
     def SetThrOnTimeToForce(self):
         """Define the thruster on-time to force conversion module"""
@@ -526,23 +591,50 @@ class BSKMujocoFSWModels:
             self.thrJointCompensation.motorTorquesOutMsgs[i] = self.jointTorqueGateways[i]
         self.thrJointCompensation.setUMax(self.maxJointTorques)
 
+    def SetJointProfiler(self, SimBase):
+        """Define the optional joint reference profiler."""
+        self.jointProfiler.ModelTag = "jointProfiler"
+        self.jointProfiler.setProfileType(self.config.jointProfileType)
+        self.jointProfiler.setUseShortestPath(self.config.jointProfileUseShortestPath)
+        if self.config.jointProfileWrapStart is not None:
+            self.jointProfiler.setJointAngleWrapStart(self.config.jointProfileWrapStart)
+        if self.config.jointProfileType == "lowPass":
+            self.jointProfiler.setWc(self.config.jointProfileCutoffFrequency)
+            self.jointProfiler.setFilterDt(self.config.jointProfileFilterTimeStep)
+        else:
+            self.jointProfiler.setProfileDuration(self.config.jointProfileDuration)
+        for index, (bodyName, jointName) in enumerate(self.jointRefs):
+            self.jointProfiler.addHingedJoint()
+            joint = SimBase.DynModels.scene.getBody(bodyName).getScalarJoint(jointName)
+            self.jointProfiler.jointStatesInMsgs[index].subscribeTo(joint.stateOutMsg)
+            self.jointProfiler.jointStateDotsInMsgs[index].subscribeTo(joint.stateDotOutMsg)
+        self.jointProfiler.desJointStatesInMsg.subscribeTo(
+            self.jointThrAllocation.desJointAnglesOutMsg
+        )
+
     def InitAllFSWObjects(self, SimBase):
         """Initialize all FSW objects in the simulation"""
         self.SetVehicleConfiguration()
         self.SetThrArmConfig()
         self.SetTransRef()
-        self.SetInertial3D()
         self.SetStateMerge(SimBase)
         self.SetNavConverter()
-        self.SetAttError()
+        if self.isTracking:
+            self.SetAttRef()
+        else:
+            self.SetInertial3D()
+            self.SetAttError()
         self.SetMrpFeedback()
         self.SetInertialCartFeedback()
         self.SetJointThrAllocation(SimBase)
         self.SetThrFiringRound()
         self.SetHingedJointArrayMotor(SimBase)
-        self.SetJointMotionCompensator(SimBase)
+        if self.useJointMotionCompensation:
+            self.SetJointMotionCompensator(SimBase)
         self.SetThrOnTimeToForce()
         self.SetThrJointCompensation(SimBase)
+        if self.useJointProfiler:
+            self.SetJointProfiler(SimBase)
 
     def setupGatewayMsgs(self, SimBase):
         """create stand-alone actuator gateway messages such that different modules can write this message (or it can be left as zero)
