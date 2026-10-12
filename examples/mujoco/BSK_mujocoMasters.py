@@ -69,10 +69,12 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         """
         return self.DynModels
 
-    def set_DynModel(self, dynModel):
+    def set_DynModel(self, dynModel, config=None):
         """Construct and store the dynamics model.
 
         :param dynModel: Module containing the ``BSKMujocoDynamicsModels`` class.
+        :param config: Configuration passed to the dynamics model. Concrete MuJoCo
+            models require it; ``None`` supports lightweight model-access tests.
         :raises RuntimeError: If dynamics setup has already been attempted.
         """
         if self._dynamicsSetupAttempted:
@@ -82,7 +84,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self._dynamicsSetupAttempted = True
         self.DynamicsProcessName = 'DynamicsProcess'  # Create simulation process name
         self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)  # Create process
-        dynModels = dynModel.BSKMujocoDynamicsModels(self, self.dynRate)  # Create dynamics class
+        dynModels = dynModel.BSKMujocoDynamicsModels(self, self.dynRate, config)  # Create dynamics class
         self._dynModels = dynModels
         self.dynamics_added = True
 
@@ -103,10 +105,12 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         """
         return self.FSWModels
 
-    def set_FswModel(self, fswModel):
+    def set_FswModel(self, fswModel, config=None):
         """Construct and store the flight software model.
 
         :param fswModel: Module containing the ``BSKMujocoFSWModels`` class.
+        :param config: Configuration passed to the FSW model. Concrete MuJoCo
+            models require it; ``None`` supports lightweight model-access tests.
         :raises RuntimeError: If dynamics has not been added or FSW setup has already been attempted.
         """
         if self._fswSetupAttempted:
@@ -118,7 +122,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self._fswSetupAttempted = True
         self.FSWProcessName = "FSWProcess"  # Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName)  # Create process
-        fswModels = fswModel.BSKMujocoFSWModels(self, self.fswRate)  # Create FSW class
+        fswModels = fswModel.BSKMujocoFSWModels(self, self.fswRate, config)  # Create FSW class
         self._fswModels = fswModels
         self.fsw_added = True
 

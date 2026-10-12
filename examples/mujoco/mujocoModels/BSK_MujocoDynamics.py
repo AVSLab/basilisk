@@ -15,7 +15,6 @@
 #  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os
 from Basilisk.simulation import(
     mujoco,
     MJSystemCoM,
@@ -25,31 +24,34 @@ from Basilisk.simulation import(
 )
 from Basilisk.utilities import macros as mc
 
-XML_PATH = os.path.join(os.path.dirname(__file__), "..", "sat_w_thruster_arms.xml")
-
-
 class BSKMujocoDynamicsModels():
     """
     bskSim simulation class that sets up the MuJoCo spacecraft dynamics models.
     """
-    def __init__(self, SimBase, dynRate):
+    def __init__(self, SimBase, dynRate, config):
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
         self.taskName = "DynamicsTask"
         self.processTasksTimeStep = mc.sec2nano(dynRate)
 
+        xmlPath = getattr(config, "xmlPath", None)
+        if not xmlPath:
+            SimBase.bskLogger.error(
+                "MuJoCo dynamics configuration must provide a non-empty xmlPath."
+            )
+
         # Create task
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
 
         # Instantiate Dyn modules as objects
-        self.scene = mujoco.MJScene.fromFile(XML_PATH)
+        self.scene = mujoco.MJScene.fromFile(xmlPath)
         self.systemCoM = MJSystemCoM.MJSystemCoM()
         self.systemMassMatrix = MJSystemMassMatrix.MJSystemMassMatrix()
         self.jointReactionForces = MJJointReactionForces.MJJointReactionForces()
         self.integrator = svIntegrators.svIntegratorRKF45(self.scene)
 
         # Initialize all modules
-        self.InitAllDynObjects()
+        self.InitAllDynObjects(config)
 
         # Assign all initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scene, 200)
@@ -61,11 +63,15 @@ class BSKMujocoDynamicsModels():
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
 
-    def setScene(self):
+    def setScene(self, config):
         self.scene.extraEoMCall = True
         self.scene.ModelTag = "mujocoScene"
-        self.integrator.setRelativeTolerance(1e-2)
-        self.integrator.setAbsoluteTolerance(1e-2)
+        relativeTolerance = getattr(config, "integratorRelativeTolerance", None)
+        absoluteTolerance = getattr(config, "integratorAbsoluteTolerance", None)
+        if relativeTolerance is not None:
+            self.integrator.setRelativeTolerance(relativeTolerance)
+        if absoluteTolerance is not None:
+            self.integrator.setAbsoluteTolerance(absoluteTolerance)
         self.scene.setIntegrator(self.integrator)
 
     def setSystemCoM(self):
@@ -82,8 +88,8 @@ class BSKMujocoDynamicsModels():
 
 
     # Global call to initialize every module
-    def InitAllDynObjects(self):
-        self.setScene()
+    def InitAllDynObjects(self, config):
+        self.setScene(config)
         self.setSystemCoM()
         self.setSystemMassMatrix()
         self.setJointReactionForces()
