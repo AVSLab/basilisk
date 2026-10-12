@@ -16,8 +16,8 @@
 #  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-# This test file is used to test all the mujoco scenarios in the examples/mujoco folder
-# The test will run each scenario and check if it runs without any errors
+# Run MuJoCo examples that do not have dedicated scenario tests.
+# Each selected scenario must complete without errors.
 
 import sys
 import os
@@ -41,10 +41,13 @@ THIS_FOLDER = os.path.dirname(__file__)
 SCENARIO_FOLDER = os.path.join(
     THIS_FOLDER, "..", "..", "examples", "mujoco"
 )
+# Their dedicated tests cover both baseline behavior and optional control modes.
+THR_ARM_SCENARIOS = {"scenarioThrArmControl", "scenarioThrArmTracking"}
 SCENARIO_FILES = [
     filename[:-3]
     for filename in os.listdir(SCENARIO_FOLDER)
     if filename.startswith("scenario") and filename.endswith(".py")
+    and filename[:-3] not in THR_ARM_SCENARIOS
 ]
 
 SCENARIO_RUN_KWARGS = {
@@ -53,7 +56,6 @@ SCENARIO_RUN_KWARGS = {
         {"useSpice": True},
         {"useSpice": False},
     ],
-    "scenarioThrArmControl": {"showPlots": False, "timeStep": 0.08, "runTime": 240.0},
     # Run the stochastic-drag scenario in both the default (Ornstein-Uhlenbeck) and the
     # IGBM density-noise modes, so both sets of documentation figures are generated.
     "scenarioStochasticDrag": [{}, {"useIgbm": True}],
