@@ -160,9 +160,10 @@ void GroundLocation::updateInertialPositions()
     this->r_LP_N = this->dcm_PN.transpose() * this->r_LP_P_Init;
     this->rhat_LP_N = this->r_LP_N/this->r_LP_N.norm();
     this->r_LN_N = this->r_PN_N + this->r_LP_N;
-    // Get planet frame angular velocity vector
+    // Get the planet angular velocity vector, which is first obtained in P components and then expressed in N components
     Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
-    this->w_PN << w_tilde_PN(2,1), w_tilde_PN(0,2), w_tilde_PN(1,0);
+    Eigen::Vector3d w_PN_P(w_tilde_PN(2,1), w_tilde_PN(0,2), w_tilde_PN(1,0));  // [rad/s] in P components
+    this->w_PN = this->dcm_PN.transpose() * w_PN_P;                              // [rad/s] in N components
     //  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateBuffer.r_LN_N);
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateBuffer.r_LP_N);

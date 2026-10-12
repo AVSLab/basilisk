@@ -7,6 +7,11 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1605: The :ref:`groundLocation` and :ref:`stripLocation` modules crossed the planet angular velocity,
+  which they computed in planet-fixed components, with inertial vectors when removing the planet rotation from the
+  spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields were in error
+  when the planet spin axis was not aligned with the inertial 3-axis.
+
 - The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
   matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order
   :math:`(\omega\,\Delta t)^2`. The orientation is now advanced as a rotation about the planet angular velocity.
