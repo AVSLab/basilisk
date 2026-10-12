@@ -226,7 +226,8 @@ It's recommended to study the first 6 scenarios in order:
   Pointing with Reaction Wheels in MuJoCo <mujoco/scenarioAttitudeFeedbackRWMuJoCo>
   Translation-only formation flying under differential drag <mujoco/scenarioFormationFlyingWithDrag>
   Satellite Drag with Stochastic (Random) Density using MuJoCo <mujoco/scenarioStochasticDrag>
-  Spacecraft Control with Thruster Arms using MuJoCo <mujoco/scenarioThrArmControl>
+  Spacecraft Regulation Control with Thruster Arms using MuJoCo <mujoco/scenarioThrArmControl>
+  Spacecraft Tracking Control with Thruster Arms using MuJoCo <mujoco/scenarioThrArmTracking>
   Combining MuJoCo Scenes and a Spacecraft in Vizard <mujoco/scenarioMJSceneVizard>
   Hinged Rigid Body Dynamics using MuJoCo <mujoco/scenarioHingedRigidBodyMuJoCo>
   Flexible Multi-Segment Solar Panel using MuJoCo <mujoco/scenarioFlexiblePanelMuJoCo>
