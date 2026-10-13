@@ -1,0 +1,3 @@
+- Updated :ref:`scenarioThrArmControl` to use configuration-driven MuJoCo dynamics and flight software for thruster-arm regulation control.
+- Added :ref:`scenarioThrArmTracking` to demonstrate spacecraft position and attitude tracking with articulated thruster arms in MuJoCo.
+- Added the :ref:`arcLineHoldRef` guidance module to generate inertial position, velocity, and acceleration references for an arc-to-line-to-hold maneuver.
