@@ -629,7 +629,7 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots):
     task_name = "unitTask"
     process_name = "testProcess"
     sim = SimulationBaseClass.SimBaseClass()
-    process_rate = macros.sec2nano(0.0005)
+    process_rate = macros.sec2nano(0.001)
     process = sim.CreateNewProcess(process_name)
     process.addTask(sim.CreateNewTask(task_name, process_rate))
 
@@ -684,7 +684,7 @@ def test_prescribed_branching_linear_spring_mass_damper(show_plots):
     smd.c = 0.0                               # [N s/m] undamped
     smd.rhoInit = 0.5                         # [m]
     smd.rhoDotInit = 0.0                      # [m/s]
-    smd.pHat_B = [[0.0], [1.0], [0.0]]        # perpendicular to the prescribed rotation axis (x)
+    smd.pHat_B = [[1.0], [0.0], [0.0]]        # Translation axis (x)
     smd.r_PB_B = [[1.0], [0.0], [0.0]]        # [m]
     sim.AddModelToTask(task_name, smd)
 
@@ -906,3 +906,4 @@ if __name__ == "__main__":
     test_prescribed_branching_spinning_body_one_dof(True)
     test_prescribed_branching_spinning_body_two_dof(True)
     test_prescribed_branching_linear_translation_one_dof(True)
+    test_prescribed_branching_linear_spring_mass_damper(True)
