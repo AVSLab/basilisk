@@ -23,6 +23,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
 /*! @brief create an instance of the Strip Location Class
  */
@@ -328,7 +329,9 @@ void StripLocation::computeAccess()
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-        if (xy_norm < 1e-12) {
+        // [m] round-off level of r_BL_L, set by the inertial position magnitude that is cancelled in r_BP_N = r_BN_N - r_PN_N
+        double overheadTol = 1e3 * std::numeric_limits<double>::epsilon() * (this->r_PN_N.norm() + r_BP_N.norm());
+        if (xy_norm < overheadTol) {  // spacecraft directly overhead, azimuth is undefined
             accessMsgIt->azimuth = 0.0;
             accessMsgIt->az_dot = 0.0;
             accessMsgIt->el_dot = 0.0;

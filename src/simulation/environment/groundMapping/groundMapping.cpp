@@ -24,6 +24,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <iostream>
+#include <limits>
 #include <math.h>
 
 /*! This is the constructor for the module class.  It sets default variable
@@ -133,7 +134,10 @@ void GroundMapping::computeAccess(uint64_t c){
     Eigen::Vector3d r_BL_L = this->dcm_LP.at(c) * this->dcm_PN * r_BL_N;
     eigenVector3d2CArray(r_BL_L, this->accessMsgBuffer.at(c).r_BL_L);
     double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-    if (xy_norm < 1e-12) {  // [m] spacecraft directly overhead, azimuth is undefined
+    // [m] round-off level of r_BL_L, set by the inertial position magnitude that is cancelled in r_BP_N = r_BN_N - r_PN_N
+    double overheadTol = 1e3 * std::numeric_limits<double>::epsilon() * (this->r_PN_N.norm() + r_BP_N.norm());
+    bool isOverhead = xy_norm < overheadTol;  // spacecraft directly overhead, azimuth is undefined
+    if (isOverhead) {
         this->accessMsgBuffer.at(c).azimuth = 0.0;
     } else {
         double cos_az = -r_BL_L[0]/xy_norm;
@@ -145,7 +149,7 @@ void GroundMapping::computeAccess(uint64_t c){
     Eigen::Vector3d v_BL_L = this->dcm_LP.at(c) * this->dcm_PN * (v_BP_N - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
     eigenVector3d2CArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
-    if (xy_norm < 1e-12) {  // [m]
+    if (isOverhead) {
         this->accessMsgBuffer.at(c).az_dot = 0.0;
         this->accessMsgBuffer.at(c).el_dot = 0.0;
     } else {
