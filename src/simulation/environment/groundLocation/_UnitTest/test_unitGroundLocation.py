@@ -347,6 +347,68 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
     assert dataLog.el_dot[0] == pytest.approx(0.0, abs=1e-11)  # [rad/s]
 
 
+@pytest.mark.parametrize("tilt_deg", [0.0, 30.0, 60.0])
+@pytest.mark.parametrize("v_PN_N", [[0.0, 0.0, 0.0], [3.0e4, -1.0e3, 2.0e3]])  # [m/s]
+def test_overheadSpacecraft(tilt_deg, v_PN_N):
+    """
+    Tests that a spacecraft exactly overhead of the ground location, with a tilted planet frame, a planet far from
+    the inertial origin and a nonzero relative velocity, gets zero azimuth, azimuth rate and elevation rate despite
+    the floating-point round-off left in the horizontal components of the SEZ position.
+
+    :param tilt_deg: [deg] angle between the planet spin axis and the inertial 3-axis
+    :param v_PN_N: [m/s] planet velocity relative to the inertial frame origin, in N components
+    :return:
+    """
+    radius = 6378136.3  # [m] planet radius
+    altitude = 600e3  # [m] spacecraft altitude above the ground location
+    omega = 7.2921159e-5  # [rad/s] planet spin rate
+    r_PN_N = np.array([1.5e11, -2.0e10, 5.0e9])  # [m] planet position relative to the inertial origin
+    lat, lon = np.radians(35.0), np.radians(-70.0)  # [rad] ground location latitude and longitude
+    tilt = np.radians(tilt_deg)  # [rad]
+    c, s = np.cos(tilt), np.sin(tilt)
+    dcm_PN = np.array([[c, 0.0, -s], [0.0, 1.0, 0.0], [s, 0.0, c]])  # [-] N to P
+    w_PN_P = np.array([0.0, 0.0, omega])  # [rad/s]
+    w_skew = np.array([[0, -w_PN_P[2], w_PN_P[1]], [w_PN_P[2], 0, -w_PN_P[0]], [-w_PN_P[1], w_PN_P[0], 0]])
+
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PositionVector = list(r_PN_N)
+    planetPayload.VelocityVector = list(v_PN_N)
+    planetPayload.J20002Pfix = dcm_PN.tolist()
+    planetPayload.J20002Pfix_dot = (-w_skew @ dcm_PN).tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+
+    rHat_P = np.array([np.cos(lat) * np.cos(lon), np.cos(lat) * np.sin(lon), np.sin(lat)])  # [-]
+    r_BP_N = dcm_PN.T @ ((radius + altitude) * rHat_P)  # [m] exactly overhead
+    # spacecraft moves relative to the planet, so the overhead singularity is hit with a nonzero velocity
+    v_BN_N = np.array(v_PN_N) + np.cross(dcm_PN.T @ w_PN_P, r_BP_N) + dcm_PN.T @ np.array([1.0e3, -2.0e3, 5.0e2])  # [m/s]
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N = (r_PN_N + r_BP_N).tolist()
+    scPayload.v_BN_N = v_BN_N.tolist()
+    scMsg = messaging.SCStatesMsg().write(scPayload)
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))
+    groundStation = groundLocation.GroundLocation()
+    groundStation.planetRadius = radius
+    groundStation.minimumElevation = -np.pi / 2
+    groundStation.specifyLocation(lat, lon, 0.0)
+    groundStation.planetInMsg.subscribeTo(planetMsg)
+    groundStation.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("simTask", groundStation)
+    dataLog = groundStation.accessOutMsgs[0].recorder()
+    scSim.AddModelToTask("simTask", dataLog)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+
+    assert np.all(np.isfinite(dataLog.v_BL_L[0]))
+    assert np.hypot(dataLog.r_BL_L[0][0], dataLog.r_BL_L[0][1]) < 1e-3  # [m] overhead up to round-off
+    assert dataLog.azimuth[0] == 0.0  # [rad]
+    assert dataLog.az_dot[0] == 0.0  # [rad/s]
+    assert dataLog.el_dot[0] == 0.0  # [rad/s]
+    assert dataLog.slantRange[0] == pytest.approx(altitude, rel=1e-6)  # [m]
+
+
 def test_nonzeroRelativeStateOutputs():
     """
     Tests the published SEZ position, SEZ velocity, range rate and surface normal for a stationary planet, a ground

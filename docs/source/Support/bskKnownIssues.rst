@@ -7,7 +7,7 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
-- GitHub issue 1606: The :ref:`stripLocation` module did not copy the computed SEZ relative velocity into the
+- The :ref:`stripLocation` module did not copy the computed SEZ relative velocity into the
   ``v_BL_L`` field of its access messages, which therefore always reported zero. The :ref:`groundMapping` module never
   assigned its planet-fixed to SEZ rotation matrix, so its ``r_BL_L``, ``v_BL_L``, azimuth and rate outputs were
   computed from an uninitialized matrix. :ref:`groundMapping` also crossed the planet angular velocity in planet-fixed
@@ -17,7 +17,10 @@ Version |release|
 
 - The :ref:`groundLocation` and :ref:`groundMapping` modules did not guard the division by the horizontal distance
   to the spacecraft in the ``azimuth``, ``az_dot`` and ``el_dot`` access message fields, so these fields were
-  undefined for a spacecraft exactly overhead of the location.
+  undefined for a spacecraft exactly overhead of the location. The overhead test first used a fixed threshold of
+  1e-12 m on the horizontal distance, which is below the floating-point round-off of the SEZ position, so it
+  could miss an exactly overhead spacecraft and leave ``azimuth`` dependent on round-off and ``az_dot`` and
+  ``el_dot`` very large.
 
 - GitHub issue 1606: The :ref:`groundLocation` and :ref:`groundMapping` modules did not subtract the planet velocity
   of ``planetInMsg`` from the spacecraft velocity, so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access
