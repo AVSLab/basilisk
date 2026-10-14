@@ -114,7 +114,7 @@ def test_general_one_dof_rotation(show_plots,
     test_sim.AddModelToTask(task_name, energy_momentum_data_log)
     test_sim.AddModelToTask(task_name, sc_state_data_log)
 
-    # Rum the simulation
+    # Run the simulation
     test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time_sec))
     test_sim.ExecuteSimulation()
@@ -229,7 +229,7 @@ def test_general_one_dof_translation(show_plots,
     test_sim.AddModelToTask(task_name, energy_momentum_data_log)
     test_sim.AddModelToTask(task_name, sc_state_data_log)
 
-    # Rum the simulation
+    # Run the simulation
     test_sim.InitializeSimulation()
     test_sim.ConfigureStopTime(macros.sec2nano(sim_time_sec))
     test_sim.ExecuteSimulation()
