@@ -191,3 +191,33 @@ def test_invalid_durations(setting, value):
     getattr(module, setting)(value)  # [s]
     with pytest.raises(bskLogging.BasiliskError, match="duration"):
         module.Reset(0)
+
+
+@pytest.mark.parametrize(
+    "setter, name",
+    [
+        ("setRadius", "radius"),
+        ("setTCircle", "tCircle"),
+        ("setTTransition", "tTransition"),
+        ("setTLinear", "tLinear"),
+    ],
+)
+@pytest.mark.parametrize("value", [np.nan, np.inf, -np.inf], ids=["nan", "inf", "negative_inf"])
+def test_nonfinite_trajectory_parameters(setter, name, value):
+    """Reject non-finite radii and phase durations during reset.
+
+    **Validation Test Description**
+
+    Set each scalar trajectory parameter to NaN or either infinity and
+    verify that reset raises ``BasiliskError`` identifying the parameter.
+
+    **Description of Variables Being Tested**
+
+    ``radius``, ``tCircle``, ``tTransition``, and ``tLinear`` must be finite
+    before the module computes the trajectory boundary states.
+    """
+    module = arcLineHoldRef.ArcLineHoldRef()
+    module.bskLogger = bskLogging.BSKLogger()
+    getattr(module, setter)(value)  # [m] for radius; [s] for phase durations
+    with pytest.raises(bskLogging.BasiliskError, match=f"{name} must be finite"):
+        module.Reset(0)

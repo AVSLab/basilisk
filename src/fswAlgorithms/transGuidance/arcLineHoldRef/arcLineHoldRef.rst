@@ -35,7 +35,10 @@ be finite three-component vectors with *exactly zero* inertial ``x`` and
 ``BSK_ERROR`` (a ``BasiliskError`` in Python), rather than allowing a position
 jump at the blend-to-line or line-to-hold boundary.
 
-``Reset()`` also requires ``tTransition > 0``, ``tLinear > 0``, and
+``radius``, ``tCircle``, ``tTransition``, and ``tLinear`` must all be finite.
+``Reset()`` rejects NaN and positive or negative infinity with ``BSK_ERROR``
+(a ``BasiliskError`` in Python) before computing trajectory boundary states.
+It also requires ``tTransition > 0``, ``tLinear > 0``, and
 ``tCircle + tTransition > 0``.  For the intended arc-then-blend sequence,
 configure a nonnegative ``tCircle`` and a positive radius.  The latter two
 conditions are recommendations, not additional checks performed by the
