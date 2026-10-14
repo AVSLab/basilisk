@@ -668,6 +668,88 @@ def test_movingStripCoordinateRates(start_lat_lon_deg, end_lat_lon_deg, moving_p
     np.testing.assert_allclose(coordinate_rates[1][1:], expected_rates[1:], rtol=1e-7, atol=1e-9)  # [rad/s]
 
 
+@pytest.mark.parametrize("pre_imaging_time", [0.0, 2.0])  # [s]
+@pytest.mark.parametrize("moving_planet", [False, True])
+def test_completedStripStops(pre_imaging_time, moving_planet):
+    """Check that a completed strip remains fixed on the planet with consistent state and access rates.
+
+    The spacecraft is fixed in the planet frame. The target must move before completion,
+    then retain only the inertial velocity due to planet rotation and translation.
+    The case without pre-imaging also samples the exact completion time.
+
+    :param pre_imaging_time: [s] time added before reaching the nominal strip start
+    :param moving_planet: whether to use a tilted, rotating, translating planet
+    """
+    radius = 6378136.3  # [m]
+    traversal_time = 10.0  # [s] time to traverse the nominal quarter-equator strip
+    completion_time = traversal_time + pre_imaging_time  # [s]
+    spin_rate = 7.2921159e-5 if moving_planet else 0.0  # [rad/s]
+    tilt = np.radians(30.0) if moving_planet else 0.0  # [rad]
+    r_PN_N_initial = np.array([1.5e8, -2.0e7, 5.0e6]) if moving_planet else np.zeros(3)  # [m]
+    v_PN_N = np.array([3.0e4, -1.0e3, 2.0e3]) if moving_planet else np.zeros(3)  # [m/s]
+    r_BP_P = np.array([radius + 600e3, 1.0e5, 2.0e5])  # [m] spacecraft fixed in P
+    r_end_P = np.array([0.0, radius, 0.0])  # [m]
+    omega_PN_P = np.array([0.0, 0.0, spin_rate])  # [rad/s]
+    omega_tilde = np.array([[0.0, -spin_rate, 0.0], [spin_rate, 0.0, 0.0], [0.0, 0.0, 0.0]])  # [rad/s]
+    tilt_dcm = np.array([[np.cos(tilt), 0.0, -np.sin(tilt)], [0.0, 1.0, 0.0],
+                         [np.sin(tilt), 0.0, np.cos(tilt)]])
+
+    planet_payload = messaging.SpicePlanetStateMsgPayload()
+    planet_message = messaging.SpicePlanetStateMsg()
+    spacecraft_payload = messaging.SCStatesMsgPayload()
+    spacecraft_message = messaging.SCStatesMsg()
+    strip_target = stripLocation.StripLocation()
+    strip_target.planetRadius = radius
+    strip_target.acquisitionSpeed = radius * np.pi / 2 / macros.sec2nano(traversal_time)  # [m/ns]
+    strip_target.preImagingTime = macros.sec2nano(pre_imaging_time)  # [ns]
+    strip_target.specifyLocationStart(0.0, 0.0, 0.0)  # [rad, rad, m]
+    strip_target.specifyLocationEnd(0.0, np.pi / 2, 0.0)  # [rad, rad, m]
+    strip_target.planetInMsg.subscribeTo(planet_message)
+    strip_target.addSpacecraftToModel(spacecraft_message)
+    strip_target.Reset(0)  # [ns]
+
+    first_stopped_time = completion_time if pre_imaging_time == 0.0 else completion_time + 1.0  # [s]
+    stopped_positions, stopped_coordinates = [], []
+    for time in [completion_time - 1.0, first_stopped_time, completion_time + 2.0]:  # [s]
+        angle = spin_rate * time  # [rad]
+        spin_dcm = np.array([[np.cos(angle), np.sin(angle), 0.0],
+                             [-np.sin(angle), np.cos(angle), 0.0], [0.0, 0.0, 1.0]])
+        dcm_PN = spin_dcm @ tilt_dcm
+        r_PN_N = r_PN_N_initial + v_PN_N * time  # [m]
+        planet_payload.PositionVector = r_PN_N.tolist()
+        planet_payload.VelocityVector = v_PN_N.tolist()
+        planet_payload.J20002Pfix = dcm_PN.tolist()
+        planet_payload.J20002Pfix_dot = (-omega_tilde @ dcm_PN).tolist()
+        planet_message.write(planet_payload)
+        spacecraft_payload.r_BN_N = (r_PN_N + dcm_PN.T @ r_BP_P).tolist()
+        spacecraft_payload.v_BN_N = (v_PN_N + dcm_PN.T @ np.cross(omega_PN_P, r_BP_P)).tolist()
+        spacecraft_message.write(spacecraft_payload)
+        strip_target.UpdateState(macros.sec2nano(time))
+
+        state = strip_target.currentStripStateOutMsg.read()
+        r_LP_P = dcm_PN @ np.array(state.r_LP_N)  # [m]
+        if time < completion_time:
+            v_LP_P = dcm_PN @ np.array(state.v_LP_N) - np.cross(omega_PN_P, r_LP_P)  # [m/s]
+            assert np.linalg.norm(v_LP_P) == pytest.approx(strip_target.acquisitionSpeed * 1e9, rel=1e-12)  # [m/s]
+            assert np.linalg.norm(r_LP_P - r_end_P) > 1.0  # [m]
+            continue
+
+        expected_v_LP_N = dcm_PN.T @ np.cross(omega_PN_P, r_end_P)  # [m/s]
+        np.testing.assert_allclose(r_LP_P, r_end_P, rtol=0.0, atol=1e-7)  # [m]
+        np.testing.assert_allclose(state.v_LP_N, expected_v_LP_N, rtol=0.0, atol=1e-8)  # [m/s]
+        np.testing.assert_allclose(state.v_LN_N, v_PN_N + expected_v_LP_N, rtol=0.0, atol=1e-8)  # [m/s]
+        access = strip_target.accessOutMsgs[0].read()
+        np.testing.assert_allclose(access.v_BL_L, np.zeros(3), rtol=0.0, atol=1e-8)  # [m/s]
+        assert access.range_dot == pytest.approx(0.0, abs=1e-8)  # [m/s]
+        np.testing.assert_allclose([access.az_dot, access.el_dot], np.zeros(2), rtol=0.0, atol=1e-12)  # [rad/s]
+        stopped_positions.append(np.array(access.r_BL_L))
+        stopped_coordinates.append([access.slantRange, access.azimuth, access.elevation])
+
+    np.testing.assert_allclose(stopped_positions[1], stopped_positions[0], rtol=0.0, atol=1e-7)  # [m]
+    assert stopped_coordinates[1][0] == pytest.approx(stopped_coordinates[0][0], abs=1e-7, rel=0.0)  # [m]
+    np.testing.assert_allclose(stopped_coordinates[1][1:], stopped_coordinates[0][1:], rtol=0.0, atol=1e-12)  # [rad]
+
+
 def test_new_start_pre_imaging(show_plots):
     """
     Tests that ``newpstart()`` correctly extends the strip backward so that

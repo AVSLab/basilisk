@@ -282,8 +282,12 @@ void StripLocation::updateTargetPositionPCPF(uint64_t currentClock)
         Eigen::Vector3d tmpLLAPosition = PCPF2LLA(this->r_LP_P, this->planetRadius);
         this->dcm_LP = C_PCPF2SEZ(tmpLLAPosition[0], tmpLLAPosition[1]);
 
-        // Update the velocity vector
-        this->v_LP_P = this->VelocityCentralLine(tauClamped, this->thetaUpdated, this->pStartUpdated, this->pEnd);
+        // Once the position reaches the endpoint, the target is stationary in the planet-fixed frame.
+        if (tauClamped >= 1.0) {
+            this->v_LP_P.setZero();
+        } else {
+            this->v_LP_P = this->VelocityCentralLine(tauClamped, this->thetaUpdated, this->pStartUpdated, this->pEnd);
+        }
 
         }
 
