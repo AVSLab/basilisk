@@ -17,9 +17,10 @@
 r"""
 Overview
 --------
-Demonstrate two independently moving instrument cameras on a spacecraft with
-a prescribed, fixed attitude. This implements the moving-platform approach
-suggested in `issue 1309 <https://github.com/AVSLab/basilisk/issues/1309>`_.
+Demonstrate two independently moving instrument cameras on a spacecraft in a
+circular Earth orbit with a prescribed, fixed attitude. This implements the
+moving-platform approach suggested in
+`issue 1309 <https://github.com/AVSLab/basilisk/issues/1309>`_.
 Rotation and translation commands enter native motion profilers through
 messages. No per-step assignment to ``camera.sigma_CB`` or ``cameraPos_B``
 is needed, and no new camera input port is introduced.
@@ -38,6 +39,9 @@ or hardware inertia. The spacecraft attitude is prescribed using an
 along x; the second rotates about x with a differently oriented mount. At
 15 seconds, new commands change both rotations and the first translation.
 This illustrates independent pose commands, not closed-loop target tracking.
+The spacecraft starts at 500 km altitude with both cameras facing Earth.
+Earth supplies point-mass gravity, while the host attitude stays fixed in the
+inertial frame throughout the orbit.
 
 Run from the repository root::
 
@@ -45,9 +49,11 @@ Run from the repository root::
 
 The native dynamics and numerical results also run without ``vizInterface``.
 With that feature available, the scenario registers the platform poses and
-two camera configurations for Vizard. Uncomment ``saveFile`` in the source
-to export a replay. Rendering images requires Vizard; the offline tests check
-native pose messages and camera-parent wiring, not rendered pixels.
+two camera configurations for Vizard, with camera frustums displayed. The
+host uses the default spacecraft model, while the platforms are gray boxes.
+The ``saveFile`` setting exports a replay. Rendering images requires Vizard; the
+offline tests check native pose messages and camera-parent wiring, not rendered
+pixels.
 """
 
 import matplotlib.pyplot as plt
@@ -61,6 +67,8 @@ from Basilisk.simulation import (
     spacecraft,
 )
 from Basilisk.utilities import SimulationBaseClass, macros, vizSupport
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import simIncludeGravBody
 
 
 def run(show_plots=False, enable_viz=True):
@@ -80,9 +88,20 @@ def run(show_plots=False, enable_viz=True):
     hub.ModelTag = "cameraHost"
     hub.hub.mHub = 100.0  # [kg]
     hub.hub.IHubPntBc_B = np.diag([20.0, 30.0, 40.0]).tolist()  # [kg*m^2]
-    hub.hub.r_CN_NInit = [100.0, -200.0, 300.0]  # [m]
     hub_sigma = [0.1, -0.2, 0.05]  # [-] MRP
     hub.hub.sigma_BNInit = hub_sigma
+
+    grav_factory = simIncludeGravBody.gravBodyFactory()
+    earth = grav_factory.createEarth()
+    earth.isCentralBody = True
+    grav_factory.addBodiesTo(hub)
+    altitude_m = 500.0e3  # [m]
+    orbit_radius_m = earth.radEquator + altitude_m
+    dcm_NB = rbk.MRP2C(hub_sigma).T
+    # Point the initial camera +z axes toward Earth; velocity is along hub +x.
+    hub.hub.r_CN_NInit = (-orbit_radius_m*dcm_NB[:, 2]).tolist()
+    hub.hub.v_CN_NInit = (np.sqrt(earth.mu/orbit_radius_m)*dcm_NB[:, 0]).tolist()
+
     attitude = messaging.AttRefMsgPayload()
     attitude.sigma_RN = hub_sigma
     attitude_msg = messaging.AttRefMsg().write(attitude)
@@ -151,7 +170,16 @@ def run(show_plots=False, enable_viz=True):
         ]
         viz = vizSupport.enableUnityVisualization(
             sim, "cameraTask", bodies,
-            # saveFile=__file__,
+            saveFile=__file__,
+        )
+        viz.settings.viewCameraFrustumHUD = 1
+        vizSupport.createCustomModel(
+            viz,
+            simBodiesToModify=[platform.ModelTag for platform in platforms],
+            modelPath="CUBE",
+            scale=[0.3, 0.3, 0.2],  # [m] Box dimensions along platform x, y, z
+            offset=[0.0, 0.0, -0.1],  # [m] Put the front face at the camera origin
+            color=vizSupport.toRGBA255("gray"),
         )
         for index, platform in enumerate(platforms):
             camera_config, camera_msg = vizSupport.createCameraConfigMsg(
@@ -187,6 +215,7 @@ def run(show_plots=False, enable_viz=True):
         "time_s": hub_log.times()*macros.NANO2SEC,
         "hub_sigma": hub_log.sigma_BN.copy(),
         "hub_position": hub_log.r_BN_N.copy(),
+        "hub_velocity": hub_log.v_BN_N.copy(),
         "platform_sigma": [log.sigma_BN.copy() for log in pose_logs],
         "platform_position": [log.r_BN_N.copy() for log in pose_logs],
         "rotation_reference": [log.sigma_PM.copy() for log in rotation_logs],

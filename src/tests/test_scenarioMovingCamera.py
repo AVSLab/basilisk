@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.utilities import vizSupport
+from Basilisk.utilities import simIncludeGravBody, vizSupport
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "examples"))
 import scenarioMovingCamera  # noqa: E402
@@ -79,20 +79,34 @@ def test_camera_platform_commands(camera_run):
             )
 
 
-def test_camera_host_remains_fixed(camera_run):
-    """Verify camera motion and retargeting leave the prescribed host pose fixed."""
+def test_camera_host_follows_orbit(camera_run):
+    """Verify the host follows a circular Earth orbit with fixed inertial attitude."""
     _, data = camera_run
     np.testing.assert_allclose(
         data["hub_sigma"], np.tile([0.1, -0.2, 0.05], (len(data["time_s"]), 1)),
         rtol=0, atol=1e-14,
     )
-    position_tolerance_m = 1e-10  # [m]
+    earth = simIncludeGravBody.gravBodyFactory().createEarth()
+    initial_position_N = data["hub_position"][0]
+    initial_velocity_N = data["hub_velocity"][0]
+    orbit_radius_m = np.linalg.norm(initial_position_N)
+    altitude_m = 500.0e3  # [m]
+    position_tolerance_m = 1e-6  # [m]
     np.testing.assert_allclose(
-        data["hub_position"], np.tile([100.0, -200.0, 300.0], (len(data["time_s"]), 1)),
+        orbit_radius_m, earth.radEquator + altitude_m, rtol=0, atol=position_tolerance_m,
+    )
+    mean_motion = np.sqrt(earth.mu/orbit_radius_m**3)
+    orbital_angle = mean_motion*data["time_s"][:, np.newaxis]
+    expected_position_N = (
+        np.cos(orbital_angle)*initial_position_N
+        + np.sin(orbital_angle)*initial_velocity_N/mean_motion
+    )
+    np.testing.assert_allclose(
+        data["hub_position"], expected_position_N,
         rtol=0, atol=position_tolerance_m,
     )
     for attitudes in data["platform_sigma"]:
-        # Both platform boresights must change while the host stays fixed.
+        # Both platform boresights must change while the host attitude stays fixed.
         start = rbk.MRP2C(attitudes[0]).T[:, 2]
         end = rbk.MRP2C(attitudes[-1]).T[:, 2]
         assert np.linalg.norm(end - start) > 0.1  # [-]
