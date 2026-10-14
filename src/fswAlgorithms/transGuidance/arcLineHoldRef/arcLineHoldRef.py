@@ -232,6 +232,15 @@ class ArcLineHoldRef(sysModel.SysModel):
 
     def Reset(self, CurrentSimNanos):
         """Initialize the fixed-maneuver boundary states before simulation."""
+        for name, value in (
+            ("radius", self.radius),
+            ("tCircle", self.tCircle),
+            ("tTransition", self.tTransition),
+            ("tLinear", self.tLinear),
+        ):
+            if not np.isfinite(value):
+                self.bskLogger.error(f"ArcLineHoldRef.{name} must be finite.")
+
         for name, endpoint in (
             ("blendEndPosition", self.blendEndPosition),
             ("finalPosition", self.finalPosition),
