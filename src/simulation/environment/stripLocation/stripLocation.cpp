@@ -325,6 +325,7 @@ void StripLocation::computeAccess()
         Eigen::Vector3d r_BP_P = this->dcm_PN * r_BP_N;
         Eigen::Vector3d v_BP_P = this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - v_PN_N) - this->w_PN.cross(r_BP_P);
         Eigen::Vector3d v_BL_L = this->dcm_LP * (v_BP_P - this->v_LP_P);
+        eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
         if (xy_norm < 1e-12) {

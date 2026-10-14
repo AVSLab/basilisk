@@ -83,6 +83,11 @@ void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init){
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
 
+    /* Compute the planet-fixed to SEZ rotation of this point; a spherical planet is assumed, so the latitude and
+     * longitude do not depend on the planet radius */
+    Eigen::Vector3d lla = PCPF2LLA(r_LP_P_init, 0.0);  // [rad, rad, m]
+    this->dcm_LP.push_back(C_PCPF2SEZ(lla[0], lla[1]));
+
     /* Create buffer output messages */
     addOwnedMessage(this->ownedAccessOutMsgs, this->accessOutMsgs);
 
@@ -114,6 +119,7 @@ void GroundMapping::computeAccess(uint64_t c){
     //!  Stash updated position in the groundState message
     eigenVector3d2CArray(this->r_LN_N, this->currentGroundStateMsgBuffer.at(c).r_LN_N);
     eigenVector3d2CArray(this->r_LP_N, this->currentGroundStateMsgBuffer.at(c).r_LP_N);
+    eigenVector3d2CArray(this->rhat_LP_N, this->currentGroundStateMsgBuffer.at(c).rHat_LP_N);
 
     //! Compute the relative position of each spacecraft to the site in the planet-centered inertial frame
     Eigen::Vector3d r_BL_N = r_BP_N - this->r_LP_N;
@@ -124,18 +130,28 @@ void GroundMapping::computeAccess(uint64_t c){
 
     this->accessMsgBuffer.at(c).slantRange = r_BL_mag;
     this->accessMsgBuffer.at(c).elevation = viewAngle;
-    Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
+    Eigen::Vector3d r_BL_L = this->dcm_LP.at(c) * this->dcm_PN * r_BL_N;
     eigenVector3d2CArray(r_BL_L, this->accessMsgBuffer.at(c).r_BL_L);
-    double cos_az = -r_BL_L[0]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
-    double sin_az = r_BL_L[1]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
-    this->accessMsgBuffer.at(c).azimuth = atan2(sin_az, cos_az);
+    double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
+    if (xy_norm < 1e-12) {  // [m] spacecraft directly overhead, azimuth is undefined
+        this->accessMsgBuffer.at(c).azimuth = 0.0;
+    } else {
+        double cos_az = -r_BL_L[0]/xy_norm;
+        double sin_az = r_BL_L[1]/xy_norm;
+        this->accessMsgBuffer.at(c).azimuth = atan2(sin_az, cos_az);
+    }
 
-    Eigen::Vector3d v_BL_L = this->dcm_LP * this->dcm_PN * (cArray2EigenVector3d(scStateInMsgBuffer.v_BN_N) - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
+    Eigen::Vector3d v_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.v_BN_N) - this->v_PN_N;  // [m/s]
+    Eigen::Vector3d v_BL_L = this->dcm_LP.at(c) * this->dcm_PN * (v_BP_N - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
     eigenVector3d2CArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
-    double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-    this->accessMsgBuffer.at(c).az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
-    this->accessMsgBuffer.at(c).el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
+    if (xy_norm < 1e-12) {  // [m]
+        this->accessMsgBuffer.at(c).az_dot = 0.0;
+        this->accessMsgBuffer.at(c).el_dot = 0.0;
+    } else {
+        this->accessMsgBuffer.at(c).az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
+        this->accessMsgBuffer.at(c).el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
+    }
 
     uint64_t within_view = this->checkInstrumentFOV();
 
@@ -157,6 +173,7 @@ void GroundMapping::updateInertialPositions()
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetInMsgBuffer.J20002Pfix);
     this->dcm_PN_dot = cArray2EigenMatrix3d(*this->planetInMsgBuffer.J20002Pfix_dot);
     this->r_PN_N = cArray2EigenVector3d(this->planetInMsgBuffer.PositionVector);
+    this->v_PN_N = cArray2EigenVector3d(this->planetInMsgBuffer.VelocityVector);  // [m/s]
 
     // Compute the position of the body frame to the planet in the inertial frame
     this->r_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.r_BN_N) - this->r_PN_N;
@@ -164,9 +181,10 @@ void GroundMapping::updateInertialPositions()
     MRP2C(scStateInMsgBuffer.sigma_BN, dcm_BN);
     this->dcm_NB = cArray2EigenMatrix3d(*dcm_BN).transpose();
 
-    // Get planet frame angular velocity vector
+    // Get the planet angular velocity vector, which is first obtained in P components and then expressed in N components
     Eigen::Matrix3d w_tilde_PN = - this->dcm_PN_dot * this->dcm_PN.transpose();
-    this->w_PN << w_tilde_PN(2,1), w_tilde_PN(0,2), w_tilde_PN(1,0);
+    Eigen::Vector3d w_PN_P(w_tilde_PN(2,1), w_tilde_PN(0,2), w_tilde_PN(1,0));  // [rad/s] in P components
+    this->w_PN = this->dcm_PN.transpose() * w_PN_P;  // [rad/s] in N components
 }
 
 /*! Method to compute whether or not the mapping point is in the instrument's FOV

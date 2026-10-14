@@ -1,2 +1,6 @@
-- Fixed :ref:`groundLocation` and :ref:`stripLocation` crossing the planet angular velocity, which was expressed in planet-fixed components, with inertial vectors. This affected ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages when the planet spin axis was not aligned with the inertial 3-axis.
-- Fixed :ref:`groundLocation` ignoring the planet translational velocity from ``planetInMsg`` when computing ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages.
+- Fixed :ref:`groundLocation`, :ref:`stripLocation` and :ref:`groundMapping` crossing the planet angular velocity, which was expressed in planet-fixed components, with inertial vectors. This affected ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages when the planet spin axis was not aligned with the inertial 3-axis.
+- Fixed :ref:`groundLocation` and :ref:`groundMapping` ignoring the planet translational velocity from ``planetInMsg`` when computing ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` of the access messages.
+- Fixed :ref:`groundMapping` using an uninitialized planet-fixed to SEZ rotation matrix; it is now computed for each mapping point from its latitude and longitude.
+- Fixed :ref:`stripLocation` not populating the ``v_BL_L`` field of its access messages.
+- Fixed :ref:`groundMapping` not populating the ``rHat_LP_N`` field of its ground state messages.
+- Added a guard to :ref:`groundLocation` and :ref:`groundMapping` so that ``azimuth``, ``az_dot`` and ``el_dot`` are set to zero, as in :ref:`stripLocation`, instead of being undefined when the horizontal distance to a spacecraft directly overhead of the location vanishes.

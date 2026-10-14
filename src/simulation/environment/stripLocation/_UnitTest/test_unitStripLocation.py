@@ -544,6 +544,51 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg):
     assert dataLog.el_dot[0] == pytest.approx(0.0, abs=1e-11)  # [rad/s]
 
 
+def test_nonzeroRelativeVelocityOutput():
+    """
+    Tests that the published SEZ relative velocity is populated and consistent with the range rate for a stationary
+    planet, a stationary strip at zero latitude and longitude, and a moving spacecraft.
+
+    :return:
+    """
+    radius = 6378136.3  # [m] planet radius
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.J20002Pfix = np.eye(3).tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+
+    r_BN_N = np.array([radius + 600e3, 1.0e5, 2.0e5])  # [m]
+    v_BN_N = np.array([10.0, 20.0, 30.0])  # [m/s]
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N = r_BN_N.tolist()
+    scPayload.v_BN_N = v_BN_N.tolist()
+    scMsg = messaging.SCStatesMsg().write(scPayload)
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))
+    stripTarget = stripLocation.StripLocation()
+    stripTarget.planetRadius = radius
+    stripTarget.minimumElevation = -np.pi / 2
+    stripTarget.maximumRange = -1
+    stripTarget.acquisitionSpeed = 0.0  # [m/ns] stationary target
+    stripTarget.preImagingTime = 0
+    stripTarget.specifyLocationStart(0.0, 0.0, 0.0)
+    stripTarget.specifyLocationEnd(0.0, 0.0, 0.0)
+    stripTarget.planetInMsg.subscribeTo(planetMsg)
+    stripTarget.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("simTask", stripTarget)
+    dataLog = stripTarget.accessOutMsgs[0].recorder()
+    scSim.AddModelToTask("simTask", dataLog)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+
+    v_BL_L_expected = np.array([-30.0, 20.0, 10.0])  # [m/s] SEZ components at lat = lon = 0
+    r_BL_L = np.array(dataLog.r_BL_L[0])  # [m]
+    np.testing.assert_allclose(dataLog.v_BL_L[0], v_BL_L_expected, atol=1e-9)  # [m/s]
+    assert dataLog.range_dot[0] == pytest.approx(v_BL_L_expected @ r_BL_L / np.linalg.norm(r_BL_L), rel=1e-9)  # [m/s]
+    assert dataLog.range_dot[0] == pytest.approx(21.8643266644, rel=1e-8)  # [m/s]
+
+
 def test_new_start_pre_imaging(show_plots):
     """
     Tests that ``newpstart()`` correctly extends the strip backward so that

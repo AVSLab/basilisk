@@ -192,17 +192,26 @@ void GroundLocation::computeAccess()
         accessMsgIt->elevation = viewAngle;
         Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
         eigenVector3d2CArray(r_BL_L, accessMsgIt->r_BL_L);
-        double cos_az = -r_BL_L[0]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
-        double sin_az = r_BL_L[1]/(sqrt(pow(r_BL_L[0],2) + pow(r_BL_L[1],2)));
-        accessMsgIt->azimuth = atan2(sin_az, cos_az);
+        double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
+        if (xy_norm < 1e-12) {  // [m] spacecraft directly overhead, azimuth is undefined
+            accessMsgIt->azimuth = 0.0;
+        } else {
+            double cos_az = -r_BL_L[0]/xy_norm;
+            double sin_az = r_BL_L[1]/xy_norm;
+            accessMsgIt->azimuth = atan2(sin_az, cos_az);
+        }
 
         Eigen::Vector3d v_BP_N = cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - this->v_PN_N;  // [m/s]
         Eigen::Vector3d v_BL_L = this->dcm_LP * this->dcm_PN * (v_BP_N - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
-        double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-        accessMsgIt->az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
-        accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
+        if (xy_norm < 1e-12) {  // [m]
+            accessMsgIt->az_dot = 0.0;
+            accessMsgIt->el_dot = 0.0;
+        } else {
+            accessMsgIt->az_dot = (-r_BL_L[0]*v_BL_L[1] + r_BL_L[1]*v_BL_L[0])/pow(xy_norm,2);
+            accessMsgIt->el_dot = (v_BL_L[2]/xy_norm - r_BL_L[2]*(r_BL_L[0]*v_BL_L[0] + r_BL_L[1]*v_BL_L[1])/pow(xy_norm,3))/(1+pow(r_BL_L[2]/xy_norm,2));
+        }
 
         if( (viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0)){
             accessMsgIt->hasAccess = 1;
