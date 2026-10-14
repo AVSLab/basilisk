@@ -194,8 +194,10 @@ void GroundLocation::computeAccess()
         Eigen::Vector3d r_BL_L = this->dcm_LP * this->dcm_PN * r_BL_N;
         eigenVector3d2CArray(r_BL_L, accessMsgIt->r_BL_L);
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-        // [m] round-off level of r_BL_L, set by the inertial position magnitude that is cancelled in r_BP_N = r_BN_N - r_PN_N
-        double overheadTol = 1e3 * std::numeric_limits<double>::epsilon() * (this->r_PN_N.norm() + r_BP_N.norm());
+        // Separate distant-origin position quantization from local subtraction and frame-rotation round-off.
+        // The local allowance covers the two position differences and the two frame rotations.
+        double overheadTol = std::numeric_limits<double>::epsilon()
+            * (this->r_PN_N.norm() + 8.0 * (r_BP_N.norm() + this->r_LP_N.norm()));  // [m]
         bool isOverhead = xy_norm < overheadTol;  // spacecraft directly overhead, azimuth is undefined
         if (isOverhead) {
             accessMsgIt->azimuth = 0.0;
