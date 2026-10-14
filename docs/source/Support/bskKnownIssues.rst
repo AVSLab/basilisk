@@ -7,14 +7,26 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
-- GitHub issue 1606: The :ref:`groundLocation` module did not subtract the planet velocity of ``planetInMsg`` from the spacecraft velocity,
-  so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields were in error by the planet
-  velocity.
+- GitHub issue 1606: The :ref:`stripLocation` module did not copy the computed SEZ relative velocity into the
+  ``v_BL_L`` field of its access messages, which therefore always reported zero. The :ref:`groundMapping` module never
+  assigned its planet-fixed to SEZ rotation matrix, so its ``r_BL_L``, ``v_BL_L``, azimuth and rate outputs were
+  computed from an uninitialized matrix. :ref:`groundMapping` also crossed the planet angular velocity in planet-fixed
+  components with inertial vectors, and did not subtract the planet velocity of ``planetInMsg``, as described in the
+  two entries below. The :ref:`groundMapping` module also did not populate the ``rHat_LP_N`` field of its ground state
+  messages.
 
-- GitHub issue 1605: The :ref:`groundLocation` and :ref:`stripLocation` modules crossed the planet angular velocity,
-  which they computed in planet-fixed components, with inertial vectors when removing the planet rotation from the
-  spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access message fields were in error
-  when the planet spin axis was not aligned with the inertial 3-axis.
+- The :ref:`groundLocation` and :ref:`groundMapping` modules did not guard the division by the horizontal distance
+  to the spacecraft in the ``azimuth``, ``az_dot`` and ``el_dot`` access message fields, so these fields were
+  undefined for a spacecraft exactly overhead of the location.
+
+- GitHub issue 1606: The :ref:`groundLocation` and :ref:`groundMapping` modules did not subtract the planet velocity
+  of ``planetInMsg`` from the spacecraft velocity, so the ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access
+  message fields were in error by the planet velocity.
+
+- GitHub issue 1605: The :ref:`groundLocation`, :ref:`stripLocation` and :ref:`groundMapping` modules crossed the
+  planet angular velocity, which they computed in planet-fixed components, with inertial vectors when removing the
+  planet rotation from the spacecraft velocity. The ``v_BL_L``, ``range_dot``, ``az_dot`` and ``el_dot`` access
+  message fields were in error when the planet spin axis was not aligned with the inertial 3-axis.
 
 - The gravity effector advanced the planet orientation of a SPICE-driven planet with a first-order update of the
   matrix elements, which is not orthonormal and distorted even a point-mass field by a relative error of order

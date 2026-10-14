@@ -347,6 +347,50 @@ def test_planetFixedSpacecraftZeroRates(tilt_deg, v_PN_N):
     assert dataLog.el_dot[0] == pytest.approx(0.0, abs=1e-11)  # [rad/s]
 
 
+def test_nonzeroRelativeStateOutputs():
+    """
+    Tests the published SEZ position, SEZ velocity, range rate and surface normal for a stationary planet, a ground
+    location at zero latitude and longitude, and a moving spacecraft.
+
+    :return:
+    """
+    radius = 6378136.3  # [m] planet radius
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.J20002Pfix = np.eye(3).tolist()
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N = [radius + 600e3, 1.0e5, 2.0e5]  # [m]
+    scPayload.v_BN_N = [10.0, 20.0, 30.0]  # [m/s]
+    scMsg = messaging.SCStatesMsg().write(scPayload)
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.CreateNewProcess("simProcess").addTask(scSim.CreateNewTask("simTask", macros.sec2nano(1.0)))
+    groundStation = groundLocation.GroundLocation()
+    groundStation.planetRadius = radius
+    groundStation.minimumElevation = -np.pi / 2
+    groundStation.specifyLocation(0.0, 0.0, 0.0)
+    groundStation.planetInMsg.subscribeTo(planetMsg)
+    groundStation.addSpacecraftToModel(scMsg)
+    scSim.AddModelToTask("simTask", groundStation)
+    accessLog = groundStation.accessOutMsgs[0].recorder()
+    stateLog = groundStation.currentGroundStateOutMsg.recorder()
+    scSim.AddModelToTask("simTask", accessLog)
+    scSim.AddModelToTask("simTask", stateLog)
+
+    scSim.InitializeSimulation()
+    scSim.TotalSim.SingleStepProcesses()
+
+    r_BL_L_expected = np.array([-2.0e5, 1.0e5, 6.0e5])  # [m] SEZ components at lat = lon = 0
+    v_BL_L_expected = np.array([-30.0, 20.0, 10.0])  # [m/s]
+    np.testing.assert_allclose(accessLog.r_BL_L[0], r_BL_L_expected, atol=1e-6)  # [m]
+    np.testing.assert_allclose(accessLog.v_BL_L[0], v_BL_L_expected, atol=1e-9)  # [m/s]
+    assert accessLog.range_dot[0] == pytest.approx(
+        v_BL_L_expected @ r_BL_L_expected / np.linalg.norm(r_BL_L_expected), rel=1e-9)  # [m/s]
+    np.testing.assert_allclose(stateLog.rHat_LP_N[0], [1.0, 0.0, 0.0], atol=1e-12)  # [-]
+    np.testing.assert_allclose(stateLog.r_LP_N[0], [radius, 0.0, 0.0], rtol=1e-12)  # [m]
+
+
 def plot_geometry(groundLocation, scLocations, minimumElevation):
     """
     Plots the location of a ground station, its field of view,  and the positions of two spacecraft to verify whether

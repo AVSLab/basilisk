@@ -39,6 +39,25 @@ Range and Elevation
 ~~~~~~~~~~~~~~~~~~~
 The range and elevation check follows the same logic as the :ref:`groundLocation` module.
 
+Planet Rotation
+~~~~~~~~~~~~~~~
+Each mapping point :math:`L` has its own planet-fixed to SEZ rotation matrix :math:`[LP]`, computed when the point is
+added from the latitude and longitude of its planet-fixed position, assuming a spherical planet.
+The planet velocity :math:`{}^{N}\mathbf{v}_{P/N}` is read from the planet state message and removed, so the module is
+valid for a planet that moves in the inertial frame.  The planet angular velocity is obtained from the SPICE planet
+orientation matrix :math:`[PN]` and its derivative, which gives :math:`\boldsymbol{\omega}_{P/N}` in :math:`P` frame
+components:
+
+.. math:: [\tilde{\boldsymbol{\omega}}_{P/N}] = -[\dot{PN}][PN]^T
+    :label: eq:gm_wTilde:8
+
+Because it is crossed with the inertial vector :math:`{}^{N}\mathbf{r}_{B/P}`, the angular velocity is first
+expressed in inertial components, :math:`{}^{N}\boldsymbol{\omega}_{P/N} = [PN]^T\,{}^{P}\boldsymbol{\omega}_{P/N}`.
+The spacecraft velocity relative to the mapping point is then
+
+.. math:: {}^{L}\mathbf{v}_{B/L} = [LP][PN]\left({}^{N}\mathbf{v}_{B/N} - {}^{N}\mathbf{v}_{P/N} - {}^{N}\boldsymbol{\omega}_{P/N} \times {}^{N}\mathbf{r}_{B/P}\right)
+    :label: eq:gm_vBL:9
+
 FOV Checking
 ~~~~~~~~~~~~
 Each mapping point is also checked to determine if its within the instrument's FOV cone. This check is performed as
