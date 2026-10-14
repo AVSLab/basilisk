@@ -110,6 +110,20 @@ The spacecraft velocity relative to the rotating location is then
     :label: eq:gl_vBL:9
 
 
+Overhead Geometry
+~~~~~~~~~~~~~~~~~
+Azimuth is undefined when the horizontal SEZ separation vanishes. When this separation is below the
+floating-point tolerance
+
+.. math:: \epsilon\left(\|\mathbf{r}_{P/N}\| + 8\left(\|\mathbf{r}_{B/P}\| + \|\mathbf{r}_{L/P}\|\right)\right),
+
+the module reports zero ``azimuth``, ``az_dot`` and ``el_dot``. Here :math:`\epsilon` is double-precision
+machine epsilon. The first term accounts for position quantization far from the inertial origin; the
+local terms allow for round-off in the position differences and frame rotations. This distinguishes
+exactly overhead geometry from small but resolvable horizontal offsets. The :ref:`groundMapping` and
+:ref:`stripLocation` modules use the same convention.
+
+
 User Guide
 ----------
 

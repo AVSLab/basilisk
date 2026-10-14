@@ -344,8 +344,10 @@ void StripLocation::computeAccess()
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));
-        // [m] round-off level of r_BL_L, set by the inertial position magnitude that is cancelled in r_BP_N = r_BN_N - r_PN_N
-        double overheadTol = 1e3 * std::numeric_limits<double>::epsilon() * (this->r_PN_N.norm() + r_BP_N.norm());
+        // Separate distant-origin position quantization from local subtraction and frame-rotation round-off.
+        // The local allowance covers the two position differences and the two frame rotations.
+        double overheadTol = std::numeric_limits<double>::epsilon()
+            * (this->r_PN_N.norm() + 8.0 * (r_BP_N.norm() + this->r_LP_N.norm()));  // [m]
         if (xy_norm < overheadTol) {  // spacecraft directly overhead, azimuth is undefined
             accessMsgIt->azimuth = 0.0;
             accessMsgIt->az_dot = 0.0;
