@@ -589,6 +589,85 @@ def test_nonzeroRelativeVelocityOutput():
     assert dataLog.range_dot[0] == pytest.approx(21.8643266644, rel=1e-8)  # [m/s]
 
 
+@pytest.mark.parametrize("start_lat_lon_deg, end_lat_lon_deg", [
+    ([0.0, 0.0], [0.0, 90.0]),
+    ([20.0, 10.0], [55.0, 75.0]),
+    ([10.0, 20.0], [55.0, 20.0]),
+], ids=["equatorial", "oblique", "meridional"])  # [deg]
+@pytest.mark.parametrize("moving_planet", [False, True])
+def test_movingStripCoordinateRates(start_lat_lon_deg, end_lat_lon_deg, moving_planet):
+    """Check moving-strip coordinate rates against central differences of published geometry.
+
+    Samples are taken inside the strip, away from the endpoint and SEZ singularities.
+    The oblique and meridional cases exercise changes in latitude as well as longitude.
+
+    :param start_lat_lon_deg: [deg] strip start latitude and longitude
+    :param end_lat_lon_deg: [deg] strip end latitude and longitude
+    :param moving_planet: whether to use a tilted, rotating, translating planet and a moving spacecraft
+    """
+    radius = 6378136.3  # [m]
+    sample_time = 10.0  # [s]
+    time_step = 0.01  # [s] central-difference interval
+    spin_rate = 7.2921159e-5 if moving_planet else 0.0  # [rad/s]
+    tilt = np.radians(30.0) if moving_planet else 0.0  # [rad]
+    r_PN_N_initial = np.array([1.5e8, -2.0e7, 5.0e6]) if moving_planet else np.zeros(3)  # [m]
+    v_PN_N = np.array([3.0e4, -1.0e3, 2.0e3]) if moving_planet else np.zeros(3)  # [m/s]
+    r_BP_P_initial = np.array([radius + 600e3, 1.0e5, 2.0e5])  # [m]
+    v_BP_P = np.array([500.0, -1000.0, 250.0]) if moving_planet else np.zeros(3)  # [m/s]
+    omega_PN_P = np.array([0.0, 0.0, spin_rate])  # [rad/s]
+    omega_tilde = np.array([[0.0, -spin_rate, 0.0], [spin_rate, 0.0, 0.0], [0.0, 0.0, 0.0]])  # [rad/s]
+    tilt_dcm = np.array([[np.cos(tilt), 0.0, -np.sin(tilt)], [0.0, 1.0, 0.0],
+                         [np.sin(tilt), 0.0, np.cos(tilt)]])
+
+    planet_payload = messaging.SpicePlanetStateMsgPayload()
+    planet_message = messaging.SpicePlanetStateMsg()
+    spacecraft_payload = messaging.SCStatesMsgPayload()
+    spacecraft_message = messaging.SCStatesMsg()
+    strip_target = stripLocation.StripLocation()
+    strip_target.planetRadius = radius
+    strip_target.acquisitionSpeed = 3.0e-6  # [m/ns]
+    start_lat, start_lon = np.radians(start_lat_lon_deg)  # [rad]
+    end_lat, end_lon = np.radians(end_lat_lon_deg)  # [rad]
+    strip_target.specifyLocationStart(start_lat, start_lon, 0.0)  # [rad, rad, m]
+    strip_target.specifyLocationEnd(end_lat, end_lon, 0.0)  # [rad, rad, m]
+    strip_target.planetInMsg.subscribeTo(planet_message)
+    strip_target.addSpacecraftToModel(spacecraft_message)
+    strip_target.Reset(0)  # [ns]
+
+    positions, coordinates, velocities, coordinate_rates = [], [], [], []
+    for time in [sample_time - time_step, sample_time, sample_time + time_step]:
+        angle = spin_rate * time  # [rad]
+        spin_dcm = np.array([[np.cos(angle), np.sin(angle), 0.0],
+                             [-np.sin(angle), np.cos(angle), 0.0], [0.0, 0.0, 1.0]])
+        dcm_PN = spin_dcm @ tilt_dcm
+        r_BP_P = r_BP_P_initial + v_BP_P * time  # [m]
+        r_PN_N = r_PN_N_initial + v_PN_N * time  # [m]
+        planet_payload.PositionVector = r_PN_N.tolist()
+        planet_payload.VelocityVector = v_PN_N.tolist()
+        planet_payload.J20002Pfix = dcm_PN.tolist()
+        planet_payload.J20002Pfix_dot = (-omega_tilde @ dcm_PN).tolist()
+        planet_message.write(planet_payload)
+        spacecraft_payload.r_BN_N = (r_PN_N + dcm_PN.T @ r_BP_P).tolist()
+        spacecraft_payload.v_BN_N = (
+            v_PN_N + dcm_PN.T @ (v_BP_P + np.cross(omega_PN_P, r_BP_P))).tolist()
+        spacecraft_message.write(spacecraft_payload)
+        strip_target.UpdateState(macros.sec2nano(time))
+
+        output = strip_target.accessOutMsgs[0].read()
+        positions.append(np.array(output.r_BL_L))
+        coordinates.append([output.slantRange, output.azimuth, output.elevation])
+        velocities.append(np.array(output.v_BL_L))
+        coordinate_rates.append([output.range_dot, output.az_dot, output.el_dot])
+
+    coordinates = np.array(coordinates)
+    coordinates[:, 1] = np.unwrap(coordinates[:, 1])
+    expected_velocity = (positions[2] - positions[0]) / (2 * time_step)  # [m/s]
+    expected_rates = (coordinates[2] - coordinates[0]) / (2 * time_step)  # [m/s, rad/s, rad/s]
+    np.testing.assert_allclose(velocities[1], expected_velocity, rtol=1e-7, atol=5e-5)  # [m/s]
+    assert coordinate_rates[1][0] == pytest.approx(expected_rates[0], rel=1e-7, abs=5e-5)  # [m/s]
+    np.testing.assert_allclose(coordinate_rates[1][1:], expected_rates[1:], rtol=1e-7, atol=1e-9)  # [rad/s]
+
+
 def test_new_start_pre_imaging(show_plots):
     """
     Tests that ``newpstart()`` correctly extends the strip backward so that

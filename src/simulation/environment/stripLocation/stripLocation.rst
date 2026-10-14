@@ -156,6 +156,25 @@ velocity :math:`{}^{L}\mathbf{v}_{B/L}` and the coordinate rates above, is
 
 where :math:`{}^{P}\mathbf{r}_{B/P} = [PN]\,{}^{N}\mathbf{r}_{B/P}`.
 
+Moving SEZ Frame
+~~~~~~~~~~~~~~~~
+As the target moves along the strip, its latitude :math:`\phi` and longitude :math:`\lambda` change,
+rotating the local SEZ frame relative to the planet-fixed frame. The published velocity is the time
+derivative of the published SEZ position components, so it includes this additional frame rotation:
+
+.. math:: {}^{L}\mathbf{v}_{B/L} = [LP]\left({}^{P}\mathbf{v}_{B/P} - {}^{P}\mathbf{v}_{L/P}\right) - {}^{L}\boldsymbol{\omega}_{L/P} \times {}^{L}\mathbf{r}_{B/L}
+    :label: eq:strip_movingSEZ:10
+
+For a target at radius :math:`R`, with south and east velocity components :math:`v_S` and :math:`v_E`,
+the local-frame angular velocity is
+
+.. math:: {}^{L}\boldsymbol{\omega}_{L/P} = \begin{bmatrix} -\dot{\lambda}\cos\phi \\ -\dot{\phi} \\ \dot{\lambda}\sin\phi \end{bmatrix} = \frac{1}{R}\begin{bmatrix} -v_E \\ v_S \\ v_E\tan\phi \end{bmatrix}.
+
+The corrected velocity is used for the azimuth and elevation rates. The added cross-product term is
+perpendicular to the relative position, so it does not change the range rate. At a geographic pole,
+longitude and the SEZ orientation are singular; the module uses zero spin about the local zenith while
+retaining the finite south/east tilt rates when the horizontal radius is at machine round-off level.
+
 
 User Guide
 ----------
