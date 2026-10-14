@@ -22,6 +22,7 @@
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <limits>
 
@@ -292,6 +293,16 @@ void StripLocation::computeAccess()
     // Update the groundLocation's inertial position
     this->updateInertialPosition();
 
+    // The target's motion rotates its local SEZ axes relative to the planet-fixed frame.
+    double targetRadius = this->r_LP_P.norm();  // [m]
+    double horizontalRadius = std::hypot(this->r_LP_P[0], this->r_LP_P[1]);  // [m]
+    Eigen::Vector3d v_LP_L = this->dcm_LP * this->v_LP_P;  // [m/s]
+    Eigen::Vector3d omega_LP_L(-v_LP_L[1] / targetRadius, v_LP_L[0] / targetRadius, 0.0);  // [rad/s]
+    // Longitude is undefined at a pole; retain the finite tilt rate and use zero zenith spin there.
+    if (horizontalRadius > std::numeric_limits<double>::epsilon() * targetRadius) {
+        omega_LP_L[2] = v_LP_L[1] * this->r_LP_P[2] / (targetRadius * horizontalRadius);
+    }
+
     // Iterate over spacecraft position messages and compute the access for each one
     std::vector<AccessMsgPayload>::iterator accessMsgIt;
     std::vector<SCStatesMsgPayload>::iterator scStatesMsgIt;
@@ -325,7 +336,7 @@ void StripLocation::computeAccess()
         // w_PN is in P components, so the planet-rotation velocity is evaluated with the P components of r_BP
         Eigen::Vector3d r_BP_P = this->dcm_PN * r_BP_N;
         Eigen::Vector3d v_BP_P = this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - v_PN_N) - this->w_PN.cross(r_BP_P);
-        Eigen::Vector3d v_BL_L = this->dcm_LP * (v_BP_P - this->v_LP_P);
+        Eigen::Vector3d v_BL_L = this->dcm_LP * (v_BP_P - this->v_LP_P) - omega_LP_L.cross(r_BL_L);
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L)/r_BL_mag;
         double xy_norm = sqrt(pow(r_BL_L[0],2)+pow(r_BL_L[1],2));

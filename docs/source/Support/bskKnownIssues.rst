@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The :ref:`stripLocation` module omitted rotation of the local SEZ frame as the target moved along a strip.
+  Its ``v_BL_L``, ``az_dot`` and ``el_dot`` outputs therefore disagreed with the derivatives of the published
+  geometry for a moving target. These outputs now include the local-frame rotation; the range rate is unchanged.
+
 - The :ref:`stripLocation` module did not copy the computed SEZ relative velocity into the
   ``v_BL_L`` field of its access messages, which therefore always reported zero. The :ref:`groundMapping` module never
   assigned its planet-fixed to SEZ rotation matrix, so its ``r_BL_L``, ``v_BL_L``, azimuth and rate outputs were
