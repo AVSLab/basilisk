@@ -133,6 +133,9 @@ def test_accuracy_comparison_runs_native_dynamics(circular_case, capsys, tools):
     """
     spec, folder, _ = circular_case
     spec["cases"][CASE_NAME]["references"] = list(tools)
+    if tools == ("orekit",):
+        (folder / f"gmat_{CASE_NAME}.csv").unlink()
+        common.manifestPath(folder, "gmat").unlink()
     results = comparison.run([CASE_NAME], dataDir=folder)
     expected_keys = {"bsk_vs_orekit", "variants"}
     if "gmat" in tools:
@@ -156,8 +159,9 @@ def test_accuracy_comparison_reports_inaccurate_reference(circular_case):
     changed = states.copy()
     position_offset = np.array([10.0, 20.0, 30.0])  # [m]
     velocity_offset = np.array([0.01, 0.02, 0.03])  # [m/s]
-    changed[-1, 1:4] += position_offset
-    changed[-1, 4:7] += velocity_offset
+    interior_sample = len(changed) // 2
+    changed[interior_sample, 1:4] += position_offset
+    changed[interior_sample, 4:7] += velocity_offset
     _write_reference(folder, spec, "orekit", changed)
     results = comparison.run([CASE_NAME], dataDir=folder)[CASE_NAME]
     for key in ("bsk_vs_orekit", "gmat_vs_orekit"):
