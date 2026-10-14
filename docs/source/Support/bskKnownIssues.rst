@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The :ref:`stripLocation` module held its target at the endpoint after completion but continued reporting
+  motion at the acquisition speed. The target velocity relative to the planet-fixed frame is now zero at
+  and after completion, keeping the strip state and access rate outputs consistent with the fixed endpoint.
+
 - The :ref:`stripLocation` module omitted rotation of the local SEZ frame as the target moved along a strip.
   Its ``v_BL_L``, ``az_dot`` and ``el_dot`` outputs therefore disagreed with the derivatives of the published
   geometry for a moving target. These outputs now include the local-frame rotation; the range rate is unchanged.

@@ -97,8 +97,10 @@ and projected back onto the sphere:
 .. math:: \mathbf{r}_{L/P}^P = R \, \frac{\mathbf{p}(\tau)}{\|\mathbf{p}(\tau)\|}
     :label: eq:project:5
 
-The PCPF velocity of the target is obtained by differentiating the SLERP expression and scaling
-to the acquisition speed.
+While the target moves along the strip, its PCPF velocity is obtained by differentiating the SLERP
+expression and scaling to the acquisition speed. At and after completion, the target holds the endpoint
+and its PCPF velocity is zero. Its inertial velocity still includes planet rotation and translation.
+Completion time includes any additional travel introduced by ``preImagingTime``.
 
 
 Determining Spacecraft-to-Target States

@@ -3,5 +3,6 @@
 - Fixed :ref:`groundMapping` using an uninitialized planet-fixed to SEZ rotation matrix; it is now computed for each mapping point from its latitude and longitude.
 - Fixed :ref:`stripLocation` not populating the ``v_BL_L`` field of its access messages.
 - Fixed :ref:`stripLocation` omitting the rotation of the moving target's local SEZ frame from ``v_BL_L``, ``az_dot`` and ``el_dot``; these outputs now agree with derivatives of the published geometry while the target moves along the strip.
+- Fixed :ref:`stripLocation` retaining its acquisition velocity after reaching the endpoint; the target now stops in the planet-fixed frame, keeping its strip state and access rate outputs consistent with the completed trajectory.
 - Fixed :ref:`groundMapping` not populating the ``rHat_LP_N`` field of its ground state messages.
 - Added a guard to :ref:`groundLocation` and :ref:`groundMapping` so that ``azimuth``, ``az_dot`` and ``el_dot`` are set to zero, as in :ref:`stripLocation`, instead of being undefined when the horizontal distance to a spacecraft directly overhead of the location vanishes. The overhead test uses a tolerance scaled to the magnitude of the position vectors, and :ref:`stripLocation` uses the same tolerance.
