@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
+  lost the sign of the flight-path angle, and returned zero rates after construction or stale
+  rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
+  ``set_mu()`` now refreshes the derived state immediately, and ``oe().rmag`` reports the current
+  radius instead of zero. Anomalies follow the ``orbitalMotion.f2E()`` and ``E2M()`` conventions
+  without additional normalization to the interval from zero to two pi radians.
+
 - The :ref:`stripLocation` module held its target at the endpoint after completion but continued reporting
   motion at the acquisition speed. The target velocity relative to the planet-fixed frame is now zero at
   and after completion, keeping the strip state and access rate outputs consistent with the fixed endpoint.
