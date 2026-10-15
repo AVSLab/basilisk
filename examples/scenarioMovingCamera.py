@@ -170,7 +170,7 @@ def run(show_plots=False, enable_viz=True):
         ]
         viz = vizSupport.enableUnityVisualization(
             sim, "cameraTask", bodies,
-            saveFile=__file__,
+            # saveFile=__file__,
         )
         viz.settings.viewCameraFrustumHUD = 1
         vizSupport.createCustomModel(
