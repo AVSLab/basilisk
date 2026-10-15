@@ -14,6 +14,11 @@ Version |release|
   radius instead of zero. Anomalies follow the ``orbitalMotion.f2E()`` and ``E2M()`` conventions
   without additional normalization to the interval from zero to two pi radians.
 
+- Optional wheel packaging could fail when independent runners supplied different
+  Rust and Cargo versions. Nightly, release, and optional-wheel test workflows now
+  resolve stable Rust once per run and use that exact toolchain for all core and
+  opNav wheel builds, including builds inside Linux containers.
+
 - The :ref:`stripLocation` module held its target at the endpoint after completion but continued reporting
   motion at the acquisition speed. The target velocity relative to the planet-fixed frame is now zero at
   and after completion, keeping the strip state and access rate outputs consistent with the fixed endpoint.
