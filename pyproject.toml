@@ -106,7 +106,8 @@ archs = ["native"]
 # Rust/Cargo toolchain at all, so it is bootstrapped here unconditionally.
 # This lets nightly, test, and release wheel jobs build Rust modules through
 # the pinned Corrosion integration on every Linux wheel platform.
-before-all = "python -m pip install 'conan>=2.0.5,<=2.28.1' && python -m conans.conan profile detect --force && conan_home=\"${CONAN_HOME:-$HOME/.conan2}\" && mkdir -p \"$conan_home\" && touch \"$conan_home/global.conf\" && for setting in 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False'; do grep -qxF \"$setting\" \"$conan_home/global.conf\" || printf '%s\\n' \"$setting\" >> \"$conan_home/global.conf\"; done && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
+# CI supplies the exact Rust version resolved once for the workflow run.
+before-all = "python -m pip install 'conan>=2.0.5,<=2.28.1' && python -m conans.conan profile detect --force && conan_home=\"${CONAN_HOME:-$HOME/.conan2}\" && mkdir -p \"$conan_home\" && touch \"$conan_home/global.conf\" && for setting in 'tools.system.package_manager:mode=install' 'tools.system.package_manager:sudo=False'; do grep -qxF \"$setting\" \"$conan_home/global.conf\" || printf '%s\\n' \"$setting\" >> \"$conan_home/global.conf\"; done && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain \"${RUSTUP_TOOLCHAIN:-stable}\""
 repair-wheel-command = [
   "auditwheel repair --strip -w {dest_dir} {wheel}"
 ]
@@ -115,7 +116,7 @@ manylinux-aarch64-image = "manylinux_2_28"
 # cibuildwheel runs Linux builds inside a manylinux container so host env vars
 # that toggles MuJoCo/OpNav aren't visible to the build unless explicitly
 # forwarded.
-environment-pass = ["CONAN_ARGS", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
+environment-pass = ["CONAN_ARGS", "RUSTUP_TOOLCHAIN", "CMAKE_C_COMPILER_LAUNCHER", "CMAKE_CXX_COMPILER_LAUNCHER"]
 
 [tool.cibuildwheel.linux.environment]
 # rustup (installed by before-all above) puts cargo/rustc here; before-all

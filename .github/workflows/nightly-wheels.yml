@@ -6,8 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
+  resolve-rust-toolchain:
+    uses: ./.github/workflows/resolve-rust-toolchain.yml
+
   build-wheels:
     name: Build Wheel Input (${{ matrix.wheel-kind }}, ${{ matrix.os }})
+    needs: resolve-rust-toolchain
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -53,6 +57,7 @@ jobs:
       - name: Build ${{ matrix.wheel-kind }} bsk wheel
         uses: ./.github/actions/build-wheel
         with:
+          rust-toolchain: ${{ needs.resolve-rust-toolchain.outputs.version }}
           output-dir: ${{ matrix.output-dir }}
           conan-args: ${{ matrix.conan-args }}
           save-conan-cache: ${{ matrix.save-conan-cache }}
@@ -130,8 +135,8 @@ jobs:
 
   notify-failure:
     name: Notify Slack on Failure
-    needs: [build-wheels, package-wheels, publish-index]
-    if: ${{ always() && (needs.build-wheels.result == 'failure' || needs.package-wheels.result == 'failure' || needs.publish-index.result == 'failure') }}
+    needs: [resolve-rust-toolchain, build-wheels, package-wheels, publish-index]
+    if: ${{ always() && (needs.resolve-rust-toolchain.result == 'failure' || needs.build-wheels.result == 'failure' || needs.package-wheels.result == 'failure' || needs.publish-index.result == 'failure') }}
     runs-on: ubuntu-24.04
     permissions: {}
 

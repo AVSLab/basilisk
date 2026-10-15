@@ -1,0 +1,30 @@
+# Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+name: Resolve Rust Toolchain
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: Exact stable Rust version shared by all wheel builds.
+        value: ${{ jobs.resolve.outputs.version }}
+
+jobs:
+  resolve:
+    name: Resolve stable Rust version
+    runs-on: ubuntu-24.04
+    permissions: {}
+    outputs:
+      version: ${{ steps.rust.outputs.version }}
+    steps:
+      - name: Resolve stable Rust version
+        id: rust
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rust_version="$(rustc +stable --version | cut -d ' ' -f 2)"
+          if [[ ! "$rust_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Expected an exact stable Rust version, got: $rust_version"
+            exit 1
+          fi
+          echo "version=$rust_version" >> "$GITHUB_OUTPUT"
+          echo "Wheel builds will use Rust $rust_version"
