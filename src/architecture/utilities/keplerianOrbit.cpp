@@ -18,8 +18,8 @@
  */
 
 #include "keplerianOrbit.h"
+#include <cmath>
 #include <architecture/utilities/avsEigenSupport.h>
-#include <architecture/utilities/linearAlgebra.h>
 
 /*! This constructor initialized to an arbitrary orbit */
 KeplerianOrbit::KeplerianOrbit()
@@ -77,7 +77,6 @@ Eigen::Vector3d KeplerianOrbit::h_BP_P() const{
     return this->orbital_angular_momentum_P;
 }
 
-/*! return mean anomaly angle */
 double KeplerianOrbit::M() const {return this->mean_anomaly;}
 /*! return mean orbit rate */
 double KeplerianOrbit::n() const {return this->mean_motion;};                              //!< return mean orbit rate
@@ -85,7 +84,6 @@ double KeplerianOrbit::n() const {return this->mean_motion;};                   
 double KeplerianOrbit::P() const {return this->orbital_period;};                           //!< return orbital period
 /*! return true anomaly */
 double KeplerianOrbit::f() const {return this->true_anomaly;};                             //!< return true anomaly
-/*! return true anomaly rate */
 double KeplerianOrbit::fDot() const {return this->true_anomaly_rate;};
 /*! return right ascencion of the ascending node */
 double KeplerianOrbit::RAAN() const {return this->right_ascension;};
@@ -109,18 +107,14 @@ double KeplerianOrbit::v() const {return this->v_BP_P().norm();};
 double KeplerianOrbit::r_a() const {return this->r_apogee;};
 /*! return radius at periapses */
 double KeplerianOrbit::r_p() const {return this->r_perigee;};
-/*! return flight path angle */
 double KeplerianOrbit::fpa() const {return this->flight_path_angle;};
-/*! return eccentric anomaly angle */
 double KeplerianOrbit::E() const {return this->eccentric_anomaly;};
 /*! return semi-latus rectum or the parameter */
 double KeplerianOrbit::p() const {return this->semi_parameter;};
-/*! return radius rate */
 double KeplerianOrbit::rDot() const {return this->radial_rate;};
 /*! return escape velocity */
 double KeplerianOrbit::c3() const {return this->v_infinity;};
 
-/*! set semi-major axis */
 void KeplerianOrbit::set_a(double a){this->semi_major_axis = a; this->change_orbit();};
 /*! set eccentricity */
 void KeplerianOrbit::set_e(double e){this->eccentricity = e; this->change_orbit();};
@@ -135,9 +129,6 @@ void KeplerianOrbit::set_f(double f){this->true_anomaly = f; this->change_f();};
 
 
 
-/*! This method returns the orbital element set for the orbit
- @return ClassicElements oe
- */
 ClassicElements KeplerianOrbit::oe(){
     ClassicElements elements;
     elements.a = this->semi_major_axis;
@@ -153,35 +144,34 @@ ClassicElements KeplerianOrbit::oe(){
     return elements;
 }
 
-/*! This method populates all outputs from orbital elements coherently if any of the
- * classical orbital elements are changed*/
+/*! @brief Recompute the derived state after changing orbital elements or gravity. */
 void KeplerianOrbit::change_orbit(){
-    this->change_f();
-    this->orbital_angular_momentum_P = this->position_BP_P.cross(this->velocity_BP_P);
     this->mean_motion = sqrt(this->mu / pow(this->semi_major_axis, 3));
     this->orbital_period = 2 * M_PI / this->mean_motion;
-    this->semi_parameter = pow(this->h(), 2) / this->mu;
     this->orbital_energy = -this->mu / 2 / this->a();
     this->r_apogee = this->a() * (1 + this->e());
     this->r_perigee = this->a() * (1 - this->e());
+    this->change_f();
+    this->orbital_angular_momentum_P = this->position_BP_P.cross(this->velocity_BP_P);
+    this->semi_parameter = pow(this->h(), 2) / this->mu;
 }
-/*! This method only changes the outputs dependent on true anomaly so that one
- * orbit may be queried at various points along the orbit*/
+/*! @brief Recompute the outputs that depend on the current true anomaly. */
 void KeplerianOrbit::change_f(){
     double r[3];
     double v[3];
-    ClassicElements oe = this->oe(); //
-    elem2rv(this->mu, &oe, r, v); //
-    this->position_BP_P = cArray2EigenVector3d(r); //
-    this->velocity_BP_P = cArray2EigenVector3d(v); //
-    this->true_anomaly_rate = this->n() * pow(this->a(), 2) * sqrt(1 - pow(this->e(), 2)) / pow(this->r(), 2); //
-    this->radial_rate = this->r() * this->fDot() * this->e() * sin(this->f()) / (1 + this->e() * cos(this->f())); //
-    this->eccentric_anomaly = safeAcos(this->e() + cos(this->f()) / (1 + this->e() * cos(this->f()))); //
-    this->mean_anomaly = this->E() - this->e() * sin(this->E()); //
-    this->flight_path_angle = safeAcos(sqrt((1 - pow(this->e(), 2)) / (1 - pow(this->e(), 2)*pow(cos(this->E()), 2)))); //
+    ClassicElements oe = this->oe();
+    elem2rv(this->mu, &oe, r, v);
+    this->position_BP_P = cArray2EigenVector3d(r);
+    this->velocity_BP_P = cArray2EigenVector3d(v);
+    this->orbit_radius = this->r();
+    this->true_anomaly_rate = this->position_BP_P.cross(this->velocity_BP_P).norm() / pow(this->orbit_radius, 2);
+    this->radial_rate = this->position_BP_P.dot(this->velocity_BP_P) / this->orbit_radius;
+    this->eccentric_anomaly = f2E(this->f(), this->e());
+    this->mean_anomaly = E2M(this->E(), this->e());
+    this->flight_path_angle = atan2(this->e() * sin(this->f()), 1 + this->e() * cos(this->f()));
 }
 
-/*! This method sets the gravitational constants of the body being orbited */
 void KeplerianOrbit::set_mu(const double mu){
     this->mu = mu;
+    this->change_orbit();
 }
