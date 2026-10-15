@@ -1,6 +1,9 @@
 name: build wheel
 description: Build a Basilisk wheel with compiler and Conan caching.
 inputs:
+  rust-toolchain:
+    description: Exact Rust version resolved once by the calling workflow.
+    required: true
   output-dir:
     description: Directory that receives the built wheel.
     required: true
@@ -19,6 +22,24 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Select workflow Rust toolchain
+      shell: bash
+      env:
+        RUSTUP_TOOLCHAIN: ${{ inputs.rust-toolchain }}
+        RUNNER_OS: ${{ runner.os }}
+      run: |
+        if [[ ! "$RUSTUP_TOOLCHAIN" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::rust-toolchain must be an exact stable Rust version"
+          exit 1
+        fi
+        echo "RUSTUP_TOOLCHAIN=$RUSTUP_TOOLCHAIN" >> "$GITHUB_ENV"
+        # Linux installs the same toolchain inside the manylinux container.
+        if [[ "$RUNNER_OS" != "Linux" ]]; then
+          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --no-self-update
+          rustc --version
+          cargo --version
+        fi
+
     - name: Setup system dependencies
       uses: ./.github/actions/setup
 
@@ -46,7 +67,7 @@ runs:
 
         if [[ "${{ runner.os }}" == "Linux" ]]; then
           echo "CONAN_HOME=/host${HOME}/.conan2" >> "${GITHUB_ENV}"
-          linux_environment_pass="CONAN_ARGS CONAN_HOME"
+          linux_environment_pass="CONAN_ARGS CONAN_HOME RUSTUP_TOOLCHAIN"
         fi
 
         if command -v sccache >/dev/null 2>&1; then

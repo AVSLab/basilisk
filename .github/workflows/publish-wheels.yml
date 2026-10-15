@@ -17,8 +17,12 @@ on:
           - pypi
 
 jobs:
+  resolve-rust-toolchain:
+    uses: ./.github/workflows/resolve-rust-toolchain.yml
+
   build-wheels:
     name: Build Wheel Input (${{ matrix.wheel-kind }}, ${{ matrix.os }})
+    needs: resolve-rust-toolchain
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -80,6 +84,7 @@ jobs:
       - name: Build ${{ matrix.wheel-kind }} bsk wheel
         uses: ./.github/actions/build-wheel
         with:
+          rust-toolchain: ${{ needs.resolve-rust-toolchain.outputs.version }}
           output-dir: ${{ matrix.output-dir }}
           conan-args: ${{ matrix.conan-args }}
           save-conan-cache: ${{ matrix.save-conan-cache }}
