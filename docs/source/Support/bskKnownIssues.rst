@@ -7,6 +7,13 @@ Basilisk Known Issues
 Version |release| (unreleased)
 --------------------------------
 
+- GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
+  lost the sign of the flight-path angle, and returned zero rates after construction or stale
+  rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
+  ``set_mu()`` now refreshes the derived state immediately, and ``oe().rmag`` reports the current
+  radius instead of zero. Anomalies follow the ``orbitalMotion.f2E()`` and ``E2M()`` conventions
+  without additional normalization to the interval from zero to two pi radians.
+
 - GitHub issue 1581: The C ``debyeLength()`` utility could read beyond its lookup
   arrays for altitudes from 2,000 km through 30,000 km, producing undefined
   results such as NaN. The interval search now includes the final table endpoint

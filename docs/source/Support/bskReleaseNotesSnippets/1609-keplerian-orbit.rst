@@ -1,0 +1,1 @@
+- Fixed :ref:`keplerianOrbit` eccentric and mean anomalies, signed flight-path angles, and rates after construction and ``set_a()``; ``set_mu()`` now refreshes derived outputs and ``oe().rmag`` returns the current radius. Anomalies follow the ``orbitalMotion.f2E()`` and ``E2M()`` conventions without additional angle normalization.
