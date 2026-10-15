@@ -1,0 +1,1 @@
+- Wheel workflows now resolve stable Rust once per run and share the exact toolchain across core and opNav builds, preventing packaging failures caused by runner toolchain drift.
