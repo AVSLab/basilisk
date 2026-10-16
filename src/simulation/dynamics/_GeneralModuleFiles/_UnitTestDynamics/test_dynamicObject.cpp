@@ -27,8 +27,9 @@
 
 namespace {
 
-class TestDynamicObject : public DynamicObject {
-public:
+class TestDynamicObject : public DynamicObject
+{
+  public:
     void UpdateState(uint64_t) override {}
     void equationsOfMotion(double, double) override {}
     void preIntegration(uint64_t) override { ++preCalls; }
@@ -38,25 +39,30 @@ public:
     int postCalls = 0;
 };
 
-class CountingIntegrator : public StateVecIntegrator {
-public:
+class CountingIntegrator : public StateVecIntegrator
+{
+  public:
     CountingIntegrator(DynamicObject* object, int& destructions)
-        : StateVecIntegrator(object), destructions(destructions) {}
+      : StateVecIntegrator(object)
+      , destructions(destructions)
+    {
+    }
     ~CountingIntegrator() override { ++destructions; }
 
     int integrationCalls = 0;
 
-protected:
+  protected:
     void prepareIntegrationBinding() override {}
     void validateIntegrationBinding() const override {}
     void integrateImpl(double, double) override { ++integrationCalls; }
 
-private:
+  private:
     int& destructions;
 };
 
-class FailingDynamicObject : public TestDynamicObject {
-public:
+class FailingDynamicObject : public TestDynamicObject
+{
+  public:
     explicit FailingDynamicObject(int& destructions)
     {
         this->setIntegrator(std::make_unique<CountingIntegrator>(this, destructions));
@@ -64,8 +70,9 @@ public:
     }
 };
 
-class FailingSynchronizedObject : public TestDynamicObject {
-public:
+class FailingSynchronizedObject : public TestDynamicObject
+{
+  public:
     FailingSynchronizedObject(DynamicObject& primary, int& destructions)
     {
         this->setIntegrator(new CountingIntegrator(this, destructions));
@@ -159,7 +166,7 @@ TEST(DynamicObjectOwnership, ReinstallActiveIntegrator)
         object.setIntegrator(integrator);
         EXPECT_EQ(destructions, 0);
         EXPECT_EQ(object.getIntegrator(), integrator);
-        EXPECT_EQ(integrator->getDynamics(), std::vector<DynamicObject*>({&object}));
+        EXPECT_EQ(integrator->getDynamics(), std::vector<DynamicObject*>({ &object }));
         object.integrateState(0);
         EXPECT_EQ(integrator->integrationCalls, 1);
     }
@@ -259,7 +266,7 @@ TEST(DynamicObjectOwnership, ReplacementPreservesSyncedDynamics)
         primary.setIntegrator(std::move(replacement));
         EXPECT_EQ(replacement, nullptr);
         EXPECT_EQ(oldDestructions, 1);
-        EXPECT_EQ(active->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
+        EXPECT_EQ(active->getDynamics(), std::vector<DynamicObject*>({ &primary, &secondary }));
         primary.integrateState(0);
         secondary.integrateState(0);
         EXPECT_EQ(active->integrationCalls, 1);
@@ -292,7 +299,7 @@ TEST(SynchronizedDynamicsLifetime, SecondaryDestructionUnlinks)
     primary.syncDynamicsIntegration(first.get());
     primary.syncDynamicsIntegration(&second);
     first.reset();
-    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &second}));
+    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &primary, &second }));
     primary.integrateState(0);
     EXPECT_EQ(second.preCalls, 1);
     EXPECT_EQ(second.postCalls, 1);
@@ -330,7 +337,7 @@ TEST(SynchronizedDynamicsLifetime, RepeatedConnectionIsNoOp)
     secondary.setIntegrator(new CountingIntegrator(&secondary, destructions));
     primary.syncDynamicsIntegration(&secondary);
     primary.syncDynamicsIntegration(&secondary);
-    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
+    ASSERT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &primary, &secondary }));
     primary.integrateState(0);
     EXPECT_EQ(secondary.preCalls, 1);
     EXPECT_EQ(secondary.postCalls, 1);
@@ -347,13 +354,13 @@ TEST(SynchronizedDynamicsLifetime, ReplacementPreservesUnlinking)
     primary.syncDynamicsIntegration(secondary.get());
     primary.setIntegrator(new CountingIntegrator(&primary, destructions));
     secondary.reset();
-    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary}));
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &primary }));
 }
 
 /** @brief A rejected null replacement preserves links until either owner is destroyed. */
 TEST(SynchronizedDynamicsLifetime, CleanupAfterRejectedReplacement)
 {
-    for (bool primaryFirst : {false, true}) {
+    for (bool primaryFirst : { false, true }) {
         int destructions = 0;
         auto primary = std::make_unique<TestDynamicObject>();
         auto secondary = std::make_unique<TestDynamicObject>();
@@ -392,9 +399,9 @@ TEST(SynchronizedDynamicsLifetime, RejectInvalidConnections)
     EXPECT_THROW(other.syncDynamicsIntegration(&secondary), BasiliskError);
     EXPECT_THROW(secondary.syncDynamicsIntegration(&other), BasiliskError);
     EXPECT_THROW(other.syncDynamicsIntegration(&primary), BasiliskError);
-    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary, &secondary}));
-    EXPECT_EQ(secondary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&secondary}));
-    EXPECT_EQ(other.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&other}));
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &primary, &secondary }));
+    EXPECT_EQ(secondary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &secondary }));
+    EXPECT_EQ(other.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &other }));
     EXPECT_FALSE((primary.getIntegrationOwner() != nullptr));
     EXPECT_TRUE((secondary.getIntegrationOwner() != nullptr));
     EXPECT_FALSE((other.getIntegrationOwner() != nullptr));
@@ -407,5 +414,5 @@ TEST(SynchronizedDynamicsLifetime, ConstructionFailureUnlinks)
     TestDynamicObject primary;
     primary.setIntegrator(new CountingIntegrator(&primary, destructions));
     EXPECT_THROW({ FailingSynchronizedObject secondary(primary, destructions); }, std::runtime_error);
-    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({&primary}));
+    EXPECT_EQ(primary.getIntegrator()->getDynamics(), std::vector<DynamicObject*>({ &primary }));
 }

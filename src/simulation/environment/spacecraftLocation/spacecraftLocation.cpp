@@ -42,7 +42,8 @@ SpacecraftLocation::SpacecraftLocation()
     this->theta_solar = -1.0;
     this->theta_view = -1.0; // [rad] negative disables the viewing-angle requirement
     this->min_illumination_factor = -1.0;
-    this->min_shadow_factor = -2.0;      // Initialize to -2 (different from min_illumination_factor to detect if user sets it
+    this->min_shadow_factor =
+      -2.0;                      // Initialize to -2 (different from min_illumination_factor to detect if user sets it
     this->glareThreshold = 0.95; // [-]
     this->useGlareConstraint = false;
 
@@ -62,7 +63,8 @@ void
 SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->scStateInMsgs.size() == 0) {
-        bskLogger.bskError("SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
+        bskLogger.bskError(
+          "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {
@@ -102,7 +104,9 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (this->min_shadow_factor != -2.0) {
         // User set the old variable, so it is mapped to new one and a warning is printed to the user
         this->min_illumination_factor = this->min_shadow_factor;
-        bskLogger.bskLog(BSK_WARNING, "spacecraftLocation: min_shadow_factor is deprecated and will be removed by 12/31/2026. Please use min_illumination_factor.");
+        bskLogger.bskLog(BSK_WARNING,
+                         "spacecraftLocation: min_shadow_factor is deprecated and will be removed by 12/31/2026. "
+                         "Please use min_illumination_factor.");
     }
 }
 
@@ -212,7 +216,7 @@ SpacecraftLocation::computeAccess()
     r_LP_P = this->dcm_PN * (r_LN_N - this->r_PN_N);
 
     const double surfaceNormalTolerance = 1e-3; // [-]
-    const double vectorNormTolerance = 1e-12; // [m]
+    const double vectorNormTolerance = 1e-12;   // [m]
     // Allow for roundoff in normalization, reflection, and dot products.
     const double glareTolerance = 16.0 * std::numeric_limits<double>::epsilon(); // [-]
     const bool hasSurfaceNormal = this->aHat_B.norm() > surfaceNormalTolerance;

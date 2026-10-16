@@ -22,43 +22,43 @@
 #include "scalarJointStatesToRWSpeed.h"
 
 ScalarJointStatesToRWSpeed::ScalarJointStatesToRWSpeed()
-    : numJoints(0)
+  : numJoints(0)
 {
 }
 
 ScalarJointStatesToRWSpeed::ScalarJointStatesToRWSpeed(uint32_t numJointsIn)
-    : numJoints(numJointsIn)
+  : numJoints(numJointsIn)
 {
     this->ensureSizes();
 }
 
 ScalarJointStatesToRWSpeed::~ScalarJointStatesToRWSpeed() = default;
 
-void ScalarJointStatesToRWSpeed::setNumJoints(uint32_t numJointsIn)
+void
+ScalarJointStatesToRWSpeed::setNumJoints(uint32_t numJointsIn)
 {
     this->numJoints = numJointsIn;
     this->ensureSizes();
 }
 
-void ScalarJointStatesToRWSpeed::ensureSizes()
+void
+ScalarJointStatesToRWSpeed::ensureSizes()
 {
     this->jointStateInMsgs.resize(this->numJoints);
 }
 
-void ScalarJointStatesToRWSpeed::Reset(uint64_t CurrentSimNanos)
+void
+ScalarJointStatesToRWSpeed::Reset(uint64_t CurrentSimNanos)
 {
     this->ensureSizes();
 
     // zero out output on reset
     RWSpeedMsgPayload outPayload = {};
-    this->rwSpeedOutMsg.write(
-        &outPayload,
-        this->moduleID,
-        CurrentSimNanos
-    );
+    this->rwSpeedOutMsg.write(&outPayload, this->moduleID, CurrentSimNanos);
 }
 
-void ScalarJointStatesToRWSpeed::UpdateState(uint64_t CurrentSimNanos)
+void
+ScalarJointStatesToRWSpeed::UpdateState(uint64_t CurrentSimNanos)
 {
     RWSpeedMsgPayload outPayload = {};
     for (uint32_t i = 0; i < this->numJoints; ++i) {
@@ -66,9 +66,5 @@ void ScalarJointStatesToRWSpeed::UpdateState(uint64_t CurrentSimNanos)
         outPayload.wheelSpeeds[i] = inPayload.state;
     }
 
-    this->rwSpeedOutMsg.write(
-        &outPayload,
-        this->moduleID,
-        CurrentSimNanos
-    );
+    this->rwSpeedOutMsg.write(&outPayload, this->moduleID, CurrentSimNanos);
 }

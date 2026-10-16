@@ -20,9 +20,9 @@
 #ifndef MSIS_SPACE_WEATHER_H
 #define MSIS_SPACE_WEATHER_H
 
-#include <memory>
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -33,8 +33,9 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief CelesTrak space-weather data publisher for :ref:`msisAtmosphere`. */
-class SpaceWeatherData: public SysModel {
-public:
+class SpaceWeatherData : public SysModel
+{
+  public:
     SpaceWeatherData();
     ~SpaceWeatherData();
 
@@ -46,16 +47,17 @@ public:
 
     void loadSpaceWeatherFile(const std::string& fileName);
 
-public:
+  public:
     ReadFunctor<EpochMsgPayload> epochInMsg{};               //!< epoch input message
     std::vector<Message<SwDataMsgPayload>*> swDataOutMsgs{}; //!< 23-element MSIS SW output message vector
     BSKLogger bskLogger{};                                   //!< BSK logging helper
 
-private:
+  private:
     static constexpr uint64_t numSwMessages = 23U; //!< [count] number of MSIS weather channels
     static constexpr uint64_t numApPerDay = 8U;    //!< [count] number of three-hour Ap entries per day
 
-    struct DailySpaceWeather {
+    struct DailySpaceWeather
+    {
         int64_t dayNumber{};                     //!< [day] days since Unix epoch
         std::array<double, numApPerDay> ap3Hr{}; //!< [-] AP1..AP8 values
         double apAvg{};                          //!< [-] daily Ap average

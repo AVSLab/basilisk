@@ -17,58 +17,65 @@
 
 */
 
-
 #ifndef LOCATIONPOINTING_H
 #define LOCATIONPOINTING_H
 
-#include <stdint.h>
-#include "cMsgCInterface/NavAttMsg_C.h"
-#include "cMsgCInterface/NavTransMsg_C.h"
-#include "cMsgCInterface/GroundStateMsg_C.h"
-#include "cMsgCInterface/StripStateMsg_C.h"
+#include "architecture/utilities/bskLogging.h"
 #include "cMsgCInterface/AttGuidMsg_C.h"
 #include "cMsgCInterface/AttRefMsg_C.h"
 #include "cMsgCInterface/EphemerisMsg_C.h"
-#include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/GroundStateMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
+#include "cMsgCInterface/NavTransMsg_C.h"
+#include "cMsgCInterface/StripStateMsg_C.h"
 #include <stdbool.h>
+#include <stdint.h>
 
-/*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a location on the ground
+/*! @brief This module is used to generate the attitude reference message in order to have a spacecraft point at a
+ * location on the ground
  */
-typedef struct {
+typedef struct
+{
 
     /* user configurable variables */
-    double pHat_B[3];           /*!< body fixed vector that is to be aimed at a location */
-    double cHat_B[3];           /*!< body fixed vector representing the scan line of the camera (must be orthogonal to pHat_B by definition) */
-    double smallAngle;          /*!< [rad] angle value that specifies what is near 0 or 180 degrees */
-    int useBoresightRateDamping; /*!< [int] flag to use rate damping about the sensor boresight (ignored for strip imaging) */
-    double alignmentThreshold;  /*!< threshold for collinearity check between pHat_B and v_TP_B during strip imaging; defaults to 0.1 */
-    double stripInertialSpeedThreshold; /*!< [m/s] minimum inertial target velocity magnitude (relative to planet origin vector) required to compute strip direction; defaults to 1e-12 */
+    double pHat_B[3];  /*!< body fixed vector that is to be aimed at a location */
+    double cHat_B[3];  /*!< body fixed vector representing the scan line of the camera (must be orthogonal to pHat_B by
+                          definition) */
+    double smallAngle; /*!< [rad] angle value that specifies what is near 0 or 180 degrees */
+    int useBoresightRateDamping; /*!< [int] flag to use rate damping about the sensor boresight (ignored for strip
+                                    imaging) */
+    double alignmentThreshold;   /*!< threshold for collinearity check between pHat_B and v_TP_B during strip imaging;
+                                    defaults to 0.1 */
+    double stripInertialSpeedThreshold; /*!< [m/s] minimum inertial target velocity magnitude (relative to planet origin
+                                           vector) required to compute strip direction; defaults to 1e-12 */
 
     /* private variables */
-    double sigma_BR_old[3];     /*!< older sigma_BR value, stored for finite diff*/
-    uint64_t time_old;          /*!< [ns] prior time value */
-    double init;                /*!< module initialization counter */
-    double eHat180_B[3];        /*!< eigen axis to use if commanded axis is 180 from pHat */
+    double sigma_BR_old[3]; /*!< older sigma_BR value, stored for finite diff*/
+    uint64_t time_old;      /*!< [ns] prior time value */
+    double init;            /*!< module initialization counter */
+    double eHat180_B[3];    /*!< eigen axis to use if commanded axis is 180 from pHat */
 
     /* declare module IO interfaces */
-    NavAttMsg_C scAttInMsg;                 //!< input msg with inertial spacecraft attitude states
-    NavTransMsg_C scTransInMsg;             //!< input msg with inertial spacecraft position states
-    GroundStateMsg_C locationInMsg;         //!< input msg with location relative to planet
-    StripStateMsg_C locationstripInMsg;     //!< input msg with location and velocity of the current target point on the strip, relative to planet
-    EphemerisMsg_C celBodyInMsg;            //!< input celestial body message
-    NavTransMsg_C scTargetInMsg;            //!< input msg with inertial target spacecraft position states
-    AttGuidMsg_C attGuidOutMsg;             //!< attitude guidance output message
-    AttRefMsg_C attRefOutMsg;               //!< attitude reference output message
+    NavAttMsg_C scAttInMsg;             //!< input msg with inertial spacecraft attitude states
+    NavTransMsg_C scTransInMsg;         //!< input msg with inertial spacecraft position states
+    GroundStateMsg_C locationInMsg;     //!< input msg with location relative to planet
+    StripStateMsg_C locationstripInMsg; //!< input msg with location and velocity of the current target point on the
+                                        //!< strip, relative to planet
+    EphemerisMsg_C celBodyInMsg;        //!< input celestial body message
+    NavTransMsg_C scTargetInMsg;        //!< input msg with inertial target spacecraft position states
+    AttGuidMsg_C attGuidOutMsg;         //!< attitude guidance output message
+    AttRefMsg_C attRefOutMsg;           //!< attitude reference output message
 
-    BSKLogger *bskLogger;  //!< BSK Logging
-}locationPointingConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} locationPointingConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_locationPointing(locationPointingConfig *configData, int64_t moduleID);
-    void Update_locationPointing(locationPointingConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_locationPointing(locationPointingConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_locationPointing(locationPointingConfig* configData, int64_t moduleID);
+    void Update_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID);
 
 #ifdef __cplusplus
 }

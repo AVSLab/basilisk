@@ -24,51 +24,54 @@
 #include <stdexcept>
 #include <string>
 
-#include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
-#include "dynParamManager.h"
 #include "architecture/utilities/bskLogging.h"
+#include "dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-
+#include <Eigen/Dense>
 
 /*! Backsubstitution matrix structure*/
-struct BackSubMatrices {
-    Eigen::Matrix3d matrixA;             //!< Backsubstitution matrix A
-    Eigen::Matrix3d matrixB;             //!< Backsubstitution matrix B
-    Eigen::Matrix3d matrixC;             //!< Backsubstitution matrix C
-    Eigen::Matrix3d matrixD;             //!< Backsubstitution matrix D
-    Eigen::Vector3d vecTrans;            //!< Backsubstitution translation vector
-    Eigen::Vector3d vecRot;              //!< Backsubstitution rotation vector
+struct BackSubMatrices
+{
+    Eigen::Matrix3d matrixA;  //!< Backsubstitution matrix A
+    Eigen::Matrix3d matrixB;  //!< Backsubstitution matrix B
+    Eigen::Matrix3d matrixC;  //!< Backsubstitution matrix C
+    Eigen::Matrix3d matrixD;  //!< Backsubstitution matrix D
+    Eigen::Vector3d vecTrans; //!< Backsubstitution translation vector
+    Eigen::Vector3d vecRot;   //!< Backsubstitution rotation vector
 };
 
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
-typedef struct {
-    double mEff;                           //!< [kg] Mass of the effector
-    double mEffDot;                        //!< [kg/s] Time derivative of retained effector mass
-    Eigen::Matrix3d IEffPntB_B;            //!< [kg m^2] Inertia of effector relative to point B in B frame components
-    Eigen::Vector3d rEff_CB_B;             //!< [m] Center of mass of effector with respect to point B in B frame comp
-    Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Body-frame derivative of the retained effector CoM
-    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kg m^2/s] Body-frame derivative of retained effector inertia
-    bool hasMassPropertyRateDynamics;      //!< True when the equations of motion use explicit rate overrides
-    double mEffDotDynamics;                //!< [kg/s] Mass rate substituted into generic rate-dependent terms
-    Eigen::Vector3d rEffPrime_CB_BDynamics; //!< [m/s] CoM derivative used by generic rate terms
+typedef struct
+{
+    double mEff;                             //!< [kg] Mass of the effector
+    double mEffDot;                          //!< [kg/s] Time derivative of retained effector mass
+    Eigen::Matrix3d IEffPntB_B;              //!< [kg m^2] Inertia of effector relative to point B in B frame components
+    Eigen::Vector3d rEff_CB_B;               //!< [m] Center of mass of effector with respect to point B in B frame comp
+    Eigen::Vector3d rEffPrime_CB_B;          //!< [m/s] Body-frame derivative of the retained effector CoM
+    Eigen::Matrix3d IEffPrimePntB_B;         //!< [kg m^2/s] Body-frame derivative of retained effector inertia
+    bool hasMassPropertyRateDynamics;        //!< True when the equations of motion use explicit rate overrides
+    double mEffDotDynamics;                  //!< [kg/s] Mass rate substituted into generic rate-dependent terms
+    Eigen::Vector3d rEffPrime_CB_BDynamics;  //!< [m/s] CoM derivative used by generic rate terms
     Eigen::Matrix3d IEffPrimePntB_BDynamics; //!< [kg m^2/s] Inertia rate substituted into generic rate-dependent terms
-}EffectorMassProps;
+} EffectorMassProps;
 
 /*! @brief state effector class */
-class StateEffector {
-public:
-    EffectorMassProps effProps;            //!< stateEffectors instantiation of effector mass props
-    Eigen::VectorXd stateDerivContribution; //!< stateEffector contribution to another stateEffector to prevent double-counting
-    Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
-    Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
-    Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
+class StateEffector
+{
+  public:
+    EffectorMassProps effProps; //!< stateEffectors instantiation of effector mass props
+    Eigen::VectorXd
+      stateDerivContribution;      //!< stateEffector contribution to another stateEffector to prevent double-counting
+    Eigen::Vector3d forceOnBody_B; //!< [N] Force that the state effector applies to the s/c
+    Eigen::Vector3d torqueOnBodyPntB_B; //!< [N] Torque that the state effector applies to the body about point B
+    Eigen::Vector3d torqueOnBodyPntC_B; //!< [N] Torque that the state effector applies to the body about point B
 
     /** setter for `stateNameOfPosition` property */
     void setStateNameOfPosition(std::string value);
     /** getter for `stateNameOfPosition` property */
-    const std::string getStateNameOfPosition() const {return this->stateNameOfPosition; }
+    const std::string getStateNameOfPosition() const { return this->stateNameOfPosition; }
     /** setter for `stateNameOfVelocity` property */
     void setStateNameOfVelocity(std::string value);
     /** getter for `stateNameOfVelocity` property */
@@ -146,25 +149,40 @@ public:
     /** getter for `propName_prescribedAngAcceleration` property */
     const std::string getPropName_prescribedAngAcceleration() const { return this->propName_prescribedAngAcceleration; }
 
-    BSKLogger bskLogger;                   //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
-public:
-    StateEffector();                       //!< Constructor
-    virtual ~StateEffector();              //!< Destructor
-    virtual void updateEffectorMassProps(double integTime);  //!< Method for stateEffector to give mass contributions
-    virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< Back-sub contributions
-    virtual void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr);  //!< Method for adding coupling contributions for state effector branching on prescribed motion
-    virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< Energy and momentum calculations
-    virtual void modifyStates(double integTime); //!< Modify state values after integration
-    virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< Force and torque on s/c due to stateEffector
+  public:
+    StateEffector();                                        //!< Constructor
+    virtual ~StateEffector();                               //!< Destructor
+    virtual void updateEffectorMassProps(double integTime); //!< Method for stateEffector to give mass contributions
+    virtual void updateContributions(double integTime,
+                                     BackSubMatrices& backSubContr,
+                                     Eigen::MRPd sigma_BN,
+                                     Eigen::Vector3d omega_BN_B,
+                                     Eigen::Vector3d g_N); //!< Back-sub contributions
+    virtual void addPrescribedMotionCouplingContributions(
+      BackSubMatrices&
+        backSubContr); //!< Method for adding coupling contributions for state effector branching on prescribed motion
+    virtual void updateEnergyMomContributions(double integTime,
+                                              Eigen::Vector3d& rotAngMomPntCContr_B,
+                                              double& rotEnergyContr,
+                                              Eigen::Vector3d omega_BN_B); //!< Energy and momentum calculations
+    virtual void modifyStates(double integTime);                           //!< Modify state values after integration
+    virtual void calcForceTorqueOnBody(double integTime,
+                                       Eigen::Vector3d omega_BN_B); //!< Force and torque on s/c due to stateEffector
     virtual void writeOutputStateMessages(uint64_t integTimeNanos); //!< Write State Messages after integration
-    virtual void registerStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to register states
-    virtual void registerProperties(DynParamManager& states);  //!< Method for stateEffectors to register properties
-    virtual void addDynamicEffector(DynamicEffector *newDynamicEffector, int segment);  //!< Method to attach a dynamic effector
-    virtual void linkInStates(DynParamManager& states) = 0;  //!< Method for stateEffectors to get other states
-    virtual void linkInPrescribedMotionProperties(DynParamManager& properties);  //!< Method for stateEffectors to access prescribed motion properties
-    virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< Method for each stateEffector to calculate derivatives
+    virtual void registerStates(DynParamManager& states) = 0;       //!< Method for stateEffectors to register states
+    virtual void registerProperties(DynParamManager& states); //!< Method for stateEffectors to register properties
+    virtual void addDynamicEffector(DynamicEffector* newDynamicEffector,
+                                    int segment);           //!< Method to attach a dynamic effector
+    virtual void linkInStates(DynParamManager& states) = 0; //!< Method for stateEffectors to get other states
+    virtual void linkInPrescribedMotionProperties(
+      DynParamManager& properties); //!< Method for stateEffectors to access prescribed motion properties
+    virtual void computeDerivatives(
+      double integTime,
+      Eigen::Vector3d rDDot_BN_N,
+      Eigen::Vector3d omegaDot_BN_B,
+      Eigen::MRPd sigma_BN) = 0; //!< Method for each stateEffector to calculate derivatives
 
     /** Commit dimension-defining collections after successful registration. */
     virtual void freezeTopology() noexcept { this->topologyFrozen = true; }
@@ -178,37 +196,39 @@ public:
         }
     }
 
-    bool topologyFrozen = false;                                    //!< whether state dimensions are frozen
-    std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
-    std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
-    std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
-    std::string stateNameOfOmega = "";                              //!< state engine name of the parent rigid body inertial angular velocity vector
+    bool topologyFrozen = false;          //!< whether state dimensions are frozen
+    std::string stateNameOfPosition = ""; //!< state engine name of the parent rigid body inertial position vector
+    std::string stateNameOfVelocity = ""; //!< state engine name of the parent rigid body inertial velocity vector
+    std::string stateNameOfSigma = "";    //!< state engine name of the parent rigid body inertial attitude
+    std::string stateNameOfOmega = ""; //!< state engine name of the parent rigid body inertial angular velocity vector
 
-    std::string propName_m_SC = "";                                 //!< property name of m_SC
-    std::string propName_mDot_SC = "";                              //!< property name of mDot_SC
-    std::string propName_centerOfMassSC = "";                       //!< property name of centerOfMassSC
-    std::string propName_inertiaSC = "";                            //!< property name of inertiaSC
-    std::string propName_inertiaPrimeSC = "";                       //!< property name of inertiaPrimeSC
-    std::string propName_centerOfMassPrimeSC = "";                  //!< property name of centerOfMassPrimeSC
-    std::string propName_centerOfMassDotSC = "";                    //!< property name of centerOfMassDotSC
-    std::string propName_inertialPosition = "";                     //!< property name of inertialPosition
-    std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
-    std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
+    std::string propName_m_SC = "";                //!< property name of m_SC
+    std::string propName_mDot_SC = "";             //!< property name of mDot_SC
+    std::string propName_centerOfMassSC = "";      //!< property name of centerOfMassSC
+    std::string propName_inertiaSC = "";           //!< property name of inertiaSC
+    std::string propName_inertiaPrimeSC = "";      //!< property name of inertiaPrimeSC
+    std::string propName_centerOfMassPrimeSC = ""; //!< property name of centerOfMassPrimeSC
+    std::string propName_centerOfMassDotSC = "";   //!< property name of centerOfMassDotSC
+    std::string propName_inertialPosition = "";    //!< property name of inertialPosition
+    std::string propName_inertialVelocity = "";    //!< property name of inertialVelocity
+    std::string propName_vehicleGravity = "";      //!< property name of vehicleGravity
 
-    std::string propName_prescribedPosition = "";                   //!< property name of prescribedPosition
-    std::string propName_prescribedVelocity = "";                   //!< property name of prescribedVelocity
-    std::string propName_prescribedAcceleration = "";               //!< property name of prescribedAcceleration
-    std::string propName_prescribedAttitude = "";                   //!< property name of prescribedAttitude
-    std::string propName_prescribedAngVelocity = "";                //!< property name of prescribedAngVelocity
-    std::string propName_prescribedAngAcceleration = "";            //!< property name of prescribedAngAcceleration
+    std::string propName_prescribedPosition = "";        //!< property name of prescribedPosition
+    std::string propName_prescribedVelocity = "";        //!< property name of prescribedVelocity
+    std::string propName_prescribedAcceleration = "";    //!< property name of prescribedAcceleration
+    std::string propName_prescribedAttitude = "";        //!< property name of prescribedAttitude
+    std::string propName_prescribedAngVelocity = "";     //!< property name of prescribedAngVelocity
+    std::string propName_prescribedAngAcceleration = ""; //!< property name of prescribedAngAcceleration
 
-    Eigen::MatrixXd* prescribedPositionProperty = nullptr;         //!< [m] r_PB_B prescribed position relative to hub
-    Eigen::MatrixXd* prescribedVelocityProperty = nullptr;         //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
-    Eigen::MatrixXd* prescribedAccelerationProperty = nullptr;     //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
-    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr;         //!< sigma_PB prescribed MRP attitude relative to hub
-    Eigen::MatrixXd* prescribedAngVelocityProperty = nullptr;      //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
-    Eigen::MatrixXd* prescribedAngAccelerationProperty = nullptr;  //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
+    Eigen::MatrixXd* prescribedPositionProperty = nullptr; //!< [m] r_PB_B prescribed position relative to hub
+    Eigen::MatrixXd* prescribedVelocityProperty = nullptr; //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
+    Eigen::MatrixXd* prescribedAccelerationProperty =
+      nullptr; //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
+    Eigen::MatrixXd* prescribedAttitudeProperty = nullptr; //!< sigma_PB prescribed MRP attitude relative to hub
+    Eigen::MatrixXd* prescribedAngVelocityProperty =
+      nullptr; //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
+    Eigen::MatrixXd* prescribedAngAccelerationProperty =
+      nullptr; //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
 };
-
 
 #endif /* STATE_EFFECTOR_H */

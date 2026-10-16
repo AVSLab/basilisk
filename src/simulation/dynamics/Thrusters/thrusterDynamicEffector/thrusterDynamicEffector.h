@@ -17,37 +17,37 @@
 
  */
 
-
 #ifndef THRUSTER_DYNAMIC_EFFECTOR_H
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
+#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRTimePair.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THRSimConfig.h"
-#include "simulation/dynamics/_GeneralModuleFiles/THROperation.h"
-#include "simulation/dynamics/_GeneralModuleFiles/BodyToHubInfo.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
-#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/THRArrayOnTimeCmdMsgPayload.h"
+#include "architecture/msgPayloadDefCpp/THROutputMsgPayload.h"
 
+#include "architecture/utilities/avsEigenMRP.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include <Eigen/Dense>
-#include <vector>
 #include <cstdint>
 #include <memory>
 #include <string>
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "architecture/utilities/avsEigenMRP.h"
-
-
+#include <vector>
 
 /*! @brief thruster dynamic effector class */
-class ThrusterDynamicEffector final: public SysModel, public DynamicEffector {
-public:
+class ThrusterDynamicEffector final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states) override;
@@ -71,41 +71,41 @@ public:
     void UpdateThrusterProperties();
     void computeBlowDownDecay(const std::shared_ptr<THRSimConfig>& CurrentThruster);
 
-public:
-    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;  //!< input message with thruster commands
-    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs;  //!< output message vector for thruster data
+  public:
+    ReadFunctor<THRArrayOnTimeCmdMsgPayload> cmdsInMsg;         //!< input message with thruster commands
+    std::vector<Message<THROutputMsgPayload>*> thrusterOutMsgs; //!< output message vector for thruster data
 
-    int stepsInRamp;                               //!< class variable
+    int stepsInRamp;                                         //!< class variable
     std::vector<std::shared_ptr<THRSimConfig>> thrusterData; //!< Thruster information
-    std::vector<double> NewThrustCmds;             //!< Incoming thrust commands
-    double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
-    double fuelMass;                               //!< kg Current total fuel mass of connected fuel tank
-    double prevFireTime;                           //!< s  Previous thruster firing time
-	double thrFactorToTime(const std::shared_ptr<THRSimConfig>& thrData,
-		std::vector<THRTimePair> *thrRamp);
-	StateData *hubSigma;                           //!< pointer to the hub attitude states
-    StateData *hubOmega;                           //!< pointer to the hub angular velocity states
-    Eigen::MatrixXd* inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
-    Eigen::MatrixXd* inertialAttitudeProperty;  //!< attitude relative to inertial frame
-    Eigen::MatrixXd* inertialAngVelocityProperty;  //!< [rad/s] inertial angular velocity relative to inertial frame
-    Eigen::Vector3d r_PcP_P;                     //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if thrusters attached to non-hub body)
+    std::vector<double> NewThrustCmds;                       //!< Incoming thrust commands
+    double mDotTotal;                                        //!< kg/s Current mass flow rate of thrusters
+    double fuelMass;                                         //!< kg Current total fuel mass of connected fuel tank
+    double prevFireTime;                                     //!< s  Previous thruster firing time
+    double thrFactorToTime(const std::shared_ptr<THRSimConfig>& thrData, std::vector<THRTimePair>* thrRamp);
+    StateData* hubSigma;                       //!< pointer to the hub attitude states
+    StateData* hubOmega;                       //!< pointer to the hub angular velocity states
+    Eigen::MatrixXd* inertialPositionProperty; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd* inertialAttitudeProperty; //!< attitude relative to inertial frame
+    Eigen::MatrixXd* inertialAngVelocityProperty; //!< [rad/s] inertial angular velocity relative to inertial frame
+    Eigen::Vector3d r_PcP_P; //!< [m] position vector of parent body CoM w.r.t. parent body frame origin (only used if
+                             //!< thrusters attached to non-hub body)
 
-    BSKLogger bskLogger;                      //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
-private:
-    void validateConfiguration();  //!< Validate dimensions before accessing thruster data or commands
-    std::vector<THROutputMsgPayload> thrusterOutBuffer;//!< Message buffer for thruster data
-    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;     //!< One-time allocation for savings
+  private:
+    void validateConfiguration(); //!< Validate dimensions before accessing thruster data or commands
+    std::vector<THROutputMsgPayload> thrusterOutBuffer; //!< Message buffer for thruster data
+    THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;      //!< One-time allocation for savings
 
-    std::vector<ReadFunctor<SCStatesMsgPayload>> attachedBodyInMsgs;       //!< vector of body states message where the thrusters attach to
+    std::vector<ReadFunctor<SCStatesMsgPayload>>
+      attachedBodyInMsgs; //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 
-    uint64_t prevCommandTime;                       //!< Time for previous valid thruster firing
+    uint64_t prevCommandTime; //!< Time for previous valid thruster firing
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<THROutputMsgPayload>>> ownedThrusterOutMsgs; //!< Storage for thrusterOutMsgs.
 };
-
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

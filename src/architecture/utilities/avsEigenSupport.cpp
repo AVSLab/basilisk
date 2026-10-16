@@ -17,12 +17,12 @@
 
  */
 
+#include "avsEigenSupport.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "rigidBodyKinematics.h"
+#include <cmath>
 #include <iostream>
 #include <math.h>
-#include <cmath>
-#include "avsEigenSupport.h"
-#include "rigidBodyKinematics.h"
-#include "architecture/utilities/macroDefinitions.h"
 
 /*
 
@@ -36,7 +36,8 @@
     @param inMat Source Eigen matrix.
     @param outArray Destination array sized by the caller.
 */
-void eigenMatrixXd2CArray(const Eigen::MatrixXd& inMat, double *outArray)
+void
+eigenMatrixXd2CArray(const Eigen::MatrixXd& inMat, double* outArray)
 {
     using RowMajorMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     Eigen::Map<RowMajorMatrixXd> outMat(outArray, inMat.rows(), inMat.cols());
@@ -49,20 +50,21 @@ void eigenMatrixXd2CArray(const Eigen::MatrixXd& inMat, double *outArray)
     @param inMat Source Eigen matrix.
     @param outArray Destination array sized by the caller.
 */
-void eigenMatrixXi2CArray(const Eigen::MatrixXi& inMat, int *outArray)
+void
+eigenMatrixXi2CArray(const Eigen::MatrixXi& inMat, int* outArray)
 {
     using RowMajorMatrixXi = Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     Eigen::Map<RowMajorMatrixXi> outMat(outArray, inMat.rows(), inMat.cols());
     outMat = inMat;
 }
 
-
 /*! Copy an Eigen 3-vector into a C array.
 
     @param inMat Source Eigen vector.
     @param outArray Destination three-element array.
 */
-void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray)
+void
+eigenVector3d2CArray(const Eigen::Vector3d& inMat, double* outArray)
 {
     Eigen::Map<Eigen::Vector3d> outVector(outArray);
     outVector = inMat;
@@ -73,7 +75,8 @@ void eigenVector3d2CArray(const Eigen::Vector3d& inMat, double *outArray)
     @param inMat Source Eigen MRP vector.
     @param outArray Destination three-element array.
 */
-void eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray)
+void
+eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray)
 {
     Eigen::Map<Eigen::Vector3d> outVector(outArray);
     outVector = inMat.coeffs();
@@ -84,7 +87,8 @@ void eigenMRPd2CArray(const Eigen::MRPd& inMat, double* outArray)
     @param inMat Source Eigen matrix.
     @param outArray Destination nine-element array.
 */
-void eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double *outArray)
+void
+eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double* outArray)
 {
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     Eigen::Map<RowMajorMatrix3d> outMat(outArray);
@@ -98,7 +102,8 @@ void eigenMatrix3d2CArray(const Eigen::Matrix3d& inMat, double *outArray)
     @param nCols Number of matrix columns.
     @return Dynamic Eigen matrix containing the source values.
 */
-Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
+Eigen::MatrixXd
+cArray2EigenMatrixXd(double* inArray, int nRows, int nCols)
 {
     return Eigen::Map<Eigen::MatrixXd>(inArray, nRows, nCols);
 }
@@ -108,7 +113,8 @@ Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
     @param inArray Source three-element array.
     @return Eigen vector containing the source values.
 */
-Eigen::Vector3d cArray2EigenVector3d(double *inArray)
+Eigen::Vector3d
+cArray2EigenVector3d(double* inArray)
 {
     return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
 }
@@ -118,7 +124,8 @@ Eigen::Vector3d cArray2EigenVector3d(double *inArray)
     @param inArray Source three-element array.
     @return Eigen MRP containing the source values.
 */
-Eigen::MRPd cArray2EigenMRPd(const double* inArray)
+Eigen::MRPd
+cArray2EigenMRPd(const double* inArray)
 {
     return Eigen::MRPd(inArray);
 }
@@ -128,7 +135,8 @@ Eigen::MRPd cArray2EigenMRPd(const double* inArray)
     @param inArray Source nine-element array.
     @return Eigen matrix containing the source values.
 */
-Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
+Eigen::Matrix3d
+cArray2EigenMatrix3d(double* inArray)
 {
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     return Eigen::Map<RowMajorMatrix3d>(inArray);
@@ -139,7 +147,8 @@ Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
     @param in2DArray Source 3x3 array.
     @return Eigen matrix containing the source values.
 */
-Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3])
+Eigen::Matrix3d
+c2DArray2EigenMatrix3d(double in2DArray[3][3])
 {
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     return Eigen::Map<RowMajorMatrix3d>(&in2DArray[0][0]);
@@ -151,16 +160,17 @@ Eigen::Matrix3d c2DArray2EigenMatrix3d(double in2DArray[3][3])
  @return Eigen::Matrix3d
  @param angle The input rotation angle
  */
-Eigen::Matrix3d eigenM1(double angle)
+Eigen::Matrix3d
+eigenM1(double angle)
 {
     Eigen::Matrix3d mOut;
 
     mOut.setIdentity();
 
-    mOut(1,1) = cos(angle);
-    mOut(1,2) = sin(angle);
-    mOut(2,1) = -mOut(1,2);
-    mOut(2,2) = mOut(1,1);
+    mOut(1, 1) = cos(angle);
+    mOut(1, 2) = sin(angle);
+    mOut(2, 1) = -mOut(1, 2);
+    mOut(2, 2) = mOut(1, 1);
 
     return mOut;
 }
@@ -171,16 +181,17 @@ Eigen::Matrix3d eigenM1(double angle)
  @return Eigen::Matrix3d
  @param angle The input rotation angle
  */
-Eigen::Matrix3d eigenM2(double angle)
+Eigen::Matrix3d
+eigenM2(double angle)
 {
     Eigen::Matrix3d mOut;
 
     mOut.setIdentity();
 
-    mOut(0,0) = cos(angle);
-    mOut(0,2) = -sin(angle);
-    mOut(2,0) = -mOut(0,2);
-    mOut(2,2) = mOut(0,0);
+    mOut(0, 0) = cos(angle);
+    mOut(0, 2) = -sin(angle);
+    mOut(2, 0) = -mOut(0, 2);
+    mOut(2, 2) = mOut(0, 0);
 
     return mOut;
 }
@@ -191,16 +202,17 @@ Eigen::Matrix3d eigenM2(double angle)
  @return Eigen::Matrix3d
  @param angle The input rotation angle
  */
-Eigen::Matrix3d eigenM3(double angle)
+Eigen::Matrix3d
+eigenM3(double angle)
 {
     Eigen::Matrix3d mOut;
 
     mOut.setIdentity();
 
-    mOut(0,0) = cos(angle);
-    mOut(0,1) = sin(angle);
-    mOut(1,0) = -mOut(0,1);
-    mOut(1,1) = mOut(0,0);
+    mOut(0, 0) = cos(angle);
+    mOut(0, 1) = sin(angle);
+    mOut(1, 0) = -mOut(0, 1);
+    mOut(1, 1) = mOut(0, 0);
 
     return mOut;
 }
@@ -211,18 +223,19 @@ Eigen::Matrix3d eigenM3(double angle)
  @return Eigen::Matrix3d
  @param vec The input vector
  */
-Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
+Eigen::Matrix3d
+eigenTilde(Eigen::Vector3d vec)
 {
     Eigen::Matrix3d mOut;
 
-    mOut(0,0) = mOut(1,1) = mOut(2,2) = 0.0;
+    mOut(0, 0) = mOut(1, 1) = mOut(2, 2) = 0.0;
 
-    mOut(0,1) = -vec(2);
-    mOut(1,0) =  vec(2);
-    mOut(0,2) =  vec(1);
-    mOut(2,0) = -vec(1);
-    mOut(1,2) = -vec(0);
-    mOut(2,1) =  vec(0);
+    mOut(0, 1) = -vec(2);
+    mOut(1, 0) = vec(2);
+    mOut(0, 2) = vec(1);
+    mOut(2, 0) = -vec(1);
+    mOut(1, 2) = -vec(0);
+    mOut(2, 1) = vec(0);
 
     return mOut;
 }
@@ -231,11 +244,12 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
  @return Eigen::MRPd
  @param dcm_Eigen The input DCM
  */
-Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
+Eigen::MRPd
+eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
 {
-    Eigen::MRPd sigma_Eigen;  // output Eigen MRP
-    double dcm_Array[9];      // C array DCM
-    double sigma_Array[3];    // C array MRP
+    Eigen::MRPd sigma_Eigen; // output Eigen MRP
+    double dcm_Array[9];     // C array DCM
+    double sigma_Array[3];   // C array MRP
 
     eigenMatrix3d2CArray(dcm_Eigen, dcm_Array);
     C2MRP(RECAST3X3 dcm_Array, sigma_Array);
@@ -248,7 +262,8 @@ Eigen::MRPd eigenC2MRP(Eigen::Matrix3d dcm_Eigen)
  @return Eigen::Vector3d
  @param mrp The input Vector3d variable
  */
-Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
+Eigen::Vector3d
+eigenMRPd2Vector3d(Eigen::MRPd mrp)
 {
     Eigen::Vector3d vec3d;
 
@@ -266,26 +281,34 @@ Eigen::Vector3d eigenMRPd2Vector3d(Eigen::MRPd mrp)
 @param f Function to find the zero of
 @param fPrime First derivative of the function
 */
-double newtonRaphsonSolve(const double& initialEstimate, const double& accuracy, const std::function<double(double)>& f, const std::function<double(double)>& fPrime) {
-	double currentEstimate = initialEstimate;
-	for (int i = 0; i < 100; i++) {
+double
+newtonRaphsonSolve(const double& initialEstimate,
+                   const double& accuracy,
+                   const std::function<double(double)>& f,
+                   const std::function<double(double)>& fPrime)
+{
+    double currentEstimate = initialEstimate;
+    for (int i = 0; i < 100; i++) {
         if (std::abs(f(currentEstimate)) < accuracy)
             break;
 
-		double functionVal = f(currentEstimate);
-		double functionDeriv = fPrime(currentEstimate);
-		currentEstimate = currentEstimate - functionVal/functionDeriv;
-	}
-	return currentEstimate;
+        double functionVal = f(currentEstimate);
+        double functionDeriv = fPrime(currentEstimate);
+        currentEstimate = currentEstimate - functionVal / functionDeriv;
+    }
+    return currentEstimate;
 }
 
 /*! This function solves for the zero of the passed function using the Bisection Method
 @return double
-@param interval The interval to use for the bisection method. Note that the root of the function must be inside this interval
+@param interval The interval to use for the bisection method. Note that the root of the function must be inside this
+interval
 @param accuracy The desired upper bound for the error
 @param f Function to find the zero of
 */
-double bisectionSolve(double *interval, double accuracy, std::function< double(double) >& f) {
+double
+bisectionSolve(double* interval, double accuracy, std::function<double(double)>& f)
+{
     BSKLogger bskLogger;
     double left = interval[0];
     double right = interval[1];
@@ -301,7 +324,7 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
         bskLogger.bskError("avsEigenSupport.bisectionSolve: interval bounds must be finite");
     }
     // check if interval is good
-    if (left > right){
+    if (left > right) {
         bskLogger.bskError("avsEigenSupport.bisectionSolve: Interval must be from left to right");
     }
     double fLeft = f(left);
@@ -313,23 +336,22 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
         return right;
     }
     // check if interval has opposite signs
-    if ((fLeft * fRight) > 0){
-        bskLogger.bskError("avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
+    if ((fLeft * fRight) > 0) {
+        bskLogger.bskError(
+          "avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
     }
     // find root
-    while ((right - left) >= accuracy){
+    while ((right - left) >= accuracy) {
         // midpoint
         currentEstimate = (left + right) / 2.0;
         double fMid = f(currentEstimate);
         // if midpoint is root, root is found
-        if (fMid == 0.0){
+        if (fMid == 0.0) {
             break;
-        }
-        else if ((fLeft < 0.0 && fMid > 0.0) || (fLeft > 0.0 && fMid < 0.0)){
+        } else if ((fLeft < 0.0 && fMid > 0.0) || (fLeft > 0.0 && fMid < 0.0)) {
             right = currentEstimate;
             fRight = fMid;
-        }
-        else{
+        } else {
             left = currentEstimate;
             fLeft = fMid;
         }
@@ -344,7 +366,8 @@ double bisectionSolve(double *interval, double accuracy, std::function< double(d
     @param tolerance allowed deviation from orthonormality and from a +1 determinant
     @return bool
  */
-bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance)
+bool
+eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance)
 {
     bool isOrthonormal = (dcm.transpose() * dcm - Eigen::Matrix3d::Identity()).norm() <= tolerance;
     bool isRightHanded = std::abs(dcm.determinant() - 1.0) <= tolerance;
@@ -357,7 +380,8 @@ bool eigenIsRotationMatrix(const Eigen::Matrix3d& dcm, double tolerance)
     @param tolerance allowed deviation of the norm from 1.0
     @return bool
  */
-bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
+bool
+eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
 {
     return std::abs(vec.norm() - 1.0) <= tolerance;
 }
@@ -373,7 +397,8 @@ bool eigenIsUnitVector(const Eigen::Vector3d& vec, double tolerance)
     @param tolerance allowed deviation in checks
     @return bool
  */
-bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
+bool
+eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
 {
     // Finiteness check
     if (!inertia.allFinite()) {
@@ -414,7 +439,8 @@ bool eigenIsValidInertiaMatrix(const Eigen::Matrix3d& inertia, double tolerance)
     @param tolerance allowed deviation from symmetry and positive semidefiniteness
     @return ``true`` when the matrix is symmetric positive semidefinite
  */
-bool eigenIsPositiveSemidefiniteMatrix(const Eigen::Matrix3d& matrix, double tolerance)
+bool
+eigenIsPositiveSemidefiniteMatrix(const Eigen::Matrix3d& matrix, double tolerance)
 {
     if (!matrix.allFinite()) {
         return false;

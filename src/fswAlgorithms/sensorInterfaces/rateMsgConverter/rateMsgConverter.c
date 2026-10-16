@@ -26,9 +26,9 @@
 
  */
 
-#include <string.h>
 #include "rateMsgConverter.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <string.h>
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -37,12 +37,12 @@
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID)
+void
+SelfInit_rateMsgConverter(rateMsgConverterConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     NavAttMsg_C_init(&configData->navRateOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -51,10 +51,11 @@ void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t modul
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!IMUSensorBodyMsg_C_isLinked(&configData->imuRateInMsg)) {
         _bskError(configData->bskLogger, "Error: rateMsgConverter.imuRateInMsg wasn't connected.");
@@ -67,7 +68,8 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;

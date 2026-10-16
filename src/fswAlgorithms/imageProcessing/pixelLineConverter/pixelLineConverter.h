@@ -20,42 +20,41 @@
 #ifndef _PIXEL_LINE_CONVERTER_H_
 #define _PIXEL_LINE_CONVERTER_H_
 
+#include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/OpNavCirclesMsg_C.h"
-#include "cMsgCInterface/CameraConfigMsg_C.h"
 #include "cMsgCInterface/OpNavMsg_C.h"
 
-#include "architecture/utilities/macroDefinitions.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
-
+#include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief The configuration structure for the pixelLine Converter module.*/
-typedef struct {
-    OpNavMsg_C opNavOutMsg; //!< [-] output navigation message for relative position
+typedef struct
+{
+    OpNavMsg_C opNavOutMsg;              //!< [-] output navigation message for relative position
     CameraConfigMsg_C cameraConfigInMsg; //!< camera config input message
-    NavAttMsg_C attInMsg; //!< attitude input message
-    OpNavCirclesMsg_C circlesInMsg; //!< circles input message
+    NavAttMsg_C attInMsg;                //!< attitude input message
+    OpNavCirclesMsg_C circlesInMsg;      //!< circles input message
 
     int32_t planetTarget; //!< The planet targeted (None = 0, Earth = 1, Mars = 2, Jupiter = 3 are allowed)
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}PixelLineConvertData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} PixelLineConvertData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_pixelLineConverter(PixelLineConvertData *configData, int64_t moduleID);
-    void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTime, int64_t moduleID);
-    
+
+    void SelfInit_pixelLineConverter(PixelLineConvertData* configData, int64_t moduleID);
+    void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

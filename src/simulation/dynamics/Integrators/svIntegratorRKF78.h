@@ -23,7 +23,8 @@
 #include "../_GeneralModuleFiles/svIntegratorAdaptiveRungeKutta.h"
 
 /*! @brief 7/8 order Runge-Kutta integrator */
-class svIntegratorRKF78 : public svIntegratorAdaptiveRungeKutta<13> {
+class svIntegratorRKF78 : public svIntegratorAdaptiveRungeKutta<13>
+{
   public:
     svIntegratorRKF78(DynamicObject* dyn); //!< class method
   private:

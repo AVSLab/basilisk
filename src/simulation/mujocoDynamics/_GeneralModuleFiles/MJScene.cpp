@@ -17,8 +17,8 @@
 
  */
 
-#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
 #include "MJScene.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateRegistry.h"
 
 #include "MJFwdKinematics.h"
 #include "StatefulSysModel.h"
@@ -37,8 +37,8 @@
 #include <unordered_set>
 #include <vector>
 
-using MJBasilisk::detail::logAndThrow;
 using MJBasilisk::detail::checkedMjtSizeCast;
+using MJBasilisk::detail::logAndThrow;
 
 namespace {
 struct MujocoStateSegments
@@ -419,14 +419,16 @@ MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
     }
 
     if (model->nv > 0) {
-        double* qvelDerivativeData = this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQvelDerivativeSegment);
+        double* qvelDerivativeData =
+          this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQvelDerivativeSegment);
         std::copy_n(data->qacc, model->nv, qvelDerivativeData);
         if (this->modelTopology.highOrderAttitude) {
             for (auto&& body : this->spec.getBodies()) {
                 body.setJointPositionDerivativesFromMujoco(data);
             }
         } else {
-            double* qposDerivativeData = this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQposDerivativeSegment);
+            double* qposDerivativeData =
+              this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQposDerivativeSegment);
             std::copy_n(data->qvel, model->nv, qposDerivativeData);
         }
     }
@@ -750,8 +752,10 @@ MJScene::copyMujocoArraysFromStates(mjModel* model, mjData* data)
 bool
 MJScene::updateForwardKinematicsFromStates(mjModel* model, mjData* data)
 {
-    const double* qposData = model->nq > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment) : nullptr;
-    const double* qvelData = model->nv > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment) : nullptr;
+    const double* qposData =
+      model->nq > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment) : nullptr;
+    const double* qvelData =
+      model->nv > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment) : nullptr;
     const bool qposChanged = model->nq > 0 && !std::equal(qposData, qposData + model->nq, data->qpos);
     const bool qvelChanged = model->nv > 0 && !std::equal(qvelData, qvelData + model->nv, data->qvel);
 
@@ -825,7 +829,8 @@ MJScene::assembleFullQpos()
     if (model->nq == 0) {
         return Eigen::VectorXd(0);
     }
-    return Eigen::Map<const Eigen::VectorXd>(this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment), model->nq);
+    return Eigen::Map<const Eigen::VectorXd>(
+      this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment), model->nq);
 }
 
 Eigen::VectorXd
@@ -835,7 +840,8 @@ MJScene::assembleFullQvel()
     if (model->nv == 0) {
         return Eigen::VectorXd(0);
     }
-    return Eigen::Map<const Eigen::VectorXd>(this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment), model->nv);
+    return Eigen::Map<const Eigen::VectorXd>(
+      this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment), model->nv);
 }
 
 void

@@ -19,14 +19,14 @@
 #ifndef IGBM_NOISE_STATE_EFFECTOR_H
 #define IGBM_NOISE_STATE_EFFECTOR_H
 
-#include <cstdint>
-#include <string>
-#include <Eigen/Dense>
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <Eigen/Dense>
+#include <cstdint>
+#include <string>
 
 /*!
  * @brief State effector that propagates a scalar correction @f$\delta@f$ whose factor
@@ -54,8 +54,11 @@
  * so the factor's stationary mean and std are exactly @f$\mu@f$ and
  * @f$\sigma_{\mathrm{st}}@f$, and stationarity holds by construction.
  */
-class IgbmNoiseStateEffector final : public StateEffector, public SysModel {
-public:
+class IgbmNoiseStateEffector final
+  : public StateEffector
+  , public SysModel
+{
+  public:
     /*! @brief Constructor. */
     IgbmNoiseStateEffector();
     /*! @brief Destructor. */
@@ -151,17 +154,17 @@ public:
      */
     void setStateName(std::string name) { this->nameOfState = name; }
 
-private:
-    static uint64_t effectorID;  //!< unique ID counter used to generate a distinct state name
+  private:
+    static uint64_t effectorID; //!< unique ID counter used to generate a distinct state name
 
-    std::string nameOfState;      //!< state manager key for scalar correction @f$\delta@f$
-    StateData* state = nullptr;   //!< pointer to scalar state container
+    std::string nameOfState;    //!< state manager key for scalar correction @f$\delta@f$
+    StateData* state = nullptr; //!< pointer to scalar state container
 
-    double mean = 1.0;             //!< mean level @f$\mu@f$ of the factor @f$(1+\delta)@f$ [-]
-    double sigmaStationary = 0.0;  //!< stationary standard deviation @f$\sigma_{\mathrm{st}}@f$ [-]
-    double timeConstant = 1.0;     //!< IGBM time constant @f$\tau@f$ [s]
-    double stateInit = 0.0;        //!< initial value for @f$\delta@f$ used at state registration
-    bool stateInitSet = false;     //!< whether the user set an explicit initial value
+    double mean = 1.0;            //!< mean level @f$\mu@f$ of the factor @f$(1+\delta)@f$ [-]
+    double sigmaStationary = 0.0; //!< stationary standard deviation @f$\sigma_{\mathrm{st}}@f$ [-]
+    double timeConstant = 1.0;    //!< IGBM time constant @f$\tau@f$ [s]
+    double stateInit = 0.0;       //!< initial value for @f$\delta@f$ used at state registration
+    bool stateInitSet = false;    //!< whether the user set an explicit initial value
 };
 
 #endif

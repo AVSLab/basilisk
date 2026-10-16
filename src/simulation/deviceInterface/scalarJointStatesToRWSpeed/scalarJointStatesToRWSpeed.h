@@ -29,15 +29,15 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
 
-#include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/RWSpeedMsgPayload.h"
+#include "architecture/msgPayloadDefC/ScalarJointStateMsgPayload.h"
 
 /*! @brief Adapter module that maps multiple ScalarJointStateMsg inputs
     directly into a single RWSpeedMsg output.
 */
 class ScalarJointStatesToRWSpeed : public SysModel
 {
-public:
+  public:
     /*! @brief Default constructor. */
     ScalarJointStatesToRWSpeed();
 
@@ -64,17 +64,17 @@ public:
     */
     void setNumJoints(uint32_t numJoints);
 
-public:
+  public:
     std::vector<ReadFunctor<ScalarJointStateMsgPayload>> jointStateInMsgs; //!< Joint state readers
-    Message<RWSpeedMsgPayload> rwSpeedOutMsg;                               //!< RW speed output
-    BSKLogger bskLogger;                                                    //!< BSK Logging
+    Message<RWSpeedMsgPayload> rwSpeedOutMsg;                              //!< RW speed output
+    BSKLogger bskLogger;                                                   //!< BSK Logging
 
-private:
+  private:
     /*! @brief Ensure internal buffers are correctly sized. */
     void ensureSizes();
 
-private:
-    uint32_t numJoints;            //!< Number of joints
+  private:
+    uint32_t numJoints; //!< Number of joints
 };
 
 #endif

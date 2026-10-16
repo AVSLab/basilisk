@@ -20,30 +20,35 @@
 #ifndef DYNAMIC_EFFECTOR_H
 #define DYNAMIC_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include "dynParamManager.h"
 #include "architecture/utilities/bskLogging.h"
+#include "dynParamManager.h"
+#include <Eigen/Dense>
 
 /*! @brief dynamic effector class */
-class DynamicEffector {
-public:
-    DynamicEffector();                      //!< Constructor
-    virtual ~DynamicEffector();             //!< Destructor
+class DynamicEffector
+{
+  public:
+    DynamicEffector();          //!< Constructor
+    virtual ~DynamicEffector(); //!< Destructor
     virtual void computeStateContribution(double integTime);
-    virtual void linkInStates(DynParamManager& states) = 0;  //!< Method to get access to other states/stateEffectors
-    virtual void linkInProperties(DynParamManager& properties);  //!< Method to get access to other properties/stateEffectors
-    virtual void computeForceTorque(double integTime, double timeStep) = 0;  //!< Method to computeForce and torque on the body
+    virtual void linkInStates(DynParamManager& states) = 0; //!< Method to get access to other states/stateEffectors
+    virtual void linkInProperties(
+      DynParamManager& properties); //!< Method to get access to other properties/stateEffectors
+    virtual void computeForceTorque(double integTime,
+                                    double timeStep) = 0; //!< Method to computeForce and torque on the body
 
-public:
+  public:
     Eigen::VectorXd stateDerivContribution; //!< DynamicEffectors contribution to a stateEffector
-    Eigen::Vector3d forceExternal_N = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in inertial components
-    Eigen::Vector3d forceExternal_B = Eigen::Vector3d::Zero();      //!< [N] External force applied by this effector in body frame components
+    Eigen::Vector3d forceExternal_N =
+      Eigen::Vector3d::Zero(); //!< [N] External force applied by this effector in inertial components
+    Eigen::Vector3d forceExternal_B =
+      Eigen::Vector3d::Zero(); //!< [N] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [Nm] External torque applied by this effector
 
     /** setter for `stateNameOfPosition` property */
     virtual void setStateNameOfPosition(std::string value);
     /** getter for `stateNameOfPosition` property */
-    const std::string getStateNameOfPosition() const {return this->stateNameOfPosition; }
+    const std::string getStateNameOfPosition() const { return this->stateNameOfPosition; }
     /** setter for `stateNameOfVelocity` property */
     virtual void setStateNameOfVelocity(std::string value);
     /** getter for `stateNameOfVelocity` property */
@@ -105,29 +110,28 @@ public:
     /** getter for `propName_vehicleGravity` property */
     const std::string getPropName_vehicleGravity() const { return this->propName_vehicleGravity; }
 
-    BSKLogger bskLogger;                    //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
-protected:
-    std::string stateNameOfPosition = "";                           //!< state engine name of the parent rigid body inertial position vector
-    std::string stateNameOfVelocity = "";                           //!< state engine name of the parent rigid body inertial velocity vector
-    std::string stateNameOfSigma = "";                              //!< state engine name of the parent rigid body inertial attitude
-    std::string stateNameOfOmega = "";                              //!< state engine name of the parent rigid body inertial angular velocity vector
+  protected:
+    std::string stateNameOfPosition = ""; //!< state engine name of the parent rigid body inertial position vector
+    std::string stateNameOfVelocity = ""; //!< state engine name of the parent rigid body inertial velocity vector
+    std::string stateNameOfSigma = "";    //!< state engine name of the parent rigid body inertial attitude
+    std::string stateNameOfOmega = ""; //!< state engine name of the parent rigid body inertial angular velocity vector
 
-    std::string propName_m_SC = "";                                 //!< property name of m_SC
-    std::string propName_mDot_SC = "";                              //!< property name of mDot_SC
-    std::string propName_centerOfMassSC = "";                       //!< property name of centerOfMassSC
-    std::string propName_inertiaSC = "";                            //!< property name of inertiaSC
-    std::string propName_inertiaPrimeSC = "";                       //!< property name of inertiaPrimeSC
-    std::string propName_centerOfMassPrimeSC = "";                  //!< property name of centerOfMassPrimeSC
-    std::string propName_centerOfMassDotSC = "";                    //!< property name of centerOfMassDotSC
-    std::string propName_inertialPosition = "";                     //!< property name of inertialPosition
-    std::string propName_inertialVelocity = "";                     //!< property name of inertialVelocity
-    std::string propName_inertialAttitude = "";                     //!< property name of inertialAttitude
-    std::string propName_inertialAngVelocity = "";                  //!< property name of inertialAngVelocity
-    std::string propName_vehicleGravity = "";                       //!< property name of vehicleGravity
+    std::string propName_m_SC = "";                //!< property name of m_SC
+    std::string propName_mDot_SC = "";             //!< property name of mDot_SC
+    std::string propName_centerOfMassSC = "";      //!< property name of centerOfMassSC
+    std::string propName_inertiaSC = "";           //!< property name of inertiaSC
+    std::string propName_inertiaPrimeSC = "";      //!< property name of inertiaPrimeSC
+    std::string propName_centerOfMassPrimeSC = ""; //!< property name of centerOfMassPrimeSC
+    std::string propName_centerOfMassDotSC = "";   //!< property name of centerOfMassDotSC
+    std::string propName_inertialPosition = "";    //!< property name of inertialPosition
+    std::string propName_inertialVelocity = "";    //!< property name of inertialVelocity
+    std::string propName_inertialAttitude = "";    //!< property name of inertialAttitude
+    std::string propName_inertialAngVelocity = ""; //!< property name of inertialAngVelocity
+    std::string propName_vehicleGravity = "";      //!< property name of vehicleGravity
 
-    bool isAttachableToStateEffector = false;      //!< Whether or not this effector can be attached onto a state effector
+    bool isAttachableToStateEffector = false; //!< Whether or not this effector can be attached onto a state effector
 };
-
 
 #endif /* DYNAMIC_EFFECTOR_H */

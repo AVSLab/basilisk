@@ -17,8 +17,8 @@
 
  */
 
-#include "architecture/utilities/macroDefinitions.h"
 #include "dataNodeBase.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "string.h"
 
 /*! Constructor.
@@ -41,12 +41,12 @@ DataNodeBase::~DataNodeBase()
     return;
 }
 
-
 /*! This method is used to reset the module. In general, no functionality is reset.
  @param CurrentSimNanos
 
  */
-void DataNodeBase::Reset(uint64_t CurrentSimNanos)
+void
+DataNodeBase::Reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -58,7 +58,8 @@ void DataNodeBase::Reset(uint64_t CurrentSimNanos)
  @param CurrentClock
 
  */
-void DataNodeBase::writeMessages(uint64_t CurrentClock)
+void
+DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write dataNode output messages - baud rate and name
     this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
@@ -71,13 +72,13 @@ void DataNodeBase::writeMessages(uint64_t CurrentClock)
 /*! This method reads the device status messages and calls a customReadMessages method
  @return bool
  */
-bool DataNodeBase::readMessages()
+bool
+DataNodeBase::readMessages()
 {
     //! - read in the data node use/supply messages
     bool dataRead = true;
     bool tmpStatusRead = true;
-    if(this->nodeStatusInMsg.isLinked())
-    {
+    if (this->nodeStatusInMsg.isLinked()) {
         this->nodeStatusMsg = this->nodeStatusInMsg();
         this->dataStatus = this->nodeStatusMsg.deviceCmd;
         tmpStatusRead = this->nodeStatusInMsg.isWritten();
@@ -86,21 +87,19 @@ bool DataNodeBase::readMessages()
 
     //! - call the custom method to perform additional input reading
     bool customRead = this->customReadMessages();
-    return(dataRead && customRead);
+    return (dataRead && customRead);
 }
 
 /*! This method evaluates the implementation-specific data model if the device is set to on.
  @param CurrentTime
 
  */
-void DataNodeBase::computeDataStatus(double CurrentTime)
+void
+DataNodeBase::computeDataStatus(double CurrentTime)
 {
-    if(this->dataStatus > 0)
-    {
+    if (this->dataStatus > 0) {
         this->evaluateDataModel(&this->nodeDataMsg, CurrentTime);
-    }
-    else
-    {
+    } else {
         this->nodeDataMsg = this->nodeDataOutMsg.zeroMsgPayload;
     }
     return;
@@ -110,11 +109,11 @@ void DataNodeBase::computeDataStatus(double CurrentTime)
  @param CurrentSimNanos
 
  */
-void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void
+DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Only update the data status if we were able to read in messages.
-    if(this->readMessages())
-    {
+    if (this->readMessages()) {
         this->computeDataStatus(static_cast<double>(CurrentSimNanos) * NANO2SEC);
     } else {
         //! - If the read was not successful then zero the output message
@@ -125,11 +124,11 @@ void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void
+DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -137,7 +136,8 @@ void DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 /*! custom Write method, similar to customSelfInit.
 
  */
-void DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void
+DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -145,7 +145,8 @@ void DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 /*! Custom read method, similar to customSelfInit; returns `true` by default.
 
  */
-bool DataNodeBase::customReadMessages()
+bool
+DataNodeBase::customReadMessages()
 {
     return true;
 }

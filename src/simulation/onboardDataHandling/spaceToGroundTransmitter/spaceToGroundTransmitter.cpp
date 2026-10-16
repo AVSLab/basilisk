@@ -24,8 +24,9 @@
 #include <iostream>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SpaceToGroundTransmitter::SpaceToGroundTransmitter(){
+ */
+SpaceToGroundTransmitter::SpaceToGroundTransmitter()
+{
     this->packetSize = 0.0;
     this->nodeBaudRate = 0.0;
     this->packetTransmitted = 0.0;
@@ -34,7 +35,8 @@ SpaceToGroundTransmitter::SpaceToGroundTransmitter(){
     return;
 }
 
-SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
+SpaceToGroundTransmitter::~SpaceToGroundTransmitter()
+{
 
     return;
 }
@@ -43,7 +45,8 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter(){
 
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
-void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg)
+void
+SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
 
@@ -54,14 +57,16 @@ void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageSt
 
     @param tmpAccessMsg input name.
 */
-void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload> *tmpAccessMsg)
+void
+SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg)
 {
     this->groundLocationAccessInMsgs.push_back(tmpAccessMsg->addSubscriber());
     return;
 }
 
-
-bool SpaceToGroundTransmitter::customReadMessages(){
+bool
+SpaceToGroundTransmitter::customReadMessages()
+{
 
     DataStorageStatusMsgPayload nodeMsg;
     AccessMsgPayload accessMsg;
@@ -73,10 +78,8 @@ bool SpaceToGroundTransmitter::customReadMessages(){
     bool dataRead = true;
     bool tmpDataRead;
 
-    if(this->storageUnitInMsgs.size() > 0)
-    {
-        for(long unsigned int c=0; c<this->storageUnitInMsgs.size(); c++)
-        {
+    if (this->storageUnitInMsgs.size() > 0) {
+        for (long unsigned int c = 0; c < this->storageUnitInMsgs.size(); c++) {
             tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
             nodeMsg = this->storageUnitInMsgs.at(c)();
 
@@ -84,27 +87,22 @@ bool SpaceToGroundTransmitter::customReadMessages(){
 
             this->storageUnitMsgsBuffer.push_back(nodeMsg);
         }
-    }
-    else {
+    } else {
         bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
         dataRead = false;
     }
-    if(this->groundLocationAccessInMsgs.size() > 0)
-    {
-        for(long unsigned int c=0; c<this->groundLocationAccessInMsgs.size(); c++)
-        {
+    if (this->groundLocationAccessInMsgs.size() > 0) {
+        for (long unsigned int c = 0; c < this->groundLocationAccessInMsgs.size(); c++) {
             tmpDataRead = this->groundLocationAccessInMsgs.at(c).isWritten();
             accessMsg = this->groundLocationAccessInMsgs.at(c)();
             dataRead = dataRead && tmpDataRead;
 
             this->groundLocationAccessMsgs.push_back(accessMsg);
         }
-    }
-    else {
+    } else {
         bskLogger.bskLog(BSK_INFORMATION, "SpaceToGroundTransmitter has no ground stations attached.");
         dataRead = false;
     }
-
 
     return true;
 }
@@ -168,21 +166,16 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
             if (this->packetTransmitted == 0.0) {
                 // Set nodeDataName to the maximum data name
                 const std::string& storedDataName =
-                    this->storageUnitMsgsBuffer.back().storedDataName[static_cast<size_t>(maxIndex)];
+                  this->storageUnitMsgsBuffer.back().storedDataName[static_cast<size_t>(maxIndex)];
                 if (storedDataName.size() >= sizeof(this->nodeDataName)) {
                     bskLogger.bskError("SpaceToGroundTransmitter: storedDataName is %zu characters, but nodeDataName "
-                                     "supports at most %zu characters.",
-                                     storedDataName.size(), sizeof(this->nodeDataName) - 1);
+                                       "supports at most %zu characters.",
+                                       storedDataName.size(),
+                                       sizeof(this->nodeDataName) - 1);
                 }
-                std::snprintf(this->nodeDataName,
-                              sizeof(this->nodeDataName),
-                              "%s",
-                              storedDataName.c_str());
+                std::snprintf(this->nodeDataName, sizeof(this->nodeDataName), "%s", storedDataName.c_str());
                 // strncpy nodeDataName to the name of the output message
-                std::snprintf(dataUsageSimMsg->dataName,
-                              sizeof(dataUsageSimMsg->dataName),
-                              "%s",
-                              this->nodeDataName);
+                std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);
 
                 // Check to see if maxVal is less than packet size. If not set the output message baudRate to zero
                 // We do not want to start downlinking until we have enough data for one packet
@@ -200,10 +193,7 @@ SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSi
                 }
 
             } else {
-                std::snprintf(dataUsageSimMsg->dataName,
-                              sizeof(dataUsageSimMsg->dataName),
-                              "%s",
-                              this->nodeDataName);
+                std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);
 
                 // If the downlink exceeds the available data, don't downlink
                 if ((maxVal + this->nodeBaudRate * (this->currentTimestep)) < 0) {

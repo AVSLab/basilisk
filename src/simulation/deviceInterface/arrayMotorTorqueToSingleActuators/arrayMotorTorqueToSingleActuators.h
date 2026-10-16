@@ -37,7 +37,7 @@
 */
 class ArrayMotorTorqueToSingleActuators : public SysModel
 {
-public:
+  public:
     /*! @brief Default constructor. */
     ArrayMotorTorqueToSingleActuators();
 
@@ -64,17 +64,17 @@ public:
     */
     void setNumActuators(uint32_t numActuators);
 
-public:
+  public:
     ReadFunctor<ArrayMotorTorqueMsgPayload> torqueInMsg;            //!< Input motor torque array
     std::vector<Message<SingleActuatorMsgPayload>> actuatorOutMsgs; //!< Scalar actuator outputs
     BSKLogger bskLogger;                                            //!< BSK Logging
 
-private:
+  private:
     /*! @brief Ensure internal buffers are correctly sized. */
     void ensureSizes();
 
-private:
-    uint32_t numActuators;                               //!< Number of actuators
+  private:
+    uint32_t numActuators; //!< Number of actuators
 };
 
 #endif

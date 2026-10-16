@@ -21,18 +21,19 @@
 #define SC_CHARGING_CURRENTS_MESSAGE_H
 
 /*! @brief Structure holding individual current components used in spacecraftChargingEquilibrium. */
-typedef struct {
-    double electronCurrent;               //!< [A] ambient plasma electron current
-    double ionCurrent;                    //!< [A] ambient plasma ion current
-    double seeElectronCurrent;            //!< [A] secondary electron emission from ambient electrons
-    double seeIonCurrent;                 //!< [A] secondary electron emission from ambient ions
-    double backscatteringCurrent;         //!< [A] ambient electron backscattering current
-    double photoelectricCurrent;          //!< [A] photoelectric current
-    double nonBeamCurrent;                //!< [A] sum of all non-beam current components
-    double beamCurrent;                   //!< [A] primary beam current term (servicer emit or target receive)
-    double beamSeeCurrent;                //!< [A] beam-induced secondary electron emission current
-    double beamBackscatteringCurrent;     //!< [A] beam-induced backscattering current
-    double totalCurrent;                  //!< [A] total current used in equilibrium solve
+typedef struct
+{
+    double electronCurrent;           //!< [A] ambient plasma electron current
+    double ionCurrent;                //!< [A] ambient plasma ion current
+    double seeElectronCurrent;        //!< [A] secondary electron emission from ambient electrons
+    double seeIonCurrent;             //!< [A] secondary electron emission from ambient ions
+    double backscatteringCurrent;     //!< [A] ambient electron backscattering current
+    double photoelectricCurrent;      //!< [A] photoelectric current
+    double nonBeamCurrent;            //!< [A] sum of all non-beam current components
+    double beamCurrent;               //!< [A] primary beam current term (servicer emit or target receive)
+    double beamSeeCurrent;            //!< [A] beam-induced secondary electron emission current
+    double beamBackscatteringCurrent; //!< [A] beam-induced backscattering current
+    double totalCurrent;              //!< [A] total current used in equilibrium solve
 } ScChargingCurrentsMsgPayload;
 
 #endif

@@ -20,9 +20,9 @@
 #ifndef MJEQUALITY_H
 #define MJEQUALITY_H
 
-#include <mujoco/mujoco.h>
-#include "architecture/messaging/messaging.h"
 #include "MJObject.h"
+#include "architecture/messaging/messaging.h"
+#include <mujoco/mujoco.h>
 
 class MJSpec;
 
@@ -34,8 +34,9 @@ class MJSpec;
  *
  * @return A string view representing the equality constraint type.
  */
-template <>
-constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsEquality>()
+template<>
+constexpr std::string_view
+MJBasilisk::detail::getObjectTypeName<mjsEquality>()
 {
     return "equality";
 }
@@ -49,14 +50,18 @@ constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsEquality>()
  */
 class MJEquality : public MJObject<mjsEquality>
 {
-public:
+  public:
     /**
      * @brief Constructs an MJEquality object with a given equality constraint.
      *
      * @param mjsequality Pointer to the MuJoCo equality constraint.
      * @param spec Reference to the `MJSpec` object where this equality is defined.
      */
-    MJEquality(mjsEquality* mjsequality, MJSpec& spec) : MJObject(mjsequality), spec(spec) {}
+    MJEquality(mjsEquality* mjsequality, MJSpec& spec)
+      : MJObject(mjsequality)
+      , spec(spec)
+    {
+    }
 
     /**
      * @brief Sets the active state of the equality constraint.
@@ -114,8 +119,7 @@ public:
      * @param midpoint Inflection point in [0, 1], relative to width.
      * @param power    Power ≥ 1, controls curve steepness.
      */
-    void setSolimp(double d0, double dwidth, double width,
-                   double midpoint, double power);
+    void setSolimp(double d0, double dwidth, double width, double midpoint, double power);
 
     /**
      * @brief Retrieves the associated MJSpec object.
@@ -124,7 +128,7 @@ public:
      */
     MJSpec& getSpec() { return spec; }
 
-protected:
+  protected:
     MJSpec& spec; ///< Reference to the object where this equality is defined.
 };
 
@@ -141,7 +145,7 @@ protected:
  */
 class MJSingleJointEquality : public MJEquality
 {
-public:
+  public:
     using MJEquality::MJEquality;
 
     /**

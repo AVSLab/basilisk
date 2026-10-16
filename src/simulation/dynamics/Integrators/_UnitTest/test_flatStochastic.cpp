@@ -454,12 +454,6 @@ class BindingInvariantProbe final : public StochasticRKIntegratorBase
     }
 };
 
-
-
-
-
-
-
 class LegacyCustomNoiseGenerator final : public GaussianNoiseGenerator
 {
   public:

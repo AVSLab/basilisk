@@ -19,11 +19,11 @@
 
 #include <cmath>
 
-#include "msisAtmosphere.h"
-#include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/utcTime.h"
-#include "architecture/utilities/geodeticConversion.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/geodeticConversion.h"
+#include "architecture/utilities/utcTime.h"
+#include "msisAtmosphere.h"
 
 /*! This method initializes some basic parameters for the module.
 
@@ -31,29 +31,29 @@
 MsisAtmosphere::MsisAtmosphere()
 {
     //! - Set the default atmospheric properties
-    this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for MSIS
+    this->planetRadius = REQ_EARTH * 1000.; // must be the radius of Earth for MSIS
 
-    this->epochDoy = -1;                     // negative value means this is not set
+    this->epochDoy = -1; // negative value means this is not set
 
     this->f107A = 0.0;
     this->f107 = 0.0;
     this->ap = 0.0;
-    for(int apInd = 0; apInd < 7; ++apInd) {
+    for (int apInd = 0; apInd < 7; ++apInd) {
         this->aph.a[apInd] = 0.0;
     }
     this->msisInput.ap_a = &this->aph;
     this->updateInputParams();
 
-
-    this->msisFlags.switches[0] = 1; //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
+    this->msisFlags.switches[0] =
+      1; //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
     //! Set default settings for NRLMSISE-00; we're using all the settings by default
-    for(int switchInd = 1; switchInd < 24; ++switchInd){
+    for (int switchInd = 1; switchInd < 24; ++switchInd) {
         this->msisFlags.switches[switchInd] = 1;
     }
 
     // Set other required interface values
     for (int c = 0; c < 23; c++) {
-        ReadFunctor<SwDataMsgPayload> *msgIn;
+        ReadFunctor<SwDataMsgPayload>* msgIn;
         msgIn = new ReadFunctor<SwDataMsgPayload>;
         this->swDataInMsgs.push_back(*msgIn);
     }
@@ -100,7 +100,8 @@ MsisAtmosphere::~MsisAtmosphere()
  differs from the mean solar time by the equation of time, up to about 16 minutes during the year.
  @param useApparent true to add the equation of time to the local solar time
  */
-void MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
+void
+MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
 {
     this->useApparentSolarTime = useApparent;
 }
@@ -108,19 +109,21 @@ void MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
 /*! Returns whether the apparent solar time is used as the local solar time input.
  @return true if the equation of time is added to the mean solar time
  */
-bool MsisAtmosphere::getUseApparentSolarTime() const
+bool
+MsisAtmosphere::getUseApparentSolarTime() const
 {
     return this->useApparentSolarTime;
 }
 
 /*! Selects the geomagnetic index used by NRLMSISE-00. By default the daily Ap index (input message 0) is used
- (switch 9 set to 1). With the 3-hour history the model uses the 3-hour Ap values of messages 1 to 20, which are collected
- into the Ap array of the model: the current 3-hour value, the values 3, 6 and 9 hours earlier, and the averages of the
- values 12 to 33 and 36 to 57 hours earlier (switch 9 set to -1). The history follows a geomagnetic storm more closely
- than the daily Ap, which applies from midnight.
+ (switch 9 set to 1). With the 3-hour history the model uses the 3-hour Ap values of messages 1 to 20, which are
+ collected into the Ap array of the model: the current 3-hour value, the values 3, 6 and 9 hours earlier, and the
+ averages of the values 12 to 33 and 36 to 57 hours earlier (switch 9 set to -1). The history follows a geomagnetic
+ storm more closely than the daily Ap, which applies from midnight.
  @param useHistory true to use the 3-hour Ap history, false to use the daily Ap
  */
-void MsisAtmosphere::setUseApHistory(bool useHistory)
+void
+MsisAtmosphere::setUseApHistory(bool useHistory)
 {
     this->useApHistory = useHistory;
     this->msisFlags.switches[9] = useHistory ? -1 : 1;
@@ -129,7 +132,8 @@ void MsisAtmosphere::setUseApHistory(bool useHistory)
 /*! Returns whether NRLMSISE-00 uses the 3-hour Ap history instead of the daily Ap.
  @return true if the 3-hour Ap history is used
  */
-bool MsisAtmosphere::getUseApHistory() const
+bool
+MsisAtmosphere::getUseApHistory() const
 {
     return this->useApHistory;
 }
@@ -141,7 +145,8 @@ bool MsisAtmosphere::getUseApHistory() const
  @param secondOfDay [s] second of the day, UTC
  @return [s] equation of time
  */
-double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
+double
+MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
 {
     if (year < 1970) {
         bskLogger.bskError("MsisAtmosphere: the apparent solar time requires an epoch year of 1970 or later.");
@@ -151,8 +156,9 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
     const int y = year - 1;
     const long daysFromEpoch =
       365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400); // [day]
-    const double julianDate = static_cast<double>(daysFromEpoch + dayOfYear - 1) + 2440587.5 + // [day] JD of the Unix epoch
-                              secondOfDay / 86400.0;                                           // [day]
+    const double julianDate = static_cast<double>(daysFromEpoch + dayOfYear - 1) +
+                              2440587.5 +                // [day] JD of the Unix epoch
+                              secondOfDay / 86400.0;     // [day]
     const double T = (julianDate - 2451545.0) / 36525.0; // [century] since J2000, JD 2451545.0 [day]
     // mean longitude of the Sun: 280.46646 [deg], 36000.76983 [deg/century], 0.0003032 [deg/century^2]
     const double meanLongitude = std::fmod(280.46646 + 36000.76983 * T + 0.0003032 * T * T, 360.0) * D2R; // [rad]
@@ -161,8 +167,8 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
     // orbit eccentricity of the Earth: 0.016708634 [-], 0.000042037 [1/century]
     const double eccentricity = 0.016708634 - 0.000042037 * T; // [-]
     // mean obliquity of the ecliptic: 23.439291 [deg], 0.0130042 [deg/century]
-    const double obliquity = (23.439291 - 0.0130042 * T) * D2R;      // [rad]
-    const double y2 = std::pow(std::tan(0.5 * obliquity), 2.0);       // [-]
+    const double obliquity = (23.439291 - 0.0130042 * T) * D2R; // [rad]
+    const double y2 = std::pow(std::tan(0.5 * obliquity), 2.0); // [-]
     const double equation = y2 * std::sin(2.0 * meanLongitude) - 2.0 * eccentricity * std::sin(meanAnomaly) +
                             4.0 * eccentricity * y2 * std::sin(meanAnomaly) * std::cos(2.0 * meanLongitude) -
                             0.5 * y2 * y2 * std::sin(4.0 * meanLongitude) -
@@ -173,55 +179,59 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
 /*! This method is used to reset the module.
 
  */
-void MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-    for(size_t ind = 0; ind < 23; ind++) {
+    for (size_t ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
             bskLogger.bskError("Required MSIS input messages No. %zu are not connected.", ind);
         }
     }
 }
 
-
-/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch message is set then this variable is not used.
+/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch
+   message is set then this variable is not used.
 
  */
-void MsisAtmosphere::customSetEpochFromVariable()
+void
+MsisAtmosphere::customSetEpochFromVariable()
 {
-    //! - only convert if the day-in-year variable was set to a non-zero value.  Otherwise use the BSK epoch default setup by the base class.
+    //! - only convert if the day-in-year variable was set to a non-zero value.  Otherwise use the BSK epoch default
+    //! setup by the base class.
     if (this->epochDoy > 0.0) {
-        /* here the BSK default epoch year is used on Jan 1, mid-night, and the requested days of year are added and converted to a proper date-time structure */
-        this->epochDateTime.tm_mday = this->epochDoy;  // assumes 1 is first day of year
+        /* here the BSK default epoch year is used on Jan 1, mid-night, and the requested days of year are added and
+         * converted to a proper date-time structure */
+        this->epochDateTime.tm_mday = this->epochDoy; // assumes 1 is first day of year
         normalizeUtcTime(&this->epochDateTime);
     }
 
     return;
 }
 
-
 /*! This method is used to write the output densities whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void
+MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-        /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
-
+    /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
 }
-
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
 
  */
-bool MsisAtmosphere::customReadMessages(){
+bool
+MsisAtmosphere::customReadMessages()
+{
     bool swRead = false;
     int failCount = 0;
     SwDataMsgPayload tmpSwData;
     this->swDataList.clear();
 
     //! Iterate over swData message ids
-    for(size_t ind = 0; ind < 23; ind++) {
+    for (size_t ind = 0; ind < 23; ind++) {
         tmpSwData = this->swDataInMsgs.at(ind)();
         swRead = this->swDataInMsgs.at(ind).isWritten();
         if (swRead) {
@@ -234,11 +244,11 @@ bool MsisAtmosphere::customReadMessages(){
     if (failCount > 0) {
         swRead = false;
     }
-    return(swRead);
+    return (swRead);
 }
 
-
-void MsisAtmosphere::updateInputParams()
+void
+MsisAtmosphere::updateInputParams()
 {
     this->msisInput.ap = this->ap;
     this->msisInput.ap_a->a[0] = this->aph.a[0];
@@ -251,10 +261,10 @@ void MsisAtmosphere::updateInputParams()
 
     this->msisInput.f107A = this->f107A;
     this->msisInput.f107 = this->f107;
-
 }
 
-void MsisAtmosphere::updateSwIndices()
+void
+MsisAtmosphere::updateSwIndices()
 {
     this->ap = this->swDataList[0].dataValue;
     this->aph.a[0] = this->swDataList[0].dataValue;
@@ -265,69 +275,67 @@ void MsisAtmosphere::updateSwIndices()
 
     uint64_t mth;
     double tmp_avg = 0.0;
-    for(mth = 5; mth < 13; mth++){
+    for (mth = 5; mth < 13; mth++) {
         tmp_avg = tmp_avg + this->swDataList[mth].dataValue;
     }
-    this->aph.a[5] = tmp_avg/8.0;
+    this->aph.a[5] = tmp_avg / 8.0;
 
     uint64_t nth;
     tmp_avg = 0.0;
-    for(nth = 13; nth < 21; nth++){
+    for (nth = 13; nth < 21; nth++) {
         tmp_avg = tmp_avg + this->swDataList[nth].dataValue;
     }
-    this->aph.a[6] = tmp_avg/8.0;
+    this->aph.a[6] = tmp_avg / 8.0;
 
     this->f107A = this->swDataList[21].dataValue;
     this->f107 = this->swDataList[22].dataValue;
-
 }
 
-void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload *msg, double currentTime)
+void
+MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime)
 {
     this->updateSwIndices();
     this->updateInputParams();
     //! Compute the geodetic position using the planet orientation.
 
-    this->currentLLA = PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius, this->getPlanetPolarRadius());
-    this->msisInput.g_lat = R2D*this->currentLLA[0];
-    this->msisInput.g_long = R2D*this->currentLLA[1];
-    this->msisInput.alt = this->currentLLA[2]/1000.0; // NRLMSISE Altitude input must be in kilometers!
+    this->currentLLA =
+      PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius, this->getPlanetPolarRadius());
+    this->msisInput.g_lat = R2D * this->currentLLA[0];
+    this->msisInput.g_long = R2D * this->currentLLA[1];
+    this->msisInput.alt = this->currentLLA[2] / 1000.0; // NRLMSISE Altitude input must be in kilometers!
 
     //! Update time.
-    struct tm localDateTime;                            // []       date/time structure
+    struct tm localDateTime; // []       date/time structure
     localDateTime = this->epochDateTime;
-    localDateTime.tm_sec += (int) currentTime;   // sets the current seconds
+    localDateTime.tm_sec += (int)currentTime; // sets the current seconds
     normalizeUtcTime(&localDateTime);
     this->msisInput.year = localDateTime.tm_year + 1900;
-    this->msisInput.doy = localDateTime.tm_yday + 1;    // Jan 1 is the 1st day of year, not 0th
-    double fracSecond = currentTime - (int) currentTime;
-    this->msisInput.sec = localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
+    this->msisInput.doy = localDateTime.tm_yday + 1; // Jan 1 is the 1st day of year, not 0th
+    double fracSecond = currentTime - (int)currentTime;
+    this->msisInput.sec =
+      localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
 
     // Local solar time [hr]. By default this is the mean solar time. The apparent solar time, which NRLMSISE-00 is
     // defined with, adds the equation of time.
-    this->msisInput.lst = this->msisInput.sec/3600.0 + this->msisInput.g_long/15.0;
+    this->msisInput.lst = this->msisInput.sec / 3600.0 + this->msisInput.g_long / 15.0;
     if (this->useApparentSolarTime) {
         this->msisInput.lst +=
           this->equationOfTime(this->msisInput.year, this->msisInput.doy, this->msisInput.sec) / 3600.0;
     }
 
     //!  NRLMSISE-00 uses different models depending on the altitude.
-    if(this->msisInput.alt < 500.0){
-        gtd7(&this->msisInput, \
-       &this->msisFlags, \
-       &this->msisOutput);
+    if (this->msisInput.alt < 500.0) {
+        gtd7(&this->msisInput, &this->msisFlags, &this->msisOutput);
     }
 
-        /* GTD7D */
-        /*   This subroutine provides Effective Total Mass Density for output
-         *   d[5] which includes contributions from "anomalous oxygen" which can
-         *   affect satellite drag above 500 km. See the section "output" for
-         *   additional details.
-         */
-    else if(this->msisInput.alt >= 500.0){
-        gtd7d(&this->msisInput, \
-       &this->msisFlags, \
-       &this->msisOutput);
+    /* GTD7D */
+    /*   This subroutine provides Effective Total Mass Density for output
+     *   d[5] which includes contributions from "anomalous oxygen" which can
+     *   affect satellite drag above 500 km. See the section "output" for
+     *   additional details.
+     */
+    else if (this->msisInput.alt >= 500.0) {
+        gtd7d(&this->msisInput, &this->msisFlags, &this->msisOutput);
     }
     msg->neutralDensity = this->msisOutput.d[5];
     msg->localTemp = this->msisOutput.t[1];

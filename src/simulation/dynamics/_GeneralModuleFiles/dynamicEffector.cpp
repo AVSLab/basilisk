@@ -38,13 +38,15 @@ DynamicEffector::~DynamicEffector()
 
 /*! This method is an optional method by a dynamic effector and allows the dynamics effector to add direct contributions
     to a state effector derivative. Example - a thruster's mDot will impact a fuel tanks total mDot */
-void DynamicEffector::computeStateContribution(double integTime [[maybe_unused]])
+void
+DynamicEffector::computeStateContribution(double integTime [[maybe_unused]])
 {
     return;
 }
 
 /*! This method is used to link in properties from a parent body that isn't the hub */
-void DynamicEffector::linkInProperties(DynParamManager& properties [[maybe_unused]])
+void
+DynamicEffector::linkInProperties(DynParamManager& properties [[maybe_unused]])
 {
     // check that this effector can be attached to a state effector
     if (!this->isAttachableToStateEffector) {
@@ -52,7 +54,8 @@ void DynamicEffector::linkInProperties(DynParamManager& properties [[maybe_unuse
     }
 }
 
-void DynamicEffector::setStateNameOfPosition(std::string value)
+void
+DynamicEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -62,7 +65,8 @@ void DynamicEffector::setStateNameOfPosition(std::string value)
     }
 }
 
-void DynamicEffector::setStateNameOfVelocity(std::string value)
+void
+DynamicEffector::setStateNameOfVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -72,7 +76,8 @@ void DynamicEffector::setStateNameOfVelocity(std::string value)
     }
 }
 
-void DynamicEffector::setStateNameOfSigma(std::string value)
+void
+DynamicEffector::setStateNameOfSigma(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -82,7 +87,8 @@ void DynamicEffector::setStateNameOfSigma(std::string value)
     }
 }
 
-void DynamicEffector::setStateNameOfOmega(std::string value)
+void
+DynamicEffector::setStateNameOfOmega(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -92,7 +98,8 @@ void DynamicEffector::setStateNameOfOmega(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_m_SC(std::string value)
+void
+DynamicEffector::setPropName_m_SC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -102,7 +109,8 @@ void DynamicEffector::setPropName_m_SC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_mDot_SC(std::string value)
+void
+DynamicEffector::setPropName_mDot_SC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -112,7 +120,8 @@ void DynamicEffector::setPropName_mDot_SC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_centerOfMassSC(std::string value)
+void
+DynamicEffector::setPropName_centerOfMassSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -122,7 +131,8 @@ void DynamicEffector::setPropName_centerOfMassSC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertiaSC(std::string value)
+void
+DynamicEffector::setPropName_inertiaSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -132,7 +142,8 @@ void DynamicEffector::setPropName_inertiaSC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertiaPrimeSC(std::string value)
+void
+DynamicEffector::setPropName_inertiaPrimeSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -142,7 +153,8 @@ void DynamicEffector::setPropName_inertiaPrimeSC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_centerOfMassPrimeSC(std::string value)
+void
+DynamicEffector::setPropName_centerOfMassPrimeSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -152,7 +164,8 @@ void DynamicEffector::setPropName_centerOfMassPrimeSC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_centerOfMassDotSC(std::string value)
+void
+DynamicEffector::setPropName_centerOfMassDotSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -162,7 +175,8 @@ void DynamicEffector::setPropName_centerOfMassDotSC(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertialPosition(std::string value)
+void
+DynamicEffector::setPropName_inertialPosition(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -172,7 +186,8 @@ void DynamicEffector::setPropName_inertialPosition(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertialVelocity(std::string value)
+void
+DynamicEffector::setPropName_inertialVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -182,7 +197,8 @@ void DynamicEffector::setPropName_inertialVelocity(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertialAttitude(std::string value)
+void
+DynamicEffector::setPropName_inertialAttitude(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -192,7 +208,8 @@ void DynamicEffector::setPropName_inertialAttitude(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_inertialAngVelocity(std::string value)
+void
+DynamicEffector::setPropName_inertialAngVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -202,7 +219,8 @@ void DynamicEffector::setPropName_inertialAngVelocity(std::string value)
     }
 }
 
-void DynamicEffector::setPropName_vehicleGravity(std::string value)
+void
+DynamicEffector::setPropName_vehicleGravity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {

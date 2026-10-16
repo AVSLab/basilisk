@@ -174,12 +174,12 @@ class FlatStochasticWorkspace
   private:
     bool bound = false; ///< True when buffers and descriptor references are ready.
     const std::vector<StochasticObjectDescriptor>* objects = nullptr; ///< Borrowed object buffers.
-    const std::vector<StochasticNoiseBinding>* bindings = nullptr; ///< Borrowed packed endpoints.
-    const std::vector<StochasticNoiseSlot>* slots = nullptr; ///< Borrowed global-source ranges.
-    Eigen::MatrixXd driftStages; ///< Derivative scalars by drift stage; each column is contiguous.
-    Eigen::MatrixXd diffusionStages; ///< Packed tangent scalars by diffusion stage.
-    Eigen::VectorXd combinedDrift; ///< Reusable weighted sum of drift columns.
-    Eigen::VectorXd combinedDiffusion; ///< Weighted sums, written one global slot at a time.
+    const std::vector<StochasticNoiseBinding>* bindings = nullptr;    ///< Borrowed packed endpoints.
+    const std::vector<StochasticNoiseSlot>* slots = nullptr;          ///< Borrowed global-source ranges.
+    Eigen::MatrixXd driftStages;          ///< Derivative scalars by drift stage; each column is contiguous.
+    Eigen::MatrixXd diffusionStages;      ///< Packed tangent scalars by diffusion stage.
+    Eigen::VectorXd combinedDrift;        ///< Reusable weighted sum of drift columns.
+    Eigen::VectorXd combinedDiffusion;    ///< Weighted sums, written one global slot at a time.
     std::vector<Eigen::VectorXd> vectors; ///< Method scratch, with one entry per global source.
 };
 

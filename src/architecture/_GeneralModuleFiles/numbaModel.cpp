@@ -18,37 +18,49 @@
 
 #include "numbaModel.h"
 
-void NumbaModel::addReaderSlot(uintptr_t payloadPtrAddr, uintptr_t linkedAddr, uintptr_t dummyAddr) {
-    ReaderSlot slot{
-        reinterpret_cast<void**>(payloadPtrAddr),
-        reinterpret_cast<uint8_t*>(linkedAddr),
-        reinterpret_cast<void*>(dummyAddr)
-    };
+void
+NumbaModel::addReaderSlot(uintptr_t payloadPtrAddr, uintptr_t linkedAddr, uintptr_t dummyAddr)
+{
+    ReaderSlot slot{ reinterpret_cast<void**>(payloadPtrAddr),
+                     reinterpret_cast<uint8_t*>(linkedAddr),
+                     reinterpret_cast<void*>(dummyAddr) };
     readerSlots_.push_back(slot);
     readLinked_.push_back(0);
 }
 
-void NumbaModel::addWritePayloadPtr(uintptr_t ptr) {
+void
+NumbaModel::addWritePayloadPtr(uintptr_t ptr)
+{
     writePayloads_.push_back(reinterpret_cast<void*>(ptr));
 }
 
-void NumbaModel::addWriteHeaderPtr(uintptr_t ptr) {
+void
+NumbaModel::addWriteHeaderPtr(uintptr_t ptr)
+{
     writeHeaders_.push_back(reinterpret_cast<MsgHeader*>(ptr));
 }
 
-void NumbaModel::addUserPointer(uintptr_t ptr) {
+void
+NumbaModel::addUserPointer(uintptr_t ptr)
+{
     userPointers_.push_back(reinterpret_cast<void*>(ptr));
 }
 
-uintptr_t NumbaModel::getReadLinkedPtr() const {
+uintptr_t
+NumbaModel::getReadLinkedPtr() const
+{
     return reinterpret_cast<uintptr_t>(readLinked_.data());
 }
 
-void NumbaModel::setStateUpdateFunc(uintptr_t funcPtr) {
+void
+NumbaModel::setStateUpdateFunc(uintptr_t funcPtr)
+{
     stateUpdateFunc_ = reinterpret_cast<StateUpdateCallback>(funcPtr);
 }
 
-void NumbaModel::finalizeAllPtrs() {
+void
+NumbaModel::finalizeAllPtrs()
+{
     readCount_ = readerSlots_.size();
     allPtrs_.clear();
     allPtrs_.reserve(readerSlots_.size() + writePayloads_.size() + userPointers_.size());
@@ -66,7 +78,9 @@ void NumbaModel::finalizeAllPtrs() {
     userPointers_.clear();
 }
 
-void NumbaModel::Reset(uint64_t /*CurrentSimNanos*/) {
+void
+NumbaModel::Reset(uint64_t /*CurrentSimNanos*/)
+{
     readerSlots_.clear();
     readLinked_.clear();
     allPtrs_.clear();
@@ -77,24 +91,25 @@ void NumbaModel::Reset(uint64_t /*CurrentSimNanos*/) {
     stateUpdateFunc_ = nullptr;
 }
 
-void NumbaModel::UpdateState(uint64_t CurrentSimNanos) {
-    if (!stateUpdateFunc_) return;
+void
+NumbaModel::UpdateState(uint64_t CurrentSimNanos)
+{
+    if (!stateUpdateFunc_)
+        return;
 
     // Refresh the read section of allPtrs_ and the linked flags array.
     // This makes re-wiring (subscribeTo after Reset) transparent to the cfunc.
     for (size_t i = 0; i < readCount_; i++) {
         uint8_t linked = *readerSlots_[i].linkedAddr;
         readLinked_[i] = linked;
-        allPtrs_[i] = linked
-            ? *readerSlots_[i].payloadPtrAddr
-            : readerSlots_[i].dummy;
+        allPtrs_[i] = linked ? *readerSlots_[i].payloadPtrAddr : readerSlots_[i].dummy;
     }
 
     stateUpdateFunc_(allPtrs_.data(), CurrentSimNanos);
 
     for (MsgHeader* h : writeHeaders_) {
-        h->isWritten   = 1;
+        h->isWritten = 1;
         h->timeWritten = CurrentSimNanos;
-        h->moduleID    = this->moduleID;
+        h->moduleID = this->moduleID;
     }
 }

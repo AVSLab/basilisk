@@ -20,22 +20,22 @@
 #ifndef BASILISK_PARTITIONEDSTORAGEUNIT_H
 #define BASILISK_PARTITIONEDSTORAGEUNIT_H
 
-#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "simulation/onboardDataHandling/_GeneralModuleFiles/dataStorageUnitBase.h"
 
 /*! @brief partioned storage unit class */
-class PartitionedStorageUnit: public DataStorageUnitBase {
+class PartitionedStorageUnit : public DataStorageUnitBase
+{
 
-public:
+  public:
     PartitionedStorageUnit();
     ~PartitionedStorageUnit();
     void addPartition(std::string dataName);
-    void setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data); //!< Adds/removes the data from the partitionNames partitions
+    void setDataBuffer(std::vector<std::string> partitionNames,
+                       std::vector<long long int> data); //!< Adds/removes the data from the partitionNames partitions
 
-private:
+  private:
     void customReset(uint64_t CurrentClock) override;
-
-
 };
 
-#endif //BASILISK_PARTITIONEDSTORAGEUNIT_H
+#endif // BASILISK_PARTITIONEDSTORAGEUNIT_H

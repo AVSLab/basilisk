@@ -39,8 +39,9 @@
  * The output messages are intended for motors on the corresponding MuJoCo
  * joints, which apply each torque as an internal parent-child pair.
  */
-class TwoHingeDamper : public SysModel {
-public:
+class TwoHingeDamper : public SysModel
+{
+  public:
     /**
      * @brief Validate the input message links and the damping coefficient.
      * @param CurrentSimNanos Current simulation time in nanoseconds.
@@ -53,16 +54,16 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos) override;
 
-    double dampingCoeff{0.0};  //!< [N*m*s] Cartesian damping coefficient times rod length squared
+    double dampingCoeff{ 0.0 }; //!< [N*m*s] Cartesian damping coefficient times rod length squared
 
-    ReadFunctor<ScalarJointStateMsgPayload> thetaInMsg;     //!< [rad] theta joint position
-    ReadFunctor<ScalarJointStateMsgPayload> phiDotInMsg;    //!< [rad/s] phi joint rate
-    ReadFunctor<ScalarJointStateMsgPayload> thetaDotInMsg;  //!< [rad/s] theta joint rate
+    ReadFunctor<ScalarJointStateMsgPayload> thetaInMsg;    //!< [rad] theta joint position
+    ReadFunctor<ScalarJointStateMsgPayload> phiDotInMsg;   //!< [rad/s] phi joint rate
+    ReadFunctor<ScalarJointStateMsgPayload> thetaDotInMsg; //!< [rad/s] theta joint rate
 
-    Message<SingleActuatorMsgPayload> phiTorqueOutMsg;    //!< [N*m] phi-joint damping torque
-    Message<SingleActuatorMsgPayload> thetaTorqueOutMsg;  //!< [N*m] theta-joint damping torque
+    Message<SingleActuatorMsgPayload> phiTorqueOutMsg;   //!< [N*m] phi-joint damping torque
+    Message<SingleActuatorMsgPayload> thetaTorqueOutMsg; //!< [N*m] theta-joint damping torque
 
-    BSKLogger bskLogger;  //!< module logger
+    BSKLogger bskLogger; //!< module logger
 };
 
 #endif

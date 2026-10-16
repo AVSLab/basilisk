@@ -17,21 +17,22 @@
  */
 
 #pragma once
-#include <cstdint>
-#include <vector>
-#include "sys_model.h"
 #include "architecture/messaging/msgHeader.h"
 #include "architecture/utilities/bskLogging.h"
+#include "sys_model.h"
+#include <cstdint>
+#include <vector>
 
 /*! @brief Bookkeeping for one registered ReadFunctor.
  *
  * All three addresses remain valid for the lifetime of the corresponding
  * Python attribute because ``subscribeTo`` updates the functor in place.
  */
-struct ReaderSlot {
-    void**   payloadPtrAddr;  //!< Address of ``ReadFunctor::payloadPointer``.
-    uint8_t* linkedAddr;      //!< Address of ``ReadFunctor::initialized``.
-    void*    dummy;           //!< Zero-filled fallback payload used when not linked.
+struct ReaderSlot
+{
+    void** payloadPtrAddr; //!< Address of ``ReadFunctor::payloadPointer``.
+    uint8_t* linkedAddr;   //!< Address of ``ReadFunctor::initialized``.
+    void* dummy;           //!< Zero-filled fallback payload used when not linked.
 };
 
 /*! @brief Base class for Python-defined Numba modules.
@@ -45,7 +46,7 @@ struct ReaderSlot {
  */
 class NumbaModel : virtual public SysModel
 {
-public:
+  public:
     /*! Register a reader functor for dynamic payload refresh.
      *
      * @param payloadPtrAddr Address of the functor payload pointer storage.
@@ -104,18 +105,18 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos) override;
 
-public:
-    BSKLogger bskLogger;  //!< Logger proxy exposed to Python-side Numba modules.
+  public:
+    BSKLogger bskLogger; //!< Logger proxy exposed to Python-side Numba modules.
 
-protected:
-    using StateUpdateCallback = void (*)(void**, uint64_t);  //!< Compiled Numba update function type.
+  protected:
+    using StateUpdateCallback = void (*)(void**, uint64_t); //!< Compiled Numba update function type.
 
-    std::vector<ReaderSlot> readerSlots_;    //!< One entry per registered reader functor.
-    std::vector<uint8_t>    readLinked_;     //!< Per-reader linkage flags refreshed each tick.
-    size_t                  readCount_ = 0;  //!< Number of reader entries stored in ``allPtrs_``.
-    std::vector<void*>      writePayloads_;  //!< Staged writable payload pointers awaiting finalization.
-    std::vector<void*>      userPointers_;   //!< Staged user pointers appended after readers and writers.
-    std::vector<void*>      allPtrs_;        //!< Flat pointer table laid out as ``[reads | writes | user]``.
-    std::vector<MsgHeader*> writeHeaders_;   //!< Headers corresponding to registered writable payloads.
-    StateUpdateCallback stateUpdateFunc_ = nullptr;  //!< Compiled Numba state update callback.
+    std::vector<ReaderSlot> readerSlots_;           //!< One entry per registered reader functor.
+    std::vector<uint8_t> readLinked_;               //!< Per-reader linkage flags refreshed each tick.
+    size_t readCount_ = 0;                          //!< Number of reader entries stored in ``allPtrs_``.
+    std::vector<void*> writePayloads_;              //!< Staged writable payload pointers awaiting finalization.
+    std::vector<void*> userPointers_;               //!< Staged user pointers appended after readers and writers.
+    std::vector<void*> allPtrs_;                    //!< Flat pointer table laid out as ``[reads | writes | user]``.
+    std::vector<MsgHeader*> writeHeaders_;          //!< Headers corresponding to registered writable payloads.
+    StateUpdateCallback stateUpdateFunc_ = nullptr; //!< Compiled Numba state update callback.
 };

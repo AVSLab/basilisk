@@ -51,7 +51,7 @@
  */
 class OrbitalElementControl : public LinearTimeInvariantSystem
 {
-public:
+  public:
     /**
      * @brief Default constructor.
      *
@@ -85,7 +85,6 @@ public:
      */
     void setProportionalGain(const Eigen::MatrixXd& K);
 
-
     /**
      * @brief Set the integral gain matrix for the orbital element controller.
      *
@@ -107,7 +106,6 @@ public:
      * @param K 6x6 integral gain matrix.
      */
     void setIntegralGain(const Eigen::MatrixXd& K);
-
 
     /**
      * @brief Reset the module and validate configuration.
@@ -196,10 +194,9 @@ public:
      * @param y LTI output vector in orbital element space with length
      *          getOutputSize().
      */
-    void writeOutput(uint64_t CurrentSimNanos,
-                     const Eigen::VectorXd &y) override;
+    void writeOutput(uint64_t CurrentSimNanos, const Eigen::VectorXd& y) override;
 
-public:
+  public:
     /**
      * @brief Gravitational parameter mu [m^3/s^2].
      *

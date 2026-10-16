@@ -58,14 +58,15 @@
  * The direction vectors account for Earth's extended source nature, providing the correct
  * net force direction rather than assuming parallel rays or anti-nadir direction.
  */
-typedef struct {
-    double   albedoFlux;     //!< [W/m^2] total (reflected solar) flux
-    double   irFlux;         //!< [W/m^2] total IR flux
-    double   albedoDir_N[3]; //!< [-] flux-weighted net albedo force direction,
-                             //!<     inertial frame N; [0,0,0] if albedoFlux==0
-    double   irDir_N[3];     //!< [-] flux-weighted net IR force direction,
-                             //!<     inertial frame N; [0,0,0] if irFlux==0
-    uint64_t timeTag;        //!< [ns] simulation time of validity
+typedef struct
+{
+    double albedoFlux;     //!< [W/m^2] total (reflected solar) flux
+    double irFlux;         //!< [W/m^2] total IR flux
+    double albedoDir_N[3]; //!< [-] flux-weighted net albedo force direction,
+                           //!<     inertial frame N; [0,0,0] if albedoFlux==0
+    double irDir_N[3];     //!< [-] flux-weighted net IR force direction,
+                           //!<     inertial frame N; [0,0,0] if irFlux==0
+    uint64_t timeTag;      //!< [ns] simulation time of validity
 } EarthRadiationMsgPayload;
 
 #endif /* EARTH_RADIATION_MSG_PAYLOAD_H */

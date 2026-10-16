@@ -23,24 +23,24 @@
 
 #include "fswAlgorithms/attControl/rateServoFullNonlinear/rateServoFullNonlinear.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 /*! selfInit method
 
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, int64_t moduleID)
+void
+SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -49,10 +49,11 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, i
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     /*! - Read the input messages */
     int i;
     VehicleConfigMsgPayload sc;
@@ -77,9 +78,8 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
         _bskError(configData->bskLogger, "Error: rateServoFullNonlinear.rateSteeringInMsg wasn't connected.");
     }
 
-
     sc = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
-    for (i=0; i < 9; i++){
+    for (i = 0; i < 9; i++) {
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
 
@@ -94,7 +94,6 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
     configData->priorTime = 0;
-
 }
 
 /*! This method takes and rate errors relative to the Reference frame, as well as
@@ -104,32 +103,32 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    AttGuidMsgPayload   guidCmd;                    /*!< Guidance input Message */
-    RWSpeedMsgPayload   wheelSpeeds;                /*!< Reaction wheel speed estimates input message */
-    RWAvailabilityMsgPayload wheelsAvailability;    /*!< Reaction wheel availability input message */
-    RateCmdMsgPayload   rateGuid;                   /*!< rate steering law message input message */
-    CmdTorqueBodyMsgPayload controlOut;             /*!< commanded torque output message */
+    AttGuidMsgPayload guidCmd;                   /*!< Guidance input Message */
+    RWSpeedMsgPayload wheelSpeeds;               /*!< Reaction wheel speed estimates input message */
+    RWAvailabilityMsgPayload wheelsAvailability; /*!< Reaction wheel availability input message */
+    RateCmdMsgPayload rateGuid;                  /*!< rate steering law message input message */
+    CmdTorqueBodyMsgPayload controlOut;          /*!< commanded torque output message */
 
-    double              dt;                 /* [s] control update period */
+    double dt; /* [s] control update period */
 
-    double              Lr[3];              /* required control torque vector [Nm] */
-    double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
-    double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
-    double              omega_BN_B[3];      /* angular rate of the body B relative to inertial N, in body frame compononents */
-    double              *wheelGs;           /* Reaction wheel spin axis pointer */
+    double Lr[3];            /* required control torque vector [Nm] */
+    double omega_BastN_B[3]; /* angular velocity of B^ast relative to inertial N, in body frame components */
+    double omega_BBast_B[3]; /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
+    double omega_BN_B[3];    /* angular rate of the body B relative to inertial N, in body frame compononents */
+    double* wheelGs;         /* Reaction wheel spin axis pointer */
     /* Temporary variables */
-    double              v3_1[3];
-    double              v3_2[3];
-    double              v3_3[3];
-    double              v3_4[3];
-    double              v3_5[3];
-    double              v3_6[3];
-    double              v3_7[3];
-    int                 i;
-    double              intLimCheck;
+    double v3_1[3];
+    double v3_2[3];
+    double v3_3[3];
+    double v3_4[3];
+    double v3_5[3];
+    double v3_6[3];
+    double v3_7[3];
+    int i;
+    double intLimCheck;
 
     /*! - zero the output message */
     controlOut = CmdTorqueBodyMsg_C_zeroMsgPayload();
@@ -146,10 +145,9 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     guidCmd = AttGuidMsg_C_read(&configData->guidInMsg);
     rateGuid = RateCmdMsg_C_read(&configData->rateSteeringInMsg);
 
-
     wheelSpeeds = RWSpeedMsg_C_zeroMsgPayload();
-    wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload();  // wheelAvailability set to 0 (AVAILABLE) by default
-    if(configData->rwConfigParams.numRW > 0) {
+    wheelsAvailability = RWAvailabilityMsg_C_zeroMsgPayload(); // wheelAvailability set to 0 (AVAILABLE) by default
+    if (configData->rwConfigParams.numRW > 0) {
         wheelSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
         if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {
             wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
@@ -164,13 +162,13 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
     /*! - integrate rate tracking error  */
-    if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
+    if (configData->Ki > 0) { /* check if integral feedback is turned on  */
         v3Scale(dt, omega_BBast_B, v3_1);
-        v3Add(v3_1, configData->z, configData->z);             /* z = integral(del_omega) */
-        for (i=0;i<3;i++) {
+        v3Add(v3_1, configData->z, configData->z); /* z = integral(del_omega) */
+        for (i = 0; i < 3; i++) {
             intLimCheck = fabs(configData->z[i]);
             if (intLimCheck > configData->integralLimit) {
-                configData->z[i] *= configData->integralLimit/intLimCheck;
+                configData->z[i] *= configData->integralLimit / intLimCheck;
             }
         }
     } else {
@@ -179,18 +177,18 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     }
 
     /*! - evaluate required attitude control torque Lr */
-    v3Scale(configData->P, omega_BBast_B, Lr);              /* +P delta_omega */
+    v3Scale(configData->P, omega_BBast_B, Lr); /* +P delta_omega */
     v3Scale(configData->Ki, configData->z, v3_2);
-    v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
+    v3Add(v3_2, Lr, Lr); /* +Ki*z */
 
     /* Lr += - omega_BastN x ([I]omega + [Gs]h_s) */
     m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3_3);
-    for(i = 0; i < configData->rwConfigParams.numRW; i++)
-    {
-        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
-            wheelGs = &(configData->rwConfigParams.GsMatrix_B[i*3]);
+    for (i = 0; i < configData->rwConfigParams.numRW; i++) {
+        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE) { /* check if wheel is available */
+            wheelGs = &(configData->rwConfigParams.GsMatrix_B[i * 3]);
             v3Scale(configData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_4);
+                    wheelGs,
+                    v3_4);
             v3Add(v3_4, v3_3, v3_3);
         }
     }

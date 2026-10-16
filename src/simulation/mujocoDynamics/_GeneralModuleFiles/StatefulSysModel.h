@@ -20,8 +20,8 @@
 #ifndef STATEFUL_SYS_MODEL_H
 #define STATEFUL_SYS_MODEL_H
 
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -43,16 +43,17 @@
  */
 class DynParamRegisterer
 {
-public:
+  public:
     /** @brief Construct a state-registering helper.
      *
      * @param manager Underlying dynamics-parameter manager.
      * @param stateNamePrefix Prefix appended to every registered state name.
      */
     DynParamRegisterer(DynParamManager& manager, std::string stateNamePrefix)
-        : manager(manager)
-        , stateNamePrefix(stateNamePrefix)
-        {}
+      : manager(manager)
+      , stateNamePrefix(stateNamePrefix)
+    {
+    }
 
     /** @brief Create and return a new state managed by the underlying
      * ``DynParamManager``.
@@ -67,33 +68,33 @@ public:
      * @param stateName State name local to the registering model.
      * @return Pointer to the newly registered state object.
      */
-        inline StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
+    inline StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
     {
-            return this->manager.registerState(nRow, nCol, this->stateNamePrefix + stateName);
+        return this->manager.registerState(nRow, nCol, this->stateNamePrefix + stateName);
     }
 
-        /** @brief Register a state with complete immutable topology metadata.
-         * @param stateName Name local to this model, before prefixing.
-         * @param spec State, drift, tangent, noise, and error-control declarations.
-         * @return Borrowed handle owned by the underlying manager.
-         */
-        inline StateData* registerState(std::string stateName, const StateSpec& spec)
-        {
-            return this->manager.registerState(this->stateNamePrefix + stateName, spec);
-        }
+    /** @brief Register a state with complete immutable topology metadata.
+     * @param stateName Name local to this model, before prefixing.
+     * @param spec State, drift, tangent, noise, and error-control declarations.
+     * @return Borrowed handle owned by the underlying manager.
+     */
+    inline StateData* registerState(std::string stateName, const StateSpec& spec)
+    {
+        return this->manager.registerState(this->stateNamePrefix + stateName, spec);
+    }
 
-        /** @brief Register a state with complete topology and an owned update policy.
-         * @param stateName Name local to this model, before prefixing.
-         * @param spec Immutable state topology.
-         * @param policy Special update rule whose ownership transfers to the registry.
-         * @return Borrowed handle owned by the underlying manager.
-         */
-        inline StateData* registerState(std::string stateName,
-                                        const StateSpec& spec,
-                                        std::unique_ptr<StateUpdatePolicy> policy)
-        {
-            return this->manager.registerState(this->stateNamePrefix + stateName, spec, std::move(policy));
-        }
+    /** @brief Register a state with complete topology and an owned update policy.
+     * @param stateName Name local to this model, before prefixing.
+     * @param spec Immutable state topology.
+     * @param policy Special update rule whose ownership transfers to the registry.
+     * @return Borrowed handle owned by the underlying manager.
+     */
+    inline StateData* registerState(std::string stateName,
+                                    const StateSpec& spec,
+                                    std::unique_ptr<StateUpdatePolicy> policy)
+    {
+        return this->manager.registerState(this->stateNamePrefix + stateName, spec, std::move(policy));
+    }
 
     /** @brief Register a shared stochastic noise source across multiple states.
      *
@@ -136,9 +137,9 @@ public:
         manager.registerSharedNoiseSource(std::move(in));
     }
 
-protected:
-    DynParamManager& manager;      //!< Wrapped manager that owns the registered states.
-    std::string stateNamePrefix;   //!< Prefix added to all registered state names.
+  protected:
+    DynParamManager& manager;    //!< Wrapped manager that owns the registered states.
+    std::string stateNamePrefix; //!< Prefix added to all registered state names.
 };
 
 /** @brief ``SysModel`` base class for modules with continuous-time states.
@@ -167,7 +168,7 @@ protected:
  */
 class StatefulSysModel : virtual public SysModel
 {
-public:
+  public:
     /** @brief Construct a stateful system model. */
     StatefulSysModel() = default;
 

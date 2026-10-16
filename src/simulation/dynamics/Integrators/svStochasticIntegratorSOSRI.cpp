@@ -19,13 +19,15 @@
 #include "svStochasticIntegratorSOSRI.h"
 
 svStochasticIntegratorSOSRI::svStochasticIntegratorSOSRI(DynamicObject* dyn)
-    : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSOSRI::getCoefficients())
-{}
+  : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSOSRI::getCoefficients())
+{
+}
 
 // Coefficients for the SOSRI tableau (stability-optimized SRI, four stages). Matrix
 // entries use the plain [stage i][sub-term j] convention of SRICoefficients (see
 // svIntegratorStrongStochasticRungeKuttaSRI.h).
-SRICoefficients<4> svStochasticIntegratorSOSRI::getCoefficients()
+SRICoefficients<4>
+svStochasticIntegratorSOSRI::getCoefficients()
 {
     SRICoefficients<4> c;
 
@@ -62,20 +64,15 @@ SRICoefficients<4> svStochasticIntegratorSOSRI::getCoefficients()
     c.B1[3][2] = -1.4223118283355949;
 
     // Weights
-    c.alpha = {1.140099274172029, -0.6401334255743456, 0.4736296532772559,
-               0.026404498125060714};
-    c.beta1 = {-1.8453464565104432, 2.688764531100726, -0.2523866501071323,
-               0.40896857551684956};
-    c.beta2 = {0.4969658141589478, -0.5771202869753592, -0.12919702470322217,
-               0.2093514975196336};
-    c.beta3 = {2.8453464565104425, -2.688764531100725, 0.2523866501071322,
-               -0.40896857551684945};
-    c.beta4 = {0.11522663875443433, -0.57877086147738, 0.2857851028163886,
-               0.17775911990655704};
+    c.alpha = { 1.140099274172029, -0.6401334255743456, 0.4736296532772559, 0.026404498125060714 };
+    c.beta1 = { -1.8453464565104432, 2.688764531100726, -0.2523866501071323, 0.40896857551684956 };
+    c.beta2 = { 0.4969658141589478, -0.5771202869753592, -0.12919702470322217, 0.2093514975196336 };
+    c.beta3 = { 2.8453464565104425, -2.688764531100725, 0.2523866501071322, -0.40896857551684945 };
+    c.beta4 = { 0.11522663875443433, -0.57877086147738, 0.2857851028163886, 0.17775911990655704 };
 
     // Nodes (row sums of A0 and A1 respectively)
-    c.c0 = {0.0, -0.04199224421316468, 0.7898405466170333, 3.7504010171562823};
-    c.c1 = {0.0, 0.26204282091330466, 0.05879875232001766, 0.758661169101175};
+    c.c0 = { 0.0, -0.04199224421316468, 0.7898405466170333, 3.7504010171562823 };
+    c.c1 = { 0.0, 0.26204282091330466, 0.05879875232001766, 0.758661169101175 };
 
     return c;
 }

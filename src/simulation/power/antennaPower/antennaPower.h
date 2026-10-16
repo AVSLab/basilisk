@@ -17,39 +17,37 @@
 
  */
 
-
 #ifndef BASILISK_POWERANTENNA_H
 #define BASILISK_POWERANTENNA_H
 
 #include "architecture/messaging/messaging.h"
-#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 #include "simulation/communication/_GeneralModuleFiles/AntennaDefinitions.h"
+#include "simulation/power/_GeneralModuleFiles/powerNodeBase.h"
 
 #include "architecture/msgPayloadDefC/AntennaLogMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief Antenna power class */
-class AntennaPower: public PowerNodeBase {
+class AntennaPower : public PowerNodeBase
+{
 
-public:
+  public:
     AntennaPower();
     ~AntennaPower();
     void customReset(uint64_t CurrentSimNanos); //!< Custom reset method
-    bool customReadMessages();                  //!< Custom read method, similar to customSelfInit; returns `true' by default.
+    bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
 
-private:
-    void evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsageMsg);
+  private:
+    void evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageMsg);
 
-public:
-    ReadFunctor<AntennaLogMsgPayload> antennaSetStateInMsg;  //!< Antenna state input message
-    double basePowerNeed;                                    //!< [W] base electrical power required to operate an antenna (positive value)
-    BSKLogger bskLogger;                                     //!< -- BSK Logging
+  public:
+    ReadFunctor<AntennaLogMsgPayload> antennaSetStateInMsg; //!< Antenna state input message
+    double basePowerNeed; //!< [W] base electrical power required to operate an antenna (positive value)
+    BSKLogger bskLogger;  //!< -- BSK Logging
 
-private:
-    AntennaLogMsgPayload antennaStatusMsgBuffer = {};        //!< copy of the antenna status message
+  private:
+    AntennaLogMsgPayload antennaStatusMsgBuffer = {}; //!< copy of the antenna status message
 };
 
-#endif //BASILISK_POWERANTENNA_H
+#endif // BASILISK_POWERANTENNA_H

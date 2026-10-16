@@ -17,14 +17,13 @@
 
 */
 
-
 #include "simulation/navigation/planetNav/planetNav.h"
-#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <iostream>
+#include "architecture/utilities/rigidBodyKinematics.h"
 #include <cstring>
+#include <iostream>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -39,7 +38,7 @@ PlanetNav::PlanetNav()
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(this->numStates);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(this->numStates, this->RNGSeed);
+    this->errorModel = GaussMarkov(this->numStates, this->RNGSeed);
 }
 
 /*! Module Destructor */
@@ -52,7 +51,8 @@ PlanetNav::~PlanetNav()
 
     @param CurrentSimNanos The clock time associated with the module call
 */
-void PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
@@ -61,12 +61,13 @@ void PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity();
-    this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
-    this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
+    this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
+    this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != this->numStates*this->numStates) {
-        bskLogger.bskError("Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting", this->PMatrix.size());
+    if (this->PMatrix.size() != this->numStates * this->numStates) {
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 12*12. Size is %ld.  Quitting",
+                           this->PMatrix.size());
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
@@ -75,12 +76,12 @@ void PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         bskLogger.bskError("Your walkbounds vector  is not 12 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
-
 }
 
 /*! This method reads the input messages associated with the planet state
  */
-void PlanetNav::readInputMessages()
+void
+PlanetNav::readInputMessages()
 {
     this->truePlanetState = this->ephemerisInMsg();
 }
@@ -89,16 +90,18 @@ void PlanetNav::readInputMessages()
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
+void
+PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 {
-    this->noisePlanetState.timeTag = (double) CurrentSimNanos * NANO2SEC;
+    this->noisePlanetState.timeTag = (double)CurrentSimNanos * NANO2SEC;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, CurrentSimNanos);
 }
 
 /*! This method applies the errors to the truePlanetState
 
  */
-void PlanetNav::applyErrors()
+void
+PlanetNav::applyErrors()
 {
     //! - Add errors
     v3Add(this->truePlanetState.r_BdyZero_N, &(this->navErrors.data()[0]), this->noisePlanetState.r_BdyZero_N);
@@ -112,17 +115,18 @@ void PlanetNav::applyErrors()
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
+void
+PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
     StateMatrix localProp = this->AMatrix;
     //! - Compute timestep since the last call
     timeStep = diffNanoToSec(CurrentSimNanos, this->prevTime);
 
-    localProp(0, 3) *= timeStep; // position/velocity cross correlation terms
-    localProp(1, 4) *= timeStep; // position/velocity cross correlation terms
-    localProp(2, 5) *= timeStep; // position/velocity cross correlation terms
-    localProp(6, 9) *= timeStep; // attitude/attitude rate cross correlation terms
+    localProp(0, 3) *= timeStep;  // position/velocity cross correlation terms
+    localProp(1, 4) *= timeStep;  // position/velocity cross correlation terms
+    localProp(2, 5) *= timeStep;  // position/velocity cross correlation terms
+    localProp(6, 9) *= timeStep;  // attitude/attitude rate cross correlation terms
     localProp(7, 10) *= timeStep; // attitude/attitude rate cross correlation terms
     localProp(8, 11) *= timeStep; // attitude/attitude rate cross correlation terms
 
@@ -136,7 +140,8 @@ void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
+void
+PlanetNav::UpdateState(uint64_t CurrentSimNanos)
 {
     /* zero the output msg buffer */
     this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;

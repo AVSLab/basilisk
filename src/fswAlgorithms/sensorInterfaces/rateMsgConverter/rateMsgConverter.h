@@ -22,34 +22,33 @@
 
 #include <stdint.h>
 
-#include "cMsgCInterface/NavAttMsg_C.h"
 #include "cMsgCInterface/IMUSensorBodyMsg_C.h"
+#include "cMsgCInterface/NavAttMsg_C.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
 
     /* declare module IO interfaces */
-    NavAttMsg_C navRateOutMsg;                        //!< attitude output message*/
-    IMUSensorBodyMsg_C imuRateInMsg;                  //!< attitude Input message*/
+    NavAttMsg_C navRateOutMsg;       //!< attitude output message*/
+    IMUSensorBodyMsg_C imuRateInMsg; //!< attitude Input message*/
 
-    BSKLogger *bskLogger;                             //!< BSK Logging
-}rateMsgConverterConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} rateMsgConverterConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, int64_t moduleID);
-    void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, int64_t moduleID);
-    
+
+    void SelfInit_rateMsgConverter(rateMsgConverterConfig* configData, int64_t moduleID);
+    void Update_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

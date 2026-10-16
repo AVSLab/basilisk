@@ -17,13 +17,13 @@
 
 */
 
-
 #include "fswAlgorithms/effectorInterfaces/thrJointCompensation/thrJointCompensation.h"
 #include "architecture/messaging/ownedMessage.h"
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
-void ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->armConfigInMsg.isLinked()) {
@@ -91,7 +91,8 @@ void ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->kinCfg.armHingeGlobalIdx.assign(nFlat, 0);
 }
 
-void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
+void
+ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -113,13 +114,15 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 ++this->numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskError("ThrJointCompensation: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("ThrJointCompensation: first joint in kinematic tree %d is not a free joint.",
+                                       tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints must be hinges
                 if (jointType != 3) {
-                    bskLogger.bskError("ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError(
+                      "ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(joint);
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -128,12 +131,14 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskError("ThrJointCompensation: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("ThrJointCompensation: numHingedJoints does not match the number of hinge joints found "
+                               "in the kinematic trees.");
         }
 
         if (this->kinCfg.armTreeIdx.size() != this->kinCfg.armJointCount.size()) {
             bskLogger.bskError("ThrJointCompensation: armTreeIdx size (%zu) does not match armJointCount size (%zu).",
-                this->kinCfg.armTreeIdx.size(), this->kinCfg.armJointCount.size());
+                               this->kinCfg.armTreeIdx.size(),
+                               this->kinCfg.armJointCount.size());
         }
 
         const size_t nArms = this->kinCfg.armJointCount.size();
@@ -156,20 +161,25 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         }
         for (size_t a = 0; a < nArms; ++a) {
             const int treeId = this->kinCfg.armTreeIdx[a];
-            const int cnt    = this->kinCfg.armJointCount[a];
+            const int cnt = this->kinCfg.armJointCount[a];
             const size_t start = this->kinCfg.armJointStart[a];
 
             auto itTree = this->treeMap.find(treeId);
             if (itTree == this->treeMap.end()) {
-                bskLogger.bskError("ThrJointCompensation: treeId %d for arm %zu was not found in joint reaction tree data.",
-                    treeId, a);
+                bskLogger.bskError(
+                  "ThrJointCompensation: treeId %d for arm %zu was not found in joint reaction tree data.", treeId, a);
             }
             const auto& hinges = itTree->second.hingeGlobalIdxs;
             size_t& cur = treeCursor[treeId];
             const size_t jointCount = static_cast<size_t>(cnt);
             if (cur + jointCount > hinges.size()) {
-                bskLogger.bskError("ThrJointCompensation: arm %zu expects %d hinge joints in tree %d, but only %zu are available (cursor=%zu).",
-                    a, cnt, treeId, hinges.size(), cur);
+                bskLogger.bskError("ThrJointCompensation: arm %zu expects %d hinge joints in tree %d, but only %zu are "
+                                   "available (cursor=%zu).",
+                                   a,
+                                   cnt,
+                                   treeId,
+                                   hinges.size(),
+                                   cur);
             }
             for (size_t j = 0; j < jointCount; ++j) {
                 this->kinCfg.armHingeGlobalIdx[start + j] = hinges[cur++];
@@ -186,7 +196,6 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     for (size_t i = 0; i < this->jointStatesInMsgs.size(); ++i) {
         ScalarJointStateMsgPayload jointStateIn = this->jointStatesInMsgs[i]();
         jointStates(static_cast<Eigen::Index>(i)) = jointStateIn.state;
-
     }
 
     // Loop through the thruster force input messages
@@ -218,41 +227,31 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 r_PB_B = this->jointPoseFlat[kFlatPrior].r_CB_B;
             }
 
-            Eigen::Vector3d r_CP_P(
-                this->kinCfg.r_CP_P[3*kFlat + 0],
-                this->kinCfg.r_CP_P[3*kFlat + 1],
-                this->kinCfg.r_CP_P[3*kFlat + 2]
-            );
+            Eigen::Vector3d r_CP_P(this->kinCfg.r_CP_P[3 * kFlat + 0],
+                                   this->kinCfg.r_CP_P[3 * kFlat + 1],
+                                   this->kinCfg.r_CP_P[3 * kFlat + 2]);
 
-            Eigen::Vector3d shat_P(
-                this->kinCfg.shat_P[3*kFlat + 0],
-                this->kinCfg.shat_P[3*kFlat + 1],
-                this->kinCfg.shat_P[3*kFlat + 2]
-            );
+            Eigen::Vector3d shat_P(this->kinCfg.shat_P[3 * kFlat + 0],
+                                   this->kinCfg.shat_P[3 * kFlat + 1],
+                                   this->kinCfg.shat_P[3 * kFlat + 2]);
 
             Eigen::Matrix3d dcm_C0P;
-            const double* p = &this->kinCfg.dcm_C0P[9*kFlat];
-            dcm_C0P << p[0], p[3], p[6],
-                    p[1], p[4], p[7],
-                    p[2], p[5], p[8];
+            const double* p = &this->kinCfg.dcm_C0P[9 * kFlat];
+            dcm_C0P << p[0], p[3], p[6], p[1], p[4], p[7], p[2], p[5], p[8];
 
             const size_t hGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
             double Phi = jointStates(static_cast<Eigen::Index>(hGlobal));
 
             Eigen::Matrix3d sTilde;
-            sTilde <<     0, -shat_P(2),  shat_P(1),
-                shat_P(2),      0, -shat_P(0),
-                -shat_P(1),  shat_P(0),     0;
+            sTilde << 0, -shat_P(2), shat_P(1), shat_P(2), 0, -shat_P(0), -shat_P(1), shat_P(0), 0;
 
-            Eigen::Matrix3d dcm_CC0 =
-                Eigen::Matrix3d::Identity() * std::cos(Phi)
-                - std::sin(Phi) * sTilde
-                + (1 - std::cos(Phi)) * (shat_P * shat_P.transpose());
+            Eigen::Matrix3d dcm_CC0 = Eigen::Matrix3d::Identity() * std::cos(Phi) - std::sin(Phi) * sTilde +
+                                      (1 - std::cos(Phi)) * (shat_P * shat_P.transpose());
 
             Eigen::Matrix3d dcm_CP = dcm_CC0 * dcm_C0P;
 
             Eigen::Vector3d r_CB_B = r_PB_B + dcm_PB.transpose() * r_CP_P;
-            Eigen::Matrix3d dcm_CB =  dcm_CP * dcm_PB;
+            Eigen::Matrix3d dcm_CB = dcm_CP * dcm_PB;
 
             this->jointPoseFlat[kFlat].dcm_CB = dcm_CB;
             this->jointPoseFlat[kFlat].r_CB_B = r_CB_B;
@@ -263,13 +262,13 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     std::unordered_map<int, Eigen::Vector3d> treeForce_B;
     std::unordered_map<int, Eigen::Vector3d> treeTorque_B;
     for (const auto& [treeId, info] : this->treeMap) {
-        treeForce_B[treeId]  = Eigen::Vector3d::Zero();
+        treeForce_B[treeId] = Eigen::Vector3d::Zero();
         treeTorque_B[treeId] = Eigen::Vector3d::Zero();
     }
     Eigen::VectorXd tauJoint = Eigen::VectorXd::Zero(numHingedJointsEigen);
 
     const size_t nThr = this->kinCfg.thrArmIdx.size();
-    for (size_t i = 0; i < nThr; ++i){
+    for (size_t i = 0; i < nThr; ++i) {
         const int armValue = this->kinCfg.thrArmIdx[i];
         const int jointValue = this->kinCfg.thrArmJointIdx[i];
         if (armValue < 0 || jointValue < 0) {
@@ -283,38 +282,28 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         const Eigen::Vector3d& r_CB_B = this->jointPoseFlat[kFlat].r_CB_B;
 
         Eigen::Vector3d fhat_P(
-            this->kinCfg.fhat_P[3*i + 0],
-            this->kinCfg.fhat_P[3*i + 1],
-            this->kinCfg.fhat_P[3*i + 2]
-        );
+          this->kinCfg.fhat_P[3 * i + 0], this->kinCfg.fhat_P[3 * i + 1], this->kinCfg.fhat_P[3 * i + 2]);
         const double Fcmd = thrForces(static_cast<Eigen::Index>(i));
         const Eigen::Vector3d f_B = dcm_CB.transpose() * (fhat_P * Fcmd);
 
         Eigen::Vector3d r_TP_P(
-            this->kinCfg.r_TP_P[3*i + 0],
-            this->kinCfg.r_TP_P[3*i + 1],
-            this->kinCfg.r_TP_P[3*i + 2]
-        );
+          this->kinCfg.r_TP_P[3 * i + 0], this->kinCfg.r_TP_P[3 * i + 1], this->kinCfg.r_TP_P[3 * i + 2]);
         const Eigen::Vector3d r_TB_B = r_CB_B + dcm_CB.transpose() * r_TP_P;
         const size_t hAttachGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
         const int treeId = this->hingeToTree[hAttachGlobal];
 
-        treeForce_B[treeId]  += f_B;
+        treeForce_B[treeId] += f_B;
         treeTorque_B[treeId] += r_TB_B.cross(f_B);
 
         const size_t start = this->kinCfg.armJointStart[arm];
-        for (size_t j = 0; j <= jLocal; ++j)
-        {
+        for (size_t j = 0; j <= jLocal; ++j) {
             const size_t kJ = start + j;
             const size_t hGlobal = this->kinCfg.armHingeGlobalIdx[kJ];
             const Eigen::Matrix3d& dcm_JB = this->jointPoseFlat[kJ].dcm_CB;
             const Eigen::Vector3d& r_JB_B = this->jointPoseFlat[kJ].r_CB_B;
 
             Eigen::Vector3d shat_P(
-                this->kinCfg.shat_P[3*kJ + 0],
-                this->kinCfg.shat_P[3*kJ + 1],
-                this->kinCfg.shat_P[3*kJ + 2]
-            );
+              this->kinCfg.shat_P[3 * kJ + 0], this->kinCfg.shat_P[3 * kJ + 1], this->kinCfg.shat_P[3 * kJ + 2]);
 
             const Eigen::Vector3d s_B = dcm_JB.transpose() * shat_P;
             const Eigen::Vector3d r_TJ_B = r_TB_B - r_JB_B;
@@ -329,10 +318,9 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     Eigen::VectorXd nonActuatorForces(static_cast<Eigen::Index>(nDOF));
     nonActuatorForces.setZero();
     for (size_t k = 0; k < nDOF; ++k) {
-        nonActuatorForces(static_cast<Eigen::Index>(k)) = reactionForcesIn.passiveForces[k]
-                                                        + reactionForcesIn.constraintForces[k]
-                                                        + reactionForcesIn.appliedForces[k]
-                                                        - reactionForcesIn.biasForces[k];
+        nonActuatorForces(static_cast<Eigen::Index>(k)) =
+          reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] + reactionForcesIn.appliedForces[k] -
+          reactionForcesIn.biasForces[k];
     }
 
     constexpr size_t nBaseDOF = 6;
@@ -378,7 +366,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             for (size_t c = 0; c < nTreeDOF; ++c) {
                 const size_t colIdx = dofIdx[c];
                 Mfull(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) =
-                    massMatrixData[rowIdx * nDOF + colIdx];
+                  massMatrixData[rowIdx * nDOF + colIdx];
             }
         }
 
@@ -387,8 +375,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
 
         Eigen::VectorXd baseBias(nBaseDOFEigen);
         for (size_t i = 0; i < nBaseDOF; ++i) {
-            baseBias(static_cast<Eigen::Index>(i)) =
-                nonActuatorForces(static_cast<Eigen::Index>(dofIdx[i]));
+            baseBias(static_cast<Eigen::Index>(i)) = nonActuatorForces(static_cast<Eigen::Index>(dofIdx[i]));
         }
 
         Eigen::VectorXd baseThr(nBaseDOFEigen);
@@ -400,7 +387,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd jointBias(nHingeJointsEigen);
         for (size_t i = 0; i < nHingeJoints; ++i) {
             jointBias(static_cast<Eigen::Index>(i)) =
-                nonActuatorForces(static_cast<Eigen::Index>(dofIdx[nBaseDOF + i]));
+              nonActuatorForces(static_cast<Eigen::Index>(dofIdx[nBaseDOF + i]));
         }
 
         Eigen::VectorXd tauThrTree(nHingeJointsEigen);
@@ -436,12 +423,14 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void ThrJointCompensation::setUMax(std::vector<double> var)
+void
+ThrJointCompensation::setUMax(std::vector<double> var)
 {
     this->uMax = var;
 }
 
-void ThrJointCompensation::addHingedJoint()
+void
+ThrJointCompensation::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;
@@ -453,7 +442,8 @@ void ThrJointCompensation::addHingedJoint()
     addOwnedMessage(this->ownedMotorTorquesOutMsgs, this->motorTorquesOutMsgs);
 }
 
-void ThrJointCompensation::addThruster()
+void
+ThrJointCompensation::addThruster()
 {
     // increase the number of thrusters by 1
     this->numThrusters++;

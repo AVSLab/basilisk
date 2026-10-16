@@ -57,33 +57,34 @@
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorRKMil : public StochasticRKIntegratorBase {
-public:
-  /** @brief Construct the numerical method for the supplied dynamics object.
-   * @param dynIn Dynamics object that will own this integrator.
-   */
-  explicit svStochasticIntegratorRKMil(DynamicObject* dynIn);
+class svStochasticIntegratorRKMil : public StochasticRKIntegratorBase
+{
+  public:
+    /** @brief Construct the numerical method for the supplied dynamics object.
+     * @param dynIn Dynamics object that will own this integrator.
+     */
+    explicit svStochasticIntegratorRKMil(DynamicObject* dynIn);
 
-  ~svStochasticIntegratorRKMil() noexcept override;
+    ~svStochasticIntegratorRKMil() noexcept override;
 
-protected:
-  /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-  void integrateImpl(double currentTime, double timeStep) override;
+  protected:
+    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
+    void integrateImpl(double currentTime, double timeStep) override;
 
-private:
-  struct FlatStorage;
+  private:
+    struct FlatStorage;
 
-  void bindStochasticMethodStorage() override { this->bindFlatStorage(); }
+    void bindStochasticMethodStorage() override { this->bindFlatStorage(); }
 
-  void bindFlatStorage();
-  void applyCandidate(const Eigen::VectorXd& base,
-                      const Eigen::VectorXd& drift,
-                      double timeStep,
-                      const Eigen::VectorXd& diffusions,
-                      const Eigen::VectorXd& pseudoSteps,
-                      Eigen::VectorXd& output);
+    void bindFlatStorage();
+    void applyCandidate(const Eigen::VectorXd& base,
+                        const Eigen::VectorXd& drift,
+                        double timeStep,
+                        const Eigen::VectorXd& diffusions,
+                        const Eigen::VectorXd& pseudoSteps,
+                        Eigen::VectorXd& output);
 
-  std::unique_ptr<FlatStorage> flatStorage;
+    std::unique_ptr<FlatStorage> flatStorage;
 };
 
 #endif /* svStochasticIntegratorRKMil_h */

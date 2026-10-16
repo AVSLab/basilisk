@@ -17,7 +17,6 @@
 
 */
 
-
 #include "simulation/dynamics/hingedRigidBodyMotor/hingedRigidBodyMotor.h"
 
 #include <algorithm>
@@ -26,20 +25,19 @@
 /** @brief Constructs a hinged rigid body motor controller with torque saturation disabled. */
 HingedRigidBodyMotor::HingedRigidBodyMotor()
 {
-    this->K = 0.0;  // [N m/rad]
-    this->P = 0.0;  // [N m s/rad]
-    this->uMax = -1.0;  // [N m] negative values disable torque saturation
+    this->K = 0.0;     // [N m/rad]
+    this->P = 0.0;     // [N m s/rad]
+    this->uMax = -1.0; // [N m] negative values disable torque saturation
 }
 
 /*! Module Destructor */
-HingedRigidBodyMotor::~HingedRigidBodyMotor()
-{
-}
+HingedRigidBodyMotor::~HingedRigidBodyMotor() {}
 
 /** @brief Checks that required input messages and controller gains are configured.
  * @param CurrentSimNanos [ns] Current simulation time; unused during reset.
  */
-void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
@@ -54,25 +52,24 @@ void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     if (!std::isfinite(this->uMax)) {
         bskLogger.bskError("HingedRigidBodyMotor uMax must be set to a finite value.");
     }
-
 }
-
 
 /** @brief Calculates and limits the commanded hinge torque.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
+void
+HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! local variables
-    double sensedTheta;  // [rad]
-    double sensedThetaDot;  // [rad/s]
-    double refTheta;  // [rad]
-    double refThetaDot;  // [rad/s]
-    double torque;  // [N m]
+    double sensedTheta;    // [rad]
+    double sensedThetaDot; // [rad/s]
+    double refTheta;       // [rad]
+    double refThetaDot;    // [rad/s]
+    double torque;         // [N m]
 
-    HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;  //!< local copy of message buffer for reference
-    HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer;  //!< local copy of message buffer for measurement
-    ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;  //!< local copy of message buffer for motor torque
+    HingedRigidBodyMsgPayload hingedBodyStateSensedInMsgBuffer;    //!< local copy of message buffer for reference
+    HingedRigidBodyMsgPayload hingedBodyStateReferenceInMsgBuffer; //!< local copy of message buffer for measurement
+    ArrayMotorTorqueMsgPayload motorTorqueOutMsgBuffer;            //!< local copy of message buffer for motor torque
 
     //! zero the output message buffers before assigning values
     motorTorqueOutMsgBuffer = this->motorTorqueOutMsg.zeroMsgPayload;

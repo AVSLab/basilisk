@@ -22,14 +22,16 @@
 #define LINK_BUDGET_DEFINITIONS_H
 
 namespace LinkBudgetTypes {
-    enum AntennaPlacement {
-        SPACE_SPACE         = 0,
-        SPACE_EARTH         = 1, // future expansion SPACE_MOON, SPACE_MARS, etc.
-        _UNKNOWN_BLOCKED    = -1
-    };
-    enum GasType {
-        OXYGEN      = 0,
-        WATER_VAPOR = 1
-    };
+enum AntennaPlacement
+{
+    SPACE_SPACE = 0,
+    SPACE_EARTH = 1, // future expansion SPACE_MOON, SPACE_MARS, etc.
+    _UNKNOWN_BLOCKED = -1
+};
+enum GasType
+{
+    OXYGEN = 0,
+    WATER_VAPOR = 1
+};
 } // namespace LinkBudgetTypes
 #endif /* LINK_BUDGET_DEFINITIONS_H */

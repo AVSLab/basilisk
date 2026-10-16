@@ -20,51 +20,50 @@
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-#include <cstdint>
-#include <Eigen/Core>
-#include "architecture/messaging/messaging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "architecture/messaging/messaging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include <Eigen/Core>
+#include <cstdint>
 
-#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
+#include "architecture/msgPayloadDefC/CmdTorqueBodyMsgPayload.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief External force and torque dynamic effector. */
-class ExtForceTorque final: public SysModel, public DynamicEffector{
-public:
+class ExtForceTorque final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     ExtForceTorque();
     ~ExtForceTorque();
 
     void Reset(uint64_t CurrentSimNanos);
-    void UpdateState(uint64_t CurrentSimNanos);         //!< class method
-    void linkInStates(DynParamManager& statesIn);       //!< class method
-    void writeOutputMessages(uint64_t currentClock);    //!< class method
+    void UpdateState(uint64_t CurrentSimNanos);      //!< class method
+    void linkInStates(DynParamManager& statesIn);    //!< class method
+    void writeOutputMessages(uint64_t currentClock); //!< class method
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep);
 
-private:
-    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer{};          //!< Cached torque command; zero until input processing
-    CmdForceInertialMsgPayload incomingCmdForceInertialBuffer{}; //!< Cached inertial force command; zero until input processing
-    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer{};        //!< Cached body force command; zero until input processing
+  private:
+    CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer{}; //!< Cached torque command; zero until input processing
+    CmdForceInertialMsgPayload
+      incomingCmdForceInertialBuffer{};                  //!< Cached inertial force command; zero until input processing
+    CmdForceBodyMsgPayload incomingCmdForceBodyBuffer{}; //!< Cached body force command; zero until input processing
 
+  public:
+    Eigen::Vector3d extForce_N;      //!< [N]  external force in inertial  frame components
+    Eigen::Vector3d extForce_B;      //!< [N]  external force in body frame components
+    Eigen::Vector3d extTorquePntB_B; //!< [Nm] external torque in body frame components
 
-public:
-    Eigen::Vector3d extForce_N;         //!< [N]  external force in inertial  frame components
-    Eigen::Vector3d extForce_B;         //!< [N]  external force in body frame components
-    Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
-
-    BSKLogger bskLogger;                      //!< BSK Logging
+    BSKLogger bskLogger;                                           //!< BSK Logging
     ReadFunctor<CmdTorqueBodyMsgPayload> cmdTorqueInMsg;           //!< commanded torque input msg
     ReadFunctor<CmdForceBodyMsgPayload> cmdForceBodyInMsg;         //!< commanded force input msg in B frame
-    ReadFunctor<CmdForceInertialMsgPayload>cmdForceInertialInMsg;  //!< commanded force input msg in N frame
-
+    ReadFunctor<CmdForceInertialMsgPayload> cmdForceInertialInMsg; //!< commanded force input msg in N frame
 };
-
 
 #endif

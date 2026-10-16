@@ -20,21 +20,18 @@
 #ifndef _AVS_LIBRARY_SELF_CHECK_
 #define _AVS_LIBRARY_SELF_CHECK_
 
-
-
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-int testLinearAlgebra(double accuracy);
-int testOrbitalAnomalies(double accuracy);
-int testOrbitalHill(double accuracy);
-int testRigidBodyKinematics(double accuracy);
+    int testLinearAlgebra(double accuracy);
+    int testOrbitalAnomalies(double accuracy);
+    int testOrbitalHill(double accuracy);
+    int testRigidBodyKinematics(double accuracy);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

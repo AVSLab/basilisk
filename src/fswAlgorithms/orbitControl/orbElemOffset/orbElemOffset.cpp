@@ -20,44 +20,40 @@
 
 #include "architecture/utilities/orbitalMotion.h"
 
-void OrbElemOffset::Reset(uint64_t /*CurrentSimNanos*/)
+void
+OrbElemOffset::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->mainElementsInMsg.isLinked()) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "OrbElemOffset::Reset: mainElementsInMsg is not linked."
-        );
+        this->bskLogger.bskLog(BSK_ERROR, "OrbElemOffset::Reset: mainElementsInMsg is not linked.");
     }
 
     if (!this->offsetElementsInMsg.isLinked()) {
-        this->bskLogger.bskLog(
-            BSK_ERROR,
-            "OrbElemOffset::Reset: offsetElementsInMsg is not linked."
-        );
+        this->bskLogger.bskLog(BSK_ERROR, "OrbElemOffset::Reset: offsetElementsInMsg is not linked.");
     }
 }
 
-void OrbElemOffset::UpdateState(uint64_t CurrentSimNanos)
+void
+OrbElemOffset::UpdateState(uint64_t CurrentSimNanos)
 {
     ClassicElementsMsgPayload outPayload{};
-    const ClassicElementsMsgPayload main   = this->mainElementsInMsg();
+    const ClassicElementsMsgPayload main = this->mainElementsInMsg();
     const ClassicElementsMsgPayload offset = this->offsetElementsInMsg();
 
     // Element wise addition for all fields except f which is handled separately
-    outPayload.a       = main.a       + offset.a;
-    outPayload.e       = main.e       + offset.e;
-    outPayload.i       = main.i       + offset.i;
-    outPayload.Omega   = main.Omega   + offset.Omega;
-    outPayload.omega   = main.omega   + offset.omega;
+    outPayload.a = main.a + offset.a;
+    outPayload.e = main.e + offset.e;
+    outPayload.i = main.i + offset.i;
+    outPayload.Omega = main.Omega + offset.Omega;
+    outPayload.omega = main.omega + offset.omega;
 
     if (useMeanAnomalyOffset) {
         // Interpret offset.f as a mean anomaly increment DeltaM
         // Step 1: mean anomaly of the main orbit
         const double e_main = main.e;
-        const double e_out  = outPayload.e;
+        const double e_out = outPayload.e;
 
-        double E_main   = f2E(main.f, e_main);
-        double M_main   = E2M(E_main, e_main);
+        double E_main = f2E(main.f, e_main);
+        double M_main = E2M(E_main, e_main);
         double M_offset = offset.f;
 
         // Step 2: final mean anomaly and conversion back to true anomaly

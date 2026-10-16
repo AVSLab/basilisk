@@ -17,7 +17,6 @@
 
 */
 
-
 #include "fswAlgorithms/smallBodyNavigation/smallBodyNavUKF/smallBodyNavUKF.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
@@ -49,19 +48,20 @@ SmallBodyNavUKF::SmallBodyNavUKF()
 }
 
 /*! Module Destructor */
-SmallBodyNavUKF::~SmallBodyNavUKF()
-{
-}
+SmallBodyNavUKF::~SmallBodyNavUKF() {}
 
 /*! Initialize C-wrapped output messages */
-void SmallBodyNavUKF::SelfInit(){
+void
+SmallBodyNavUKF::SelfInit()
+{
     SmallBodyNavUKFMsg_C_init(&this->smallBodyNavUKFOutMsgC);
 }
 
 /*! This method is used to reset the module, check that required input messages are connect and compute weigths.
 
 */
-void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
@@ -73,20 +73,22 @@ void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
     /* compute UT weights to be used in the UT */
     this->wm_sigma(0) = this->kappa / (this->kappa + stateSize);
-    this->wc_sigma(0) = this->wm_sigma(0) + 1 - pow(this->alpha,2) + this->beta;
+    this->wc_sigma(0) = this->wm_sigma(0) + 1 - pow(this->alpha, 2) + this->beta;
     for (int i = 0; i < stateSize; i++) {
         /* Assign weigths */
-        this->wm_sigma(i+1) = 1 / (2*(stateSize + this->kappa));
-        this->wm_sigma(stateSize+i+1) = this->wm_sigma(i+1);
-        this->wc_sigma(i+1) = this->wm_sigma(i+1);
-        this->wc_sigma(stateSize+i+1) = this->wm_sigma(i+1);
+        this->wm_sigma(i + 1) = 1 / (2 * (stateSize + this->kappa));
+        this->wm_sigma(stateSize + i + 1) = this->wm_sigma(i + 1);
+        this->wc_sigma(i + 1) = this->wm_sigma(i + 1);
+        this->wc_sigma(stateSize + i + 1) = this->wm_sigma(i + 1);
     }
 }
 
 /*! This method is used to read the input messages.
 
 */
-void SmallBodyNavUKF::readMessages(){
+void
+SmallBodyNavUKF::readMessages()
+{
     /* Read in the input messages */
     this->navTransInMsgBuffer = this->navTransInMsg();
     this->asteroidEphemerisInMsgBuffer = this->asteroidEphemerisInMsg();
@@ -96,7 +98,9 @@ void SmallBodyNavUKF::readMessages(){
     @param CurrentSimNanos
 
 */
-void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
+void
+SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos)
+{
     /* Read angular velocity of the small body fixed frame */
     this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
 
@@ -114,10 +118,8 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
     /* Loop to generate remaining sigma points */
     for (int i = 0; i < stateSize; i++) {
         /* Generate sigma points */
-        X_sigma_k.col(i+1) = currentState
-            - sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
-        X_sigma_k.col(stateSize+i+1) = currentState
-            + sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
+        X_sigma_k.col(i + 1) = currentState - sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
+        X_sigma_k.col(stateSize + i + 1) = currentState + sqrt(stateSize + this->kappa) * Psqrt_k.col(i);
     }
 
     /* Loop to propagate sigma points and compute mean */
@@ -136,16 +138,15 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
         v_sigma_k = x_sigma_k.segment<3>(3);
         a_sigma_k = x_sigma_k.segment<3>(6);
         x_sigma_dot_k.segment<3>(0) = v_sigma_k;
-        x_sigma_dot_k.segment<3>(3) = - 2*this->omega_AN_A.cross(v_sigma_k)
-                                     - this->omega_AN_A.cross(this->omega_AN_A.cross(r_sigma_k))
-                                     - this->mu_ast*r_sigma_k/pow(r_sigma_k.norm(), 3)
-                                     + a_sigma_k;
+        x_sigma_dot_k.segment<3>(3) = -2 * this->omega_AN_A.cross(v_sigma_k) -
+                                      this->omega_AN_A.cross(this->omega_AN_A.cross(r_sigma_k)) -
+                                      this->mu_ast * r_sigma_k / pow(r_sigma_k.norm(), 3) + a_sigma_k;
 
         /* Use Euler integration to propagate */
-        this->X_sigma_k1_.col(i) = x_sigma_k + x_sigma_dot_k*(CurrentSimNanos-prevTime)*NANO2SEC;
+        this->X_sigma_k1_.col(i) = x_sigma_k + x_sigma_dot_k * (CurrentSimNanos - prevTime) * NANO2SEC;
 
         /* Compute average */
-        this->x_hat_k1_ = this->x_hat_k1_ + this->wm_sigma(i)*this->X_sigma_k1_.col(i);
+        this->x_hat_k1_ = this->x_hat_k1_ + this->wm_sigma(i) * this->X_sigma_k1_.col(i);
     }
 
     /* Loop to compute covariance */
@@ -156,7 +157,7 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
         x_sigma_dev_k1_ = this->X_sigma_k1_.col(i) - this->x_hat_k1_;
 
         /* Add the deviation to the covariance */
-        this->P_k1_ = this->P_k1_ + this->wc_sigma(i)*x_sigma_dev_k1_*x_sigma_dev_k1_.transpose();
+        this->P_k1_ = this->P_k1_ + this->wc_sigma(i) * x_sigma_dev_k1_ * x_sigma_dev_k1_.transpose();
     }
 
     /* Add process noise covariance */
@@ -167,7 +168,9 @@ void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos){
 /*! This method does the UT to the a-priori state to compute the a-priori measurements
 
 */
-void SmallBodyNavUKF::measurementUT(){
+void
+SmallBodyNavUKF::measurementUT()
+{
     /* Compute square root matrix of covariance */
     StateMatrix Psqrt_k1_ = P_k1_.llt().matrixL();
 
@@ -177,10 +180,8 @@ void SmallBodyNavUKF::measurementUT(){
     /* Loop to generate remaining sigma points */
     for (int i = 0; i < stateSize; i++) {
         /* Generate sigma points */
-        this->X_sigma_k1_.col(i+1) = this->x_hat_k1_
-            - sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
-        this->X_sigma_k1_.col(stateSize+i+1) = this->x_hat_k1_
-            + sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
+        this->X_sigma_k1_.col(i + 1) = this->x_hat_k1_ - sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
+        this->X_sigma_k1_.col(stateSize + i + 1) = this->x_hat_k1_ + sqrt(stateSize + this->kappa) * Psqrt_k1_.col(i);
     }
 
     /* Loop to propagate sigma points and compute mean */
@@ -194,7 +195,7 @@ void SmallBodyNavUKF::measurementUT(){
         this->Y_sigma_k1_.col(i) = x_sigma_k1_.segment<3>(0);
 
         /* Compute average */
-        this->y_hat_k1_ = this->y_hat_k1_ + this->wm_sigma(i)*this->Y_sigma_k1_.col(i);
+        this->y_hat_k1_ = this->y_hat_k1_ + this->wm_sigma(i) * this->Y_sigma_k1_.col(i);
     }
 
     /* Loop to compute measurements covariance and cross-correlation */
@@ -208,8 +209,8 @@ void SmallBodyNavUKF::measurementUT(){
         y_sigma_dev_k1_ = this->Y_sigma_k1_.col(i) - this->y_hat_k1_;
 
         /* Add the deviation to the measurement and cross-correlation covariances*/
-        this->R_k1_ = this->R_k1_ + this->wc_sigma(i)*y_sigma_dev_k1_*y_sigma_dev_k1_.transpose();
-        this->H = this->H + this->wc_sigma(i)*x_sigma_dev_k1_*y_sigma_dev_k1_.transpose();
+        this->R_k1_ = this->R_k1_ + this->wc_sigma(i) * y_sigma_dev_k1_ * y_sigma_dev_k1_.transpose();
+        this->H = this->H + this->wc_sigma(i) * x_sigma_dev_k1_ * y_sigma_dev_k1_.transpose();
     }
 
     /* Extract dcm of the small body, it transforms from inertial to small body fixed frame */
@@ -225,17 +226,19 @@ void SmallBodyNavUKF::measurementUT(){
 /*! This method collects the measurements and updates the estimation
 
 */
-void SmallBodyNavUKF::kalmanUpdate(){
+void
+SmallBodyNavUKF::kalmanUpdate()
+{
     /* Read attitude MRP of the small body fixed frame w.r.t. inertial */
     Eigen::Vector3d sigma_AN;
     sigma_AN = cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.sigma_BN);
 
     /* Subtract the asteroid position from the spacecraft position */
-    Eigen::Vector3d y_k1 = this->dcm_AN*(cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N)
-        - cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
+    Eigen::Vector3d y_k1 = this->dcm_AN * (cArray2EigenVector3d(navTransInMsgBuffer.r_BN_N) -
+                                           cArray2EigenVector3d(asteroidEphemerisInMsgBuffer.r_BdyZero_N));
 
     /* Compute Kalman gain */
-    this->K = this->H*this->R_k1_.inverse();
+    this->K = this->H * this->R_k1_.inverse();
 
     /* Compute the Kalman innovation */
     StateVector w_k1 = this->K * (y_k1 - this->y_hat_k1_);
@@ -252,7 +255,9 @@ void SmallBodyNavUKF::kalmanUpdate(){
 /*! This method writes the output messages
 
 */
-void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos){
+void
+SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos)
+{
     /* Create output msg buffers */
     SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer;
 
@@ -267,13 +272,15 @@ void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos){
     this->smallBodyNavUKFOutMsg.write(&smallBodyNavUKFOutMsgBuffer, this->moduleID, CurrentSimNanos);
 
     /* Write to the C-wrapped output messages */
-    SmallBodyNavUKFMsg_C_write(&smallBodyNavUKFOutMsgBuffer, &this->smallBodyNavUKFOutMsgC, this->moduleID, CurrentSimNanos);
+    SmallBodyNavUKFMsg_C_write(
+      &smallBodyNavUKFOutMsgBuffer, &this->smallBodyNavUKFOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
 /*! This is the main method that gets called every time the module is updated.
 
 */
-void SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
+void
+SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->processUT(CurrentSimNanos);

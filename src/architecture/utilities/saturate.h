@@ -20,28 +20,26 @@
 #ifndef _Saturate_HH_
 #define _Saturate_HH_
 
-#include <stdint.h>
 #include <Eigen/Dense>
-
+#include <stdint.h>
 
 /*! @brief This class is used to saturate an output variable
-*/
+ */
 class Saturate
 {
 
-public:
+  public:
     Saturate();
-    Saturate(int64_t size);     //!< class constructor
+    Saturate(int64_t size); //!< class constructor
     ~Saturate();
     //! Set lower and upper bounds for each state.
     void setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds);
     //! Saturate the given states.
     Eigen::VectorXd saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates);
 
-private:
-    int64_t numStates;              //!< -- Number of states to generate noise for
-    Eigen::MatrixX2d stateBounds;   //!< -- one row for each state. lower bounds in left column, upper in right column
+  private:
+    int64_t numStates;            //!< -- Number of states to generate noise for
+    Eigen::MatrixX2d stateBounds; //!< -- one row for each state. lower bounds in left column, upper in right column
 };
-
 
 #endif /* _saturate_HH_ */

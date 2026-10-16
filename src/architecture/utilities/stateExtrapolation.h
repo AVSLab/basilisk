@@ -56,7 +56,8 @@ struct PlanetSpin
  * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix
  * @return the planet spin, with `isZero` set if the derivative is zero
  */
-static inline PlanetSpin planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+static inline PlanetSpin
+planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
 {
     PlanetSpin spin;
     if (dcm_NPfix_dot.isZero()) {
@@ -80,7 +81,8 @@ static inline PlanetSpin planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eige
  * @param dt [s] signed time offset to advance the orientation by
  * @return the advanced orientation matrix, or dcm_NPfix if the spin or the offset is zero
  */
-static inline Eigen::Matrix3d advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
+static inline Eigen::Matrix3d
+advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
 {
     if (spin.isZero || dt == 0.0) {
         return dcm_NPfix;
@@ -109,7 +111,8 @@ static inline Eigen::Matrix3d advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const
  * @param dcm_NPfix_dot [1/s] time derivative before the advance, returned if the spin is zero
  * @return [1/s] the derivative at the advanced epoch
  */
-static inline Eigen::Matrix3d advanceDcmDot(const PlanetSpin& spin, const Eigen::Matrix3d& dcmAdvanced_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+static inline Eigen::Matrix3d
+advanceDcmDot(const PlanetSpin& spin, const Eigen::Matrix3d& dcmAdvanced_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
 {
     if (spin.isZero) {
         return dcm_NPfix_dot;
@@ -130,7 +133,8 @@ static inline Eigen::Matrix3d advanceDcmDot(const PlanetSpin& spin, const Eigen:
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return true if the message is older than the current time and was written at the previous module update
  */
-static inline bool isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
+static inline bool
+isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
 {
     return timeWrittenNanos < currentSimNanos && timeWrittenNanos == previousUpdateNanos;
 }
@@ -158,7 +162,8 @@ static inline bool isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWritt
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return copy of the payload with `r_BN_N` and `r_CN_N` advanced by `v * 0.5 * (currentSimNanos - timeWrittenNanos)`
  */
-static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
+static inline SCStatesMsgPayload
+extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
                                  uint64_t currentSimNanos,
                                  uint64_t timeWrittenNanos,
                                  uint64_t previousUpdateNanos)
@@ -179,7 +184,8 @@ static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStates
  *
  * The relative position of the spacecraft with respect to a planet is only meaningful if both are evaluated at the
  * same epoch. The position is advanced with the planet velocity, and the planet-fixed orientation is advanced with
- * planetSpin() and advanceDcm(). The offset is signed: it is negative if the planet message is newer than the target epoch.
+ * planetSpin() and advanceDcm(). The offset is signed: it is negative if the planet message is newer than the target
+ * epoch.
  *
  * @param planetState planet state message payload as read from the message
  * @param targetNanos [ns] epoch to evaluate the planet at
@@ -191,7 +197,8 @@ static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStates
  * the target epoch, with no check on the age of the message. A message written once with a non-zero velocity is
  * projected forward over the whole simulation.
  */
-static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
+static inline SpicePlanetStateMsgPayload
+extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
                               uint64_t targetNanos,
                               uint64_t timeWrittenNanos)
 {
@@ -205,11 +212,13 @@ static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const Spi
     }
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     // J20002Pfix is [PN], it maps inertial to planet-fixed components. Its transpose [NP] is advanced.
-    Eigen::Matrix3d dcm_NPfix = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
+    Eigen::Matrix3d dcm_NPfix =
+      RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
     if (dcm_NPfix.isZero()) { // position-only planet message that leaves the optional orientation uninitialized
         dcm_NPfix = Eigen::Matrix3d::Identity();
     }
-    const Eigen::Matrix3d dcm_NPfix_dot = RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
+    const Eigen::Matrix3d dcm_NPfix_dot =
+      RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
     const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
     const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix[0][0]) = dcmAdvanced_NPfix.transpose();
@@ -325,13 +334,13 @@ class ScStateExtrapolation
             // update interval
             const bool periodKnown = this->writeIntervalNanos[index] != 0;
             const bool periodDiffers = periodKnown && this->writeIntervalNanos[index] != moduleIntervalNanos;
-            const bool lagged = periodKnown && !periodDiffers &&
-                                isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            const bool lagged =
+              periodKnown && !periodDiffers && isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
             allLagged = allLagged && lagged;
-            allStepLagMessages = allStepLagMessages &&
-                                 isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
-            mismatch = mismatch ||
-                       (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
+            allStepLagMessages =
+              allStepLagMessages && isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            mismatch =
+              mismatch || (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
         }
         this->lagConsistent = allLagged;
         this->allStepLag = allStepLagMessages;
@@ -352,7 +361,7 @@ class ScStateExtrapolation
      * @param scStateInMsgs spacecraft state input messages, in the order of the apply() indexes
      * @param logger logger of the calling module
      */
-    template <typename Messages>
+    template<typename Messages>
     void prepareFromMessages(uint64_t currentSimNanos,
                              uint64_t previousUpdateNanos,
                              Messages& scStateInMsgs,
@@ -372,7 +381,7 @@ class ScStateExtrapolation
      * @param scStateInMsg spacecraft state input message
      * @param logger logger of the calling module
      */
-    template <typename Message>
+    template<typename Message>
     void prepareFromMessage(uint64_t currentSimNanos,
                             uint64_t previousUpdateNanos,
                             Message& scStateInMsg,
@@ -390,10 +399,8 @@ class ScStateExtrapolation
      * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
      * @return the payload, with the position advanced to the step midpoint if the extrapolation applies
      */
-    template <typename Message>
-    SCStatesMsgPayload applyMessage(Message& scStateInMsg,
-                                    uint64_t currentSimNanos,
-                                    uint64_t previousUpdateNanos) const
+    template<typename Message>
+    SCStatesMsgPayload applyMessage(Message& scStateInMsg, uint64_t currentSimNanos, uint64_t previousUpdateNanos) const
     {
         return this->apply(scStateInMsg(), currentSimNanos, scStateInMsg.timeWritten(), previousUpdateNanos);
     }
@@ -405,7 +412,7 @@ class ScStateExtrapolation
      * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
      * @return the planet payload moved to the epoch of the spacecraft states
      */
-    template <typename Message>
+    template<typename Message>
     SpicePlanetStateMsgPayload applyPlanetMessage(Message& planetInMsg,
                                                   uint64_t currentSimNanos,
                                                   uint64_t previousUpdateNanos) const
@@ -450,8 +457,8 @@ class ScStateExtrapolation
                                            uint64_t timeWrittenNanos,
                                            uint64_t previousUpdateNanos) const
     {
-        SpicePlanetStateMsgPayload planet = this->movePlanetToEpoch(
-            planetState, currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+        SpicePlanetStateMsgPayload planet =
+          this->movePlanetToEpoch(planetState, currentSimNanos, timeWrittenNanos, previousUpdateNanos);
         // a position-only message leaves the optional orientation at zero: treat it as identity on every path
         const double* dcmElements = &planet.J20002Pfix[0][0]; // [-]
         if (std::all_of(dcmElements, dcmElements + 9, [](double e) { return e == 0.0; })) {
@@ -481,29 +488,29 @@ class ScStateExtrapolation
     }
 
   private:
-    bool enabled = false;                    //!< true if the spacecraft state is extrapolated
-    bool warned = false;                     //!< true once the rate mismatch warning was logged
-    bool lagConsistent = false;              //!< true if all spacecraft messages were written at the previous update
-                                             //!< and their period is known
-    bool allStepLag = false;                 //!< true if all spacecraft messages were written at the previous update
-    std::vector<uint64_t> lastWriteNanos{};  //!< [ns] last observed write time of each state message
+    bool enabled = false;                       //!< true if the spacecraft state is extrapolated
+    bool warned = false;                        //!< true once the rate mismatch warning was logged
+    bool lagConsistent = false;                 //!< true if all spacecraft messages were written at the previous update
+                                                //!< and their period is known
+    bool allStepLag = false;                    //!< true if all spacecraft messages were written at the previous update
+    std::vector<uint64_t> lastWriteNanos{};     //!< [ns] last observed write time of each state message
     std::vector<uint64_t> writeIntervalNanos{}; //!< [ns] last observed interval between two write times, 0 if unknown
-    std::vector<bool> rewritten{};           //!< true if the state message was seen with more than one write time
+    std::vector<bool> rewritten{};              //!< true if the state message was seen with more than one write time
     std::vector<uint64_t> timesBuffer{};        //!< [ns] reusable buffer for the write times passed to prepare()
-    std::vector<bool> seen{};                //!< true if the state message was observed in a previous update
+    std::vector<bool> seen{};                   //!< true if the state message was observed in a previous update
 
     //! Move the planet to the epoch selected by prepare(), see applyPlanet().
     SpicePlanetStateMsgPayload movePlanetToEpoch(const SpicePlanetStateMsgPayload& planetState,
-                                           uint64_t currentSimNanos,
-                                           uint64_t timeWrittenNanos,
-                                           uint64_t previousUpdateNanos) const
+                                                 uint64_t currentSimNanos,
+                                                 uint64_t timeWrittenNanos,
+                                                 uint64_t previousUpdateNanos) const
     {
         if (!this->lagConsistent) {
             if (this->allStepLag) {
                 // The spacecraft states stay at the message epoch, which is the previous module update for every
                 // spacecraft, for example while the spacecraft period is not yet known. The planet is moved to that
-                // epoch, so the relative geometry is still evaluated at one epoch. The offset is signed: negative for a planet
-                // written at the current update, zero for one written at the previous update.
+                // epoch, so the relative geometry is still evaluated at one epoch. The offset is signed: negative for a
+                // planet written at the current update, zero for one written at the previous update.
                 return extrapolatePlanetStateToEpoch(planetState, previousUpdateNanos, timeWrittenNanos);
             }
             return planetState;

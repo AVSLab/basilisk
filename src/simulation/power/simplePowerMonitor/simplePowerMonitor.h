@@ -17,24 +17,21 @@
 
  */
 
-
 #ifndef BASILISK_SIMPLEPOWERMONITOR_H
 #define BASILISK_SIMPLEPOWERMONITOR_H
 
 #include "simulation/power/_GeneralModuleFiles/powerStorageBase.h"
 
 /*! @brief simple power monitor class */
-class SimplePowerMonitor: public PowerStorageBase {
+class SimplePowerMonitor : public PowerStorageBase
+{
 
-public:
+  public:
     SimplePowerMonitor();
     ~SimplePowerMonitor();
 
-private:
-    void evaluateBatteryModel(PowerStorageStatusMsgPayload *msg);
-
-
+  private:
+    void evaluateBatteryModel(PowerStorageStatusMsgPayload* msg);
 };
 
-
-#endif //BASILISK_SIMPLEPOWERMONITOR_H
+#endif // BASILISK_SIMPLEPOWERMONITOR_H

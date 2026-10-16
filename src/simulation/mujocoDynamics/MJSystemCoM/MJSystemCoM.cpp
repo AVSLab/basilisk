@@ -17,27 +17,26 @@
 
 */
 
-
 #include "simulation/mujocoDynamics/MJSystemCoM/MJSystemCoM.h"
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <mujoco/mujoco.h>
 
 /*! Initialize C-wrapped output messages */
 void
-MJSystemCoM::SelfInit(){
+MJSystemCoM::SelfInit()
+{
     SCStatesMsg_C_init(&this->comStatesOutMsgC);
 }
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-MJSystemCoM::MJSystemCoM()
-{
-}
+MJSystemCoM::MJSystemCoM() {}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
-*/
-void MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+ */
+void
+MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!scene) {
         bskLogger.bskError("MJSystemCoM: scene pointer not set!");
@@ -58,17 +57,17 @@ void MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-
 /*! This extracts the total spacecraft CoM position and velocity
-*/
-void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
+ */
+void
+MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
 {
     const auto model = scene->getMujocoModel();
     const auto data = scene->getMujocoData();
     double massSC = 0.0;
     Eigen::Vector3d r_CN_N;
     Eigen::Vector3d v_CN_N;
-    SCStatesMsgPayload payload;  //!< local copy of message buffer
+    SCStatesMsgPayload payload; //!< local copy of message buffer
 
     // always zero the output message buffers before assigning values
     payload = this->comStatesOutMsg.zeroMsgPayload;
@@ -78,10 +77,11 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
     // calculate CoM position
     for (int i = 1; i < model->nbody; i++) {
         const double mi = model->body_mass[i];
-        if (mi <= 0.0) continue;
+        if (mi <= 0.0)
+            continue;
 
         // Body COM position in world: xipos[3*i : 3*i+3]
-        const Eigen::Vector3d ri = Eigen::Map<const Eigen::Vector3d>(data->xipos + 3*i);
+        const Eigen::Vector3d ri = Eigen::Map<const Eigen::Vector3d>(data->xipos + 3 * i);
 
         massSC += mi;
         r_CN_N += mi * ri;
@@ -100,7 +100,8 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
 
         for (int i = 1; i < model->nbody; ++i) {
             const double mi = model->body_mass[i];
-            if (mi <= 0.0) continue;
+            if (mi <= 0.0)
+                continue;
 
             // Fill jacobians at the BODY COM
             // (MuJoCo API: mj_jacBodyCom(m, d, jacp, jacr, body_id))
@@ -109,24 +110,23 @@ void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
             mj_jacBodyCom(model, data, jacp.data(), jacr.data(), i);
 
             // vi = jacp * qvel   (jacp is row-major 3×nv)
-            Eigen::Map<const Eigen::Matrix<double,3,Eigen::Dynamic,Eigen::RowMajor>>
-                Jp(jacp.data(), 3, model->nv);
+            Eigen::Map<const Eigen::Matrix<double, 3, Eigen::Dynamic, Eigen::RowMajor>> Jp(jacp.data(), 3, model->nv);
 
-            const Eigen::Vector3d vi = Jp * qv;   // linear COM velocity of body i
+            const Eigen::Vector3d vi = Jp * qv; // linear COM velocity of body i
 
             v_CN_N += mi * vi;
         }
     }
     if (massSC > 0.0) {
-        const Eigen::Vector3d centerOfMass_N = r_CN_N/massSC;
+        const Eigen::Vector3d centerOfMass_N = r_CN_N / massSC;
         for (const auto& [bodyIndex, body] : this->namedBodies) {
-            if (model->body_mass[bodyIndex] <= 0.0) continue;
+            if (model->body_mass[bodyIndex] <= 0.0)
+                continue;
             auto& massRateInMsg = body->derivativeMassPropertiesInMsg;
             if (massRateInMsg.isLinked()) {
-                const double massRate = massRateInMsg().massSC;  // [kg/s]
-                const Eigen::Vector3d ri =
-                    Eigen::Map<const Eigen::Vector3d>(data->xipos + 3*bodyIndex);
-                v_CN_N += massRate*(ri - centerOfMass_N);
+                const double massRate = massRateInMsg().massSC; // [kg/s]
+                const Eigen::Vector3d ri = Eigen::Map<const Eigen::Vector3d>(data->xipos + 3 * bodyIndex);
+                v_CN_N += massRate * (ri - centerOfMass_N);
             }
         }
     }

@@ -24,9 +24,7 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-MappingInstrument::MappingInstrument()
-{
-}
+MappingInstrument::MappingInstrument() {}
 
 /*! Module Destructor */
 MappingInstrument::~MappingInstrument() = default;
@@ -35,10 +33,11 @@ MappingInstrument::~MappingInstrument() = default;
  @param CurrentSimNanos
 
  */
-void MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that the baud rate is set
-    if (this->nodeBaudRate < 0.0){
+    if (this->nodeBaudRate < 0.0) {
         bskLogger.bskError("MappingInstrument.nodeBaudRate is not set to a positive value.");
     }
 
@@ -49,10 +48,11 @@ void MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  @param CurrentSimNanos
 
  */
-void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
+void
+MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 {
     /* Loop through each access message */
-    for (long unsigned int c=0; c< this->accessInMsgs.size(); c++) {
+    for (long unsigned int c = 0; c < this->accessInMsgs.size(); c++) {
         /* Zero the output message buffer */
         this->dataNodeOutMsgBuffer.at(c) = this->dataNodeOutMsgs.at(c)->zeroMsgPayload;
 
@@ -79,16 +79,18 @@ void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-
 /*! Adds a mapping point (access message and name) to the module
  *
-*/
-void MappingInstrument::addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName){
+ */
+void
+MappingInstrument::addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg, std::string dataName)
+{
     DataNodeUsageMsgPayload dataNodeUsageMsg = {};
     if (dataName.size() >= sizeof(dataNodeUsageMsg.dataName)) {
         bskLogger.bskError("MappingInstrument: dataName is %zu characters, but DataNodeUsageMsgPayload.dataName "
-                         "supports at most %zu characters.",
-                         dataName.size(), sizeof(dataNodeUsageMsg.dataName) - 1);
+                           "supports at most %zu characters.",
+                           dataName.size(),
+                           sizeof(dataNodeUsageMsg.dataName) - 1);
     }
 
     /* Add the name of the mapping point */

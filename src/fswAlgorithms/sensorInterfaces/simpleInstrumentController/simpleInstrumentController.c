@@ -36,11 +36,11 @@
 void
 SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     configData->imaged = 0;
     configData->controllerStatus = 1;
     configData->constraintStartTime = 0.0; // [ns]
-    configData->elapsedTime = 0.0; // [ns]
+    configData->elapsedTime = 0.0;         // [ns]
     configData->constraintsActive = 0;
 
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
@@ -56,8 +56,8 @@ SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData
 void
 Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->locationAccessInMsg)) {
         _bskError(configData->bskLogger, "Error: simpleInstrumentController.locationAccessInMsg wasn't connected.");
@@ -70,7 +70,7 @@ Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, u
     configData->imaged = 0;
     configData->constraintsActive = 0;
     configData->constraintStartTime = 0.0; // [ns]
-    configData->elapsedTime = 0.0; // [ns]
+    configData->elapsedTime = 0.0;         // [ns]
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -142,7 +142,7 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                     if (!configData->constraintsActive) {
                         configData->constraintsActive = 1;
                         configData->constraintStartTime = (double)callTime; // [ns] current sim time
-                        configData->elapsedTime = 0.0; // [ns]
+                        configData->elapsedTime = 0.0;                      // [ns]
                     }
 
                     if (configData->acquisitionTime < 0.0) {
@@ -161,7 +161,7 @@ Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, 
                                 "simpleInstrumentController: allowedTime is negative and has been set to zero.");
                     }
 
-                    configData->elapsedTime = (double) callTime - configData->constraintStartTime;
+                    configData->elapsedTime = (double)callTime - configData->constraintStartTime;
 
                     // Determine the effective time to image: cannot exceed allowedTime
                     double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)

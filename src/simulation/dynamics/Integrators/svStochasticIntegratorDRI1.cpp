@@ -24,13 +24,14 @@
 #include <typeinfo>
 
 svStochasticIntegratorDRI1::svStochasticIntegratorDRI1(DynamicObject* dyn)
-    : StochasticRKIntegratorBase(dyn), coefficients(svStochasticIntegratorDRI1::getCoefficients())
+  : StochasticRKIntegratorBase(dyn)
+  , coefficients(svStochasticIntegratorDRI1::getCoefficients())
 {
 }
 
-svStochasticIntegratorDRI1::svStochasticIntegratorDRI1(DynamicObject* dyn,
-                                                       const DRI1Coefficients& coefficients)
-    : StochasticRKIntegratorBase(dyn), coefficients(coefficients)
+svStochasticIntegratorDRI1::svStochasticIntegratorDRI1(DynamicObject* dyn, const DRI1Coefficients& coefficients)
+  : StochasticRKIntegratorBase(dyn)
+  , coefficients(coefficients)
 {
 }
 
@@ -47,7 +48,8 @@ svStochasticIntegratorDRI1::setNonMixing(bool enabled)
 }
 
 // Coefficients for the DRI1 tableau.
-DRI1Coefficients svStochasticIntegratorDRI1::getCoefficients()
+DRI1Coefficients
+svStochasticIntegratorDRI1::getCoefficients()
 {
     DRI1Coefficients c;
     c.a021 = 1.0 / 2.0;
@@ -90,86 +92,178 @@ DRI1Coefficients svStochasticIntegratorDRI1::getCoefficients()
 // b231=-1, b222=b223=b232=b233=0 for all of these (only the diagonal cross term is used).
 
 svStochasticIntegratorRI1::svStochasticIntegratorRI1(DynamicObject* dyn)
-    : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI1::getCoefficients())
-{}
+  : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI1::getCoefficients())
+{
+}
 
-DRI1Coefficients svStochasticIntegratorRI1::getCoefficients()
+DRI1Coefficients
+svStochasticIntegratorRI1::getCoefficients()
 {
     DRI1Coefficients c;
-    c.a021 = 2.0 / 3.0; c.a031 = -1.0 / 3.0; c.a032 = 1.0;
-    c.a121 = 1.0; c.a131 = 1.0;
-    c.b021 = 1.0; c.b031 = 0.0;
-    c.b121 = 1.0; c.b131 = -1.0;
-    c.b221 = 1.0; c.b222 = 0.0; c.b223 = 0.0; c.b231 = -1.0; c.b232 = 0.0; c.b233 = 0.0;
-    c.alpha1 = 1.0 / 4.0; c.alpha2 = 1.0 / 2.0; c.alpha3 = 1.0 / 4.0;
-    c.c02 = 2.0 / 3.0; c.c03 = 2.0 / 3.0; c.c12 = 1.0; c.c13 = 1.0;
-    c.beta11 = 1.0 / 2.0; c.beta12 = 1.0 / 4.0; c.beta13 = 1.0 / 4.0;
-    c.beta22 = 1.0 / 2.0; c.beta23 = -1.0 / 2.0;
-    c.beta31 = -1.0 / 2.0; c.beta32 = 1.0 / 4.0; c.beta33 = 1.0 / 4.0;
-    c.beta42 = 1.0 / 2.0; c.beta43 = -1.0 / 2.0;
+    c.a021 = 2.0 / 3.0;
+    c.a031 = -1.0 / 3.0;
+    c.a032 = 1.0;
+    c.a121 = 1.0;
+    c.a131 = 1.0;
+    c.b021 = 1.0;
+    c.b031 = 0.0;
+    c.b121 = 1.0;
+    c.b131 = -1.0;
+    c.b221 = 1.0;
+    c.b222 = 0.0;
+    c.b223 = 0.0;
+    c.b231 = -1.0;
+    c.b232 = 0.0;
+    c.b233 = 0.0;
+    c.alpha1 = 1.0 / 4.0;
+    c.alpha2 = 1.0 / 2.0;
+    c.alpha3 = 1.0 / 4.0;
+    c.c02 = 2.0 / 3.0;
+    c.c03 = 2.0 / 3.0;
+    c.c12 = 1.0;
+    c.c13 = 1.0;
+    c.beta11 = 1.0 / 2.0;
+    c.beta12 = 1.0 / 4.0;
+    c.beta13 = 1.0 / 4.0;
+    c.beta22 = 1.0 / 2.0;
+    c.beta23 = -1.0 / 2.0;
+    c.beta31 = -1.0 / 2.0;
+    c.beta32 = 1.0 / 4.0;
+    c.beta33 = 1.0 / 4.0;
+    c.beta42 = 1.0 / 2.0;
+    c.beta43 = -1.0 / 2.0;
     return c;
 }
 
 svStochasticIntegratorRI3::svStochasticIntegratorRI3(DynamicObject* dyn)
-    : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI3::getCoefficients())
-{}
+  : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI3::getCoefficients())
+{
+}
 
-DRI1Coefficients svStochasticIntegratorRI3::getCoefficients()
+DRI1Coefficients
+svStochasticIntegratorRI3::getCoefficients()
 {
     DRI1Coefficients c;
-    c.a021 = 1.0; c.a031 = 1.0 / 4.0; c.a032 = 1.0 / 4.0;
-    c.a121 = 1.0; c.a131 = 1.0;
-    c.b021 = (3.0 - 2.0 * std::sqrt(6.0)) / 5.0; c.b031 = (6.0 + std::sqrt(6.0)) / 10.0;
-    c.b121 = 1.0; c.b131 = -1.0;
-    c.b221 = 1.0; c.b222 = 0.0; c.b223 = 0.0; c.b231 = -1.0; c.b232 = 0.0; c.b233 = 0.0;
-    c.alpha1 = 1.0 / 6.0; c.alpha2 = 1.0 / 6.0; c.alpha3 = 2.0 / 3.0;
-    c.c02 = 1.0; c.c03 = 1.0 / 2.0; c.c12 = 1.0; c.c13 = 1.0;
-    c.beta11 = 1.0 / 2.0; c.beta12 = 1.0 / 4.0; c.beta13 = 1.0 / 4.0;
-    c.beta22 = 1.0 / 2.0; c.beta23 = -1.0 / 2.0;
-    c.beta31 = -1.0 / 2.0; c.beta32 = 1.0 / 4.0; c.beta33 = 1.0 / 4.0;
-    c.beta42 = 1.0 / 2.0; c.beta43 = -1.0 / 2.0;
+    c.a021 = 1.0;
+    c.a031 = 1.0 / 4.0;
+    c.a032 = 1.0 / 4.0;
+    c.a121 = 1.0;
+    c.a131 = 1.0;
+    c.b021 = (3.0 - 2.0 * std::sqrt(6.0)) / 5.0;
+    c.b031 = (6.0 + std::sqrt(6.0)) / 10.0;
+    c.b121 = 1.0;
+    c.b131 = -1.0;
+    c.b221 = 1.0;
+    c.b222 = 0.0;
+    c.b223 = 0.0;
+    c.b231 = -1.0;
+    c.b232 = 0.0;
+    c.b233 = 0.0;
+    c.alpha1 = 1.0 / 6.0;
+    c.alpha2 = 1.0 / 6.0;
+    c.alpha3 = 2.0 / 3.0;
+    c.c02 = 1.0;
+    c.c03 = 1.0 / 2.0;
+    c.c12 = 1.0;
+    c.c13 = 1.0;
+    c.beta11 = 1.0 / 2.0;
+    c.beta12 = 1.0 / 4.0;
+    c.beta13 = 1.0 / 4.0;
+    c.beta22 = 1.0 / 2.0;
+    c.beta23 = -1.0 / 2.0;
+    c.beta31 = -1.0 / 2.0;
+    c.beta32 = 1.0 / 4.0;
+    c.beta33 = 1.0 / 4.0;
+    c.beta42 = 1.0 / 2.0;
+    c.beta43 = -1.0 / 2.0;
     return c;
 }
 
 svStochasticIntegratorRI5::svStochasticIntegratorRI5(DynamicObject* dyn)
-    : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI5::getCoefficients())
-{}
+  : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI5::getCoefficients())
+{
+}
 
-DRI1Coefficients svStochasticIntegratorRI5::getCoefficients()
+DRI1Coefficients
+svStochasticIntegratorRI5::getCoefficients()
 {
     DRI1Coefficients c;
-    c.a021 = 1.0; c.a031 = 25.0 / 144.0; c.a032 = 35.0 / 144.0;
-    c.a121 = 1.0 / 4.0; c.a131 = 1.0 / 4.0;
-    c.b021 = 1.0 / 3.0; c.b031 = -5.0 / 6.0;
-    c.b121 = 1.0 / 2.0; c.b131 = -1.0 / 2.0;
-    c.b221 = 1.0; c.b222 = 0.0; c.b223 = 0.0; c.b231 = -1.0; c.b232 = 0.0; c.b233 = 0.0;
-    c.alpha1 = 1.0 / 10.0; c.alpha2 = 3.0 / 14.0; c.alpha3 = 24.0 / 35.0;
-    c.c02 = 1.0; c.c03 = 5.0 / 12.0; c.c12 = 1.0 / 4.0; c.c13 = 1.0 / 4.0;
-    c.beta11 = 1.0; c.beta12 = -1.0; c.beta13 = -1.0;
-    c.beta22 = 1.0; c.beta23 = -1.0;
-    c.beta31 = 1.0 / 2.0; c.beta32 = -1.0 / 4.0; c.beta33 = -1.0 / 4.0;
-    c.beta42 = 1.0 / 2.0; c.beta43 = -1.0 / 2.0;
+    c.a021 = 1.0;
+    c.a031 = 25.0 / 144.0;
+    c.a032 = 35.0 / 144.0;
+    c.a121 = 1.0 / 4.0;
+    c.a131 = 1.0 / 4.0;
+    c.b021 = 1.0 / 3.0;
+    c.b031 = -5.0 / 6.0;
+    c.b121 = 1.0 / 2.0;
+    c.b131 = -1.0 / 2.0;
+    c.b221 = 1.0;
+    c.b222 = 0.0;
+    c.b223 = 0.0;
+    c.b231 = -1.0;
+    c.b232 = 0.0;
+    c.b233 = 0.0;
+    c.alpha1 = 1.0 / 10.0;
+    c.alpha2 = 3.0 / 14.0;
+    c.alpha3 = 24.0 / 35.0;
+    c.c02 = 1.0;
+    c.c03 = 5.0 / 12.0;
+    c.c12 = 1.0 / 4.0;
+    c.c13 = 1.0 / 4.0;
+    c.beta11 = 1.0;
+    c.beta12 = -1.0;
+    c.beta13 = -1.0;
+    c.beta22 = 1.0;
+    c.beta23 = -1.0;
+    c.beta31 = 1.0 / 2.0;
+    c.beta32 = -1.0 / 4.0;
+    c.beta33 = -1.0 / 4.0;
+    c.beta42 = 1.0 / 2.0;
+    c.beta43 = -1.0 / 2.0;
     return c;
 }
 
 svStochasticIntegratorRI6::svStochasticIntegratorRI6(DynamicObject* dyn)
-    : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI6::getCoefficients())
-{}
+  : svStochasticIntegratorDRI1(dyn, svStochasticIntegratorRI6::getCoefficients())
+{
+}
 
-DRI1Coefficients svStochasticIntegratorRI6::getCoefficients()
+DRI1Coefficients
+svStochasticIntegratorRI6::getCoefficients()
 {
     DRI1Coefficients c;
-    c.a021 = 1.0; c.a031 = 0.0; c.a032 = 0.0;
-    c.a121 = 1.0; c.a131 = 1.0;
-    c.b021 = 1.0; c.b031 = 0.0;
-    c.b121 = 1.0; c.b131 = -1.0;
-    c.b221 = 1.0; c.b222 = 0.0; c.b223 = 0.0; c.b231 = -1.0; c.b232 = 0.0; c.b233 = 0.0;
-    c.alpha1 = 1.0 / 2.0; c.alpha2 = 1.0 / 2.0; c.alpha3 = 0.0;
-    c.c02 = 1.0; c.c03 = 0.0; c.c12 = 1.0; c.c13 = 1.0;
-    c.beta11 = 1.0 / 2.0; c.beta12 = 1.0 / 4.0; c.beta13 = 1.0 / 4.0;
-    c.beta22 = 1.0 / 2.0; c.beta23 = -1.0 / 2.0;
-    c.beta31 = -1.0 / 2.0; c.beta32 = 1.0 / 4.0; c.beta33 = 1.0 / 4.0;
-    c.beta42 = 1.0 / 2.0; c.beta43 = -1.0 / 2.0;
+    c.a021 = 1.0;
+    c.a031 = 0.0;
+    c.a032 = 0.0;
+    c.a121 = 1.0;
+    c.a131 = 1.0;
+    c.b021 = 1.0;
+    c.b031 = 0.0;
+    c.b121 = 1.0;
+    c.b131 = -1.0;
+    c.b221 = 1.0;
+    c.b222 = 0.0;
+    c.b223 = 0.0;
+    c.b231 = -1.0;
+    c.b232 = 0.0;
+    c.b233 = 0.0;
+    c.alpha1 = 1.0 / 2.0;
+    c.alpha2 = 1.0 / 2.0;
+    c.alpha3 = 0.0;
+    c.c02 = 1.0;
+    c.c03 = 0.0;
+    c.c12 = 1.0;
+    c.c13 = 1.0;
+    c.beta11 = 1.0 / 2.0;
+    c.beta12 = 1.0 / 4.0;
+    c.beta13 = 1.0 / 4.0;
+    c.beta22 = 1.0 / 2.0;
+    c.beta23 = -1.0 / 2.0;
+    c.beta31 = -1.0 / 2.0;
+    c.beta32 = 1.0 / 4.0;
+    c.beta33 = 1.0 / 4.0;
+    c.beta42 = 1.0 / 2.0;
+    c.beta43 = -1.0 / 2.0;
     return c;
 }
 

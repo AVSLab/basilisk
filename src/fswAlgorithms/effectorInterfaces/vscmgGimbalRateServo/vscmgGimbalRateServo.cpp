@@ -23,7 +23,8 @@
 
 /*! Initialize C-wrapped output messages */
 void
-VscmgGimbalRateServo::SelfInit(){
+VscmgGimbalRateServo::SelfInit()
+{
     VSCMGArrayTorqueMsg_C_init(&this->cmdsOutMsgC);
 }
 
@@ -80,15 +81,13 @@ VscmgGimbalRateServo::UpdateState(uint64_t CurrentSimNanos)
 
     if (!this->speedsInMsg.isWritten()) {
         for (int i = 0; i < vscmgConfigParams.numVSCMG; i++) {
-        VSCMGSpeeds.wheelSpeeds[i] = this->vscmgConfigParams.Omega0List[i];
-        VSCMGSpeeds.gimbalAngles[i] = this->vscmgConfigParams.gamma0List[i];
-        VSCMGSpeeds.gimbalRates[i] = this->vscmgConfigParams.gammaDot0List[i];
+            VSCMGSpeeds.wheelSpeeds[i] = this->vscmgConfigParams.Omega0List[i];
+            VSCMGSpeeds.gimbalAngles[i] = this->vscmgConfigParams.gamma0List[i];
+            VSCMGSpeeds.gimbalRates[i] = this->vscmgConfigParams.gammaDot0List[i];
         }
     } else {
         VSCMGSpeeds = this->speedsInMsg();
     }
-
-
 
     omega_BN_B = Eigen::Vector3d(hubAttState.omega_BN_B[0], hubAttState.omega_BN_B[1], hubAttState.omega_BN_B[2]);
     //! - Compute torques for each VSCMG

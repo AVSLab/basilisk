@@ -56,8 +56,9 @@
  *
  * @warning Stochastic integration is in beta.
  */
-class StochasticRKIntegratorBase : public StateVecStochasticIntegrator {
-public:
+class StochasticRKIntegratorBase : public StateVecStochasticIntegrator
+{
+  public:
     using StateVecStochasticIntegrator::StateVecStochasticIntegrator;
 
     /** Sets the seed for the (default) Random Number Generator used by this integrator.
@@ -73,71 +74,71 @@ public:
      * integrator replays a known sequence of Wiener increments. */
     void setNoiseGenerator(std::shared_ptr<GaussianNoiseGenerator> generator);
 
-protected:
-  /** @brief Prepare shared noise output and method scratch before binding commits. */
-  void prepareIntegrationBinding() override;
+  protected:
+    /** @brief Prepare shared noise output and method scratch before binding commits. */
+    void prepareIntegrationBinding() override;
 
-  /** @brief Verify the borrowed topology before reusing numerical storage. */
-  void validateIntegrationBinding() const override { this->validateStochasticTopology(); }
+    /** @brief Verify the borrowed topology before reusing numerical storage. */
+    void validateIntegrationBinding() const override { this->validateStochasticTopology(); }
 
-  /** Allocates method-specific scratch in the topology-binding transaction. */
-  virtual void bindStochasticMethodStorage() {}
+    /** Allocates method-specific scratch in the topology-binding transaction. */
+    virtual void bindStochasticMethodStorage() {}
 
-  /** Binds topology, generator output, and method scratch as one transaction. */
-  template<typename MethodBinder>
-  void bindFlatStochasticStorage(MethodBinder&& bindMethodStorage)
-  {
-      try {
-          this->bindFlatStochasticCore();
-          std::forward<MethodBinder>(bindMethodStorage)();
-      } catch (...) {
-          this->resetFlatStochasticStorage();
-          throw;
-      }
-  }
+    /** Binds topology, generator output, and method scratch as one transaction. */
+    template<typename MethodBinder>
+    void bindFlatStochasticStorage(MethodBinder&& bindMethodStorage)
+    {
+        try {
+            this->bindFlatStochasticCore();
+            std::forward<MethodBinder>(bindMethodStorage)();
+        } catch (...) {
+            this->resetFlatStochasticStorage();
+            throw;
+        }
+    }
 
-  /** Binds methods that need no additional scratch beyond the flat base. */
-  void bindFlatStochasticStorage();
+    /** Binds methods that need no additional scratch beyond the flat base. */
+    void bindFlatStochasticStorage();
 
-  /** Draws one sample into preallocated ``dW`` and ``dZ`` buffers. */
-  void generateNoise(double timeStep);
+    /** Draws one sample into preallocated ``dW`` and ``dZ`` buffers. */
+    void generateNoise(double timeStep);
 
-  /** Draws Wiener increments and only the requested auxiliary prefix. */
-  void generateNoise(double timeStep, size_t auxiliaryCount);
+    /** Draws Wiener increments and only the requested auxiliary prefix. */
+    void generateNoise(double timeStep, size_t auxiliaryCount);
 
-  /** Draws only Wiener increments, reusing ``dZ`` as compatibility scratch. */
-  void generateWienerNoise(double timeStep);
+    /** Draws only Wiener increments, reusing ``dZ`` as compatibility scratch. */
+    void generateWienerNoise(double timeStep);
 
-  /** Preallocated Wiener increments for flat stochastic methods. */
-  const Eigen::VectorXd& flatDW() const noexcept { return this->dW; }
+    /** Preallocated Wiener increments for flat stochastic methods. */
+    const Eigen::VectorXd& flatDW() const noexcept { return this->dW; }
 
-  /** Preallocated auxiliary Gaussian increments for flat stochastic methods. */
-  const Eigen::VectorXd& flatDZ() const noexcept { return this->dZ; }
+    /** Preallocated auxiliary Gaussian increments for flat stochastic methods. */
+    const Eigen::VectorXd& flatDZ() const noexcept { return this->dZ; }
 
-private:
-  /** @brief Hold the configured generator alive across a potentially replacing callback. */
-  std::shared_ptr<GaussianNoiseGenerator> noiseGenerator() const
-  {
-      if (this->rvGenerator == nullptr) {
-          throw std::invalid_argument("Stochastic integrator noise generator cannot be null.");
-      }
-      return this->rvGenerator;
-  }
+  private:
+    /** @brief Hold the configured generator alive across a potentially replacing callback. */
+    std::shared_ptr<GaussianNoiseGenerator> noiseGenerator() const
+    {
+        if (this->rvGenerator == nullptr) {
+            throw std::invalid_argument("Stochastic integrator noise generator cannot be null.");
+        }
+        return this->rvGenerator;
+    }
 
-  /** @brief Bind topology and size Wiener/auxiliary buffers once. */
-  void bindFlatStochasticCore();
-  /** @brief Discard incomplete topology and noise output after binding failure. */
-  void resetFlatStochasticStorage() noexcept;
+    /** @brief Bind topology and size Wiener/auxiliary buffers once. */
+    void bindFlatStochasticCore();
+    /** @brief Discard incomplete topology and noise output after binding failure. */
+    void resetFlatStochasticStorage() noexcept;
 
-  bool flatNoiseOutputBound = false; ///< True after topology-sized output allocation commits.
-  Eigen::VectorXd dW; ///< Wiener increments indexed by independent global source.
-  Eigen::VectorXd dZ; ///< Auxiliary Gaussian output; only the requested prefix is meaningful.
-  /** Random Number Generator for the integrator (supplies dW and dZ per noise source). */
-  std::shared_ptr<GaussianNoiseGenerator> rvGenerator = std::make_shared<RandomGaussianNoiseGenerator>();
-  /** @brief Cached exact built-in type, or null for custom generators.
-   * Exact built-in generators cannot replace themselves from a callback.
-   */
-  RandomGaussianNoiseGenerator* nativeGenerator = static_cast<RandomGaussianNoiseGenerator*>(this->rvGenerator.get());
+    bool flatNoiseOutputBound = false; ///< True after topology-sized output allocation commits.
+    Eigen::VectorXd dW;                ///< Wiener increments indexed by independent global source.
+    Eigen::VectorXd dZ;                ///< Auxiliary Gaussian output; only the requested prefix is meaningful.
+    /** Random Number Generator for the integrator (supplies dW and dZ per noise source). */
+    std::shared_ptr<GaussianNoiseGenerator> rvGenerator = std::make_shared<RandomGaussianNoiseGenerator>();
+    /** @brief Cached exact built-in type, or null for custom generators.
+     * Exact built-in generators cannot replace themselves from a callback.
+     */
+    RandomGaussianNoiseGenerator* nativeGenerator = static_cast<RandomGaussianNoiseGenerator*>(this->rvGenerator.get());
 };
 
 #endif /* stochasticRKIntegratorBase_h */

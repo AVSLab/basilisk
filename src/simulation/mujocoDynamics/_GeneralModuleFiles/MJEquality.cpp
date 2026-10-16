@@ -22,7 +22,8 @@
 
 #include <algorithm>
 
-void MJEquality::setActive(bool active)
+void
+MJEquality::setActive(bool active)
 {
     auto data = this->spec.getMujocoData();
     data->eq_active[this->getId()] = active;
@@ -60,7 +61,8 @@ MJEquality::setSolimp(double d0, double dwidth, double width, double midpoint, d
     model->eq_solimp[this->getId() * mjNIMP + 4] = power;
 }
 
-void MJSingleJointEquality::setJointOffsetConstraint(double val)
+void
+MJSingleJointEquality::setJointOffsetConstraint(double val)
 {
     for (size_t i = 0; i < mjNEQDATA; i++) {
         this->mjsObject->data[i] = i == 0 ? val : 0;

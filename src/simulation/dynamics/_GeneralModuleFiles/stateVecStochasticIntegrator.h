@@ -17,7 +17,6 @@
 
  */
 
-
 /** @file stateVecStochasticIntegrator.h
  * @brief Shared noise topology and stochastic candidate construction.
  */
@@ -44,9 +43,9 @@ using StochasticStateDescriptor = FlatStateDescriptor;
 /** One state-local diffusion tangent assigned to a global noise slot. */
 struct StochasticNoiseBinding
 {
-    size_t boundStateIndex = 0; ///< State descriptor affected by this endpoint.
-    size_t packedOffset = 0;    ///< First tangent scalar in packed global-slot storage.
-    size_t scalarCount = 0;     ///< Number of tangent scalars for this endpoint.
+    size_t boundStateIndex = 0;       ///< State descriptor affected by this endpoint.
+    size_t packedOffset = 0;          ///< First tangent scalar in packed global-slot storage.
+    size_t scalarCount = 0;           ///< Number of tangent scalars for this endpoint.
     const double* liveData = nullptr; ///< Borrowed tangent pointer in the finalized registry.
 };
 
@@ -76,7 +75,7 @@ struct StochasticNoiseSlot
 class StateVecStochasticIntegrator : public StateVecIntegrator
 {
 
-public:
+  public:
     using StateVecIntegrator::StateVecIntegrator;
 
   protected:
@@ -306,19 +305,19 @@ public:
     bool diffusionInputsMatchTopology(const Eigen::VectorXd& diffusions,
                                       const Eigen::VectorXd& globalPseudoSteps) const;
 
-    FlatStateBinding flatBinding; ///< Owns descriptors and borrows finalized buffers/policies.
+    FlatStateBinding flatBinding;                      ///< Owns descriptors and borrows finalized buffers/policies.
     std::vector<StochasticNoiseBinding> noiseBindings; ///< Endpoints grouped by global source.
-    std::vector<StochasticNoiseSlot> noiseSlots; ///< One packed range per independent global process.
-    std::vector<size_t> localNoiseToGlobalSlot; ///< Local endpoint -> shared/global process index.
-    std::vector<size_t> localNoiseToPackedOffset; ///< Local endpoint -> packed tangent offset.
-    std::vector<const double*> localNoiseLiveData; ///< Local endpoint -> live tangent for direct updates.
-    Eigen::VectorXd rollbackState; ///< State at attempted-step entry, preserved until the step completes.
-    Eigen::VectorXd workingState; ///< Accepted intermediate candidate when a method advances its own base.
-    Eigen::VectorXd candidateState; ///< Reusable destination for complete, sparse, or final assembly.
+    std::vector<StochasticNoiseSlot> noiseSlots;       ///< One packed range per independent global process.
+    std::vector<size_t> localNoiseToGlobalSlot;        ///< Local endpoint -> shared/global process index.
+    std::vector<size_t> localNoiseToPackedOffset;      ///< Local endpoint -> packed tangent offset.
+    std::vector<const double*> localNoiseLiveData;     ///< Local endpoint -> live tangent for direct updates.
+    Eigen::VectorXd rollbackState;       ///< State at attempted-step entry, preserved until the step completes.
+    Eigen::VectorXd workingState;        ///< Accepted intermediate candidate when a method advances its own base.
+    Eigen::VectorXd candidateState;      ///< Reusable destination for complete, sparse, or final assembly.
     Eigen::VectorXd sparseBaselineState; ///< Drift-only baseline reused by per-source trials.
-    Eigen::VectorXd packedDerivatives; ///< Captured drift in flat registration order.
-    Eigen::VectorXd packedDiffusions; ///< Captured tangents in global-slot order.
-    bool workingStateIsRollback = true; ///< Selects rollbackState until an intermediate candidate is accepted.
+    Eigen::VectorXd packedDerivatives;   ///< Captured drift in flat registration order.
+    Eigen::VectorXd packedDiffusions;    ///< Captured tangents in global-slot order.
+    bool workingStateIsRollback = true;  ///< Selects rollbackState until an intermediate candidate is accepted.
     size_t activeSparseSlot = static_cast<size_t>(-1); ///< Previous perturbed scratch slot; size_t(-1) means none.
     CandidateAssemblyPhase candidatePhase = CandidateAssemblyPhase::Idle; ///< Validity of candidateState.
 };

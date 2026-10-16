@@ -17,9 +17,9 @@
 
  */
 
-#include "architecture/utilities/macroDefinitions.h"
 #include "fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! This method initializes the configData for the veh config algorithm.
     It initializes the output message in the messaging system.
@@ -27,14 +27,15 @@
  @param configData The configuration data associated with the vehcle config interface
  @param moduleID The ID associated with the configData
  */
-void SelfInit_vehicleConfigData(VehConfigInputData *configData, int64_t moduleID)
+void
+SelfInit_vehicleConfigData(VehConfigInputData* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     VehicleConfigMsg_C_init(&configData->vecConfigOutMsg);
 }
 
-
-void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_vehicleConfigData(VehConfigInputData* configData, uint64_t callTime, int64_t moduleID)
 {
     VehicleConfigMsgPayload localConfigData;
     /*! Begin function steps*/
@@ -62,11 +63,12 @@ void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_vehicleConfigData(VehConfigInputData* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) configData;
-    (void) callTime;
-    (void) moduleID;
+    (void)configData;
+    (void)callTime;
+    (void)moduleID;
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;
 }

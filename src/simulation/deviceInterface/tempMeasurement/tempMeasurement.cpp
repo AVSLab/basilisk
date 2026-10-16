@@ -17,10 +17,8 @@
 
 */
 
-
 #include "tempMeasurement.h"
 #include <iostream>
-
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model.
@@ -42,7 +40,8 @@ TempMeasurement::~TempMeasurement() = default;
 /*! This method is used to reset the module and checks that required input messages are connected.
 
 */
-void TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->tempInMsg.isLinked()) {
         bskLogger.bskError("TempMeasurement.tempInMsg was not linked.");
@@ -56,46 +55,47 @@ void TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->spikeProbabilityGenerator.seed(static_cast<std::minstd_rand::result_type>(spikeSeed));
     this->noiseModel.setRNGSeed(this->RNGSeed);
 
-    Eigen::VectorXd nMatrix(1,1);
-    nMatrix(0,0) = this->senNoiseStd;
+    Eigen::VectorXd nMatrix(1, 1);
+    nMatrix(0, 0) = this->senNoiseStd;
     this->noiseModel.setNoiseMatrix(nMatrix);
 
     this->noiseModel.setPropMatrix(this->propagationMatrix);
 
-    Eigen::VectorXd bounds(1,1);
-    bounds(0,0) = this->walkBounds;
+    Eigen::VectorXd bounds(1, 1);
+    bounds(0, 0) = this->walkBounds;
     this->noiseModel.setUpperBounds(bounds);
 }
 
 /*! This method adds noise, bias, and fault behaviors to the read-in temperature message.
 
 */
-void TempMeasurement::applySensorErrors()
+void
+TempMeasurement::applySensorErrors()
 {
     // apply noise and bias
     double sensorError;
-    if(this->senNoiseStd <= 0.0){
+    if (this->senNoiseStd <= 0.0) {
         sensorError = this->senBias;
     } else {
         // get current error from gaussMarkov random number generator
         this->noiseModel.computeNextState();
         Eigen::VectorXd currentErrorEigen = this->noiseModel.getCurrentState();
-        double sensorNoise = currentErrorEigen(0,0);
+        double sensorNoise = currentErrorEigen(0, 0);
         sensorError = this->senBias + sensorNoise;
     }
     this->sensedTemperature = this->trueTemperature + sensorError;
 
     // apply fault conditions
-    if(this->faultState == TEMP_FAULT_STUCK_VALUE){ // stuck at specified value
+    if (this->faultState == TEMP_FAULT_STUCK_VALUE) { // stuck at specified value
         this->sensedTemperature = this->stuckValue;
-    } else if (this->faultState == TEMP_FAULT_STUCK_CURRENT){ // stuck at last value before flag turned on
+    } else if (this->faultState == TEMP_FAULT_STUCK_CURRENT) { // stuck at last value before flag turned on
         this->sensedTemperature = this->pastValue;
-    } else if (this->faultState == TEMP_FAULT_SPIKING){ // spiking periodically with specified probability
+    } else if (this->faultState == TEMP_FAULT_SPIKING) { // spiking periodically with specified probability
         // have to make a new distribution every time because SWIG can't parse putting this in the H file....?
-        std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0,1.0);
+        std::uniform_real_distribution<double> spikeProbabilityDistribution(0.0, 1.0);
         double n = spikeProbabilityDistribution(this->spikeProbabilityGenerator); // draw from uniform distribution
         if (n <= this->spikeProbability) { // if drawn number within probability of spiking
-            this->sensedTemperature = this->sensedTemperature*this->spikeAmount;
+            this->sensedTemperature = this->sensedTemperature * this->spikeAmount;
         }
     }
 
@@ -105,10 +105,11 @@ void TempMeasurement::applySensorErrors()
 /*! This is the main method that gets called every time the module is updated.
 
 */
-void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
+void
+TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
 {
     TemperatureMsgPayload tempInMsgBuffer;  //!< local copy of message buffer
-    TemperatureMsgPayload tempOutMsgBuffer;  //!< local copy of message buffer
+    TemperatureMsgPayload tempOutMsgBuffer; //!< local copy of message buffer
 
     // always zero the output message buffers before assigning values
     tempOutMsgBuffer = this->tempOutMsg.zeroMsgPayload;

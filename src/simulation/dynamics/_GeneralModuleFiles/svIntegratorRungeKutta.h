@@ -49,7 +49,9 @@
  *     -----
  *       b
  */
-template <size_t numberStages> struct RKCoefficients {
+template<size_t numberStages>
+struct RKCoefficients
+{
 
     /** Array with size = numberStages */
     using StageSizedArray = std::array<double, numberStages>;
@@ -80,7 +82,9 @@ template <size_t numberStages> struct RKCoefficients {
  * rollback. Derived adaptive methods reuse the stage machinery but manage accepted
  * internal steps separately.
  */
-template <size_t numberStages> class svIntegratorRungeKutta : public StateVecIntegrator {
+template<size_t numberStages>
+class svIntegratorRungeKutta : public StateVecIntegrator
+{
   public:
     static_assert(numberStages > 0, "One cannot declare Runge Kutta integrators of stage 0");
 
@@ -129,11 +133,11 @@ template <size_t numberStages> class svIntegratorRungeKutta : public StateVecInt
     const RKCoefficients<numberStages> coefficients;
 
   protected:
-    FlatStateBinding flatBinding; ///< Owns descriptors and borrows finalized registry storage.
-    Eigen::VectorXd baseState; ///< Accepted base for stage construction and fixed-step rollback.
-    Eigen::VectorXd candidateState; ///< Candidate scratch when live-buffer construction is unavailable.
+    FlatStateBinding flatBinding;       ///< Owns descriptors and borrows finalized registry storage.
+    Eigen::VectorXd baseState;          ///< Accepted base for stage construction and fixed-step rollback.
+    Eigen::VectorXd candidateState;     ///< Candidate scratch when live-buffer construction is unavailable.
     Eigen::VectorXd combinedDerivative; ///< Weighted drift used by policy-aware candidate construction.
-    Eigen::MatrixXd kStorage; ///< Derivative scalars by RK stage, with each stage contiguous.
+    Eigen::MatrixXd kStorage;           ///< Derivative scalars by RK stage, with each stage contiguous.
 };
 
 template<size_t numberStages>
@@ -329,10 +333,7 @@ svIntegratorRungeKutta<numberStages>::buildFlatCandidate(double timeStep,
         output = this->baseState + this->combinedDerivative * timeStep;
         return;
     }
-    this->flatBinding.writeDriftCandidate(this->baseState,
-                                          this->combinedDerivative,
-                                          timeStep,
-                                          output);
+    this->flatBinding.writeDriftCandidate(this->baseState, this->combinedDerivative, timeStep, output);
 }
 
 #endif /* svIntegratorRungeKutta_h */

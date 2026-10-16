@@ -27,7 +27,8 @@
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
 
-class DerivedSysModel : public SysModel {};
+class DerivedSysModel : public SysModel
+{};
 
 namespace {
 
@@ -134,12 +135,12 @@ TEST(RecorderCopyContract, RecorderCopiesStateWithUniqueModuleId)
 
     Message<CModuleTemplateMsgPayload> msg;
     CModuleTemplateMsgPayload payload = {};
-    payload.dataVector[0] = 1.0;  // [units]
+    payload.dataVector[0] = 1.0; // [units]
 
-    uint64_t firstWriteTime = 0;  // [ns]
+    uint64_t firstWriteTime = 0; // [ns]
     msg.write(&payload, 0, firstWriteTime);
 
-    uint64_t recordInterval = 10;  // [ns]
+    uint64_t recordInterval = 10; // [ns]
     Recorder<CModuleTemplateMsgPayload> original(&msg, recordInterval);
     original.ModelTag = "sourceRecorder";
     original.RNGSeed = 7;
@@ -153,8 +154,8 @@ TEST(RecorderCopyContract, RecorderCopiesStateWithUniqueModuleId)
     ASSERT_EQ(copied.record().size(), 1U);
     EXPECT_DOUBLE_EQ(copied.record()[0].dataVector[0], 1.0);
 
-    payload.dataVector[0] = 2.0;  // [units]
-    uint64_t secondWriteTime = 10;  // [ns]
+    payload.dataVector[0] = 2.0;   // [units]
+    uint64_t secondWriteTime = 10; // [ns]
     msg.write(&payload, 0, secondWriteTime);
 
     original.UpdateState(secondWriteTime);
@@ -170,12 +171,12 @@ TEST(RecorderCopyContract, RecorderAssignmentKeepsTargetModuleId)
 {
     Message<CModuleTemplateMsgPayload> msg;
     CModuleTemplateMsgPayload payload = {};
-    payload.dataVector[0] = 3.0;  // [units]
+    payload.dataVector[0] = 3.0; // [units]
 
-    uint64_t firstWriteTime = 0;  // [ns]
+    uint64_t firstWriteTime = 0; // [ns]
     msg.write(&payload, 0, firstWriteTime);
 
-    uint64_t recordInterval = 10;  // [ns]
+    uint64_t recordInterval = 10; // [ns]
     Recorder<CModuleTemplateMsgPayload> original(&msg, recordInterval);
     original.UpdateState(firstWriteTime);
 
