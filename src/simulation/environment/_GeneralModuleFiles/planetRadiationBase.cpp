@@ -508,10 +508,10 @@ double PlanetRadiationBase::computeIlluminationAtdA(double          Rplanet,  //
     if (fabs(l) < fabs(l_2) || fabs(l) < fabs(l_1)) {
         if (c < b - a) {
             illuminationFactor = 0.0;  // [-]
-        } else if (c < a - b) {
+        } else if (c < a - b) {  // annular: the planet disk is inside the solar disk
             const double areaSun  = M_PI * pow(a, 2);  // [sr]
-            const double areaBody = M_PI * pow(b, 2);  // [sr]
-            illuminationFactor = 1.0 - (areaSun - areaBody) / areaSun;  // [-]
+            const double areaBody = M_PI * pow(b, 2);  // [sr] occulted area of the solar disk
+            illuminationFactor = 1.0 - areaBody / areaSun;  // [-]
         } else if (c < a + b) {
             const double x    = (pow(c, 2) + pow(a, 2) - pow(b, 2)) / (2.0 * c);  // [rad]
             const double y    = sqrt(std::max(0.0, pow(a, 2) - pow(x, 2)));  // [rad]

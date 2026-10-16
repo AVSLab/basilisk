@@ -78,7 +78,9 @@ The illumination factor obtained through the module is compared to the expected 
 calculated, depending on the eclipse type. Full eclipse and no eclipse illumination factors are compared without the \
 need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse illumination \
 factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using \
-MATLAB and Spice data.
+MATLAB and Spice data. In the annular cases the disk of the planet lies inside the solar disk, so the \
+truth value is the visible fraction :math:`1 - (b/a)^2` of the solar disk, where :math:`a` and :math:`b` are the \
+apparent radii of the Sun and the planet.
 
 
 **Test Parameters:**
@@ -274,7 +276,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Earth none eclipse condition")
         elif eclipseCondition == "annular":
-            truthilluminationFactor = 1.497253388113018e-04
+            truthilluminationFactor = 0.9998502746611887  # [-] 1 - (b/a)^2
             if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Earth annular eclipse condition")
@@ -296,7 +298,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Mars none eclipse condition")
         elif eclipseCondition == "annular":
-            truthilluminationFactor = 4.245137380531894e-05
+            truthilluminationFactor = 0.9999575486261947  # [-] 1 - (b/a)^2
             if not unitTestSupport.isDoubleEqual(eclipseData_0[-1], truthilluminationFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Illumination Factor failed for Mars annular eclipse condition")
@@ -408,6 +410,67 @@ def unitEclipseCustom(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+@pytest.mark.parametrize("distanceBehindEarth", [1.5e9, 1.0e10])  # [m]
+def test_annularEclipseIlluminationFactor(distanceBehindEarth):
+    """
+**Test Description and Success Criteria**
+
+A spacecraft is placed on the Earth shadow axis beyond the tip of the umbra, which extends about
+1.39e9 m behind the Earth, so that the disk of the Earth lies entirely inside the solar disk. The Sun,
+Earth and spacecraft states are written directly to messages, which makes the truth value independent
+of Spice.
+
+The illumination factor must equal the visible fraction of the solar disk, :math:`1 - (b/a)^2`, where
+:math:`a` and :math:`b` are the apparent radii of the Sun and the Earth seen from the spacecraft, and not
+the occulted fraction :math:`(b/a)^2`.
+
+**Test Parameters:**
+
+- ``distanceBehindEarth``: [m]
+  distance of the spacecraft from the Earth along the shadow axis
+
+**Description of Variables Being Tested**
+
+The ``illuminationFactor`` of the eclipse output message is compared to the analytic truth value.
+
+    """
+    sunDistance = orbitalMotion.AU * 1000.0  # [m]
+
+    scSim = SimulationBaseClass.SimBaseClass()
+    proc = scSim.CreateNewProcess("p")
+    proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(1.0)))  # [s]
+
+    sunPayload = messaging.SpicePlanetStateMsgPayload()
+    sunPayload.PositionVector = [sunDistance, 0.0, 0.0]  # [m]
+    sunMsg = messaging.SpicePlanetStateMsg().write(sunPayload)
+    planetPayload = messaging.SpicePlanetStateMsgPayload()
+    planetPayload.PlanetName = "earth"
+    planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
+    scPayload = messaging.SCStatesMsgPayload()
+    scPayload.r_BN_N = [-distanceBehindEarth, 0.0, 0.0]  # [m]
+    scMsg = messaging.SCStatesMsg().write(scPayload)
+
+    module = eclipse.Eclipse()
+    module.addSpacecraftToModel(scMsg)
+    module.addPlanetToModel(planetMsg)
+    module.sunInMsg.subscribeTo(sunMsg)
+    scSim.AddModelToTask("t", module)
+    dataLog = module.eclipseOutMsgs[0].recorder()
+    scSim.AddModelToTask("t", dataLog)
+
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(0)  # [ns]
+    scSim.ExecuteSimulation()
+
+    earthRadius = orbitalMotion.REQ_EARTH * 1000.0  # [m]
+    a = np.arcsin(orbitalMotion.REQ_SUN * 1000.0 / (sunDistance + distanceBehindEarth))  # [rad]
+    b = np.arcsin(earthRadius / distanceBehindEarth)  # [rad]
+    truthIlluminationFactor = 1.0 - (b / a) ** 2  # [-]
+
+    illuminationFactor = dataLog.illuminationFactor[-1]
+    assert illuminationFactor == pytest.approx(truthIlluminationFactor, abs=1e-12)
+
+
 def test_shadow_vs_illumination_alias_and_deprecation_behavior():
     """
     Check aliasing and deprecation behavior for EclipseMsgPayload.
@@ -447,5 +510,6 @@ def test_shadow_vs_illumination_alias_and_deprecation_behavior():
 
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")
+    test_annularEclipseIlluminationFactor(1.5e9)
     unitEclipseCustom(False)
     test_shadow_vs_illumination_alias_and_deprecation_behavior()

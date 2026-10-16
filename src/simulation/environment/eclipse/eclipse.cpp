@@ -185,11 +185,11 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-/*! This method computes the fraction of sunlight given an eclipse.
- @param planetRadius
- @param r_HB_N
- @param s_BP_N
- @return double fractionIllumination The eclipse illumination fraction.
+/*! @brief Compute the visible fraction of the solar disk given an eclipse.
+ @param planetRadius [m] equatorial radius of the occulting body
+ @param r_HB_N [m] position of the sun relative to the spacecraft
+ @param s_BP_N [m] position of the spacecraft relative to the occulting body
+ @return [-] illumination fraction, 0.0 for a total eclipse and 1.0 for no eclipse
  */
 double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
 {
@@ -206,10 +206,8 @@ double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d 
     // with implausible a, b and c values
     if (c < b - a) { // total eclipse, implying a < b
         illuminationFraction = 0.0;
-    } else if (c < a - b) { // partial maximum eclipse, implying a > b
-        double areaSun = M_PI*a*a;
-        double areaBody = M_PI*b*b;
-        area = areaSun - areaBody;
+    } else if (c < a - b) { // annular eclipse: the disk of the body is inside the solar disk, implying a > b
+        area = M_PI*b*b; // occulted area of the solar disk
         illuminationFraction = 1 - area/(M_PI*a*a);
     } else if (c < a + b) { // partial eclipse
         double x = (c*c + a*a - b*b)/(2*c);

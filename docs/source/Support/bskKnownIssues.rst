@@ -38,6 +38,12 @@ Version |release| (unreleased)
   Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
 
+- GitHub issue 1615: The :ref:`eclipse` module returned the occulted fraction :math:`(b/a)^2` of the solar disk
+  instead of the visible fraction :math:`1 - (b/a)^2` when the disk of the occulting body lies entirely inside the
+  solar disk, where :math:`a` and :math:`b` are the apparent radii of the Sun and the body. The same formula in
+  ``PlanetRadiationBase``, used by :ref:`albedo` and :ref:`earthRadiationModel`, was also corrected, even though
+  that case is not reached for patches on the planet surface.
+
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale
   rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
