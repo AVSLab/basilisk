@@ -40,13 +40,15 @@ WEEKS_PER_ROLLOVER = 1024  # GPS weeks between rollovers
     (datetime.datetime(2015, 7, 1, 0, 0, 0), 17),  # just after the leap second of 2015 June 30
     (datetime.datetime(2024, 4, 4, 0, 0, 0), 18),  # TDB - TT near its maximum of about +1.7 ms
     (datetime.datetime(2026, 3, 20, 12, 0, 0, 123000), 18),  # fractional UTC seconds
+    (datetime.datetime(2048, 6, 1, 0, 0, 0), 18),  # past GPS week 3551, where week*604800 s overflows a 32-bit int
 ])
 def test_gps_time_and_julian_date(epoch, leap_seconds):
     """The GPS week, GPS seconds of week and UTC Julian date of ``spiceTimeOutMsg`` equal their definitions.
 
     GPS time is the UTC time elapsed since the GPS epoch plus the leap seconds introduced since then, and the
     Julian date is the UTC Julian date.  The epochs include a GPS week rollover, a date just after a leap second,
-    and a date near the maximum of the periodic difference between TDB and atomic time.
+    a date near the maximum of the periodic difference between TDB and atomic time, and a date after GPS week 3551,
+    where the GPS week expressed in seconds no longer fits in a signed 32-bit integer.
     """
     sim = SimulationBaseClass.SimBaseClass()
     process = sim.CreateNewProcess("process")
