@@ -13,6 +13,12 @@ Version |release|
   ``PlanetRadiationBase``, used by :ref:`albedo` and :ref:`earthRadiationModel`, was also corrected, even though
   that case is not reached for patches on the planet surface.
 
+- GitHub issue 1612: The :ref:`spiceInterface` module computed the GPS time of ``spiceTimeOutMsg`` as the
+  elapsed TDB time since the GPS epoch instead of atomic time. ``GPSSeconds`` was in error by a periodic term of up
+  to 1.7 ms, and ``GPSWeek`` and ``GPSRollovers`` could be one week early at a week boundary. ``JulianDateCurrent``
+  was read from a SPICE Julian date string, which has at most seven decimals, and was therefore quantized to
+  1e-7 day.
+
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale
   rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
