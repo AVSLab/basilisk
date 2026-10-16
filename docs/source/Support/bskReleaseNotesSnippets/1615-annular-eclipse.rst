@@ -1,0 +1,2 @@
+- Fixed :ref:`eclipse` returning the occulted instead of the visible fraction of the solar disk during annular eclipses, where the disk of the occulting body lies inside the solar disk.
+- Fixed the same annular-eclipse formula in ``PlanetRadiationBase``, used by :ref:`albedo` and :ref:`earthRadiationModel`, to return the visible fraction of the solar disk.
