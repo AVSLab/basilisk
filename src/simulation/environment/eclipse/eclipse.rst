@@ -129,12 +129,14 @@ This type assumes that the apparent radius of the planet is larger than that of 
 Annular Eclipse (:math:`c < a-b`)
 """""""""""""""""""""""""""""""""
 
-This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`).
-Use the equation for a circular area, :math:`A = \pi r^2`, to find the area of the sun and
-planet faces, replacing :math:`r` with the corresponding apparent radius. The illumination
-fraction is then just the ratio of the planet's area to the sun's area.
+This type assumes the apparent radius of the sun is larger than that of the planet (:math:`a>b`),
+so the disk of the planet lies entirely inside the solar disk. Use the equation for a circular
+area, :math:`A = \pi r^2`, to find the area of the sun and planet faces, replacing :math:`r`
+with the corresponding apparent radius. The occulted area of the solar disk is the planet's
+area :math:`A_P = \pi b^2`, and the illumination fraction is the visible fraction of the solar
+disk of area :math:`A_H = \pi a^2`.
 
-.. math:: \text{Illumination Fraction} = \frac{A_P}{A_H}
+.. math:: \text{Illumination Fraction} = 1 - \frac{A_P}{A_H} = 1 - \frac{b^2}{a^2}
     :label: eq:18
 
 Partial Eclipse (:math:`c < a+ b`)
@@ -153,7 +155,7 @@ Parameters :math:`a`, :math:`b`, and :math:`c` are those calculated previously i
 .. math:: y = \sqrt{a^2 - x^2}
     :label: eq:elipse:21
 
-Like with the annular partial eclipse, the illumination factor for this type is the ratio between the occulted area and the sun's apparent area. This is given by the equation below.
+Like with the annular eclipse, the illumination factor for this type is one minus the ratio between the occulted area and the sun's apparent area. This is given by the equation below.
 
 .. math:: \text{Illumination Fraction} = 1 - \frac{A}{\pi a^2}
     :label: eq:elipse:22
@@ -188,7 +190,7 @@ User Guide
 
 Setting The Spacecraft State Input Messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The spacecrat state messages are read in by the ``eclipse`` module to determine where the spacecraft is relative to the sun and the planet(s).  The module can handle a list of input messages, however, these are not set directly.  Rather, use the method::
+The spacecraft state messages are read in by the ``eclipse`` module to determine where the spacecraft is relative to the sun and the planet(s).  The module can handle a list of input messages, however, these are not set directly.  Rather, use the method::
 
     addSpacecraftToModel(scObject.scStateOutMsg)
 
