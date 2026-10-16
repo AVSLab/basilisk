@@ -15,7 +15,116 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import numpy as np
+import pytest
 from Basilisk.utilities import RigidBodyKinematics as rbk
+
+
+@pytest.fixture(params=["python", "numba"])
+def prv_backend(request):
+    """Exercise PRV conversions in Python and, when available, Numba."""
+    if request.param == "numba":
+        pytest.importorskip("numba")
+        pytest.importorskip("scipy")
+        return pytest.importorskip("Basilisk.utilities.RigidBodyKinematicsNumba")
+    return rbk
+
+
+@pytest.mark.parametrize("function_name, identity", [
+    ("C2PRV", np.eye(3)),
+    ("EP2PRV", np.array([1.0, 0.0, 0.0, 0.0])),
+    ("EP2PRV", np.array([-1.0, 0.0, 0.0, 0.0])),
+    ("MRP2PRV", np.zeros(3)),
+    ("gibbs2PRV", np.zeros(3)),
+])
+def test_prv_identity(prv_backend, function_name, identity):
+    """Identity attitudes must produce zero PRVs without invalid arithmetic."""
+    with np.errstate(divide="raise", invalid="raise"):
+        result = getattr(prv_backend, function_name)(identity)
+    np.testing.assert_array_equal(result, np.zeros(3))
+
+
+@pytest.mark.parametrize("function_name, identity", [
+    ("EP2PRV", [1.0, 0.0, 0.0, 0.0]),
+    ("EP2PRV", [-1.0, 0.0, 0.0, 0.0]),
+    ("MRP2PRV", [0.0, 0.0, 0.0]),
+    ("gibbs2PRV", [0.0, 0.0, 0.0]),
+])
+def test_prv_identity_lists(function_name, identity):
+    """Plain Python lists must also support identity-to-PRV conversion."""
+    with np.errstate(divide="raise", invalid="raise"):
+        result = getattr(rbk, function_name)(identity)
+    np.testing.assert_array_equal(result, np.zeros(3))
+
+
+@pytest.mark.parametrize("axis", [
+    [1.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
+    [1.0, -2.0, 3.0],
+])  # [-] rotation-axis directions
+@pytest.mark.parametrize("function_name", ["C2PRV", "EP2PRV", "MRP2PRV"])
+def test_prv_half_turn(prv_backend, function_name, axis):
+    """Exact half-turns must retain their angle and axis, up to axis sign."""
+    axis = np.array(axis) / np.linalg.norm(axis)
+    if function_name == "C2PRV":
+        # A symmetric DCM has an exactly zero antisymmetric part.
+        attitude = 2.0 * np.outer(axis, axis) - np.eye(3)
+    elif function_name == "EP2PRV":
+        attitude = np.concatenate(([0.0], axis))
+    else:
+        attitude = axis
+
+    result = getattr(prv_backend, function_name)(attitude)
+    if np.dot(result, axis) < 0.0:
+        result = -result
+    np.testing.assert_allclose(result, np.pi * axis, rtol=1e-14, atol=1e-14)
+
+
+@pytest.mark.parametrize("angle", [
+    1e-14, -1e-8, 1e-8, 0.5, np.pi - 1e-8, -np.pi + 1e-8,
+])  # [rad]
+@pytest.mark.parametrize("function_name", [
+    "C2PRV", "EP2PRV", "MRP2PRV", "gibbs2PRV",
+])
+def test_prv_near_singular_rotations(prv_backend, function_name, angle):
+    """Recover small, ordinary, and near-half-turn rotations analytically."""
+    axis = np.array([1.0, -2.0, 3.0])  # [-]
+    axis /= np.linalg.norm(axis)
+    if function_name == "C2PRV":
+        cross_matrix = np.array([
+            [0.0, -axis[2], axis[1]],
+            [axis[2], 0.0, -axis[0]],
+            [-axis[1], axis[0], 0.0],
+        ])
+        attitude = (np.cos(angle) * np.eye(3)
+                    + (1.0 - np.cos(angle)) * np.outer(axis, axis)
+                    - np.sin(angle) * cross_matrix)
+    elif function_name == "EP2PRV":
+        attitude = np.concatenate(([np.cos(angle / 2.0)],
+                                   np.sin(angle / 2.0) * axis))
+    elif function_name == "MRP2PRV":
+        attitude = np.tan(angle / 4.0) * axis
+    else:
+        attitude = np.tan(angle / 2.0) * axis
+
+    with np.errstate(divide="raise", invalid="raise"):
+        result = getattr(prv_backend, function_name)(attitude)
+    np.testing.assert_allclose(result, angle * axis, rtol=1e-13, atol=0.0)
+
+
+@pytest.mark.parametrize("function_name", ["EP2PRV", "MRP2PRV"])
+def test_prv_long_rotation(prv_backend, function_name):
+    """Preserve the existing angle branch for rotations greater than pi."""
+    angle = 4.0  # [rad]
+    axis = np.array([1.0, -2.0, 3.0])  # [-]
+    axis /= np.linalg.norm(axis)
+    if function_name == "EP2PRV":
+        attitude = np.concatenate(([np.cos(angle / 2.0)],
+                                   np.sin(angle / 2.0) * axis))
+    else:
+        attitude = np.tan(angle / 4.0) * axis
+    result = getattr(prv_backend, function_name)(attitude)
+    np.testing.assert_allclose(result, angle * axis, rtol=1e-14, atol=0.0)
 
 
 def test_ep2euler321_clips_inverse_trig_roundoff():

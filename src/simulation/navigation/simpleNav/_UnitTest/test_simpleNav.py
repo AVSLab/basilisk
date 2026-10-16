@@ -190,7 +190,8 @@ def unitSimpleNav(show_plots):
                 posDiffCount += 1
             if(abs(velVecDiff[j]) > currentVelBound[j]):
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > currentAttBound[j]):
+            # Allow roundoff from MRP composition at the clamped noise bound.
+            if abs(attVecDiff[j]) > currentAttBound[j] * (1.0 + 1e-14):
                 attDiffCount += 1
             if(abs(rateVecDiff[j]) > currentRateBound[j]):
                 rateDiffCount += 1

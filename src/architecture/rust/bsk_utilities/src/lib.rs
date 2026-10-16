@@ -238,4 +238,85 @@ mod ffi_tests {
         let wrapped = attitude::wrap_to_pi(4.0); // [rad]
         assert_close(wrapped, 4.0 - 2.0 * PI, 1.0e-15); // [rad]
     }
+
+    /// Smoke-test ordinary attitude boundaries through the expanded C bindings.
+    #[test]
+    fn attitude_boundaries_use_linked_c_functions() {
+        let mut sigma = [2.0, 0.0, 0.0]; // [-]
+        let mut quaternion = [0.0; 4];
+        let mut shadow = [0.0; 3];
+        let mut prv = [0.0; 3]; // [rad]
+        unsafe {
+            crate::raw::MRP2EP(sigma.as_mut_ptr(), quaternion.as_mut_ptr());
+            crate::raw::MRPswitch(sigma.as_mut_ptr(), 1.0, shadow.as_mut_ptr()); // [-] threshold
+            crate::raw::MRP2PRV(sigma.as_mut_ptr(), prv.as_mut_ptr());
+        }
+        assert_close(quaternion[0], -0.6, 1e-15); // [-]
+        assert_close(quaternion[1], 0.8, 1e-15); // [-]
+        assert_eq!(shadow, [-0.5, 0.0, 0.0]); // [-]
+        assert_close(prv[0], 4.0 * 2.0_f64.atan(), 1e-15); // [rad]
+        let threshold = f64::from(1.1_f32); // [-] Match Python's promoted float32 threshold.
+        sigma = [threshold, 0.0, 0.0]; // [-]
+        unsafe {
+            crate::raw::MRPswitch(sigma.as_mut_ptr(), threshold, shadow.as_mut_ptr());
+        }
+        assert_eq!(shadow, sigma);
+        for convert in [crate::raw::MRP2EP, crate::raw::Gibbs2EP] {
+            let mut buffer = [0.1, 0.2, 0.3, 0.0]; // [-] Space for the output quaternion.
+            let mut expected = [0.0; 4];
+            unsafe {
+                convert(buffer.as_mut_ptr(), expected.as_mut_ptr());
+                let pointer = buffer.as_mut_ptr();
+                convert(pointer, pointer);
+            }
+            assert_eq!(buffer, expected);
+        }
+        assert_eq!(
+            attitude::add_mrp([1.0, 0.0, 0.0], [1.0, 0.0, 0.0]),
+            [0.0; 3]
+        );
+
+        let mut zero = [0.0; 3]; // [rad]
+        let mut omega = [0.01, -0.02, 0.03]; // [rad/s]
+        let mut derivative = [0.0; 3]; // [rad/s]
+        unsafe {
+            crate::raw::dPRV(
+                zero.as_mut_ptr(),
+                omega.as_mut_ptr(),
+                derivative.as_mut_ptr(),
+            );
+        }
+        assert_eq!(derivative, omega);
+    }
+
+    /// Verify the Rust wrapper retains the C angle-wrapping convention.
+    #[test]
+    fn angle_wrapping_handles_multiple_revolutions() {
+        let offsets = [-2.9, -0.2, 0.0, 0.2, 2.9]; // [rad]
+        for turns in [
+            -1_000_000, -100, -10, -3, -2, -1, 0, 1, 2, 3, 10, 100, 1_000_000,
+        ] {
+            for offset in offsets {
+                let angle = f64::from(turns) * (2.0 * PI) + offset; // [rad]
+                let wrapped = attitude::wrap_to_pi(angle);
+                let tolerance = 4.0 * f64::EPSILON * angle.abs().max(1.0); // [rad]
+                assert!((-PI..=PI).contains(&wrapped));
+                assert_close(wrapped, offset, tolerance);
+                assert_eq!(attitude::wrap_to_pi(wrapped), wrapped);
+            }
+        }
+        for sign in [-1.0, 1.0] {
+            for multiple in [1.0, 3.0, 5.0] {
+                assert_eq!(attitude::wrap_to_pi(sign * multiple * PI), sign * PI);
+            }
+            for multiple in [0.0, 2.0, 4.0, 8.0] {
+                let wrapped = attitude::wrap_to_pi(sign * multiple * PI);
+                assert_eq!(wrapped, 0.0);
+                assert_eq!(wrapped.is_sign_negative(), sign < 0.0);
+            }
+        }
+        for angle in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            assert!(attitude::wrap_to_pi(angle).is_nan());
+        }
+    }
 }
