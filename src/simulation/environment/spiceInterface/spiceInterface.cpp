@@ -741,8 +741,8 @@ void SpiceInterface::initTimeData()
     //! - Get the time value associate with the requested UTC date
     str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
     if (this->J2000ETInit < etGPSEpoch) {
-        bskLogger.bskLog(BSK_WARNING, "The initial time is before the GPS epoch, where GPS time is undefined.  "
-                                      "The GPS time outputs are zero until the GPS epoch.");
+        bskLogger.bskLog(BSK_WARNING, "The initial time is before the GPS epoch.  "
+                                      "The GPS time outputs are held at zero until the GPS epoch.");
     }
 }
 
@@ -754,7 +754,7 @@ void SpiceInterface::initTimeData()
  */
 void SpiceInterface::computeGPSData()
 {
-    //! - Take the elapsed atomic time since the GPS epoch, held at zero before the epoch where GPS time is undefined
+    //! - Take the elapsed atomic time since the GPS epoch, held at zero before the epoch
     double gpsElapsed = std::max(unitim_c(this->J2000Current, "TDB", "TAI") - this->TAIGPSEpoch, 0.0); // [s]
     const double secondsPerWeek = 604800.0; // [s]
     const uint64_t weeksPerRollover = 1024;
@@ -763,7 +763,7 @@ void SpiceInterface::computeGPSData()
     //! - Subtract out the weeks scaled up to seconds to get time in week, in floating point to avoid integer overflow
     this->GPSSeconds = gpsElapsed - static_cast<double>(totalWeeks)*secondsPerWeek; // [s]
 
-    //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
+    //! - Maximum GPS week is 1024 so get the rollovers and the week modulo 1024
     this->GPSRollovers = totalWeeks/weeksPerRollover;
     this->GPSWeek = static_cast<uint16_t>(totalWeeks % weeksPerRollover);
 }
