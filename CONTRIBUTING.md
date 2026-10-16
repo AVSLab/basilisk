@@ -128,6 +128,12 @@ Pre-commit manages the formatter version without a separate clang-format install
 pre-commit run clang-format --files path/to/file.cpp path/to/file.h
 ```
 
+To format all tracked C/C++ files, run:
+
+```sh
+pre-commit run clang-format --all-files
+```
+
 To prevent a section from getting reformatted, wrap it with ```// clang-format off``` and ```// clang-format on```.
 
 For more information is available on the [clang-format](https://clang.llvm.org/docs/ClangFormat.html) website.

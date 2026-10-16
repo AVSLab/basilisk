@@ -416,7 +416,9 @@ this inside a folder as HTML support folder will be created::
 
 Formatting Code Files using ``pre-commit`` and ``clang-format``
 ---------------------------------------------------------------
-If you are developing new code to contribute back to Basilisk it must follow the
-:ref:`codingGuidelines`.  This requires using the ``pre-commit`` and  ``clang-format``
-packages. The file `CONTRIBUTING.md <https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md>`__
-explains how to setup and use these code formating tools.
+New code contributed to Basilisk must follow the :ref:`codingGuidelines`.
+Use ``pre-commit`` to format C/C++ files. The hook automatically installs the
+clang-format version pinned in ``.pre-commit-config.yaml``. A separate
+clang-format installation is optional.
+See `CONTRIBUTING.md <https://github.com/AVSLab/basilisk/blob/develop/CONTRIBUTING.md>`__
+for installation and usage instructions.
