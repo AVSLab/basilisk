@@ -86,7 +86,7 @@ def test_gps_time_and_julian_date(epoch, gps_utc_offset):
 
 
 def test_gps_time_before_gps_epoch():
-    """Before the GPS epoch, where GPS time is undefined, the GPS week, seconds and rollovers are held at zero."""
+    """Before the GPS epoch, the GPS week, seconds and rollovers are held at zero."""
     time_log = run_spice_time_output(datetime.datetime(1979, 6, 1, 0, 0, 0))
 
     assert int(time_log.GPSWeek[-1]) == 0
