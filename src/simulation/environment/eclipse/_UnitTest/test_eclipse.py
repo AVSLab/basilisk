@@ -410,15 +410,19 @@ def unitEclipseCustom(show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+@pytest.mark.parametrize("boundaryFraction", [0.0, 0.999])  # [-]
 @pytest.mark.parametrize("distanceBehindEarth", [1.5e9, 1.0e10])  # [m]
-def test_annularEclipseIlluminationFactor(distanceBehindEarth):
+def test_annularEclipseIlluminationFactor(distanceBehindEarth, boundaryFraction):
     """
 **Test Description and Success Criteria**
 
-A spacecraft is placed on the Earth shadow axis beyond the tip of the umbra, which extends about
-1.39e9 m behind the Earth, so that the disk of the Earth lies entirely inside the solar disk. The Sun,
+A spacecraft is placed beyond the tip of the umbra, which extends about 1.39e9 m behind the Earth,
+so that the disk of the Earth lies entirely inside the solar disk. The spacecraft is either on the
+Earth shadow axis or displaced laterally until the Earth disk nearly touches the edge of the solar disk,
+which checks the annular branch selection just inside the annular/partial boundary. The Sun,
 Earth and spacecraft states are written directly to messages, which makes the truth value independent
-of Spice.
+of Spice. Before running the simulation, the test asserts that the setup is annular, i.e. :math:`a > b` and
+:math:`c < a - b`, where :math:`c` is the apparent angular separation of the Sun and Earth centers.
 
 The illumination factor must equal the visible fraction of the solar disk, :math:`1 - (b/a)^2`, where
 :math:`a` and :math:`b` are the apparent radii of the Sun and the Earth seen from the spacecraft, and not
@@ -428,6 +432,9 @@ the occulted fraction :math:`(b/a)^2`.
 
 - ``distanceBehindEarth``: [m]
   distance of the spacecraft from the Earth along the shadow axis
+- ``boundaryFraction``: [-]
+  target value of :math:`c / (a - b)`, where 0 places the spacecraft on the shadow axis and values
+  close to 1 place it just inside the annular/partial boundary
 
 **Description of Variables Being Tested**
 
@@ -435,19 +442,38 @@ The ``illuminationFactor`` of the eclipse output message is compared to the anal
 
     """
     sunDistance = orbitalMotion.AU * 1000.0  # [m]
+    r_HN_N = np.array([sunDistance, 0.0, 0.0])  # [m]
+    # small-angle lateral offset giving c = boundaryFraction * (a - b), with c ~ h * AU / (d * (AU + d))
+    aAxis = np.arcsin(orbitalMotion.REQ_SUN * 1000.0 / (sunDistance + distanceBehindEarth))  # [rad]
+    bAxis = np.arcsin(orbitalMotion.REQ_EARTH * 1000.0 / distanceBehindEarth)  # [rad]
+    lateralOffset = (boundaryFraction * (aAxis - bAxis) * distanceBehindEarth
+                     * (sunDistance + distanceBehindEarth) / sunDistance)  # [m]
+    r_BN_N = np.array([-distanceBehindEarth, lateralOffset, 0.0])  # [m]
+
+    # verify that the setup produces an annular eclipse before testing the illumination factor
+    earthRadius = orbitalMotion.REQ_EARTH * 1000.0  # [m]
+    r_HB_N = r_HN_N - r_BN_N  # [m]
+    a = np.arcsin(orbitalMotion.REQ_SUN * 1000.0 / np.linalg.norm(r_HB_N))  # [rad]
+    b = np.arcsin(earthRadius / np.linalg.norm(r_BN_N))  # [rad]
+    c = np.arccos(np.clip(np.dot(-r_BN_N, r_HB_N) / (np.linalg.norm(r_BN_N) * np.linalg.norm(r_HB_N)),
+                          -1.0, 1.0))  # [rad]
+    assert a > b, "the apparent solar disk must be larger than the apparent Earth disk"
+    assert c < a - b, "the apparent Earth disk must lie entirely inside the apparent solar disk"
+    if boundaryFraction > 0.0:
+        assert c > 0.99 * (a - b), "the apparent Earth disk must lie close to the edge of the apparent solar disk"
 
     scSim = SimulationBaseClass.SimBaseClass()
     proc = scSim.CreateNewProcess("p")
     proc.addTask(scSim.CreateNewTask("t", macros.sec2nano(1.0)))  # [s]
 
     sunPayload = messaging.SpicePlanetStateMsgPayload()
-    sunPayload.PositionVector = [sunDistance, 0.0, 0.0]  # [m]
+    sunPayload.PositionVector = r_HN_N.tolist()  # [m]
     sunMsg = messaging.SpicePlanetStateMsg().write(sunPayload)
     planetPayload = messaging.SpicePlanetStateMsgPayload()
     planetPayload.PlanetName = "earth"
     planetMsg = messaging.SpicePlanetStateMsg().write(planetPayload)
     scPayload = messaging.SCStatesMsgPayload()
-    scPayload.r_BN_N = [-distanceBehindEarth, 0.0, 0.0]  # [m]
+    scPayload.r_BN_N = r_BN_N.tolist()  # [m]
     scMsg = messaging.SCStatesMsg().write(scPayload)
 
     module = eclipse.Eclipse()
@@ -462,9 +488,6 @@ The ``illuminationFactor`` of the eclipse output message is compared to the anal
     scSim.ConfigureStopTime(0)  # [ns]
     scSim.ExecuteSimulation()
 
-    earthRadius = orbitalMotion.REQ_EARTH * 1000.0  # [m]
-    a = np.arcsin(orbitalMotion.REQ_SUN * 1000.0 / (sunDistance + distanceBehindEarth))  # [rad]
-    b = np.arcsin(earthRadius / distanceBehindEarth)  # [rad]
     truthIlluminationFactor = 1.0 - (b / a) ** 2  # [-]
 
     illuminationFactor = dataLog.illuminationFactor[-1]
@@ -510,6 +533,6 @@ def test_shadow_vs_illumination_alias_and_deprecation_behavior():
 
 if __name__ == "__main__":
     unitEclipse(False, "annular", "mars")
-    test_annularEclipseIlluminationFactor(1.5e9)
+    test_annularEclipseIlluminationFactor(1.5e9, 0.0)  # [m], [-]
     unitEclipseCustom(False)
     test_shadow_vs_illumination_alias_and_deprecation_behavior()
