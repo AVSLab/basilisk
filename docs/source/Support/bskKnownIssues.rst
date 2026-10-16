@@ -21,6 +21,15 @@ Version |release|
   before the GPS epoch produced invalid GPS outputs.  The corrected UTC Julian date preserves the SPICE
   convention of holding at the following midnight during an inserted leap second, avoiding backward jumps.
 
+- GitHub issues 1610 and 1611: Rigid-body kinematics conversions and composition
+  now preserve identity, small rotations, half-turns, and Euler singularities;
+  PRV rate maps use analytic limits at zero and angle wrapping handles multiple
+  revolutions. Python and Numba retain sequence inputs and non-contiguous PRV
+  arrays. Numba uses wrappers and overloads to avoid deprecated list reflection;
+  see :ref:`numbaModules_rbkn` for compiled-call requirements and the public
+  callable interface. Representation singularities and extreme floating-point
+  magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
+
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale
   rates after ``set_a()``. These outputs are now consistent with the current elliptic orbit.
