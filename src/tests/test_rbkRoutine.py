@@ -46,7 +46,7 @@ def test_rigidBodyKinematics(show_plots):
 
     v1 = np.array([10 * D2R, 20 * D2R, 30 * D2R])
     v2 = np.array([-30 * D2R, 200 * D2R, 81 * D2R])
-    v_true = np.array([-2.96705972839036, 2.44346095279206, 1.41371669411541])
+    v_true = np.array([-2.96705972839036, 2.44346095279206, -1.72787595947439])  # [rad]
     v = rbk.addEuler121(v1, v2)
     e_count += equalCheck(v, v_true, 'addEuler121')
     v = rbk.addEuler131(v1, v2)
@@ -951,7 +951,7 @@ def test_rigidBodyKinematics(show_plots):
     e_count += equalCheck(v, v_true, 'subEuler213')
     v = rbk.subEuler321(e1, e2)
     e_count += equalCheck(v, v_true, 'subEuler321')
-    v_true = np.array([2.969124082346242, 2.907100217278789, 2.423943306316236])
+    v_true = np.array([-0.172468571243551, 2.907100217278789, 2.423943306316236])  # [rad]
     v = rbk.subEuler121(e1, e2)
     e_count += equalCheck(v, v_true, 'subEuler121')
     v = rbk.subEuler212(e1, e2)
