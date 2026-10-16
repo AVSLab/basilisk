@@ -19,6 +19,7 @@
 
 #include "eclipse.h"
 #include "architecture/messaging/ownedMessage.h"
+#include <algorithm>
 #include <iostream>
 #include "architecture/utilities/astroConstants.h"
 #include "architecture/utilities/avsEigenSupport.h"
@@ -241,7 +242,7 @@ double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d 
         illuminationFraction = 1 - area/(M_PI*a*a);
     } else if (c < a + b) { // partial eclipse
         double x = (c*c + a*a - b*b)/(2*c);
-        double y = sqrt(a*a - x*x);
+        double y = sqrt(std::max(0.0, a*a - x*x)); // guard against rounding at the annular/partial boundary
         area = a*a*safeAcos(x/a) + b*b*safeAcos((c-x)/b) - c*y;
         illuminationFraction = 1 - area/(M_PI*a*a);
     }
