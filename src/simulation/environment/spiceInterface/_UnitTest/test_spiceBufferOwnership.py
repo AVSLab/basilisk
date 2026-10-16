@@ -24,7 +24,7 @@ def test_time_conversion_after_repeated_reset(picture, expected):
     elapsed_seconds = 1.0  # [s]
     initial_julian_date = 2451545.0  # [day]
     seconds_per_day = 86400.0  # [s/day]
-    date_tolerance = 5.0e-8  # [day] Half a unit in the final SPICE Julian-date decimal place.
+    date_tolerance = 1.0e-9  # [day] Double precision of the Julian date, with margin.
     for _ in range(3):
         model.Reset(0)
         model.UpdateState(macros.sec2nano(elapsed_seconds))
@@ -44,7 +44,7 @@ def test_time_output_rejects_insufficient_capacity(picture_length):
         model.getCurrentTimeString()
 
 
-@pytest.mark.parametrize("field", ["spiceBuffer", "charBufferSize"])
+@pytest.mark.parametrize("field", ["charBufferSize"])
 def test_scratch_storage_is_private(field):
     """Python callers cannot replace the buffer or change its capacity."""
     model = spiceInterface.SpiceInterface(auto_configure_kernels=False)

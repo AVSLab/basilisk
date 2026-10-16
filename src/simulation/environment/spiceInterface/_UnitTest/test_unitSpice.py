@@ -250,6 +250,11 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot, MarsTruthPos
         GPSEndTime = GPSTimeSeconds + 17 + 60.0 - 68.184  # 17 GPS skip seconds passed that date
     else:
         GPSEndTime = GPSTimeSeconds + 16 + 60.0 - 67.184  # 16 GPS skip seconds before
+    # GPS time is atomic time, so remove the periodic TDB - TT term of the SPICE leap seconds kernel
+    ETEnd = (date - datetime.datetime(2000, 1, 1, 12)).total_seconds() + 60.0  # [s] TDB past J2000
+    meanAnomaly = 6.239996 + 1.99096871E-7*ETEnd  # [rad] Earth-Moon barycenter mean anomaly
+    eccentricAnomaly = meanAnomaly + 1.671E-2*numpy.sin(meanAnomaly)  # [rad]
+    GPSEndTime -= 1.657E-3*numpy.sin(eccentricAnomaly)  # [s]
 
     GPSWeek = int(GPSEndTime / (86400 * 7))
     GPSSecondAssumed = GPSEndTime - GPSWeek * 86400 * 7

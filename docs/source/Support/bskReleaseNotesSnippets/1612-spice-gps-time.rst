@@ -1,0 +1,1 @@
+- Fixed :ref:`spiceInterface` GPS week and seconds of ``spiceTimeOutMsg``, which were computed from TDB instead of atomic time, and its UTC Julian date, which was quantized to 1e-7 day.
