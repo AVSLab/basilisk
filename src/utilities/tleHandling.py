@@ -72,14 +72,26 @@ def utc_to_tt(jd_utc):
     return jd_utc + delta_t
 
 def frame_bias():
-    d_alpha = -0.0146 * ARCSEC2RAD
-    xi      = -0.016617 * ARCSEC2RAD
-    eta     = -0.0068192 * ARCSEC2RAD
+    """
+    Frame bias matrix from the GCRS to the mean equator and equinox of J2000.
+
+    Uses the IERS Conventions (2010) form :math:`B = R_1(-\\eta_0) R_2(\\xi_0) R_3(d\\alpha_0)`.
+    Here :math:`R_i(\\theta)` is the axes (frame) rotation returned by :func:`rot`, which rotates the
+    coordinate frame by :math:`\\theta` about axis :math:`i` (for example :math:`R_3(\\theta)` has
+    :math:`+\\sin\\theta` in row 1, column 2); under the vector-rotation convention the same product
+    reads as the transpose.
+
+    Returns:
+        numpy.ndarray: 3x3 rotation matrix that maps GCRS vector components to mean J2000 components.
+    """
+    d_alpha = -0.0146 * ARCSEC2RAD  # [rad] ICRS right ascension offset of the J2000 mean equinox
+    xi      = -0.016617 * ARCSEC2RAD  # [rad] celestial pole offset in x
+    eta     = -0.0068192 * ARCSEC2RAD  # [rad] celestial pole offset in y
 
     return (
-        rot(3, d_alpha) @
-        rot(2, -xi) @
-        rot(1, -eta)
+        rot(1, -eta) @
+        rot(2, xi) @
+        rot(3, d_alpha)
     )
 
 def nutation_iau1980(T):
@@ -297,6 +309,18 @@ def rot(axis, angle):
 
 # Helper functions: Coordinate conversion; TEME -> J2000/ICRS
 def _teme2j2000(r, v, epoch):
+    """
+    Rotate a TEME state into the Basilisk inertial frame.
+
+    The rotation chain is equation of equinoxes, IAU 1980 nutation, IAU 1976 precession, and the inverse of
+    :func:`frame_bias`, so the output is expressed in the GCRF. These are the ICRF-aligned axes that SPICE
+    calls ``J2000`` and that Basilisk uses as its inertial frame.
+
+    :param r: TEME position vector [m]
+    :param v: TEME velocity vector [m/s]
+    :param epoch: UTC epoch of the state as a ``datetime``
+    :return: tuple ``(r, v)`` with the GCRF position [m] and velocity [m/s]
+    """
 
     jd_utc = datetime_to_jd(epoch)
     jd_tt  = utc_to_tt(jd_utc)
