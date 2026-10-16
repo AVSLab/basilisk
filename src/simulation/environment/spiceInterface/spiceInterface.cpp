@@ -768,10 +768,11 @@ void SpiceInterface::computeGPSData()
     //! - Take the elapsed atomic time since the GPS epoch
     double gpsElapsed = unitim_c(this->J2000Current, "TDB", "TAI")
                         - unitim_c(this->JDGPSEpoch, "TDB", "TAI"); // [s]
+    const double secondsPerWeek = 604800.0; // [s]
     //! - Scale the elapsed by a week's worth of seconds to get week
-    this->GPSWeek = (uint16_t) (gpsElapsed/(7*86400));
-    //! - Subtract out the GPS week scaled up to seconds to get time in week
-    this->GPSSeconds = gpsElapsed - this->GPSWeek*7*86400;
+    this->GPSWeek = (uint16_t) (gpsElapsed/secondsPerWeek);
+    //! - Subtract out the GPS week scaled up to seconds to get time in week, in floating point to avoid integer overflow
+    this->GPSSeconds = gpsElapsed - static_cast<double>(this->GPSWeek)*secondsPerWeek; // [s]
 
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
     this->GPSRollovers = this->GPSWeek/1024;
