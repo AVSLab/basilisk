@@ -239,7 +239,7 @@ public:
 
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
-    double JDGPSEpoch;          //!< s Ephemeris time of the GPS epoch, seconds past J2000.  Saved for efficiency
+    double TAIGPSEpoch;         //!< s TAI of the GPS epoch, seconds past J2000.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
