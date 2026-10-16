@@ -19,13 +19,15 @@
 #include "svStochasticIntegratorSRIW1.h"
 
 svStochasticIntegratorSRIW1::svStochasticIntegratorSRIW1(DynamicObject* dyn)
-    : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSRIW1::getCoefficients())
-{}
+  : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSRIW1::getCoefficients())
+{
+}
 
 // Coefficients for the SRIW1 tableau, in unrolled per-stage form. Matrix entries
 // use the plain [stage i][sub-term j] convention of SRICoefficients (see
 // svIntegratorStrongStochasticRungeKuttaSRI.h).
-SRICoefficients<4> svStochasticIntegratorSRIW1::getCoefficients()
+SRICoefficients<4>
+svStochasticIntegratorSRIW1::getCoefficients()
 {
     SRICoefficients<4> c;
 
@@ -48,15 +50,15 @@ SRICoefficients<4> svStochasticIntegratorSRIW1::getCoefficients()
     c.B1[3][2] = 1. / 2.;
 
     // Weights
-    c.alpha = {1. / 3., 2. / 3., 0., 0.};
-    c.beta1 = {-1., 4. / 3., 2. / 3., 0.};
-    c.beta2 = {-1., 4. / 3., -1. / 3., 0.};
-    c.beta3 = {2., -4. / 3., -2. / 3., 0.};
-    c.beta4 = {-2., 5. / 3., -2. / 3., 1.};
+    c.alpha = { 1. / 3., 2. / 3., 0., 0. };
+    c.beta1 = { -1., 4. / 3., 2. / 3., 0. };
+    c.beta2 = { -1., 4. / 3., -1. / 3., 0. };
+    c.beta3 = { 2., -4. / 3., -2. / 3., 0. };
+    c.beta4 = { -2., 5. / 3., -2. / 3., 1. };
 
     // Nodes (row sums of A0 and A1 respectively)
-    c.c0 = {0., 3. / 4., 0., 0.};
-    c.c1 = {0., 1. / 4., 1., 1. / 4.};
+    c.c0 = { 0., 3. / 4., 0., 0. };
+    c.c1 = { 0., 1. / 4., 1., 1. / 4. };
 
     return c;
 }

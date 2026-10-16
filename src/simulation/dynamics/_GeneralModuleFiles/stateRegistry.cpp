@@ -108,7 +108,7 @@ StateRegistry::finalizeStates()
     for (size_t index = 0; index < this->stateLayoutView.size(); ++index) {
         const StateLayout& layout = this->stateLayoutView[index];
         this->stateRecords[index].handle->bindStateViews(this->liveBuffers.states.data() + layout.stateOffset,
-                                                       this->liveBuffers.derivatives.data() + layout.derivOffset);
+                                                         this->liveBuffers.derivatives.data() + layout.derivOffset);
         this->stateRecords[index].seed.reset();
     }
     this->finalized = true;
@@ -190,8 +190,8 @@ StateRegistry::registerState(uint32_t nRow, uint32_t nCol, std::string stateName
     const auto existing = this->stateSlotByName.find(stateName);
     if (existing != this->stateSlotByName.end()) {
         const StateRecord& established = this->stateRecords[existing->second];
-        if (established.spec.updateKind == StateUpdateKind::Euclidean &&
-            established.spec.state == spec.state && established.spec.derivative == spec.derivative &&
+        if (established.spec.updateKind == StateUpdateKind::Euclidean && established.spec.state == spec.state &&
+            established.spec.derivative == spec.derivative &&
             established.spec.diffusionTangent == spec.diffusionTangent) {
             spec = established.spec;
         }
@@ -561,7 +561,8 @@ StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex) const
         return record.seed->diffusions.at(localNoiseIndex).data();
     }
     const StateLayout& layout = this->stateLayoutView.at(slot);
-    return this->liveBuffers.diffusions.data() + layout.diffusionOffset + localNoiseIndex * layout.diffusionCountPerSource;
+    return this->liveBuffers.diffusions.data() + layout.diffusionOffset +
+           localNoiseIndex * layout.diffusionCountPerSource;
 }
 
 void

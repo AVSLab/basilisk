@@ -21,9 +21,9 @@
 
 #include <algorithm>
 #include <cmath>
-svStochasticIntegratorW2Ito::svStochasticIntegratorW2Ito(DynamicObject* dyn,
-                                                         const W2ItoCoefficients& coefficients)
-    : StochasticRKIntegratorBase(dyn), coefficients(coefficients)
+svStochasticIntegratorW2Ito::svStochasticIntegratorW2Ito(DynamicObject* dyn, const W2ItoCoefficients& coefficients)
+  : StochasticRKIntegratorBase(dyn)
+  , coefficients(coefficients)
 {
 }
 

@@ -19,25 +19,27 @@
 #include "svStochasticIntegratorSRA1.h"
 
 svStochasticIntegratorSRA1::svStochasticIntegratorSRA1(DynamicObject* dyn)
-    : svIntegratorStrongStochasticRungeKuttaSRA(dyn, svStochasticIntegratorSRA1::getCoefficients())
-{}
+  : svIntegratorStrongStochasticRungeKuttaSRA(dyn, svStochasticIntegratorSRA1::getCoefficients())
+{
+}
 
 // Coefficients for the SRA1 tableau. Matrix
 // entries use the plain [stage i][sub-term j] convention of SRACoefficients (note that
 // some reference implementations store the transpose A0' internally; here we write A0 directly).
-SRACoefficients<2> svStochasticIntegratorSRA1::getCoefficients()
+SRACoefficients<2>
+svStochasticIntegratorSRA1::getCoefficients()
 {
     SRACoefficients<2> c;
 
     c.A0[1][0] = 3. / 4.;
     c.B0[1][0] = 3. / 2.;
 
-    c.alpha = {1. / 3., 2. / 3.};
-    c.beta1 = {1., 0.};
-    c.beta2 = {-1., 1.};
+    c.alpha = { 1. / 3., 2. / 3. };
+    c.beta1 = { 1., 0. };
+    c.beta2 = { -1., 1. };
 
-    c.c0 = {0., 3. / 4.};
-    c.c1 = {1., 0.};
+    c.c0 = { 0., 3. / 4. };
+    c.c1 = { 1., 0. };
 
     return c;
 }

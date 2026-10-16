@@ -71,7 +71,8 @@ StateData::usesPerComponentErrorControl() const
     return this->owner->handleSpec(this->slot).errorControl == ErrorControlMode::PerComponent;
 }
 
-size_t StateData::getNumNoiseSources() const
+size_t
+StateData::getNumNoiseSources() const
 {
     return this->owner->handleSpec(this->slot).noiseCount;
 }

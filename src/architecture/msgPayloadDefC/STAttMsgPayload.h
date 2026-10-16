@@ -23,10 +23,10 @@
 #include <stdint.h>
 
 /*! @brief Output structure for ST attitude measurement in vehicle body frame*/
-typedef struct {
-    uint64_t timeTag;           //!< [ns] Vehicle time code associated with measurement
-    double MRP_BdyInrtl[3];     //!< [-] MRP estimate of inertial to body transformation
-}STAttMsgPayload;
-
+typedef struct
+{
+    uint64_t timeTag;       //!< [ns] Vehicle time code associated with measurement
+    double MRP_BdyInrtl[3]; //!< [-] MRP estimate of inertial to body transformation
+} STAttMsgPayload;
 
 #endif

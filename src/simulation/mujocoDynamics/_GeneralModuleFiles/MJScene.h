@@ -61,7 +61,7 @@ class MJFwdKinematics;
  */
 class MJScene : public DynamicObject
 {
-public:
+  public:
     /**
      * @brief Constructs an MJScene object using an XML string.
      *
@@ -201,8 +201,7 @@ public:
      * @param joint The joint to attach the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addJointSingleActuator(const std::string& name,
-                                        const std::string& joint);
+    MJSingleActuator& addJointSingleActuator(const std::string& name, const std::string& joint);
 
     /**
      * @brief Adds a single-input actuator acting on a joint (`MJSingleActuator`).
@@ -213,8 +212,7 @@ public:
      * @param joint The joint to attach the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addJointSingleActuator(const std::string& name,
-                                        const MJJoint& joint);
+    MJSingleActuator& addJointSingleActuator(const std::string& name, const MJJoint& joint);
 
     /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
@@ -236,9 +234,7 @@ public:
      * @param gear The gear parameters for the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addSingleActuator(const std::string& name,
-                                        const std::string& site,
-                                        const Eigen::Vector6d& gear);
+    MJSingleActuator& addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear);
 
     /**
      * @brief Adds a single-input actuator (`MJSingleActuator`).
@@ -260,9 +256,7 @@ public:
      * @param gear The gear parameters for the actuator.
      * @return Reference to the created `MJSingleActuator`.
      */
-    MJSingleActuator& addSingleActuator(const std::string& name,
-                                        const MJSite& site,
-                                        const Eigen::Vector6d& gear);
+    MJSingleActuator& addSingleActuator(const std::string& name, const MJSite& site, const Eigen::Vector6d& gear);
 
     /**
      * @brief Adds a force actuator to the scene.
@@ -637,7 +631,7 @@ public:
      */
     void printMujocoModelDebugInfo(const std::string& path);
 
-public:
+  public:
     static const int FWD_KINEMATICS_PRIORITY = 10000; ///< Priority for default forward kinematics model.
 
     /** @brief Flag to run the equations of motion after integration.
@@ -673,7 +667,8 @@ public:
     /** Return the configured qpos attitude policy mode. */
     bool getHighOrderAttitudeIntegration() const noexcept;
 
-    Message<MJSceneStateMsgPayload> stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
+    Message<MJSceneStateMsgPayload>
+      stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
     /**
      * @brief Returns the full position vector, matching the layout of
@@ -684,7 +679,7 @@ public:
     /** Companion to `assembleFullQpos`, for the qvel space (length `nv`). */
     Eigen::VectorXd assembleFullQvel();
 
-protected:
+  protected:
     /**
      * @brief Updates MuJoCo structs from the Basilisk `StateData` objects.
      */
@@ -746,13 +741,13 @@ protected:
      */
     struct MujocoTopology
     {
-        bool registered = false; ///< True after the first complete scene Reset.
+        bool registered = false;        ///< True after the first complete scene Reset.
         bool highOrderAttitude = false; ///< Quaternion derivative/policy mode captured at registration.
         mjtSize nq = 0;                 ///< Stored joint-position scalars.
         mjtSize nv = 0;                 ///< Joint-velocity scalars.
         mjtSize na = 0;                 ///< Actuator activation scalars.
         mjtSize nbody = 0;              ///< Body count, including the world body.
-        std::vector<int> jointTypes; ///< Joint kinds in compiled model order.
+        std::vector<int> jointTypes;    ///< Joint kinds in compiled model order.
 
         /** @brief Capture model dimensions and the selected quaternion policy. */
         static MujocoTopology capture(const mjModel& model, bool highOrderAttitude);
@@ -772,8 +767,8 @@ protected:
     /** Register and bind state storage against an already compiled model. */
     void registerAndBindDynamicsState(mjModel* model, mjData* data, bool topologyAlreadyFinalized);
 
-    bool highOrderAttitudeIntegration = false; ///< Requested quaternion policy, fixed with state topology.
-    bool sceneMutationBlocked = false; ///< Blocks mutation while callbacks borrow scene/model pointers.
+    bool highOrderAttitudeIntegration = false;        ///< Requested quaternion policy, fixed with state topology.
+    bool sceneMutationBlocked = false;                ///< Blocks mutation while callbacks borrow scene/model pointers.
     MJSceneStateMsgPayload outputStateMessagePayload; ///< Reusable pending payload, filled before publication.
     MujocoTopology modelTopology; ///< Accepted MuJoCo layout checked before replacement compilation commits.
 
@@ -781,17 +776,19 @@ protected:
     bool modelTopologyMatches(const mjModel& candidate) const;
 
   protected:
-    MJSpec spec; ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
-    bool mjModelConstStale = false; ///< Flag indicating stale model constants.
+    MJSpec spec;                        ///< `MJSpec` (MuJoCo model specification wrapper) associated with this scene.
+    bool mjModelConstStale = false;     ///< Flag indicating stale model constants.
     bool forwardKinematicsStale = true; ///< Flag indicating stale forward kinematics.
-    bool firstDynamicsCall = true; ///< Flag to track if this is the first equationsOfMotion evaluation.
+    bool firstDynamicsCall = true;      ///< Flag to track if this is the first equationsOfMotion evaluation.
 
     SysModelTask dynamicsTask; ///< Task managing models involved in the dynamics of this scene.
-    SysModelTask dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
-    std::vector<std::unique_ptr<SysModel>> ownedSysModel; ///< System models that should be cleared on this scene destruction.
+    SysModelTask
+      dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
+    std::vector<std::unique_ptr<SysModel>>
+      ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
-    StateData* massState = nullptr;       ///< Bulk mass state (one entry per body).
-    StateData* actState = nullptr;        ///< Bulk actuator state (entire `act`).
+    StateData* massState = nullptr;                ///< Bulk mass state (one entry per body).
+    StateData* actState = nullptr;                 ///< Bulk actuator state (entire `act`).
     StateBufferSegment jointQposStateSegment;      ///< Joint-bound qpos buffer span.
     StateBufferSegment jointQvelStateSegment;      ///< Joint-bound qvel buffer span.
     StateBufferSegment jointQposDerivativeSegment; ///< Native qpos tangent span.

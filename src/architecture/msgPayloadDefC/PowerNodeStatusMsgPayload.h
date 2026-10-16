@@ -21,12 +21,10 @@
 
 #include <stdint.h>
 
-
 //! @brief Power node command message used to change the state of power modules.
-typedef struct{
-    uint64_t powerStatus;      //!< Power status indicator; 0 is off, 1 is on, additional values
-}PowerNodeStatusMsgPayload;
+typedef struct
+{
+    uint64_t powerStatus; //!< Power status indicator; 0 is off, 1 is on, additional values
+} PowerNodeStatusMsgPayload;
 
-
-
-#endif //BASILISK_POWERNODESTATUSMSG_H
+#endif // BASILISK_POWERNODESTATUSMSG_H

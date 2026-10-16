@@ -21,9 +21,9 @@
 #define CURRENT_H
 
 /*! @brief Structure used to store current measurement */
-typedef struct {
-    double current;    //!< [A] Amps
-}CurrentMsgPayload;
-
+typedef struct
+{
+    double current; //!< [A] Amps
+} CurrentMsgPayload;
 
 #endif

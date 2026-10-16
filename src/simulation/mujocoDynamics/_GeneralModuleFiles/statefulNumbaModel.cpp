@@ -18,12 +18,14 @@
 
 #include "statefulNumbaModel.h"
 
-void StatefulNumbaModel::Reset(uint64_t CurrentSimNanos)
+void
+StatefulNumbaModel::Reset(uint64_t CurrentSimNanos)
 {
     NumbaModel::Reset(CurrentSimNanos);
 }
 
-void StatefulNumbaModel::UpdateState(uint64_t CurrentSimNanos)
+void
+StatefulNumbaModel::UpdateState(uint64_t CurrentSimNanos)
 {
     NumbaModel::UpdateState(CurrentSimNanos);
 }

@@ -19,7 +19,11 @@
 
 #include "MJActuator.h"
 
-void MJActuatorObject::updateCtrl(mjData* data, double value) { data->ctrl[this->getId()] = value; }
+void
+MJActuatorObject::updateCtrl(mjData* data, double value)
+{
+    data->ctrl[this->getId()] = value;
+}
 
 void
 MJActuator::configure(const mjModel* model)

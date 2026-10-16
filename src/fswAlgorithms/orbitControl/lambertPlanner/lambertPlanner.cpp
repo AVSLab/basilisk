@@ -19,8 +19,8 @@
 
 #include "fswAlgorithms/orbitControl/lambertPlanner/lambertPlanner.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include <cmath>
 #include <array>
+#include <cmath>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -36,7 +36,8 @@ LambertPlanner::~LambertPlanner() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void
+LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -44,7 +45,7 @@ void LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
     }
 
     // check that the provided input module parameters are valid
-    if (this->finalTime - this->maneuverTime < 0.0){
+    if (this->finalTime - this->maneuverTime < 0.0) {
         bskLogger.bskError("lambertPlanner: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
@@ -53,33 +54,28 @@ void LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertPlanner::UpdateState(uint64_t currentSimNanos)
+void
+LambertPlanner::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
 
     // initial state vector
     StateVector X0;
-    X0 << this->r_N,
-            this->v_N;
+    X0 << this->r_N, this->v_N;
 
     // equations of motion (assuming two body point mass gravity)
-    EquationsOfMotion EOM = [this](double, const StateVector& state)
-    {
+    EquationsOfMotion EOM = [this](double, const StateVector& state) {
         StateVector stateDerivative;
 
         stateDerivative.head<3>() = state.tail<3>();
-        stateDerivative.tail<3>() = -this->mu/(pow(state.head<3>().norm(),3)) * state.head<3>();
+        stateDerivative.tail<3>() = -this->mu / (pow(state.head<3>().norm(), 3)) * state.head<3>();
 
         return stateDerivative;
     };
 
     // propagate to obtain expected position at maneuver time tm
-    PropagationResult states = this->propagate(
-            EOM,
-            {this->time, this->maneuverTime},
-            X0,
-            10);
+    PropagationResult states = this->propagate(EOM, { this->time, this->maneuverTime }, X0, 10);
     this->rm_N = states.second.back().head<3>();
 
     // write messages
@@ -89,7 +85,8 @@ void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 /*! This method sets the lambert solver algorithm that should be used to the method by Izzo.
 
 */
-void LambertPlanner::useSolverIzzoMethod()
+void
+LambertPlanner::useSolverIzzoMethod()
 {
     this->solverMethod = IZZO;
 }
@@ -97,7 +94,8 @@ void LambertPlanner::useSolverIzzoMethod()
 /*! This method sets the lambert solver algorithm that should be used to the method by Gooding.
 
 */
-void LambertPlanner::useSolverGoodingMethod()
+void
+LambertPlanner::useSolverGoodingMethod()
 {
     this->solverMethod = GOODING;
 }
@@ -106,11 +104,12 @@ void LambertPlanner::useSolverGoodingMethod()
     It also checks if the message contents are valid for this module.
 
 */
-void LambertPlanner::readMessages()
+void
+LambertPlanner::readMessages()
 {
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
 
-    if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0){
+    if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0) {
         bskLogger.bskError("lambertPlanner: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
@@ -123,7 +122,8 @@ void LambertPlanner::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertPlanner::writeMessages(uint64_t currentSimNanos)
+void
+LambertPlanner::writeMessages(uint64_t currentSimNanos)
 {
     LambertProblemMsgPayload lambertProblemOutMsgBuffer;
     lambertProblemOutMsgBuffer = this->lambertProblemOutMsg.zeroMsgPayload;
@@ -149,22 +149,22 @@ void LambertPlanner::writeMessages(uint64_t currentSimNanos)
     @param dt Time step.
     @return Time values and corresponding six-element state vectors.
 */
-LambertPlanner::PropagationResult LambertPlanner::propagate(
-        const EquationsOfMotion& EOM,
-        std::array<double, 2> interval,
-        const StateVector& X0,
-        double dt)
+LambertPlanner::PropagationResult
+LambertPlanner::propagate(const EquationsOfMotion& EOM,
+                          std::array<double, 2> interval,
+                          const StateVector& X0,
+                          double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
 
-    std::vector<double> t = {t0};
-    std::vector<StateVector> X = {X0};
+    std::vector<double> t = { t0 };
+    std::vector<StateVector> X = { X0 };
 
     // propagate forward to tf
-    const size_t stepCount = static_cast<size_t>(ceil(abs(tf-t0)/dt));
+    const size_t stepCount = static_cast<size_t>(ceil(abs(tf - t0) / dt));
     for (size_t c = 0; c < stepCount; c++) {
-        double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
+        double step = std::min(dt, abs(tf - t.at(c))); // for last time step, step size might be smaller than dt
         // special case for backwards propagation
         if (tf < t0) {
             step = -step;
@@ -176,7 +176,7 @@ LambertPlanner::PropagationResult LambertPlanner::propagate(
         t.push_back(tnew);
         X.push_back(Xnew);
     }
-    return {std::move(t), std::move(X)};
+    return { std::move(t), std::move(X) };
 }
 
 /*! This method provides the 4th order Runge-Kutta (RK4)
@@ -187,43 +187,50 @@ LambertPlanner::PropagationResult LambertPlanner::propagate(
     @param dt Time step.
     @return Integrated six-element state vector.
 */
-LambertPlanner::StateVector LambertPlanner::RK4(const EquationsOfMotion& ODEfunction,
-                                                const StateVector& X0,
-                                                double t0,
-                                                double dt)
+LambertPlanner::StateVector
+LambertPlanner::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X0, double t0, double dt)
 {
     double h = dt;
 
     StateVector k1 = ODEfunction(t0, X0);
-    StateVector k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
-    StateVector k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
-    StateVector k4 = ODEfunction(t0 + h, X0 + h*k3);
+    StateVector k2 = ODEfunction(t0 + h / 2., X0 + h * k1 / 2.);
+    StateVector k3 = ODEfunction(t0 + h / 2., X0 + h * k2 / 2.);
+    StateVector k4 = ODEfunction(t0 + h, X0 + h * k3);
 
-    StateVector X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+    StateVector X = X0 + 1. / 6. * h * (k1 + 2. * k2 + 2. * k3 + k4);
 
     return X;
 }
 
-void LambertPlanner::setR_TN_N(const Eigen::Vector3d value)
+void
+LambertPlanner::setR_TN_N(const Eigen::Vector3d value)
 {
     this->r_TN_N = value;
 }
 
-void LambertPlanner::setFinalTime(const double value){
+void
+LambertPlanner::setFinalTime(const double value)
+{
     this->finalTime = value;
 }
 
-void LambertPlanner::setManeuverTime(const double value){
+void
+LambertPlanner::setManeuverTime(const double value)
+{
     this->maneuverTime = value;
 }
 
-void LambertPlanner::setMu(const double value){
-    if (value < 0.0){
+void
+LambertPlanner::setMu(const double value)
+{
+    if (value < 0.0) {
         bskLogger.bskError("lambertPlanner: mu must be positive.");
     }
     this->mu = value;
 }
 
-void LambertPlanner::setNumRevolutions(const int value){
+void
+LambertPlanner::setNumRevolutions(const int value)
+{
     this->numRevolutions = value;
 }

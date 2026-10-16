@@ -20,7 +20,8 @@
 
 #include <algorithm>
 
-void IgbmAtmDensity::writeOutput(uint64_t CurrentSimNanos, double x)
+void
+IgbmAtmDensity::writeOutput(uint64_t CurrentSimNanos, double x)
 {
     AtmoPropsMsgPayload out = atmoDensInMsg();
     // x is the IGBM factor (mean-reverting to mu); a multiplicative density correction.

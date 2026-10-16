@@ -43,9 +43,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorMayurama : public StochasticRKIntegratorBase {
-public:
-
+class svStochasticIntegratorMayurama : public StochasticRKIntegratorBase
+{
+  public:
     /** Uses same constructor as StochasticRKIntegratorBase */
     using StochasticRKIntegratorBase::StochasticRKIntegratorBase;
 

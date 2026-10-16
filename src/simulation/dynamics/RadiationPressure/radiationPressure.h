@@ -20,35 +20,34 @@
 #ifndef RADIATION_PRESSURE_H
 #define RADIATION_PRESSURE_H
 
-#include <vector>
-#include <cstdint>
-#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include <Eigen/Dense>
+#include <cstdint>
+#include <vector>
 
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
-
-typedef enum {
+typedef enum
+{
     SRP_CANNONBALL_MODEL,
     SRP_FACETED_CPU_MODEL
 } srpModel_t;
 
-
-
 //  SRP effects on body
 /*! @brief solar radiation pressure dynamic effector */
-class RadiationPressure final: public SysModel, public DynamicEffector{
-public:
+class RadiationPressure final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     RadiationPressure();
     ~RadiationPressure();
 
@@ -63,31 +62,29 @@ public:
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
     void addSHatLookupBEntry(Eigen::Vector3d vec);
 
-private:
+  private:
     void validateConfiguration();
-    void validateLookupDimensions();  //!< Validate the three lookup table lengths
+    void validateLookupDimensions(); //!< Validate the three lookup table lengths
     void computeCannonballModel(Eigen::Vector3d rSunB_N);
     void computeLookupModel(Eigen::Vector3d rSunB_B);
 
-public:
-    double  area; //!< m^2 Body surface area
-    double  coefficientReflection;                  //!< Factor grouping surface optical properties
-    ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg;   //!< sun state input message
-    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;         //!< (optional) sun eclipse input message
-    std::vector<Eigen::Vector3d> lookupForce_B;     //!< Force on S/C at 1 AU from sun
-    std::vector<Eigen::Vector3d> lookupTorque_B;    //!< Torque on S/C
-    std::vector<Eigen::Vector3d> lookupSHat_B;      //!< S/C to sun unit vector defined in the body frame.
-    BSKLogger bskLogger;                      //!< BSK Logging
+  public:
+    double area;                                          //!< m^2 Body surface area
+    double coefficientReflection;                         //!< Factor grouping surface optical properties
+    ReadFunctor<SpicePlanetStateMsgPayload> sunEphmInMsg; //!< sun state input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;       //!< (optional) sun eclipse input message
+    std::vector<Eigen::Vector3d> lookupForce_B;           //!< Force on S/C at 1 AU from sun
+    std::vector<Eigen::Vector3d> lookupTorque_B;          //!< Torque on S/C
+    std::vector<Eigen::Vector3d> lookupSHat_B;            //!< S/C to sun unit vector defined in the body frame.
+    BSKLogger bskLogger;                                  //!< BSK Logging
 
-private:
-    srpModel_t  srpModel; //!< specifies which SRP model to use
-    SpicePlanetStateMsgPayload sunEphmInBuffer;    //!< Buffer for incoming ephemeris message data
-    bool stateRead; //!< Indicates a successful read of incoming SC state message data
-    EclipseMsgPayload sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    StateData *hubR_N;                          //!< State data access to inertial position for the hub
-    StateData *hubSigma;                                   //!< Hub/Inertial attitude represented by MRP
-
+  private:
+    srpModel_t srpModel;                        //!< specifies which SRP model to use
+    SpicePlanetStateMsgPayload sunEphmInBuffer; //!< Buffer for incoming ephemeris message data
+    bool stateRead;                             //!< Indicates a successful read of incoming SC state message data
+    EclipseMsgPayload sunVisibilityFactor;      //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
+    StateData* hubR_N;                          //!< State data access to inertial position for the hub
+    StateData* hubSigma;                        //!< Hub/Inertial attitude represented by MRP
 };
-
 
 #endif

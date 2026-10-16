@@ -21,9 +21,8 @@
 #define COMMON_UTILS_SEMAPHORE_H
 // https://riptutorial.com/cplusplus/example/30142/semaphore-cplusplus-11
 
-#include <mutex>
 #include <condition_variable>
-
+#include <mutex>
 
 /*! Basilisk semaphore class */
 class BSKSemaphore
@@ -32,10 +31,10 @@ class BSKSemaphore
     std::condition_variable cv;
     size_t count;
 
-public:
+  public:
     /*! method description */
     BSKSemaphore(size_t count_in = 0)
-        : count(count_in)
+      : count(count_in)
     {
     }
 
@@ -45,7 +44,7 @@ public:
         {
             std::unique_lock<std::mutex> lock(mutex);
             ++count;
-            //notify the waiting thread
+            // notify the waiting thread
         }
         cv.notify_one();
     }
@@ -54,9 +53,8 @@ public:
     inline void acquire()
     {
         std::unique_lock<std::mutex> lock(mutex);
-        while (count == 0)
-        {
-            //wait on the mutex until notify is called
+        while (count == 0) {
+            // wait on the mutex until notify is called
             cv.wait(lock);
         }
         --count;

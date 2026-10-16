@@ -26,9 +26,10 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig  *configData, int64_t moduleID)
+void
+SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     DeviceCmdMsg_C_init(&configData->deviceCmdOutMsg);
 }
 
@@ -38,10 +39,11 @@ void SelfInit_scanningInstrumentController(scanningInstrumentControllerConfig  *
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_scanningInstrumentController(scanningInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!AccessMsg_C_isLinked(&configData->accessInMsg)) {
         _bskError(configData->bskLogger, "Error: scanningInstrumentController.accessInMsg was not connected.");
@@ -51,22 +53,24 @@ void Reset_scanningInstrumentController(scanningInstrumentControllerConfig *conf
     }
 }
 
-/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the attitude
-error and attitude rate are within the tolerance. If so, the instrument is turned on, otherwise it is turned off.
+/*! This method checks the status of the device and if there is access to target, as well if the magnitude of the
+attitude error and attitude rate are within the tolerance. If so, the instrument is turned on, otherwise it is turned
+off.
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_scanningInstrumentController(scanningInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_scanningInstrumentController(scanningInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR
 
-    AccessMsgPayload accessInMsgBuffer;  //!< local copy of message buffer
-    AttGuidMsgPayload attGuidInMsgBuffer;  //!< local copy of message buffer
-    DeviceStatusMsgPayload deviceStatusInMsgBuffer;  //!< local copy of message buffer
-    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;  //!< local copy of message buffer
+    AccessMsgPayload accessInMsgBuffer;             //!< local copy of message buffer
+    AttGuidMsgPayload attGuidInMsgBuffer;           //!< local copy of message buffer
+    DeviceStatusMsgPayload deviceStatusInMsgBuffer; //!< local copy of message buffer
+    DeviceCmdMsgPayload deviceCmdOutMsgBuffer;      //!< local copy of message buffer
 
     // always zero the output message buffers before assigning values
     deviceCmdOutMsgBuffer = DeviceCmdMsg_C_zeroMsgPayload();
@@ -89,10 +93,10 @@ void Update_scanningInstrumentController(scanningInstrumentControllerConfig *con
     if (configData->controllerStatus) {
         /* If the attitude error is less than the tolerance, the groundLocation is accessible, and (if enabled) the rate
         error is less than the tolerance, turn on the instrument and set the imaged indicator to 1*/
-        if ((sigma_BR_norm <= configData->attErrTolerance)
-            && (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
-            && (accessInMsgBuffer.hasAccess))
-        {
+        if ((sigma_BR_norm <= configData->attErrTolerance) &&
+            (!configData->useRateTolerance ||
+             (omega_BR_norm <= configData->rateErrTolerance)) // Check rate tolerance if useRateTolerance enabled
+            && (accessInMsgBuffer.hasAccess)) {
             deviceCmdOutMsgBuffer.deviceCmd = 1;
         }
     }

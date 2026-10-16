@@ -26,7 +26,8 @@ std::default_random_engine generator(rd());
 std::uniform_real_distribution<double> valueDistribution(-10, 10);
 std::uniform_real_distribution<double> boundDistribution(0, 2);
 
-TEST(LinearInterpolationTest, HandlesNormalInputs) {
+TEST(LinearInterpolationTest, HandlesNormalInputs)
+{
     double x = valueDistribution(generator);
     double x1 = x - boundDistribution(generator);
     double x2 = x + boundDistribution(generator);

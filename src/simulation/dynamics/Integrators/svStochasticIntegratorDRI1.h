@@ -20,15 +20,16 @@
 #ifndef svStochasticIntegratorDRI1_h
 #define svStochasticIntegratorDRI1_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 
 #include <vector>
 
 /** Coefficients for the Debrabant & Roessler DRI1 weak-order-2 method. Names follow
  * the DRI1 tableau. */
-struct DRI1Coefficients {
+struct DRI1Coefficients
+{
     double a021;   //!< Drift-stage A-matrix coefficient (A0)
     double a031;   //!< Drift-stage A-matrix coefficient (A0)
     double a032;   //!< Drift-stage A-matrix coefficient (A0)
@@ -83,8 +84,9 @@ struct DRI1Coefficients {
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorDRI1 : public StochasticRKIntegratorBase {
-public:
+class svStochasticIntegratorDRI1 : public StochasticRKIntegratorBase
+{
+  public:
     svStochasticIntegratorDRI1(DynamicObject* dyn); //!< Constructor
 
     /** When true, the cross-noise (mixed iterated integral) terms are skipped. This
@@ -176,19 +178,19 @@ public:
      */
     void copyHatDiffusion(size_t globalNoiseIndex, size_t hatStageIndex, bool secondHat);
 
-    bool methodStorageBound = false; ///< True after all method buffers have been sized.
-    Eigen::VectorXd combinedDerivative; ///< Weighted drift combination used to build a candidate.
-    Eigen::VectorXd firstDiffusionDrift; ///< Drift combination for the first diffusion-support candidate.
+    bool methodStorageBound = false;      ///< True after all method buffers have been sized.
+    Eigen::VectorXd combinedDerivative;   ///< Weighted drift combination used to build a candidate.
+    Eigen::VectorXd firstDiffusionDrift;  ///< Drift combination for the first diffusion-support candidate.
     Eigen::VectorXd secondDiffusionDrift; ///< Drift combination for the second diffusion-support candidate.
-    Eigen::VectorXd combinedDiffusion; ///< Weighted diffusion contributions in packed noise-source order.
-    Eigen::MatrixXd derivativeStages; ///< Drift scalars by stage; each stage occupies one contiguous column.
-    Eigen::MatrixXd diffusionStages; ///< Packed diffusion scalars by stage, grouped by independent source.
-    Eigen::MatrixXd firstHatDiffusions; ///< Diffusions sampled at the first family of mixed-integral support states.
-    Eigen::MatrixXd secondHatDiffusions; ///< Diffusions sampled at the second family of mixed-integral support states.
-    Eigen::VectorXd weakDW; ///< Discrete weak-method increments indexed by independent source.
-    Eigen::VectorXd diagonalIntegral; ///< Diagonal iterated-integral terms indexed by independent source.
-    Eigen::VectorXd weakDZ; ///< Auxiliary discrete increments used for mixed noise-source terms.
-    Eigen::VectorXd pseudoSteps; ///< Temporary per-source noise weights for candidate construction.
+    Eigen::VectorXd combinedDiffusion;    ///< Weighted diffusion contributions in packed noise-source order.
+    Eigen::MatrixXd derivativeStages;     ///< Drift scalars by stage; each stage occupies one contiguous column.
+    Eigen::MatrixXd diffusionStages;      ///< Packed diffusion scalars by stage, grouped by independent source.
+    Eigen::MatrixXd firstHatDiffusions;   ///< Diffusions sampled at the first family of mixed-integral support states.
+    Eigen::MatrixXd secondHatDiffusions;  ///< Diffusions sampled at the second family of mixed-integral support states.
+    Eigen::VectorXd weakDW;               ///< Discrete weak-method increments indexed by independent source.
+    Eigen::VectorXd diagonalIntegral;     ///< Diagonal iterated-integral terms indexed by independent source.
+    Eigen::VectorXd weakDZ;               ///< Auxiliary discrete increments used for mixed noise-source terms.
+    Eigen::VectorXd pseudoSteps;          ///< Temporary per-source noise weights for candidate construction.
 
   private:
     bool nonMixing = false;
@@ -202,10 +204,12 @@ public:
  * the cross-noise mixed-integral terms, which is exact (and more efficient) for
  * diagonal/scalar-noise problems.
  */
-class svStochasticIntegratorDRI1NM : public svStochasticIntegratorDRI1 {
-public:
+class svStochasticIntegratorDRI1NM : public svStochasticIntegratorDRI1
+{
+  public:
     /** Constructor. */
-    explicit svStochasticIntegratorDRI1NM(DynamicObject* dyn) : svStochasticIntegratorDRI1(dyn)
+    explicit svStochasticIntegratorDRI1NM(DynamicObject* dyn)
+      : svStochasticIntegratorDRI1(dyn)
     {
         this->setNonMixing(true);
     }
@@ -219,41 +223,49 @@ public:
  * non-diagonal, non-commutative, scalar-additive). Shares DRI1's step; differs only in
  * its coefficient tableau (the RI1 tableau).
  */
-class svStochasticIntegratorRI1 : public svStochasticIntegratorDRI1 {
-public:
+class svStochasticIntegratorRI1 : public svStochasticIntegratorDRI1
+{
+  public:
     /** Constructor. */
     svStochasticIntegratorRI1(DynamicObject* dyn);
-private:
+
+  private:
     /** Returns the RI1 coefficient tableau. */
     static DRI1Coefficients getCoefficients();
 };
 
 /** @brief RI3: Roessler weak-order-2 Ito method (Roessler 2009), any noise. */
-class svStochasticIntegratorRI3 : public svStochasticIntegratorDRI1 {
-public:
+class svStochasticIntegratorRI3 : public svStochasticIntegratorDRI1
+{
+  public:
     /** Constructor. */
     svStochasticIntegratorRI3(DynamicObject* dyn);
-private:
+
+  private:
     /** Returns the RI3 coefficient tableau. */
     static DRI1Coefficients getCoefficients();
 };
 
 /** @brief RI5: Roessler weak-order-2 Ito method (Roessler 2009), any noise. */
-class svStochasticIntegratorRI5 : public svStochasticIntegratorDRI1 {
-public:
+class svStochasticIntegratorRI5 : public svStochasticIntegratorDRI1
+{
+  public:
     /** Constructor. */
     svStochasticIntegratorRI5(DynamicObject* dyn);
-private:
+
+  private:
     /** Returns the RI5 coefficient tableau. */
     static DRI1Coefficients getCoefficients();
 };
 
 /** @brief RI6: Roessler weak-order-2 Ito method (Roessler 2009), any noise. */
-class svStochasticIntegratorRI6 : public svStochasticIntegratorDRI1 {
-public:
+class svStochasticIntegratorRI6 : public svStochasticIntegratorDRI1
+{
+  public:
     /** Constructor. */
     svStochasticIntegratorRI6(DynamicObject* dyn);
-private:
+
+  private:
     /** Returns the RI6 coefficient tableau. */
     static DRI1Coefficients getCoefficients();
 };

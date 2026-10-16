@@ -28,8 +28,9 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief Module that optionally saturates a scalar actuator command. */
-class SaturationSingleActuator : public SysModel {
-public:
+class SaturationSingleActuator : public SysModel
+{
+  public:
     /*! @brief Constructor */
     SaturationSingleActuator() {};
 
@@ -57,12 +58,12 @@ public:
      */
     void setMaxInput(double maxInput);
 
-public:
-    ReadFunctor<SingleActuatorMsgPayload> actuatorInMsg;   //!< Input actuator command
-    Message<SingleActuatorMsgPayload> actuatorOutMsg;      //!< Output actuator command
-    BSKLogger bskLogger;                                   //!< BSK logging
+  public:
+    ReadFunctor<SingleActuatorMsgPayload> actuatorInMsg; //!< Input actuator command
+    Message<SingleActuatorMsgPayload> actuatorOutMsg;    //!< Output actuator command
+    BSKLogger bskLogger;                                 //!< BSK logging
 
-private:
+  private:
     /*!
      * @brief Apply saturation to an input value if enabled.
      * @param inputValue Raw actuator command.
@@ -70,7 +71,7 @@ private:
      */
     double applySaturation(double inputValue) const;
 
-private:
+  private:
     bool saturationEnabled = true;                              //!< Flag enabling saturation
     double minInput = -std::numeric_limits<double>::infinity(); //!< Minimum allowed command
     double maxInput = std::numeric_limits<double>::infinity();  //!< Maximum allowed command

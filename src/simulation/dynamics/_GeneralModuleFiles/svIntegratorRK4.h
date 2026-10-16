@@ -23,7 +23,8 @@
 #include "svIntegratorRungeKutta.h"
 
 /*! @brief 4th order Runge-Kutta integrator */
-class svIntegratorRK4 : public svIntegratorRungeKutta<4> {
+class svIntegratorRK4 : public svIntegratorRungeKutta<4>
+{
   public:
     svIntegratorRK4(DynamicObject* dyn); //!< class method
   private:

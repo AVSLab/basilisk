@@ -17,20 +17,20 @@
 
 */
 
-
 #ifndef MJJOINTREACTIONFORCES_H
 #define MJJOINTREACTIONFORCES_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefCpp/MJJointReactionsMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
 #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJScene.h"
 
 /*! @brief This C++ module extracts the reaction forces and torques acting on the joints from a MuJoCo scene
  */
-class MJJointReactionForces: public SysModel {
-public:
+class MJJointReactionForces : public SysModel
+{
+  public:
     MJJointReactionForces() = default;  //!< This is the constructor for the module class.
     ~MJJointReactionForces() = default; //!< This is the destructor for the module class.
 
@@ -46,24 +46,21 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
-    MJScene* scene{nullptr};  //!< pointer to the MuJoCo scene
+  public:
+    MJScene* scene{ nullptr }; //!< pointer to the MuJoCo scene
 
     /**
      * joint reaction forces and torques output msg
      */
     Message<MJJointReactionsMsgPayload> reactionForcesOutMsg;
 
-    BSKLogger bskLogger;              //!< BSK Logging
-private:
-
-    std::size_t nDOF = 0;                     //!< number of total DOF
-    std::vector<int> jointTreeIdx;            //!< list of the kinematic tree index for each joint
-    std::vector<int> jointParentBodyIdx;      //!< list of the parent body index for each joint
-    std::vector<int> jointTypes;              //!< list of joint types in the system
-    std::vector<int> jointDOFStart;           //!< list of the starting DOF index for each joint
-
+    BSKLogger bskLogger; //!< BSK Logging
+  private:
+    std::size_t nDOF = 0;                //!< number of total DOF
+    std::vector<int> jointTreeIdx;       //!< list of the kinematic tree index for each joint
+    std::vector<int> jointParentBodyIdx; //!< list of the parent body index for each joint
+    std::vector<int> jointTypes;         //!< list of joint types in the system
+    std::vector<int> jointDOFStart;      //!< list of the starting DOF index for each joint
 };
-
 
 #endif

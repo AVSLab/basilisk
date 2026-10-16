@@ -20,29 +20,29 @@
 #ifndef SpiceInterface_H
 #define SpiceInterface_H
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include <array>
 #include <cstdint>
-#include <vector>
-#include <map>
 #include <filesystem>
+#include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <unordered_map>
-#include <set>
 #include <utility>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/utilities/avsEigenSupport.h"
+#include <vector>
 
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
 #include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/AttRefMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpiceTimeMsgPayload.h"
 #include "architecture/msgPayloadDefC/TransRefMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 
 /**
  * Thin RAII wrapper around a single SPICE kernel.
@@ -54,7 +54,7 @@
  */
 class SpiceKernel
 {
-public:
+  public:
     /**
      * Request a shared handle for the kernel at the given path.
      *
@@ -76,13 +76,13 @@ public:
     const std::string& getPath() const { return path; }
 
     /// True if furnsh_c succeeded for this kernel.
-    bool wasLoadSuccesful() const {return loadSucceeded; };
+    bool wasLoadSuccesful() const { return loadSucceeded; };
 
     // avoid copy operations
     SpiceKernel(const SpiceKernel&) = delete;
     SpiceKernel& operator=(const SpiceKernel&) = delete;
 
-private:
+  private:
     /**
      * Construct a SpiceKernel by furnishing the given canonical path.
      *
@@ -116,22 +116,23 @@ private:
     static std::unordered_map<std::string, std::weak_ptr<SpiceKernel>> cache;
 };
 
-
 /*! @brief spice interface class */
-class SpiceInterface: public SysModel {
-public:
+class SpiceInterface : public SysModel
+{
+  public:
     SpiceInterface();
     ~SpiceInterface();
 
     void UpdateState(uint64_t CurrentSimNanos);
-    int loadSpiceKernel(char *kernelName, const char *dataPath);
-    int unloadSpiceKernel(char *kernelName, const char *dataPath);
-	std::string getCurrentTimeString();         //!< class method
+    int loadSpiceKernel(char* kernelName, const char* dataPath);
+    int unloadSpiceKernel(char* kernelName, const char* dataPath);
+    std::string getCurrentTimeString(); //!< class method
     void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
-    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload> *spiceData,
-                       uint64_t CurrentSimNanos = 0, bool allowReconstruction = false);
+    void pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData,
+                       uint64_t CurrentSimNanos = 0,
+                       bool allowReconstruction = false);
     void writeOutputMessages(uint64_t CurrentClock);
 
     //! Add a SPICE kernel by full path (absolute or relative)
@@ -179,18 +180,20 @@ public:
      * @{ */
 
     //! Default knot spacing when reconstruction is enabled without an explicit ``knotStep`` [ns].
-    static constexpr uint64_t defaultKnotStep = 60000000000;  // 60 s
+    static constexpr uint64_t defaultKnotStep = 60000000000; // 60 s
 
     //! Reconstruct this planet's position from a coarse knot grid. ``knotStep`` in nanoseconds.
     void setPlanetPositionReconstruction(const std::string& planetName,
                                          uint64_t knotStep = defaultKnotStep,
-                                         int nKnots = 2, bool useVelocity = true,
+                                         int nKnots = 2,
+                                         bool useVelocity = true,
                                          bool interpolate = true);
 
     //! Reconstruct this planet's orientation from a coarse knot grid. ``knotStep`` in nanoseconds.
     void setPlanetOrientationReconstruction(const std::string& planetName,
                                             uint64_t knotStep = defaultKnotStep,
-                                            int nKnots = 2, bool useVelocity = true,
+                                            int nKnots = 2,
+                                            bool useVelocity = true,
                                             bool interpolate = true);
 
     //! Turn this planet's position channel off: emit zero position/velocity, no SPICE query.
@@ -210,38 +213,41 @@ public:
     std::pair<long, long> getPlanetSpiceQueryCount(const std::string& planetName);
     /** @} */
 
-public:
-    Message<SpiceTimeMsgPayload> spiceTimeOutMsg;    //!< spice time sampling output message
-    ReadFunctor<EpochMsgPayload> epochInMsg;            //!< (optional) input epoch message
+  public:
+    Message<SpiceTimeMsgPayload> spiceTimeOutMsg;                         //!< spice time sampling output message
+    ReadFunctor<EpochMsgPayload> epochInMsg;                              //!< (optional) input epoch message
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs; //!< vector of planet state output messages
     std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs; //!< vector of spacecraft state output messages
-    std::vector<Message<AttRefMsgPayload>*> attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
-    std::vector<Message<TransRefMsgPayload>*> transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
+    std::vector<Message<AttRefMsgPayload>*>
+      attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
+    std::vector<Message<TransRefMsgPayload>*>
+      transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
 
-    std::string SPICEDataPath;           //!< -- Path on file to SPICE data
-    std::string referenceBase;           //!< -- Base reference frame to use
-    std::string zeroBase;                //!< -- Base zero point to use for states
-	std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
-    bool SPICELoaded;                    //!< -- Boolean indicating to reload spice
+    std::string SPICEDataPath;  //!< -- Path on file to SPICE data
+    std::string referenceBase;  //!< -- Base reference frame to use
+    std::string zeroBase;       //!< -- Base zero point to use for states
+    std::string timeOutPicture; //!< -- Optional parameter used to extract time strings
+    bool SPICELoaded;           //!< -- Boolean indicating to reload spice
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
-    std::vector<std::string>planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
+    std::vector<std::string>
+      planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
 
-    bool timeDataInit;          //!< -- Flag indicating whether time has been init
-    double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
-    double J2000Current;        //!< s Current J2000 elapsed time
-    double julianDateCurrent;   //!< d Current UTC Julian date
-    double GPSSeconds;          //!< s Current GPS seconds of week
-    uint16_t GPSWeek;           //!< -- Current GPS week value
-    uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
+    bool timeDataInit;        //!< -- Flag indicating whether time has been init
+    double J2000ETInit;       //!< s Seconds elapsed since J2000 at init
+    double J2000Current;      //!< s Current J2000 elapsed time
+    double julianDateCurrent; //!< d Current UTC Julian date
+    double GPSSeconds;        //!< s Current GPS seconds of week
+    uint16_t GPSWeek;         //!< -- Current GPS week value
+    uint64_t GPSRollovers;    //!< -- Count on the number of GPS rollovers
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
+  private:
     static constexpr int charBufferSize = 512; //!< Capacity of SPICE scratch buffers, including the null terminator.
 
-    std::string GPSEpochTime;   //!< -- String for the GPS epoch
-    double TAIGPSEpoch;         //!< s TAI of the GPS epoch, seconds past J2000.  Saved for efficiency
+    std::string GPSEpochTime; //!< -- String for the GPS epoch
+    double TAIGPSEpoch;       //!< s TAI of the GPS epoch, seconds past J2000.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
@@ -282,11 +288,13 @@ private:
     void countSpiceQuery(const std::string& planetName, bool isPosition);
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
-    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>> ownedPlanetStateOutMsgs; //!< Storage for planetStateOutMsgs.
+    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>>
+      ownedPlanetStateOutMsgs;                                                     //!< Storage for planetStateOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedScStateOutMsgs; //!< Storage for scStateOutMsgs.
-    std::vector<std::unique_ptr<Message<AttRefMsgPayload>>> ownedAttRefStateOutMsgs; //!< Storage for attRefStateOutMsgs.
-    std::vector<std::unique_ptr<Message<TransRefMsgPayload>>> ownedTransRefStateOutMsgs; //!< Storage for transRefStateOutMsgs.
+    std::vector<std::unique_ptr<Message<AttRefMsgPayload>>>
+      ownedAttRefStateOutMsgs; //!< Storage for attRefStateOutMsgs.
+    std::vector<std::unique_ptr<Message<TransRefMsgPayload>>>
+      ownedTransRefStateOutMsgs; //!< Storage for transRefStateOutMsgs.
 };
-
 
 #endif

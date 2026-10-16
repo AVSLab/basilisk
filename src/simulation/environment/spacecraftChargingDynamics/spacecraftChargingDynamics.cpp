@@ -25,7 +25,8 @@
 #include <cmath>
 
 /*! Class constructor. */
-SpacecraftChargingDynamics::SpacecraftChargingDynamics() {
+SpacecraftChargingDynamics::SpacecraftChargingDynamics()
+{
     this->nameOfServicerPotentialState = "servicerPotential";
     this->nameOfTargetPotentialState = "targetPotential";
 
@@ -34,12 +35,13 @@ SpacecraftChargingDynamics::SpacecraftChargingDynamics() {
 }
 
 /*! Reset method. */
-void SpacecraftChargingDynamics::Reset(uint64_t CurrentSimNanos) {
+void
+SpacecraftChargingDynamics::Reset(uint64_t CurrentSimNanos)
+{
     this->registerDynamics();
     this->writeOutputStateMessages(CurrentSimNanos);
     this->timeBefore = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     this->timeBeforeNanos = CurrentSimNanos;
-
 }
 
 /*! Register and initialize the dynamics state during Reset. */
@@ -54,7 +56,9 @@ SpacecraftChargingDynamics::registerDynamics()
 }
 
 /*! Method to register states. */
-void SpacecraftChargingDynamics::registerStates(DynParamManager& states) {
+void
+SpacecraftChargingDynamics::registerStates(DynParamManager& states)
+{
     this->servicerPotentialState = states.registerState(1, 1, this->nameOfServicerPotentialState);
     Eigen::MatrixXd servicerPotentialInitMatrix(1, 1);
     servicerPotentialInitMatrix(0, 0) = this->servicerPotentialInit;
@@ -67,7 +71,9 @@ void SpacecraftChargingDynamics::registerStates(DynParamManager& states) {
 }
 
 /*! Module update method. */
-void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
+void
+SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos)
+{
     // Read the target and servicer spacecraft state input message if it is linked and written
     if (this->servicerStateInMsg.isLinked() && this->servicerStateInMsg.isWritten()) {
         SCStatesMsgPayload servicerStateInMsgBuffer = this->servicerStateInMsg();
@@ -129,7 +135,9 @@ void SpacecraftChargingDynamics::UpdateState(uint64_t CurrentSimNanos) {
 }
 
 /*! Method to write module output messages. */
-void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
+void
+SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime)
+{
     this->servicerPotential = this->servicerPotentialState->stateView()(0, 0);
     this->targetPotential = this->targetPotentialState->stateView()(0, 0);
 
@@ -187,7 +195,10 @@ void SpacecraftChargingDynamics::writeOutputStateMessages(uint64_t clockTime) {
 }
 
 /*! Method for the charging equations of motion */
-void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds [[maybe_unused]], double timeStep [[maybe_unused]]) {
+void
+SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds [[maybe_unused]],
+                                              double timeStep [[maybe_unused]])
+{
     this->servicerPotential = this->servicerPotentialState->stateView()(0, 0);
     this->targetPotential = this->targetPotentialState->stateView()(0, 0);
 
@@ -196,34 +207,34 @@ void SpacecraftChargingDynamics::equationsOfMotion(double integTimeSeconds [[may
 
     // Set the servicer potential derivative
     Eigen::MatrixXd servicerPotentialRate(1, 1);
-    servicerPotentialRate(0, 0) = (this->servicerPlasmaElectronCurrent + this->servicerPlasmaIonCurrent
-            + this->servicerPhotoelectricCurrent + this->servicerEBCurrent) / this->servicerCapacitance;
+    servicerPotentialRate(0, 0) = (this->servicerPlasmaElectronCurrent + this->servicerPlasmaIonCurrent +
+                                   this->servicerPhotoelectricCurrent + this->servicerEBCurrent) /
+                                  this->servicerCapacitance;
     this->servicerPotentialState->setDerivative(servicerPotentialRate);
 
     // Set the target potential derivative
     Eigen::MatrixXd targetPotentialRate(1, 1);
-    targetPotentialRate(0, 0) = (this->targetPlasmaElectronCurrent + this->targetPlasmaIonCurrent
-            + this->targetPhotoelectricCurrent + this->targetEBCurrent) / this->targetCapacitance;
+    targetPotentialRate(0, 0) = (this->targetPlasmaElectronCurrent + this->targetPlasmaIonCurrent +
+                                 this->targetPhotoelectricCurrent + this->targetEBCurrent) /
+                                this->targetCapacitance;
     this->targetPotentialState->setDerivative(targetPotentialRate);
 }
 
 /*! Method for computing all currents acting on the spacecraft */
-void SpacecraftChargingDynamics::computeCurrents() {
+void
+SpacecraftChargingDynamics::computeCurrents()
+{
     // Compute the plasma electron currents
-    this->servicerPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->servicerSurfaceArea,
-                                                                             this->servicerPotential);
-    this->targetPlasmaElectronCurrent = this->computePlasmaElectronCurrent(this->targetSurfaceArea,
-                                                                           this->targetPotential);
+    this->servicerPlasmaElectronCurrent =
+      this->computePlasmaElectronCurrent(this->servicerSurfaceArea, this->servicerPotential);
+    this->targetPlasmaElectronCurrent =
+      this->computePlasmaElectronCurrent(this->targetSurfaceArea, this->targetPotential);
 
     // Compute the plasma ion currents
-    this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(this->servicerSurfaceArea,
-                                                                   this->servicerSunlitArea,
-                                                                   this->servicerPotential,
-                                                                   this->v_SN_N_norm);
-    this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(this->targetSurfaceArea,
-                                                                 this->targetSunlitArea,
-                                                                 this->targetPotential,
-                                                                 this->v_TN_N_norm);
+    this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(
+      this->servicerSurfaceArea, this->servicerSunlitArea, this->servicerPotential, this->v_SN_N_norm);
+    this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(
+      this->targetSurfaceArea, this->targetSunlitArea, this->targetPotential, this->v_TN_N_norm);
 
     // Compute the electron beam currents
     this->computeElectronBeamCurrent();
@@ -237,14 +248,19 @@ void SpacecraftChargingDynamics::computeCurrents() {
  @param spacecraftPotential [Volts] Spacecraft potential
  @return double
 */
-double SpacecraftChargingDynamics::computePlasmaElectronCurrent(double surfaceArea, double spacecraftPotential) {
-    double thermalVelocityElectrons = std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI));  // [m/s] thermal electron velocity
+double
+SpacecraftChargingDynamics::computePlasmaElectronCurrent(double surfaceArea, double spacecraftPotential)
+{
+    double thermalVelocityElectrons =
+      std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI)); // [m/s] thermal electron velocity
 
     double plasmaElectronCurrent{};
     if (spacecraftPotential <= 0.0) {
-        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) * exp(spacecraftPotential / this->tempElectrons);
+        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) *
+                                exp(spacecraftPotential / this->tempElectrons);
     } else {
-        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) * (1 + (spacecraftPotential / this->tempElectrons));
+        plasmaElectronCurrent = (-0.25 * surfaceArea * Q_CHARGE * this->densityElectrons * thermalVelocityElectrons) *
+                                (1 + (spacecraftPotential / this->tempElectrons));
     }
 
     return plasmaElectronCurrent;
@@ -257,17 +273,25 @@ double SpacecraftChargingDynamics::computePlasmaElectronCurrent(double surfaceAr
  @param v_BN_N_norm [m/s] Spacecraft inertial velocity norm
  @return double
 */
-double SpacecraftChargingDynamics::computePlasmaIonCurrent(double surfaceArea, double sunlitArea, double spacecraftPotential, double v_BN_N_norm) {
-    double thermalVelocityIons = std::sqrt((8 * Q_CHARGE * this->tempIons) / (MASS_PROTON * MPI));  // [m/s] thermal ion velocity
+double
+SpacecraftChargingDynamics::computePlasmaIonCurrent(double surfaceArea,
+                                                    double sunlitArea,
+                                                    double spacecraftPotential,
+                                                    double v_BN_N_norm)
+{
+    double thermalVelocityIons =
+      std::sqrt((8 * Q_CHARGE * this->tempIons) / (MASS_PROTON * MPI)); // [m/s] thermal ion velocity
     double relativeVelocityIons = std::abs(v_BN_N_norm - bulkVelocityIons);
 
     double plasmaIonCurrent{};
 
     if (thermalVelocityIons >= relativeVelocityIons) {
         if (spacecraftPotential <= 0.0) {
-            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) * (1 - (spacecraftPotential / this->tempIons));
+            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) *
+                               (1 - (spacecraftPotential / this->tempIons));
         } else {
-            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) * exp(-spacecraftPotential / this->tempIons);
+            plasmaIonCurrent = (0.25 * surfaceArea * Q_CHARGE * this->densityIons * thermalVelocityIons) *
+                               exp(-spacecraftPotential / this->tempIons);
         }
     } else {
         plasmaIonCurrent = sunlitArea * Q_CHARGE * this->densityIons * relativeVelocityIons;
@@ -277,11 +301,14 @@ double SpacecraftChargingDynamics::computePlasmaIonCurrent(double surfaceArea, d
 }
 
 /*! Method to compute electron beam currents */
-void SpacecraftChargingDynamics::computeElectronBeamCurrent() {
+void
+SpacecraftChargingDynamics::computeElectronBeamCurrent()
+{
     if (this->electronBeamEnergy > (this->servicerPotential - this->targetPotential)) {
-        double intermediateTerm = -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
+        double intermediateTerm =
+          -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
         this->servicerEBCurrent = this->electronBeamCurrent * (1 - exp(intermediateTerm));
-        this->targetEBCurrent = - this->alphaEB * this->electronBeamCurrent * (1 - exp(intermediateTerm));
+        this->targetEBCurrent = -this->alphaEB * this->electronBeamCurrent * (1 - exp(intermediateTerm));
     } else {
         this->servicerEBCurrent = 0.0;
         this->targetEBCurrent = 0.0;
@@ -289,33 +316,41 @@ void SpacecraftChargingDynamics::computeElectronBeamCurrent() {
 }
 
 /*! Method to compute photoelectric currents */
-void SpacecraftChargingDynamics::computePhotoelectricCurrent() {
+void
+SpacecraftChargingDynamics::computePhotoelectricCurrent()
+{
     // Compute the servicer photoelectric current
     if (this->servicerPotential <= 0) {
         this->servicerPhotoelectricCurrent = this->fluxPhotoelectrons * this->servicerSunlitArea;
     } else {
-        this->servicerPhotoelectricCurrent = this->fluxPhotoelectrons * this->servicerSunlitArea * exp(-1 * this->servicerPotential / this->tempPhotoelectrons);
+        this->servicerPhotoelectricCurrent = this->fluxPhotoelectrons * this->servicerSunlitArea *
+                                             exp(-1 * this->servicerPotential / this->tempPhotoelectrons);
     }
 
     // Compute the target photoelectric current
     if (this->targetPotential <= 0) {
         this->targetPhotoelectricCurrent = this->fluxPhotoelectrons * this->targetSunlitArea;
     } else {
-        this->targetPhotoelectricCurrent = this->fluxPhotoelectrons * this->targetSunlitArea * exp(-1 * this->targetPotential / this->tempPhotoelectrons);
+        this->targetPhotoelectricCurrent = this->fluxPhotoelectrons * this->targetSunlitArea *
+                                           exp(-1 * this->targetPotential / this->tempPhotoelectrons);
     }
 }
 
 /*! Method for pre-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
 */
-void SpacecraftChargingDynamics::preIntegration(uint64_t integrateToThisTimeNanos) {
+void
+SpacecraftChargingDynamics::preIntegration(uint64_t integrateToThisTimeNanos)
+{
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos);
 }
 
 /*! Method for post-integration steps.
  @param integrateToThisTimeNanos Time to integrate to
 */
-void SpacecraftChargingDynamics::postIntegration(uint64_t integrateToThisTimeNanos) {
+void
+SpacecraftChargingDynamics::postIntegration(uint64_t integrateToThisTimeNanos)
+{
     this->timeBeforeNanos = integrateToThisTimeNanos;
     this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
 }
@@ -323,35 +358,45 @@ void SpacecraftChargingDynamics::postIntegration(uint64_t integrateToThisTimeNan
 /*! Setter for the initial servicer potential.
  @param potentialInit [Volts] Servicer initial potential
 */
-void SpacecraftChargingDynamics::setServicerPotentialInit(const double potentialInit) {
+void
+SpacecraftChargingDynamics::setServicerPotentialInit(const double potentialInit)
+{
     this->servicerPotentialInit = potentialInit;
 }
 
 /*! Setter for the initial target potential.
  @param potentialInit [Volts] Target initial potential
 */
-void SpacecraftChargingDynamics::setTargetPotentialInit(const double potentialInit) {
+void
+SpacecraftChargingDynamics::setTargetPotentialInit(const double potentialInit)
+{
     this->targetPotentialInit = potentialInit;
 }
 
 /*! Getter for the servicer initial potential.
  @return double
 */
-double SpacecraftChargingDynamics::getServicerPotentialInit() const {
+double
+SpacecraftChargingDynamics::getServicerPotentialInit() const
+{
     return this->servicerPotentialInit;
 }
 
 /*! Getter for the target initial potential.
  @return double
 */
-double SpacecraftChargingDynamics::getTargetPotentialInit() const {
+double
+SpacecraftChargingDynamics::getTargetPotentialInit() const
+{
     return this->targetPotentialInit;
 }
 
 /*! Setter for the servicer spacecraft capacitance.
  @param capacitance [farad] Servicer spacecraft capacitance
 */
-void SpacecraftChargingDynamics::setServicerCapacitance(const double capacitance) {
+void
+SpacecraftChargingDynamics::setServicerCapacitance(const double capacitance)
+{
     assert(capacitance > 0.0);
     this->servicerCapacitance = std::abs(capacitance);
 }
@@ -359,7 +404,9 @@ void SpacecraftChargingDynamics::setServicerCapacitance(const double capacitance
 /*! Setter for the target spacecraft capacitance.
  @param capacitance [farad] Target spacecraft capacitance
 */
-void SpacecraftChargingDynamics::setTargetCapacitance(const double capacitance) {
+void
+SpacecraftChargingDynamics::setTargetCapacitance(const double capacitance)
+{
     assert(capacitance > 0.0);
     this->targetCapacitance = std::abs(capacitance);
 }
@@ -367,21 +414,27 @@ void SpacecraftChargingDynamics::setTargetCapacitance(const double capacitance) 
 /*! Getter for the servicer spacecraft capacitance.
  @return double
 */
-double SpacecraftChargingDynamics::getServicerCapacitance() const {
+double
+SpacecraftChargingDynamics::getServicerCapacitance() const
+{
     return this->servicerCapacitance;
 }
 
 /*! Getter for the target spacecraft capacitance.
  @return double
 */
-double SpacecraftChargingDynamics::getTargetCapacitance() const {
+double
+SpacecraftChargingDynamics::getTargetCapacitance() const
+{
     return this->targetCapacitance;
 }
 
 /*! Setter for the photoelectron temperature.
  @param temp [eV] Photoelectron temperature
 */
-void SpacecraftChargingDynamics::setTempPhotoelectrons(const double temp) {
+void
+SpacecraftChargingDynamics::setTempPhotoelectrons(const double temp)
+{
     assert(temp > 0.0);
     this->tempPhotoelectrons = std::abs(temp);
 }
@@ -389,7 +442,9 @@ void SpacecraftChargingDynamics::setTempPhotoelectrons(const double temp) {
 /*! Setter for the photoelectron flux.
  @param flux [A/m^2] Photoelectron flux
 */
-void SpacecraftChargingDynamics::setFluxPhotoelectrons(const double flux) {
+void
+SpacecraftChargingDynamics::setFluxPhotoelectrons(const double flux)
+{
     assert(flux > 0.0);
     this->fluxPhotoelectrons = std::abs(flux);
 }
@@ -397,21 +452,27 @@ void SpacecraftChargingDynamics::setFluxPhotoelectrons(const double flux) {
 /*! Getter for the photoelectron temperature.
  @return double
 */
-double SpacecraftChargingDynamics::getTempPhotoelectrons() const {
+double
+SpacecraftChargingDynamics::getTempPhotoelectrons() const
+{
     return this->tempPhotoelectrons;
 }
 
 /*! Getter for the photoelectron flux.
  @return double
 */
-double SpacecraftChargingDynamics::getFluxPhotoelectrons() const {
+double
+SpacecraftChargingDynamics::getFluxPhotoelectrons() const
+{
     return this->fluxPhotoelectrons;
 }
 
 /*! Setter for the electron temperature.
  @param temp [eV] Electron temperature
 */
-void SpacecraftChargingDynamics::setTempElectrons(const double temp) {
+void
+SpacecraftChargingDynamics::setTempElectrons(const double temp)
+{
     assert(temp > 0.0);
     this->tempElectrons = std::abs(temp);
 }
@@ -419,14 +480,18 @@ void SpacecraftChargingDynamics::setTempElectrons(const double temp) {
 /*! Getter for the electron temperature.
  @return double
 */
-double SpacecraftChargingDynamics::getTempElectrons() const {
+double
+SpacecraftChargingDynamics::getTempElectrons() const
+{
     return this->tempElectrons;
 }
 
 /*! Setter for the electron density.
  @param density [m^-3] Electron density
 */
-void SpacecraftChargingDynamics::setDensityElectrons(const double density) {
+void
+SpacecraftChargingDynamics::setDensityElectrons(const double density)
+{
     assert(density > 0.0);
     this->densityElectrons = std::abs(density);
 }
@@ -434,14 +499,18 @@ void SpacecraftChargingDynamics::setDensityElectrons(const double density) {
 /*! Getter for the electron density.
  @return double
 */
-double SpacecraftChargingDynamics::getDensityElectrons() const {
+double
+SpacecraftChargingDynamics::getDensityElectrons() const
+{
     return this->densityElectrons;
 }
 
 /*! Setter for the ion temperature.
  @param temp [eV] Ion temperature
 */
-void SpacecraftChargingDynamics::setTempIons(const double temp) {
+void
+SpacecraftChargingDynamics::setTempIons(const double temp)
+{
     assert(temp > 0.0);
     this->tempIons = std::abs(temp);
 }
@@ -449,14 +518,18 @@ void SpacecraftChargingDynamics::setTempIons(const double temp) {
 /*! Getter for the ion temperature.
  @return double
 */
-double SpacecraftChargingDynamics::getTempIons() const {
+double
+SpacecraftChargingDynamics::getTempIons() const
+{
     return this->tempIons;
 }
 
 /*! Setter for the ion density.
  @param density [m^-3] Ion density
 */
-void SpacecraftChargingDynamics::setDensityIons(const double density) {
+void
+SpacecraftChargingDynamics::setDensityIons(const double density)
+{
     assert(density > 0.0);
     this->densityIons = std::abs(density);
 }
@@ -464,14 +537,18 @@ void SpacecraftChargingDynamics::setDensityIons(const double density) {
 /*! Getter for the ion density.
  @return double
 */
-double SpacecraftChargingDynamics::getDensityIons() const {
+double
+SpacecraftChargingDynamics::getDensityIons() const
+{
     return this->densityIons;
 }
 
 /*! Setter for the bulk ion velocity.
  @param velocity [m/s] Bulk ion velocity
 */
-void SpacecraftChargingDynamics::setBulkVelocityIons(const double velocity) {
+void
+SpacecraftChargingDynamics::setBulkVelocityIons(const double velocity)
+{
     assert(velocity >= 0.0);
     this->bulkVelocityIons = std::abs(velocity);
 }
@@ -479,6 +556,8 @@ void SpacecraftChargingDynamics::setBulkVelocityIons(const double velocity) {
 /*! Getter for the bulk ion velocity.
  @return double
 */
-double SpacecraftChargingDynamics::getBulkVelocityIons() const {
+double
+SpacecraftChargingDynamics::getBulkVelocityIons() const
+{
     return this->bulkVelocityIons;
 }

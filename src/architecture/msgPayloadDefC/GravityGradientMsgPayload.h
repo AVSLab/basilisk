@@ -20,10 +20,10 @@
 #ifndef gravityGradientSimMsg_H
 #define gravityGradientSimMsg_H
 
-
 /*! gravity gradient torque message definition */
-typedef struct {
-    double gravityGradientTorque_B[3];  //!< [Nm] Gravity Gradient torque in body frame components
-}GravityGradientMsgPayload;
+typedef struct
+{
+    double gravityGradientTorque_B[3]; //!< [Nm] Gravity Gradient torque in body frame components
+} GravityGradientMsgPayload;
 
-#endif //BASILISK_DATANODEUSAGESIMMSG_H
+#endif // BASILISK_DATANODEUSAGESIMMSG_H

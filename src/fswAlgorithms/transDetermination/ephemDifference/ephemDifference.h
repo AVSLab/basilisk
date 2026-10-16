@@ -26,36 +26,35 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
 /*! @brief Container with paired input/output message names and IDs */
-typedef struct{
+typedef struct
+{
     EphemerisMsg_C ephInMsg;  //!< [-] Input name for the ephemeris message
     EphemerisMsg_C ephOutMsg; //!< [-] The name converted output message
-}EphemChangeConfig;
+} EphemChangeConfig;
 
 /*! @brief Container holding ephemDifference module variables */
-typedef struct {
-    EphemerisMsg_C ephBaseInMsg; //!< base ephemeris input message name
+typedef struct
+{
+    EphemerisMsg_C ephBaseInMsg;                           //!< base ephemeris input message name
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; //!< [-] The list of bodies to change out
-    
+
     uint32_t ephBdyCount; //!< [-] The number of ephemeris bodies we are changing
 
-    BSKLogger *bskLogger; //!< BSK Logging
-}EphemDifferenceData;
+    BSKLogger* bskLogger; //!< BSK Logging
+} EphemDifferenceData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID);
-    void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
-        int64_t moduleID);
-    void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
-                              int64_t moduleID);
-    
+
+    void SelfInit_ephemDifference(EphemDifferenceData* configData, int64_t moduleID);
+    void Update_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

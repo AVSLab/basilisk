@@ -19,43 +19,35 @@
 #include "svStochasticIntegratorW2Ito2.h"
 
 svStochasticIntegratorW2Ito2::svStochasticIntegratorW2Ito2(DynamicObject* dyn)
-    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
+  : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
 {
 }
 
 // Coefficients for the W2Ito2 tableau (Tang & Xiao, Table 3). 4-stage explicit method.
-W2ItoCoefficients svStochasticIntegratorW2Ito2::getCoefficients()
+W2ItoCoefficients
+svStochasticIntegratorW2Ito2::getCoefficients()
 {
     W2ItoCoefficients c;
 
-    c.alpha = {1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0};
-    c.beta0 = {0.0, -1.0, 1.0, 1.0};
-    c.beta1 = {0.0, 2.0, 0.0, -2.0};
+    c.alpha = { 1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0 };
+    c.beta0 = { 0.0, -1.0, 1.0, 1.0 };
+    c.beta1 = { 0.0, 2.0, 0.0, -2.0 };
 
-    c.A0 = {{0.0, 0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0, 0.0},
-            {0.0, 1.0 / 2.0, 0.0, 0.0},
-            {0.0, 0.0, 1.0, 0.0}};
+    c.A0 = {
+        { 0.0, 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0, 0.0 }, { 0.0, 1.0 / 2.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }
+    };
 
-    c.B0 = {{0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0},
-            {0.0, 1.0, 0.0, 0.0},
-            {0.0, 1.0, 0.0, 0.0}};
+    c.B0 = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 0.0 } };
 
-    c.A1 = {{0.0, 0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0, 0.0}};
+    c.A1 = {
+        { 0.0, 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0, 0.0 }
+    };
 
-    c.B1 = {{0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0},
-            {0.0, 1.0 / 2.0, 0.0, 0.0},
-            {0.0, -1.0 / 2.0, 0.0, 0.0}};
+    c.B1 = {
+        { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 1.0 / 2.0, 0.0, 0.0 }, { 0.0, -1.0 / 2.0, 0.0, 0.0 }
+    };
 
-    c.B2 = {{0.0, 0.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0},
-            {0.0, 1.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0, 0.0}};
+    c.B2 = { { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 } };
 
     return c;
 }

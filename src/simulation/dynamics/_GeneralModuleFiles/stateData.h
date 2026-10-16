@@ -50,7 +50,7 @@ struct MatrixShape
 /** @brief Adaptive-integrator error scaling associated with a state. */
 enum class ErrorControlMode
 {
-    WholeState,   ///< Compare the norm of the state error against one state-level threshold.
+    WholeState,  ///< Compare the norm of the state error against one state-level threshold.
     PerComponent ///< Compare each scalar error against its own scaled threshold.
 };
 
@@ -102,34 +102,34 @@ struct StateSpec
  */
 class StateUpdatePolicy
 {
-public:
-  virtual ~StateUpdatePolicy() = default;
+  public:
+    virtual ~StateUpdatePolicy() = default;
 
-  /** @brief Compare immutable policy topology by value. */
-  virtual bool topologyEquals(const StateUpdatePolicy& other) const = 0;
+    /** @brief Compare immutable policy topology by value. */
+    virtual bool topologyEquals(const StateUpdatePolicy& other) const = 0;
 
-  /** @brief Validate that a state specification is supported by this policy. */
-  virtual void validate(const StateSpec& spec) const = 0;
+    /** @brief Validate that a state specification is supported by this policy. */
+    virtual void validate(const StateSpec& spec) const = 0;
 
-  /** @brief Construct one drift candidate from a base state and combined drift.
-   * @param base State at the start of this candidate update.
-   * @param combinedDrift Weighted drift in the declared derivative shape.
-   * @param timeStep Drift multiplier in seconds.
-   * @param output Destination in the declared state shape; must be fully written.
-   */
-  virtual void buildDriftCandidate(ConstMatrixView base,
-                                   ConstMatrixView combinedDrift,
-                                   double timeStep,
-                                   MutableMatrixView output) const = 0;
+    /** @brief Construct one drift candidate from a base state and combined drift.
+     * @param base State at the start of this candidate update.
+     * @param combinedDrift Weighted drift in the declared derivative shape.
+     * @param timeStep Drift multiplier in seconds.
+     * @param output Destination in the declared state shape; must be fully written.
+     */
+    virtual void buildDriftCandidate(ConstMatrixView base,
+                                     ConstMatrixView combinedDrift,
+                                     double timeStep,
+                                     MutableMatrixView output) const = 0;
 
-  /** @brief Apply one diffusion-tangent increment to a candidate state.
-   * @param state Candidate to update in place.
-   * @param diffusionTangent One combined tangent in the declared diffusion shape.
-   * @param pseudoStep Method-provided multiplier for this tangent, often a Wiener increment.
-   */
-  virtual void applyNoiseIncrement(MutableMatrixView state,
-                                   ConstMatrixView diffusionTangent,
-                                   double pseudoStep) const = 0;
+    /** @brief Apply one diffusion-tangent increment to a candidate state.
+     * @param state Candidate to update in place.
+     * @param diffusionTangent One combined tangent in the declared diffusion shape.
+     * @param pseudoStep Method-provided multiplier for this tangent, often a Wiener increment.
+     */
+    virtual void applyNoiseIncrement(MutableMatrixView state,
+                                     ConstMatrixView diffusionTangent,
+                                     double pseudoStep) const = 0;
 };
 
 class StateRegistry;
@@ -320,10 +320,10 @@ class StateData
         this->activeDerivative = derivative;
     }
 
-    StateRegistry* owner = nullptr; //!< Registry owning this handle's metadata and storage
-    size_t slot = 0;                  //!< Stable registration slot
-    double* activeState = nullptr;    //!< Active seed or buffer state storage
-    double* activeDerivative = nullptr; //!< Active seed or buffer derivative storage
+    StateRegistry* owner = nullptr;        //!< Registry owning this handle's metadata and storage
+    size_t slot = 0;                       //!< Stable registration slot
+    double* activeState = nullptr;         //!< Active seed or buffer state storage
+    double* activeDerivative = nullptr;    //!< Active seed or buffer derivative storage
     const MatrixShape viewStateShape;      ///< Immutable shape cached for inline state maps.
     const MatrixShape viewDerivativeShape; ///< Immutable shape cached for inline derivative maps.
 };

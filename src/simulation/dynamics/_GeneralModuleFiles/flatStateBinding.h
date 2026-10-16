@@ -43,15 +43,15 @@ class StateRegistry;
  */
 struct FlatObjectDescriptor
 {
-    DynamicObject* object = nullptr; ///< Borrowed dynamics callback target.
+    DynamicObject* object = nullptr;   ///< Borrowed dynamics callback target.
     StateRegistry* registry = nullptr; ///< Borrowed registry owning this object's buffers.
-    size_t firstStateIndex = 0; ///< First entry in the binding's state-descriptor vector.
-    size_t stateOffset = 0; ///< First scalar in a combined state buffer.
-    size_t stateCount = 0; ///< Scalars in this object's live state buffer.
-    size_t derivativeOffset = 0; ///< First scalar in a combined derivative buffer.
-    size_t derivativeCount = 0; ///< Scalars in this object's derivative buffer.
-    double* stateData = nullptr; ///< Borrowed start of this object's live state buffer.
-    double* derivativeData = nullptr; ///< Borrowed start of this object's derivative buffer.
+    size_t firstStateIndex = 0;        ///< First entry in the binding's state-descriptor vector.
+    size_t stateOffset = 0;            ///< First scalar in a combined state buffer.
+    size_t stateCount = 0;             ///< Scalars in this object's live state buffer.
+    size_t derivativeOffset = 0;       ///< First scalar in a combined derivative buffer.
+    size_t derivativeCount = 0;        ///< Scalars in this object's derivative buffer.
+    double* stateData = nullptr;       ///< Borrowed start of this object's live state buffer.
+    double* derivativeData = nullptr;  ///< Borrowed start of this object's derivative buffer.
 };
 
 /** @brief One state with shapes and integrator-global offsets resolved at binding time.
@@ -61,23 +61,23 @@ struct FlatObjectDescriptor
  */
 struct FlatStateDescriptor
 {
-    StateData* state = nullptr; ///< Borrowed stable handle.
-    std::string stateName; ///< Registration name, used for diagnostics and tolerance resolution.
-    size_t dynamicObjectIndex = 0; ///< Owning entry in the object-descriptor vector.
-    size_t stateOffset = 0; ///< First scalar in a combined state buffer.
-    size_t stateCount = 0; ///< Stored state scalars.
-    Eigen::Index stateRows = 0; ///< Rows in the stored state.
-    Eigen::Index stateColumns = 0; ///< Columns in the stored state.
-    size_t derivativeOffset = 0; ///< First scalar in a combined drift buffer.
-    size_t derivativeCount = 0; ///< Drift scalars.
-    Eigen::Index derivativeRows = 0; ///< Rows in drift views.
+    StateData* state = nullptr;         ///< Borrowed stable handle.
+    std::string stateName;              ///< Registration name, used for diagnostics and tolerance resolution.
+    size_t dynamicObjectIndex = 0;      ///< Owning entry in the object-descriptor vector.
+    size_t stateOffset = 0;             ///< First scalar in a combined state buffer.
+    size_t stateCount = 0;              ///< Stored state scalars.
+    Eigen::Index stateRows = 0;         ///< Rows in the stored state.
+    Eigen::Index stateColumns = 0;      ///< Columns in the stored state.
+    size_t derivativeOffset = 0;        ///< First scalar in a combined drift buffer.
+    size_t derivativeCount = 0;         ///< Drift scalars.
+    Eigen::Index derivativeRows = 0;    ///< Rows in drift views.
     Eigen::Index derivativeColumns = 0; ///< Columns in drift views.
-    size_t diffusionCount = 0; ///< Scalars per local diffusion tangent.
-    Eigen::Index diffusionRows = 0; ///< Rows in tangent views.
-    Eigen::Index diffusionColumns = 0; ///< Columns in tangent views.
-    size_t noiseCount = 0; ///< Local noise endpoints for this state.
-    size_t localNoiseOffset = 0; ///< First entry in concatenated local-noise mappings.
-    StateUpdateKind updateKind = StateUpdateKind::Euclidean; ///< Cached arithmetic dispatch choice.
+    size_t diffusionCount = 0;          ///< Scalars per local diffusion tangent.
+    Eigen::Index diffusionRows = 0;     ///< Rows in tangent views.
+    Eigen::Index diffusionColumns = 0;  ///< Columns in tangent views.
+    size_t noiseCount = 0;              ///< Local noise endpoints for this state.
+    size_t localNoiseOffset = 0;        ///< First entry in concatenated local-noise mappings.
+    StateUpdateKind updateKind = StateUpdateKind::Euclidean;      ///< Cached arithmetic dispatch choice.
     ErrorControlMode errorControl = ErrorControlMode::WholeState; ///< Cached adaptive scaling convention.
     const StateUpdatePolicy* specialUpdate = nullptr; ///< Borrowed immutable policy; null for Euclidean states.
 
@@ -116,10 +116,10 @@ struct FlatStateDescriptor
 struct FlatUpdateRun
 {
     size_t firstDescriptorIndex = 0; ///< First state in this run; the only state for a special update.
-    size_t stateOffset = 0; ///< First scalar in a combined state buffer.
-    size_t stateCount = 0; ///< State scalars covered by the run.
-    size_t derivativeOffset = 0; ///< First scalar in a combined derivative buffer.
-    size_t derivativeCount = 0; ///< Drift scalars covered by the run.
+    size_t stateOffset = 0;          ///< First scalar in a combined state buffer.
+    size_t stateCount = 0;           ///< State scalars covered by the run.
+    size_t derivativeOffset = 0;     ///< First scalar in a combined derivative buffer.
+    size_t derivativeCount = 0;      ///< Drift scalars covered by the run.
     StateUpdateKind updateKind = StateUpdateKind::Euclidean; ///< A vector-addition run or one policy-dispatched state.
 };
 
@@ -142,7 +142,7 @@ class FlatStateBinding
     enum class Mode
     {
         DeterministicRungeKutta, ///< Drift-only RK candidate construction.
-        Stochastic ///< Drift and diffusion candidate construction.
+        Stochastic               ///< Drift and diffusion candidate construction.
     };
 
     FlatStateBinding() = default;
@@ -234,16 +234,18 @@ class FlatStateBinding
                              Eigen::Ref<Eigen::VectorXd> output) const;
 
   private:
-    bool bound = false; ///< True after complete descriptor construction.
+    bool bound = false;                               ///< True after complete descriptor construction.
     Mode bindingMode = Mode::DeterministicRungeKutta; ///< Consumer family used for validation diagnostics.
-    size_t stateCount = 0; ///< Total stored state scalars.
-    size_t derivativeCount = 0; ///< Total drift scalars.
-    size_t noiseCount = 0; ///< Total local noise endpoints.
+    size_t stateCount = 0;                            ///< Total stored state scalars.
+    size_t derivativeCount = 0;                       ///< Total drift scalars.
+    size_t noiseCount = 0;                            ///< Total local noise endpoints.
     bool allEuclideanUpdates = true; ///< Enables whole-buffer arithmetic when no policy dispatch is needed.
     std::vector<FlatObjectDescriptor> objectDescriptors; ///< Borrowed buffer metadata in integration order.
-    std::vector<FlatStateDescriptor> stateDescriptors; ///< Per-state metadata in registration order.
-    std::vector<FlatUpdateRun> stateUpdateRuns; ///< Adjacent compatible Euclidean states coalesced for vector arithmetic.
-    std::vector<size_t> canonicalNoiseTraversalOrder; ///< State indices sorted by object and name for stable noise assignment.
+    std::vector<FlatStateDescriptor> stateDescriptors;   ///< Per-state metadata in registration order.
+    std::vector<FlatUpdateRun>
+      stateUpdateRuns; ///< Adjacent compatible Euclidean states coalesced for vector arithmetic.
+    std::vector<size_t>
+      canonicalNoiseTraversalOrder; ///< State indices sorted by object and name for stable noise assignment.
 };
 
 #endif /* flatStateBinding_h */

@@ -20,16 +20,16 @@
 #ifndef RW_CONFIG_MESSAGE_H
 #define RW_CONFIG_MESSAGE_H
 
-#include <stdint.h>
 #include "architecture/utilities/macroDefinitions.h"
+#include <stdint.h>
 
 /*! @brief RW array configuration FSW msg */
-typedef struct{
-    double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-]    The RW spin axis matrix in body frame components 
+typedef struct
+{
+    double GsMatrix_B[3 * MAX_EFF_CNT]; //!< [-]    The RW spin axis matrix in body frame components
     double JsList[MAX_EFF_CNT];         //!< [kgm2] The spin axis inertia for RWs
-    int    numRW;                       //!< [-]    The number of reaction wheels available on vehicle
+    int numRW;                          //!< [-]    The number of reaction wheels available on vehicle
     double uMax[MAX_EFF_CNT];           //!< [Nm]   The maximum RW motor torque
-}RWArrayConfigMsgPayload;
-
+} RWArrayConfigMsgPayload;
 
 #endif

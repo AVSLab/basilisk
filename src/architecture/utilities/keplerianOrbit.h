@@ -19,11 +19,10 @@
 
 #pragma once
 
-#include <cmath>
+#include "architecture/utilities/astroConstants.h"
 #include <Eigen/Dense>
 #include <architecture/utilities/orbitalMotion.h>
-#include "architecture/utilities/astroConstants.h"
-
+#include <cmath>
 
 /*! @brief Represent an elliptical orbit with a coherent set of derived outputs.
  *
@@ -38,22 +37,22 @@
  * normalization to [0, 2*pi). Negative and wrapped true anomalies are accepted;
  * these conversions do not preserve a count of completed revolutions.
  */
-class KeplerianOrbit {
-public:
+class KeplerianOrbit
+{
+  public:
     KeplerianOrbit();
     KeplerianOrbit(ClassicElements oe, const double mu);
-    KeplerianOrbit(const KeplerianOrbit &orig);
+    KeplerianOrbit(const KeplerianOrbit& orig);
     ~KeplerianOrbit();
 
-
-    Eigen::Vector3d r_BP_P() const;              //!< body position vector relative to planet
-    Eigen::Vector3d v_BP_P() const;              //!< body velocity vector relative to planet
+    Eigen::Vector3d r_BP_P() const; //!< body position vector relative to planet
+    Eigen::Vector3d v_BP_P() const; //!< body velocity vector relative to planet
     Eigen::Vector3d h_BP_P() const; //!< angular momentum of body relative to planet
-    double M() const;                          //!< Mean elliptic anomaly [rad], using E2M().
+    double M() const;               //!< Mean elliptic anomaly [rad], using E2M().
     double n() const;
     double P() const;
     double f() const;
-    double fDot() const;                       //!< True anomaly rate [rad/s].
+    double fDot() const; //!< True anomaly rate [rad/s].
     double RAAN() const;
     double omega() const;
     double i() const;
@@ -65,10 +64,10 @@ public:
     double v() const;
     double r_a() const;
     double r_p() const;
-    double fpa() const;                        //!< Flight-path angle [rad], negative for inward motion.
-    double E() const;                          //!< Eccentric anomaly [rad], using f2E().
+    double fpa() const; //!< Flight-path angle [rad], negative for inward motion.
+    double E() const;   //!< Eccentric anomaly [rad], using f2E().
     double p() const;
-    double rDot() const;                       //!< Radial velocity [m/s], negative for inward motion.
+    double rDot() const; //!< Radial velocity [m/s], negative for inward motion.
     double c3() const;
     /*! @brief Return the current orbital elements and derived geometry.
      * @return Elements including the current radius in rmag [m], inverse semi-major
@@ -89,9 +88,9 @@ public:
     void set_RAAN(double RAAN);
     void set_f(double f);
 
-private:
-    double mu = MU_EARTH*std::pow(10,9); // [m^3/s^2]
-    double semi_major_axis = 1E5*1000;  // convert to meters
+  private:
+    double mu = MU_EARTH * std::pow(10, 9); // [m^3/s^2]
+    double semi_major_axis = 1E5 * 1000;    // convert to meters
     double eccentricity = 1E-5;
     double inclination{};
     double argument_of_periapsis{};
@@ -113,7 +112,8 @@ private:
     Eigen::Vector3d orbital_angular_momentum_P;
     Eigen::Vector3d position_BP_P;
     Eigen::Vector3d velocity_BP_P;
-private:
+
+  private:
     void change_orbit();
     void change_f();
 };

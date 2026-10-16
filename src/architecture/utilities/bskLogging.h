@@ -17,25 +17,24 @@
 
  */
 
-
-
 #ifndef _BSK_LOG_
 #define _BSK_LOG_
 
-
-//maximum length of info to log in a reference to BSKLogging in C, not relevant in C++
+// maximum length of info to log in a reference to BSKLogging in C, not relevant in C++
 #define MAX_LOGGING_LENGTH 255
 
-typedef enum {
+typedef enum
+{
     BSK_DEBUG,
     BSK_INFORMATION,
     BSK_WARNING,
     BSK_ERROR,
-    BSK_SILENT          // the coder should never use this flag when using bskLog().  It is used to turn off all output
+    BSK_SILENT // the coder should never use this flag when using bskLog().  It is used to turn off all output
 } logLevel_t;
 
 extern logLevel_t LogLevel;
-void printDefaultLogLevel(void);
+void
+printDefaultLogLevel(void);
 
 /// \cond DO_NOT_DOCUMENT
 
@@ -67,8 +66,7 @@ void printDefaultLogLevel(void);
 
 #ifndef BSK_PRINTF_FORMAT
 #if !defined(SWIG) && (defined(__clang__) || defined(__GNUC__))
-#define BSK_PRINTF_FORMAT(formatIndex, firstArgument) \
-    __attribute__((format(printf, formatIndex, firstArgument)))
+#define BSK_PRINTF_FORMAT(formatIndex, firstArgument) __attribute__((format(printf, formatIndex, firstArgument)))
 #else
 #define BSK_PRINTF_FORMAT(formatIndex, firstArgument)
 #endif
@@ -76,24 +74,31 @@ void printDefaultLogLevel(void);
 
 #ifdef __cplusplus
 #include <map>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 #ifdef SWIG
 %include "std_except.i"
 #endif
 
-void setDefaultLogLevel(logLevel_t logLevel);
-logLevel_t getDefaultLogLevel();
+void
+setDefaultLogLevel(logLevel_t logLevel);
+logLevel_t
+getDefaultLogLevel();
 
 /*! Custom Basilisk runtime error class */
-class BasiliskError : public std::runtime_error {
-public:
+class BasiliskError : public std::runtime_error
+{
+  public:
     explicit BasiliskError(const std::string& message)
-        : std::runtime_error(message) {}
+      : std::runtime_error(message)
+    {
+    }
 
     explicit BasiliskError(const char* message)
-        : std::runtime_error(message) {}
+      : std::runtime_error(message)
+    {
+    }
 };
 
 #ifdef SWIG
@@ -107,31 +112,28 @@ public:
 /*! BSK logging class */
 class BSKLogger
 {
-    public:
-        BSKLogger();
-        BSKLogger(logLevel_t logLevel);
-        virtual ~BSKLogger() = default;
-        void setLogLevel(logLevel_t logLevel);
-        void printLogLevel();
-        int getLogLevel();
-        void bskLog(logLevel_t targetLevel, const char* info, ...) BSK_PRINTF_FORMAT(3, 4);
+  public:
+    BSKLogger();
+    BSKLogger(logLevel_t logLevel);
+    virtual ~BSKLogger() = default;
+    void setLogLevel(logLevel_t logLevel);
+    void printLogLevel();
+    int getLogLevel();
+    void bskLog(logLevel_t targetLevel, const char* info, ...) BSK_PRINTF_FORMAT(3, 4);
 #ifndef SWIG
-        BSK_NORETURN void bskError(const char* info, ...) BSK_PRINTF_FORMAT(2, 3);
+    BSK_NORETURN void bskError(const char* info, ...) BSK_PRINTF_FORMAT(2, 3);
 #endif
 
-    //Provides a mapping from log level enum to str
-    public:
-        std::map<int, const char*> logLevelMap
-        {
-            {0, "BSK_DEBUG"},
-            {1, "\033[92mBSK_INFORMATION\033[0m"},
-            {2, "\033[93mBSK_WARNING\033[0m"},
-            {3, "\033[91mBSK_ERROR\033[0m"},
-            {4, "BSK_SILENT"}
-        };
+    // Provides a mapping from log level enum to str
+  public:
+    std::map<int, const char*> logLevelMap{ { 0, "BSK_DEBUG" },
+                                            { 1, "\033[92mBSK_INFORMATION\033[0m" },
+                                            { 2, "\033[93mBSK_WARNING\033[0m" },
+                                            { 3, "\033[91mBSK_ERROR\033[0m" },
+                                            { 4, "BSK_SILENT" } };
 
-    private:
-        logLevel_t _logLevel;
+  private:
+    logLevel_t _logLevel;
 };
 
 #ifdef SWIG
@@ -169,21 +171,27 @@ typedef struct BSKLogger BSKLogger;
 #endif
 
 #ifdef __cplusplus
-    #define EXTERN extern "C"
-    // C++ callers should use BSKLogger::bskError(), which is marked non-returning.
-    // Keep the C wrapper unannotated in C++ so BasiliskError unwinds consistently on MSVC.
-    #define EXTERN_NORETURN extern "C"
+#define EXTERN extern "C"
+// C++ callers should use BSKLogger::bskError(), which is marked non-returning.
+// Keep the C wrapper unannotated in C++ so BasiliskError unwinds consistently on MSVC.
+#define EXTERN_NORETURN extern "C"
 #else
-    #define EXTERN
-    #define EXTERN_NORETURN BSK_NORETURN
+#define EXTERN
+#define EXTERN_NORETURN BSK_NORETURN
 #endif
 
-EXTERN BSKLogger* _BSKLogger(void);
-EXTERN void _BSKLogger_d(BSKLogger*);
-EXTERN void _printLogLevel(BSKLogger*);
-EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
-EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
-EXTERN_NORETURN void _bskError(BSKLogger*, const char*);
+EXTERN BSKLogger*
+_BSKLogger(void);
+EXTERN void
+_BSKLogger_d(BSKLogger*);
+EXTERN void
+_printLogLevel(BSKLogger*);
+EXTERN void
+_setLogLevel(BSKLogger*, logLevel_t);
+EXTERN void
+_bskLog(BSKLogger*, logLevel_t, const char*);
+EXTERN_NORETURN void
+_bskError(BSKLogger*, const char*);
 #ifndef SWIG
 /*! Log through the C++ logger without allowing an exception to cross the C ABI.
  *
@@ -191,9 +199,9 @@ EXTERN_NORETURN void _bskError(BSKLogger*, const char*);
  *  C++ exception. It returns zero on success and a nonzero value when logging
  *  throws. A null logger is treated as logging-disabled success.
  */
-EXTERN int _bskLogNoThrow(BSKLogger*, logLevel_t, const char*) BSK_NOEXCEPT;
+EXTERN int
+_bskLogNoThrow(BSKLogger*, logLevel_t, const char*) BSK_NOEXCEPT;
 #endif
-
 
 /// \endcond
 

@@ -29,12 +29,13 @@
 #include "architecture/msgPayloadDefC/HillRelStateMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavTransMsgPayload.h"
 #include "architecture/msgPayloadDefC/VehicleConfigMsgPayload.h"
-#include "cMsgCInterface/CmdForceInertialMsg_C.h"
 #include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/CmdForceInertialMsg_C.h"
 
 /*! @brief Computes an inertial control force command from Hill-frame relative position and velocity errors. */
-class HillFrameRelativeControl : public SysModel {
-public:
+class HillFrameRelativeControl : public SysModel
+{
+  public:
     /*! @brief Constructor */
     HillFrameRelativeControl();
     /*! @brief Destructor */
@@ -54,14 +55,16 @@ public:
     /*! @brief Initialize C-wrapped output messages. */
     void SelfInit() override;
 
-    ReadFunctor<NavTransMsgPayload> chiefTransInMsg;                 //!< chief translational nav input message
-    ReadFunctor<HillRelStateMsgPayload> hillStateInMsg;              //!< optional deputy-relative-to-chief Hill-frame state input message
-    ReadFunctor<NavTransMsgPayload> deputyTransInMsg;                //!< optional deputy translational nav input message (exclusive with hillStateInMsg)
-    ReadFunctor<VehicleConfigMsgPayload> deputyVehicleConfigInMsg;   //!< deputy mass configuration input message
-    Message<CmdForceInertialMsgPayload> forceOutMsg;                 //!< inertial force command output message
-    CmdForceInertialMsg_C forceOutMsgC = {};                         //!< C-wrapped inertial force command output message
+    ReadFunctor<NavTransMsgPayload> chiefTransInMsg; //!< chief translational nav input message
+    ReadFunctor<HillRelStateMsgPayload>
+      hillStateInMsg; //!< optional deputy-relative-to-chief Hill-frame state input message
+    ReadFunctor<NavTransMsgPayload>
+      deputyTransInMsg; //!< optional deputy translational nav input message (exclusive with hillStateInMsg)
+    ReadFunctor<VehicleConfigMsgPayload> deputyVehicleConfigInMsg; //!< deputy mass configuration input message
+    Message<CmdForceInertialMsgPayload> forceOutMsg;               //!< inertial force command output message
+    CmdForceInertialMsg_C forceOutMsgC = {};                       //!< C-wrapped inertial force command output message
 
-    BSKLogger bskLogger;                                             //!< BSK logging object
+    BSKLogger bskLogger; //!< BSK logging object
 
     /*! @brief Set Hill-frame position feedback gain matrix.
      *
@@ -123,7 +126,7 @@ public:
      */
     double getMu() const;
 
-private:
+  private:
     /*! @brief Read all subscribed input messages into local buffers. */
     void readMessages();
 
@@ -136,19 +139,23 @@ private:
      */
     void writeMessages(uint64_t currentSimNanos);
 
-    NavTransMsgPayload chiefNavBuffer;               //!< chief nav input message buffer
-    HillRelStateMsgPayload hillStateBuffer;          //!< Hill relative state input message buffer
-    NavTransMsgPayload deputyNavBuffer;              //!< deputy nav input message buffer
-    VehicleConfigMsgPayload deputyVehicleBuffer;     //!< deputy vehicle config buffer
+    NavTransMsgPayload chiefNavBuffer;           //!< chief nav input message buffer
+    HillRelStateMsgPayload hillStateBuffer;      //!< Hill relative state input message buffer
+    NavTransMsgPayload deputyNavBuffer;          //!< deputy nav input message buffer
+    VehicleConfigMsgPayload deputyVehicleBuffer; //!< deputy vehicle config buffer
 
-    double K[3][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}; //!< Hill-frame position feedback gain matrix [1/s^2]
-    double P[3][3] = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}; //!< Hill-frame velocity feedback gain matrix [1/s]
-    bool setKFlag = false; //!< flag to check if K has been set
-    bool setPFlag = false; //!< flag to check if P has been set
-    std::array<double, 3> rRef_H = {0.0, 0.0, 0.0}; //!< reference Hill-frame relative position [m]
-    std::array<double, 3> vRef_H = {0.0, 0.0, 0.0}; //!< reference Hill-frame relative velocity [m/s]
-    double mu = 0.0; //!< [m^3/s^2] gravitational parameter used in feedforward dynamics
-    double forceCmd_N[3] = {0.0, 0.0, 0.0}; //!< commanded force in inertial frame [N]
+    double K[3][3] = { { 0.0, 0.0, 0.0 },
+                       { 0.0, 0.0, 0.0 },
+                       { 0.0, 0.0, 0.0 } }; //!< Hill-frame position feedback gain matrix [1/s^2]
+    double P[3][3] = { { 0.0, 0.0, 0.0 },
+                       { 0.0, 0.0, 0.0 },
+                       { 0.0, 0.0, 0.0 } };           //!< Hill-frame velocity feedback gain matrix [1/s]
+    bool setKFlag = false;                            //!< flag to check if K has been set
+    bool setPFlag = false;                            //!< flag to check if P has been set
+    std::array<double, 3> rRef_H = { 0.0, 0.0, 0.0 }; //!< reference Hill-frame relative position [m]
+    std::array<double, 3> vRef_H = { 0.0, 0.0, 0.0 }; //!< reference Hill-frame relative velocity [m/s]
+    double mu = 0.0;                          //!< [m^3/s^2] gravitational parameter used in feedforward dynamics
+    double forceCmd_N[3] = { 0.0, 0.0, 0.0 }; //!< commanded force in inertial frame [N]
 };
 
 #endif

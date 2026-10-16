@@ -19,10 +19,12 @@
 #define ELECTRON_BEAM_MSG_H
 
 /*! @brief Message that defines the parameters of an onboard electron beam gun. */
-typedef struct {
-    double energyEB;   //!< [eV] Energy of the primary electron beam
-    double currentEB;  //!< [A]  Primary beam current (positive value represents electrons leaving)
-    double alphaEB;    //!< [-] A number from [0,1] representing the fraction of current actually reaching the target (to simulate beam divergence)
+typedef struct
+{
+    double energyEB;  //!< [eV] Energy of the primary electron beam
+    double currentEB; //!< [A]  Primary beam current (positive value represents electrons leaving)
+    double alphaEB;   //!< [-] A number from [0,1] representing the fraction of current actually reaching the target (to
+                      //!< simulate beam divergence)
 } ElectronBeamMsgPayload;
 
 #endif

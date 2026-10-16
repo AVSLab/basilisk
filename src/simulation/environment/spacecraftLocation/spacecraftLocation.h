@@ -20,10 +20,10 @@
 #ifndef GROUND_LOCATION_H
 #define GROUND_LOCATION_H
 
-#include <cstdint>
-#include <memory>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
+#include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -59,8 +59,10 @@ class SpacecraftLocation : public SysModel
     double theta;           //!< [r] (optional) sensor/communication half-cone angle, must be set if shat_B is specified
     double theta_solar;     //!< [r] (optional) illumination half-cone angle, treating aHat_B as the surface normal
     double theta_view;      //!< [rad] (optional) maximum angle from the surface normal to the tracked spacecraft
-    double min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
-    double min_shadow_factor;       //!< [] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead.
+    double
+      min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
+    double
+      min_shadow_factor;   //!< [] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead.
     double glareThreshold; //!< [-] minimum specular alignment classified as glare; defaults to 0.95
     bool useGlareConstraint; //!< [-] if true, detected glare prevents access; defaults to false
 

@@ -23,9 +23,9 @@
 #include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief Message for magnetic torque bar dipole commands. */
-typedef struct {
-    double mtbDipoleCmds[MAX_EFF_CNT];  //!< [A-m2] magnetic torque bar dipole cmds
-}MTBCmdMsgPayload;
-
+typedef struct
+{
+    double mtbDipoleCmds[MAX_EFF_CNT]; //!< [A-m2] magnetic torque bar dipole cmds
+} MTBCmdMsgPayload;
 
 #endif

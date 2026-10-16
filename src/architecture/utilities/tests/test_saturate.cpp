@@ -17,12 +17,12 @@
 
  */
 
-#include "architecture/utilities/saturate.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "architecture/utilities/saturate.h"
 #include <gtest/gtest.h>
 
-
-TEST(Saturate, testSaturate) {
+TEST(Saturate, testSaturate)
+{
     Eigen::Vector3d states;
     states << -555, 1.27, 5000000.;
     auto saturator = Saturate(3);

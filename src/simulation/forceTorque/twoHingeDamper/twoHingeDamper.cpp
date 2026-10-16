@@ -20,7 +20,8 @@
 
 #include <cmath>
 
-void TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->thetaInMsg.isLinked()) {
         this->bskLogger.bskError("TwoHingeDamper.thetaInMsg is not linked.");
@@ -36,17 +37,17 @@ void TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-void TwoHingeDamper::UpdateState(uint64_t CurrentSimNanos)
+void
+TwoHingeDamper::UpdateState(uint64_t CurrentSimNanos)
 {
     const double theta = this->thetaInMsg().state;
     const double cosTheta = std::cos(theta);
 
     SingleActuatorMsgPayload phiPayload = this->phiTorqueOutMsg.zeroMsgPayload;
-    phiPayload.input =
-        -this->dampingCoeff*cosTheta*cosTheta*this->phiDotInMsg().state;
+    phiPayload.input = -this->dampingCoeff * cosTheta * cosTheta * this->phiDotInMsg().state;
     this->phiTorqueOutMsg.write(&phiPayload, this->moduleID, CurrentSimNanos);
 
     SingleActuatorMsgPayload thetaPayload = this->thetaTorqueOutMsg.zeroMsgPayload;
-    thetaPayload.input = -this->dampingCoeff*this->thetaDotInMsg().state;
+    thetaPayload.input = -this->dampingCoeff * this->thetaDotInMsg().state;
     this->thetaTorqueOutMsg.write(&thetaPayload, this->moduleID, CurrentSimNanos);
 }

@@ -20,19 +20,17 @@
 #ifndef _FACET_ELEMENT_MESSAGE_H
 #define _FACET_ELEMENT_MESSAGE_H
 
-
-
 /*! @brief Message used to define a single facet geometry configuration message */
-typedef struct {
-    double area;  //!< [m^2] Facet area
-    double r_CopF_F[3];  //!< [m] Facet center of pressure location wrt facet frame origin point F
-    double nHat_F[3];  //!< [-] Facet normal vector expressed in facet frame F components
-    double rotHat_F[3];  //!< [-] Facet rotation axis expressed in facet frame F components
-    double dcm_F0B[3][3];  //!< [-] Initial facet frame attitude relative to hub B frame
-    double r_FB_B[3];  //!< [m] Facet location relative to hub frame origin point B
-    double c_diffuse;  //!< [-] Facet diffuse reflection optical coefficient
-    double c_specular;  //!< [-] Facet specular reflection optical coefficient
-}FacetElementMsgPayload;
-
+typedef struct
+{
+    double area;          //!< [m^2] Facet area
+    double r_CopF_F[3];   //!< [m] Facet center of pressure location wrt facet frame origin point F
+    double nHat_F[3];     //!< [-] Facet normal vector expressed in facet frame F components
+    double rotHat_F[3];   //!< [-] Facet rotation axis expressed in facet frame F components
+    double dcm_F0B[3][3]; //!< [-] Initial facet frame attitude relative to hub B frame
+    double r_FB_B[3];     //!< [m] Facet location relative to hub frame origin point B
+    double c_diffuse;     //!< [-] Facet diffuse reflection optical coefficient
+    double c_specular;    //!< [-] Facet specular reflection optical coefficient
+} FacetElementMsgPayload;
 
 #endif

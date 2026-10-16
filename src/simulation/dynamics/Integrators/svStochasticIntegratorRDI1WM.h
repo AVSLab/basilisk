@@ -45,27 +45,28 @@
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorRDI1WM : public StochasticRKIntegratorBase {
-public:
-  /** @brief Construct the numerical method for the supplied dynamics object.
-   * @param dynIn Dynamics object that will own this integrator.
-   */
-  explicit svStochasticIntegratorRDI1WM(DynamicObject* dynIn);
+class svStochasticIntegratorRDI1WM : public StochasticRKIntegratorBase
+{
+  public:
+    /** @brief Construct the numerical method for the supplied dynamics object.
+     * @param dynIn Dynamics object that will own this integrator.
+     */
+    explicit svStochasticIntegratorRDI1WM(DynamicObject* dynIn);
 
-  ~svStochasticIntegratorRDI1WM() noexcept override;
+    ~svStochasticIntegratorRDI1WM() noexcept override;
 
-protected:
-  /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
-  void integrateImpl(double currentTime, double timeStep) override;
+  protected:
+    /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
+    void integrateImpl(double currentTime, double timeStep) override;
 
-private:
-  struct FlatStorage;
+  private:
+    struct FlatStorage;
 
-  void bindStochasticMethodStorage() override { this->bindFlatStorage(); }
+    void bindStochasticMethodStorage() override { this->bindFlatStorage(); }
 
-  void bindFlatStorage();
+    void bindFlatStorage();
 
-  std::unique_ptr<FlatStorage> flatStorage;
+    std::unique_ptr<FlatStorage> flatStorage;
 };
 
 #endif /* svStochasticIntegratorRDI1WM_h */

@@ -17,45 +17,48 @@
 
 */
 
-
 #ifndef MAPPINGINSTRUMENT_H
 #define MAPPINGINSTRUMENT_H
 
+#include <Eigen/Dense>
 #include <cstdint>
 #include <memory>
-#include <Eigen/Dense>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AccessMsgPayload.h"
 #include "architecture/msgPayloadDefC/DataNodeUsageMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/utilities/bskLogging.h"
 
-/*! @brief This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each accessible point.
+/*! @brief This module receives a vector of accessMsgPayloads and outputs a vector of DataNodeUsageMsgPayloads for each
+ * accessible point.
  */
-class MappingInstrument: public SysModel {
-public:
+class MappingInstrument : public SysModel
+{
+  public:
     MappingInstrument();
     ~MappingInstrument();
 
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
-    void addMappingPoint(Message<AccessMsgPayload> *tmpAccessMsg, std::string dataName); //!< connects accessMsgPayload to instrument
+    void addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg,
+                         std::string dataName); //!< connects accessMsgPayload to instrument
 
-public:
+  public:
     std::vector<Message<DataNodeUsageMsgPayload>*> dataNodeOutMsgs; //!< vector of data node output messages
-    std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs; //!< vector of ground location access messages
-    BSKLogger bskLogger; //!< -- BSK Logging
-    double nodeBaudRate = -1; //!< [baud] Data provided (+).
+    std::vector<ReadFunctor<AccessMsgPayload>> accessInMsgs;        //!< vector of ground location access messages
+    BSKLogger bskLogger;                                            //!< -- BSK Logging
+    double nodeBaudRate = -1;                                       //!< [baud] Data provided (+).
 
-private:
+  private:
     std::vector<std::string> mappingPoints;
-    std::vector<DataNodeUsageMsgPayload> dataNodeOutMsgBuffer;                  //!< buffer of data node output data
+    std::vector<DataNodeUsageMsgPayload> dataNodeOutMsgBuffer; //!< buffer of data node output data
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
-    std::vector<std::unique_ptr<Message<DataNodeUsageMsgPayload>>> ownedDataNodeOutMsgs; //!< Storage for dataNodeOutMsgs.
+    std::vector<std::unique_ptr<Message<DataNodeUsageMsgPayload>>>
+      ownedDataNodeOutMsgs; //!< Storage for dataNodeOutMsgs.
 };
 
-#endif //BASILISK_MAPPINGINSTRUMENT_H
+#endif // BASILISK_MAPPINGINSTRUMENT_H

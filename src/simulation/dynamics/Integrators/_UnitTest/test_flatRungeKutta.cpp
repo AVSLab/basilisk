@@ -437,8 +437,6 @@ class RungeKuttaStorageProbe final : public svIntegratorRungeKutta<numberStages>
       : svIntegratorRungeKutta<numberStages>(dynamics, coefficients)
     {
     }
-
-
 };
 
 template<size_t numberStages>
@@ -477,12 +475,6 @@ class AdaptiveToleranceProbe final : public svIntegratorAdaptiveRungeKutta<numbe
         throw std::invalid_argument("State is not bound to the tolerance probe.");
     }
 };
-
-
-
-
-
-
 
 RKCoefficients<1>
 eulerCoefficients()
@@ -1059,7 +1051,6 @@ TEST(FlatRungeKutta, BindingKeepsStateAndDerivativeExtentsIndependent)
     EXPECT_EQ(dynamics.state->derivativeView().size(), 3);
 }
 
-
 TEST(FlatRungeKutta, FinalizationAndRepeatedDeclarationsPreserveStorage)
 {
     DynParamManager manager;
@@ -1164,8 +1155,7 @@ TEST(FlatRungeKutta, AdaptivePeerDestructionMatchesFreshBinding)
         referencePrimary.vectorState->setState(primary.vectorState->stateView());
         referenceSurvivor.matrixState->setState(survivor.matrixState->stateView());
         referenceSurvivor.vectorState->setState(survivor.vectorState->stateView());
-        auto* reference =
-          new AdaptiveToleranceProbe<4>(&referencePrimary, bogackiShampineCoefficients(), 3.0);
+        auto* reference = new AdaptiveToleranceProbe<4>(&referencePrimary, bogackiShampineCoefficients(), 3.0);
         referencePrimary.setIntegrator(reference);
         referenceSurvivor.setIntegrator(new svIntegratorRungeKutta<4>(&referenceSurvivor, rk4Coefficients()));
         referencePrimary.syncDynamicsIntegration(&referenceSurvivor);

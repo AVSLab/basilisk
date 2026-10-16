@@ -26,12 +26,12 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t moduleID)
+void
+SelfInit_ephemNavConverter(EphemNavConverterData* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     NavTransMsg_C_init(&configData->stateOutMsg);
 }
-
 
 /*! This resets the module to original states.
 
@@ -39,10 +39,11 @@ void SelfInit_ephemNavConverter(EphemNavConverterData *configData, int64_t modul
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_ephemNavConverter(EphemNavConverterData* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephInMsg)) {
         _bskError(configData->bskLogger, "Error: ephemNavConverter.ephInMsg wasn't connected.");
@@ -56,7 +57,8 @@ void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_ephemNavConverter(EphemNavConverterData* configData, uint64_t callTime, int64_t moduleID)
 {
     EphemerisMsgPayload tmpEphemeris;
     NavTransMsgPayload tmpOutputState;
@@ -66,9 +68,9 @@ void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTi
     tmpEphemeris = EphemerisMsg_C_read(&configData->ephInMsg);
 
     /*! - map timeTag, position and velocity vector to output message */
-	tmpOutputState.timeTag = tmpEphemeris.timeTag;
-	v3Copy(tmpEphemeris.r_BdyZero_N, tmpOutputState.r_BN_N);
-	v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
+    tmpOutputState.timeTag = tmpEphemeris.timeTag;
+    v3Copy(tmpEphemeris.r_BdyZero_N, tmpOutputState.r_BN_N);
+    v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
 
     /*! - write output message */
     NavTransMsg_C_write(&tmpOutputState, &configData->stateOutMsg, moduleID, callTime);

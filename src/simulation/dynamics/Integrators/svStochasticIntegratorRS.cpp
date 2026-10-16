@@ -21,57 +21,101 @@
 
 #include <cmath>
 
-svStochasticIntegratorRS::svStochasticIntegratorRS(DynamicObject* dynIn,
-                                                   const RSCoefficients& coefficients)
-    : StochasticRKIntegratorBase(dynIn), coefficients(coefficients)
+svStochasticIntegratorRS::svStochasticIntegratorRS(DynamicObject* dynIn, const RSCoefficients& coefficients)
+  : StochasticRKIntegratorBase(dynIn)
+  , coefficients(coefficients)
 {
 }
 
 // ---- RS1 / RS2 coefficients (RS1 / RS2 tableaux) ----
 
 svStochasticIntegratorRS1::svStochasticIntegratorRS1(DynamicObject* dyn)
-    : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS1::getCoefficients())
-{}
+  : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS1::getCoefficients())
+{
+}
 
-RSCoefficients svStochasticIntegratorRS1::getCoefficients()
+RSCoefficients
+svStochasticIntegratorRS1::getCoefficients()
 {
     RSCoefficients c;
-    c.a021 = 0.0; c.a031 = 1.0; c.a032 = 0.0;
-    c.a131 = 1.0; c.a141 = 1.0;
-    c.b031 = 1.0 / 4.0; c.b032 = 3.0 / 4.0;
+    c.a021 = 0.0;
+    c.a031 = 1.0;
+    c.a032 = 0.0;
+    c.a131 = 1.0;
+    c.a141 = 1.0;
+    c.b031 = 1.0 / 4.0;
+    c.b032 = 3.0 / 4.0;
     c.b121 = 2.0 / 3.0;
-    c.b131 = 1.0 / 12.0; c.b132 = 1.0 / 4.0;
-    c.b141 = -5.0 / 4.0; c.b142 = 1.0 / 4.0; c.b143 = 2.0;
-    c.b221 = 1.0; c.b231 = -1.0;
-    c.b331 = 1.0 / 4.0; c.b332 = 3.0 / 4.0;
-    c.b341 = 1.0 / 4.0; c.b342 = 3.0 / 4.0;
-    c.alpha1 = 0.0; c.alpha2 = 0.0; c.alpha3 = 1.0 / 2.0; c.alpha4 = 1.0 / 2.0;
-    c.c02 = 0.0; c.c03 = 1.0; c.c13 = 1.0; c.c14 = 1.0;
-    c.beta11 = 1.0 / 8.0; c.beta12 = 3.0 / 8.0; c.beta13 = 3.0 / 8.0; c.beta14 = 1.0 / 8.0;
-    c.beta22 = -1.0 / 4.0; c.beta23 = 1.0 / 4.0;
+    c.b131 = 1.0 / 12.0;
+    c.b132 = 1.0 / 4.0;
+    c.b141 = -5.0 / 4.0;
+    c.b142 = 1.0 / 4.0;
+    c.b143 = 2.0;
+    c.b221 = 1.0;
+    c.b231 = -1.0;
+    c.b331 = 1.0 / 4.0;
+    c.b332 = 3.0 / 4.0;
+    c.b341 = 1.0 / 4.0;
+    c.b342 = 3.0 / 4.0;
+    c.alpha1 = 0.0;
+    c.alpha2 = 0.0;
+    c.alpha3 = 1.0 / 2.0;
+    c.alpha4 = 1.0 / 2.0;
+    c.c02 = 0.0;
+    c.c03 = 1.0;
+    c.c13 = 1.0;
+    c.c14 = 1.0;
+    c.beta11 = 1.0 / 8.0;
+    c.beta12 = 3.0 / 8.0;
+    c.beta13 = 3.0 / 8.0;
+    c.beta14 = 1.0 / 8.0;
+    c.beta22 = -1.0 / 4.0;
+    c.beta23 = 1.0 / 4.0;
     return c;
 }
 
 svStochasticIntegratorRS2::svStochasticIntegratorRS2(DynamicObject* dyn)
-    : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS2::getCoefficients())
-{}
+  : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS2::getCoefficients())
+{
+}
 
-RSCoefficients svStochasticIntegratorRS2::getCoefficients()
+RSCoefficients
+svStochasticIntegratorRS2::getCoefficients()
 {
     RSCoefficients c;
-    c.a021 = 2.0 / 3.0; c.a031 = 1.0 / 6.0; c.a032 = 1.0 / 2.0;
-    c.a131 = 1.0; c.a141 = 1.0;
-    c.b031 = 1.0 / 4.0; c.b032 = 3.0 / 4.0;
+    c.a021 = 2.0 / 3.0;
+    c.a031 = 1.0 / 6.0;
+    c.a032 = 1.0 / 2.0;
+    c.a131 = 1.0;
+    c.a141 = 1.0;
+    c.b031 = 1.0 / 4.0;
+    c.b032 = 3.0 / 4.0;
     c.b121 = 2.0 / 3.0;
-    c.b131 = 1.0 / 12.0; c.b132 = 1.0 / 4.0;
-    c.b141 = -5.0 / 4.0; c.b142 = 1.0 / 4.0; c.b143 = 2.0;
-    c.b221 = 1.0; c.b231 = -1.0;
-    c.b331 = 1.0 / 4.0; c.b332 = 3.0 / 4.0;
-    c.b341 = 1.0 / 4.0; c.b342 = 3.0 / 4.0;
-    c.alpha1 = 1.0 / 4.0; c.alpha2 = 1.0 / 4.0; c.alpha3 = 1.0 / 2.0; c.alpha4 = 0.0;
-    c.c02 = 2.0 / 3.0; c.c03 = 2.0 / 3.0; c.c13 = 1.0; c.c14 = 1.0;
-    c.beta11 = 1.0 / 8.0; c.beta12 = 3.0 / 8.0; c.beta13 = 3.0 / 8.0; c.beta14 = 1.0 / 8.0;
-    c.beta22 = -1.0 / 4.0; c.beta23 = 1.0 / 4.0;
+    c.b131 = 1.0 / 12.0;
+    c.b132 = 1.0 / 4.0;
+    c.b141 = -5.0 / 4.0;
+    c.b142 = 1.0 / 4.0;
+    c.b143 = 2.0;
+    c.b221 = 1.0;
+    c.b231 = -1.0;
+    c.b331 = 1.0 / 4.0;
+    c.b332 = 3.0 / 4.0;
+    c.b341 = 1.0 / 4.0;
+    c.b342 = 3.0 / 4.0;
+    c.alpha1 = 1.0 / 4.0;
+    c.alpha2 = 1.0 / 4.0;
+    c.alpha3 = 1.0 / 2.0;
+    c.alpha4 = 0.0;
+    c.c02 = 2.0 / 3.0;
+    c.c03 = 2.0 / 3.0;
+    c.c13 = 1.0;
+    c.c14 = 1.0;
+    c.beta11 = 1.0 / 8.0;
+    c.beta12 = 3.0 / 8.0;
+    c.beta13 = 3.0 / 8.0;
+    c.beta14 = 1.0 / 8.0;
+    c.beta22 = -1.0 / 4.0;
+    c.beta23 = 1.0 / 4.0;
     return c;
 }
 
@@ -128,22 +172,24 @@ svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep)
           this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
     };
 
-    auto row = [](double x0, double x1, double x2, double x3) {
-        return std::array<double, 4>{x0, x1, x2, x3};
-    };
+    auto row = [](double x0, double x1, double x2, double x3) { return std::array<double, 4>{ x0, x1, x2, x3 }; };
     const std::array<std::array<double, 4>, 4> A0 = {
-        row(0, 0, 0, 0), row(c.a021, 0, 0, 0), row(c.a031, c.a032, 0, 0), row(0, 0, 0, 0)};
+        row(0, 0, 0, 0), row(c.a021, 0, 0, 0), row(c.a031, c.a032, 0, 0), row(0, 0, 0, 0)
+    };
     const std::array<std::array<double, 4>, 4> A1 = {
-        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.a131, 0, 0, 0), row(c.a141, 0, 0, 0)};
+        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.a131, 0, 0, 0), row(c.a141, 0, 0, 0)
+    };
     const std::array<std::array<double, 4>, 4> B0 = {
-        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.b031, c.b032, 0, 0), row(0, 0, 0, 0)};
+        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.b031, c.b032, 0, 0), row(0, 0, 0, 0)
+    };
     const std::array<std::array<double, 4>, 4> B1 = {
-        row(0, 0, 0, 0), row(c.b121, 0, 0, 0), row(c.b131, c.b132, 0, 0),
-        row(c.b141, c.b142, c.b143, 0)};
+        row(0, 0, 0, 0), row(c.b121, 0, 0, 0), row(c.b131, c.b132, 0, 0), row(c.b141, c.b142, c.b143, 0)
+    };
     const std::array<std::array<double, 4>, 4> B3 = {
-        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.b331, c.b332, 0, 0), row(c.b341, c.b342, 0, 0)};
-    const std::array<double, 4> c0nodes = {0.0, c.c02, c.c03, 0.0};
-    const std::array<double, 4> c1nodes = {0.0, 0.0, c.c13, c.c14};
+        row(0, 0, 0, 0), row(0, 0, 0, 0), row(c.b331, c.b332, 0, 0), row(c.b341, c.b342, 0, 0)
+    };
+    const std::array<double, 4> c0nodes = { 0.0, c.c02, c.c03, 0.0 };
+    const std::array<double, 4> c1nodes = { 0.0, 0.0, c.c13, c.c14 };
 
     try {
         evaluateDrift(currentTime, 0);
@@ -190,9 +236,9 @@ svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep)
             }
         }
 
-        const std::array<double, 4> alpha = {c.alpha1, c.alpha2, c.alpha3, c.alpha4};
+        const std::array<double, 4> alpha = { c.alpha1, c.alpha2, c.alpha3, c.alpha4 };
         workspace.writeDrift(alpha, 4);
-        const std::array<double, 4> beta1 = {c.beta11, c.beta12, c.beta13, c.beta14};
+        const std::array<double, 4> beta1 = { c.beta11, c.beta12, c.beta13, c.beta14 };
         for (size_t k = 0; k < m; k++) {
             workspace.writeDiffusion(k, beta1, 4);
         }

@@ -43,7 +43,8 @@
  * This non-templated interface lets callers configure per-state tolerances
  * without needing to know the concrete Runge-Kutta stage count.
  */
-class StateVecAdaptiveIntegrator {
+class StateVecAdaptiveIntegrator
+{
   public:
     virtual ~StateVecAdaptiveIntegrator() = default;
 
@@ -66,7 +67,9 @@ class StateVecAdaptiveIntegrator {
  *     -----
  *       b*
  */
-template <size_t numberStages> struct RKAdaptiveCoefficients : public RKCoefficients<numberStages> {
+template<size_t numberStages>
+struct RKAdaptiveCoefficients : public RKCoefficients<numberStages>
+{
 
     /** "b*" Coefficients of the Adaptive RK method ("b" coefficients of the higher order method) */
     typename RKCoefficients<numberStages>::StageSizedArray bStarArray = {};
@@ -85,9 +88,11 @@ template <size_t numberStages> struct RKAdaptiveCoefficients : public RKCoeffici
  * during error evaluation. ErrorControlMode selects a whole-state norm or individual
  * scalar thresholds, including for states with special update policies.
  */
-template <size_t numberStages>
-class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStages>,
-                                       public StateVecAdaptiveIntegrator {
+template<size_t numberStages>
+class svIntegratorAdaptiveRungeKutta
+  : public svIntegratorRungeKutta<numberStages>
+  , public StateVecAdaptiveIntegrator
+{
   public:
     /**
      * Constructs the integrator for the given dynamic object and specified Adaptive RK
@@ -180,8 +185,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * Sets the relative tolerance for the given DynamicObject
      * and the state identified by the given name.
      */
-    void
-    setRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName, double relTol);
+    void setRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName, double relTol);
 
     /**
      * Returns the relative tolerance for the given DynamicObject
@@ -190,15 +194,13 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * If the relative tolerance for this state and DynamicObject was not set, then
      * returns an empty optional.
      */
-    std::optional<double> getRelativeTolerance(const DynamicObject& dynamicObject,
-                                               std::string stateName);
+    std::optional<double> getRelativeTolerance(const DynamicObject& dynamicObject, std::string stateName);
 
     /**
      * Sets the absolute tolerance for the given DynamicObject
      * and the state identified by the given name.
      */
-    void
-    setAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName, double absTol);
+    void setAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName, double absTol);
 
     /**
      * Returns the absolute tolerance for the given DynamicObject
@@ -207,8 +209,7 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
      * If the absolute tolerance for this state and DynamicObject was not set, then
      * returns an empty optional.
      */
-    std::optional<double> getAbsoluteTolerance(const DynamicObject& dynamicObject,
-                                               std::string stateName);
+    std::optional<double> getAbsoluteTolerance(const DynamicObject& dynamicObject, std::string stateName);
 
   public:
     /** Maximum relative truncation error allowed.
@@ -261,11 +262,11 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
     struct ToleranceSpan
     {
         size_t globalStateOffset; ///< First scalar in a combined state buffer.
-        Eigen::Index rows; ///< Rows in this state's matrix.
-        Eigen::Index columns; ///< Columns in this state's matrix.
-        double relative; ///< Dimensionless resolved relative tolerance.
-        double absolute; ///< Resolved absolute tolerance, in the state's units.
-        ErrorControlMode mode; ///< Whole-state norm or per-component scaling.
+        Eigen::Index rows;        ///< Rows in this state's matrix.
+        Eigen::Index columns;     ///< Columns in this state's matrix.
+        double relative;          ///< Dimensionless resolved relative tolerance.
+        double absolute;          ///< Resolved absolute tolerance, in the state's units.
+        ErrorControlMode mode;    ///< Whole-state norm or per-component scaling.
     };
 
     /** @brief Independently optional overrides; absent values inherit the next default. */
@@ -291,9 +292,9 @@ class svIntegratorAdaptiveRungeKutta : public svIntegratorRungeKutta<numberStage
     /** Dynamic-object-specific state tolerance overrides. */
     std::unordered_map<const DynamicObject*, StateToleranceOverrides> objectToleranceOverrides;
 
-    Eigen::VectorXd entryState; ///< Full-interval rollback, independent of accepted internal substeps.
-    Eigen::VectorXd lowOrderState; ///< Embedded lower-order trial candidate.
-    Eigen::VectorXd highOrderState; ///< Embedded higher-order trial, swapped into baseState on acceptance.
+    Eigen::VectorXd entryState;                ///< Full-interval rollback, independent of accepted internal substeps.
+    Eigen::VectorXd lowOrderState;             ///< Embedded lower-order trial candidate.
+    Eigen::VectorXd highOrderState;            ///< Embedded higher-order trial, swapped into baseState on acceptance.
     std::vector<ToleranceSpan> toleranceSpans; ///< Resolved metadata in flat state order.
     uint64_t toleranceConfigurationGeneration = 0; ///< Advances when a tolerance setter changes configuration.
     uint64_t resolvedToleranceConfigurationGeneration = std::numeric_limits<uint64_t>::max(); ///< Cached revision.
@@ -551,44 +552,48 @@ svIntegratorAdaptiveRungeKutta<numberStages>::validateTolerance(double tolerance
     }
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     this->relTol = relTol;
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
 {
     return this->relTol;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     this->absTol = absTol;
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
-double svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
+template<size_t numberStages>
+double
+svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
 {
     return this->absTol;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName,
-                                                                        double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName, double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     this->stateToleranceOverrides[stateName].relative = relTol;
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
+template<size_t numberStages>
 std::optional<double>
 svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string stateName)
 {
@@ -599,16 +604,16 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string s
     return std::nullopt;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName,
-                                                                        double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName, double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     this->stateToleranceOverrides[stateName].absolute = absTol;
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
+template<size_t numberStages>
 std::optional<double>
 svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string stateName)
 {
@@ -619,11 +624,11 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string s
     return std::nullopt;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName,
-    double relTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName,
+                                                                   double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
@@ -631,10 +636,10 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
-inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName)
+template<size_t numberStages>
+inline std::optional<double>
+svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -647,11 +652,11 @@ inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRe
     return std::nullopt;
 }
 
-template <size_t numberStages>
-void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName,
-    double absTol)
+template<size_t numberStages>
+void
+svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName,
+                                                                   double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
@@ -659,10 +664,10 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(
     ++this->toleranceConfigurationGeneration;
 }
 
-template <size_t numberStages>
-inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(
-    const DynamicObject& dynamicObject,
-    std::string stateName)
+template<size_t numberStages>
+inline std::optional<double>
+svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(const DynamicObject& dynamicObject,
+                                                                   std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -681,8 +686,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::requireDynamicObject(const Dynamic
 {
     auto it = std::find(this->dynamics().cbegin(), this->dynamics().cend(), &dynamicObject);
     if (it == this->dynamics().end()) {
-        throw std::invalid_argument(
-            "Given DynamicObject is not integrated by this integrator object");
+        throw std::invalid_argument("Given DynamicObject is not integrated by this integrator object");
     }
     return *it;
 }

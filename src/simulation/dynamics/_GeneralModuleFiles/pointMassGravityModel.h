@@ -26,7 +26,8 @@
 /**
  * The point mass gravity model
  */
-class PointMassGravityModel : public GravityModel {
+class PointMassGravityModel : public GravityModel
+{
   public:
     /** Does nothing, as the point-mass gravity model has no parameters other than
      * `muBody`, which must be set separately */

@@ -17,14 +17,14 @@
 
 */
 
-
 #include "fswAlgorithms/effectorInterfaces/hingedJointArrayMotor/hingedJointArrayMotor.h"
 #include "architecture/messaging/ownedMessage.h"
-#include <iostream>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <iostream>
 
-void HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
@@ -63,18 +63,21 @@ void HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
     // Check that the gains have been set properly
     if (this->Ktheta.rows() != this->numHingedJoints || this->Ktheta.cols() != this->numHingedJoints) {
-        bskLogger.bskError("HingedJointArrayMotor Ktheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
+        bskLogger.bskError("HingedJointArrayMotor Ktheta gains matrix does not have dimensions of %d x %d.",
+                           this->numHingedJoints,
+                           this->numHingedJoints);
     }
     if (this->Ptheta.rows() != this->numHingedJoints || this->Ptheta.cols() != this->numHingedJoints) {
-        bskLogger.bskError("HingedJointArrayMotor Ptheta gains matrix does not have dimensions of %d x %d.", this->numHingedJoints, this->numHingedJoints);
+        bskLogger.bskError("HingedJointArrayMotor Ptheta gains matrix does not have dimensions of %d x %d.",
+                           this->numHingedJoints,
+                           this->numHingedJoints);
     }
 
-
     this->treeInfoInitialized = false;
-
 }
 
-void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
+void
+HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -96,13 +99,15 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
                 ++this->numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskError("HingedJointArrayMotor: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("HingedJointArrayMotor: first joint in kinematic tree %d is not a free joint.",
+                                       tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints must be hinges
                 if (jointType != 3) {
-                    bskLogger.bskError("HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError(
+                      "HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -110,7 +115,8 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
             }
         }
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskError("HingedJointArrayMotor: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("HingedJointArrayMotor: numHingedJoints does not match the number of hinge joints found "
+                               "in the kinematic trees.");
         }
         this->treeInfoInitialized = true;
     }
@@ -126,7 +132,6 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         const Eigen::Index jointIndex = static_cast<Eigen::Index>(i);
         jointStates(jointIndex) = jointStateIn.state;
         jointStateDots(jointIndex) = jointStateDotIn.state;
-
     }
 
     // Compute the motor torques for each hinged joint
@@ -137,10 +142,8 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     nonActuatorForces.setZero();
     for (int k = 0; k < nDOF; ++k) {
         const size_t dofIndex = static_cast<size_t>(k);
-        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex]
-                               + reactionForcesIn.constraintForces[dofIndex]
-                               + reactionForcesIn.appliedForces[dofIndex]
-                               - reactionForcesIn.biasForces[dofIndex];
+        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex] + reactionForcesIn.constraintForces[dofIndex] +
+                               reactionForcesIn.appliedForces[dofIndex] - reactionForcesIn.biasForces[dofIndex];
     }
 
     constexpr int nTransDOF = 3; // number of translational DOFs for free joint base
@@ -217,7 +220,8 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         // Compute desired joint accelerations for this tree
         Eigen::VectorXd theta_ddot_des(nHingeJoints);
         theta_ddot_des.setZero();
-        Eigen::VectorXd theta(nHingeJoints), thetaDot(nHingeJoints), theta_des(nHingeJoints), thetaDot_des(nHingeJoints), thetaDDot_des(nHingeJoints);
+        Eigen::VectorXd theta(nHingeJoints), thetaDot(nHingeJoints), theta_des(nHingeJoints),
+          thetaDot_des(nHingeJoints), thetaDDot_des(nHingeJoints);
         theta.setZero();
         thetaDot.setZero();
         theta_des.setZero();
@@ -233,7 +237,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
             thetaDDot_des(i) = desJointStatesIn.stateDDots[jointPosition];
         }
 
-        auto wrap = [](double a){ return std::atan2(std::sin(a), std::cos(a)); };
+        auto wrap = [](double a) { return std::atan2(std::sin(a), std::cos(a)); };
         Eigen::VectorXd e(nHingeJoints), eDot(nHingeJoints);
         e.setZero();
         eDot.setZero();
@@ -247,13 +251,12 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         Eigen::Vector3d rhs = -Mtth * theta_ddot_des + baseTransBias;
         Eigen::LDLT<Eigen::Matrix3d> ldlt(Mtt);
         Eigen::Vector3d lambda = ldlt.solve(rhs);
-        Eigen::VectorXd uH_tree = (Mthth * theta_ddot_des) + (Mtht*lambda) - jointBias;
+        Eigen::VectorXd uH_tree = (Mthth * theta_ddot_des) + (Mtht * lambda) - jointBias;
 
         for (int i = 0; i < nHingeJoints; ++i) {
             const int hingedIdx = hingeGlobalIdxs[static_cast<size_t>(i)];
             uH(hingedIdx) = uH_tree(i);
         }
-
     }
 
     // Apply torque limits if specified
@@ -268,7 +271,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     }
 
     // write to the output messages
-    for (int i=0; i < this->numHingedJoints; ++i) {
+    for (int i = 0; i < this->numHingedJoints; ++i) {
         const size_t jointIndex = static_cast<size_t>(i);
         SingleActuatorMsgPayload motorTorquesOutMsg = this->motorTorquesOutMsgs[jointIndex]->zeroMsgPayload;
         motorTorquesOutMsg.input = uH(i);
@@ -276,7 +279,8 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void HingedJointArrayMotor::setKtheta(std::vector<double> var)
+void
+HingedJointArrayMotor::setKtheta(std::vector<double> var)
 {
     const std::size_t N = var.size();
     const int m = static_cast<int>(std::llround(std::sqrt(static_cast<double>(N))));
@@ -287,7 +291,8 @@ void HingedJointArrayMotor::setKtheta(std::vector<double> var)
     this->Ktheta = Kmap;
 }
 
-void HingedJointArrayMotor::setPtheta(std::vector<double> var)
+void
+HingedJointArrayMotor::setPtheta(std::vector<double> var)
 {
     const std::size_t N = var.size();
     const int m = static_cast<int>(std::llround(std::sqrt(static_cast<double>(N))));
@@ -298,12 +303,14 @@ void HingedJointArrayMotor::setPtheta(std::vector<double> var)
     this->Ptheta = Pmap;
 }
 
-void HingedJointArrayMotor::setUMax(std::vector<double> var)
+void
+HingedJointArrayMotor::setUMax(std::vector<double> var)
 {
     this->uMax = var;
 }
 
-void HingedJointArrayMotor::addHingedJoint()
+void
+HingedJointArrayMotor::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;

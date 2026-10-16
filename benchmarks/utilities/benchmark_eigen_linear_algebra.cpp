@@ -759,8 +759,10 @@ main(int argc, char** argv)
           "v3 dot", benchmarkIterations(20000000, options), runEigenVector3Dot, runLinearAlgebraVector3Dot));
         results.push_back(runBenchmarkPair(
           "v3 cross", benchmarkIterations(10000000, options), runEigenVector3Cross, runLinearAlgebraVector3Cross));
-        results.push_back(runBenchmarkPair(
-          "3x3 multiply", benchmarkIterations(5000000, options), runEigenMatrix3Multiply, runLinearAlgebraMatrix3Multiply));
+        results.push_back(runBenchmarkPair("3x3 multiply",
+                                           benchmarkIterations(5000000, options),
+                                           runEigenMatrix3Multiply,
+                                           runLinearAlgebraMatrix3Multiply));
         results.push_back(runBenchmarkPair("3x3 transpose multiply",
                                            benchmarkIterations(5000000, options),
                                            runEigenMatrix3TransposeMultiply,
@@ -769,12 +771,16 @@ main(int argc, char** argv)
                                            benchmarkIterations(8000000, options),
                                            runEigenMatrix3VectorMultiply,
                                            runLinearAlgebraMatrix3VectorMultiply));
-        results.push_back(runBenchmarkPair(
-          "3x3 inverse", benchmarkIterations(1000000, options), runEigenMatrix3Inverse, runLinearAlgebraMatrix3Inverse));
+        results.push_back(runBenchmarkPair("3x3 inverse",
+                                           benchmarkIterations(1000000, options),
+                                           runEigenMatrix3Inverse,
+                                           runLinearAlgebraMatrix3Inverse));
         results.push_back(runBenchmarkPair(
           "4x4 inverse", benchmarkIterations(200000, options), runEigenMatrix4Inverse, runLinearAlgebraMatrix4Inverse));
-        results.push_back(runBenchmarkPair(
-          "6x6 multiply", benchmarkIterations(800000, options), runEigenMatrix6Multiply, runLinearAlgebraMatrix6Multiply));
+        results.push_back(runBenchmarkPair("6x6 multiply",
+                                           benchmarkIterations(800000, options),
+                                           runEigenMatrix6Multiply,
+                                           runLinearAlgebraMatrix6Multiply));
         results.push_back(runBenchmarkPair("6x6 vector multiply",
                                            benchmarkIterations(2000000, options),
                                            runEigenMatrix6VectorMultiply,

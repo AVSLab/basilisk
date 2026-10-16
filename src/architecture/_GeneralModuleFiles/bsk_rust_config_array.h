@@ -35,8 +35,8 @@
  *        C++ type resolution selects this path for every Boolean alias, too.
  */
 template<typename Value, typename Wrapper>
-std::vector<Value> bskRustGetConfigArray(const Wrapper *wrapper, std::size_t fieldIndex,
-                                       std::size_t length)
+std::vector<Value>
+bskRustGetConfigArray(const Wrapper* wrapper, std::size_t fieldIndex, std::size_t length)
 {
     if constexpr (std::is_same_v<Value, bool>) {
         auto rawValue = std::make_unique<Value[]>(length);
@@ -64,8 +64,8 @@ std::vector<Value> bskRustGetConfigArray(const Wrapper *wrapper, std::size_t fie
  *        Rust still validates the complete proposed value before storing it.
  */
 template<typename Value, typename Wrapper>
-void bskRustSetConfigArray(Wrapper *wrapper, std::size_t fieldIndex,
-                          const std::vector<Value> &value)
+void
+bskRustSetConfigArray(Wrapper* wrapper, std::size_t fieldIndex, const std::vector<Value>& value)
 {
     if constexpr (std::is_same_v<Value, bool>) {
         auto rawValue = std::make_unique<Value[]>(value.size());

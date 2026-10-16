@@ -19,8 +19,8 @@
 #ifndef STOCHASTIC_DRAG_COEFF_H
 #define STOCHASTIC_DRAG_COEFF_H
 
-#include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 #include "architecture/msgPayloadDefC/DragGeometryMsgPayload.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/meanRevertingNoise.h"
 
 /**
  * @class StochasticDragCoeff
@@ -30,8 +30,9 @@
  * where \f$x\f$ is the OU state maintained by the base class. All other geometry fields are
  * passed through unchanged.
  */
-class StochasticDragCoeff : public MeanRevertingNoise {
-public:
+class StochasticDragCoeff : public MeanRevertingNoise
+{
+  public:
     /**
      * @brief Input drag geometry message.
      *
@@ -44,7 +45,7 @@ public:
      */
     Message<DragGeometryMsgPayload> dragGeomOutMsg;
 
-protected:
+  protected:
     /**
      * @brief Apply the OU correction to \f$C_D\f$ and write the result.
      *

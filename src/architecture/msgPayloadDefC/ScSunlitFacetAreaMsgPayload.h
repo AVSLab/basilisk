@@ -21,9 +21,9 @@ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Bo
 #define SC_SUNLIT_FACET_AREA_MSG_PAYLOAD_H
 
 /*! @brief Structure used to define the total sunlit area of a spacecraft facet model */
-typedef struct {
-    double area;    //!< [m^2] Total facet area exposed to the sun
-}ScSunlitFacetAreaMsgPayload;
-
+typedef struct
+{
+    double area; //!< [m^2] Total facet area exposed to the sun
+} ScSunlitFacetAreaMsgPayload;
 
 #endif

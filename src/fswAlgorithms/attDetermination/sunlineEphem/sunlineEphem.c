@@ -18,9 +18,9 @@
  */
 
 #include "sunlineEphem.h"
-#include <string.h>
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <string.h>
 
 /*!
  \verbatim embed:rst
@@ -30,12 +30,12 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
+void
+SelfInit_sunlineEphem(sunlineEphemConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -44,12 +44,12 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) configData;
-    (void) callTime;
-    (void) moduleID;
-
+    (void)configData;
+    (void)callTime;
+    (void)moduleID;
 }
 
 /*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
@@ -58,12 +58,13 @@ void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double r_SB_N[3];               /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
-    double r_SB_N_hat[3];           /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
-    double r_SB_B_hat[3];           /* [m] difference between the sun and spacecrat in the body frame (of unit length) */
-    double BN[3][3];                /* [-] direction cosine matrix used to rotate the inertial frame to body frame */
+    double r_SB_N[3];     /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
+    double r_SB_N_hat[3]; /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
+    double r_SB_B_hat[3]; /* [m] difference between the sun and spacecrat in the body frame (of unit length) */
+    double BN[3][3];      /* [-] direction cosine matrix used to rotate the inertial frame to body frame */
     NavAttMsgPayload outputSunline;     /* [-] Output sunline estimate data */
     EphemerisMsgPayload sunEphemBuffer; /* [-] Input sun ephemeris data */
     NavTransMsgPayload scTransBuffer;   /* [-] Input spacecraft position data */

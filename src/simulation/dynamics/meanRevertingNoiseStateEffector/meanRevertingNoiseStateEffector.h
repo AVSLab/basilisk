@@ -19,14 +19,14 @@
 #ifndef MEAN_REVERTING_NOISE_STATE_EFFECTOR_H
 #define MEAN_REVERTING_NOISE_STATE_EFFECTOR_H
 
-#include <cstdint>
-#include <string>
-#include <Eigen/Dense>
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include <Eigen/Dense>
+#include <cstdint>
+#include <string>
 
 /*!
  * @brief State effector that propagates a scalar Ornstein-Uhlenbeck process.
@@ -38,8 +38,11 @@
  * where @f$\tau@f$ is the time constant and @f$\sigma_{\mathrm{st}}@f$ is the stationary
  * standard deviation.
  */
-class MeanRevertingNoiseStateEffector final : public StateEffector, public SysModel {
-public:
+class MeanRevertingNoiseStateEffector final
+  : public StateEffector
+  , public SysModel
+{
+  public:
     /*! @brief Constructor. */
     MeanRevertingNoiseStateEffector();
     /*! @brief Destructor. */
@@ -119,15 +122,15 @@ public:
      */
     void setStateName(std::string name) { this->nameOfState = name; }
 
-private:
-    static uint64_t effectorID;  //!< unique ID counter used to generate a distinct state name
+  private:
+    static uint64_t effectorID; //!< unique ID counter used to generate a distinct state name
 
-    std::string nameOfState;      //!< state manager key for scalar state @f$x@f$
-    StateData* state = nullptr;   //!< pointer to scalar state container
+    std::string nameOfState;    //!< state manager key for scalar state @f$x@f$
+    StateData* state = nullptr; //!< pointer to scalar state container
 
-    double sigmaStationary = 0.0;  //!< stationary standard deviation @f$\sigma_{\mathrm{st}}@f$ [-]
-    double timeConstant = 1.0;     //!< OU time constant @f$\tau@f$ [s]
-    double stateInit = 0.0;        //!< initial value for @f$x@f$ used at state registration
+    double sigmaStationary = 0.0; //!< stationary standard deviation @f$\sigma_{\mathrm{st}}@f$ [-]
+    double timeConstant = 1.0;    //!< OU time constant @f$\tau@f$ [s]
+    double stateInit = 0.0;       //!< initial value for @f$x@f$ used at state registration
 };
 
 #endif

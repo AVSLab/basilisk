@@ -19,15 +19,15 @@
 #ifndef AERODYNAMIC_DRAG_H
 #define AERODYNAMIC_DRAG_H
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
-#include "architecture/msgPayloadDefC/DragGeometryMsgPayload.h"
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
+#include "architecture/msgPayloadDefC/DragGeometryMsgPayload.h"
 #include "architecture/msgPayloadDefC/ForceAtSiteMsgPayload.h"
-#include "architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.h"
 #include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/TorqueAtSiteMsgPayload.h"
 #include "architecture/msgPayloadDefC/WindMsgPayload.h"
 #include "cMsgCInterface/ForceAtSiteMsg_C.h"
 #include "cMsgCInterface/TorqueAtSiteMsg_C.h"
@@ -55,7 +55,7 @@
  */
 class CannonballDrag : public SysModel
 {
-public:
+  public:
     /** @brief Initializes the C output messages */
     void SelfInit() override;
 
@@ -72,8 +72,7 @@ public:
      */
     void Reset(uint64_t CurrentSimNanos) override;
 
-public:
-
+  public:
     /** @brief Geometry input. */
     ReadFunctor<DragGeometryMsgPayload> dragGeometryInMsg;
 
@@ -101,6 +100,5 @@ public:
     /** @brief Logger */
     BSKLogger bskLogger;
 };
-
 
 #endif

@@ -31,7 +31,7 @@
  */
 class SingleActuatorInterpolator : public Interpolator<SingleActuatorMsgPayload, 1>
 {
-protected:
+  protected:
     /**
      * @brief Sets the payload values for the SingleActuatorMsgPayload.
      *
@@ -50,14 +50,13 @@ protected:
     }
 };
 
-
 /**
  * @brief Interpolates a series of user-given data points to publish
  *  a message of type `ScalarJointStateMsg`
  */
 class ScalarJointStateInterpolator : public Interpolator<ScalarJointStateMsgPayload, 1>
 {
-protected:
+  protected:
     /**
      * @brief Sets the payload values for the ScalarJointStateMsgPayload.
      *

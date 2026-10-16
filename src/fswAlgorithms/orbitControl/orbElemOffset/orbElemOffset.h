@@ -69,7 +69,7 @@
  */
 class OrbElemOffset : public SysModel
 {
-public:
+  public:
     /** Default constructor */
     OrbElemOffset() = default;
 
@@ -95,7 +95,7 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos) override;
 
-public:
+  public:
     /*!
      * @brief Toggle interpretation of offsetElementsInMsg.f as a mean anomaly offset.
      *
@@ -113,7 +113,7 @@ public:
     //! Output classical elements message for the combined elements
     Message<ClassicElementsMsgPayload> elementsOutMsg;
 
-    BSKLogger bskLogger;   //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 };
 
 #endif /* ORB_ELEM_OFFSET_H */

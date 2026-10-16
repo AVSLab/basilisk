@@ -19,17 +19,20 @@
 
 #include "JointPIDController.h"
 
-double JointPIDController::readMeasuredPosition(const ScalarJointStateMsgPayload& i) const
+double
+JointPIDController::readMeasuredPosition(const ScalarJointStateMsgPayload& i) const
 {
     return i.state;
 }
 
-double JointPIDController::readMeasuredVelocity(const ScalarJointStateMsgPayload& i) const
+double
+JointPIDController::readMeasuredVelocity(const ScalarJointStateMsgPayload& i) const
 {
     return i.state;
 }
 
-void JointPIDController::writeOutput(SingleActuatorMsgPayload& o, double val)
+void
+JointPIDController::writeOutput(SingleActuatorMsgPayload& o, double val)
 {
     o.input = val;
 }

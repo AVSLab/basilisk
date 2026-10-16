@@ -29,9 +29,10 @@
  *
  * Implements the required virtual methods for reading joint state and writing actuator input.
  */
-class JointPIDController : public PIDController<ScalarJointStateMsgPayload, ScalarJointStateMsgPayload, SingleActuatorMsgPayload>
+class JointPIDController
+  : public PIDController<ScalarJointStateMsgPayload, ScalarJointStateMsgPayload, SingleActuatorMsgPayload>
 {
-protected:
+  protected:
     /**
      * @brief Read the measured position from the joint state payload.
      * @param i Joint state message payload.

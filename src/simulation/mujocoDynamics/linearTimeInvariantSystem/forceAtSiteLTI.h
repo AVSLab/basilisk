@@ -41,7 +41,7 @@
  */
 class ForceAtSiteLTI : public LinearTimeInvariantSystem
 {
-public:
+  public:
     /**
      * @brief Default constructor.
      *
@@ -91,10 +91,9 @@ public:
      * @param CurrentSimNanos Current simulation time in nanoseconds.
      * @param y Output vector of size at least 3.
      */
-    void writeOutput(uint64_t CurrentSimNanos,
-                     const Eigen::VectorXd &y) override;
+    void writeOutput(uint64_t CurrentSimNanos, const Eigen::VectorXd& y) override;
 
-public:
+  public:
     /**
      * @brief Output message carrying the 3D force command at the site.
      *
