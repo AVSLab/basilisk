@@ -241,7 +241,7 @@ private:
     static constexpr int charBufferSize = 512; //!< Capacity of SPICE scratch buffers, including the null terminator.
 
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
-    double JDGPSEpoch;          //!< s Ephemeris time of the GPS epoch, seconds past J2000.  Saved for efficiency
+    double TAIGPSEpoch;         //!< s TAI of the GPS epoch, seconds past J2000.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;

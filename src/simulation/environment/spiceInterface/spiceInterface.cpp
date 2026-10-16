@@ -587,7 +587,7 @@ SpiceInterface::SpiceInterface()
     GPSWeek = 0;
     GPSRollovers = 0;
     timeDataInit = false;
-    JDGPSEpoch = 0.0;
+    TAIGPSEpoch = 0.0;
     GPSEpochTime = "1980 January 6, 00:00:00.0";
 
     referenceBase = "j2000";
@@ -734,10 +734,16 @@ void SpiceInterface::initTimeData()
         }
     }
 
-    //! -Get the time value associated with the GPS epoch
-    str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
+    //! - Get the TAI of the GPS epoch, which is fixed, so the conversion is done once here
+    double etGPSEpoch;
+    str2et_c(this->GPSEpochTime.c_str(), &etGPSEpoch);
+    this->TAIGPSEpoch = unitim_c(etGPSEpoch, "TDB", "TAI"); // [s]
     //! - Get the time value associate with the requested UTC date
     str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
+    if (this->J2000ETInit < etGPSEpoch) {
+        bskLogger.bskLog(BSK_WARNING, "The initial time is before the GPS epoch, where GPS time is undefined.  "
+                                      "The GPS time outputs are zero until the GPS epoch.");
+    }
 }
 
 /*! This method computes the GPS time data for the current elapsed time.  GPS time
@@ -748,18 +754,18 @@ void SpiceInterface::initTimeData()
  */
 void SpiceInterface::computeGPSData()
 {
-    //! - Take the elapsed atomic time since the GPS epoch
-    double gpsElapsed = unitim_c(this->J2000Current, "TDB", "TAI")
-                        - unitim_c(this->JDGPSEpoch, "TDB", "TAI"); // [s]
+    //! - Take the elapsed atomic time since the GPS epoch, held at zero before the epoch where GPS time is undefined
+    double gpsElapsed = std::max(unitim_c(this->J2000Current, "TDB", "TAI") - this->TAIGPSEpoch, 0.0); // [s]
     const double secondsPerWeek = 604800.0; // [s]
-    //! - Scale the elapsed by a week's worth of seconds to get week
-    this->GPSWeek = (uint16_t) (gpsElapsed/secondsPerWeek);
-    //! - Subtract out the GPS week scaled up to seconds to get time in week, in floating point to avoid integer overflow
-    this->GPSSeconds = gpsElapsed - static_cast<double>(this->GPSWeek)*secondsPerWeek; // [s]
+    const uint64_t weeksPerRollover = 1024;
+    //! - Scale the elapsed by a week's worth of seconds to get the total number of weeks
+    uint64_t totalWeeks = static_cast<uint64_t>(gpsElapsed/secondsPerWeek);
+    //! - Subtract out the weeks scaled up to seconds to get time in week, in floating point to avoid integer overflow
+    this->GPSSeconds = gpsElapsed - static_cast<double>(totalWeeks)*secondsPerWeek; // [s]
 
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
-    this->GPSRollovers = this->GPSWeek/1024;
-    this->GPSWeek = (uint16_t)(this->GPSWeek-this->GPSRollovers*1024);
+    this->GPSRollovers = totalWeeks/weeksPerRollover;
+    this->GPSWeek = static_cast<uint16_t>(totalWeeks % weeksPerRollover);
 }
 
 /*! This method takes the values computed in the model and outputs them.
