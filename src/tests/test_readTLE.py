@@ -266,6 +266,34 @@ def test_write_tle_6digit_norad_raises():
     with pytest.raises(ValueError, match="100000"):
         tleHandling.generateTle(tleData)
 
+
+# Reference values from Orekit 13.1 (orekit_jpype 13.1.8.0): GCRF to EME2000 rotation at J2000_EPOCH
+OREKIT_GCRF2EME2000 = np.array([
+    [9.9999999999999423e-01, -7.0782797441991980e-08, 8.0562171469761338e-08],
+    [7.0782794778573375e-08, 9.9999999999999711e-01, 3.3060414542221364e-08],
+    [-8.0562173809869717e-08, -3.3060408839805523e-08, 9.9999999999999623e-01],
+])  # [-]
+
+# TEME state and its Orekit 13.1 FramesFactory.getTEME().getTransformTo(FramesFactory.getGCRF(), date) result
+TEME_EPOCH = datetime(2004, 4, 6, 7, 51, 28, 386009)  # UTC
+TEME_R = np.array([5094.18016210, 6127.64465950, 6380.34453270]) * 1e3  # [m]
+TEME_V = np.array([-4.746131487, 0.785818041, 5.531931288]) * 1e3  # [m/s]
+OREKIT_GCRF_R = np.array([5102509.519317023, 6123010.947714332, 6378136.913898652])  # [m]
+OREKIT_GCRF_V = np.array([-4743.219940214507, 790.5366985409497, 5533.7558470487875])  # [m/s]
+
+
+def test_frame_bias_matches_orekit():
+    """frame_bias() must match the Orekit GCRF to EME2000 rotation (IERS frame bias)."""
+    np.testing.assert_allclose(tleHandling.frame_bias(), OREKIT_GCRF2EME2000, rtol=0.0, atol=1e-11)  # [-]
+
+
+def test_teme2j2000_matches_orekit():
+    """_teme2j2000() must match the Orekit TEME to GCRF transform."""
+    r_m, v_m_s = tleHandling._teme2j2000(TEME_R, TEME_V, TEME_EPOCH)
+    np.testing.assert_allclose(r_m, OREKIT_GCRF_R, rtol=0.0, atol=0.15)  # [m]
+    np.testing.assert_allclose(v_m_s, OREKIT_GCRF_V, rtol=0.0, atol=5e-4)  # [m/s]
+
+
 if __name__ == "__main__":
     # Reading TLE
     test_read_tle(DATA_DIR / "hypso1.tle", EXPECTED_OE_HYPSO)
@@ -277,3 +305,7 @@ if __name__ == "__main__":
 
     # Take TLE, generate orbital elements, then generate TLE again and compare to original
     test_read_write_tle(DATA_DIR / "hypso1.tle")
+
+    # Frame bias and TEME to GCRF conversion against Orekit
+    test_frame_bias_matches_orekit()
+    test_teme2j2000_matches_orekit()

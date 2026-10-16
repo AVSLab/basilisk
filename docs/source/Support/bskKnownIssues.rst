@@ -38,6 +38,11 @@ Version |release| (unreleased)
   Representation singularities and extreme floating-point
   magnitudes remain outside the numerical guarantees; see :ref:`rbkNumericalLimits`.
 
+- GitHub issue 1621: ``tleHandling.frame_bias()`` applied the GCRS to mean J2000 frame bias rotations in the
+  reverse order and with the wrong sign of :math:`\xi_0`. The TEME to J2000/ICRF conversion used by
+  ``tleHandling`` therefore introduced position errors of about 1.3 m in the regression case.
+  TLE-derived initial states change slightly with the corrected conversion.
+
 - GitHub issue 1620: The error message of ``atmosphericDrag()`` in ``orbitalMotion``, printed for a position with a non-positive
   altitude, showed the position components with an index shifted by one and read past the end of the position
   vector. The C diagnostic now reads the correct components. The Python implementation had the same indexing
