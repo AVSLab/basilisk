@@ -156,9 +156,10 @@ def run_bindgen(wrapper_path: Path, include_root: Path, basilisk_dir: Path) -> s
         "elem2rv|rv2elem|clMeanOscMap|clElem2eqElem|"
         "hillFrame|hill2rv|rv2hill|"
         "atmosphericDensity|debyeLength|atmosphericDrag|solarRad|"
-        "addMRP|subMRP|MRP2C|C2MRP|MRP2EP|EP2MRP|"
+        "addMRP|subMRP|MRP2C|C2MRP|MRP2EP|EP2MRP|MRP2PRV|EP2PRV|MRP2Gibbs|"
+        "Gibbs2C|Gibbs2EP|Gibbs2MRP|Gibbs2PRV|addGibbs|subGibbs|dGibbs|"
         "MRPshadow|MRPswitch|dMRP|dMRP2Omega|ddMRP|ddMRP2dOmega|"
-        "BmatMRP|BdotmatMRP|BinvMRP|wrapToPi|tilde|Mi"
+        "BmatMRP|BdotmatMRP|BinvMRP|BinvGibbs|BmatPRV|BinvPRV|dPRV|wrapToPi|tilde|Mi"
     )
     allow_constants = (
         "G_UNIVERSIAL|AU|AU2M|SPEED_LIGHT|SOLAR_FLUX_EARTH|"

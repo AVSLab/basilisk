@@ -154,7 +154,8 @@ def planetNavTestFunction(show_plots):
                 posDiffCount += 1
             if abs(velVecDiff[j]) > velBound[j]:
                 velDiffCount += 1
-            if abs(attVecDiff[j]) > attBound[j]:
+            # Allow roundoff from MRP composition at the clamped noise bound.
+            if abs(attVecDiff[j]) > attBound[j] * (1.0 + 1e-14):
                 attDiffCount += 1
             if abs(rateVecDiff[j]) > rateBound[j]:
                 rateDiffCount += 1

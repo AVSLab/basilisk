@@ -48,15 +48,21 @@ def _safe_acos(value):
 
 
 def Picheck(x):
+    """Wrap an angle with any number of revolutions to the interval [-pi, pi].
+
+    :param x: Input angle in radians.
+    :return: Equivalent angle in radians. Exact half-turn remainders and zero
+        retain the input sign. Non-finite inputs return NaN.
     """
-        Picheck(x)
-        Makes sure that the angle x lies within +/- Pi.
-    """
-    if x > M_PI:
-        return x - 2 * M_PI
-    if x < -M_PI:
-        return x + 2 * M_PI
-    return x
+    if not math.isfinite(x):
+        return math.nan
+    two_pi = 2.0 * M_PI  # [rad]
+    wrapped = np.fmod(x, two_pi)
+    if wrapped > M_PI:
+        return wrapped - two_pi
+    if wrapped < -M_PI:
+        return wrapped + two_pi
+    return wrapped
 
 
 def C2EP(C):
@@ -324,24 +330,15 @@ def C2MRP(C):
 
 
 def C2PRV(C):
-    """
-    C2PRV
+    """Convert a direction cosine matrix to a principal rotation vector.
 
-    	Q = C2PRV(C) translates the 3x3 direction cosine matrix
-    	C into the corresponding 3x1 principal rotation vector Q,
-    	where the first component of Q is the principal rotation angle
-    	phi (0<= phi <= Pi)
+    :param C: A 3-by-3 direction cosine matrix.
+    :return: A three-component rotation vector in radians. Its magnitude is
+        the rotation angle in the interval [0, pi], and its direction is the
+        rotation axis. The identity returns a zero vector.
     """
 
-    cp = (np.trace(C) - 1) / 2
-    p = _safe_acos(cp)
-    sp = p / 2. / np.sin(p)
-    q = np.array([
-        (C[1, 2] - C[2, 1]) * sp,
-        (C[2, 0] - C[0, 2]) * sp,
-        (C[0, 1] - C[1, 0]) * sp
-    ])
-    return q
+    return EP2PRV(C2EP(C))
 
 
 def addEP(b1, b2):
@@ -605,71 +602,57 @@ def addGibbs(q1, q2):
     return result
 
 
+def _compose_mrp(q1, q2, sign):
+    """Compose MRPs through quaternions, returning the bounded MRP set."""
+    if q1[0] == -sign*q2[0] and q1[1] == -sign*q2[1] and q1[2] == -sign*q2[2]:
+        return np.zeros(3)
+    first = MRP2EP(q1)
+    second = MRP2EP(q2)
+    # Explicit components keep Numba compilation within a macOS worker's stack.
+    cross = np.array([first[2]*second[3] - first[3]*second[2],
+                      first[3]*second[1] - first[1]*second[3],
+                      first[1]*second[2] - first[2]*second[1]])
+    # Cancel the linear terms before adding the smaller cross product.
+    vector = (second[0]*first[1:] + sign*first[0]*second[1:]) + cross
+    scalar = first[0]*second[0] - sign*np.dot(first[1:], second[1:])
+    return EP2MRP(np.array([scalar, vector[0], vector[1], vector[2]]))
+
+
 def addMRP(q1, q2):
+    """Return the MRP set for successive rotations ``q1`` and ``q2``.
+
+    :param q1: First dimensionless MRP vector as a list, tuple, or array.
+    :param q2: Second dimensionless MRP vector as a list, tuple, or array.
+    :return: A three-component, dimensionless MRP array with norm at most one.
     """
-     addMRP(Q1,Q2)
 
-    	Q = addMRP(Q1,Q2) provides the MRP vector
-    	which corresponds to performing to successive
-    	rotations Q1 and Q2.
-    """
-
-    den = 1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2)
-
-    if np.abs(den) < 1e-5:
-        q2 = -q2/np.dot(q2,q2)
-        den = 1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2)
-    num = (1 - np.dot(q1, q1)) * q2 + (1 - np.dot(q2, q2)) * q1 + 2 * np.cross(q1, q2)
-
-    q = num / den
-
-    if np.dot(q,q) > 1:
-            q = - q/np.dot(q,q)
-
-    return q
+    return _compose_mrp(q1, q2, 1.0)
 
 
 def PRV2elem(r):
-    """
-    PRV2elem(R)
+    """Convert a rotation vector to its angle and unit axis.
 
-    	Q = PRV2elem(R) translates a prinicpal rotation vector R
-    	into the corresponding principal rotation element set Q.
+    :param r: Three-component principal rotation vector in radians.
+    :return: Four components: the angle in radians followed by the unit axis.
+        Only an exactly zero vector returns an all-zero element set.
     """
-    q0 = np.linalg.norm(r)
-    if q0 < 1e-12:
+    angle = math.hypot(r[0], math.hypot(r[1], r[2]))
+    if angle == 0.0:
         return np.zeros(4)
-    q1 = r[0] / q0
-    q2 = r[1] / q0
-    q3 = r[2] / q0
-    q = np.array([q0, q1, q2, q3])
-    return q
+    return np.array([angle, r[0] / angle, r[1] / angle, r[2] / angle])
 
 
 def addPRV(qq1, qq2):
+    """Compose two successive principal rotation vectors.
+
+    :param qq1: First rotation vector in radians.
+    :param qq2: Second rotation vector in radians.
+    :return: Composed rotation vector in radians. Opposite input vectors return
+        zero; otherwise the composed quaternion's angle branch is retained.
     """
-     addPRV(Q1,Q2)
-
-    	Q = addPRV(Q1,Q2) provides the principal rotation vector
-    	which corresponds to performing to successive
-    	prinicipal rotations Q1 and Q2.
-    """
-
-    q1 = PRV2elem(qq1)
-    q2 = PRV2elem(qq2)
-    cp1 = math.cos(q1[0] / 2.)
-    cp2 = math.cos(q2[0] / 2.)
-    sp1 = math.sin(q1[0] / 2.)
-    sp2 = math.sin(q2[0] / 2.)
-    e1 = q1[1:4]
-    e2 = q2[1:4]
-
-    p = 2. * _safe_acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
-    sp = math.sin(p / 2.)
-    e = (cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2))
-    q = (p / sp) * e
-
-    return q
+    if qq1[0] == -qq2[0] and qq1[1] == -qq2[1] and qq1[2] == -qq2[2]:
+        return np.zeros(3)
+    return EP2PRV(addEP(PRV2EP(qq1), PRV2EP(qq2)))
 
 
 def BinvEP(q):
@@ -1113,19 +1096,22 @@ def BinvMRP(q):
 
 
 def BinvPRV(q):
-    """
-    BinvPRV(Q)
+    """Map the rotation-vector derivative to angular velocity.
 
-    	B = BinvPRV(Q) returns the 3x3 matrix which relates
-    	the derivative of principal rotation vector Q to the
-    	body angular velocity vector w.
-
-    		w = [B(Q)]^(-1) dQ/dt
+    :param q: Principal rotation vector in radians as a list, tuple, or array.
+    :return: A 3-by-3 kinematic matrix, equal to identity at zero attitude.
+        Small-angle series avoid cancellation near zero.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     p = la.norm(q)
-    c1 = (1 - math.cos(p)) / p / p
-    c2 = (p - math.sin(p)) / p / p / p
+    if p < 1e-2:  # [rad]
+        p2 = p * p
+        c1 = 0.5 - p2 / 24.0 + p2 * p2 / 720.0 - p2**3 / 40320.0
+        c2 = 1.0 / 6.0 - p2 / 120.0 + p2 * p2 / 5040.0 - p2**3 / 362880.0
+    else:
+        c1 = 2.0 * (math.sin(p / 2.0) / p)**2
+        c2 = (p - math.sin(p)) / p**3
 
     B = np.zeros((3, 3))
     B[0, 0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2])
@@ -1619,18 +1605,20 @@ def BdotmatMRP(q, dq):
 
 
 def BmatPRV(q):
-    """
-    BmatPRV(Q)
+    """Map angular velocity to the rotation-vector derivative.
 
-    	B = BmatPRV(Q) returns the 3x3 matrix which relates the
-    	body angular velocity vector w to the derivative of
-    	principal rotation vector Q.
-
-    		dQ/dt = [B(Q)] w
+    :param q: Principal rotation vector in radians as a list, tuple, or array.
+    :return: A 3-by-3 kinematic matrix, equal to identity at zero attitude.
+        Small-angle series avoid cancellation near zero.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     p = np.linalg.norm(q)
-    c = 1 / p / p * (1 - p / 2 / math.tan(p / 2))
+    if p < 1e-2:  # [rad]
+        p2 = p * p
+        c = 1.0 / 12.0 + p2 / 720.0 + p2 * p2 / 30240.0 + p2**3 / 1209600.0
+    else:
+        c = (1.0 - p / 2.0 / math.tan(p / 2.0)) / p**2
     B = np.zeros((3, 3))
     B[0, 0] = 1 - c * (q[1] * q[1] + q[2] * q[2])
     B[0, 1] = -q[2] / 2 + c * (q[0] * q[1])
@@ -1900,16 +1888,14 @@ def ddMRP2dOmega(q, dq, ddq):
 
 
 def dPRV(q, w):
-    """
-    dPRV(Q,W)
+    """Map angular velocity to the principal rotation vector derivative.
 
-    	dq = dPRV(Q,W) returns the PRV derivative
-    	for a given PRV vector Q and body
-    	angular velocity vector w.
-
-    	dQ/dt =  [B(Q)] w
+    :param q: Three-component principal rotation vector in radians.
+    :param w: Body angular velocity in radians per second.
+    :return: Rotation vector derivative in radians per second.
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatPRV(q), w)
 
 
@@ -2120,14 +2106,16 @@ def gibbs2MRP(q1):
 
 
 def gibbs2PRV(q):
-    """
-    gibbs2PRV(Q)
+    """Convert a Gibbs vector to a principal rotation vector.
 
-    	Q = gibbs2PRV(Q1) translates the gibbs vector Q1
-    	into the principal rotation vector Q.
+    :param q: A three-component, dimensionless Gibbs vector.
+    :return: A three-component rotation vector in radians. A zero Gibbs
+        vector returns a zero rotation vector.
     """
 
-    tp = np.linalg.norm(q)
+    tp = math.hypot(q[0], math.hypot(q[1], q[2]))
+    if tp == 0.0:
+        return np.zeros(3)
     p = 2 * math.atan(tp)
     q0 = q[0] / tp * p
     q1 = q[1] / tp * p
@@ -2327,14 +2315,17 @@ def MRP2Gibbs(q1):
 
 
 def MRP2PRV(q):
-    """
-    MRP2PRV(Q1)
+    """Convert modified Rodrigues parameters to a principal rotation vector.
 
-    	Q = MRP2PRV(Q1) translates the MRP vector Q1
-    	into the principal rotation vector Q.
+    :param q: A three-component, dimensionless MRP vector.
+    :return: A three-component rotation vector in radians. A zero MRP vector
+        returns a zero rotation vector. MRP norms greater than one retain
+        rotation angles greater than pi.
     """
 
-    tp = np.linalg.norm(q)
+    tp = math.hypot(q[0], math.hypot(q[1], q[2]))
+    if tp == 0.0:
+        return np.zeros(3)
     p = 4 * math.atan(tp)
     q0 = q[0] / tp * p
     q1 = q[1] / tp * p
@@ -2342,6 +2333,17 @@ def MRP2PRV(q):
     q = np.array([q0, q1, q2])
 
     return q
+
+
+def MRPshadow(q):
+    """Return the shadow set of a nonzero MRP vector.
+
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :return: The three-component array ``-q / dot(q, q)``.
+    :note: The shadow of zero is singular and returns NaN components.
+    """
+    q = np.asarray(q, dtype=np.float64)
+    return -q / np.dot(q, q)
 
 
 def MRPswitch(q, s2):
@@ -2378,10 +2380,9 @@ def PRV2C(q):
     """
 
     q = np.asarray(q, dtype=np.float64).reshape(3)
-    angle = np.linalg.norm(q)
+    angle = math.hypot(q[0], math.hypot(q[1], q[2]))
 
-    if angle < 1e-8:
-        # No rotation -> identity matrix
+    if angle == 0.0:
         return np.eye(3)
 
     # Normalize principal axis
@@ -2390,7 +2391,7 @@ def PRV2C(q):
 
     cp = np.cos(angle)
     sp = np.sin(angle)
-    d1 = 1 - cp
+    d1 = 2.0 * math.sin(angle / 2.0)**2
 
     C = np.array([
         [q1*q1*d1 + cp,     q1*q2*d1 + q3*sp, q1*q3*d1 - q2*sp],
@@ -2852,51 +2853,27 @@ def subGibbs(q1, q2):
 
 
 def subMRP(q1, q2):
+    """Return the relative MRP set from ``q2`` to ``q1``.
+
+    :param q1: Final dimensionless MRP vector as a list, tuple, or array.
+    :param q2: Reference dimensionless MRP vector as a list, tuple, or array.
+    :return: A three-component, dimensionless MRP array with norm at most one.
     """
-    subMRP(Q1,Q2)
 
-    	Q = subMRP(Q1,Q2) provides the MRP vector
-    	which corresponds to relative rotation from Q2
-    	to Q1.
-    """
-
-    den = 1 + np.dot(q1, q1) * np.dot(q2, q2) + 2 * np.dot(q1, q2)
-    if den < 1e-5:
-        q2 = -q2/np.dot(q2,q2)
-        den = 1 + np.dot(q1, q1) * np.dot(q2, q2) + 2 * np.dot(q1, q2)
-    num = (1 - np.dot(q2, q2)) * q1 - (1 - np.dot(q1, q1)) * q2 + 2 * np.cross(q1, q2)
-
-    q = num / den
-    if np.dot(q,q) > 1:
-        q = -q/np.dot(q, q)
-
-    return q
+    return _compose_mrp(q1, q2, -1.0)
 
 
 def subPRV(q1, q2):
+    """Return the relative principal rotation vector from ``q2`` to ``q1``.
+
+    :param q1: Final rotation vector in radians.
+    :param q2: Reference rotation vector in radians.
+    :return: Relative rotation vector in radians. Equal input vectors return
+        zero; otherwise the relative quaternion's angle branch is retained.
     """
-    subPRV(Q1,Q2)
-
-    	Q = subPRV(Q1,Q2) provides the prinipal rotation vector
-    	which corresponds to relative principal rotation from Q2
-    	to Q1.
-    """
-
-    q1 = PRV2elem(q1)
-    q2 = PRV2elem(q2)
-    cp1 = math.cos(q1[0] / 2)
-    cp2 = math.cos(q2[0] / 2)
-    sp1 = math.sin(q1[0] / 2)
-    sp2 = math.sin(q2[0] / 2)
-    e1 = q1[1:4]
-    e2 = q2[1:4]
-
-    p = 2 * _safe_acos(cp1 * cp2 + sp1 * sp2 * np.dot(e1, e2))
-    sp = math.sin(p / 2)
-    e = (-cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2)) / sp
-    q = p * e
-
-    return q
+    if q1[0] == q2[0] and q1[1] == q2[1] and q1[2] == q2[2]:
+        return np.zeros(3)
+    return EP2PRV(subEP(PRV2EP(q1), PRV2EP(q2)))
 
 
 def EP2C(q):
@@ -3205,15 +3182,19 @@ def EP2MRP(q):
 
 
 def EP2PRV(q):
-    """
-    EP2PRV(Q1)
+    """Convert Euler parameters to a principal rotation vector.
 
-    	Q = EP2PRV(Q1) translates the euler parameter vector Q1
-    	into the principal rotation vector Q.
+    :param q: A four-component unit quaternion with its scalar component first.
+    :return: A three-component rotation vector in radians. Both quaternion
+        representations of the identity return zero. Otherwise, a negative
+        scalar component retains a rotation angle greater than pi.
     """
 
-    p = 2 * _safe_acos(q[0])
-    sp = math.sin(p / 2)
+    sp = math.hypot(q[1], math.hypot(q[2], q[3]))
+    if sp == 0.0:
+        return np.zeros(3)
+    # The vector part preserves small rotations when the scalar rounds to one.
+    p = 2 * math.atan2(sp, q[0])
     q1 = q[1] / sp * p
     q2 = q[2] / sp * p
     q3 = q[3] / sp * p

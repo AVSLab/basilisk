@@ -24,7 +24,6 @@
 #include "architecture/utilities/bsk_Print.h"
 #include <string.h>
 
-#define nearZero 0.0000000000001
 
 /*
  * Q = addEP(B1,B2) provides the Euler parameter vector
@@ -297,10 +296,11 @@ void addEuler323(double *e1, double *e2, double *result)
     result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
 }
 
-/*
- * Q = addGibbs(Q1,Q2) provides the Gibbs vector
- * which corresponds to performing to successive
- * rotations Q1 and Q2.
+/**
+ * @brief Return the Gibbs vector for successive rotations q1 and q2.
+ * @param q1 First Gibbs vector [-].
+ * @param q2 Second Gibbs vector [-].
+ * @param result Output composed Gibbs vector [-].
  */
 void addGibbs(double *q1, double *q2, double *result)
 {
@@ -313,93 +313,62 @@ void addGibbs(double *q1, double *q2, double *result)
     v3Scale(1. / (1. - v3Dot(q1, q2)), v1, result);
 }
 
-/*
- * addMRP(Q1,Q2,Q) provides the MRP vector
- * which corresponds to performing to successive
- * rotations Q1 and Q2.
- */
-void addMRP(double *q1, double *q2, double *result)
+/** @brief Compose MRPs through quaternions, returning the bounded MRP set. */
+static void composeMRP(double *q1, double *q2, double sign, double *result)
 {
-    double v1[3];
-    double v2[3];
-    double s1[3];
-    double det;
-    double mag;
-
-    v3Copy(q1, s1);
-    det = (1 + v3Dot(s1, s1)*v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
-
-    if (fabs(det) < 0.1) {
-        mag = v3Dot(s1, s1);
-        v3Scale(-1./mag, s1, s1);
-        det = (1 + v3Dot(s1, s1)*v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
-    }
-
-    v3Cross(s1, q2, v1);
-    v3Scale(2., v1, v2);
-    v3Scale(1 - v3Dot(q2, q2), s1, result);
-    v3Add(result, v2, result);
-    v3Scale(1 - v3Dot(s1, s1), q2, v1);
-    v3Add(result, v1, result);
-    v3Scale(1 / det, result, result);
-
-    /* map MRP to inner set */
-    mag = v3Dot(result, result);
-    if (mag > 1.0){
-        v3Scale(-1./mag, result, result);
-    }
-}
-
-/*
- * addPRV(Q1,Q2,Q) provides the principal rotation vector
- * which corresponds to performing to successive
- * prinicipal rotations Q1 and Q2.
- */
-void addPRV(double *qq1, double *qq2, double *result)
-{
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double p;
-    double sp;
-    double e1[3];
-    double e2[3];
-    double compSum[3];
-    double q1[4];
-    double q2[4];
-
-    v3Add(qq1, qq2, compSum);
-
-    if((v3Norm(qq1) < 1.0E-7 || v3Norm(qq2) < 1.0E-7))
-    {
-        v3Add(qq1, qq2, result);
-        return;
-    }
-
-    PRV2elem(qq1, q1);
-    PRV2elem(qq2, q2);
-    cp1 = cos(q1[0] / 2.);
-    cp2 = cos(q2[0] / 2.);
-    sp1 = sin(q1[0] / 2.);
-    sp2 = sin(q2[0] / 2.);
-    v3Set(q1[1], q1[2], q1[3], e1);
-    v3Set(q2[1], q2[2], q2[3], e2);
-
-    p = 2 * safeAcos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
-    if(fabs(p) < 1.0E-13)
-    {
+    double first[4];
+    double second[4];
+    double composed[4];
+    double cross[3];
+    if (q1[0] == -sign * q2[0] && q1[1] == -sign * q2[1] && q1[2] == -sign * q2[2]) {
         v3SetZero(result);
         return;
     }
-    sp = sin(p / 2.);
-    v3Scale(cp1 * sp2, e2, q1);
-    v3Scale(cp2 * sp1, e1, q2);
-    v3Add(q1, q2, result);
-    v3Cross(e1, e2, q1);
-    v3Scale(sp1 * sp2, q1, q2);
-    v3Add(result, q2, result);
-    v3Scale(p / sp, result, result);
+    MRP2EP(q1, first);
+    MRP2EP(q2, second);
+    v3Cross(first + 1, second + 1, cross);
+    composed[0] = first[0] * second[0] - sign * v3Dot(first + 1, second + 1);
+    // Cancel the linear terms before adding the smaller cross product.
+    for (int index = 0; index < 3; ++index) {
+        composed[index + 1] = (second[0] * first[index + 1] + sign * first[0] * second[index + 1])
+                              + cross[index];
+    }
+    EP2MRP(composed, result);
+}
+
+/**
+ * @brief Return the bounded MRP set for successive rotations q1 and q2.
+ * @param q1 First MRP vector [-].
+ * @param q2 Second MRP vector [-].
+ * @param result Output MRP vector with norm at most one [-].
+ */
+void addMRP(double *q1, double *q2, double *result)
+{
+    composeMRP(q1, q2, 1.0, result);
+}
+
+/**
+ * @brief Compose two successive principal rotation vectors.
+ * @param qq1 First rotation vector [rad].
+ * @param qq2 Second rotation vector [rad].
+ * @param result Output composed rotation vector [rad].
+ * @note Opposite input vectors return zero; other results retain the composed
+ * quaternion's angle branch.
+ */
+void addPRV(double *qq1, double *qq2, double *result)
+{
+    double first[4];
+    double second[4];
+    double composed[4];
+
+    if (qq1[0] == -qq2[0] && qq1[1] == -qq2[1] && qq1[2] == -qq2[2]) {
+        v3SetZero(result);
+        return;
+    }
+    PRV2EP(qq1, first);
+    PRV2EP(qq2, second);
+    addEP(first, second, composed);
+    EP2PRV(composed, result);
 }
 
 /*
@@ -784,12 +753,10 @@ void BinvEuler312(double *q, double B[3][3])
     B[2][2] = 0;
 }
 
-/*
- * BinvGibbs(Q,B) returns the 3x3 matrix which relates
- * the derivative of Gibbs vector Q to the
- * body angular velocity vector w.
- *
- * w = 2 [B(Q)]^(-1) dQ/dt
+/**
+ * @brief Return the inverse Gibbs rate matrix, with angular velocity w = 2 B dq/dt.
+ * @param q Gibbs vector [-].
+ * @param B Output 3-by-3 inverse rate matrix [-].
  */
 void BinvGibbs(double *q, double B[3][3])
 {
@@ -805,13 +772,11 @@ void BinvGibbs(double *q, double B[3][3])
     m33Scale(1. / (1 + v3Dot(q, q)), B, B);
 }
 
-/*
-* BinvMRP(Q,B) returns the 3x3 matrix which relates
-* the derivative of MRP vector Q to the
-* body angular velocity vector w.
-*
-* w = 4 [B(Q)]^(-1) dQ/dt
-*/
+/**
+ * @brief Return the inverse MRP rate matrix, with angular velocity w = 4 B dq/dt.
+ * @param q Modified Rodrigues parameters [-].
+ * @param B Output 3-by-3 inverse rate matrix [-].
+ */
 void BinvMRP(double *q, double B[3][3])
 {
     double s2;
@@ -829,12 +794,11 @@ void BinvMRP(double *q, double B[3][3])
     m33Scale(1. / (1 + s2) / (1 + s2), B, B);
 }
 
-/*
- * BinvPRV(Q,B) returns the 3x3 matrix which relates
- * the derivative of principal rotation vector Q to the
- * body angular velocity vector w.
- *
- * w = [B(Q)]^(-1) dQ/dt
+/**
+ * @brief Map the rotation-vector derivative to angular velocity.
+ * @param q Principal rotation vector [rad].
+ * @param B Output 3-by-3 kinematic matrix.
+ * @note The zero-attitude limit is identity; small angles use series expansions.
  */
 void BinvPRV(double *q, double B[3][3])
 {
@@ -843,8 +807,15 @@ void BinvPRV(double *q, double B[3][3])
     double c2;
 
     p = sqrt(v3Dot(q, q));
-    c1 = (1 - cos(p)) / p / p;
-    c2 = (p - sin(p)) / p / p / p;
+    if (p < 1e-2) {  // [rad]
+        double p2 = p * p;
+        c1 = 0.5 - p2 / 24.0 + p2 * p2 / 720.0 - p2 * p2 * p2 / 40320.0;
+        c2 = 1.0 / 6.0 - p2 / 120.0 + p2 * p2 / 5040.0 - p2 * p2 * p2 / 362880.0;
+    } else {
+        double halfSinc = sin(p / 2.0) / p;
+        c1 = 2.0 * halfSinc * halfSinc;
+        c2 = (p - sin(p)) / (p * p * p);
+    }
 
     B[0][0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2]);
     B[0][1] = c1 * q[2] + c2 * q[0] * q[1];
@@ -1272,12 +1243,10 @@ void BmatGibbs(double *q, double B[3][3])
     B[2][2] = 1 + q[2] * q[2];
 }
 
-/*
- * BmatMRP(Q,B) returns the 3x3 matrix which relates the
- * body angular velocity vector w to the derivative of
- * MRP vector Q.
- *
- * dQ/dt = 1/4 [B(Q)] w
+/**
+ * @brief Return the MRP rate matrix satisfying dq/dt = B * omega / 4.
+ * @param q Input MRP vector [-].
+ * @param B Output rate matrix [-].
  */
 void BmatMRP(double *q, double B[3][3])
 {
@@ -1295,13 +1264,11 @@ void BmatMRP(double *q, double B[3][3])
     B[2][2] = 1 - s2 + 2 * q[2] * q[2];
 }
 
-/*
- * BdotmatMRP(Q,dQ,B) returns the 3x3 matrix derivative of
- * the BmatMRP matrix, and it is used to relate the
- * body angular acceleration vector dw to the second order
- * derivative of the MRP vector Q.
- *
- * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+/**
+ * @brief Return the time derivative of the MRP rate matrix.
+ * @param q Input MRP vector [-].
+ * @param dq Input MRP time derivative [1/s].
+ * @param B Output matrix time derivative [1/s].
  */
 void BdotmatMRP(double *q, double *dq, double B[3][3])
 {
@@ -1319,19 +1286,23 @@ void BdotmatMRP(double *q, double *dq, double B[3][3])
     B[2][2] = s + 4 * ( q[2] * dq[2] );
 }
 
-/*
- * BmatPRV(Q,B) returns the 3x3 matrix which relates the
- * body angular velocity vector w to the derivative of
- * principal rotation vector Q.
- *
- * dQ/dt = [B(Q)] w
+/**
+ * @brief Map angular velocity to the rotation-vector derivative.
+ * @param q Principal rotation vector [rad].
+ * @param B Output 3-by-3 kinematic matrix.
+ * @note The zero-attitude limit is identity; small angles use series expansions.
  */
 void BmatPRV(double *q, double B[3][3])
 {
     double p;
     double c;
     p = v3Norm(q);
-    c = 1. / p / p * (1. - p / 2. / tan(p / 2.));
+    if (p < 1e-2) {  // [rad]
+        double p2 = p * p;
+        c = 1.0 / 12.0 + p2 / 720.0 + p2 * p2 / 30240.0 + p2 * p2 * p2 / 1209600.0;
+    } else {
+        c = (1.0 - p / 2.0 / tan(p / 2.0)) / (p * p);
+    }
     B[0][0] = 1 - c * (q[1] * q[1] + q[2] * q[2]);
     B[0][1] = -q[2] / 2 + c * (q[0] * q[1]);
     B[0][2] = q[1] / 2 + c * (q[0] * q[2]);
@@ -1579,11 +1550,10 @@ void C2MRP(double C[3][3], double *q)
     q[2] = b[3] / (1 + b[0]);
 }
 
-/*
- * C2PRV(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding 3x1 principal rotation vector Q,
- * where the first component of Q is the principal rotation angle
- * phi (0<= phi <= Pi)
+/**
+ * @brief Convert a DCM to a principal rotation vector.
+ * @param C Input 3-by-3 direction cosine matrix.
+ * @param q Output rotation vector [rad], with magnitude in [0, pi].
  */
 void C2PRV(double C[3][3], double *q)
 {
@@ -1798,12 +1768,11 @@ void dEuler323(double *q, double *w, double *dq)
     m33MultV3(B, w, dq);
 }
 
-/*
- * dGibbs(Q,W,dq) returns the Gibbs derivative
- * for a given Gibbs vector Q and body
- * angular velocity vector w.
- *
- * dQ/dt = 1/2 [B(Q)] w
+/**
+ * @brief Map angular velocity to the Gibbs vector derivative.
+ * @param q Dimensionless Gibbs vector.
+ * @param w Body angular velocity in radians per second.
+ * @param dq Gibbs time derivative in inverse seconds.
  */
 void dGibbs(double *q, double *w, double *dq)
 {
@@ -1814,12 +1783,11 @@ void dGibbs(double *q, double *w, double *dq)
     v3Scale(0.5, dq, dq);
 }
 
-/*
- * dMRP(Q,W,dq) returns the MRP derivative
- * for a given MRP vector Q and body
- * angular velocity vector w.
- *
- * dQ/dt = 1/4 [B(Q)] w
+/**
+ * @brief Map angular velocity to the MRP time derivative.
+ * @param q Dimensionless MRP vector.
+ * @param w Body angular velocity in radians per second.
+ * @param dq MRP time derivative in inverse seconds.
  */
 void dMRP(double *q, double *w, double *dq)
 {
@@ -1830,12 +1798,11 @@ void dMRP(double *q, double *w, double *dq)
     v3Scale(0.25, dq, dq);
 }
 
-/*
- * dMRP2omega(Q,dQ,W) returns the angular rate W
- * for a given MRP vector Q and
- * MRP derivative dQ.
- *
- * w = 4 [B(Q)]^(-1) dQ/dt
+/**
+ * @brief Recover angular velocity from the MRP time derivative.
+ * @param q Dimensionless MRP vector.
+ * @param dq MRP time derivative in inverse seconds.
+ * @param w Body angular velocity in radians per second.
  */
 void dMRP2Omega(double *q, double *dq, double *w)
 {
@@ -1846,12 +1813,13 @@ void dMRP2Omega(double *q, double *dq, double *w)
     v3Scale(4, w, w);
 }
 
-/*
- * ddMRP(Q,dQ,W,dW) returns the second order MRP derivative
- * for a given MRP vector Q, first MRP derivative dQ, body angular
- * velocity vector w and body angular acceleration vector dw.
- *
- * (d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+/**
+ * @brief Map angular acceleration to the MRP second derivative.
+ * @param q Dimensionless MRP vector.
+ * @param dq MRP time derivative in inverse seconds.
+ * @param w Body angular velocity in radians per second.
+ * @param dw Body angular acceleration in radians per second squared.
+ * @param ddq MRP second derivative in inverse seconds squared.
  */
 void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
 {
@@ -1868,12 +1836,12 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
     }
 }
 
-/*
- * ddMRP2omegaDot(Q,dQ,ddQ) returns the angular rate W
- * for a given MRP vector Q and
- * MRP derivative dQ.
- *
- * dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
+/**
+ * @brief Recover angular acceleration from MRP derivatives.
+ * @param q Dimensionless MRP vector.
+ * @param dq MRP time derivative in inverse seconds.
+ * @param ddq MRP second derivative in inverse seconds squared.
+ * @param dw Body angular acceleration in radians per second squared.
  */
 void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
 {
@@ -1892,12 +1860,11 @@ void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
     v3Scale(4, dw, dw);
 }
 
-/*
- * dPRV(Q,W,dq) returns the PRV derivative
- * for a given PRV vector Q and body
- * angular velocity vector w.
- *
- * dQ/dt =  [B(Q)] w
+/**
+ * @brief Map angular velocity to the principal rotation vector derivative.
+ * @param q Principal rotation vector [rad].
+ * @param w Body angular velocity [rad/s].
+ * @param dq Output rotation vector derivative [rad/s].
  */
 void dPRV(double *q, double *w, double *dq)
 {
@@ -2211,23 +2178,26 @@ void EP2MRP(double *q1, double *q)
     }
 }
 
-/*
- * EP2PRV(Q1,Q) translates the Euler parameter vector Q1
- * into the principal rotation vector Q.
+/**
+ * @brief Convert Euler parameters to a principal rotation vector.
+ * @param q1 Unit quaternion, scalar component first.
+ * @param q Output rotation vector [rad].
+ * @note Both identity quaternions return zero. A negative scalar component
+ * retains the rotation branch with angle greater than pi.
  */
 void EP2PRV(double *q1, double *q)
 {
     double p;
     double sp;
 
-    p = 2 * safeAcos(q1[0]);
-    sp = sin(p / 2);
-    if (fabs(sp) < nearZero) {
+    sp = hypot(q1[1], hypot(q1[2], q1[3]));
+    if (sp == 0.0) {
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = 0.0;
         return;
     }
+    p = 2.0 * atan2(sp, q1[0]);
     q[0] = q1[1] / sp * p;
     q[1] = q1[2] / sp * p;
     q[2] = q1[3] / sp * p;
@@ -3367,9 +3337,10 @@ void Euler3232PRV(double *e, double *q)
     EP2PRV(ep, q);
 }
 
-/*
- * Gibbs2C(Q,C) returns the direction cosine
- * matrix in terms of the 3x1 Gibbs vector Q.
+/**
+ * @brief Convert a Gibbs vector to a direction cosine matrix.
+ * @param q Input three-component Gibbs vector [-].
+ * @param C Output 3-by-3 direction cosine matrix [-].
  */
 void Gibbs2C(double *q, double C[3][3])
 {
@@ -3395,16 +3366,22 @@ void Gibbs2C(double *q, double C[3][3])
     m33Scale(1. / (1 + d1), C, C);
 }
 
-/*
- * Gibbs2EP(Q1,Q) translates the Gibbs vector Q1
- * into the Euler parameter vector Q.
+/**
+ * @brief Convert a Gibbs vector to Euler parameters.
+ * @param q1 Input three-component Gibbs vector [-].
+ * @param q Output scalar-first unit quaternion with a positive scalar component [-].
+ * @note Input and output may share storage if the buffer holds four doubles.
  */
 void Gibbs2EP(double *q1, double *q)
 {
+    double first = q1[0];
+    double second = q1[1];
+    double third = q1[2];
+
     q[0] = 1 / sqrt(1 + v3Dot(q1, q1));
-    q[1] = q1[0] * q[0];
-    q[2] = q1[1] * q[0];
-    q[3] = q1[2] * q[0];
+    q[1] = first * q[0];
+    q[2] = second * q[0];
+    q[3] = third * q[0];
 }
 
 /*
@@ -3551,27 +3528,29 @@ void Gibbs2Euler323(double *q, double *e)
     EP2Euler323(ep, e);
 }
 
-/*
- * Gibbs2MRP(Q1,Q) translates the Gibbs vector Q1
- * into the MRP vector Q.
+/**
+ * @brief Convert a Gibbs vector to modified Rodrigues parameters.
+ * @param q1 Input three-component Gibbs vector [-].
+ * @param q Output three-component MRP vector with norm at most one [-].
  */
 void Gibbs2MRP(double *q1, double *q)
 {
     v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q);
 }
 
-/*
- * Gibbs2PRV(Q1,Q) translates the Gibbs vector Q1
- * into the principal rotation vector Q.
+/**
+ * @brief Convert a Gibbs vector to a principal rotation vector.
+ * @param q1 Input Gibbs vector.
+ * @param q Output rotation vector [rad]. Small nonzero rotations are retained.
  */
 void Gibbs2PRV(double *q1, double *q)
 {
     double tp;
     double p;
 
-    tp = sqrt(v3Dot(q1, q1));
+    tp = hypot(q1[0], hypot(q1[1], q1[2]));
     p = 2 * atan(tp);
-    if (tp < nearZero) {
+    if (tp == 0.0) {
         q[0] = 0.0;
         q[1] = 0.0;
         q[2] = 0.0;
@@ -3582,9 +3561,10 @@ void Gibbs2PRV(double *q1, double *q)
     q[2] = q1[2] / tp * p;
 }
 
-/*
- * MRP2C(Q,C) returns the direction cosine
- * matrix in terms of the 3x1 MRP vector Q.
+/**
+ * @brief Convert modified Rodrigues parameters to a direction cosine matrix.
+ * @param q Input three-component MRP vector [-].
+ * @param C Output 3-by-3 direction cosine matrix [-].
  */
 void MRP2C(double *q, double C[3][3])
 {
@@ -3614,19 +3594,24 @@ void MRP2C(double *q, double C[3][3])
     m33Scale(1. / d, C, C);
 }
 
-/*
- * MRP2EP(Q1,Q) translates the MRP vector Q1
- * into the Euler parameter vector Q.
+/**
+ * @brief Convert modified Rodrigues parameters to Euler parameters.
+ * @param q1 Input three-component MRP vector [-].
+ * @param q Output scalar-first unit quaternion [-].
+ * @note Input and output may share storage if the buffer holds four doubles.
  */
 void MRP2EP(double *q1, double *q)
 {
+    double first = q1[0];
+    double second = q1[1];
+    double third = q1[2];
     double ps;
 
     ps = 1 + v3Dot(q1, q1);
     q[0] = (1 - v3Dot(q1, q1)) / ps;
-    q[1] = 2 * q1[0] / ps;
-    q[2] = 2 * q1[1] / ps;
-    q[3] = 2 * q1[2] / ps;
+    q[1] = 2 * first / ps;
+    q[2] = 2 * second / ps;
+    q[3] = 2 * third / ps;
 }
 
 /*
@@ -3773,28 +3758,29 @@ void MRP2Euler323(double *q, double *e)
     EP2Euler323(ep, e);
 }
 
-/*
- * MRP2Gibbs(Q1,Q) translates the MRP vector Q1
- * into the Gibbs vector Q.
+/**
+ * @brief Convert modified Rodrigues parameters to a Gibbs vector.
+ * @param q1 Input MRP vector [-].
+ * @param q Output Gibbs vector [-].
  */
 void MRP2Gibbs(double *q1, double *q)
 {
     v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q);
 }
 
-/*
- * MRP2PRV(Q1,Q) translates the MRP vector Q1
- * into the principal rotation vector Q.
+/**
+ * @brief Convert modified Rodrigues parameters to a principal rotation vector.
+ * @param q1 Input modified Rodrigues parameters.
+ * @param q Output rotation vector [rad]. Small nonzero rotations are retained.
  */
 void MRP2PRV(double *q1, double *q)
 {
     double tp;
     double p;
 
-    tp = sqrt(v3Dot(q1, q1));
-    if(tp < nearZero)
-    {
-        memset(q, 0x0, 3*sizeof(double));
+    tp = hypot(q1[0], hypot(q1[1], q1[2]));
+    if (tp == 0.0) {
+        v3SetZero(q);
         return;
     }
     p = 4 * atan(tp);
@@ -3803,9 +3789,11 @@ void MRP2PRV(double *q1, double *q)
     q[2] = q1[2] / tp * p;
 }
 
-/*
- * MRPswitch(Q,s2,s) checks to see if v3Norm(Q) is larger than s2.
- * If yes, then the MRP vector Q is mapped to its shadow set.
+/**
+ * @brief Switch to the shadow MRP set only above the norm threshold.
+ * @param q Input MRP vector [-].
+ * @param s2 MRP norm threshold, interpreted by magnitude [-].
+ * @param s Output MRP vector, unchanged at or below the threshold [-].
  */
 void MRPswitch(double *q, double s2, double *s)
 {
@@ -3819,8 +3807,10 @@ void MRPswitch(double *q, double s2, double *s)
     }
 }
 
-/*
- * MRPshadow forces a switch from the current MRP to its shadow set
+/**
+ * @brief Return the shadow set of a nonzero MRP vector.
+ * @param qIn Input MRP vector [-].
+ * @param qOut Output shadow MRP vector [-]. May alias qIn.
  */
 void MRPshadow(double *qIn, double *qOut)
 {
@@ -3831,30 +3821,32 @@ void MRPshadow(double *qIn, double *qOut)
     return;
 }
 
-/*
- * Makes sure that the angle x lies within +/- Pi.
+/**
+ * @brief Wrap an angle with any number of revolutions to the interval [-pi, pi].
+ * @param x Input angle [rad].
+ * @return Equivalent angle [rad], or NaN for non-finite inputs.
+ * @note Exact half-turn remainders and zero retain the input sign.
  */
 double wrapToPi(double x)
 {
-    double q;
-
-    q = x;
-
-    if(x >  M_PI) {
-        q = x - 2 * M_PI;
+    if (!isfinite(x)) {
+        return nan("");
     }
-
-    if(x < -M_PI) {
-        q = x + 2 * M_PI;
+    const double twoPi = 2.0 * M_PI;  // [rad]
+    double wrapped = fmod(x, twoPi);
+    if (wrapped > M_PI) {
+        return wrapped - twoPi;
     }
-
-    return q;
+    if (wrapped < -M_PI) {
+        return wrapped + twoPi;
+    }
+    return wrapped;
 }
 
-/*
- * PRV2C(Q,C) returns the direction cosine
- * matrix in terms of the 3x1 principal rotation vector
- * Q.
+/**
+ * @brief Convert a principal rotation vector to a DCM.
+ * @param q Input rotation vector [rad].
+ * @param C Output 3-by-3 direction cosine matrix.
  */
 void PRV2C(double *q, double C[3][3])
 {
@@ -3866,20 +3858,19 @@ void PRV2C(double *q, double C[3][3])
     double sp;
     double d1;
 
-    if(v3Norm(q) == 0.0)
-    {
+    q0 = hypot(q[0], hypot(q[1], q[2]));
+    if (q0 == 0.0) {
         m33SetIdentity(C);
         return;
     }
 
-    q0 = sqrt(v3Dot(q, q));
     q1 = q[0] / q0;
     q2 = q[1] / q0;
     q3 = q[2] / q0;
 
     cp = cos(q0);
     sp = sin(q0);
-    d1 = 1 - cp;
+    d1 = 2.0 * sin(q0 / 2.0) * sin(q0 / 2.0);
     C[0][0] = q1 * q1 * d1 + cp;
     C[0][1] = q1 * q2 * d1 + q3 * sp;
     C[0][2] = q1 * q3 * d1 - q2 * sp;
@@ -3891,23 +3882,22 @@ void PRV2C(double *q, double C[3][3])
     C[2][2] = q3 * q3 * d1 + cp;
 }
 
-/*
- * PRV2elem(R,Q) translates a prinicpal rotation vector R
- * into the corresponding principal rotation element set Q.
+/**
+ * @brief Convert a rotation vector to its angle and unit axis.
+ * @param r Input rotation vector [rad].
+ * @param q Output angle [rad] followed by the unit axis.
+ * @note Only an exactly zero vector returns an all-zero element set.
  */
 void PRV2elem(double *r, double *q)
 {
-    q[0] = sqrt(v3Dot(r, r));
-	if (q[0] < 1.0E-12)
-	{
-		q[1] = q[2] = q[3] = 0.0;
-	}
-	else
-	{
-		q[1] = r[0] / q[0];
-		q[2] = r[1] / q[0];
-		q[3] = r[2] / q[0];
-	}
+    q[0] = hypot(r[0], hypot(r[1], r[2]));
+    if (q[0] == 0.0) {
+        q[1] = q[2] = q[3] = 0.0;
+    } else {
+        q[1] = r[0] / q[0];
+        q[2] = r[1] / q[0];
+        q[3] = r[2] / q[0];
+    }
 }
 
 /*
@@ -4362,94 +4352,56 @@ void subEuler323(double *e, double *e1, double *e2)
     e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
 }
 
-/*
- * subGibbs(Q1,Q2,Q) provides the Gibbs vector
- * which corresponds to relative rotation from Q2
- * to Q1.
+/**
+ * @brief Return the relative Gibbs vector from q2 to q1.
+ * @param q1 Final Gibbs vector [-].
+ * @param q2 Reference Gibbs vector [-].
+ * @param q Output relative Gibbs vector [-].
  */
 void subGibbs(double *q1, double *q2, double *q)
 {
     double d1[3];
+    double difference[3];
 
     v3Cross(q1, q2, d1);
-    v3Add(q1, d1, q);
-    v3Subtract(q, q2, q);
-    v3Scale(1. / (1. + v3Dot(q1, q2)), q, q);
+    v3Add(q1, d1, difference);
+    v3Subtract(difference, q2, difference);
+    v3Scale(1. / (1. + v3Dot(q1, q2)), difference, q);
 }
 
-/*
- * subMRP(Q1,Q2,Q) provides the MRP vector
- * which corresponds to relative rotation from Q2
- * to Q1.
+/**
+ * @brief Return the bounded relative MRP set from q2 to q1.
+ * @param q1 Final MRP vector [-].
+ * @param q2 Reference MRP vector [-].
+ * @param q Output relative MRP vector with norm at most one [-].
  */
 void subMRP(double *q1, double *q2, double *q)
 {
-    double d1[3];
-    double s1[3];
-    double det;
-    double mag;
-
-    v3Copy(q1, s1);
-    det = (1. + v3Dot(s1, s1)*v3Dot(q2, q2) + 2.*v3Dot(s1, q2));
-    if (fabs(det) < 0.1) {
-        mag = v3Dot(s1, s1);
-        v3Scale(-1.0/mag, s1, s1);
-        det = (1. + v3Dot(s1, s1)*v3Dot(q2, q2) + 2.*v3Dot(s1, q2));
-    }
-
-    v3Cross(s1, q2, d1);
-    v3Scale(2., d1, q);
-    v3Scale(1. - v3Dot(q2, q2), s1, d1);
-    v3Add(q, d1, q);
-    v3Scale(1. - v3Dot(s1, s1), q2, d1);
-    v3Subtract(q, d1, q);
-    v3Scale(1. / det, q, q);
-
-    /* map MRP to inner set */
-    mag = v3Dot(q, q);
-    if (mag > 1.0){
-        v3Scale(-1./mag, q, q);
-    }
-
+    composeMRP(q1, q2, -1.0, q);
 }
 
-/*
- * subPRV(Q1,Q2,Q) provides the prinipal rotation vector
- * which corresponds to relative principal rotation from Q2
- * to Q1.
+/**
+ * @brief Return the relative principal rotation vector from q20 to q10.
+ * @param q10 Final rotation vector [rad].
+ * @param q20 Reference rotation vector [rad].
+ * @param q Output relative rotation vector [rad].
+ * @note Equal input vectors return zero; other results retain the relative
+ * quaternion's angle branch.
  */
 void subPRV(double *q10, double *q20, double *q)
 {
-    double q1[4];
-    double q2[4];
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double e1[3];
-    double e2[3];
-    double p;
-    double sp;
+    double first[4];
+    double second[4];
+    double relative[4];
 
-    PRV2elem(q10, q1);
-    PRV2elem(q20, q2);
-    cp1 = cos(q1[0] / 2.);
-    cp2 = cos(q2[0] / 2.);
-    sp1 = sin(q1[0] / 2.);
-    sp2 = sin(q2[0] / 2.);
-    v3Copy(&(q1[1]), e1);
-    v3Copy(&(q2[1]), e2);
-
-    p = 2.*safeAcos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
-    sp = sin(p / 2.);
-
-    v3Cross(e1, e2, q1);
-    v3Scale(sp1 * sp2, q1, q);
-    v3Scale(cp2 * sp1, e1, q1);
-    v3Add(q1, q, q);
-    v3Scale(cp1 * sp2, e2, q1);
-    v3Subtract(q, q1, q);
-    v3Scale(p / sp, q, q);
+    if (q10[0] == q20[0] && q10[1] == q20[1] && q10[2] == q20[2]) {
+        v3SetZero(q);
+        return;
+    }
+    PRV2EP(q10, first);
+    PRV2EP(q20, second);
+    subEP(first, second, relative);
+    EP2PRV(relative, q);
 }
 
 /*
