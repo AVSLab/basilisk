@@ -32,6 +32,9 @@
 #include "spiceInterface.h"
 
 namespace {
+    constexpr double julianDateJ2000 = 2451545.0; //!< [d] Julian date of the J2000 epoch
+    constexpr double secondsPerDay = 86400.0;     //!< [s] Seconds in a Julian day
+
     /**
      * RAII guard for SPICE error mode.
      *
@@ -733,8 +736,6 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
  */
 void SpiceInterface::initTimeData()
 {
-    double EpochDelteET;
-
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
         // Read in the epoch message and set the internal time structure
@@ -754,26 +755,23 @@ void SpiceInterface::initTimeData()
     str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
     //! - Get the time value associate with the requested UTC date
     str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
-    //! - Take the JD epoch and get the elapsed time for it
-    deltet_c(this->JDGPSEpoch, "ET", &EpochDelteET);
-
 }
 
-/*! This method computes the GPS time data for the current elapsed time.  It uses
- the total elapsed times at both the GPS epoch time and the current time to
- compute the GPS time (week, seconds, rollovers)
+/*! This method computes the GPS time data for the current elapsed time.  GPS time
+ is atomic time (TAI - 19 s), so the elapsed time since the GPS epoch is the
+ difference of the TAI times at the current time and at the GPS epoch.  This
+ elapsed time gives the GPS time (week, seconds, rollovers).
 
  */
 void SpiceInterface::computeGPSData()
 {
-    double JDDifference;
-
-    //! - The difference between the epochs in julian date terms is the total
-    JDDifference = this->J2000Current - this->JDGPSEpoch;
+    //! - Take the elapsed atomic time since the GPS epoch
+    double gpsElapsed = unitim_c(this->J2000Current, "TDB", "TAI")
+                        - unitim_c(this->JDGPSEpoch, "TDB", "TAI"); // [s]
     //! - Scale the elapsed by a week's worth of seconds to get week
-    this->GPSWeek = (uint16_t) (JDDifference/(7*86400));
+    this->GPSWeek = (uint16_t) (gpsElapsed/(7*86400));
     //! - Subtract out the GPS week scaled up to seconds to get time in week
-    this->GPSSeconds = JDDifference - this->GPSWeek*7*86400;
+    this->GPSSeconds = gpsElapsed - this->GPSWeek*7*86400;
 
     //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
     this->GPSRollovers = this->GPSWeek/1024;
@@ -838,11 +836,10 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
-    //! - Compute the current Julian Date string and cast it over to the double
-    et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
-             (this->spiceBuffer));
-    std::string localString = reinterpret_cast<char*> (&this->spiceBuffer[3]);
-    this->julianDateCurrent = std::stod(localString);
+    //! - Compute the current UTC Julian date from the UTC seconds past J2000
+    double deltaET; // [s] ET - UTC
+    deltet_c(this->J2000Current, "ET", &deltaET);
+    this->julianDateCurrent = julianDateJ2000 + (this->J2000Current - deltaET) / secondsPerDay; // [d]
     //! Get GPS and Planet data and then write the message outputs. Reconstruction is allowed only
     //! on the planet pass (the raw sim time drives the knot grid; the spacecraft pass stays exact).
     this->computeGPSData();

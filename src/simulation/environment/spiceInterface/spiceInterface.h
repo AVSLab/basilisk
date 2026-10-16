@@ -230,8 +230,8 @@ public:
     bool timeDataInit;          //!< -- Flag indicating whether time has been init
     double J2000ETInit;         //!< s Seconds elapsed since J2000 at init
     double J2000Current;        //!< s Current J2000 elapsed time
-    double julianDateCurrent;   //!< s Current JulianDate
-    double GPSSeconds;          //!< s Current GPS seconds
+    double julianDateCurrent;   //!< d Current UTC Julian date
+    double GPSSeconds;          //!< s Current GPS seconds of week
     uint16_t GPSWeek;           //!< -- Current GPS week value
     uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
 
@@ -239,7 +239,7 @@ public:
 
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
-    double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
+    double JDGPSEpoch;          //!< s Ephemeris time of the GPS epoch, seconds past J2000.  Saved for efficiency
 
     std::vector<SpicePlanetStateMsgPayload> planetData;
     std::vector<SpicePlanetStateMsgPayload> scData;
