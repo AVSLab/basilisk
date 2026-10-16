@@ -20,37 +20,39 @@
 #ifndef LINKBUDGET_H
 #define LINKBUDGET_H
 
+#include "../_GeneralModuleFiles/AntennaDefinitions.h"
+#include "../_GeneralModuleFiles/LinkBudgetTypes.h"
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/AntennaLogMsgPayload.h"
+#include "architecture/msgPayloadDefC/LinkBudgetMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
 #include <fstream>
 #include <string>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/AntennaLogMsgPayload.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/LinkBudgetMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
-#include "architecture/utilities/astroConstants.h"
-#include "../_GeneralModuleFiles/LinkBudgetTypes.h"
-#include "../_GeneralModuleFiles/AntennaDefinitions.h"
-#include "architecture/utilities/avsEigenSupport.h"
 
 /*! @brief This module describes how the radio link-budget model operates within the simulation environment.
  *  The purpose of this module is to provide a basic representation of radio-link communication between two spacecrafts
  *  or between a spacecraft and a ground station.
  */
-struct LookupTable {
-    std::vector<double> f_l;          //!< [GHz] Frequency lookup values
-    std::vector<double> l_1;          //!< [-] Lookup coefficient a1, b1
-    std::vector<double> l_2;          //!< [-] Lookup coefficient a2, b2
-    std::vector<double> l_3;          //!< [-] Lookup coefficient a3, b3
-    std::vector<double> l_4;          //!< [-] Lookup coefficient a4, b4
-    std::vector<double> l_5;          //!< [-] Lookup coefficient a5, b5
-    std::vector<double> l_6;          //!< [-] Lookup coefficient a6, b6
+struct LookupTable
+{
+    std::vector<double> f_l; //!< [GHz] Frequency lookup values
+    std::vector<double> l_1; //!< [-] Lookup coefficient a1, b1
+    std::vector<double> l_2; //!< [-] Lookup coefficient a2, b2
+    std::vector<double> l_3; //!< [-] Lookup coefficient a3, b3
+    std::vector<double> l_4; //!< [-] Lookup coefficient a4, b4
+    std::vector<double> l_5; //!< [-] Lookup coefficient a5, b5
+    std::vector<double> l_6; //!< [-] Lookup coefficient a6, b6
 };
 
 /*! @brief Precomputed atmospheric attenuation profile
  *  Stores layer-by-layer attenuation data for slant path integration
  */
-struct AttenuationLookupTable {
+struct AttenuationLookupTable
+{
     std::vector<double> layer_i;         //!< [m] Altitude layers
     std::vector<double> gamma_i;         //!< [dB/km] Attenuation values at each altitude layer (vertical)
     std::vector<double> delta_h_layer_i; //!< [m] Thickness of each altitude layer
@@ -66,64 +68,65 @@ struct AttenuationLookupTable {
  *  - Frequency offset losses
  *  - Carrier-to-noise ratio (CNR)
  */
-class LinkBudget:  public SysModel {
-public:
+class LinkBudget : public SysModel
+{
+  public:
     LinkBudget();
     ~LinkBudget() = default;
 
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
-    bool atmosAtt     = false; //!< Enable/disable atmospheric attenuation (only used for space-ground)
-    bool pointingLoss = true;  //!< Enable/disable pointing loss
-    bool freqLoss     = true;  //!< Enable/disable frequency offset loss
+  public:
+    bool atmosAtt = false;    //!< Enable/disable atmospheric attenuation (only used for space-ground)
+    bool pointingLoss = true; //!< Enable/disable pointing loss
+    bool freqLoss = true;     //!< Enable/disable frequency offset loss
 
-    ReadFunctor<AntennaLogMsgPayload>       antennaInPayload_1;     //!< antenna output antenna 1
-    ReadFunctor<AntennaLogMsgPayload>       antennaInPayload_2;     //!< antenna output antenna 2
+    ReadFunctor<AntennaLogMsgPayload> antennaInPayload_1; //!< antenna output antenna 1
+    ReadFunctor<AntennaLogMsgPayload> antennaInPayload_2; //!< antenna output antenna 2
 
     // local copies of message buffers
-    AntennaLogMsgPayload       antennaIn_1;                         //!< local copy of message buffer
-    AntennaLogMsgPayload       antennaIn_2;                         //!< local copy of message buffer
+    AntennaLogMsgPayload antennaIn_1; //!< local copy of message buffer
+    AntennaLogMsgPayload antennaIn_2; //!< local copy of message buffer
 
     // Output Messages
-    Message<LinkBudgetMsgPayload> linkBudgetOutPayload;             //!< output msg description
+    Message<LinkBudgetMsgPayload> linkBudgetOutPayload; //!< output msg description
 
     // Variables to store (output) message data
-    LinkBudgetMsgPayload  linkBudgetOutPayloadBuffer;               //!< local copy of message buffer
+    LinkBudgetMsgPayload linkBudgetOutPayloadBuffer; //!< local copy of message buffer
 
-    BSKLogger bskLogger;                                            //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
     /** GETTERS **/
     /*! @brief Get 'free space path loss'
      *  @return FSPL [dB]
      */
-    double getL_FSPL() const {return this->L_FSPL;}
+    double getL_FSPL() const { return this->L_FSPL; }
 
     /*! @brief Get atmospheric attenuation loss
      *  @return L_atm [dB]
      */
-    double getL_atm() const {return this->L_atm;}
+    double getL_atm() const { return this->L_atm; }
 
     /*! @brief Get frequency offset loss
      *  @return L_freq [dB]
      */
-    double getL_freq() const {return this->L_freq;}
+    double getL_freq() const { return this->L_freq; }
 
     /*! @brief Get pointing loss
      *  @return L_point [dB]
      */
-    double getL_point() const {return this->L_point;}
+    double getL_point() const { return this->L_point; }
 
     /*! @brief Get carrier to noise ratio of antenna1
      *  @return CNR1 [-]
      */
-    double getCNR1() const {return this->CNR1;}
+    double getCNR1() const { return this->CNR1; }
 
     /*! @brief Get carrier to noise ratio of antenna2
      *  @return CNR2 [-]
      */
-    double getCNR2() const {return this->CNR2;}
+    double getCNR2() const { return this->CNR2; }
 
     /*! @brief Set the oxygen lookup table JSON file path
      *  @param filePath Absolute or relative path to ``oxygen.json``
@@ -138,47 +141,50 @@ public:
     /*! @brief Get the configured oxygen lookup table JSON file path
      *  @return Oxygen lookup table path
      */
-    std::string getOxygenLookupFilePath() const {return this->oxygenLookupFilePath;}
+    std::string getOxygenLookupFilePath() const { return this->oxygenLookupFilePath; }
 
     /*! @brief Get the configured water-vapor lookup table JSON file path
      *  @return Water-vapor lookup table path
      */
-    std::string getWaterVaporLookupFilePath() const {return this->waterVaporLookupFilePath;}
+    std::string getWaterVaporLookupFilePath() const { return this->waterVaporLookupFilePath; }
 
-private:
-    LinkBudgetTypes::AntennaPlacement antennaPlacement;  //!< [-]   Antenna placement type
-    AntennaTypes::EnvironmentType     env1;              //!< [-]   Antenna environment of antenna 1: space, 2: ground
-    AntennaTypes::EnvironmentType     env2;              //!< [-]   Antenna environment of antenna 2: space, 2: ground
-    double                            distance;          //!< [m]   Distance between antennas
-    double                            L_FSPL;            //!< [dB]  Free space path loss
-    double                            L_atm;             //!< [dB]  Atmospheric loss
-    double                            L_freq;            //!< [dB]  Frequency offset loss
-    double                            L_point;           //!< [dB]  Pointing loss
-    double                            P_Rx1;             //!< [W]   Antenna receive power
-    double                            P_Rx2;             //!< [W]   Antenna receive power
-    double                            CNR1;              //!< [-]   Carrier to noise ratio
-    double                            CNR2;              //!< [-]   Carrier to noise ratio
-    double                            B_overlap;         //!< [Hz]  Overlapping bandwidth
-    double                            centerfreq;        //!< [Hz]  Center frequency of the two antennas
+  private:
+    LinkBudgetTypes::AntennaPlacement antennaPlacement; //!< [-]   Antenna placement type
+    AntennaTypes::EnvironmentType env1;                 //!< [-]   Antenna environment of antenna 1: space, 2: ground
+    AntennaTypes::EnvironmentType env2;                 //!< [-]   Antenna environment of antenna 2: space, 2: ground
+    double distance;                                    //!< [m]   Distance between antennas
+    double L_FSPL;                                      //!< [dB]  Free space path loss
+    double L_atm;                                       //!< [dB]  Atmospheric loss
+    double L_freq;                                      //!< [dB]  Frequency offset loss
+    double L_point;                                     //!< [dB]  Pointing loss
+    double P_Rx1;                                       //!< [W]   Antenna receive power
+    double P_Rx2;                                       //!< [W]   Antenna receive power
+    double CNR1;                                        //!< [-]   Carrier to noise ratio
+    double CNR2;                                        //!< [-]   Carrier to noise ratio
+    double B_overlap;                                   //!< [Hz]  Overlapping bandwidth
+    double centerfreq;                                  //!< [Hz]  Center frequency of the two antennas
 
     /* Atmospheric coefficients */
-    const double          h_Toa      = 100.0e3;          //!< [m]   Height of top of atmosphere for attenuation integration(TOA = 100 km "Karman line") (above spherical earth surface)
-    AntennaLogMsgPayload  *gndAntPnt = nullptr;          //!< [-]   Pointer to the ground antenna msg payload
-    AntennaLogMsgPayload  *scAntPnt  = nullptr;          //!< [-]   Pointer to the spacecraft antenna msg payload
-    LookupTable            oxygenLookup;                 //!< [-]   Oxygen absorption coefficients (frequency plus ITU-R P.676 a1..a6 coefficients)
-    LookupTable            waterVaporLookup;             //!< [-]   Water vapor absorption coefficients (frequency plus ITU-R P.676 b1..b6 coefficients)
-    std::string            oxygenLookupFilePath;         //!< [-]   Optional oxygen lookup table JSON file path override
-    std::string            waterVaporLookupFilePath;     //!< [-]   Optional water-vapor lookup table JSON file path override
-    AttenuationLookupTable attenuationLookup;            //!< [-]   Atmospheric attenuation lookup table
-    double                 h_0;                          //!< [m]   Altitude of ground antenna
-    double                 n_0;                          //!< [-]   Refractivity at ground antenna altitude
-    bool                   linkValid;                    //!< [-]   Flag indicating if the link is valid (sufficient bandwidth overlap, antennas in correct states, etc.)
+    const double h_Toa = 100.0e3; //!< [m]   Height of top of atmosphere for attenuation integration(TOA = 100 km
+                                  //!< "Karman line") (above spherical earth surface)
+    AntennaLogMsgPayload* gndAntPnt = nullptr; //!< [-]   Pointer to the ground antenna msg payload
+    AntennaLogMsgPayload* scAntPnt = nullptr;  //!< [-]   Pointer to the spacecraft antenna msg payload
+    LookupTable oxygenLookup; //!< [-]   Oxygen absorption coefficients (frequency plus ITU-R P.676 a1..a6 coefficients)
+    LookupTable
+      waterVaporLookup; //!< [-]   Water vapor absorption coefficients (frequency plus ITU-R P.676 b1..b6 coefficients)
+    std::string oxygenLookupFilePath;         //!< [-]   Optional oxygen lookup table JSON file path override
+    std::string waterVaporLookupFilePath;     //!< [-]   Optional water-vapor lookup table JSON file path override
+    AttenuationLookupTable attenuationLookup; //!< [-]   Atmospheric attenuation lookup table
+    double h_0;                               //!< [m]   Altitude of ground antenna
+    double n_0;                               //!< [-]   Refractivity at ground antenna altitude
+    bool linkValid; //!< [-]   Flag indicating if the link is valid (sufficient bandwidth overlap, antennas in correct
+                    //!< states, etc.)
 
     /* Constants, */
     /* Clamp to minimum 5° elevation angle for numerical stability */
-    const double MIN_SIN_ELEVATION = 0.0872;  // sin(5°) ≈ 0.0872
+    const double MIN_SIN_ELEVATION = 0.0872; // sin(5°) ≈ 0.0872
 
-private:
+  private:
     void readMessages();
     void initialization();
     void calculateLinkBudget();

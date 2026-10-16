@@ -20,12 +20,12 @@
 #ifndef DRAG_GEOMETRY_MSG_PAYLPAD_H
 #define DRAG_GEOMETRY_MSG_PAYLPAD_H
 
-
 //! @brief Container for basic drag parameters.
-typedef struct {
+typedef struct
+{
     double projectedArea; //!< [m^2] Area of spacecraft projected in velocity direction
     double dragCoeff;     //!< [-]   Nondimensional drag coefficient
-    double r_CP_S[3];     //!< [m]   Position of center of pressure relative to the center of frame S, given in frame S [m]
-}DragGeometryMsgPayload;
+    double r_CP_S[3]; //!< [m]   Position of center of pressure relative to the center of frame S, given in frame S [m]
+} DragGeometryMsgPayload;
 
 #endif

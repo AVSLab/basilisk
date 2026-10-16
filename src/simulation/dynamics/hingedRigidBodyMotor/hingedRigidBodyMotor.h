@@ -17,45 +17,43 @@
 
 */
 
-
 #ifndef HINGEDRIGIDBODYMOTOR_H
 #define HINGEDRIGIDBODYMOTOR_H
 
 #include <cstdint>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
-#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/ArrayMotorTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/HingedRigidBodyMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
 
 /** @brief Computes an ideal commanded hinge torque using a PD tracking law.
  *
  * The module uses sensed and reference hinge angles and angular rates to calculate a torque command.  It is an ideal
  * controller with optional symmetric torque saturation; it does not model electromechanical motor dynamics.
  */
-class HingedRigidBodyMotor: public SysModel {
-public:
+class HingedRigidBodyMotor : public SysModel
+{
+  public:
     HingedRigidBodyMotor();
     ~HingedRigidBodyMotor();
 
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
+  public:
+    double K;    //!< [N m/rad] finite, nonnegative proportional gain on hinge-angle tracking error
+    double P;    //!< [N m s/rad] finite, nonnegative derivative gain on hinge-rate tracking error
+    double uMax; //!< [N m] finite maximum torque magnitude; a negative value disables saturation
 
-    double K;  //!< [N m/rad] finite, nonnegative proportional gain on hinge-angle tracking error
-    double P;  //!< [N m s/rad] finite, nonnegative derivative gain on hinge-rate tracking error
-    double uMax;  //!< [N m] finite maximum torque magnitude; a negative value disables saturation
+    ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg; //!< sensed rigid body state (theta, theta dot)
+    ReadFunctor<HingedRigidBodyMsgPayload>
+      hingedBodyStateReferenceInMsg; //!< reference hinged rigid body state (theta, theta dot)
 
-    ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg;  //!< sensed rigid body state (theta, theta dot)
-    ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateReferenceInMsg;  //!< reference hinged rigid body state (theta, theta dot)
+    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg; //!< motor torque on hinged rigid body
 
-    Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg;  //!< motor torque on hinged rigid body
-
-    BSKLogger bskLogger;              //!< -- BSK Logging
-
+    BSKLogger bskLogger; //!< -- BSK Logging
 };
-
 
 #endif

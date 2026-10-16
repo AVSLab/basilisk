@@ -22,17 +22,19 @@
 #define ANTENNA_DEFINITIONS_H
 
 namespace AntennaTypes {
-    enum EnvironmentType {
-        ENVIRONMENT_SPACE    = 0,
-        ENVIRONMENT_EARTH    = 1,
-        _ENVIRONMENT_UNKNOWN = -1
-    };
-    enum AntennaStateEnum {
-        ANTENNA_OFF            = 0,
-        ANTENNA_RX             = 1,
-        ANTENNA_TX             = 2,
-        ANTENNA_RXTX           = 3,
-        _ANTENNA_STATE_UNKNOWN = -1
-    };
+enum EnvironmentType
+{
+    ENVIRONMENT_SPACE = 0,
+    ENVIRONMENT_EARTH = 1,
+    _ENVIRONMENT_UNKNOWN = -1
+};
+enum AntennaStateEnum
+{
+    ANTENNA_OFF = 0,
+    ANTENNA_RX = 1,
+    ANTENNA_TX = 2,
+    ANTENNA_RXTX = 3,
+    _ANTENNA_STATE_UNKNOWN = -1
+};
 } // namespace AntennaTypes
 #endif /* ANTENNA_DEFINITIONS_H */

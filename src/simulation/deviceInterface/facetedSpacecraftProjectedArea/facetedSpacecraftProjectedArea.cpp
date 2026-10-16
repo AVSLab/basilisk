@@ -26,25 +26,32 @@ FacetedSpacecraftProjectedArea::~FacetedSpacecraftProjectedArea() = default;
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
-void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime) {
+void
+FacetedSpacecraftProjectedArea::Reset(uint64_t callTime)
+{
     // If general heading is linked, no other messages can be linked
     if (this->bodyHeadingInMsg.isLinked() &&
         (this->spacecraftStateInMsg.isLinked() || this->sunStateInMsg.isLinked())) {
-        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg cannot be used with spacecraftStateInMsg and/or sunStateInMsg.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg cannot be "
+                                  "used with spacecraftStateInMsg and/or sunStateInMsg.");
     }
     // If Sun heading is linked, the spacecraft state message must also be linked
     if (this->sunStateInMsg.isLinked() && !this->spacecraftStateInMsg.isLinked()) {
-        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg requires spacecraftStateInMsg to be linked.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg requires "
+                                  "spacecraftStateInMsg to be linked.");
     }
     // If no messages are linked, no valid heading is configured
-    if (! this->bodyHeadingInMsg.isLinked() && !this->sunStateInMsg.isLinked() && !this->spacecraftStateInMsg.isLinked()) {
-        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
+    if (!this->bodyHeadingInMsg.isLinked() && !this->sunStateInMsg.isLinked() &&
+        !this->spacecraftStateInMsg.isLinked()) {
+        this->bskLogger->bskError(
+          "FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
     }
 
     // Check facet element messages are linked
     for (uint64_t idx = 0; idx < this->facetElementBodyInMsgs.size(); idx++) {
         if (!this->facetElementBodyInMsgs[idx].isLinked()) {
-            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
         }
     }
 
@@ -67,10 +74,11 @@ void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime) {
 /*! Module update method.
  @param callTime [ns] Time the method is called
 */
-void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
+void
+FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime)
+{
     // Stop the simulation if Reset() failed
-    if (this->facetAreaList.size() != this->numFacets ||
-        this->facetNHat_BList.size() != this->numFacets ||
+    if (this->facetAreaList.size() != this->numFacets || this->facetNHat_BList.size() != this->numFacets ||
         this->facetProjectedAreaList.size() != this->numFacets ||
         this->facetElementBodyInMsgs.size() != this->numFacets ||
         this->facetProjectedAreaOutMsgs.size() != this->numFacets) {
@@ -102,14 +110,17 @@ void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime) {
 /*! This method reads the module input messages and updates the current body heading vector. The method returns a
     boolean indicating whether reading the input messages was successful.
  */
-bool FacetedSpacecraftProjectedArea::readInputMessages() {
+bool
+FacetedSpacecraftProjectedArea::readInputMessages()
+{
     // Set body heading vector default to zero
     this->bodyHeadingVec_B.setZero();
 
     // Read input messages
     if (this->spacecraftStateInMsg.isLinked()) {
         if (!this->spacecraftStateInMsg.isWritten()) {
-            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
         }
 
         SCStatesMsgPayload spacecraftStateIn{};
@@ -121,7 +132,8 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             // Option 1: Sun direction heading (Application: sunlit area calculation)
             // Also requires spacecraftStateInMsg
             if (!this->sunStateInMsg.isWritten()) {
-                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
+                this->bskLogger->bskError(
+                  "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
             }
 
             SpicePlanetStateMsgPayload sunStateIn{};
@@ -135,7 +147,8 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             if (norm > 1e-12) {
                 this->bodyHeadingVec_B = r_SB_B / norm;
             } else {
-                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                this->bskLogger->bskError(
+                  "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
             }
         } else {
             // Option 2: Spacecraft velocity heading (Application: drag)
@@ -145,19 +158,22 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             if (norm > 1e-12) {
                 this->bodyHeadingVec_B = v_BN_B / norm;
             } else {
-                this->bskLogger->bskError("FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                this->bskLogger->bskError(
+                  "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
             }
         }
     } else if (this->bodyHeadingInMsg.isLinked()) {
         if (!this->bodyHeadingInMsg.isWritten()) {
-            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
         }
         // Option 3: Direct heading
         BodyHeadingMsgPayload bodyHeadingIn{};
         bodyHeadingIn = this->bodyHeadingInMsg();
         this->bodyHeadingVec_B = cArray2EigenVector3d(bodyHeadingIn.rHat_XB_B);
     } else {
-        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. Cannot subscribe multiple direction vectors to the module.");
+        this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. Cannot subscribe multiple "
+                                  "direction vectors to the module.");
     }
 
     // Read the articulated facet input messages
@@ -168,17 +184,20 @@ bool FacetedSpacecraftProjectedArea::readInputMessages() {
             this->facetAreaList[idx] = facetElementBodyIn.area;
             this->facetNHat_BList[idx] = cArray2EigenVector3d(facetElementBodyIn.nHat_B);
         } else {
-            this->bskLogger->bskError("FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
         }
     }
 
-    return true;  // Reading input messages was successful
+    return true; // Reading input messages was successful
 }
 
 /*! Method to write module output messages.
  @param callTime [ns] Time the method is called
 */
-void FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime) {
+void
+FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime)
+{
     // Write total spacecraft projected area output message
     ProjectedAreaMsgPayload totalProjectedAreaOut{};
     totalProjectedAreaOut.area = this->totalProjectedArea;
@@ -200,7 +219,9 @@ void FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime) {
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets) {
+void
+FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets)
+{
     this->numFacets = numFacets;
 
     // Release old output messages if this setter is called multiple times
@@ -220,4 +241,8 @@ void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets) {
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t FacetedSpacecraftProjectedArea::getNumFacets() const { return this->numFacets; }
+uint64_t
+FacetedSpacecraftProjectedArea::getNumFacets() const
+{
+    return this->numFacets;
+}

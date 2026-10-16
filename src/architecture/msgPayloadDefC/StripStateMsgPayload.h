@@ -20,16 +20,16 @@
 #ifndef STRIPSTATE_MSG_H
 #define STRIPSTATE_MSG_H
 
-/*! @brief Message that defines the inertial location of the current target groundlocation on the central line of the strip and its velocity
+/*! @brief Message that defines the inertial location of the current target groundlocation on the central line of the
+ * strip and its velocity
  */
-typedef struct {
+typedef struct
+{
     double r_LN_N[3]; //!< [m] Position vector of the current target w.r.t.the inertial origin in the inertial frame
     double r_LP_N[3]; //!< [m] Position vector of the current target w.r.t the planet center in the inertial frame
     double v_LN_N[3]; //!< [m/s] Velocity vector of the current target w.r.t the inertial origin in the inertial frame
     double v_LP_N[3]; //!< [m/s] Velocity vector of the current target w.r.t the planet center in the inertial frame
 
-}StripStateMsgPayload;
+} StripStateMsgPayload;
 
-
-
-#endif //STRIPSTATE_MSG_H
+#endif // STRIPSTATE_MSG_H

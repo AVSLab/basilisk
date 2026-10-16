@@ -20,13 +20,12 @@
 #ifndef prescribedRotationSimMsg_h
 #define prescribedRotationSimMsg_h
 
-
- /*! @brief Structure used to define the prescribed motion state effector rotational state data message */
-typedef struct {
-    double omega_PM_P[3];                      //!< [rad/s] Angular velocity of the P frame wrt the M frame in P frame components
-    double omegaPrime_PM_P[3];                 //!< [rad/s^2] B/M frame time derivative of omega_PM_P
-    double sigma_PM[3];                        //!< MRP attitude parameters for the P frame relative to the M frame
-}PrescribedRotationMsgPayload;
-
+/*! @brief Structure used to define the prescribed motion state effector rotational state data message */
+typedef struct
+{
+    double omega_PM_P[3];      //!< [rad/s] Angular velocity of the P frame wrt the M frame in P frame components
+    double omegaPrime_PM_P[3]; //!< [rad/s^2] B/M frame time derivative of omega_PM_P
+    double sigma_PM[3];        //!< MRP attitude parameters for the P frame relative to the M frame
+} PrescribedRotationMsgPayload;
 
 #endif /* prescribedRotationSimMsg_h */

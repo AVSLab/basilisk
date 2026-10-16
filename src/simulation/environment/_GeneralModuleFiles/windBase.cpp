@@ -20,10 +20,10 @@
 #include "windBase.h"
 #include "architecture/messaging/ownedMessage.h"
 #include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/utcTime.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/simDefinitions.h"
 #include "architecture/utilities/stateExtrapolation.h"
+#include "architecture/utilities/utcTime.h"
 
 WindBase::WindBase()
 {
@@ -32,18 +32,19 @@ WindBase::WindBase()
     m33SetIdentity(this->planetState.J20002Pfix);
 
     //! - set default epoch (Basilisk standard epoch)
-    this->epochDateTime.tm_year  = EPOCH_YEAR - 1900;
-    this->epochDateTime.tm_mon   = EPOCH_MONTH - 1;
-    this->epochDateTime.tm_mday  = EPOCH_DAY;
-    this->epochDateTime.tm_hour  = EPOCH_HOUR;
-    this->epochDateTime.tm_min   = EPOCH_MIN;
-    this->epochDateTime.tm_sec   = (int) round(EPOCH_SEC);
+    this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
+    this->epochDateTime.tm_mon = EPOCH_MONTH - 1;
+    this->epochDateTime.tm_mday = EPOCH_DAY;
+    this->epochDateTime.tm_hour = EPOCH_HOUR;
+    this->epochDateTime.tm_min = EPOCH_MIN;
+    this->epochDateTime.tm_sec = (int)round(EPOCH_SEC);
     this->epochDateTime.tm_isdst = -1;
 }
 
 WindBase::~WindBase() = default;
 
-void WindBase::Reset(uint64_t CurrentSimNanos)
+void
+WindBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -61,12 +62,12 @@ void WindBase::Reset(uint64_t CurrentSimNanos)
             bskLogger.bskError("WindBase: epochInMsg is linked but has not been written.");
         }
         EpochMsgPayload epochMsg = this->epochInMsg();
-        this->epochDateTime.tm_year  = epochMsg.year - 1900;
-        this->epochDateTime.tm_mon   = epochMsg.month - 1;
-        this->epochDateTime.tm_mday  = epochMsg.day;
-        this->epochDateTime.tm_hour  = epochMsg.hours;
-        this->epochDateTime.tm_min   = epochMsg.minutes;
-        this->epochDateTime.tm_sec   = (int) round(epochMsg.seconds);
+        this->epochDateTime.tm_year = epochMsg.year - 1900;
+        this->epochDateTime.tm_mon = epochMsg.month - 1;
+        this->epochDateTime.tm_mday = epochMsg.day;
+        this->epochDateTime.tm_hour = epochMsg.hours;
+        this->epochDateTime.tm_min = epochMsg.minutes;
+        this->epochDateTime.tm_sec = (int)round(epochMsg.seconds);
         normalizeUtcTime(&this->epochDateTime);
     } else {
         customSetEpochFromVariable();
@@ -75,7 +76,8 @@ void WindBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 }
 
-void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void
+WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     // Read the planet message to get the current SPICE data
     if (this->planetPosInMsg.isWritten()) {
@@ -87,25 +89,29 @@ void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
     }
 }
 
-void WindBase::customSetEpochFromVariable() {}
+void
+WindBase::customSetEpochFromVariable()
+{
+}
 
-void WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
+void
+WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
 
-bool WindBase::getExtrapolateScStateToStepMidpoint() const
+bool
+WindBase::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
 
-bool WindBase::readMessages(uint64_t CurrentSimNanos)
+bool
+WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
-    bool scRead = std::all_of(
-        this->scStateInMsgs.begin(), this->scStateInMsgs.end(),
-        [](auto& msg) { return msg.isWritten(); }
-    );
+    bool scRead =
+      std::all_of(this->scStateInMsgs.begin(), this->scStateInMsgs.end(), [](auto& msg) { return msg.isWritten(); });
 
     bool planetRead = this->planetPosInMsg.isWritten();
     if (scRead && planetRead) {
@@ -127,24 +133,30 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
     return scRead && planetRead && customReadMessages();
 }
 
-bool WindBase::customReadMessages() { return true; }
-
-Eigen::Vector3d WindBase::computeRelativePos(const SpicePlanetStateMsgPayload& planetState,
-                                             const SCStatesMsgPayload& scState) const
+bool
+WindBase::customReadMessages()
 {
-    return Eigen::Vector3d(scState.r_BN_N) - Eigen::Vector3d(planetState.PositionVector);  // r_BP_N
+    return true;
 }
 
-Eigen::Vector3d WindBase::getPlanetOmega_N() const
+Eigen::Vector3d
+WindBase::computeRelativePos(const SpicePlanetStateMsgPayload& planetState, const SCStatesMsgPayload& scState) const
+{
+    return Eigen::Vector3d(scState.r_BN_N) - Eigen::Vector3d(planetState.PositionVector); // r_BP_N
+}
+
+Eigen::Vector3d
+WindBase::getPlanetOmega_N() const
 {
     return this->planetOmega_N;
 }
 
-void WindBase::setPlanetOmega_N(const Eigen::Vector3d &omega)
+void
+WindBase::setPlanetOmega_N(const Eigen::Vector3d& omega)
 {
     // Validate input for NaN and infinite values
-    if (std::isnan(omega(0)) || std::isnan(omega(1)) || std::isnan(omega(2)) ||
-        std::isinf(omega(0)) || std::isinf(omega(1)) || std::isinf(omega(2))) {
+    if (std::isnan(omega(0)) || std::isnan(omega(1)) || std::isnan(omega(2)) || std::isinf(omega(0)) ||
+        std::isinf(omega(1)) || std::isinf(omega(2))) {
         bskLogger.bskError("Planet angular velocity contains NaN or infinite values.");
     } else {
         this->planetOmega_N = omega;
@@ -152,17 +164,20 @@ void WindBase::setPlanetOmega_N(const Eigen::Vector3d &omega)
     this->useSpiceOmega = false;
 }
 
-bool WindBase::getUseSpiceOmegaFlag() const
+bool
+WindBase::getUseSpiceOmegaFlag() const
 {
     return this->useSpiceOmega;
 }
 
-void WindBase::setUseSpiceOmegaFlag(bool useSpice)
+void
+WindBase::setUseSpiceOmegaFlag(bool useSpice)
 {
     this->useSpiceOmega = useSpice;
 }
 
-void WindBase::updatePlanetOmegaFromSpice()
+void
+WindBase::updatePlanetOmegaFromSpice()
 {
     Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C_dot(this->planetState.J20002Pfix_dot[0]);
     Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C(this->planetState.J20002Pfix[0]);
@@ -171,15 +186,17 @@ void WindBase::updatePlanetOmegaFromSpice()
     this->spiceOmega_N = C.transpose() * omega_P;
 }
 
-Eigen::Vector3d WindBase::getSelectedOmega()
+Eigen::Vector3d
+WindBase::getSelectedOmega()
 {
     if (this->useSpiceOmega && this->planetPosInMsg.isWritten()) {
         return this->spiceOmega_N;
     }
-    return this->planetOmega_N;  // manual fallback
+    return this->planetOmega_N; // manual fallback
 }
 
-void WindBase::updateLocalWind(double currentTime)
+void
+WindBase::updateLocalWind(double currentTime)
 {
     // Compute co-rotating atmosphere velocity: omega_planet_N x r_BP_N
     const Eigen::Vector3d omega_planet_N = this->getSelectedOmega();
@@ -194,7 +211,8 @@ void WindBase::updateLocalWind(double currentTime)
     }
 }
 
-void WindBase::writeMessages(uint64_t CurrentClock)
+void
+WindBase::writeMessages(uint64_t CurrentClock)
 {
     for (size_t c = 0; c < this->envOutMsgs.size(); c++) {
         if (c < this->envOutBuffer.size()) {
@@ -204,9 +222,13 @@ void WindBase::writeMessages(uint64_t CurrentClock)
     customWriteMessages(CurrentClock);
 }
 
-void WindBase::customWriteMessages(uint64_t /*CurrentClock*/) {}
+void
+WindBase::customWriteMessages(uint64_t /*CurrentClock*/)
+{
+}
 
-void WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
+void
+WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     //! - add input message
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
@@ -215,13 +237,15 @@ void WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg)
     addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 }
 
-void WindBase::UpdateState(uint64_t CurrentSimNanos)
+void
+WindBase::UpdateState(uint64_t CurrentSimNanos)
 {
     this->envOutBuffer.clear();
 
     if (this->readMessages(CurrentSimNanos)) {
         // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
-        const uint64_t epochNanos = this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+        const uint64_t epochNanos =
+          this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
         this->updateLocalWind(static_cast<double>(epochNanos) * NANO2SEC);
     } else {
         // Zero outputs when message reads fail to avoid stale data

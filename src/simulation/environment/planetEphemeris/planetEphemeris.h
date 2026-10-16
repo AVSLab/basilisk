@@ -20,22 +20,22 @@
 #ifndef planetEphemeris_H
 #define planetEphemeris_H
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
 
-#include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/bskLogging.h"
-
+#include "architecture/utilities/orbitalMotion.h"
 
 /*! @brief planet ephemeris class */
-class PlanetEphemeris: public SysModel {
-public:
+class PlanetEphemeris : public SysModel
+{
+  public:
     PlanetEphemeris();
     ~PlanetEphemeris();
 
@@ -44,30 +44,30 @@ public:
 
     void setPlanetNames(std::vector<std::string> planetNames);
 
-public:
+  public:
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetOutMsgs; //!< -- vector of planet state output messages
 
-    std::vector<ClassicElements>planetElements; //!< -- Vector of planet classical orbit elements
+    std::vector<ClassicElements> planetElements; //!< -- Vector of planet classical orbit elements
 
-    std::vector<double> rightAscension;         //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
-    std::vector<double> declination;            //!< [r] Declination of the north pole rotation axis (neg. 2-axis)
-    std::vector<double> lst0;                   //!< [r] initial planet local sidereal time angle (pos. 3-axis)
+    std::vector<double> rightAscension; //!< [r] right ascension of the north pole rotation axis (pos. 3-axis)
+    std::vector<double> declination;    //!< [r] Declination of the north pole rotation axis (neg. 2-axis)
+    std::vector<double> lst0;           //!< [r] initial planet local sidereal time angle (pos. 3-axis)
 
-    std::vector<double> rotRate;                //!< [r/s] planet rotation rate
+    std::vector<double> rotRate; //!< [r/s] planet rotation rate
 
-    std::string zeroBase{};                     //!< -- Output origin body; empty preserves heliocentric states
+    std::string zeroBase{}; //!< -- Output origin body; empty preserves heliocentric states
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-private:
-    std::vector<std::string> planetNames;       //!< -- Vector of planet names
-    double epochTime;                           //!< [s] time of provided planet ephemeris epoch
-    int computeAttitudeFlag;                    //!< -- flag indicating whether planet orientation is provided
-    int zeroBaseIndex = -1;                     //!< -- index of the body selected as the translational origin
+  private:
+    std::vector<std::string> planetNames; //!< -- Vector of planet names
+    double epochTime;                     //!< [s] time of provided planet ephemeris epoch
+    int computeAttitudeFlag;              //!< -- flag indicating whether planet orientation is provided
+    int zeroBaseIndex = -1;               //!< -- index of the body selected as the translational origin
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
-    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>> ownedPlanetOutMsgs; //!< Storage for planetOutMsgs.
+    std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>>
+      ownedPlanetOutMsgs; //!< Storage for planetOutMsgs.
 };
-
 
 #endif

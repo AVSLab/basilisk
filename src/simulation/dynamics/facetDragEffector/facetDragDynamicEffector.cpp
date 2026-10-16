@@ -18,9 +18,9 @@
  */
 
 #include "facetDragDynamicEffector.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 
 FacetDragDynamicEffector::FacetDragDynamicEffector()
 {
@@ -28,9 +28,9 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
     this->torqueExternalPntB_B.fill(0.0);
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
-    this->atmoInData = {};  // Initialize atmosphere data to zero
-    this->windInData = {};  // Initialize wind data to zero
-	this->numFacets = 0;
+    this->atmoInData = {}; // Initialize atmosphere data to zero
+    this->windInData = {}; // Initialize wind data to zero
+    this->numFacets = 0;
 
     this->isAttachableToStateEffector = true;
 
@@ -40,25 +40,27 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
 /*! The destructor.*/
 FacetDragDynamicEffector::~FacetDragDynamicEffector()
 {
-	return;
+    return;
 }
 
 /*! Validate the module configuration when the scheduler resets the model.
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-	this->validateConfiguration();
+    this->validateConfiguration();
 }
 
 /*! Validate that the required atmospheric density input is connected. */
-void FacetDragDynamicEffector::validateConfiguration()
+void
+FacetDragDynamicEffector::validateConfiguration()
 {
-	// check if input message has not been included
-	if (!this->atmoDensInMsg.isLinked()) {
-		bskLogger.bskError("facetDragDynamicEffector.atmoDensInMsg was not linked.");
-	}
+    // check if input message has not been included
+    if (!this->atmoDensInMsg.isLinked()) {
+        bskLogger.bskError("facetDragDynamicEffector.atmoDensInMsg was not linked.");
+    }
 
     return;
 }
@@ -67,17 +69,18 @@ void FacetDragDynamicEffector::validateConfiguration()
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
+void
+FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
-	return;
+    return;
 }
-
 
 /*! This method is used to read the incoming density message and wind velocity message (if linked)
 and update the internal density/atmospheric data.
 
  */
-bool FacetDragDynamicEffector::ReadInputs()
+bool
+FacetDragDynamicEffector::ReadInputs()
 {
     bool dataGood;
     dataGood = this->atmoDensInMsg.isWritten();
@@ -89,7 +92,7 @@ bool FacetDragDynamicEffector::ReadInputs()
     } else {
         this->windInData = {};
     }
-    return(dataGood);
+    return (dataGood);
 }
 
 /*! @brief Add a facet to the drag model.
@@ -99,12 +102,17 @@ bool FacetDragDynamicEffector::ReadInputs()
  * @param[in] B_normal_hat [-] Facet normal expressed in the parent body frame.
  * @param[in] B_location [m] Facet location relative to the parent body-frame origin.
  */
-void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location){
-	this->scGeometry.facetAreas.push_back(area);
-	this->scGeometry.facetCoeffs.push_back(dragCoeff);
-	this->scGeometry.facetNormals_B.push_back(B_normal_hat);
-	this->scGeometry.facetLocations_B.push_back(B_location);
-	this->numFacets = this->numFacets + 1;
+void
+FacetDragDynamicEffector::addFacet(double area,
+                                   double dragCoeff,
+                                   Eigen::Vector3d B_normal_hat,
+                                   Eigen::Vector3d B_location)
+{
+    this->scGeometry.facetAreas.push_back(area);
+    this->scGeometry.facetCoeffs.push_back(dragCoeff);
+    this->scGeometry.facetNormals_B.push_back(B_normal_hat);
+    this->scGeometry.facetLocations_B.push_back(B_location);
+    this->numFacets = this->numFacets + 1;
 }
 
 /*! This method is used to link the dragEffector to the hub attitude and velocity,
@@ -113,17 +121,21 @@ which are required for calculating drag forces and torques.
  @param states dynamic parameter states
  */
 
-void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
-	this->validateConfiguration();
+void
+FacetDragDynamicEffector::linkInStates(DynParamManager& states)
+{
+    this->validateConfiguration();
 
-	this->hubSigma = states.getStateObject(this->stateNameOfSigma);
-	this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
+    this->hubSigma = states.getStateObject(this->stateNameOfSigma);
+    this->hubVelocity = states.getStateObject(this->stateNameOfVelocity);
 }
 
 /*! This method is used to link the dragEffector to its parent state effector's properties
  @param properties The parameter manager to collect from
  */
-void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties){
+void
+FacetDragDynamicEffector::linkInProperties(DynParamManager& properties)
+{
     this->validateConfiguration();
 
     this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
@@ -132,8 +144,10 @@ void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties){
 
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
  * It accounts for wind velocity if the wind message is linked.
-*/
-void FacetDragDynamicEffector::updateDragDir(){
+ */
+void
+FacetDragDynamicEffector::updateDragDir()
+{
     Eigen::MRPd sigmaBN;
     Eigen::Vector3d v_BN_N;
     if (!this->stateNameOfSigma.empty()) {
@@ -155,7 +169,7 @@ void FacetDragDynamicEffector::updateDragDir(){
     }
 
     double vNorm = this->v_B.norm();
-    if (vNorm > 1e-12) {  // [m/s]
+    if (vNorm > 1e-12) { // [m/s]
         this->v_hat_B = this->v_B / vNorm;
     } else {
         this->v_hat_B.setZero();
@@ -167,39 +181,41 @@ void FacetDragDynamicEffector::updateDragDir(){
 /*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
 dependence and lift forces.
 */
-void FacetDragDynamicEffector::plateDrag(){
-	Eigen::Vector3d facetDragForce, facetDragTorque;
-	Eigen::Vector3d totalDragForce, totalDragTorque;
+void
+FacetDragDynamicEffector::plateDrag()
+{
+    Eigen::Vector3d facetDragForce, facetDragTorque;
+    Eigen::Vector3d totalDragForce, totalDragTorque;
 
-	//! - Zero out the structure force/torque for the drag set
+    //! - Zero out the structure force/torque for the drag set
     double projectedArea = 0.0;
     double projectionTerm = 0.0;
-	totalDragForce.setZero();
-	totalDragTorque.setZero();
+    totalDragForce.setZero();
+    totalDragTorque.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
 
-	double vMag = this->v_B.norm();
-	if (vMag <= 1e-12) {  // [m/s]
-		return;
-	}
+    double vMag = this->v_B.norm();
+    if (vMag <= 1e-12) { // [m/s]
+        return;
+    }
 
-	for(size_t i = 0; i < this->numFacets; i++){
-	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
-		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
-		if(projectedArea > 0.0){
-			facetDragForce = 0.5 * pow(vMag, 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->getDensity() * (-1.0)*this->v_hat_B;
-			facetDragTorque = (-1)*facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
-			totalDragForce = totalDragForce + facetDragForce;
-			totalDragTorque = totalDragTorque + facetDragTorque;
-		}
-	}
-	this->forceExternal_B = totalDragForce;
-	this->torqueExternalPntB_B = totalDragTorque;
+    for (size_t i = 0; i < this->numFacets; i++) {
+        projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
+        projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
+        if (projectedArea > 0.0) {
+            facetDragForce = 0.5 * pow(vMag, 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea *
+                             this->getDensity() * (-1.0) * this->v_hat_B;
+            facetDragTorque = (-1) * facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
+            totalDragForce = totalDragForce + facetDragForce;
+            totalDragTorque = totalDragTorque + facetDragTorque;
+        }
+    }
+    this->forceExternal_B = totalDragForce;
+    this->torqueExternalPntB_B = totalDragTorque;
 
-  return;
+    return;
 }
-
 
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
@@ -207,10 +223,12 @@ selecting the model type based on the settable attribute "modelType."
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
-	updateDragDir();
-	plateDrag();
-  return;
+void
+FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+{
+    updateDragDir();
+    plateDrag();
+    return;
 }
 
 /*! This method is called to update the local atmospheric conditions at each timestep.
@@ -218,15 +236,17 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
-	ReadInputs();
-	return;
+    ReadInputs();
+    return;
 }
 
 /** This method obtains the density from the input data
  */
-double FacetDragDynamicEffector::getDensity()
+double
+FacetDragDynamicEffector::getDensity()
 {
-	return this->atmoInData.neutralDensity;
+    return this->atmoInData.neutralDensity;
 }

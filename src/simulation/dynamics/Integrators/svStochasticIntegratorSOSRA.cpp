@@ -19,13 +19,15 @@
 #include "svStochasticIntegratorSOSRA.h"
 
 svStochasticIntegratorSOSRA::svStochasticIntegratorSOSRA(DynamicObject* dyn)
-    : svIntegratorStrongStochasticRungeKuttaSRA(dyn, svStochasticIntegratorSOSRA::getCoefficients())
-{}
+  : svIntegratorStrongStochasticRungeKuttaSRA(dyn, svStochasticIntegratorSOSRA::getCoefficients())
+{
+}
 
 // Coefficients for the SOSRA (three-stage SRA) tableau. Matrix entries use the
 // plain [stage i][sub-term j] convention of SRACoefficients (a21 -> A0[1][0],
 // a31 -> A0[2][0], a32 -> A0[2][1], etc.).
-SRACoefficients<3> svStochasticIntegratorSOSRA::getCoefficients()
+SRACoefficients<3>
+svStochasticIntegratorSOSRA::getCoefficients()
 {
     SRACoefficients<3> c;
 
@@ -40,13 +42,13 @@ SRACoefficients<3> svStochasticIntegratorSOSRA::getCoefficients()
     c.B0[2][1] = 1.8632741501139225;
 
     // Weights
-    c.alpha = {0.2889874966892885, 0.6859880440839937, 0.025024459226717772};
-    c.beta1 = {-16.792534242221663, 17.514995785380226, 0.27753845684143835};
-    c.beta2 = {0.4237535769069274, 0.6010381474428539, -1.0247917243497813};
+    c.alpha = { 0.2889874966892885, 0.6859880440839937, 0.025024459226717772 };
+    c.beta1 = { -16.792534242221663, 17.514995785380226, 0.27753845684143835 };
+    c.beta2 = { 0.4237535769069274, 0.6010381474428539, -1.0247917243497813 };
 
     // Nodes
-    c.c0 = {0.0, 0.6923962376159507, 1.0};
-    c.c1 = {0.0, 0.041248171110700504, 1.0};
+    c.c0 = { 0.0, 0.6923962376159507, 1.0 };
+    c.c1 = { 0.0, 0.041248171110700504, 1.0 };
 
     return c;
 }

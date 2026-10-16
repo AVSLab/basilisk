@@ -21,9 +21,7 @@
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
-CppModuleTemplate::CppModuleTemplate()
-{
-}
+CppModuleTemplate::CppModuleTemplate() {}
 
 /*! Module Destructor.  */
 CppModuleTemplate::~CppModuleTemplate()
@@ -31,28 +29,28 @@ CppModuleTemplate::~CppModuleTemplate()
     return;
 }
 
-
 /*! This method is used to reset the module.
 
  */
-void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
+void
+CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 {
     /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
     this->updateCounter = 0.0;
-    bskLogger.bskLog(BSK_INFORMATION, "Variable updateCounter set to %f in reset.",this->updateCounter);
+    bskLogger.bskLog(BSK_INFORMATION, "Variable updateCounter set to %f in reset.", this->updateCounter);
 
     /* zero output message on reset */
-    CModuleTemplateMsgPayload outMsgBuffer={};       /*!< local output message copy */
+    CModuleTemplateMsgPayload outMsgBuffer = {}; /*!< local output message copy */
     this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-
-void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+void
+CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 {
     // Zero the output buffer each update to avoid publishing uninitialized fields.
     CModuleTemplateMsgPayload outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
-    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
-    double inputVector[3];                       /*!< [-] sample input vector */
+    CModuleTemplateMsgPayload inMsgBuffer; /*!< local copy of input message */
+    double inputVector[3];                 /*!< [-] sample input vector */
 
     // Use a zero vector when the optional input is not connected.
     v3SetZero(inputVector);
@@ -65,7 +63,7 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 
     // Sample math: copy the input vector and add the counter to its first component.
     v3Copy(inputVector, outMsgBuffer.dataVector);
-    this->updateCounter += 1.0;  // [-]
+    this->updateCounter += 1.0; // [-]
     outMsgBuffer.dataVector[0] += this->updateCounter;
 
     /*! - Write the module output message */
@@ -73,21 +71,24 @@ void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
-    bskLogger.bskLog(BSK_INFORMATION, "C++ Module ID %lld ran Update at %fs", this->moduleID, (double) CurrentSimNanos/(1e9));
-
+    bskLogger.bskLog(
+      BSK_INFORMATION, "C++ Module ID %lld ran Update at %fs", this->moduleID, (double)CurrentSimNanos / (1e9));
 }
 
-void CppModuleTemplate::setUpdateCounter(double value)
+void
+CppModuleTemplate::setUpdateCounter(double value)
 {
     // check that value is in acceptable range
     if (value > 0) {
         this->updateCounter = value;
     } else {
-        bskLogger.bskError("CppModuleTemplate: updateCounter variable must be strictly positive, you tried to set %f", value);
+        bskLogger.bskError("CppModuleTemplate: updateCounter variable must be strictly positive, you tried to set %f",
+                           value);
     }
 }
 
-void CppModuleTemplate::setSampleConfigVector(std::array<double, 3> value)
+void
+CppModuleTemplate::setSampleConfigVector(std::array<double, 3> value)
 {
     // check that value is in acceptable range
     for (size_t i = 0; i < value.size(); i++) {

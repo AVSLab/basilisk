@@ -50,7 +50,9 @@
  *
  * See more in the description of svIntegratorStrongStochasticRungeKuttaSRI.
  */
-template <size_t numberStages> struct SRICoefficients {
+template<size_t numberStages>
+struct SRICoefficients
+{
 
     /** Array with size = numberStages */
     using StageSizedArray = std::array<double, numberStages>;
@@ -131,14 +133,14 @@ template <size_t numberStages> struct SRICoefficients {
  *
  * @warning Stochastic integration is in beta.
  */
-template <size_t numberStages>
-class svIntegratorStrongStochasticRungeKuttaSRI : public StochasticRKIntegratorBase {
-public:
+template<size_t numberStages>
+class svIntegratorStrongStochasticRungeKuttaSRI : public StochasticRKIntegratorBase
+{
+  public:
     static_assert(numberStages > 0, "One cannot declare Runge Kutta integrators of stage 0");
 
     /** Creates an SRI integrator for the given DynamicObject using the passed coefficients. */
-    svIntegratorStrongStochasticRungeKuttaSRI(DynamicObject* dynIn,
-                                              const SRICoefficients<numberStages>& coefficients);
+    svIntegratorStrongStochasticRungeKuttaSRI(DynamicObject* dynIn, const SRICoefficients<numberStages>& coefficients);
 
   protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
@@ -159,10 +161,12 @@ public:
     FlatStochasticWorkspace flatWorkspace; ///< Owned stage and candidate buffers reused across steps.
 };
 
-template <size_t numberStages>
+template<size_t numberStages>
 svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::svIntegratorStrongStochasticRungeKuttaSRI(
-    DynamicObject* dynIn, const SRICoefficients<numberStages>& coefficients)
-    : StochasticRKIntegratorBase(dynIn), coefficients(coefficients)
+  DynamicObject* dynIn,
+  const SRICoefficients<numberStages>& coefficients)
+  : StochasticRKIntegratorBase(dynIn)
+  , coefficients(coefficients)
 {
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A0);
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A1);

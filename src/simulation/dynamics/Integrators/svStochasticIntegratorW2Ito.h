@@ -20,8 +20,8 @@
 #ifndef svStochasticIntegratorW2Ito_h
 #define svStochasticIntegratorW2Ito_h
 
-#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 
 #include <vector>
@@ -43,15 +43,16 @@
  * with \f$A^{(0)}, A^{(1)}, B^{(0)}, B^{(1)}, B^{(2)}\f$ strictly lower-triangular
  * \f$s\times s\f$ matrices (explicit method) and \f$\alpha, \beta^{(0)}, \beta^{(1)}\f$
  * length-\f$s\f$ weight vectors. */
-struct W2ItoCoefficients {
-    std::vector<double> alpha;              //!< drift weights, length s
-    std::vector<double> beta0;              //!< diffusion weights on the three-point increment, length s
-    std::vector<double> beta1;              //!< diffusion weights on the diagonal iterated integral, length s
-    std::vector<std::vector<double>> A0;    //!< drift-to-drift stage matrix, s x s
-    std::vector<std::vector<double>> B0;    //!< diffusion-to-drift stage matrix, s x s
-    std::vector<std::vector<double>> A1;    //!< drift-to-diffusion stage matrix, s x s
-    std::vector<std::vector<double>> B1;    //!< self-noise diffusion-to-diffusion stage matrix, s x s
-    std::vector<std::vector<double>> B2;    //!< cross-noise diffusion-to-diffusion stage matrix, s x s
+struct W2ItoCoefficients
+{
+    std::vector<double> alpha;           //!< drift weights, length s
+    std::vector<double> beta0;           //!< diffusion weights on the three-point increment, length s
+    std::vector<double> beta1;           //!< diffusion weights on the diagonal iterated integral, length s
+    std::vector<std::vector<double>> A0; //!< drift-to-drift stage matrix, s x s
+    std::vector<std::vector<double>> B0; //!< diffusion-to-drift stage matrix, s x s
+    std::vector<std::vector<double>> A1; //!< drift-to-diffusion stage matrix, s x s
+    std::vector<std::vector<double>> B1; //!< self-noise diffusion-to-diffusion stage matrix, s x s
+    std::vector<std::vector<double>> B2; //!< cross-noise diffusion-to-diffusion stage matrix, s x s
 
     /** Number of stages, inferred from the length of ``alpha``. */
     size_t numStages() const { return this->alpha.size(); }
@@ -60,7 +61,8 @@ struct W2ItoCoefficients {
     double c0(size_t i) const
     {
         double sum = 0.0;
-        for (double v : this->A0.at(i)) sum += v;
+        for (double v : this->A0.at(i))
+            sum += v;
         return sum;
     }
 
@@ -68,7 +70,8 @@ struct W2ItoCoefficients {
     double c1(size_t i) const
     {
         double sum = 0.0;
-        for (double v : this->A1.at(i)) sum += v;
+        for (double v : this->A1.at(i))
+            sum += v;
         return sum;
     }
 };
@@ -107,7 +110,8 @@ struct W2ItoCoefficients {
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorW2Ito : public StochasticRKIntegratorBase {
+class svStochasticIntegratorW2Ito : public StochasticRKIntegratorBase
+{
   protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
     void integrateImpl(double currentTime, double timeStep) override;
@@ -151,14 +155,14 @@ class svStochasticIntegratorW2Ito : public StochasticRKIntegratorBase {
     void combineDiffusion(size_t globalNoiseIndex, const std::vector<double>& factors, size_t length);
 
     Eigen::VectorXd combinedDerivative; ///< Weighted drift combination used to build a candidate.
-    Eigen::VectorXd scaledDerivative; ///< Scratch for a scaled drift contribution.
-    Eigen::VectorXd combinedDiffusion; ///< Weighted diffusion contributions in packed noise-source order.
-    Eigen::VectorXd scaledDiffusion; ///< Scratch for a scaled diffusion contribution.
-    Eigen::MatrixXd derivativeStages; ///< Drift scalars by stage; each stage occupies one contiguous column.
-    Eigen::MatrixXd diffusionStages; ///< Packed diffusion scalars by stage, grouped by independent source.
-    Eigen::VectorXd weakDW; ///< Discrete weak-method increments indexed by independent source.
-    Eigen::VectorXd diagonalIntegral; ///< Diagonal iterated-integral terms indexed by independent source.
-    Eigen::VectorXd pseudoSteps; ///< Temporary per-source noise weights for candidate construction.
+    Eigen::VectorXd scaledDerivative;   ///< Scratch for a scaled drift contribution.
+    Eigen::VectorXd combinedDiffusion;  ///< Weighted diffusion contributions in packed noise-source order.
+    Eigen::VectorXd scaledDiffusion;    ///< Scratch for a scaled diffusion contribution.
+    Eigen::MatrixXd derivativeStages;   ///< Drift scalars by stage; each stage occupies one contiguous column.
+    Eigen::MatrixXd diffusionStages;    ///< Packed diffusion scalars by stage, grouped by independent source.
+    Eigen::VectorXd weakDW;             ///< Discrete weak-method increments indexed by independent source.
+    Eigen::VectorXd diagonalIntegral;   ///< Diagonal iterated-integral terms indexed by independent source.
+    Eigen::VectorXd pseudoSteps;        ///< Temporary per-source noise weights for candidate construction.
 };
 
 #endif /* svStochasticIntegratorW2Ito_h */

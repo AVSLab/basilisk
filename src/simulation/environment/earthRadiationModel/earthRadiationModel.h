@@ -19,8 +19,8 @@
 #ifndef EARTH_RADIATION_MODEL_H
 #define EARTH_RADIATION_MODEL_H
 
-#include "architecture/msgPayloadDefC/EarthRadiationMsgPayload.h"
 #include "architecture/messaging/messaging.h"
+#include "architecture/msgPayloadDefC/EarthRadiationMsgPayload.h"
 #include "simulation/environment/_GeneralModuleFiles/planetRadiationBase.h"
 
 /*! @brief Earth Radiation Pressure environment module.
@@ -32,22 +32,23 @@
  * The module is a sub-class of `PlanetRadiationBase`. See that class for the
  * nominal messages used and setup instructions.
  */
-class EarthRadiationModel : public PlanetRadiationBase {
-public:
-    EarthRadiationModel()  = default;
+class EarthRadiationModel : public PlanetRadiationBase
+{
+  public:
+    EarthRadiationModel() = default;
     ~EarthRadiationModel() = default;
 
     Message<EarthRadiationMsgPayload> earthRadiationOutMsg; //!< total flux + direction vectors
 
-protected:
+  protected:
     /*! Clears per-timestep accumulators before the planet loop.
      *  @param scMsg   Spacecraft state message (unused).
      *  @param sunMsg  Sun state message (unused).
      *  @param nanos   Current simulation time (ns).
      */
-    void onUpdateBegin(const SCStatesMsgPayload&         scMsg,
+    void onUpdateBegin(const SCStatesMsgPayload& scMsg,
                        const SpicePlanetStateMsgPayload& sunMsg,
-                       uint64_t                          nanos) override;
+                       uint64_t nanos) override;
 
     /*! Calls entry.grid.computePatches() and accumulates flux-weighted directions.
      *  @param scMsg      Spacecraft state message.
@@ -57,12 +58,12 @@ protected:
      *  @param S_sun      [W/m^2] distance-corrected solar flux at planet.
      *  @param nanos      Current simulation time (ns).
      */
-    void evaluatePlanet(const SCStatesMsgPayload&         scMsg,
+    void evaluatePlanet(const SCStatesMsgPayload& scMsg,
                         const SpicePlanetStateMsgPayload& sunMsg,
-                        SpicePlanetStateMsgPayload        planetMsg,
-                        PlanetEntry&                      entry,
-                        const double                      S_sun,
-                        uint64_t                          nanos) override;
+                        SpicePlanetStateMsgPayload planetMsg,
+                        PlanetEntry& entry,
+                        const double S_sun,
+                        uint64_t nanos) override;
 
     /*! EarthRadiationModel uses planetInMsg directly and leaves planets empty
      *  until Reset(); opt in to the single-planet backward-compat fallback.
@@ -74,12 +75,12 @@ protected:
      */
     void onUpdateEnd(uint64_t nanos) override;
 
-private:
-    double albedoFlux     = 0.0;              //!< [W/m^2] accumulated albedo flux
-    double irFlux         = 0.0;              //!< [W/m^2] accumulated IR flux
-    double albedoVec_N[3] = {0.0, 0.0, 0.0};  //!< [-] flux-weighted albedo direction, inertial N
-    double irVec_N[3]     = {0.0, 0.0, 0.0};  //!< [-] flux-weighted IR direction, inertial N
-    uint64_t currentNanos = 0;                //!< [ns] current simulation time
+  private:
+    double albedoFlux = 0.0;                   //!< [W/m^2] accumulated albedo flux
+    double irFlux = 0.0;                       //!< [W/m^2] accumulated IR flux
+    double albedoVec_N[3] = { 0.0, 0.0, 0.0 }; //!< [-] flux-weighted albedo direction, inertial N
+    double irVec_N[3] = { 0.0, 0.0, 0.0 };     //!< [-] flux-weighted IR direction, inertial N
+    uint64_t currentNanos = 0;                 //!< [ns] current simulation time
 };
 
 #endif /* EARTH_RADIATION_MODEL_H */

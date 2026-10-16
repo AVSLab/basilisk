@@ -26,10 +26,11 @@
 #include <stdint.h>
 
 /*! @brief Stepper motor class. */
-class StepperMotor : public SysModel {
-   public:
-    StepperMotor() = default;   //!< Constructor
-    ~StepperMotor() = default;  //!< Destructor
+class StepperMotor : public SysModel
+{
+  public:
+    StepperMotor() = default;  //!< Constructor
+    ~StepperMotor() = default; //!< Destructor
 
     void Reset(uint64_t currentSimNanos) override;
     void UpdateState(uint64_t currentSimNanos) override;
@@ -42,10 +43,10 @@ class StepperMotor : public SysModel {
     void setStepTime(const double stepTime);
 
     ReadFunctor<MotorStepCommandMsgPayload>
-        motorStepCommandInMsg;                           //!< Input msg for the number of commanded motor step counts
-    Message<StepperMotorMsgPayload> stepperMotorOutMsg;  //!< Output msg for the stepper motor state information
+      motorStepCommandInMsg;                            //!< Input msg for the number of commanded motor step counts
+    Message<StepperMotorMsgPayload> stepperMotorOutMsg; //!< Output msg for the stepper motor state information
 
-   private:
+  private:
     void actuateMotor(double t);
     void resetMotor();
     void updateStepParameters();
@@ -56,35 +57,35 @@ class StepperMotor : public SysModel {
     void computeStepComplete(double t);
 
     /* Step parameters */
-    double stepAngle{};    //!< [rad] Angle the stepper motor moves through for a single step (constant)
-    double stepTime{};     //!< [s] Time required for a single motor step (constant)
-    int stepsCommanded{};  //!< [steps] Number of commanded steps
-    int stepCount{};       //!< [steps] Current motor step count (number of steps taken)
+    double stepAngle{};   //!< [rad] Angle the stepper motor moves through for a single step (constant)
+    double stepTime{};    //!< [s] Time required for a single motor step (constant)
+    int stepsCommanded{}; //!< [steps] Number of commanded steps
+    int stepCount{};      //!< [steps] Current motor step count (number of steps taken)
 
     /* Motor angle parameters */
-    double thetaInit{};              //!< [rad] Initial motor angle
-    double intermediateThetaInit{};  //!< [rad] Initial motor angle at the start of each step
-    double intermediateThetaRef{};   //!< [rad] Reference motor angle at the end of each step
-    double theta{};                  //!< [rad] Current motor angle
-    double thetaDot{};               //!< [rad/s] Current motor angle rate
-    double thetaDDot{};              //!< [rad/s^2] Current motor angular acceleration
-    double thetaDDotMax{};           //!< [rad/s^2] Maximum angular acceleration of the stepper motor
+    double thetaInit{};             //!< [rad] Initial motor angle
+    double intermediateThetaInit{}; //!< [rad] Initial motor angle at the start of each step
+    double intermediateThetaRef{};  //!< [rad] Reference motor angle at the end of each step
+    double theta{};                 //!< [rad] Current motor angle
+    double thetaDot{};              //!< [rad/s] Current motor angle rate
+    double thetaDDot{};             //!< [rad/s^2] Current motor angular acceleration
+    double thetaDDotMax{};          //!< [rad/s^2] Maximum angular acceleration of the stepper motor
 
     /* Temporal parameters */
-    double tInit{};                //!< [s] Simulation time at the beginning of each step
-    double previousWrittenTime{-1};  //!< [ns] Time the last input message was written
-    double ts{};                   //!< [s] The simulation time halfway through each step (switch time for ang accel)
-    double tf{};                   //!< [s] Simulation time when the current step will be completed
+    double tInit{};                   //!< [s] Simulation time at the beginning of each step
+    double previousWrittenTime{ -1 }; //!< [ns] Time the last input message was written
+    double ts{};                      //!< [s] The simulation time halfway through each step (switch time for ang accel)
+    double tf{};                      //!< [s] Simulation time when the current step will be completed
 
     /* Boolean parameters */
-    bool actuationComplete{true};  //!< Boolean designating the motor has fully completed the commanded actuation
-    bool stepComplete{true};       //!< Boolean designating the completion of a step
-    bool newMsg{};             //!< Boolean designating a new command message is written
-    bool interruptMsg{};       //!< Boolean designating the new command message is interrupting motor actuation
+    bool actuationComplete{ true }; //!< Boolean designating the motor has fully completed the commanded actuation
+    bool stepComplete{ true };      //!< Boolean designating the completion of a step
+    bool newMsg{};                  //!< Boolean designating a new command message is written
+    bool interruptMsg{};            //!< Boolean designating the new command message is interrupting motor actuation
 
     /* Constant parameters */
-    double a{};  //!< Parabolic constant for the first half of a step
-    double b{};  //!< Parabolic constant for the second half of a step
+    double a{}; //!< Parabolic constant for the first half of a step
+    double b{}; //!< Parabolic constant for the second half of a step
 };
 
 #endif

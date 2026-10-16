@@ -18,7 +18,8 @@
  */
 #include "stochasticAtmDensity.h"
 
-void StochasticAtmDensity::writeOutput(uint64_t CurrentSimNanos, double x)
+void
+StochasticAtmDensity::writeOutput(uint64_t CurrentSimNanos, double x)
 {
     AtmoPropsMsgPayload out = atmoDensInMsg();
     out.neutralDensity *= 1.0 + x;

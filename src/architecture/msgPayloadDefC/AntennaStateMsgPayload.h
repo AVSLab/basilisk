@@ -24,7 +24,8 @@
 
 /*! @brief Antenna state output message definition
  */
-typedef struct {
-    uint32_t antennaState;   //!< [-] antenna state: 0: OFF, 1: Rx, 2: Tx, 3: RxTx
-}AntennaStateMsgPayload;
+typedef struct
+{
+    uint32_t antennaState; //!< [-] antenna state: 0: OFF, 1: Rx, 2: Tx, 3: RxTx
+} AntennaStateMsgPayload;
 #endif /* antennaStateMsg_H */

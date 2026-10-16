@@ -26,32 +26,32 @@
 #include "architecture/utilities/bskLogging.h"
 #include <stdint.h>
 
-
-
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* declare module private variables */
-    RWConstellationMsgPayload rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
-    RWArrayConfigMsgPayload  rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
+    RWConstellationMsgPayload
+      rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
+    RWArrayConfigMsgPayload rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
-    RWConstellationMsg_C rwConstellationInMsg;          /*!< RW array input message */
-    RWArrayConfigMsg_C rwParamsOutMsg;                  /*!< RW array output message */
+    RWConstellationMsg_C rwConstellationInMsg; /*!< RW array input message */
+    RWArrayConfigMsg_C rwParamsOutMsg;         /*!< RW array output message */
 
-    BSKLogger *bskLogger;   //!< BSK Logging
+    BSKLogger* bskLogger; //!< BSK Logging
 
-}rwConfigData_Config;
+} rwConfigData_Config;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_rwConfigData(rwConfigData_Config*configData, int64_t moduleID);
-    void Update_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, int64_t moduleID);
-    
+
+    void SelfInit_rwConfigData(rwConfigData_Config* configData, int64_t moduleID);
+    void Update_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

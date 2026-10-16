@@ -26,14 +26,14 @@
 /** @brief Method workspace allocated after state binding. */
 struct svStochasticIntegratorRKMil::FlatStorage
 {
-    Eigen::VectorXd drift; ///< Drift evaluated at the step-entry state.
-    Eigen::VectorXd zeroDrift; ///< Zero drift for candidates perturbed only by diffusion.
+    Eigen::VectorXd drift;           ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd zeroDrift;       ///< Zero drift for candidates perturbed only by diffusion.
     Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
     Eigen::VectorXd ggPrime; ///< Packed diffusion directional-derivative approximation for the Milstein correction.
-    Eigen::VectorXd kState; ///< Diffusion support state used to estimate the Milstein correction.
-    Eigen::VectorXd intermediateState; ///< Scratch candidate for composing the final update.
-    Eigen::VectorXd zeroPseudoSteps; ///< Zero noise weights for a drift-only candidate.
-    Eigen::VectorXd supportPseudoSteps; ///< Noise weights used to construct diffusion support states.
+    Eigen::VectorXd kState;  ///< Diffusion support state used to estimate the Milstein correction.
+    Eigen::VectorXd intermediateState;   ///< Scratch candidate for composing the final update.
+    Eigen::VectorXd zeroPseudoSteps;     ///< Zero noise weights for a drift-only candidate.
+    Eigen::VectorXd supportPseudoSteps;  ///< Noise weights used to construct diffusion support states.
     Eigen::VectorXd milsteinPseudoSteps; ///< Per-source weights for the Milstein correction.
 };
 

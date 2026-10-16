@@ -30,9 +30,9 @@
  * Derives from MeanRevertingNoise. Scales the incoming neutral density by \f$(1 + x)\f$,
  * where \f$x\f$ is the OU state maintained by the base class.
  */
-class StochasticAtmDensity : public MeanRevertingNoise {
-public:
-
+class StochasticAtmDensity : public MeanRevertingNoise
+{
+  public:
     /**
      * @brief Input atmospheric properties message.
      *
@@ -48,7 +48,7 @@ public:
      */
     Message<AtmoPropsMsgPayload> atmoDensOutMsg;
 
-protected:
+  protected:
     /**
      * @brief Apply the OU correction factor and write output.
      *
@@ -60,6 +60,5 @@ protected:
      */
     void writeOutput(uint64_t CurrentSimNanos, double x) override;
 };
-
 
 #endif

@@ -18,9 +18,9 @@
  */
 
 #include "mtbMomentumManagement.h"
-#include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/svd.h"
+#include "string.h"
 
 /*!
  \verbatim embed:rst
@@ -32,15 +32,15 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int64_t moduleID)
+void
+SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     MTBCmdMsg_C_init(&configData->mtbCmdOutMsg);
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
 
     return;
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.  The local copy of the
@@ -50,26 +50,27 @@ void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig *configData, int
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     /*
      * Check if the required input messages are linked.
      */
-    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)){
+    if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwParamsInMsg is not connected.");
     }
-    if(!MTBArrayConfigMsg_C_isLinked(&configData->mtbParamsInMsg)){
+    if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbParamsInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.mtbParamsInMsg is not connected.");
     }
-    if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)){
+    if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.tamSensorBodyInMsg is not connected.");
     }
-    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)){
+    if (!RWSpeedMsg_C_isLinked(&configData->rwSpeedsInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwSpeedsInMsg is not connected.");
     }
-    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)){
+    if (!ArrayMotorTorqueMsg_C_isLinked(&configData->rwMotorTorqueInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.rwMotorTorqueInMsg is not connected.");
     }
 
@@ -80,14 +81,14 @@ void Reset_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64
     return;
 }
 
-
 /*! Computes the appropriate wheel torques and magnetic torque bar dipoles to bias the wheels to their desired speeds.
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Declare and initialize local variables.
@@ -95,15 +96,15 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     if (configData->rwConfigParams.numRW < 0 || configData->mtbConfigParams.numMTB < 0) {
         _bskError(configData->bskLogger, "mtbMomentumManagement: effector counts must be non-negative.");
     }
-    size_t numRW = (size_t) configData->rwConfigParams.numRW;
-    size_t numMTB = (size_t) configData->mtbConfigParams.numMTB;
+    size_t numRW = (size_t)configData->rwConfigParams.numRW;
+    size_t numMTB = (size_t)configData->mtbConfigParams.numMTB;
     size_t j = 0;
-    double BTilde_B[3*3];
-    double BGt[3*MAX_EFF_CNT];
-    double BGtPsuedoInverse[MAX_EFF_CNT*3];
+    double BTilde_B[3 * 3];
+    double BGt[3 * MAX_EFF_CNT];
+    double BGtPsuedoInverse[MAX_EFF_CNT * 3];
     double uDelta_B[3];
     double uDelta_W[MAX_EFF_CNT];
-    double GsPsuedoInverse[MAX_EFF_CNT*3];
+    double GsPsuedoInverse[MAX_EFF_CNT * 3];
     double Gs[3 * MAX_EFF_CNT];
     mSetZero(BTilde_B, 3, 3);
     mSetZero(BGt, 3, numMTB);
@@ -132,7 +133,8 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
 
     /*! - Compute the wheel speed feedback.*/
     vSubtract(rwSpeedsInMsgBuffer.wheelSpeeds, numRW, configData->wheelSpeedBiases, configData->wheelSpeedError_W);
-    vElementwiseMult(configData->rwConfigParams.JsList, numRW, configData->wheelSpeedError_W, configData->hDeltaWheels_W);
+    vElementwiseMult(
+      configData->rwConfigParams.JsList, numRW, configData->wheelSpeedError_W, configData->hDeltaWheels_W);
     mMultV(Gs, 3, numRW, configData->hDeltaWheels_W, configData->hDeltaWheels_B);
     vScale(-configData->cGain, configData->hDeltaWheels_W, numRW, configData->tauIdealRW_W);
     mMultV(Gs, 3, numRW, configData->tauIdealRW_W, configData->tauIdealRW_B);
@@ -146,8 +148,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
     /*
      * Saturate dipoles.
      */
-    for (j = 0; j < numMTB; j++)
-    {
+    for (j = 0; j < numMTB; j++) {
         if (mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] > configData->mtbConfigParams.maxMtbDipoles[j])
             mtbCmdOutputMsgBuffer.mtbDipoleCmds[j] = configData->mtbConfigParams.maxMtbDipoles[j];
 
@@ -173,7 +174,8 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
      * Write output messages.
      */
     MTBCmdMsg_C_write(&mtbCmdOutputMsgBuffer, &configData->mtbCmdOutMsg, moduleID, callTime);
-    vAdd(configData->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
+    vAdd(
+      configData->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
     ArrayMotorTorqueMsg_C_write(&rwMotorTorqueOutMsgBuffer, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 
     return;
@@ -182,9 +184,10 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig *configData, uint6
 /*
  * Returns the tilde matrix in the form of a 1-D array.
  */
-void v3TildeM(double v[3], void *result)
+void
+v3TildeM(double v[3], void* result)
 {
-    double *m_result = (double *)result;
+    double* m_result = (double*)result;
     m_result[MXINDEX(3, 0, 0)] = 0.0;
     m_result[MXINDEX(3, 0, 1)] = -v[2];
     m_result[MXINDEX(3, 0, 2)] = v[1];

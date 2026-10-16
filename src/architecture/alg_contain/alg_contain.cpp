@@ -23,19 +23,20 @@ AlgContain::AlgContain()
     AlgSelfInit = NULL;
     AlgUpdate = NULL;
     DataPtr = NULL;
-	AlgReset = NULL;
+    AlgReset = NULL;
     CallCounts = 0;
     return;
 }
 
-AlgContain::AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
+AlgContain::AlgContain(void* DataIn,
+                       void (*UpPtr)(void*, uint64_t, uint64_t),
                        void (*SelfPtr)(void*, uint64_t),
-	                   void (*ResetPtr) (void*, uint64_t, uint64_t))
+                       void (*ResetPtr)(void*, uint64_t, uint64_t))
 {
     DataPtr = DataIn;
     AlgSelfInit = SelfPtr;
     AlgUpdate = UpPtr;
-	AlgReset = ResetPtr;
+    AlgReset = ResetPtr;
 }
 
 AlgContain::~AlgContain()
@@ -43,27 +44,26 @@ AlgContain::~AlgContain()
     return;
 }
 
-void AlgContain::SelfInit()
+void
+AlgContain::SelfInit()
 {
-    if(AlgSelfInit != NULL)
-    {
-        AlgSelfInit(DataPtr, (uint32_t) moduleID);
+    if (AlgSelfInit != NULL) {
+        AlgSelfInit(DataPtr, (uint32_t)moduleID);
     }
 }
 
-
-void AlgContain::UpdateState(uint64_t CurrentSimNanos)
+void
+AlgContain::UpdateState(uint64_t CurrentSimNanos)
 {
-    if(AlgUpdate != NULL)
-    {
-        AlgUpdate(DataPtr, CurrentSimNanos, (uint32_t) moduleID);
+    if (AlgUpdate != NULL) {
+        AlgUpdate(DataPtr, CurrentSimNanos, (uint32_t)moduleID);
     }
 }
 
-void AlgContain::Reset(uint64_t CurrentSimNanos)
+void
+AlgContain::Reset(uint64_t CurrentSimNanos)
 {
-	if (AlgReset != NULL)
-	{
-		AlgReset(DataPtr, CurrentSimNanos, (uint32_t) moduleID);
-	}
+    if (AlgReset != NULL) {
+        AlgReset(DataPtr, CurrentSimNanos, (uint32_t)moduleID);
+    }
 }

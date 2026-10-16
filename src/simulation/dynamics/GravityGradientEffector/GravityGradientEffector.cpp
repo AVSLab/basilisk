@@ -17,27 +17,27 @@
 
  */
 
-#include <iostream>
 #include "GravityGradientEffector.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include <iostream>
 
 GravityGradientEffector::GravityGradientEffector()
 {
-	return;
+    return;
 }
 
 /*! The destructor.*/
 GravityGradientEffector::~GravityGradientEffector()
 {
-	return;
+    return;
 }
-
 
 /*! Reset the effector outputs and validate its configuration.
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
 */
-void GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* zero the effector output forces and torques */
     this->forceExternal_B.fill(0.0);
@@ -50,10 +50,12 @@ void GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! Validate that at least one gravity-gradient source planet was configured. */
-void GravityGradientEffector::validateConfiguration()
+void
+GravityGradientEffector::validateConfiguration()
 {
     if (this->planetPropertyNames.empty()) {
-        bskLogger.bskError("planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+        bskLogger.bskError(
+          "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
     }
 }
 
@@ -61,33 +63,37 @@ void GravityGradientEffector::validateConfiguration()
  @param planetName The planet name
 
  */
-void GravityGradientEffector::addPlanetName(std::string planetName)
+void
+GravityGradientEffector::addPlanetName(std::string planetName)
 {
     this->planetPropertyNames.push_back(planetName);
 
     return;
 }
 
-
 /*! Write the gravity gradient torque output message.
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
+void
+GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     GravityGradientMsgPayload outMsg;
     eigenVector3d2CArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
     this->gravityGradientOutMsg.write(&outMsg, this->moduleID, CurrentClock);
 
-	return;
+    return;
 }
 
-/*! This method is used to link the gravity gradient effector to the hub position, inertia tensor and center of mass vector.
+/*! This method is used to link the gravity gradient effector to the hub position, inertia tensor and center of mass
+ * vector.
  *
  * @param[in] states Dynamic parameter manager containing the required states and properties.
  */
 
-void GravityGradientEffector::linkInStates(DynParamManager& states){
+void
+GravityGradientEffector::linkInStates(DynParamManager& states)
+{
     this->validateConfiguration();
 
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
@@ -97,7 +103,7 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
     this->m_SC = states.getPropertyReference(this->propName_m_SC);
 
     std::vector<std::string>::iterator name;
-    for(name = this->planetPropertyNames.begin(); name != this->planetPropertyNames.end(); name++) {
+    for (name = this->planetPropertyNames.begin(); name != this->planetPropertyNames.end(); name++) {
         this->r_PN_N.push_back(states.getPropertyReference(*name + ".r_PN_N"));
         this->muPlanet.push_back(states.getPropertyReference(*name + ".mu"));
     }
@@ -108,8 +114,10 @@ void GravityGradientEffector::linkInStates(DynParamManager& states){
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]]){
-	// Zero out the force/torque values to begin with
+void
+GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+{
+    // Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();
 
     /* compute DCN [BN] */
@@ -120,12 +128,12 @@ void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused
     Eigen::MatrixXd ISCPntC_B;
     Eigen::Matrix3d cTilde;
     cTilde = eigenTilde(*this->c_B);
-    ISCPntC_B = *this->ISCPntB_B - (*this->m_SC)(0,0)*cTilde*cTilde.transpose();
+    ISCPntC_B = *this->ISCPntB_B - (*this->m_SC)(0, 0) * cTilde * cTilde.transpose();
 
     std::vector<std::string>::iterator it;
     size_t c = 0;
-    for(it = this->planetPropertyNames.begin(); it != this->planetPropertyNames.end(); it++) {
-        double mu = (*this->muPlanet[c])(0,0);  /* in m^3/s^2 */
+    for (it = this->planetPropertyNames.begin(); it != this->planetPropertyNames.end(); it++) {
+        double mu = (*this->muPlanet[c])(0, 0); /* in m^3/s^2 */
 
         /* determine spacecraft CM position relative to planet */
         Eigen::Vector3d r_CP_N = this->r_BN_N->stateView() + dcm_BN.transpose() * (*this->c_B) - *(this->r_PN_N[c]);
@@ -138,7 +146,7 @@ void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused
 
         /* compute gravity gradient torque */
         Eigen::Vector3d ggTorque;
-        ggTorque = 3.0*mu/rMag/rMag/rMag * (ISCPntC_B * rHat_B);
+        ggTorque = 3.0 * mu / rMag / rMag / rMag * (ISCPntC_B * rHat_B);
         ggTorque = rHat_B.cross(ggTorque);
 
         /* sum up all gravity gradient contributions */
@@ -146,7 +154,7 @@ void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused
         c++;
     }
 
-  	return;
+    return;
 }
 
 /*! This method is called once per BSK update cycle.  It writes out a msg of the
@@ -154,8 +162,9 @@ void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
+void
+GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-	this->WriteOutputMessages(CurrentSimNanos);
-	return;
+    this->WriteOutputMessages(CurrentSimNanos);
+    return;
 }

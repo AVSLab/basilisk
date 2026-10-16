@@ -17,12 +17,12 @@
 
  */
 
-#include <string.h>
-#include <math.h>
-#include <stdio.h>
 #include "fswAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 /*! This method initializes the configData for the sun safe attitude guidance.
  It checks to ensure that the inputs are sane and then creates the
@@ -31,13 +31,12 @@
  @param configData The configuration data associated with the sun safe guidance
  @param moduleID The Basilisk module identifier
  */
-void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
+void
+SelfInit_sunSafePoint(sunSafePointConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
-
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -46,10 +45,11 @@ void SelfInit_sunSafePoint(sunSafePointConfig *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     double v1[3];
 
     // check if the required input messages are included
@@ -61,14 +61,18 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
     }
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
-    if (v3Norm(configData->sHatBdyCmd)  < 0.1) {
-      char info[MAX_LOGGING_LENGTH];
-      snprintf(info, sizeof(info), "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-               configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
-      _bskError(configData->bskLogger, info);
+    if (v3Norm(configData->sHatBdyCmd) < 0.1) {
+        char info[MAX_LOGGING_LENGTH];
+        snprintf(info,
+                 sizeof(info),
+                 "The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+                 configData->sHatBdyCmd[0],
+                 configData->sHatBdyCmd[1],
+                 configData->sHatBdyCmd[2]);
+        _bskError(configData->bskLogger, info);
     } else {
         v3Set(1., 0., 0., v1);
-        v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
+        v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd); /* ensure that this vector is a unit vector */
         v3Cross(configData->sHatBdyCmd, v1, configData->eHat180_B);
         if (v3Norm(configData->eHat180_B) < 0.1) {
             v3Set(0., 1., 0., v1);
@@ -89,15 +93,15 @@ void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, int64
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
 */
-void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     NavAttMsgPayload navMsg;
     double ctSNormalized;
-    double sNorm;                   /*!< --- Norm of measured direction vector */
-    double e_hat[3];                /*!< --- Eigen Axis */
-    double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
-    double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
+    double sNorm;         /*!< --- Norm of measured direction vector */
+    double e_hat[3];      /*!< --- Eigen Axis */
+    double omega_BN_B[3]; /*!< r/s inertial body angular velocity vector in B frame components */
+    double omega_RN_B[3]; /*!< r/s local copy of the desired reference frame rate */
 
     NavAttMsgPayload localImuDataInBuffer;
     configData->attGuidanceOutBuffer = AttGuidMsg_C_zeroMsgPayload();
@@ -110,12 +114,10 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
 
     /*! - Compute the current error vector if it is valid*/
     sNorm = v3Norm(navMsg.vehSunPntBdy);
-    if(sNorm > configData->minUnitMag)
-    {
+    if (sNorm > configData->minUnitMag) {
         /* a good sun direction vector is available */
-        ctSNormalized = v3Dot(configData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
-        ctSNormalized = fabs(ctSNormalized) > 1.0 ?
-        ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
+        ctSNormalized = v3Dot(configData->sHatBdyCmd, navMsg.vehSunPntBdy) / sNorm;
+        ctSNormalized = fabs(ctSNormalized) > 1.0 ? ctSNormalized / fabs(ctSNormalized) : ctSNormalized;
         configData->sunAngleErr = safeAcos(ctSNormalized);
 
         /*
@@ -123,7 +125,7 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
          */
         if (configData->sunAngleErr < configData->smallAngle) {
             /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
-             v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
+            v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
         } else {
             if (M_PI - configData->sunAngleErr < configData->smallAngle) {
                 /* the commanded body vector nearly is opposite the sun heading */
@@ -133,13 +135,13 @@ void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
                 v3Cross(navMsg.vehSunPntBdy, configData->sHatBdyCmd, e_hat);
             }
             v3Normalize(e_hat, configData->sunMnvrVec);
-            v3Scale(tan(configData->sunAngleErr*0.25), configData->sunMnvrVec,
-                    configData->attGuidanceOutBuffer.sigma_BR);
+            v3Scale(
+              tan(configData->sunAngleErr * 0.25), configData->sunMnvrVec, configData->attGuidanceOutBuffer.sigma_BR);
             MRPswitch(configData->attGuidanceOutBuffer.sigma_BR, 1.0, configData->attGuidanceOutBuffer.sigma_BR);
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(configData->sunAxisSpinRate/sNorm, navMsg.vehSunPntBdy, omega_RN_B);
+        v3Scale(configData->sunAxisSpinRate / sNorm, navMsg.vehSunPntBdy, omega_RN_B);
         v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
         v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 

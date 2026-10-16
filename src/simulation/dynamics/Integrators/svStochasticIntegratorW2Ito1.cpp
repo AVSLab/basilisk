@@ -21,39 +21,30 @@
 #include <cmath>
 
 svStochasticIntegratorW2Ito1::svStochasticIntegratorW2Ito1(DynamicObject* dyn)
-    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
+  : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
 {
 }
 
 // Coefficients for the W2Ito1 tableau (Tang & Xiao, Table 2). 3-stage explicit method.
-W2ItoCoefficients svStochasticIntegratorW2Ito1::getCoefficients()
+W2ItoCoefficients
+svStochasticIntegratorW2Ito1::getCoefficients()
 {
     const double sqrt6 = std::sqrt(6.0);
     W2ItoCoefficients c;
 
-    c.alpha = {1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0};
-    c.beta0 = {-1.0, 1.0, 1.0};
-    c.beta1 = {2.0, 0.0, -2.0};
+    c.alpha = { 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 };
+    c.beta0 = { -1.0, 1.0, 1.0 };
+    c.beta1 = { 2.0, 0.0, -2.0 };
 
-    c.A0 = {{0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0},
-            {-1.0, 2.0, 0.0}};
+    c.A0 = { { 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0 }, { -1.0, 2.0, 0.0 } };
 
-    c.B0 = {{0.0, 0.0, 0.0},
-            {(6.0 - sqrt6) / 10.0, 0.0, 0.0},
-            {(3.0 + 2.0 * sqrt6) / 5.0, 0.0, 0.0}};
+    c.B0 = { { 0.0, 0.0, 0.0 }, { (6.0 - sqrt6) / 10.0, 0.0, 0.0 }, { (3.0 + 2.0 * sqrt6) / 5.0, 0.0, 0.0 } };
 
-    c.A1 = {{0.0, 0.0, 0.0},
-            {1.0 / 4.0, 0.0, 0.0},
-            {1.0 / 4.0, 0.0, 0.0}};
+    c.A1 = { { 0.0, 0.0, 0.0 }, { 1.0 / 4.0, 0.0, 0.0 }, { 1.0 / 4.0, 0.0, 0.0 } };
 
-    c.B1 = {{0.0, 0.0, 0.0},
-            {1.0 / 2.0, 0.0, 0.0},
-            {-1.0 / 2.0, 0.0, 0.0}};
+    c.B1 = { { 0.0, 0.0, 0.0 }, { 1.0 / 2.0, 0.0, 0.0 }, { -1.0 / 2.0, 0.0, 0.0 } };
 
-    c.B2 = {{0.0, 0.0, 0.0},
-            {1.0, 0.0, 0.0},
-            {0.0, 0.0, 0.0}};
+    c.B2 = { { 0.0, 0.0, 0.0 }, { 1.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } };
 
     return c;
 }

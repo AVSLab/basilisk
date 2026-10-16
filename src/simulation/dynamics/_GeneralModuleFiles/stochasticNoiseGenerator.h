@@ -38,7 +38,8 @@
  * With time step ``h``, each entry of ``dW`` and ``dZ`` is distributed as
  * \f$N(0, h)\f$.
  */
-struct GaussianNoiseSample {
+struct GaussianNoiseSample
+{
     Eigen::VectorXd dW; //!< Wiener increment per noise source, ~ N(0, h)
     Eigen::VectorXd dZ; //!< Second independent Wiener increment per noise source, ~ N(0, h)
 };
@@ -53,8 +54,9 @@ struct GaussianNoiseSample {
  *
  * @warning Stochastic integration is in beta.
  */
-class GaussianNoiseGenerator {
-public:
+class GaussianNoiseGenerator
+{
+  public:
     virtual ~GaussianNoiseGenerator() = default;
 
     /** Sets the seed for the underlying RNG (if any). */
@@ -179,13 +181,14 @@ public:
  * ``dZ`` is drawn as \f$\sqrt{h}\,N(0,1)\f$. The ``dW`` entries are drawn first
  * (indices 0..m-1), then the ``dZ`` entries.
  */
-class RandomGaussianNoiseGenerator : public GaussianNoiseGenerator {
-public:
-  void setSeed(size_t seed) override
-  {
-      this->rng.seed(static_cast<std::mt19937::result_type>(seed));
-      this->normal_rv.reset();
-  }
+class RandomGaussianNoiseGenerator : public GaussianNoiseGenerator
+{
+  public:
+    void setSeed(size_t seed) override
+    {
+        this->rng.seed(static_cast<std::mt19937::result_type>(seed));
+        this->normal_rv.reset();
+    }
 
     GaussianNoiseSample generate(size_t m, double h) override
     {
@@ -233,12 +236,12 @@ public:
         this->generateWienerInto(dW, m, h);
     }
 
-protected:
+  protected:
     /** Random Number Generator */
-    std::mt19937 rng{std::random_device{}()};
+    std::mt19937 rng{ std::random_device{}() };
 
     /** Standard normally distributed random variable */
-    std::normal_distribution<double> normal_rv{0., 1.};
+    std::normal_distribution<double> normal_rv{ 0., 1. };
 };
 
 /** Replays a pre-computed sequence of Gaussian increments.
@@ -254,8 +257,9 @@ protected:
  * generate call is made after the queue is exhausted, a ``std::runtime_error``
  * is thrown.
  */
-class PrescribedGaussianNoiseGenerator : public GaussianNoiseGenerator {
-public:
+class PrescribedGaussianNoiseGenerator : public GaussianNoiseGenerator
+{
+  public:
     /** Seeding has no effect on a prescribed generator. */
     void setSeed(size_t) override {}
 
@@ -273,8 +277,7 @@ public:
         if (dZ.empty()) {
             sample.dZ = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(dW.size()));
         } else {
-            sample.dZ =
-                Eigen::Map<const Eigen::VectorXd>(dZ.data(), static_cast<Eigen::Index>(dZ.size()));
+            sample.dZ = Eigen::Map<const Eigen::VectorXd>(dZ.data(), static_cast<Eigen::Index>(dZ.size()));
         }
         this->samples.push_back(std::move(sample));
     }
@@ -342,16 +345,14 @@ public:
     const GaussianNoiseSample& nextAndValidate(size_t m, size_t auxiliaryCount)
     {
         if (this->cursor == this->samples.size()) {
-            throw std::runtime_error(
-                "PrescribedGaussianNoiseGenerator ran out of prescribed noise samples. "
-                "Push one sample per integration step.");
+            throw std::runtime_error("PrescribedGaussianNoiseGenerator ran out of prescribed noise samples. "
+                                     "Push one sample per integration step.");
         }
         const GaussianNoiseSample& sample = this->samples[this->cursor++];
 
         if (static_cast<size_t>(sample.dW.size()) != m) {
-            throw std::runtime_error(
-                "PrescribedGaussianNoiseGenerator: the queued sample has a different number of "
-                "noise sources than requested by the integrator.");
+            throw std::runtime_error("PrescribedGaussianNoiseGenerator: the queued sample has a different number of "
+                                     "noise sources than requested by the integrator.");
         }
         if (static_cast<size_t>(sample.dZ.size()) < auxiliaryCount) {
             throw std::runtime_error("PrescribedGaussianNoiseGenerator: the queued sample's dZ is shorter than the "

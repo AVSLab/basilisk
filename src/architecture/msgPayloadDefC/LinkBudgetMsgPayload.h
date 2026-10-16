@@ -22,15 +22,16 @@
 #define linkBudgetLogMsg_H
 
 /*! antenna state message definition */
-typedef struct {
-    char     antennaName1[20];                         //!< [-]     Antenna identifier
-    char     antennaName2[20];                         //!< [-]     Antenna identifier
-    uint32_t antennaState2;                          //!< [-]     Current state of the antenna 2 (0: off, 1: Rx, 2: Tx, 3: RxTx)
-    uint32_t antennaState1;                          //!< [-]     Current state of the antenna 1 (0: off, 1: Rx, 2: Tx, 3: RxTx)
-    double   CNR1;                                   //!< [-]     Carrier to noise ratio at antenna 1
-    double   CNR2;                                   //!< [-]     Carrier to noise ratio at antenna 2
-    double   distance;                               //!< [m]     Distance between the two antennas
-    double   bandwidth;                              //!< [Hz]    Bandwidth of the communication link
-    double   frequency;                              //!< [Hz]    Operating frequency of the communication link
-}LinkBudgetMsgPayload;
+typedef struct
+{
+    char antennaName1[20];  //!< [-]     Antenna identifier
+    char antennaName2[20];  //!< [-]     Antenna identifier
+    uint32_t antennaState2; //!< [-]     Current state of the antenna 2 (0: off, 1: Rx, 2: Tx, 3: RxTx)
+    uint32_t antennaState1; //!< [-]     Current state of the antenna 1 (0: off, 1: Rx, 2: Tx, 3: RxTx)
+    double CNR1;            //!< [-]     Carrier to noise ratio at antenna 1
+    double CNR2;            //!< [-]     Carrier to noise ratio at antenna 2
+    double distance;        //!< [m]     Distance between the two antennas
+    double bandwidth;       //!< [Hz]    Bandwidth of the communication link
+    double frequency;       //!< [Hz]    Operating frequency of the communication link
+} LinkBudgetMsgPayload;
 #endif /* linkBudgetLogMsg_H */

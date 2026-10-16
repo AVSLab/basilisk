@@ -17,37 +17,37 @@
 
  */
 /*
-* ADCSDefinitions.h
-*
-* Provide generation defintions related to the ADCS Algorithms
-*
-* University of Colorado, Autonomous Vehicle Systems (AVS) Lab
-* Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
-*/
+ * ADCSDefinitions.h
+ *
+ * Provide generation defintions related to the ADCS Algorithms
+ *
+ * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
+ * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
+ */
 
 #ifndef _FSW_DEFINITIONS_H
 #define _FSW_DEFINITIONS_H
-
 
 /* Boolean Definition */
 #ifdef __APPLE__
 /* <mach/boolean.h> defines boolean_t and is idempotent; including it here
  * prevents a redefinition conflict when system headers pull it in later. */
-#  include <mach/boolean.h>
-#  define BOOL_FALSE 0
-#  define BOOL_TRUE  1
+#include <mach/boolean.h>
+#define BOOL_FALSE 0
+#define BOOL_TRUE 1
 #else
-typedef enum {
+typedef enum
+{
     BOOL_FALSE = 0,
     BOOL_TRUE
 } boolean_t;
 #endif
 
 /*! @brief Structure used to define the output definition for component availability */
- typedef enum {
-    AVAILABLE = 0,      /* must be 0, so that if these states are set to zero, device is AVAILABLE be default */
+typedef enum
+{
+    AVAILABLE = 0, /* must be 0, so that if these states are set to zero, device is AVAILABLE be default */
     UNAVAILABLE
-}FSWdeviceAvailability;
-
+} FSWdeviceAvailability;
 
 #endif

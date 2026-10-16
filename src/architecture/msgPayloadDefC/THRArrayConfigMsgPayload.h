@@ -20,17 +20,14 @@
 #ifndef THR_ARRAY_MESSAGE_H
 #define THR_ARRAY_MESSAGE_H
 
-#include "architecture/utilities/macroDefinitions.h"
 #include "THRConfigMsgPayload.h"
-
-
+#include "architecture/utilities/macroDefinitions.h"
 
 /*! @brief FSW message definition containing the thruster cluster information */
-typedef struct {
-    int numThrusters;                        //!< [-] number of thrusters
-    THRConfigMsgPayload thrusters[MAX_EFF_CNT];  //!< [-] array of thruster configuration information
-}THRArrayConfigMsgPayload;
-
-
+typedef struct
+{
+    int numThrusters;                           //!< [-] number of thrusters
+    THRConfigMsgPayload thrusters[MAX_EFF_CNT]; //!< [-] array of thruster configuration information
+} THRArrayConfigMsgPayload;
 
 #endif

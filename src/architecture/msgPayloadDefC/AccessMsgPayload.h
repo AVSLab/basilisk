@@ -25,21 +25,22 @@
 /*! @brief Message that defines access to spacecraft from a groundLocation, providing access, range, and elevation with
  * respect to a ground location.
  */
-typedef struct {
-    uint64_t hasAccess;//!< [-] 1 when the writer has access to a spacecraft; 0 otherwise.
-    double slantRange;//!< [m] Range from a location to the spacecraft.
-    double elevation;//!< [rad] Elevation angle for a given spacecraft.
-    double azimuth; //!< [rad] Azimuth angle for a spacecraft.
-    double range_dot; //!< [m/s] Range rate of a given spacecraft relative to a location in the SEZ rotating frame.
-    double el_dot; //!< [rad/s] Elevation angle rate for a given spacecraft in the SEZ rotating frame.
-    double az_dot; //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
-    double r_BL_L[3]; //!<[m] Spacecraft position relative to the groundLocation in the SEZ frame.
-    double v_BL_L[3]; //!<[m/s] SEZ relative time derivative of r_BL vector in SEZ vector components.
+typedef struct
+{
+    uint64_t hasAccess; //!< [-] 1 when the writer has access to a spacecraft; 0 otherwise.
+    double slantRange;  //!< [m] Range from a location to the spacecraft.
+    double elevation;   //!< [rad] Elevation angle for a given spacecraft.
+    double azimuth;     //!< [rad] Azimuth angle for a spacecraft.
+    double range_dot;   //!< [m/s] Range rate of a given spacecraft relative to a location in the SEZ rotating frame.
+    double el_dot;      //!< [rad/s] Elevation angle rate for a given spacecraft in the SEZ rotating frame.
+    double az_dot;      //!< [rad/s] Azimuth angle rate for a given spacecraft in the SEZ rotating frame.
+    double r_BL_L[3];   //!<[m] Spacecraft position relative to the groundLocation in the SEZ frame.
+    double v_BL_L[3];   //!<[m/s] SEZ relative time derivative of r_BL vector in SEZ vector components.
     uint64_t hasIllumination; //!< [-] 1 when illumination constraints are met; 0 otherwise.
     double sunIncidenceAngle; //!< [rad] Angle between the surface normal and location-to-Sun vector.
-    double scViewAngle; //!< [rad] Angle between the surface normal and location-to-spacecraft vector.
-    uint64_t hasGlare; //!< [-] 1 when the specular glare factor meets the configured threshold; 0 otherwise.
+    double scViewAngle;       //!< [rad] Angle between the surface normal and location-to-spacecraft vector.
+    uint64_t hasGlare;        //!< [-] 1 when the specular glare factor meets the configured threshold; 0 otherwise.
     double glareFactor; //!< [-] Alignment of the tracked spacecraft with the ideal specular reflection, in [0, 1].
-}AccessMsgPayload;
+} AccessMsgPayload;
 
 #endif /* accessSimMsg.h */

@@ -17,50 +17,49 @@
 
 */
 
-
 #ifndef VSCMG_GIMBAL_RATE_SERVO_H
 #define VSCMG_GIMBAL_RATE_SERVO_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/VSCMGArrayConfigMsgPayload.h"
-#include "architecture/msgPayloadDefC/VSCMGRefStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
-#include "architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.h"
-#include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
-#include "cMsgCInterface/VSCMGArrayTorqueMsg_C.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include <Eigen/Dense>
+#include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGArrayConfigMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGArrayTorqueMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGRefStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/VSCMGSpeedMsgPayload.h"
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/bskLogging.h"
+#include "cMsgCInterface/VSCMGArrayTorqueMsg_C.h"
+#include <Eigen/Dense>
 
 /*! @brief Mapping desired gimbal rates and RW wheel accelerations to motor torques.
  */
-class VscmgGimbalRateServo: public SysModel {
-public:
+class VscmgGimbalRateServo : public SysModel
+{
+  public:
     VscmgGimbalRateServo();
     ~VscmgGimbalRateServo() = default;
     void SelfInit();
     void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
 
-public:
+  public:
     ReadFunctor<VSCMGArrayConfigMsgPayload> vsmcgParamsInMsg;  //!< [-] VSCMG array configuration input message
-    ReadFunctor<VSCMGRefStatesMsgPayload> vscmgRefStatesInMsg;  //!< [-] reference VSCMG states input message
-    ReadFunctor<NavAttMsgPayload> attInMsg;  //!< [-] attitude navigation input message
-    ReadFunctor<VSCMGSpeedMsgPayload> speedsInMsg;  //!< [-] VSCMG speeds input message
-    Message<VSCMGArrayTorqueMsgPayload> cmdsOutMsg;  //!< [-] VSCMG motor torque C++ output message
-    VSCMGArrayTorqueMsg_C               cmdsOutMsgC = {};    //!< [-] VSCMG motor torque C output message
-    BSKLogger bskLogger;              //!< [-] BSK Logging
+    ReadFunctor<VSCMGRefStatesMsgPayload> vscmgRefStatesInMsg; //!< [-] reference VSCMG states input message
+    ReadFunctor<NavAttMsgPayload> attInMsg;                    //!< [-] attitude navigation input message
+    ReadFunctor<VSCMGSpeedMsgPayload> speedsInMsg;             //!< [-] VSCMG speeds input message
+    Message<VSCMGArrayTorqueMsgPayload> cmdsOutMsg;            //!< [-] VSCMG motor torque C++ output message
+    VSCMGArrayTorqueMsg_C cmdsOutMsgC = {};                    //!< [-] VSCMG motor torque C output message
+    BSKLogger bskLogger;                                       //!< [-] BSK Logging
 
-    void setK_gammaDot(double);  //!< [-] setter for `K-gammaDot` property
-    double getK_gammaDot() const {return this->K_gammaDot;}   //!< [-] getter for `K-gammaDot` property
+    void setK_gammaDot(double);                               //!< [-] setter for `K-gammaDot` property
+    double getK_gammaDot() const { return this->K_gammaDot; } //!< [-] getter for `K-gammaDot` property
 
-private:
-    double K_gammaDot;  //!< [1/s] proportional gain applied to gimbal rate errors
-    VSCMGArrayTorqueMsgPayload outputTorques;   //!< [-] output torques for the VSCMGs
-    VSCMGArrayConfigMsgPayload vscmgConfigParams;  //!< [-] struct to store message containing VSCMG config parameters in body B frame
-
+  private:
+    double K_gammaDot;                        //!< [1/s] proportional gain applied to gimbal rate errors
+    VSCMGArrayTorqueMsgPayload outputTorques; //!< [-] output torques for the VSCMGs
+    VSCMGArrayConfigMsgPayload
+      vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
 };
-
 
 #endif

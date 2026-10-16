@@ -468,7 +468,7 @@ TEST(SpiceBufferOwnership, SpacecraftSetupUnwindsAfterAllocationFailure)
 {
     expectCleanupAfterAllocationFailure([] {
         SpiceInterface model;
-        model.addSpacecraftNames({"EARTH", "MARS"});
+        model.addSpacecraftNames({ "EARTH", "MARS" });
     });
 }
 

@@ -23,33 +23,33 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stochasticRKIntegratorBase.h"
 
-
 /**
  * Coefficients for the Tocino & Vigo-Aguiar weak second-order stochastic integrators
  * SIEA / SMEA / SIEB / SMEB (the "improved/modified Euler" family).
  *
  * The naming follows the SIEA/SMEA/SIEB/SMEB tableau.
  */
-struct SIESMECoefficients {
-    double alpha1 = 0;      //!< drift-stage weight on k0
-    double alpha2 = 0;      //!< drift-stage weight on k1
-    double gamma1 = 0;      //!< g0 noise weight
-    double lambda1 = 0;     //!< g1 noise weight on dW
-    double lambda2 = 0;     //!< g1 noise weight on sqrt(h)
-    double lambda3 = 0;     //!< g1 noise weight on W2
-    double mu1 = 0;         //!< g2 noise weight on dW
-    double mu2 = 0;         //!< g2 noise weight on sqrt(h)
-    double mu3 = 0;         //!< g2 noise weight on W2
-    double mu0 = 0;         //!< drift stage node time
-    double mubar0 = 0;      //!< diffusion stage node time
-    double lambda0 = 0;     //!< k1 stage drift scaling
-    double lambdabar0 = 0;  //!< g1/g2 stage drift scaling
-    double nu1 = 0;         //!< k1 stage noise scaling on dW
-    double nu2 = 0;         //!< k1 stage noise scaling on the dW^3 term (W3)
-    double beta2 = 0;       //!< g1 stage noise scaling on sqrt(h)
-    double beta3 = 0;       //!< g1 stage noise scaling on W2
-    double delta2 = 0;      //!< g2 stage noise scaling on sqrt(h)
-    double delta3 = 0;      //!< g2 stage noise scaling on W2
+struct SIESMECoefficients
+{
+    double alpha1 = 0;     //!< drift-stage weight on k0
+    double alpha2 = 0;     //!< drift-stage weight on k1
+    double gamma1 = 0;     //!< g0 noise weight
+    double lambda1 = 0;    //!< g1 noise weight on dW
+    double lambda2 = 0;    //!< g1 noise weight on sqrt(h)
+    double lambda3 = 0;    //!< g1 noise weight on W2
+    double mu1 = 0;        //!< g2 noise weight on dW
+    double mu2 = 0;        //!< g2 noise weight on sqrt(h)
+    double mu3 = 0;        //!< g2 noise weight on W2
+    double mu0 = 0;        //!< drift stage node time
+    double mubar0 = 0;     //!< diffusion stage node time
+    double lambda0 = 0;    //!< k1 stage drift scaling
+    double lambdabar0 = 0; //!< g1/g2 stage drift scaling
+    double nu1 = 0;        //!< k1 stage noise scaling on dW
+    double nu2 = 0;        //!< k1 stage noise scaling on the dW^3 term (W3)
+    double beta2 = 0;      //!< g1 stage noise scaling on sqrt(h)
+    double beta3 = 0;      //!< g1 stage noise scaling on W2
+    double delta2 = 0;     //!< g2 stage noise scaling on sqrt(h)
+    double delta3 = 0;     //!< g2 stage noise scaling on W2
 };
 
 /**
@@ -82,8 +82,9 @@ struct SIESMECoefficients {
  *
  * @warning Stochastic integration is in beta.
  */
-class svIntegratorWeakSIESME : public StochasticRKIntegratorBase {
-public:
+class svIntegratorWeakSIESME : public StochasticRKIntegratorBase
+{
+  public:
     /** Constructs the integrator for the given DynamicObject with the passed coefficient tableau. */
     svIntegratorWeakSIESME(DynamicObject* dynIn, const SIESMECoefficients& coefficients);
 

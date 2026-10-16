@@ -20,50 +20,58 @@
 #ifndef FACETED_SRP_EFFECTOR_H
 #define FACETED_SRP_EFFECTOR_H
 
-#include <Eigen/Dense>
-#include <vector>
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/EclipseMsgPayload.h"
 #include "architecture/msgPayloadDefC/FacetElementBodyMsgPayload.h"
 #include "architecture/msgPayloadDefC/ProjectedAreaMsgPayload.h"
 #include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
 #include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include <Eigen/Dense>
+#include <vector>
 
 /*! @brief Faceted solar radiation pressure dynamic effector */
-class FacetedSRPEffector final: public SysModel, public DynamicEffector {
-public:
-    FacetedSRPEffector() = default;  //!< Constructor
-    ~FacetedSRPEffector() = default;  //!< Destructor
-    void linkInStates(DynParamManager& states) override;  //!< Method for giving the effector access to the hub states
-    void computeForceTorque(double callTime, double timeStep) override;  //!< Method for computing the total SRP force and torque about point B
-    void Reset(uint64_t currentSimNanos) override;  //!< Reset method
-    void setNumFacets(const uint64_t numFacets);  //!< Setter method for total number of spacecraft facets
-    uint64_t getNumFacets() const;  //!< Getter method for total number of spacecraft facets
+class FacetedSRPEffector final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
+    FacetedSRPEffector() = default;                      //!< Constructor
+    ~FacetedSRPEffector() = default;                     //!< Destructor
+    void linkInStates(DynParamManager& states) override; //!< Method for giving the effector access to the hub states
+    void computeForceTorque(double callTime, double timeStep)
+      override; //!< Method for computing the total SRP force and torque about point B
+    void Reset(uint64_t currentSimNanos) override; //!< Reset method
+    void setNumFacets(const uint64_t numFacets);   //!< Setter method for total number of spacecraft facets
+    uint64_t getNumFacets() const;                 //!< Getter method for total number of spacecraft facets
 
-    std::vector<ReadFunctor<FacetElementBodyMsgPayload>> facetElementBodyInMsgs;  //!< List of facet geometry input data (Expressed in hub B frame)
-    std::vector<ReadFunctor<ProjectedAreaMsgPayload>> facetProjectedAreaInMsgs;  //!< List of facet projected area input messages
-    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg;  //!< Sun spice ephemeris input message
-    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;  //!< (optional) Sun eclipse input message
+    std::vector<ReadFunctor<FacetElementBodyMsgPayload>>
+      facetElementBodyInMsgs; //!< List of facet geometry input data (Expressed in hub B frame)
+    std::vector<ReadFunctor<ProjectedAreaMsgPayload>>
+      facetProjectedAreaInMsgs;                            //!< List of facet projected area input messages
+    ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< Sun spice ephemeris input message
+    ReadFunctor<EclipseMsgPayload> sunEclipseInMsg;        //!< (optional) Sun eclipse input message
 
-private:
-    void validateConfiguration();  //!< Validate required input-message connections
-    void initializeFacetData();  //!< Size and initialize cached per-facet data
+  private:
+    void validateConfiguration(); //!< Validate required input-message connections
+    void initializeFacetData();   //!< Size and initialize cached per-facet data
 
     /* Facet input message data */
-    std::vector<double> facetAreaList;  //!< [m^2] List of facet areas
-    std::vector<double> facetProjectedAreaList;  //!< [m^2] List of facet projected areas
-    std::vector<Eigen::Vector3d> facetR_CopB_BList;  //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
-    std::vector<Eigen::Vector3d> facetNHat_BList;  //!< [-] List of facet normal vectors expressed in hub B frame components
-    std::vector<double> facetDiffuseCoeffList;  //!< [-] List of facet diffuse reflection optical coefficient list
-    std::vector<double> facetSpecularCoeffList;  //!< [-] List of facet specular reflection optical coefficient list
+    std::vector<double> facetAreaList;          //!< [m^2] List of facet areas
+    std::vector<double> facetProjectedAreaList; //!< [m^2] List of facet projected areas
+    std::vector<Eigen::Vector3d>
+      facetR_CopB_BList; //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
+    std::vector<Eigen::Vector3d>
+      facetNHat_BList;                         //!< [-] List of facet normal vectors expressed in hub B frame components
+    std::vector<double> facetDiffuseCoeffList; //!< [-] List of facet diffuse reflection optical coefficient list
+    std::vector<double> facetSpecularCoeffList; //!< [-] List of facet specular reflection optical coefficient list
 
-    uint64_t numFacets{};  //!< Number of spacecraft facets
-    StateData *hubPosition = nullptr;  //!< [m] Hub inertial position vector
-    StateData *hubSigma = nullptr;  //!< Hub MRP inertial attitude
-    double sunVisibilityFactor = 1.0;  //!< Sun visibility factor (0 = full shadow, 1 = full sunlight)
+    uint64_t numFacets{};             //!< Number of spacecraft facets
+    StateData* hubPosition = nullptr; //!< [m] Hub inertial position vector
+    StateData* hubSigma = nullptr;    //!< Hub MRP inertial attitude
+    double sunVisibilityFactor = 1.0; //!< Sun visibility factor (0 = full shadow, 1 = full sunlight)
 };
 
 #endif

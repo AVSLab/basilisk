@@ -35,9 +35,9 @@
  * \f$x\f$ non-positive for a large step/increment, so the corrected density is clamped to
  * be non-negative (a negative density is unphysical).
  */
-class IgbmAtmDensity : public InhomogeneousGeometricBrownianMotion {
-public:
-
+class IgbmAtmDensity : public InhomogeneousGeometricBrownianMotion
+{
+  public:
     /**
      * @brief Input atmospheric properties message.
      *
@@ -53,7 +53,7 @@ public:
      */
     Message<AtmoPropsMsgPayload> atmoDensOutMsg;
 
-protected:
+  protected:
     /**
      * @brief Apply the IGBM correction factor and write output.
      *
@@ -65,6 +65,5 @@ protected:
      */
     void writeOutput(uint64_t CurrentSimNanos, double x) override;
 };
-
 
 #endif

@@ -21,9 +21,9 @@ Copyright (c) 2026, Autonomous Vehicle Systems Lab, University of Colorado at Bo
 #define PROJECTED_AREA_MSG_PAYLOAD_H
 
 /*! @brief Structure used to define projected area */
-typedef struct {
-    double area;    //!< [m^2] Projected area
-}ProjectedAreaMsgPayload;
-
+typedef struct
+{
+    double area; //!< [m^2] Projected area
+} ProjectedAreaMsgPayload;
 
 #endif

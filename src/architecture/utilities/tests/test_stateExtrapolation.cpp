@@ -143,8 +143,7 @@ TEST(StateExtrapolation, isNoOpWithZeroVelocityAtAnyAge)
     SCStatesMsgPayload in = makeState();
     in.v_BN_N[1] = 0.0;
     in.v_CN_N[1] = 0.0;
-    const SCStatesMsgPayload out =
-      extrapolateScStateToStepMidpoint(in, 20000000000ULL, 10000000000ULL, 10000000000ULL);
+    const SCStatesMsgPayload out = extrapolateScStateToStepMidpoint(in, 20000000000ULL, 10000000000ULL, 10000000000ULL);
 
     EXPECT_DOUBLE_EQ(out.r_BN_N[0], in.r_BN_N[0]);
     EXPECT_DOUBLE_EQ(out.r_BN_N[1], in.r_BN_N[1]);
@@ -185,7 +184,8 @@ applySingle(ScStateExtrapolation& extrapolation,
     return extrapolation.apply(in, now, written, previousUpdate);
 }
 
-/*! Feed the spacecraft write times seen by a module running at the given period and record which updates were extrapolated. */
+/*! Feed the spacecraft write times seen by a module running at the given period and record which updates were
+ * extrapolated. */
 void
 runModule(ScStateExtrapolation& extrapolation,
           BSKLogger& logger,
@@ -310,10 +310,12 @@ TEST(ScStateExtrapolation, isNotExtrapolatedBeforeTwoWriteTimesAreKnown)
     BSKLogger logger;
     const SCStatesMsgPayload in = makeState();
     // first observation of a message written at the previous update: the period is unknown
-    const SCStatesMsgPayload first = applySingle(extrapolation, in, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
+    const SCStatesMsgPayload first =
+      applySingle(extrapolation, in, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
     EXPECT_DOUBLE_EQ(first.r_BN_N[1], in.r_BN_N[1]);
     // second write time observed with an interval equal to the module interval
-    const SCStatesMsgPayload second = applySingle(extrapolation, in, 30 * SECOND_NANOS, 20 * SECOND_NANOS, 20 * SECOND_NANOS, logger);
+    const SCStatesMsgPayload second =
+      applySingle(extrapolation, in, 30 * SECOND_NANOS, 20 * SECOND_NANOS, 20 * SECOND_NANOS, logger);
     EXPECT_NE(second.r_BN_N[1], in.r_BN_N[1]);
 }
 
@@ -348,16 +350,16 @@ TEST(PlanetStateExtrapolation, translatingPlanetKeepsTheSeparationAtEveryUpdateI
 {
     // The spacecraft and the planet translate together at 30 km/s, 400 km apart radially. The module runs before the
     // spacecraft: at update k it reads the spacecraft written at the previous update and the planet written now.
-    const double speed = 3.0e4;       // [m/s]
-    const double separation0 = 4.0e5; // [m]
+    const double speed = 3.0e4;              // [m/s]
+    const double separation0 = 4.0e5;        // [m]
     const uint64_t step = 10 * SECOND_NANOS; // [ns]
     ScStateExtrapolation extrapolation;
     extrapolation.setEnabled(true);
     BSKLogger logger;
     for (uint64_t k = 0; k < 6; k++) {
-        const uint64_t now = k * step;                      // [ns]
+        const uint64_t now = k * step;                         // [ns]
         const uint64_t previous = k == 0 ? 0 : (k - 1) * step; // [ns]
-        const uint64_t scWritten = previous;                // [ns]
+        const uint64_t scWritten = previous;                   // [ns]
         SCStatesMsgPayload sc = makeState();
         sc.r_BN_N[0] = separation0 + speed * diffNanoToSec(scWritten, 0); // [m]
         sc.v_BN_N[0] = speed;                                             // [m/s]
@@ -395,9 +397,9 @@ TEST(PlanetStateExtrapolation, spinningPlanetOrientationStaysOrthonormal)
 {
     const double spinRate = OMEGA_EARTH; // [rad/s] Earth rotation rate
     SpicePlanetStateMsgPayload planet{};
-    planet.J20002Pfix[0][0] = 1.0;       // [-]
-    planet.J20002Pfix[1][1] = 1.0;       // [-]
-    planet.J20002Pfix[2][2] = 1.0;       // [-]
+    planet.J20002Pfix[0][0] = 1.0; // [-]
+    planet.J20002Pfix[1][1] = 1.0; // [-]
+    planet.J20002Pfix[2][2] = 1.0; // [-]
     // d[PN]/dt = -[omega_P x][PN] with omega along +z: only the 0-1 block is non-zero
     planet.J20002Pfix_dot[0][1] = spinRate;  // [1/s]
     planet.J20002Pfix_dot[1][0] = -spinRate; // [1/s]
@@ -462,7 +464,7 @@ TEST(PlanetStateExtrapolation, resetClearsTheExtrapolatedStateOfThePlanet)
     ScStateExtrapolation extrapolation;
     extrapolation.setEnabled(true);
     BSKLogger logger;
-    const uint64_t step = 10 * SECOND_NANOS; // [ns]
+    const uint64_t step = 10 * SECOND_NANOS;       // [ns]
     extrapolation.prepare(step, 0, { 0 }, logger); // first write time, the period is known at the next update
     applySingle(extrapolation, makeState(), 2 * step, step, step, logger);
     const SpicePlanetStateMsgPayload moved = extrapolation.applyPlanet(planet, 2 * step, 2 * step, step);
@@ -484,7 +486,8 @@ struct TwoSpacecraftResult
     bool mismatch;
 };
 
-TwoSpacecraftResult runTwoSpacecraft(uint64_t firstWritten, uint64_t secondWritten, const SpicePlanetStateMsgPayload& planet)
+TwoSpacecraftResult
+runTwoSpacecraft(uint64_t firstWritten, uint64_t secondWritten, const SpicePlanetStateMsgPayload& planet)
 {
     const uint64_t now = 20 * SECOND_NANOS;      // [ns]
     const uint64_t previous = 10 * SECOND_NANOS; // [ns]

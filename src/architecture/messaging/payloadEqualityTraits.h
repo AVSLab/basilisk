@@ -28,14 +28,17 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *  ``messaging.h`` and are not part of the native C++ messaging API.
  */
 template<typename T>
-struct PayloadEqualityTraits {
+struct PayloadEqualityTraits
+{
     /// @brief Indicates whether equality comparison is supported for this payload type.
     static constexpr bool supported = false;
 };
 
 /*! Returns true if a field-wise equality comparison is defined for payload type T. */
 template<typename T>
-constexpr bool supportsPayloadEquality() noexcept {
+constexpr bool
+supportsPayloadEquality() noexcept
+{
     return PayloadEqualityTraits<T>::supported;
 }
 
@@ -45,13 +48,13 @@ constexpr bool supportsPayloadEquality() noexcept {
  *  Guard calls with supportsPayloadEquality<T>() via if constexpr, or add a specialization.
  */
 template<typename T>
-bool payloadsAreEqual(const T& lhs, const T& rhs) {
-    static_assert(
-        PayloadEqualityTraits<T>::supported,
-        "payloadsAreEqual: no equality comparison is defined for this payload type. "
-        "Add a visible PayloadEqualityTraits<T> specialization when the payload "
-        "comparison semantics can be defined safely."
-    );
+bool
+payloadsAreEqual(const T& lhs, const T& rhs)
+{
+    static_assert(PayloadEqualityTraits<T>::supported,
+                  "payloadsAreEqual: no equality comparison is defined for this payload type. "
+                  "Add a visible PayloadEqualityTraits<T> specialization when the payload "
+                  "comparison semantics can be defined safely.");
     return PayloadEqualityTraits<T>::equal(lhs, rhs);
 }
 

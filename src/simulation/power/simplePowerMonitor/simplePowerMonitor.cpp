@@ -19,15 +19,16 @@
 
 #include "simplePowerMonitor.h"
 
-
 /*! The constructor creates a SimplePowerMonitor instance with zero stored charge and a capacity of -1.*/
-SimplePowerMonitor::SimplePowerMonitor(){
+SimplePowerMonitor::SimplePowerMonitor()
+{
 
     this->storedCharge = 0;
     return;
 }
 
-SimplePowerMonitor::~SimplePowerMonitor(){
+SimplePowerMonitor::~SimplePowerMonitor()
+{
 
     return;
 }
@@ -35,7 +36,9 @@ SimplePowerMonitor::~SimplePowerMonitor(){
 /*! This method integrates the net power across all the attached devices and stores it.
 
  */
-void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusMsgPayload *msg) {
+void
+SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
+{
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
     msg->storageCapacity = -1.0;

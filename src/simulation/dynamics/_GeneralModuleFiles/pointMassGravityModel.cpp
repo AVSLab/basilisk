@@ -20,7 +20,8 @@
 #include "pointMassGravityModel.h"
 #include "gravityEffector.h"
 
-std::optional<std::string> PointMassGravityModel::initializeParameters(const GravBodyData& body)
+std::optional<std::string>
+PointMassGravityModel::initializeParameters(const GravBodyData& body)
 {
     this->muBody = body.mu;
     return this->initializeParameters();

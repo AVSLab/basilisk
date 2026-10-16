@@ -23,8 +23,9 @@
 #include <cstdio>
 
 /*! Constructor, which sets the default nodeDataOut to zero.
-*/
-SimpleTransmitter::SimpleTransmitter(){
+ */
+SimpleTransmitter::SimpleTransmitter()
+{
     this->packetSize = 0.0;
     this->nodeBaudRate = 0.0;
     this->packetTransmitted = 0.0;
@@ -33,7 +34,8 @@ SimpleTransmitter::SimpleTransmitter(){
     return;
 }
 
-SimpleTransmitter::~SimpleTransmitter(){
+SimpleTransmitter::~SimpleTransmitter()
+{
 
     return;
 }
@@ -42,13 +44,16 @@ SimpleTransmitter::~SimpleTransmitter(){
 
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
-void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload> *tmpStorageUnitMsg){
+void
+SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
+{
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
     return;
 }
 
-
-bool SimpleTransmitter::customReadMessages(){
+bool
+SimpleTransmitter::customReadMessages()
+{
 
     DataStorageStatusMsgPayload nodeMsg;
 
@@ -58,18 +63,15 @@ bool SimpleTransmitter::customReadMessages(){
     bool dataRead = true;
     bool tmpDataRead;
 
-    if(this->storageUnitInMsgs.size() > 0)
-    {
-        for(long unsigned int c=0; c<storageUnitInMsgs.size(); c++)
-        {
+    if (this->storageUnitInMsgs.size() > 0) {
+        for (long unsigned int c = 0; c < storageUnitInMsgs.size(); c++) {
             tmpDataRead = this->storageUnitInMsgs.at(c).isWritten();
             nodeMsg = this->storageUnitInMsgs.at(c)();
             dataRead = dataRead && tmpDataRead;
 
             this->storageUnitMsgs.push_back(nodeMsg);
         }
-    }
-    else {
+    } else {
         bskLogger.bskLog(BSK_INFORMATION, "Data storage has no data node messages to read.");
         dataRead = false;
     }
@@ -78,8 +80,10 @@ bool SimpleTransmitter::customReadMessages(){
 }
 
 /*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
-*/
-void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimMsg, double currentTime){
+ */
+void
+SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
+{
 
     this->currentTimestep = currentTime - this->previousTime;
 
@@ -96,19 +100,14 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
             const std::string& storedDataName = this->storageUnitMsgs.back().storedDataName[currentPosition];
             if (storedDataName.size() >= sizeof(this->nodeDataName)) {
                 bskLogger.bskError("SimpleTransmitter: storedDataName is %zu characters, but nodeDataName "
-                                 "supports at most %zu characters.",
-                                 storedDataName.size(), sizeof(this->nodeDataName) - 1);
+                                   "supports at most %zu characters.",
+                                   storedDataName.size(),
+                                   sizeof(this->nodeDataName) - 1);
             }
-            std::snprintf(this->nodeDataName,
-                          sizeof(this->nodeDataName),
-                          "%s",
-                          storedDataName.c_str());
+            std::snprintf(this->nodeDataName, sizeof(this->nodeDataName), "%s", storedDataName.c_str());
 
             // strncpy nodeDataName to the name of the output message
-            std::snprintf(dataUsageSimMsg->dataName,
-                          sizeof(dataUsageSimMsg->dataName),
-                          "%s",
-                          this->nodeDataName);
+            std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
 
             // Check to see if maxVal is less than packet size.
@@ -119,10 +118,7 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
                 this->packetTransmitted = 0;
             }
         } else {
-            std::snprintf(dataUsageSimMsg->dataName,
-                          sizeof(dataUsageSimMsg->dataName),
-                          "%s",
-                          this->nodeDataName);
+            std::snprintf(dataUsageSimMsg->dataName, sizeof(dataUsageSimMsg->dataName), "%s", this->nodeDataName);
             this->packetTransmitted += this->nodeBaudRate * (this->currentTimestep);
             // If the transmitted packet size has exceeded the packet size, set packetTransmitted to zero
             // Both of these variables are negative so the comparison is non-intuitive
@@ -136,17 +132,18 @@ void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload *dataUsageSimM
     }
     this->previousTime = currentTime;
     return;
-
 }
 
-int SimpleTransmitter::getMaxIndex() {
+int
+SimpleTransmitter::getMaxIndex()
+{
     //! - Loop through storedData, select index w/ largest amt
     double maxVal = -1.0;
     int maxIndex = -1;
     for (long unsigned int i = 0; i < this->storageUnitMsgs.back().storedData.size(); i++) {
         if (this->storageUnitMsgs.back().storedData[i] > maxVal) {
             maxVal = this->storageUnitMsgs.back().storedData[i];
-            maxIndex = (int) i;
+            maxIndex = (int)i;
         }
     }
 

@@ -48,7 +48,8 @@ StateEffector::~StateEffector()
 
 /*! This method is for the state effector to provide its contributions of mass and mass rates to the dynamicObject. This
  allows for the dynamicObject to have access to the total mass, and inerita, mass and inertia rates*/
-void StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void
+StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     return;
 }
@@ -56,7 +57,12 @@ void StateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
  method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
-void StateEffector::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr [[maybe_unused]], Eigen::MRPd sigma_BN [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]], Eigen::Vector3d g_N [[maybe_unused]])
+void
+StateEffector::updateContributions(double integTime [[maybe_unused]],
+                                   BackSubMatrices& backSubContr [[maybe_unused]],
+                                   Eigen::MRPd sigma_BN [[maybe_unused]],
+                                   Eigen::Vector3d omega_BN_B [[maybe_unused]],
+                                   Eigen::Vector3d g_N [[maybe_unused]])
 {
     return;
 }
@@ -66,7 +72,8 @@ void StateEffector::updateContributions(double integTime [[maybe_unused]], BackS
  to how the spacecraft module calls updateContributions for all its attached effectors, the prescribed motion module
  calls this method for all its attached state effectors.
  */
-void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr [[maybe_unused]])
+void
+StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr [[maybe_unused]])
 {
     return;
 }
@@ -74,49 +81,61 @@ void StateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& ba
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
  The analytical devlopement of these contributions can be seen in
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
-void StateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B [[maybe_unused]],
-                                                 double & rotEnergyContr [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]])
+void
+StateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                            Eigen::Vector3d& rotAngMomPntCContr_B [[maybe_unused]],
+                                            double& rotEnergyContr [[maybe_unused]],
+                                            Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     return;
 }
 
 /*! This method allows for an individual stateEffector to modify their states after integration*/
-void StateEffector::modifyStates(double integTime [[maybe_unused]])
+void
+StateEffector::modifyStates(double integTime [[maybe_unused]])
 {
     return;
 }
 
-/*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
-void StateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]])
+/*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on
+ * to the body */
+void
+StateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     return;
 }
 
 /*! This method ensures that all dynamics states have their messages written after integation */
-void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos [[maybe_unused]])
+void
+StateEffector::writeOutputStateMessages(uint64_t integTimeNanos [[maybe_unused]])
 {
     return;
 }
 
 /*! This method allows the effector to register its properties */
-void StateEffector::registerProperties(DynParamManager& states [[maybe_unused]])
+void
+StateEffector::registerProperties(DynParamManager& states [[maybe_unused]])
 {
     return;
 }
 
-/*! This method can only be called for a state effector with override definition set up to support attached dynamic effectors */
-void StateEffector::addDynamicEffector(DynamicEffector * newDynamicEffector [[maybe_unused]], int segment [[maybe_unused]])
+/*! This method can only be called for a state effector with override definition set up to support attached dynamic
+ * effectors */
+void
+StateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector [[maybe_unused]], int segment [[maybe_unused]])
 {
     bskLogger.bskError("StateEffector: This effector is not compatible with attached effectors");
 }
 
 /*! This method allows the state effector to link in prescribed motion properties */
-void StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties [[maybe_unused]])
+void
+StateEffector::linkInPrescribedMotionProperties(DynParamManager& properties [[maybe_unused]])
 {
     bskLogger.bskError("StateEffector: This effector is not compatible for attachment to prescribed motion.");
 }
 
-void StateEffector::setStateNameOfPosition(std::string value)
+void
+StateEffector::setStateNameOfPosition(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -126,7 +145,8 @@ void StateEffector::setStateNameOfPosition(std::string value)
     }
 }
 
-void StateEffector::setStateNameOfVelocity(std::string value)
+void
+StateEffector::setStateNameOfVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -136,7 +156,8 @@ void StateEffector::setStateNameOfVelocity(std::string value)
     }
 }
 
-void StateEffector::setStateNameOfSigma(std::string value)
+void
+StateEffector::setStateNameOfSigma(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -146,7 +167,8 @@ void StateEffector::setStateNameOfSigma(std::string value)
     }
 }
 
-void StateEffector::setStateNameOfOmega(std::string value)
+void
+StateEffector::setStateNameOfOmega(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -156,7 +178,8 @@ void StateEffector::setStateNameOfOmega(std::string value)
     }
 }
 
-void StateEffector::setPropName_m_SC(std::string value)
+void
+StateEffector::setPropName_m_SC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -166,7 +189,8 @@ void StateEffector::setPropName_m_SC(std::string value)
     }
 }
 
-void StateEffector::setPropName_mDot_SC(std::string value)
+void
+StateEffector::setPropName_mDot_SC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -176,7 +200,8 @@ void StateEffector::setPropName_mDot_SC(std::string value)
     }
 }
 
-void StateEffector::setPropName_centerOfMassSC(std::string value)
+void
+StateEffector::setPropName_centerOfMassSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -186,7 +211,8 @@ void StateEffector::setPropName_centerOfMassSC(std::string value)
     }
 }
 
-void StateEffector::setPropName_inertiaSC(std::string value)
+void
+StateEffector::setPropName_inertiaSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -196,7 +222,8 @@ void StateEffector::setPropName_inertiaSC(std::string value)
     }
 }
 
-void StateEffector::setPropName_inertiaPrimeSC(std::string value)
+void
+StateEffector::setPropName_inertiaPrimeSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -206,7 +233,8 @@ void StateEffector::setPropName_inertiaPrimeSC(std::string value)
     }
 }
 
-void StateEffector::setPropName_centerOfMassPrimeSC(std::string value)
+void
+StateEffector::setPropName_centerOfMassPrimeSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -216,7 +244,8 @@ void StateEffector::setPropName_centerOfMassPrimeSC(std::string value)
     }
 }
 
-void StateEffector::setPropName_centerOfMassDotSC(std::string value)
+void
+StateEffector::setPropName_centerOfMassDotSC(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -226,7 +255,8 @@ void StateEffector::setPropName_centerOfMassDotSC(std::string value)
     }
 }
 
-void StateEffector::setPropName_inertialPosition(std::string value)
+void
+StateEffector::setPropName_inertialPosition(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -236,7 +266,8 @@ void StateEffector::setPropName_inertialPosition(std::string value)
     }
 }
 
-void StateEffector::setPropName_inertialVelocity(std::string value)
+void
+StateEffector::setPropName_inertialVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -246,7 +277,8 @@ void StateEffector::setPropName_inertialVelocity(std::string value)
     }
 }
 
-void StateEffector::setPropName_vehicleGravity(std::string value)
+void
+StateEffector::setPropName_vehicleGravity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -256,7 +288,8 @@ void StateEffector::setPropName_vehicleGravity(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedPosition(std::string value)
+void
+StateEffector::setPropName_prescribedPosition(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -266,7 +299,8 @@ void StateEffector::setPropName_prescribedPosition(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedVelocity(std::string value)
+void
+StateEffector::setPropName_prescribedVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -276,7 +310,8 @@ void StateEffector::setPropName_prescribedVelocity(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedAcceleration(std::string value)
+void
+StateEffector::setPropName_prescribedAcceleration(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -286,7 +321,8 @@ void StateEffector::setPropName_prescribedAcceleration(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedAttitude(std::string value)
+void
+StateEffector::setPropName_prescribedAttitude(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -296,7 +332,8 @@ void StateEffector::setPropName_prescribedAttitude(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedAngVelocity(std::string value)
+void
+StateEffector::setPropName_prescribedAngVelocity(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {
@@ -306,7 +343,8 @@ void StateEffector::setPropName_prescribedAngVelocity(std::string value)
     }
 }
 
-void StateEffector::setPropName_prescribedAngAcceleration(std::string value)
+void
+StateEffector::setPropName_prescribedAngAcceleration(std::string value)
 {
     // check that value is acceptable
     if (!value.empty()) {

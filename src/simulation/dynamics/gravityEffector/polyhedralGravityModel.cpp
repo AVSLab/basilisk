@@ -22,28 +22,28 @@
 
 namespace {
 // Computes the facet solid angle.
-inline double computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eigen::Vector3d rk)
+inline double
+computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eigen::Vector3d rk)
 {
     // Computes solid angle
     double wy, wx, wf;
-    wy = ri.transpose()*rj.cross(rk);
-    wx = ri.norm()*rj.norm()*rk.norm()
-         + ri.norm()*rj.transpose()*rk
-         + rj.norm()*rk.transpose()*ri
-         + rk.norm()*ri.transpose()*rj;
-    wf = 2*atan2(wy, wx);
+    wy = ri.transpose() * rj.cross(rk);
+    wx = ri.norm() * rj.norm() * rk.norm() + ri.norm() * rj.transpose() * rk + rj.norm() * rk.transpose() * ri +
+         rk.norm() * ri.transpose() * rj;
+    wf = 2 * atan2(wy, wx);
 
     return wf;
 }
 }
 
-std::optional<std::string> PolyhedralGravityModel::initializeParameters()
+std::optional<std::string>
+PolyhedralGravityModel::initializeParameters()
 {
     // If data hasn't been loaded, quit and return failure
-    if (this->xyzVertex.size() == 0 || this->orderFacet.size() == 0)
-    {
+    if (this->xyzVertex.size() == 0 || this->orderFacet.size() == 0) {
         return "Could not initialize polyhedral data: the vertex (xyzVertex) or facet (orderFacet) "
-        "were not provided.";;
+               "were not provided.";
+        ;
     }
 
     // Initializes facet parameters
@@ -55,7 +55,8 @@ std::optional<std::string> PolyhedralGravityModel::initializeParameters()
     return {};
 }
 
-std::optional<std::string> PolyhedralGravityModel::initializeParameters(const GravBodyData& body)
+std::optional<std::string>
+PolyhedralGravityModel::initializeParameters(const GravBodyData& body)
 {
     this->muBody = body.mu;
     return this->initializeParameters();
@@ -91,28 +92,25 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
     dUf.setZero(3);
 
     // Loop through edges
-    for (Eigen::Index n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++) {
         const size_t collectionIndex = static_cast<size_t>(n);
         // Get edge dyad matrix
         Ee = this->EeDyad[collectionIndex];
 
         // Compute vector from spacecraft to an edge point
-        re = this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - pos_BP_P;
+        re = this->xyzVertex.row(this->edgeVertex(n, 0)).transpose() - pos_BP_P;
 
         // Compute edge wire potential
-        a = (this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - pos_BP_P).norm();
-        b = (this->xyzVertex.row(this->edgeVertex(n,1)).transpose()
-             - pos_BP_P).norm();
+        a = (this->xyzVertex.row(this->edgeVertex(n, 0)).transpose() - pos_BP_P).norm();
+        b = (this->xyzVertex.row(this->edgeVertex(n, 1)).transpose() - pos_BP_P).norm();
         e = this->edgeLength(n);
-        Le = log((a+b+e) / (a+b-e));
+        Le = log((a + b + e) / (a + b - e));
 
         // Add current edge contribution
-        dUe += Ee*re*Le;
+        dUe += Ee * re * Le;
 
         // Loop through facets
-        if (n < nFacet){
+        if (n < nFacet) {
             // Get facet dyad matrix
             Ff = this->FfDyad[collectionIndex];
 
@@ -134,13 +132,13 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
             rf = ri;
 
             // Add facet contribution
-            dUf += Ff*rf*wf;
+            dUf += Ff * rf * wf;
         }
     }
 
     // Compute gravity acceleration
     Eigen::Vector3d acc;
-    acc = (this->muBody/this->volPoly)*(-dUe + dUf);
+    acc = (this->muBody / this->volPoly) * (-dUe + dUf);
 
     return acc;
 }
@@ -175,28 +173,25 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
     Uf = 0;
 
     // Loop through edges
-    for (Eigen::Index n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++) {
         const size_t collectionIndex = static_cast<size_t>(n);
         // Get edge dyad matrix
         Ee = this->EeDyad[collectionIndex];
 
         // Compute vector from spacecraft to an edge point
-        re = this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - pos_BP_P;
+        re = this->xyzVertex.row(this->edgeVertex(n, 0)).transpose() - pos_BP_P;
 
         // Compute edge wire potential
-        a = (this->xyzVertex.row(this->edgeVertex(n,0)).transpose()
-             - pos_BP_P).norm();
-        b = (this->xyzVertex.row(this->edgeVertex(n,1)).transpose()
-             - pos_BP_P).norm();
+        a = (this->xyzVertex.row(this->edgeVertex(n, 0)).transpose() - pos_BP_P).norm();
+        b = (this->xyzVertex.row(this->edgeVertex(n, 1)).transpose() - pos_BP_P).norm();
         e = this->edgeLength(n);
-        Le = log((a+b+e) / (a+b-e));
+        Le = log((a + b + e) / (a + b - e));
 
         // Add current edge contribution
-        Ue += re.dot(Ee*re)*Le;
+        Ue += re.dot(Ee * re) * Le;
 
         // Loop through facets
-        if (n < nFacet){
+        if (n < nFacet) {
             // Get facet dyad matrix
             Ff = this->FfDyad[collectionIndex];
 
@@ -218,19 +213,19 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
             rf = ri;
 
             // Add facet contribution
-            Uf += rf.dot(Ff*rf)*wf;
+            Uf += rf.dot(Ff * rf) * wf;
         }
     }
 
     /* Compute gravity potential */
     double U;
-    U = (this->muBody/this->volPoly) * (Ue - Uf)/2;
+    U = (this->muBody / this->volPoly) * (Ue - Uf) / 2;
 
     return U;
 }
 
-
-void PolyhedralGravityModel::initializeFacets()
+void
+PolyhedralGravityModel::initializeFacets()
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -264,8 +259,7 @@ void PolyhedralGravityModel::initializeFacets()
     Eigen::Index idxEdge = 0;
 
     // Loop through each facet
-    for (Eigen::Index m = 0; m < nFacet; m++)
-    {
+    for (Eigen::Index m = 0; m < nFacet; m++) {
         // Obtain vertex indexes of the facet
         v = this->orderFacet.row(m);
         i = v[0] - 1;
@@ -285,31 +279,29 @@ void PolyhedralGravityModel::initializeFacets()
         this->xyzFacet.row(m) = (xyz3 + xyz2 + xyz1) / 3;
 
         // Add facet contribution to volume
-        this->volPoly += abs(xyz1.cross(xyz2).transpose()*xyz3)/6;
+        this->volPoly += abs(xyz1.cross(xyz2).transpose() * xyz3) / 6;
 
         // Store facet dyad product
-        this->FfDyad.push_back(nf*nf.transpose());
+        this->FfDyad.push_back(nf * nf.transpose());
 
         // Get edge vertexes for this facet
-        edgeCurrentFacet << i, j,
-            j, k,
-            k, i;
+        edgeCurrentFacet << i, j, j, k, k, i;
 
         // Loop through each facet edge
-        for (Eigen::Index n = 0; n < 3; n++){
+        for (Eigen::Index n = 0; n < 3; n++) {
             // Add edge if non-repeated */
-            isEdgeRepeat = this->addEdge(edgeCurrentFacet.row(n),
-                                         idxEdge, static_cast<int>(m));
+            isEdgeRepeat = this->addEdge(edgeCurrentFacet.row(n), idxEdge, static_cast<int>(m));
 
             // If not repeated, advance edge index
-            if (isEdgeRepeat == false){
+            if (isEdgeRepeat == false) {
                 idxEdge += 1;
             }
         }
     }
 }
 
-void PolyhedralGravityModel::initializeEdges()
+void
+PolyhedralGravityModel::initializeEdges()
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -323,14 +315,14 @@ void PolyhedralGravityModel::initializeEdges()
     this->edgeLength.setZero(nEdge);
 
     // Loop through edges
-    for (Eigen::Index n = 0; n < nEdge; n++){
+    for (Eigen::Index n = 0; n < nEdge; n++) {
         // Obtain normal of facets sharing the edge
         nFA = this->normalFacet.row(this->edgeFacet(n, 0)).transpose();
         nFB = this->normalFacet.row(this->edgeFacet(n, 1)).transpose();
 
         // Compute the edge line and length
-        edgeLine = (this->xyzVertex.row(this->edgeVertex(n, 1))
-                    - this->xyzVertex.row(this->edgeVertex(n, 0))).transpose();
+        edgeLine =
+          (this->xyzVertex.row(this->edgeVertex(n, 1)) - this->xyzVertex.row(this->edgeVertex(n, 0))).transpose();
         this->edgeLength(n) = edgeLine.norm();
         edgeLine /= this->edgeLength(n);
 
@@ -339,20 +331,21 @@ void PolyhedralGravityModel::initializeEdges()
         n21 = -edgeLine.cross(nFB);
 
         // Store edge dyad product
-        this->EeDyad.push_back(nFA*n12.transpose() + nFB*n21.transpose());
+        this->EeDyad.push_back(nFA * n12.transpose() + nFB * n21.transpose());
     }
 }
 
-bool PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, Eigen::Index idxEdge, int idxFacet)
+bool
+PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, Eigen::Index idxEdge, int idxFacet)
 {
     // Flag telling if an edge is already stored
     bool isEdgeRepeat = false;
 
     // Loop through previously stored edges
-    for (Eigen::Index i = 0; i < idxEdge; i++){
+    for (Eigen::Index i = 0; i < idxEdge; i++) {
         // Check if the edge is already stored
-        if ((this->edgeVertex(i, 0) == edge(0) && this->edgeVertex(i, 1) == edge(1))
-            || (this->edgeVertex(i, 1) == edge(0) && this->edgeVertex(i, 0) == edge(1))){
+        if ((this->edgeVertex(i, 0) == edge(0) && this->edgeVertex(i, 1) == edge(1)) ||
+            (this->edgeVertex(i, 1) == edge(0) && this->edgeVertex(i, 0) == edge(1))) {
             // If edge is repeated set flag to true and just store the other facet
             isEdgeRepeat = true;
             this->edgeFacet(i, 1) = idxFacet;

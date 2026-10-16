@@ -24,7 +24,9 @@
 /*! Module reset method.
  @param callTime [ns] Time the method is called
 */
-void StepperMotor::Reset(uint64_t callTime [[maybe_unused]]) {
+void
+StepperMotor::Reset(uint64_t callTime [[maybe_unused]])
+{
     assert(this->motorStepCommandInMsg.isLinked());
 
     // Reset required module parameters
@@ -40,14 +42,16 @@ void StepperMotor::Reset(uint64_t callTime [[maybe_unused]]) {
     this->interruptMsg = false;
 
     // Set motor maximum angular acceleration
-    this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime);  // [rad/s^2]
+    this->thetaDDotMax = this->stepAngle / (0.25 * this->stepTime * this->stepTime); // [rad/s^2]
 }
 
 /*! Module update method. This method profiles the stepper motor actuation as a function of time. The motor states
  are then written to the output message.
  @param callTime [ns] Time the method is called
 */
-void StepperMotor::UpdateState(uint64_t callTime) {
+void
+StepperMotor::UpdateState(uint64_t callTime)
+{
     MotorStepCommandMsgPayload motorStepCommandIn{};
 
     // Read the input message
@@ -101,7 +105,9 @@ void StepperMotor::UpdateState(uint64_t callTime) {
 /*! This method is used to simulate the stepper motor actuation in time.
  @param t [s] Time the method is called
 */
-void StepperMotor::actuateMotor(double t) {
+void
+StepperMotor::actuateMotor(double t)
+{
     // Update the motor step parameters when a step is completed
     if (this->stepComplete) {
         this->updateStepParameters();
@@ -118,8 +124,10 @@ void StepperMotor::actuateMotor(double t) {
 }
 
 /*! This method resets the motor states when the current request is complete and a new request is received.
-*/
-void StepperMotor::resetMotor() {
+ */
+void
+StepperMotor::resetMotor()
+{
     this->stepCount = 0;
     this->thetaInit = this->theta;
     this->newMsg = false;
@@ -127,8 +135,10 @@ void StepperMotor::resetMotor() {
 }
 
 /*! This method updates the step parameters after a step is completed.
-*/
-void StepperMotor::updateStepParameters() {
+ */
+void
+StepperMotor::updateStepParameters()
+{
     this->stepComplete = false;
     this->tf = this->tInit + this->stepTime;
     this->ts = this->tInit + this->stepTime / 2;
@@ -149,12 +159,18 @@ void StepperMotor::updateStepParameters() {
  @return bool
  @param t [s] Time the method is called
 */
-bool StepperMotor::isInStepFirstHalf(double t) { return (t < this->ts && std::abs(this->ts - t) > 1e-5); }
+bool
+StepperMotor::isInStepFirstHalf(double t)
+{
+    return (t < this->ts && std::abs(this->ts - t) > 1e-5);
+}
 
 /*! This method computes the motor states during the first half of each step.
  @param t [s] Time the method is called
 */
-void StepperMotor::computeStepFirstHalf(double t) {
+void
+StepperMotor::computeStepFirstHalf(double t)
+{
     if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = this->thetaDDotMax;
     } else {
@@ -168,14 +184,18 @@ void StepperMotor::computeStepFirstHalf(double t) {
  @return bool
  @param t [s] Time the method is called
 */
-bool StepperMotor::isInStepSecondHalf(double t) {
+bool
+StepperMotor::isInStepSecondHalf(double t)
+{
     return ((t >= this->ts || std::abs(this->ts - t) < 1e-5) && std::abs(this->tf - t) > 1e-5);
 }
 
 /*! This method computes the motor states during the second half of each step.
  @param t [s] Time the method is called
 */
-void StepperMotor::computeStepSecondHalf(double t) {
+void
+StepperMotor::computeStepSecondHalf(double t)
+{
     if (this->intermediateThetaRef > this->intermediateThetaInit) {
         this->thetaDDot = -this->thetaDDotMax;
     } else {
@@ -188,7 +208,9 @@ void StepperMotor::computeStepSecondHalf(double t) {
 /*! This method computes the motor states when a step is complete.
  @param t [s] Time the method is called
 */
-void StepperMotor::computeStepComplete(double t) {
+void
+StepperMotor::computeStepComplete(double t)
+{
     this->stepComplete = true;
     this->thetaDot = 0.0;
     this->theta = this->intermediateThetaRef;
@@ -210,32 +232,54 @@ void StepperMotor::computeStepComplete(double t) {
 /*! Getter method for the initial motor angle called `thetaInit`.
  @return double
 */
-double StepperMotor::getThetaInit() const { return this->thetaInit; }
+double
+StepperMotor::getThetaInit() const
+{
+    return this->thetaInit;
+}
 
 /*! Getter method for the motor step angle called `stepAngle`.
  @return double
 */
-double StepperMotor::getStepAngle() const { return this->stepAngle; }
+double
+StepperMotor::getStepAngle() const
+{
+    return this->stepAngle;
+}
 
 /*! Getter method for the motor step time called `stepTime`.
  @return double
 */
-double StepperMotor::getStepTime() const { return this->stepTime; }
+double
+StepperMotor::getStepTime() const
+{
+    return this->stepTime;
+}
 
 /*! Getter method for the maximum motor angular acceleration called `thetaDDotMax`.
  @return double
 */
-double StepperMotor::getThetaDDotMax() const { return this->thetaDDotMax; }
+double
+StepperMotor::getThetaDDotMax() const
+{
+    return this->thetaDDotMax;
+}
 
 /*! Setter method for the initial motor angle.
  @param thetaInit [rad] Initial motor angle
 */
-void StepperMotor::setThetaInit(const double thetaInit) { this->thetaInit = thetaInit; }
+void
+StepperMotor::setThetaInit(const double thetaInit)
+{
+    this->thetaInit = thetaInit;
+}
 
 /*! Setter method for the motor step angle.
  @param stepAngle [rad] Motor step angle
 */
-void StepperMotor::setStepAngle(const double stepAngle) {
+void
+StepperMotor::setStepAngle(const double stepAngle)
+{
     assert(stepAngle > 0.0);
     this->stepAngle = std::abs(stepAngle);
 }
@@ -243,7 +287,9 @@ void StepperMotor::setStepAngle(const double stepAngle) {
 /*! Setter method for the motor step time.
  @param stepTime [s] Motor step time
 */
-void StepperMotor::setStepTime(const double stepTime) {
+void
+StepperMotor::setStepTime(const double stepTime)
+{
     assert(stepTime > 0.0);
     this->stepTime = std::abs(stepTime);
 }

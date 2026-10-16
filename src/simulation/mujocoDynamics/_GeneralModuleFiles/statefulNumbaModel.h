@@ -17,8 +17,8 @@
  */
 
 #pragma once
-#include "architecture/_GeneralModuleFiles/numbaModel.h"
 #include "StatefulSysModel.h"
+#include "architecture/_GeneralModuleFiles/numbaModel.h"
 
 /** @brief SysModel that combines ``NumbaModel`` with ``StatefulSysModel``.
  *
@@ -35,9 +35,11 @@
  *
  * All NumbaModel features (messages, memory, rng, bskLogger) are also available.
  */
-class StatefulNumbaModel : public NumbaModel, public StatefulSysModel
+class StatefulNumbaModel
+  : public NumbaModel
+  , public StatefulSysModel
 {
-public:
+  public:
     /** Default constructor */
     StatefulNumbaModel() = default;
 

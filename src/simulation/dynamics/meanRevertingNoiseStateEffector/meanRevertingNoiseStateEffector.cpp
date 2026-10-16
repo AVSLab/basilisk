@@ -30,20 +30,22 @@ MeanRevertingNoiseStateEffector::MeanRevertingNoiseStateEffector()
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
-    this->nameOfState = "meanRevertingNoiseState"
-                        + std::to_string(MeanRevertingNoiseStateEffector::effectorID);
+    this->nameOfState = "meanRevertingNoiseState" + std::to_string(MeanRevertingNoiseStateEffector::effectorID);
     MeanRevertingNoiseStateEffector::effectorID++;
 }
 
-void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
+void
+MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
-        this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
+        this->bskLogger.bskError(
+          "MeanRevertingNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
     }
     this->sigmaStationary = sigmaStationary;
 }
 
-void MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
+void
+MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (!std::isfinite(timeConstant) || timeConstant <= 0.0) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setTimeConstant requires finite timeConstant > 0.");
@@ -51,7 +53,8 @@ void MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
     this->timeConstant = timeConstant;
 }
 
-double MeanRevertingNoiseStateEffector::getStateValue() const
+double
+MeanRevertingNoiseStateEffector::getStateValue() const
 {
     if (this->state == nullptr) {
         return this->stateInit;
@@ -59,7 +62,8 @@ double MeanRevertingNoiseStateEffector::getStateValue() const
     return this->state->stateView()(0, 0);
 }
 
-void MeanRevertingNoiseStateEffector::setStateValue(double val)
+void
+MeanRevertingNoiseStateEffector::setStateValue(double val)
 {
     if (!std::isfinite(val)) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setStateValue requires a finite state value.");
@@ -72,7 +76,8 @@ void MeanRevertingNoiseStateEffector::setStateValue(double val)
     }
 }
 
-void MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
+void
+MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -86,14 +91,16 @@ void MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
     this->state->setState(state);
 }
 
-void MeanRevertingNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
+void
+MeanRevertingNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
 {
 }
 
-void MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                         Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                                         Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                                         Eigen::MRPd sigma_BN [[maybe_unused]])
+void
+MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                    Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                                    Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                                    Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");
@@ -108,7 +115,8 @@ void MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[mayb
     // Taking square roots before division avoids overflow in 2/tau for small finite tau.
     diffusion(0, 0) = this->sigmaStationary * (std::sqrt(2.0) / std::sqrt(this->timeConstant));
     if (!derivative.allFinite() || !diffusion.allFinite()) {
-        this->bskLogger.bskError("MeanRevertingNoiseStateEffector: state and parameters produce non-finite drift or diffusion.");
+        this->bskLogger.bskError(
+          "MeanRevertingNoiseStateEffector: state and parameters produce non-finite drift or diffusion.");
     }
     this->state->setDerivative(derivative);
     this->state->setDiffusion(diffusion, 0);

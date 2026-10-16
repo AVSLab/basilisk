@@ -19,15 +19,15 @@
 #ifndef INHOMOGENEOUS_GEOMETRIC_BROWNIAN_MOTION_H
 #define INHOMOGENEOUS_GEOMETRIC_BROWNIAN_MOTION_H
 
-#include <cstdint>
-#include <cmath>
-#include <stdexcept>
 #include <Eigen/Dense>
+#include <cmath>
+#include <cstdint>
+#include <stdexcept>
 
-#include "architecture/utilities/bskLogging.h"
 #include "architecture/messaging/messaging.h"
-#include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
+#include "architecture/utilities/bskLogging.h"
 #include "simulation/mujocoDynamics/_GeneralModuleFiles/MJUtils.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
 
 /**
  * @class InhomogeneousGeometricBrownianMotion
@@ -72,8 +72,9 @@
  *   2) computes drift and diffusion each step
  *   3) calls the user hook writeOutput(CurrentSimNanos, x)
  */
-class InhomogeneousGeometricBrownianMotion : public StatefulSysModel {
-public:
+class InhomogeneousGeometricBrownianMotion : public StatefulSysModel
+{
+  public:
     /**
      * @brief Default constructor. Parameters remain at defaults.
      */
@@ -157,7 +158,7 @@ public:
     /// Logger
     BSKLogger bskLogger;
 
-protected:
+  protected:
     /**
      * @brief Pure virtual output hook. Called every step after drift and diffusion
      *        are set. Use this to read inputs if needed and write outputs.
@@ -166,14 +167,14 @@ protected:
      */
     virtual void writeOutput(uint64_t CurrentSimNanos, double x) = 0;
 
-private:
+  private:
     // State storage
-    StateData *xState = nullptr;
+    StateData* xState = nullptr;
 
     // Parameters in stationary form (dX = (mu - X)/tau dt + sigma X dW with sigma derived)
-    double mean            = 1.0;  ///< Mean-reversion level mu.
-    double sigmaStationary = 0.0;  ///< Stationary std dev of x.
-    double timeConstant    = 1.0;  ///< Mean-reversion time constant in seconds.
+    double mean = 1.0;            ///< Mean-reversion level mu.
+    double sigmaStationary = 0.0; ///< Stationary std dev of x.
+    double timeConstant = 1.0;    ///< Mean-reversion time constant in seconds.
 };
 
 #endif

@@ -21,8 +21,9 @@
 #define MASS_FLOW_RATE_MSG_PAYLOAD_H
 
 /*! @brief Message containing a scalar mass flow rate. */
-typedef struct {
-    double massFlowRate;              //!< [kg/s] scalar mass flow rate
-}MassFlowRateMsgPayload;
+typedef struct
+{
+    double massFlowRate; //!< [kg/s] scalar mass flow rate
+} MassFlowRateMsgPayload;
 
 #endif

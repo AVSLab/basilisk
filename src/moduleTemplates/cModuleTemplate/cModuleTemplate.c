@@ -28,19 +28,18 @@
 /* Pull in support files using paths relative to the Basilisk src directory. */
 #include "architecture/utilities/linearAlgebra.h"
 
-
 /*!
     This method initializes the output messages for this module.
 
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleID)
+void
+SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     CModuleTemplateMsg_C_init(&configData->dataOutMsg);
 }
-
 
 /*! @brief Reset the runtime counter and publish a zero output payload.
  @note The sampleConfigVector configuration is preserved. The inputVector scratch
@@ -50,7 +49,8 @@ void SelfInit_cModuleTemplate(cModuleTemplateConfig *configData, int64_t moduleI
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
     configData->updateCounter = 0.0;
@@ -59,7 +59,7 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 
     /* initialize the output message to zero on reset */
-    CModuleTemplateMsgPayload outMsgBuffer;       /*!< local output message copy */
+    CModuleTemplateMsgPayload outMsgBuffer; /*!< local output message copy */
     outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
     CModuleTemplateMsg_C_write(&outMsgBuffer, &configData->dataOutMsg, moduleID, callTime);
 }
@@ -70,11 +70,12 @@ void Reset_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // Zero the output buffer each update to avoid publishing uninitialized fields.
     CModuleTemplateMsgPayload outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();
-    CModuleTemplateMsgPayload inMsgBuffer;        /*!< local copy of input message */
+    CModuleTemplateMsgPayload inMsgBuffer; /*!< local copy of input message */
 
     // Use a zero vector when the optional input is not connected.
     v3SetZero(configData->inputVector);
@@ -87,7 +88,7 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
 
     // Sample math: copy the input vector and add the counter to its first component.
     v3Copy(configData->inputVector, outMsgBuffer.dataVector);
-    configData->updateCounter += 1.0;  // [-]
+    configData->updateCounter += 1.0; // [-]
     outMsgBuffer.dataVector[0] += configData->updateCounter;
 
     /*! - Write the module output message */
@@ -96,8 +97,7 @@ void Update_cModuleTemplate(cModuleTemplateConfig *configData, uint64_t callTime
     /* this logging statement is not typically required.  It is done here to see in the
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
-    snprintf(info, sizeof(info), "C Module ID %lld ran Update at %fs",
-             (long long int) moduleID, (double) callTime/(1e9));
+    snprintf(
+      info, sizeof(info), "C Module ID %lld ran Update at %fs", (long long int)moduleID, (double)callTime / (1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
-
 }

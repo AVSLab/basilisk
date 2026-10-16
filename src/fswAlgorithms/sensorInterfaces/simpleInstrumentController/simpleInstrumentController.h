@@ -30,39 +30,45 @@
 #include "cMsgCInterface/DeviceStatusMsg_C.h"
 
 /*! @brief Data configuration structure for the MRP feedback attitude control routine. */
-typedef struct {
+typedef struct
+{
     /* User configurable variables */
-    double attErrTolerance; //!< Normalized MRP attitude error tolerance
-    unsigned int useRateTolerance; //!< Flag to enable rate error tolerance
-    double rateErrTolerance; //!< Rate error tolerance in rad/s
-    unsigned int imaged;    //!< Indicator for whether or not the image has already been captured
-    unsigned int controllerStatus;  //!< dictates whether or not the controller should be running
-    double constraintStartTime; //!< time when constraints were first satisfied [nanoseconds]
+    double attErrTolerance;          //!< Normalized MRP attitude error tolerance
+    unsigned int useRateTolerance;   //!< Flag to enable rate error tolerance
+    double rateErrTolerance;         //!< Rate error tolerance in rad/s
+    unsigned int imaged;             //!< Indicator for whether or not the image has already been captured
+    unsigned int controllerStatus;   //!< dictates whether or not the controller should be running
+    double constraintStartTime;      //!< time when constraints were first satisfied [nanoseconds]
     unsigned int useDurationImaging; //!< flag to enable duration-based imaging
-    double acquisitionTime; //!< (optional) Duration that constraints must be satisfied [nanoseconds]
-    double allowedTime;     //!< (optional) Maximum allowed time for imaging [nanoseconds]
-    double elapsedTime; //!< Elapsed valid-constraint duration for duration-based imaging [nanoseconds]
-    unsigned int constraintsActive; //!< flag to track state
+    double acquisitionTime;          //!< (optional) Duration that constraints must be satisfied [nanoseconds]
+    double allowedTime;              //!< (optional) Maximum allowed time for imaging [nanoseconds]
+    double elapsedTime;              //!< Elapsed valid-constraint duration for duration-based imaging [nanoseconds]
+    unsigned int constraintsActive;  //!< flag to track state
     uint64_t timeToleranceLower; //!< Optional lower time tolerance for imaging [nanoseconds]; zero disables lower bound
     uint64_t timeToleranceUpper; //!< Optional upper time tolerance for imaging [nanoseconds]; zero disables upper bound
-    uint64_t imagingTime; //!< Desired imaging time [nanoseconds]
+    uint64_t imagingTime;        //!< Desired imaging time [nanoseconds]
 
     /* declare module IO interfaces */
-    AccessMsg_C locationAccessInMsg;                   //!< Ground location access input message
-    AttGuidMsg_C attGuidInMsg;                         //!< attitude guidance input message
-    DeviceStatusMsg_C deviceStatusInMsg;                     //!< (optional) device status input message
-    DeviceCmdMsg_C deviceCmdOutMsg;              //!< device status output message
+    AccessMsg_C locationAccessInMsg;     //!< Ground location access input message
+    AttGuidMsg_C attGuidInMsg;           //!< attitude guidance input message
+    DeviceStatusMsg_C deviceStatusInMsg; //!< (optional) device status input message
+    DeviceCmdMsg_C deviceCmdOutMsg;      //!< device status output message
 
-    BSKLogger *bskLogger;                              //!< BSK Logging
-}simpleInstrumentControllerConfig;
+    BSKLogger* bskLogger; //!< BSK Logging
+} simpleInstrumentControllerConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig *configData, int64_t moduleID);
-void Update_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
-void Reset_simpleInstrumentController(simpleInstrumentControllerConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID);
+    void Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData,
+                                           uint64_t callTime,
+                                           int64_t moduleID);
+    void Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData,
+                                          uint64_t callTime,
+                                          int64_t moduleID);
 
 #ifdef __cplusplus
 }

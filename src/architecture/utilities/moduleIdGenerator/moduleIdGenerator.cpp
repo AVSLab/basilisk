@@ -38,27 +38,28 @@ ModuleIdGenerator::ModuleIdGenerator()
 
 ModuleIdGenerator::~ModuleIdGenerator()
 {
-	delete TheInstance;
-	TheInstance = NULL;
+    delete TheInstance;
+    TheInstance = NULL;
 }
 /*!
  * This gives a pointer to the messaging system to whoever asks for it.
  * @return ModuleIdGenerator* TheInstance
  */
-ModuleIdGenerator* ModuleIdGenerator::GetInstance()
+ModuleIdGenerator*
+ModuleIdGenerator::GetInstance()
 {
-    if(TheInstance == NULL)
-    {
+    if (TheInstance == NULL) {
         TheInstance = new ModuleIdGenerator();
     }
-    return(TheInstance);
+    return (TheInstance);
 }
 
 /*!
  * This method assigns a module ID to a new module and increments the NextModuleID counter
  * @return uint64_t nextModuleID the newly minted module ID
  */
-int64_t ModuleIdGenerator::checkoutModuleID()
+int64_t
+ModuleIdGenerator::checkoutModuleID()
 {
-    return(this->nextModuleID++);
+    return (this->nextModuleID++);
 }

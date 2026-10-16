@@ -25,30 +25,28 @@
 
 #include "architecture/utilities/bskLogging.h"
 
-
-
 /*! @brief module configuration message */
-typedef struct {
-    double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
-    IMUSensorMsg_C imuComInMsg;             /*!< imu input message*/
-    IMUSensorBodyMsg_C imuSensorOutMsg;     /*!< imu output message*/
+typedef struct
+{
+    double dcm_BP[9];                   /*!< Row major platform 2 bdy DCM*/
+    IMUSensorMsg_C imuComInMsg;         /*!< imu input message*/
+    IMUSensorBodyMsg_C imuSensorOutMsg; /*!< imu output message*/
 
     IMUSensorBodyMsgPayload outMsgBuffer; /*!< Output data structure*/
-    BSKLogger *bskLogger;   //!< BSK Logging
-}IMUConfigData;
+    BSKLogger* bskLogger;                 //!< BSK Logging
+} IMUConfigData;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    
-    void SelfInit_imuProcessTelem(IMUConfigData *configData, int64_t moduleID);
-    void Reset_imuProcessTelem(IMUConfigData *configData, uint64_t callTime, int64_t moduleId);
-    void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime,
-        int64_t moduleID);
-    
+
+    void SelfInit_imuProcessTelem(IMUConfigData* configData, int64_t moduleID);
+    void Reset_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleId);
+    void Update_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

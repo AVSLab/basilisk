@@ -48,7 +48,9 @@
  * explicit). Because the noise is additive there is only a single family of
  * stages. See ``svIntegratorStrongStochasticRungeKuttaSRA`` for the recurrence.
  */
-template <size_t numberStages> struct SRACoefficients {
+template<size_t numberStages>
+struct SRACoefficients
+{
 
     /** Array with size = numberStages */
     using StageSizedArray = std::array<double, numberStages>;
@@ -106,14 +108,14 @@ template <size_t numberStages> struct SRACoefficients {
  *
  * @warning Stochastic integration is in beta.
  */
-template <size_t numberStages>
-class svIntegratorStrongStochasticRungeKuttaSRA : public StochasticRKIntegratorBase {
-public:
+template<size_t numberStages>
+class svIntegratorStrongStochasticRungeKuttaSRA : public StochasticRKIntegratorBase
+{
+  public:
     static_assert(numberStages > 0, "One cannot declare Runge Kutta integrators of stage 0");
 
     /** Creates an SRA integrator for the given DynamicObject using the passed coefficients. */
-    svIntegratorStrongStochasticRungeKuttaSRA(DynamicObject* dynIn,
-                                              const SRACoefficients<numberStages>& coefficients);
+    svIntegratorStrongStochasticRungeKuttaSRA(DynamicObject* dynIn, const SRACoefficients<numberStages>& coefficients);
 
   protected:
     /** Performs the integration of the associated dynamic objects up to time currentTime+timeStep */
@@ -134,10 +136,12 @@ public:
     FlatStochasticWorkspace flatWorkspace; ///< Owned stage and candidate buffers reused across steps.
 };
 
-template <size_t numberStages>
+template<size_t numberStages>
 svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::svIntegratorStrongStochasticRungeKuttaSRA(
-    DynamicObject* dynIn, const SRACoefficients<numberStages>& coefficients)
-    : StochasticRKIntegratorBase(dynIn), coefficients(coefficients)
+  DynamicObject* dynIn,
+  const SRACoefficients<numberStages>& coefficients)
+  : StochasticRKIntegratorBase(dynIn)
+  , coefficients(coefficients)
 {
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A0);
     stochastic_tableau::validateExplicitMatrix(this->coefficients.B0);

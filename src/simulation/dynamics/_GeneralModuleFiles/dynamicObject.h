@@ -44,12 +44,13 @@
  * secondaries; native connections are detached when either object is destroyed.
  * Reset and integration exceptions propagate to callers.
  */
-class DynamicObject : public SysModel {
+class DynamicObject : public SysModel
+{
     friend class StateVecIntegrator;
 
   public:
-    DynParamManager dynManager;     /**< Dynamics parameter manager for all effectors */
-    BSKLogger bskLogger;            /**< BSK Logging */
+    DynParamManager dynManager; /**< Dynamics parameter manager for all effectors */
+    BSKLogger bskLogger;        /**< BSK Logging */
 
   public:
     DynamicObject() = default;
@@ -83,8 +84,7 @@ class DynamicObject : public SysModel {
      *
      * Note that not all ``DynamicObjects`` may support this functionality.
      */
-    virtual void equationsOfMotionDiffusion(double t [[maybe_unused]], double timeStep [[maybe_unused]]) {
-    };
+    virtual void equationsOfMotionDiffusion(double t [[maybe_unused]], double timeStep [[maybe_unused]]) {};
 
     /** Performs pre-integration steps */
     virtual void preIntegration(uint64_t callTimeNanos) = 0;
@@ -93,8 +93,7 @@ class DynamicObject : public SysModel {
     virtual void postIntegration(uint64_t callTimeNanos) = 0;
 
     /** Computes energy and momentum of the system */
-    virtual void computeEnergyMomentum(double t [[maybe_unused]]){
-    };
+    virtual void computeEnergyMomentum(double t [[maybe_unused]]) {};
 
     /** Prepares the dynamic object to be integrated, integrates the states
      * forward in time, and finally performs the post-integration steps.
@@ -144,13 +143,13 @@ class DynamicObject : public SysModel {
     DynamicObject* getIntegrationOwner() const noexcept;
 
   public:
-    double timeStep = 0.0;   /**< [s] integration time step */
-    double timeBefore = 0.0; /**< [s] prior time value */
+    double timeStep = 0.0;        /**< [s] integration time step */
+    double timeBefore = 0.0;      /**< [s] prior time value */
     uint64_t timeBeforeNanos = 0; /**< [ns] prior time value */
 
   private:
     std::unique_ptr<StateVecIntegrator> integrator; ///< Owned numerical method and workspaces.
-    DynamicObject* integrationOwner = nullptr; ///< Borrowed primary object, or null for independent integration.
+    DynamicObject* integrationOwner = nullptr;      ///< Borrowed primary object, or null for independent integration.
 
   protected:
     /** @brief Reject changes that would invalidate the fixed state layout. */

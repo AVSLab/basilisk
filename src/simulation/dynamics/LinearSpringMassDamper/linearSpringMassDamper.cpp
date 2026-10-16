@@ -24,34 +24,35 @@
 /*! This is the constructor, setting variables to default values */
 LinearSpringMassDamper::LinearSpringMassDamper()
 {
-	// - zero the contributions for mass props and mass rates
-	this->effProps.mEff = 0.0;
-	this->effProps.IEffPntB_B.setZero();
-	this->effProps.rEff_CB_B.setZero();
-	this->effProps.rEffPrime_CB_B.setZero();
-	this->effProps.IEffPrimePntB_B.setZero();
+    // - zero the contributions for mass props and mass rates
+    this->effProps.mEff = 0.0;
+    this->effProps.IEffPntB_B.setZero();
+    this->effProps.rEff_CB_B.setZero();
+    this->effProps.rEffPrime_CB_B.setZero();
+    this->effProps.IEffPrimePntB_B.setZero();
 
-	// - Initialize the variables to working values
-	this->massSMD = 1.0;
-	this->r_PB_B.setZero();
-	this->pHat_B.setIdentity();
-	this->k = 1.0;
-	this->c = 0.0;
+    // - Initialize the variables to working values
+    this->massSMD = 1.0;
+    this->r_PB_B.setZero();
+    this->pHat_B.setIdentity();
+    this->k = 1.0;
+    this->c = 0.0;
     this->rhoInit = 0.0;
     this->rhoDotInit = 0.0;
     this->massInit = 0.0;
-	this->nameOfRhoState = "linearSpringMassDamperRho" + std::to_string(this->effectorID);
-	this->nameOfRhoDotState = "linearSpringMassDamperRhoDot" + std::to_string(this->effectorID);
-	this->nameOfMassState = "linearSpringMassDamperMass" + std::to_string(this->effectorID);
+    this->nameOfRhoState = "linearSpringMassDamperRho" + std::to_string(this->effectorID);
+    this->nameOfRhoDotState = "linearSpringMassDamperRhoDot" + std::to_string(this->effectorID);
+    this->nameOfMassState = "linearSpringMassDamperMass" + std::to_string(this->effectorID);
     this->effectorID++;
 
-	return;
+    return;
 }
 
 uint64_t LinearSpringMassDamper::effectorID = 1;
 
 /*! @brief Validate the initial particle mass, retaining the supported empty-particle case. */
-void LinearSpringMassDamper::validateConfiguration()
+void
+LinearSpringMassDamper::validateConfiguration()
 {
     if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
         this->bskLogger.bskError("LinearSpringMassDamper: massInit must be finite and non-negative.");
@@ -61,7 +62,8 @@ void LinearSpringMassDamper::validateConfiguration()
 /*! @brief Validate configuration without restoring depleted mass or changing integrated states.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void LinearSpringMassDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+LinearSpringMassDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -76,7 +78,8 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void LinearSpringMassDamper::linkInStates(DynParamManager& states)
+void
+LinearSpringMassDamper::linkInStates(DynParamManager& states)
 {
     // - Grab access to gravity
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -92,68 +95,66 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void LinearSpringMassDamper::registerStates(DynParamManager& states)
+void
+LinearSpringMassDamper::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
     // - Register rho and rhoDot
-	this->rhoState = states.registerState(1, 1, nameOfRhoState);
-    Eigen::MatrixXd rhoInitMatrix(1,1);
-    rhoInitMatrix(0,0) = this->rhoInit;
+    this->rhoState = states.registerState(1, 1, nameOfRhoState);
+    Eigen::MatrixXd rhoInitMatrix(1, 1);
+    rhoInitMatrix(0, 0) = this->rhoInit;
     this->rhoState->setState(rhoInitMatrix);
-	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
-    Eigen::MatrixXd rhoDotInitMatrix(1,1);
-    rhoDotInitMatrix(0,0) = this->rhoDotInit;
+    this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
+    Eigen::MatrixXd rhoDotInitMatrix(1, 1);
+    rhoDotInitMatrix(0, 0) = this->rhoDotInit;
     this->rhoDotState->setState(rhoDotInitMatrix);
 
-	// - Register mass
-	this->massState = states.registerState(1, 1, nameOfMassState);
-    Eigen::MatrixXd massInitMatrix(1,1);
-    massInitMatrix(0,0) = this->massInit;
+    // - Register mass
+    this->massState = states.registerState(1, 1, nameOfMassState);
+    Eigen::MatrixXd massInitMatrix(1, 1);
+    massInitMatrix(0, 0) = this->massInit;
     this->massState->setState(massInitMatrix);
     this->hasRegisteredStates = true;
 
-	return;
+    return;
 }
 
 /*! This is the method for the SMD to add its contributions to the mass props and mass prop rates of the vehicle
  *
  * @param[in] integTime [s] Current integration time.
  */
-void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]])
+void
+LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
-	// - Grab rho from state manager and define r_PcB_B
+    // - Grab rho from state manager and define r_PcB_B
     this->rho = this->rhoState->stateView()(0, 0);
     this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
     this->massSMD = this->massState->stateView()(0, 0);
 
     // - Update the effectors mass
-	this->effProps.mEff = this->massSMD;
-	this->effProps.mEffDot = this->fuelMassDot;
-	this->effProps.mEffDotDynamics =
-        this->omitMassRateDynamics ? 0.0 : this->fuelMassDot;
-	// - Update the position of CoM
-	this->effProps.rEff_CB_B = this->r_PcB_B;
-	// - Update the inertia about B
-	this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
-	this->effProps.IEffPntB_B = this->massSMD * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
+    this->effProps.mEff = this->massSMD;
+    this->effProps.mEffDot = this->fuelMassDot;
+    this->effProps.mEffDotDynamics = this->omitMassRateDynamics ? 0.0 : this->fuelMassDot;
+    // - Update the position of CoM
+    this->effProps.rEff_CB_B = this->r_PcB_B;
+    // - Update the inertia about B
+    this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
+    this->effProps.IEffPntB_B = this->massSMD * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
-	// - Grab rhoDot from the stateManager and define rPrime_PcB_B
+    // - Grab rhoDot from the stateManager and define rPrime_PcB_B
     this->rhoDot = this->rhoDotState->stateView()(0, 0);
     this->rPrime_PcB_B = this->rhoDot * this->pHat_B;
-	this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
+    this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
     this->effProps.rEffPrime_CB_BDynamics = this->rPrime_PcB_B;
 
-	// - Update the body time derivative of inertia about B
-	this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-	const Eigen::Matrix3d inertiaRateFromMotion =
-        -this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
-                       + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
+    // - Update the body time derivative of inertia about B
+    this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
+    const Eigen::Matrix3d inertiaRateFromMotion =
+      -this->massSMD * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B);
     this->effProps.IEffPrimePntB_B =
-        -this->fuelMassDot*this->rTilde_PcB_B*this->rTilde_PcB_B
-        + inertiaRateFromMotion;
+      -this->fuelMassDot * this->rTilde_PcB_B * this->rTilde_PcB_B + inertiaRateFromMotion;
     this->effProps.IEffPrimePntB_BDynamics = inertiaRateFromMotion;
-    this->effProps.hasMassPropertyRateDynamics =
-        this->fuelMassDot != 0.0;
+    this->effProps.hasMassPropertyRateDynamics = this->fuelMassDot != 0.0;
 
     return;
 }
@@ -162,18 +163,19 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_un
  *
  * @param[in] integTime [s] Current integration time.
  */
-void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
+void
+LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
 {
     if (this->massState == nullptr) {
         this->bskLogger.bskLog(
-            BSK_ERROR,
-            "LinearSpringMassDamper was attached to a FuelTank but never added to Spacecraft. Every particle "
-            "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
+          BSK_ERROR,
+          "LinearSpringMassDamper was attached to a FuelTank but never added to Spacecraft. Every particle "
+          "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
     }
     // Read the current RK-stage state before the tank allocates propellant flow.
     this->fuelMass = this->massState->stateView()(0, 0);
     if (this->fuelMass < 0.0) {
-        this->fuelMass = 0.0;  // [kg]
+        this->fuelMass = 0.0; // [kg]
         Eigen::MatrixXd massMatrix(1, 1);
         massMatrix(0, 0) = this->fuelMass;
         this->massState->setState(massMatrix);
@@ -190,12 +192,17 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]]
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
+void
+LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]],
+                                            BackSubMatrices& backSubContr,
+                                            Eigen::MRPd sigma_BN,
+                                            Eigen::Vector3d omega_BN_B,
+                                            Eigen::Vector3d g_N [[maybe_unused]])
 {
     if (this->massSMD <= 0.0) {
         this->aRho.setZero();
         this->bRho.setZero();
-        this->cRho = 0.0;  // [m/s^2]
+        this->cRho = 0.0; // [m/s^2]
         backSubContr.matrixA.setZero();
         backSubContr.matrixB.setZero();
         backSubContr.matrixC.setZero();
@@ -217,9 +224,9 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d g_B;
     gLocal_N = *this->g_N;
-    g_B = dcm_BN*gLocal_N;
+    g_B = dcm_BN * gLocal_N;
 
-	// - Define aRho
+    // - Define aRho
     this->aRho = -this->pHat_B;
 
     // - Define bRho
@@ -227,18 +234,19 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
 
     // - Define cRho
     Eigen::Vector3d omega_BN_B_local = omega_BN_B;
-	cRho = 1.0/(this->massSMD)*(this->pHat_B.dot(this->massSMD * g_B) - this->k*this->rho - this->c*this->rhoDot
-		         - 2 * this->massSMD*this->pHat_B.dot(omega_BN_B_local.cross(this->rPrime_PcB_B))
-		                   - this->massSMD*this->pHat_B.dot(omega_BN_B_local.cross(omega_BN_B_local.cross(this->r_PcB_B))));
+    cRho = 1.0 / (this->massSMD) *
+           (this->pHat_B.dot(this->massSMD * g_B) - this->k * this->rho - this->c * this->rhoDot -
+            2 * this->massSMD * this->pHat_B.dot(omega_BN_B_local.cross(this->rPrime_PcB_B)) -
+            this->massSMD * this->pHat_B.dot(omega_BN_B_local.cross(omega_BN_B_local.cross(this->r_PcB_B))));
 
-	// - Compute matrix/vector contributions
-	backSubContr.matrixA = this->massSMD*this->pHat_B*this->aRho.transpose();
-    backSubContr.matrixB = this->massSMD*this->pHat_B*this->bRho.transpose();
-    backSubContr.matrixC = -this->massSMD*this->bRho*this->aRho.transpose();
-	backSubContr.matrixD = -this->massSMD*this->bRho*this->bRho.transpose();
-	backSubContr.vecTrans = -this->massSMD*this->cRho*this->pHat_B;
-	backSubContr.vecRot = -this->massSMD*omega_BN_B_local.cross(this->r_PcB_B.cross(this->rPrime_PcB_B)) +
-	                                                             this->massSMD*this->cRho*this->bRho;
+    // - Compute matrix/vector contributions
+    backSubContr.matrixA = this->massSMD * this->pHat_B * this->aRho.transpose();
+    backSubContr.matrixB = this->massSMD * this->pHat_B * this->bRho.transpose();
+    backSubContr.matrixC = -this->massSMD * this->bRho * this->aRho.transpose();
+    backSubContr.matrixD = -this->massSMD * this->bRho * this->bRho.transpose();
+    backSubContr.vecTrans = -this->massSMD * this->cRho * this->pHat_B;
+    backSubContr.vecRot = -this->massSMD * omega_BN_B_local.cross(this->r_PcB_B.cross(this->rPrime_PcB_B)) +
+                          this->massSMD * this->cRho * this->bRho;
     return;
 }
 
@@ -250,28 +258,32 @@ void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void
+LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]],
+                                           Eigen::Vector3d rDDot_BN_N,
+                                           Eigen::Vector3d omegaDot_BN_B,
+                                           Eigen::MRPd sigma_BN)
 {
 
-	// - Find DCM
-	Eigen::MRPd sigmaLocal_BN;
-	Eigen::Matrix3d dcm_BN;
-	sigmaLocal_BN = sigma_BN;
-	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
+    // - Find DCM
+    Eigen::MRPd sigmaLocal_BN;
+    Eigen::Matrix3d dcm_BN;
+    sigmaLocal_BN = sigma_BN;
+    dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
-	// - Set the derivative of rho to rhoDot
+    // - Set the derivative of rho to rhoDot
     this->rhoState->setDerivative(this->rhoDotState->stateView());
 
     // - Compute rhoDDot
-	Eigen::MatrixXd conv(1,1);
+    Eigen::MatrixXd conv(1, 1);
     Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
     Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
-	Eigen::Vector3d rDDot_BN_B_local = dcm_BN*rDDot_BN_N_local;
+    Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
-	this->rhoDotState->setDerivative(conv);
+    this->rhoDotState->setDerivative(conv);
 
     // - Set the massDot already computed from fuelTank to the stateDerivative of mass
-    conv(0,0) = this->fuelMassDot;
+    conv(0, 0) = this->fuelMassDot;
     this->massState->setDerivative(conv);
 
     return;
@@ -284,8 +296,11 @@ void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                          double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void
+LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                     Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                     double& rotEnergyContr,
+                                                     Eigen::Vector3d omega_BN_B)
 {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -294,10 +309,10 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[may
 
     // - Find rotational angular momentum contribution from hub
     rDotPcB_B = this->rPrime_PcB_B + omegaLocal_BN_B.cross(this->r_PcB_B);
-    rotAngMomPntCContr_B = this->massSMD*this->r_PcB_B.cross(rDotPcB_B);
+    rotAngMomPntCContr_B = this->massSMD * this->r_PcB_B.cross(rDotPcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*this->massSMD*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
+    rotEnergyContr = 1.0 / 2.0 * this->massSMD * rDotPcB_B.dot(rDotPcB_B) + 1.0 / 2.0 * this->k * this->rho * this->rho;
 
     return;
 }
@@ -307,7 +322,8 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[may
  * @param[in] integTime [s] Current integration time.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
+void
+LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
@@ -318,14 +334,14 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unus
     rhoDDotLocal = rhoDotState->derivativeView()(0, 0);
 
     // - Calculate force that the FSP is applying to the spacecraft
-    this->forceOnBody_B = -(this->massSMD*this->pHat_B*rhoDDotLocal + 2*this->massSMD
-                            *this->rhoDot*omegaLocal_BN_B.cross(this->pHat_B));
+    this->forceOnBody_B = -(this->massSMD * this->pHat_B * rhoDDotLocal +
+                            2 * this->massSMD * this->rhoDot * omegaLocal_BN_B.cross(this->pHat_B));
 
     // - Calculate torque that the FSP is applying about point B
-    this->torqueOnBodyPntB_B = -(this->massSMD*this->r_PcB_B.cross(this->pHat_B)*rhoDDotLocal
-                                 + this->massSMD*omegaLocal_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B))
-                                 - this->massSMD*(this->rPrime_PcB_B.cross(this->r_PcB_B.cross(omegaLocal_BN_B))
-                                                   + this->r_PcB_B.cross(this->rPrime_PcB_B.cross(omegaLocal_BN_B))));
+    this->torqueOnBodyPntB_B = -(this->massSMD * this->r_PcB_B.cross(this->pHat_B) * rhoDDotLocal +
+                                 this->massSMD * omegaLocal_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B)) -
+                                 this->massSMD * (this->rPrime_PcB_B.cross(this->r_PcB_B.cross(omegaLocal_BN_B)) +
+                                                  this->r_PcB_B.cross(this->rPrime_PcB_B.cross(omegaLocal_BN_B))));
 
     // - Define values needed to get the torque about point C
     Eigen::Vector3d cLocal_B = *this->c_B;
@@ -334,10 +350,10 @@ void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unus
     Eigen::Vector3d rPrime_PcC_B = this->rPrime_PcB_B - cPrimeLocal_B;
 
     // - Calculate the torque about point C
-    this->torqueOnBodyPntC_B = -(this->massSMD*r_PcC_B.cross(this->pHat_B)*rhoDDotLocal
-                                 + this->massSMD*omegaLocal_BN_B.cross(r_PcC_B.cross(rPrime_PcC_B))
-                                 - this->massSMD*(rPrime_PcC_B.cross(r_PcC_B.cross(omegaLocal_BN_B))
-                                                   + r_PcC_B.cross(rPrime_PcC_B.cross(omegaLocal_BN_B))));
+    this->torqueOnBodyPntC_B = -(this->massSMD * r_PcC_B.cross(this->pHat_B) * rhoDDotLocal +
+                                 this->massSMD * omegaLocal_BN_B.cross(r_PcC_B.cross(rPrime_PcC_B)) -
+                                 this->massSMD * (rPrime_PcC_B.cross(r_PcC_B.cross(omegaLocal_BN_B)) +
+                                                  r_PcC_B.cross(rPrime_PcC_B.cross(omegaLocal_BN_B))));
 
     return;
 }

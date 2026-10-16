@@ -33,14 +33,13 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
+void
+SelfInit_mrpPD(MrpPDConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     /*! - Create output message for module */
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
-
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -49,10 +48,11 @@ void SelfInit_mrpPD(MrpPDConfig *configData, int64_t moduleID)
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required input messages are included
     if (!AttGuidMsg_C_isLinked(&configData->guidInMsg)) {
         _bskError(configData->bskLogger, "Error: mrpPD.guidInMsg wasn't connected.");
@@ -61,7 +61,6 @@ void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
         _bskError(configData->bskLogger, "Error: mrpPD.vehConfigInMsg wasn't connected.");
     }
-
 
     /*! - read in spacecraft configuration message */
     VehicleConfigMsgPayload vcInMsg = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
@@ -75,17 +74,17 @@ void Reset_mrpPD(MrpPDConfig *configData, uint64_t callTime, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime,
-    int64_t moduleID)
+void
+Update_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    double              Lr[3];                  /*!< required control torque vector [Nm] */
-    double              omega_BN_B[3];          /*!< Inertial angular body vector in body B-frame components */
-    CmdTorqueBodyMsgPayload controlOutMsg;      /*!< Control output requests */
-    AttGuidMsgPayload       guidInMsg;          /*!< Guidance Message */
-    double              v3_temp1[3];
-    double              v3_temp2[3];
-    double              v3_temp3[3];
-    double              v3_temp4[3];
+    double Lr[3];                          /*!< required control torque vector [Nm] */
+    double omega_BN_B[3];                  /*!< Inertial angular body vector in body B-frame components */
+    CmdTorqueBodyMsgPayload controlOutMsg; /*!< Control output requests */
+    AttGuidMsgPayload guidInMsg;           /*!< Guidance Message */
+    double v3_temp1[3];
+    double v3_temp2[3];
+    double v3_temp3[3];
+    double v3_temp4[3];
 
     /*! - zero the output message copy */
     controlOutMsg = CmdTorqueBodyMsg_C_zeroMsgPayload();
@@ -99,7 +98,7 @@ void Update_mrpPD(MrpPDConfig *configData, uint64_t callTime,
     /*! - Evaluate required attitude control torque */
     /* Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
-    v3Scale(configData->K, guidInMsg.sigma_BR, v3_temp1); /* + K * sigma_BR */
+    v3Scale(configData->K, guidInMsg.sigma_BR, v3_temp1);   /* + K * sigma_BR */
     v3Scale(configData->P, guidInMsg.omega_BR_B, v3_temp2); /* + P * delta_omega */
     v3Add(v3_temp1, v3_temp2, Lr);
 

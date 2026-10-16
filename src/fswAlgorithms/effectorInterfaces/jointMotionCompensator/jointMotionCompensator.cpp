@@ -17,13 +17,13 @@
 
 */
 
-
 #include "fswAlgorithms/effectorInterfaces/jointMotionCompensator/jointMotionCompensator.h"
 #include "architecture/messaging/ownedMessage.h"
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
-void JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
@@ -45,7 +45,8 @@ void JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->treeInfoInitialized = false;
 }
 
-void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
+void
+JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -56,8 +57,8 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         this->treeMap.clear();
         int nextHingeIdx = 0;
 
-        for (std::size_t joint=0; joint<reactionForcesIn.jointTreeIdx.size(); ++joint) {
-            const int tree      = reactionForcesIn.jointTreeIdx[joint];
+        for (std::size_t joint = 0; joint < reactionForcesIn.jointTreeIdx.size(); ++joint) {
+            const int tree = reactionForcesIn.jointTreeIdx[joint];
             const int jointType = reactionForcesIn.jointTypes[joint];
 
             TreeInfo& info = this->treeMap[tree];
@@ -66,13 +67,15 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
                 ++numKinematicTrees;
                 // check that first joint in tree is free
                 if (jointType != 0) {
-                    bskLogger.bskError("JointMotionCompensator: first joint in kinematic tree %d is not a free joint.", tree);
+                    bskLogger.bskError("JointMotionCompensator: first joint in kinematic tree %d is not a free joint.",
+                                       tree);
                 }
                 info.freeJointIdx = static_cast<int>(joint);
             } else {
                 // subsequent joints are hinges
                 if (jointType != 3) {
-                    bskLogger.bskError("JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                    bskLogger.bskError(
+                      "JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -81,10 +84,12 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         }
 
         if (this->numHingedJoints != nextHingeIdx) {
-            bskLogger.bskError("JointMotionCompensator: numHingedJoints does not match the number of hinge joints found in the kinematic trees.");
+            bskLogger.bskError("JointMotionCompensator: numHingedJoints does not match the number of hinge joints "
+                               "found in the kinematic trees.");
         }
         if (this->numSpacecraft != numKinematicTrees) {
-            bskLogger.bskError("JointMotionCompensator: numSpacecraft does not match the number of kinematic trees found in the system.");
+            bskLogger.bskError("JointMotionCompensator: numSpacecraft does not match the number of kinematic trees "
+                               "found in the system.");
         }
         this->treeInfoInitialized = true;
     }
@@ -92,7 +97,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     // loop through the motor torque input messages and store the values
     Eigen::VectorXd jointTorques(this->numHingedJoints);
     jointTorques.setZero();
-    for (size_t i=0; i<this->jointTorqueInMsgs.size(); ++i) {
+    for (size_t i = 0; i < this->jointTorqueInMsgs.size(); ++i) {
         SingleActuatorMsgPayload jointTorqueIn = this->jointTorqueInMsgs[i]();
         jointTorques(static_cast<Eigen::Index>(i)) = jointTorqueIn.input;
     }
@@ -105,10 +110,8 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     nonActuatorForces.setZero();
     for (int k = 0; k < nDOF; ++k) {
         const size_t dofIndex = static_cast<size_t>(k);
-        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex]
-                               + reactionForcesIn.constraintForces[dofIndex]
-                               + reactionForcesIn.appliedForces[dofIndex]
-                               - reactionForcesIn.biasForces[dofIndex];
+        nonActuatorForces(k) = reactionForcesIn.passiveForces[dofIndex] + reactionForcesIn.constraintForces[dofIndex] +
+                               reactionForcesIn.appliedForces[dofIndex] - reactionForcesIn.biasForces[dofIndex];
     }
 
     for (const auto& [treeId, info] : this->treeMap) {
@@ -147,12 +150,12 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
             }
         }
 
-        Eigen::Matrix3d Mtt  = Mfull.block<3,3>(0, 0);
-        Eigen::Matrix3d Mrt  = Mfull.block<3,3>(3, 0);
+        Eigen::Matrix3d Mtt = Mfull.block<3, 3>(0, 0);
+        Eigen::Matrix3d Mrt = Mfull.block<3, 3>(3, 0);
         Eigen::Matrix3Xd Mtth = Mfull.block(0, 6, 3, nHingeJoints);
         Eigen::Matrix3Xd Mrth = Mfull.block(3, 6, 3, nHingeJoints);
         Eigen::MatrixX3d Mtht = Mfull.block(6, 0, nHingeJoints, 3);
-        Eigen::MatrixXd Mthth= Mfull.block(6, 6, nHingeJoints, nHingeJoints);
+        Eigen::MatrixXd Mthth = Mfull.block(6, 6, nHingeJoints, nHingeJoints);
 
         // Build the non-actuator force vectors
         Eigen::Vector3d baseTransBias;
@@ -177,14 +180,13 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         Eigen::LDLT<Eigen::Matrix3d> ldltMtt(Mtt);
         Eigen::Vector3d temp1 = ldltMtt.solve(baseTransBias);
         Eigen::Matrix3Xd temp2 = ldltMtt.solve(Mtth);
-        Eigen::MatrixXd temp3 = Mthth - Mtht*temp2;
-        Eigen::VectorXd thetaDDot = temp3.ldlt().solve(jointBias + treeMotorTorque - Mtht*temp1);
-        Eigen::Vector3d rDDot = temp1 - temp2*thetaDDot;
-        Eigen::Vector3d treeHubTorque = -baseRotBias + Mrt*rDDot + Mrth*thetaDDot;
+        Eigen::MatrixXd temp3 = Mthth - Mtht * temp2;
+        Eigen::VectorXd thetaDDot = temp3.ldlt().solve(jointBias + treeMotorTorque - Mtht * temp1);
+        Eigen::Vector3d rDDot = temp1 - temp2 * thetaDDot;
+        Eigen::Vector3d treeHubTorque = -baseRotBias + Mrt * rDDot + Mrth * thetaDDot;
 
         // store the hub torque for this spacecraft
         hubTorques.segment<3>(scIdx * 3) = treeHubTorque;
-
     }
 
     // Apply saturation if uMax is set
@@ -194,8 +196,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
         }
         for (int i = 0; i < this->numSpacecraft * 3; ++i) {
             const size_t torqueIndex = static_cast<size_t>(i);
-            hubTorques(i) = std::max(-this->uMax[torqueIndex],
-                                     std::min(this->uMax[torqueIndex], hubTorques(i)));
+            hubTorques(i) = std::max(-this->uMax[torqueIndex], std::min(this->uMax[torqueIndex], hubTorques(i)));
         }
     }
     // write to the output messages
@@ -204,14 +205,13 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
             SingleActuatorMsgPayload hubTorqueOut;
             hubTorqueOut.input = hubTorques(sc * 3 + axis);
             this->hubTorqueOutMsgs[static_cast<size_t>(sc * 3 + axis)]->write(
-                &hubTorqueOut,
-                this->moduleID,
-                CurrentSimNanos);
+              &hubTorqueOut, this->moduleID, CurrentSimNanos);
         }
     }
 }
 
-void JointMotionCompensator::setUMax(std::vector<double> var)
+void
+JointMotionCompensator::setUMax(std::vector<double> var)
 {
     // Check each entry is non-negative
     for (size_t i = 0; i < var.size(); ++i) {
@@ -223,10 +223,11 @@ void JointMotionCompensator::setUMax(std::vector<double> var)
     this->uMax = var;
 }
 
-void JointMotionCompensator::addSpacecraft()
+void
+JointMotionCompensator::addSpacecraft()
 {
     // increase the number of spacecraft by 1
-    this->numSpacecraft ++;
+    this->numSpacecraft++;
 
     // add an output message for each principal axis of the new spacecraft
     addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
@@ -234,10 +235,11 @@ void JointMotionCompensator::addSpacecraft()
     addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
 }
 
-void JointMotionCompensator::addHingedJoint()
+void
+JointMotionCompensator::addHingedJoint()
 {
     // increase the number of hinged joints by 1
-    this->numHingedJoints ++;
+    this->numHingedJoints++;
 
     // add an input message for the new hinged joint
     this->jointTorqueInMsgs.push_back(ReadFunctor<SingleActuatorMsgPayload>());

@@ -22,28 +22,31 @@
 #include "arrayMotorTorqueToSingleActuators.h"
 
 ArrayMotorTorqueToSingleActuators::ArrayMotorTorqueToSingleActuators()
-    : numActuators(0)
+  : numActuators(0)
 {
 }
 
 ArrayMotorTorqueToSingleActuators::ArrayMotorTorqueToSingleActuators(uint32_t numActuatorsIn)
-    : numActuators(numActuatorsIn)
+  : numActuators(numActuatorsIn)
 {
     this->ensureSizes();
 }
 
-void ArrayMotorTorqueToSingleActuators::setNumActuators(uint32_t numActuatorsIn)
+void
+ArrayMotorTorqueToSingleActuators::setNumActuators(uint32_t numActuatorsIn)
 {
     this->numActuators = numActuatorsIn;
     this->ensureSizes();
 }
 
-void ArrayMotorTorqueToSingleActuators::ensureSizes()
+void
+ArrayMotorTorqueToSingleActuators::ensureSizes()
 {
     this->actuatorOutMsgs.resize(this->numActuators);
 }
 
-void ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
+void
+ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
 {
     this->ensureSizes();
 
@@ -53,26 +56,18 @@ void ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
     for (uint32_t i = 0; i < this->numActuators; ++i) {
 
         outPayload.input = 0.0;
-        this->actuatorOutMsgs[i].write(
-            &outPayload,
-            this->moduleID,
-            CurrentSimNanos
-        );
+        this->actuatorOutMsgs[i].write(&outPayload, this->moduleID, CurrentSimNanos);
     }
 }
 
-void ArrayMotorTorqueToSingleActuators::UpdateState(uint64_t CurrentSimNanos)
+void
+ArrayMotorTorqueToSingleActuators::UpdateState(uint64_t CurrentSimNanos)
 {
     ArrayMotorTorqueMsgPayload inPayload = this->torqueInMsg();
     SingleActuatorMsgPayload outPayload = {};
 
-    for (uint32_t i = 0; i < this->numActuators; ++i)
-    {
+    for (uint32_t i = 0; i < this->numActuators; ++i) {
         outPayload.input = inPayload.motorTorque[i];
-        this->actuatorOutMsgs[i].write(
-            &outPayload,
-            this->moduleID,
-            CurrentSimNanos
-        );
+        this->actuatorOutMsgs[i].write(&outPayload, this->moduleID, CurrentSimNanos);
     }
 }
