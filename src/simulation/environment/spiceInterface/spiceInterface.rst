@@ -61,4 +61,6 @@ the following time scales:
 - ``JulianDateCurrent``: the UTC Julian date.
 - ``GPSWeek``, ``GPSSeconds`` and ``GPSRollovers``: the GPS week modulo 1024, the seconds of week and the number of
   1024 week rollovers.  GPS time is atomic time (TAI - 19 s) elapsed since the GPS epoch 1980 January 6,
-  00:00:00 UTC, and therefore includes the leap seconds introduced since that epoch.
+  00:00:00 UTC, and therefore includes the leap seconds introduced since that epoch.  Negative GPS time is not
+  modeled: if the simulation starts before the GPS epoch, the module emits a warning at reset and the GPS outputs
+  are held at zero until the GPS epoch is reached.
