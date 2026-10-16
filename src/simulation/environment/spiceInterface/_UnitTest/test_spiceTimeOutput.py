@@ -1,4 +1,3 @@
-
 # ISC License
 #
 # Copyright (c) 2026, PIC4SeR & AVS Lab, Politecnico di Torino & Argotec S.R.L., University of Colorado Boulder
@@ -35,20 +34,11 @@ SECONDS_PER_WEEK = 604800.0  # [s]
 WEEKS_PER_ROLLOVER = 1024  # GPS weeks between rollovers
 
 
-@pytest.mark.parametrize("epoch, leap_seconds", [
-    (datetime.datetime(1999, 8, 21, 23, 59, 47), 13),  # GPS week 1024 starts at this UTC time
-    (datetime.datetime(2015, 7, 1, 0, 0, 0), 17),  # just after the leap second of 2015 June 30
-    (datetime.datetime(2024, 4, 4, 0, 0, 0), 18),  # TDB - TT near its maximum of about +1.7 ms
-    (datetime.datetime(2026, 3, 20, 12, 0, 0, 123000), 18),  # fractional UTC seconds
-    (datetime.datetime(2048, 6, 1, 0, 0, 0), 18),  # past GPS week 3551, where week*604800 s overflows a 32-bit int
-])
-def test_gps_time_and_julian_date(epoch, leap_seconds):
-    """The GPS week, GPS seconds of week and UTC Julian date of ``spiceTimeOutMsg`` equal their definitions.
+def run_spice_time_output(epoch):
+    """Run ``spiceInterface`` for a single update at ``epoch`` and return the ``spiceTimeOutMsg`` recorder.
 
-    GPS time is the UTC time elapsed since the GPS epoch plus the leap seconds introduced since then, and the
-    Julian date is the UTC Julian date.  The epochs include a GPS week rollover, a date just after a leap second,
-    a date near the maximum of the periodic difference between TDB and atomic time, and a date after GPS week 3551,
-    where the GPS week expressed in seconds no longer fits in a signed 32-bit integer.
+    :param epoch: UTC time at which the simulation starts
+    :return: recorder of ``spiceTimeOutMsg``
     """
     sim = SimulationBaseClass.SimBaseClass()
     process = sim.CreateNewProcess("process")
@@ -65,14 +55,43 @@ def test_gps_time_and_julian_date(epoch, leap_seconds):
     sim.InitializeSimulation()
     sim.ConfigureStopTime(0)
     sim.ExecuteSimulation()
+    return time_log
 
-    gps_time = (epoch - GPS_EPOCH).total_seconds() + leap_seconds  # [s]
+
+# gps_utc_offset is GPS - UTC, the leap seconds introduced since the GPS epoch, i.e. TAI - UTC - 19 s [s]
+@pytest.mark.parametrize("epoch, gps_utc_offset", [
+    (datetime.datetime(1999, 8, 21, 23, 59, 47), 13),  # GPS week 1024 starts at this UTC time
+    (datetime.datetime(2015, 7, 1, 0, 0, 0), 17),  # just after the leap second of 2015 June 30
+    (datetime.datetime(2024, 4, 4, 0, 0, 0), 18),  # TDB - TT near its maximum of about +1.7 ms
+    (datetime.datetime(2026, 3, 20, 12, 0, 0, 123000), 18),  # fractional UTC seconds
+    (datetime.datetime(2048, 6, 1, 0, 0, 0), 18),  # past GPS week 3551, where week*604800 s overflows a 32-bit int
+])
+def test_gps_time_and_julian_date(epoch, gps_utc_offset):
+    """The GPS week, GPS seconds of week and UTC Julian date of ``spiceTimeOutMsg`` equal their definitions.
+
+    GPS time is the UTC time elapsed since the GPS epoch plus the leap seconds introduced since then, and the
+    Julian date is the UTC Julian date.  The epochs include a GPS week rollover, a date just after a leap second,
+    a date near the maximum of the periodic difference between TDB and atomic time, and a date after GPS week 3551,
+    where the GPS week expressed in seconds no longer fits in a signed 32-bit integer.
+    """
+    time_log = run_spice_time_output(epoch)
+
+    gps_time = (epoch - GPS_EPOCH).total_seconds() + gps_utc_offset  # [s]
     julian_date = UNIX_EPOCH_JULIAN_DATE + (epoch - UNIX_EPOCH).total_seconds()/SECONDS_PER_DAY  # [d]
 
     gps_week = int(time_log.GPSWeek[-1]) + WEEKS_PER_ROLLOVER*int(time_log.GPSRollovers[-1])
     assert gps_week == int(gps_time//SECONDS_PER_WEEK)
     assert time_log.GPSSeconds[-1] == pytest.approx(gps_time % SECONDS_PER_WEEK, rel=0.0, abs=1.0e-6)  # [s]
     assert time_log.JulianDateCurrent[-1] == pytest.approx(julian_date, rel=0.0, abs=1.0e-9)  # [d]
+
+
+def test_gps_time_before_gps_epoch():
+    """Before the GPS epoch, where GPS time is undefined, the GPS week, seconds and rollovers are held at zero."""
+    time_log = run_spice_time_output(datetime.datetime(1979, 6, 1, 0, 0, 0))
+
+    assert int(time_log.GPSWeek[-1]) == 0
+    assert int(time_log.GPSRollovers[-1]) == 0
+    assert time_log.GPSSeconds[-1] == 0.0  # [s]
 
 
 if __name__ == "__main__":
