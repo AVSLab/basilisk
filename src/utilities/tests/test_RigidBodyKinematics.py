@@ -29,6 +29,115 @@ def prv_backend(request):
     return rbk
 
 
+@pytest.mark.parametrize("layout", ["contiguous", "strided", "reversed", "column"])
+@pytest.mark.parametrize("angle", [0.0, 0.7])  # [rad]
+def test_prv2c_array_views(prv_backend, layout, angle):
+    """Convert array views without changing the rotation or the input storage."""
+    axis = np.array([2.0, -3.0, 6.0]) / 7.0  # [-]
+    vector = angle * axis  # [rad]
+    if layout == "strided":
+        storage = np.zeros(6)
+        storage[::2] = vector
+        value = storage[::2]
+    elif layout == "reversed":
+        storage = vector[::-1].copy()
+        value = storage[::-1]
+    elif layout == "column":
+        storage = np.column_stack((vector, vector))
+        value = storage[:, 0]
+    else:
+        storage = vector.copy()
+        value = storage
+    assert value.flags.c_contiguous == (layout == "contiguous")
+    original = storage.copy()
+    quaternion = np.r_[np.cos(angle / 2.0), axis * np.sin(angle / 2.0)]
+    expected = rbk.EP2C(quaternion)
+
+    result = prv_backend.PRV2C(value)
+
+    np.testing.assert_allclose(result, expected, rtol=0.0, atol=5e-15)
+    np.testing.assert_array_equal(storage, original)
+
+
+def test_prv2c_view_in_numba_kernel():
+    """Convert a matrix column created inside a compiled Numba caller."""
+    numba = pytest.importorskip("numba")
+    pytest.importorskip("scipy")
+    from Basilisk.utilities import RigidBodyKinematicsNumba as rbk_numba
+
+    @numba.njit
+    def column_to_dcm(matrix):
+        return rbk_numba.PRV2C(matrix[:, 0])
+
+    matrix = np.array([[0.2, 0.0], [-0.3, 0.0], [0.6, 0.0]])  # [rad]
+    expected = rbk.PRV2C(matrix[:, 0])
+    np.testing.assert_allclose(column_to_dcm(matrix), expected, rtol=0.0, atol=5e-15)
+
+
+@pytest.mark.parametrize("backend", ["python", "numba"])
+@pytest.mark.parametrize("container", [list, tuple, np.array], ids=["list", "tuple", "array"])
+@pytest.mark.parametrize("quaternion, expected", [
+    pytest.param([-0.5, 0.5, -0.5, 0.5], [-1.0 / 3.0, 1.0 / 3.0, -1.0 / 3.0],
+                 id="negative-scalar"),
+    pytest.param([0.5, -0.5, 0.5, -0.5], [-1.0 / 3.0, 1.0 / 3.0, -1.0 / 3.0],
+                 id="positive-scalar"),
+    pytest.param([-1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0], id="negative-identity"),
+    pytest.param([1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0], id="positive-identity"),
+    pytest.param([-1.0, 1e-12, -2e-12, 3e-12], [-5e-13, 1e-12, -1.5e-12],
+                 id="near-negative-identity"),
+    pytest.param([0.0, 1.0, 0.0, 0.0], [1.0, 0.0, 0.0], id="half-turn"),
+])  # [-] unit quaternions and their bounded MRP sets
+def test_ep2mrp_sequence_inputs(backend, container, quaternion, expected):
+    """Preserve bounded MRPs and input contents for each quaternion container."""
+    if backend == "numba":
+        pytest.importorskip("numba")
+        pytest.importorskip("scipy")
+        from Basilisk.utilities import RigidBodyKinematicsNumba as implementation
+    else:
+        implementation = rbk
+    value = container(quaternion)
+    original = np.array(quaternion)
+
+    result = implementation.EP2MRP(value)
+
+    np.testing.assert_allclose(result, expected, rtol=5e-15, atol=0.0)
+    np.testing.assert_allclose(rbk.MRP2C(result), rbk.EP2C(original), rtol=0.0, atol=5e-15)
+    assert np.linalg.norm(result) <= 1.0
+    np.testing.assert_array_equal(value, original)
+
+
+@pytest.mark.parametrize("backend", ["python", "numba"])
+@pytest.mark.parametrize("container", [list, tuple, np.array], ids=["list", "tuple", "array"])
+@pytest.mark.parametrize("mrp, expected", [
+    pytest.param([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], id="identity"),
+    pytest.param([0.1, 0.2, 0.3], [10.0 / 43.0, 20.0 / 43.0, 30.0 / 43.0],
+                 id="reported-case"),
+    pytest.param([-0.25, 0.5, 0.0], [-8.0 / 11.0, 16.0 / 11.0, 0.0],
+                 id="mixed-signs"),
+    pytest.param([2.0, 0.0, 0.0], [-4.0 / 3.0, 0.0, 0.0], id="long-rotation"),
+    pytest.param([-0.5, 0.0, 0.0], [-4.0 / 3.0, 0.0, 0.0], id="shadow-set"),
+    pytest.param([1e-12, -2e-12, 3e-12], [2e-12, -4e-12, 6e-12],
+                 id="small-rotation"),
+])  # [-] MRPs and their Gibbs vectors
+def test_mrp2gibbs_sequence_inputs(backend, container, mrp, expected):
+    """Return three Gibbs components for every container without changing inputs."""
+    if backend == "numba":
+        pytest.importorskip("numba")
+        pytest.importorskip("scipy")
+        from Basilisk.utilities import RigidBodyKinematicsNumba as implementation
+    else:
+        implementation = rbk
+    value = container(mrp)
+    original = np.array(mrp)
+
+    result = implementation.MRP2Gibbs(value)
+
+    assert result.shape == (3,)
+    np.testing.assert_allclose(result, expected, rtol=5e-15, atol=0.0)
+    np.testing.assert_allclose(rbk.gibbs2C(result), rbk.MRP2C(original), rtol=0.0, atol=5e-15)
+    np.testing.assert_array_equal(value, original)
+
+
 @pytest.mark.parametrize("function_name, identity", [
     ("C2PRV", np.eye(3)),
     ("EP2PRV", np.array([1.0, 0.0, 0.0, 0.0])),
