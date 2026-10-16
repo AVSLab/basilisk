@@ -7,6 +7,10 @@ Basilisk Known Issues
 Version |release|
 -----------------
 
+- The error message of ``atmosphericDrag()`` in ``orbitalMotion``, printed for a position with a non-positive
+  altitude, showed the position components with an index shifted by one and read past the end of the position
+  vector.
+
 - GitHub issue 1615: The :ref:`eclipse` module returned the occulted fraction :math:`(b/a)^2` of the solar disk
   instead of the visible fraction :math:`1 - (b/a)^2` when the disk of the occulting body lies entirely inside the
   solar disk, where :math:`a` and :math:`b` are the apparent radii of the Sun and the body. The same formula in
