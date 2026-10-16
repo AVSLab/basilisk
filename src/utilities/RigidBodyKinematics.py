@@ -16,7 +16,14 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
+"""Attitude conversions, composition, and kinematic rate maps.
 
+Angles are in radians and Euler parameters are scalar-first unit quaternions.
+Use bounded MRP sets and avoid the inherent singularities of each representation.
+The routines use ordinary double-precision formulas; arbitrary finite magnitudes
+and subnormal components are not guaranteed to produce accurate finite results.
+See :ref:`rbkNumericalLimits` for the common C, Python, Numba, and Rust limits.
+"""
 
 import math
 
@@ -591,13 +598,14 @@ def addEuler323(e1, e2):
 
 
 def addGibbs(q1, q2):
-    """
-    addGibbs(Q1,Q2)
+    """Return the Gibbs vector for successive rotations ``q1`` and ``q2``.
 
-    	Q = addGibbs(Q1,Q2) provides the gibbs vector
-    	which corresponds to performing to successive
-    	rotations Q1 and Q2.
+    :param q1: First dimensionless Gibbs vector as a list, tuple, or array.
+    :param q2: Second dimensionless Gibbs vector as a list, tuple, or array.
+    :return: A three-component, dimensionless Gibbs array.
     """
+    q1 = np.asarray(q1, dtype=np.float64)
+    q2 = np.asarray(q2, dtype=np.float64)
     result = (q1 + q2 + np.cross(q1, q2)) / (1 - np.dot(q1, q2))
     return result
 
@@ -1043,16 +1051,14 @@ def BinvEuler323(q):
 
 
 def BinvGibbs(q):
-    """
-    BinvGibbs(Q)
+    """Return the inverse Gibbs rate matrix.
 
-    	B = BinvGibbs(Q) returns the 3x3 matrix which relates
-    	the derivative of gibbs vector Q to the
-    	body angular velocity vector w.
-
-    		w = 2 [B(Q)]^(-1) dQ/dt
+    :param q: Three dimensionless Gibbs components as a list, tuple, or array.
+    :return: A dimensionless 3-by-3 matrix satisfying
+        ``omega = 2 * BinvGibbs(q) @ dq_dt``.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     B = np.zeros((3, 3))
     B[0, 0] = 1
     B[0, 1] = q[2]
@@ -1069,16 +1075,14 @@ def BinvGibbs(q):
 
 
 def BinvMRP(q):
-    """
-    BinvMRP(Q)
+    """Return the inverse MRP rate matrix.
 
-    	B = BinvMRP(Q) returns the 3x3 matrix which relates
-    	the derivative of MRP vector Q to the
-    	body angular velocity vector w.
-
-    		w = 4 [B(Q)]^(-1) dQ/dt
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :return: A dimensionless 3-by-3 matrix satisfying
+        ``omega = 4 * BinvMRP(q) @ dq_dt``.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     s2 = np.dot(q, q)
     B = np.zeros((3, 3))
     B[0, 0] = 1 - s2 + 2 * q[0] * q[0]
@@ -1528,16 +1532,14 @@ def BmatEuler323(q):
 
 
 def BmatGibbs(q):
-    """
-    BmatGibbs(Q)
+    """Return the Gibbs rate matrix satisfying ``dq_dt = B @ omega / 2``.
 
-    	B = BmatGibbs(Q) returns the 3x3 matrix which relates the
-    	body angular velocity vector w to the derivative of
-    	Gibbs vector Q.
-
-    		dQ/dt = 1/2 [B(Q)] w
+    :param q: Three dimensionless Gibbs components as a list, tuple, or array.
+    :return: A dimensionless 3-by-3 matrix evaluated in double precision,
+        including when the input array contains integers or single-precision values.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     B = np.zeros((3, 3))
     B[0, 0] = 1 + q[0] * q[0]
     B[0, 1] = q[0] * q[1] - q[2]
@@ -1553,16 +1555,13 @@ def BmatGibbs(q):
 
 
 def BmatMRP(q):
-    """
-    BmatMRP(Q)
+    """Return the MRP rate matrix satisfying ``dq_dt = B @ omega / 4``.
 
-    	B = BmatMRP(Q) returns the 3x3 matrix which relates the
-    	body angular velocity vector w to the derivative of
-    	MRP vector Q.
-
-    		dQ/dt = 1/4 [B(Q)] w
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :return: A dimensionless 3-by-3 matrix.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     B = np.zeros((3, 3))
     s2 = np.dot(q, q)
     B[0, 0] = 1 - s2 + 2 * q[0] * q[0]
@@ -1579,16 +1578,15 @@ def BmatMRP(q):
 
 
 def BdotmatMRP(q, dq):
-    """
-    BdotmatMRP(Q, dQ)
+    """Return the time derivative of the MRP rate matrix.
 
-    	B = BdotmatMRP(Q, dQ) returns the derivative of the 3x3 BmatMRP
-        matrix, which is used to calculate the second order derivative
-        of the MRP vector Q.
-
-    	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :param dq: Three MRP time derivatives in inverse seconds.
+    :return: A 3-by-3 matrix in inverse seconds.
     """
 
+    q = np.asarray(q, dtype=np.float64)
+    dq = np.asarray(dq, dtype=np.float64)
     Bdot = np.zeros((3, 3))
     s = -2 * np.dot(q, dq)
     Bdot[0, 0] = s + 4 * (q[0] * dq[0])
@@ -1644,6 +1642,7 @@ def dEP(q, w):
     	dQ/dt = 1/2 [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return .5 * np.dot(BmatEP(q), w)
 
 
@@ -1658,6 +1657,7 @@ def dEuler121(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler121(q), w)
 
 
@@ -1672,6 +1672,7 @@ def dEuler123(q, w):
         dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler123(q), w)
 
 
@@ -1686,6 +1687,7 @@ def dEuler131(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler131(q), w)
 
 
@@ -1700,6 +1702,7 @@ def dEuler132(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler132(q), w)
 
 
@@ -1714,6 +1717,7 @@ def dEuler212(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler212(q), w)
 
 
@@ -1728,6 +1732,7 @@ def dEuler213(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler213(q), w)
 
 
@@ -1742,6 +1747,7 @@ def dEuler231(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler231(q), w)
 
 
@@ -1756,6 +1762,7 @@ def dEuler232(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler232(q), w)
 
 
@@ -1770,6 +1777,7 @@ def dEuler312(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler312(q), w)
 
 
@@ -1784,6 +1792,7 @@ def dEuler313(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler313(q), w)
 
 
@@ -1798,6 +1807,7 @@ def dEuler321(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler321(q), w)
 
 
@@ -1812,75 +1822,72 @@ def dEuler323(q, w):
     	dQ/dt =  [B(Q)] w
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return np.dot(BmatEuler323(q), w)
 
 
 def dGibbs(q, w):
-    """
-    dGibbs(Q,W)
+    """Map angular velocity to the Gibbs vector derivative.
 
-    	dq = dGibbs(Q,W) returns the gibbs derivative
-    	for a given gibbs vector Q and body
-    	angular velocity vector w.
-
-    	dQ/dt = 1/2 [B(Q)] w
+    :param q: Dimensionless Gibbs vector.
+    :param w: Body angular velocity in radians per second.
+    :return: Gibbs time derivative in inverse seconds.
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return .5 * np.dot(BmatGibbs(q), w)
 
 
 def dMRP(q, w):
-    """
-    dMRP(Q,W)
+    """Map angular velocity to the MRP time derivative.
 
-    	dq = dMRP(Q,W) returns the MRP derivative
-    	for a given MRP vector Q and body
-    	angular velocity vector w.
-
-    	dQ/dt = 1/4 [B(Q)] w
+    :param q: Dimensionless MRP vector.
+    :param w: Body angular velocity in radians per second.
+    :return: MRP time derivative in inverse seconds.
     """
 
+    w = np.asarray(w, dtype=np.float64)
     return .25 * np.dot(BmatMRP(q), w)
 
 
 def dMRP2Omega(q, dq):
-    """
-    dMRP(Q,dQ)
+    """Recover angular velocity from the MRP time derivative.
 
-    	W = dMRP(Q,dQ) returns the angular rate
-    	for a given MRP set q MRP derivative dq.
-
-        W = 4 [B(Q)]^(-1) dQ
+    :param q: Dimensionless MRP vector.
+    :param dq: MRP time derivative in inverse seconds.
+    :return: Body angular velocity in radians per second.
     """
 
+    dq = np.asarray(dq, dtype=np.float64)
     return 4 * np.dot(BinvMRP(q), dq)
 
 
 def ddMRP(q, dq, w, dw):
-    """
-    dMRP(Q,dQ,W,dW)
+    """Map angular acceleration to the MRP second derivative.
 
-    	ddQ = ddMRP(Q,dQ,W,dW) returns the MRP second derivative
-    	for a given MRP vector q, MRP derivative dq, body
-    	angular velocity vector w and body angulat acceleration
-        vector dw.
-
-    	(d^2Q)/(dt^2) = 1/4 ( [B(Q)] dw + [Bdot(Q,dQ)] w )
+    :param q: Dimensionless MRP vector.
+    :param dq: MRP time derivative in inverse seconds.
+    :param w: Body angular velocity in radians per second.
+    :param dw: Body angular acceleration in radians per second squared.
+    :return: MRP second derivative in inverse seconds squared.
     """
 
+    w = np.asarray(w, dtype=np.float64)
+    dw = np.asarray(dw, dtype=np.float64)
     return .25 * ( np.dot(BmatMRP(q), dw) + np.dot(BdotmatMRP(q, dq), w) )
 
+
 def ddMRP2dOmega(q, dq, ddq):
-    """
-    ddMRP2dOmega(Q,dQ,ddQ)
+    """Recover angular acceleration from MRP derivatives.
 
-    	dW = ddMRP2dOmega(Q,dQ,ddQ) returns the body angular acceleration
-        dW given the MRP vector Q, the MRP derivative dQ and the MRP
-        second order derivative ddQ.
-
-    	dW/dt = 4 [B(Q)]^(-1) ( ddQ - [Bdot(Q,dQ)] [B(Q)]^(-1) dQ )
+    :param q: Dimensionless MRP vector.
+    :param dq: MRP time derivative in inverse seconds.
+    :param ddq: MRP second derivative in inverse seconds squared.
+    :return: Body angular acceleration in radians per second squared.
     """
 
+    dq = np.asarray(dq, dtype=np.float64)
+    ddq = np.asarray(ddq, dtype=np.float64)
     Binv = BinvMRP(q)
     Bdot = BdotmatMRP(q, dq)
 
@@ -1917,13 +1924,13 @@ def elem2PRV(r):
 
 
 def gibbs2C(q):
-    """
-    gibbs2C
+    """Convert a Gibbs vector to a direction cosine matrix.
 
-    	C = gibbs2C(Q) returns the direction cosine
-    	matrix in terms of the 3x1 gibbs vector Q.
+    :param q: Three dimensionless Gibbs components as a list, tuple, or array.
+    :return: A 3-by-3 direction cosine matrix.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     q1 = q[0]
     q2 = q[1]
     q3 = q[2]
@@ -1944,13 +1951,13 @@ def gibbs2C(q):
 
 
 def gibbs2EP(q1):
-    """
-    gibbs2EP(Q1)
+    """Convert a Gibbs vector to Euler parameters.
 
-    	Q = gibbs2EP(Q1) translates the gibbs vector Q1
-    	into the euler parameter vector Q.
+    :param q1: Three dimensionless Gibbs components as a list, tuple, or array.
+    :return: A unit quaternion with a positive scalar component first.
     """
 
+    q1 = np.asarray(q1, dtype=np.float64)
     qm = np.linalg.norm(q1)
     ps = np.sqrt(1 + qm * qm)
     q = np.array([
@@ -2095,13 +2102,13 @@ def gibbs2Euler323(q):
 
 
 def gibbs2MRP(q1):
-    """
-    gibbs2MRP(Q1)
+    """Convert a Gibbs vector to modified Rodrigues parameters.
 
-    	Q = gibbs2MRP(Q1) translates the gibbs vector Q1
-    	into the MRP vector Q.
+    :param q1: Three dimensionless Gibbs components as a list, tuple, or array.
+    :return: A three-component, dimensionless MRP array with norm at most one.
     """
 
+    q1 = np.asarray(q1, dtype=np.float64)
     return q1 / (1 + math.sqrt(1 + np.dot(q1, q1)))
 
 
@@ -2125,13 +2132,13 @@ def gibbs2PRV(q):
 
 
 def MRP2C(q):
-    """
-    MRP2C
+    """Convert modified Rodrigues parameters to a direction cosine matrix.
 
-    	C = MRP2C(Q) returns the direction cosine
-    	matrix in terms of the 3x1 MRP vector Q.
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :return: A 3-by-3 direction cosine matrix.
     """
 
+    q = np.asarray(q, dtype=np.float64)
     q1 = q[0]
     q2 = q[1]
     q3 = q[2]
@@ -2154,12 +2161,13 @@ def MRP2C(q):
 
 
 def MRP2EP(q1):
-    """
-    MRP2EP(Q1)
+    """Convert modified Rodrigues parameters to Euler parameters.
 
-    	Q = MRP2EP(Q1) translates the MRP vector Q1
-    	into the euler parameter vector Q.
+    :param q1: Three dimensionless MRP components as a list, tuple, or array.
+    :return: A unit quaternion with its scalar component first. MRP norms greater
+        than one retain a negative quaternion scalar component.
     """
+    q1 = np.asarray(q1, dtype=np.float64)
     qm = np.linalg.norm(q1)
     ps = 1 + qm * qm
     q = np.array([
@@ -2304,13 +2312,14 @@ def MRP2Euler323(q):
 
 
 def MRP2Gibbs(q1):
-    """
-    MRP2Gibbs(Q1)
+    """Convert modified Rodrigues parameters to a Gibbs vector.
 
-    	Q = MRP2Gibbs(Q1) translates the MRP vector Q1
-    	into the gibbs vector Q.
+    :param q1: Three dimensionless MRP components as a list, tuple, or array.
+    :return: A three-component, dimensionless Gibbs vector.
+    :note: The conversion is singular when the MRP norm equals one.
     """
 
+    q1 = np.asarray(q1, dtype=np.float64)
     return 2 * q1 / (1 - np.dot(q1, q1))
 
 
@@ -2347,13 +2356,15 @@ def MRPshadow(q):
 
 
 def MRPswitch(q, s2):
-    """
-    MRPswitch
+    """Switch to the shadow MRP set when the input norm exceeds ``s2``.
 
-    	S = MRPswitch(Q,s2) checks to see if norm(Q) is larger than s2.
-    	If yes, then the MRP vector Q is mapped to its shadow set.
+    :param q: Three dimensionless MRP components as a list, tuple, or array.
+    :param s2: Dimensionless MRP norm threshold.
+    :return: A three-component MRP array, unchanged at or below the threshold.
     """
 
+    q = np.asarray(q, dtype=np.float64)
+    s2 = np.float64(s2)
     q2 = np.dot(q, q)
     if (q2 > s2 * s2):
         s = -q / q2
@@ -2379,7 +2390,8 @@ def PRV2C(q):
         Direction cosine (rotation) matrix.
     """
 
-    q = np.asarray(q, dtype=np.float64).reshape(3)
+    # Numba requires contiguous storage when reshaping strided array views.
+    q = np.ascontiguousarray(np.asarray(q, dtype=np.float64)).reshape(3)
     angle = math.hypot(q[0], math.hypot(q[1], q[2]))
 
     if angle == 0.0:
@@ -2403,11 +2415,11 @@ def PRV2C(q):
 
 
 def PRV2EP(qq1):
-    """"
-    PRV2EP(Q1)
+    """Convert a principal rotation vector to Euler parameters.
 
-    	Q = PRV2EP(Q1) translates the principal rotation vector Q1
-    	into the euler parameter vector Q.
+    :param qq1: Three-component rotation vector in radians.
+    :return: A unit quaternion with its scalar component first. Small nonzero
+        rotations retain their vector components.
     """
 
     q = np.zeros(4)
@@ -2842,13 +2854,14 @@ def subEuler323(e, e1):
 
 
 def subGibbs(q1, q2):
-    """
-    subGibbs(Q1,Q2)
+    """Return the relative Gibbs vector from ``q2`` to ``q1``.
 
-    	Q = subGibbs(Q1,Q2) provides the gibbs vector
-    	which corresponds to relative rotation from Q2
-    	to Q1.
+    :param q1: Final dimensionless Gibbs vector as a list, tuple, or array.
+    :param q2: Reference dimensionless Gibbs vector as a list, tuple, or array.
+    :return: A three-component, dimensionless Gibbs array.
     """
+    q1 = np.asarray(q1, dtype=np.float64)
+    q2 = np.asarray(q2, dtype=np.float64)
     return (q1 - q2 + np.cross(q1, q2)) / (1. + np.dot(q1, q2))
 
 
@@ -3165,18 +3178,19 @@ def EP2Gibbs(q):
 
 
 def EP2MRP(q):
-    """
-    EP2MRP(Q1)
-        Q = EP2MRP(Q1) translates the euler parameter vector Q1
-        into the MRP vector Q.
+    """Convert Euler parameters to the MRP set with norm at most one.
+
+    :param q: Four-component unit quaternion, scalar component first. Lists,
+        tuples, and NumPy arrays are supported.
+    :return: Three dimensionless MRPs. Negative-scalar quaternions use the
+        shadow set; both identity quaternions return zero.
     """
 
-    if q[0] < 0:
-        q = -q
-
-    q1 = q[1] / (1 + q[0])
-    q2 = q[2] / (1 + q[0])
-    q3 = q[3] / (1 + q[0])
+    # Select the bounded MRP set without negating the input container.
+    denominator = 1.0 + q[0] if q[0] >= 0.0 else q[0] - 1.0
+    q1 = q[1] / denominator
+    q2 = q[2] / denominator
+    q3 = q[3] / denominator
 
     return np.array([q1, q2, q3])
 
@@ -4292,6 +4306,7 @@ def Mi(theta, i):
     else:
         print('Mi() error: incorrect axis', i, 'selected')
     return C
+
 
 def v3Tilde(vector):
     x1 = vector[0]

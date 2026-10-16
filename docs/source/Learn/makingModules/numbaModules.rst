@@ -346,8 +346,9 @@ Allowed
   ``while``, ``break``, ``continue``, ``return``.
 - **Math functions**: ``math.sqrt``, ``math.sin``, etc. (import ``math``
   at module level, use inside the function normally).
-- **Calling other** ``@nb.njit`` **functions** - factor complex logic into
-  helper functions decorated with ``@numba.njit``.
+- **Calling compiled functions or registered Numba overloads** - use helpers
+  decorated with ``@numba.njit`` or compatible library functions such as
+  those in ``RigidBodyKinematicsNumba``.
 - **``print(label, value, ...)``** - variadic print to stdout works and is
   the simplest way to emit debug output.
 - **``bskLogger``** methods as described in :ref:`numbaModules_logging`.
@@ -358,8 +359,10 @@ Allowed
 Not Allowed
 ~~~~~~~~~~~
 
-- **Python objects** of any kind: no lists, dicts, sets, tuples, classes,
-  generators, or iterators.  Use numpy arrays for all collections.
+- **Arbitrary Python objects** that require the Python interpreter. Prefer
+  NumPy arrays for numerical collections. Numeric tuples and native Numba
+  containers are supported subject to Numba's type restrictions; convert
+  ordinary Python lists before passing them into a compiled caller.
 - **String variables** - string *literals* in ``print`` and ``bskLogger`` calls
   work, but you cannot assign a string to a variable or pass one as a
   function argument (other than via the ``bskLog*`` API).
@@ -368,8 +371,9 @@ Not Allowed
 - **Exceptions** - ``raise``, ``try``/``except``/``finally`` are not
   supported.  Use conditional logic and ``bskLogger`` to handle error
   conditions.
-- **Calling Python functions** that are not themselves ``@nb.njit``-compiled.
-  Standard library functions (``os``, ``sys``, etc.) are unavailable.
+- **Calling Python functions** without a compiled implementation or a
+  registered Numba overload. Standard library functions from ``os`` and
+  ``sys``, for example, are unavailable.
 - **Dynamic memory allocation** with arbitrary Python types.  NumPy array
   creation with a *constant* size (``np.zeros(3)``) is fine; allocation
   whose size depends on a runtime variable may require care.
@@ -402,7 +406,7 @@ continues from whatever value was last written, by any means.
 ----------------------------
 
 :py:mod:`Basilisk.utilities.RigidBodyKinematicsNumba` provides
-``@nb.njit``-compiled versions of every function in
+Python wrappers and Numba overloads for every function in
 :py:mod:`Basilisk.utilities.RigidBodyKinematics`, making the full rigid-body
 kinematics library callable from within compiled ``UpdateStateImpl`` kernels.
 
@@ -418,9 +422,51 @@ Import individual functions at module level (outside ``UpdateStateImpl``)::
             attGuidOutMsgPayload.sigma_BR[:3] = sigma_BR
 
 All kinematics functions (``MRP2C``, ``C2MRP``, ``addMRP``, ``subMRP``,
-``EP2C``, ``C2EP``, ``PRV2C``, and more) are available.  Because they are
-decorated with ``@nb.njit(inline='always')``, calls inside ``UpdateStateImpl``
-compile inline with no per-call overhead.
+``EP2C``, ``C2EP``, ``PRV2C``, and more) are available. Calls inside
+``UpdateStateImpl`` select the compiled implementations through Numba overloads.
+The overloads and kernels use ``inline='always'`` and bypass Python dispatch.
+The plain Python ``RigidBodyKinematics`` module remains unchanged.
+The common :ref:`rbkNumericalLimits` also apply to these compiled functions.
+
+Python and compiled inputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When called from Python, these functions accept numeric lists, tuples, and
+NumPy arrays, including nested sequences for matrices. Wrappers convert lists
+and tuples to ``float64`` arrays before entering Numba. Existing arrays are
+passed through without copying, and scalar arguments such as an angle or axis
+index retain their types. Positional and keyword calls use the same signatures
+as ``RigidBodyKinematics``.
+
+For compiled callers, use NumPy arrays, preferably ``float64``, or numeric
+tuples. The overloads also accept native lists created inside compiled code and
+``numba.typed.List`` arguments. Ordinary Python lists must be converted before
+entering the **outermost** compiled function, including a user-defined
+``@numba.njit`` caller. A kinematics function inside that caller cannot convert
+the caller's original Python argument before Numba processes it.
+
+For example::
+
+    import numpy as np
+    from numba import njit
+    from Basilisk.utilities.RigidBodyKinematicsNumba import MRP2C
+
+    sigma = [0.1, -0.2, 0.3]  # [-] MRPs
+    matrix = MRP2C(sigma)  # The Python wrapper converts the list.
+
+    @njit
+    def rotation(sigma):
+        return MRP2C(sigma)  # Selects the compiled implementation.
+
+    matrix = rotation(np.asarray(sigma, dtype=np.float64))
+
+This arrangement avoids Numba's deprecated Python list reflection without
+suppressing its warnings. It reuses the same mathematical implementations for
+Python and compiled calls. Public functions are now Python callables with
+Numba overloads rather than dispatcher objects; dispatcher-specific attributes
+such as ``.signatures`` and ``.py_func`` are not part of this interface. Use
+``RigidBodyKinematics`` for the plain Python implementations. Compiled callers
+may still use ``@numba.njit(cache=True)``.
 
 .. note::
 
