@@ -21,12 +21,28 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - name: Select formatting scope
+        id: formatting-scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]] && git diff --quiet "$BASE_SHA...$HEAD_SHA" -- \
+            .clang-format .pre-commit-config.yaml ':(glob)**/.clang-format'; then
+            echo "args=--from-ref $BASE_SHA --to-ref $HEAD_SHA" >> "$GITHUB_OUTPUT"
+          else
+            echo "args=--all-files" >> "$GITHUB_OUTPUT"
+          fi
       - uses: pre-commit/action@v3.0.1
         with:
-          extra_args: clang-format --all-files --show-diff-on-failure
+          extra_args: clang-format ${{ steps.formatting-scope.outputs.args }} --show-diff-on-failure
 
   build-linux:
     runs-on: ubuntu-24.04
