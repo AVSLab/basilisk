@@ -1689,7 +1689,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler121(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("addEuler121 failed\n");
         errorCount++;
@@ -1707,9 +1707,9 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler131(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
-        printf("addEuler123 failed\n");
+        printf("addEuler131 failed\n");
         errorCount++;
     }
 
@@ -1725,7 +1725,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler212(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("addEuler212 failed\n");
         errorCount++;
@@ -1752,7 +1752,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler232(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("addEuler232 failed\n");
         errorCount++;
@@ -1770,7 +1770,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler313(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("addEuler313 failed\n");
         errorCount++;
@@ -1788,7 +1788,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     addEuler323(v3_1, v3_2, v3);
-    v3Set(-2.96705972839036, 2.44346095279206, 1.41371669411541, v3_1);
+    v3Set(-2.96705972839036, 2.44346095279206, -1.72787595947439, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("addEuler323 failed\n");
         errorCount++;
@@ -3317,7 +3317,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler121(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler121 failed\n");
         errorCount++;
@@ -3335,7 +3335,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler131(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler131 failed\n");
         errorCount++;
@@ -3353,7 +3353,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler212(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler212 failed\n");
         errorCount++;
@@ -3380,7 +3380,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler232(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler232 failed\n");
         errorCount++;
@@ -3398,7 +3398,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler313(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler313 failed\n");
         errorCount++;
@@ -3416,7 +3416,7 @@ int testRigidBodyKinematics(double accuracy)
     v3Set(10 * D2R, 20 * D2R, 30 * D2R, v3_1);
     v3Set(-30 * D2R, 200 * D2R, 81 * D2R, v3_2);
     subEuler323(v3_1, v3_2, v3);
-    v3Set(2.969124082346242, 2.907100217278789, 2.423943306316236, v3_1);
+    v3Set(-0.172468571243551, 2.907100217278789, 2.423943306316236, v3_1);  // [rad]
     if(!v3IsEqual(v3, v3_1, accuracy)) {
         printf("subEuler323 failed\n");
         errorCount++;

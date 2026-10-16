@@ -39,56 +39,42 @@ void addEP(double *b1, double *b2, double *result)
     result[3] = b2[3] * b1[0] + b2[2] * b1[1] - b2[1] * b1[2] + b2[0] * b1[3];
 }
 
-/*
- * addEuler121(E1,E2,Q) computes the overall (1-2-1) Euler
- * angle vector corresponding to two successive
- * (1-2-1) rotations E1 and E2.
+/**
+ * @brief Compose successive (1-2-1) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler121(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler1212C(e1, C1);
+    Euler1212C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler121(C, result);
 }
 
-/*
- * addEuler131(E1,E2,Q) computes the overall (1-3-1) Euler
- * angle vector corresponding to two successive
- * (1-3-1) rotations E1 and E2.
+/**
+ * @brief Compose successive (1-3-1) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler131(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler1312C(e1, C1);
+    Euler1312C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler131(C, result);
 }
 
 /*
@@ -125,30 +111,23 @@ void addEuler132(double *e1, double *e2, double *result)
     C2Euler132(C, result);
 }
 
-/*
- * addEuler212(E1,E2,Q) computes the overall (2-1-2) Euler
- * angle vector corresponding to two successive
- * (2-1-2) rotations E1 and E2.
+/**
+ * @brief Compose successive (2-1-2) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler212(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler2122C(e1, C1);
+    Euler2122C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler212(C, result);
 }
 
 /*
@@ -185,30 +164,23 @@ void addEuler231(double *e1, double *e2, double *result)
     C2Euler231(C, result);
 }
 
-/*
- * addEuler232(E1,E2,Q) computes the overall (2-3-2) Euler
- * angle vector corresponding to two successive
- * (2-3-2) rotations E1 and E2.
+/**
+ * @brief Compose successive (2-3-2) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler232(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler2322C(e1, C1);
+    Euler2322C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler232(C, result);
 }
 
 /*
@@ -228,30 +200,23 @@ void addEuler312(double *e1, double *e2, double *result)
     C2Euler312(C, result);
 }
 
-/*
- * addEuler313(E1,E2,Q) computes the overall (3-1-3) Euler
- * angle vector corresponding to two successive
- * (3-1-3) rotations E1 and E2.
+/**
+ * @brief Compose successive (3-1-3) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler313(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler3132C(e1, C1);
+    Euler3132C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler313(C, result);
 }
 
 /*
@@ -271,30 +236,23 @@ void addEuler321(double *e1, double *e2, double *result)
     C2Euler321(C, result);
 }
 
-/*
- * addEuler323(E1,E2,Q) computes the overall (3-2-3) Euler
- * angle vector corresponding to two successive
- * (3-2-3) rotations E1 and E2.
+/**
+ * @brief Compose successive (3-2-3) rotations, including singular attitudes.
+ * @param e1 First Euler angle vector [rad].
+ * @param e2 Second Euler angle vector [rad].
+ * @param result Output Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void addEuler323(double *e1, double *e2, double *result)
 {
-    double cp1;
-    double cp2;
-    double sp1;
-    double sp2;
-    double dum;
-    double cp3;
+    double C1[3][3];
+    double C2[3][3];
+    double C[3][3];
 
-    cp1 = cos(e1[1]);
-    cp2 = cos(e2[1]);
-    sp1 = sin(e1[1]);
-    sp2 = sin(e2[1]);
-    dum = e1[2] + e2[0];
-
-    result[1] = safeAcos(cp1 * cp2 - sp1 * sp2 * cos(dum));
-    cp3 = cos(result[1]);
-    result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
-    result[2] = wrapToPi(e2[2] + atan2(sp1 * sp2 * sin(dum), cp1 - cp3 * cp2));
+    Euler3232C(e1, C1);
+    Euler3232C(e2, C2);
+    m33MultM33(C2, C1, C);
+    C2Euler323(C, result);
 }
 
 /*
@@ -1414,136 +1372,192 @@ void C2EP(double C[3][3], double b[4])
     }
 }
 
-/*
- * C2Euler121(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (1-2-1) Euler angle set.
+/**
+ * @brief Extract Euler angles with a deterministic singularity convention.
+ * @param C Input direction cosine matrix.
+ * @param firstAxis Zero-based first rotation axis.
+ * @param secondAxis Zero-based second rotation axis.
+ * @param repeated Nonzero when the third axis repeats the first axis.
+ * @param q Output Euler angles [rad]. The third angle is zero at a singularity.
+ * @note Remove the third rotation before extracting the first angle from the
+ * second-axis row, which is unaffected by the middle rotation. This avoids
+ * independently extracting two ill-conditioned outer angles near a singularity.
+ */
+static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis, int repeated, double q[3])
+{
+    int remainingAxis = 3 - firstAxis - secondAxis;
+    double parity = secondAxis == (firstAxis + 1) % 3 ? 1.0 : -1.0;
+    const double singularityTolerance = 1e-14;  // [-] sine or cosine of the middle angle
+    double magnitude;
+    double sine;
+    double cosine;
+    double sineLast;
+    double cosineLast;
+
+    if (repeated) {
+        magnitude = hypot(C[firstAxis][secondAxis], C[firstAxis][remainingAxis]);
+        q[1] = atan2(magnitude, C[firstAxis][firstAxis]);
+        q[2] = magnitude > singularityTolerance
+            ? atan2(C[secondAxis][firstAxis], parity * C[remainingAxis][firstAxis]) : 0.0;  // [rad]
+        sineLast = sin(q[2]);
+        cosineLast = cos(q[2]);
+        sine = parity * cosineLast * C[secondAxis][remainingAxis] - sineLast * C[remainingAxis][remainingAxis];
+        cosine = cosineLast * C[secondAxis][secondAxis] - parity * sineLast * C[remainingAxis][secondAxis];
+    } else {
+        magnitude = hypot(C[secondAxis][firstAxis], C[firstAxis][firstAxis]);
+        q[1] = atan2(parity * C[remainingAxis][firstAxis], magnitude);
+        q[2] = magnitude > singularityTolerance
+            ? atan2(-parity * C[secondAxis][firstAxis], C[firstAxis][firstAxis]) : 0.0;  // [rad]
+        sineLast = sin(q[2]);
+        cosineLast = cos(q[2]);
+        sine = parity * cosineLast * C[secondAxis][remainingAxis] + sineLast * C[firstAxis][remainingAxis];
+        cosine = cosineLast * C[secondAxis][secondAxis] + parity * sineLast * C[firstAxis][secondAxis];
+    }
+    q[0] = atan2(sine, cosine);
+}
+
+/**
+ * @brief Convert a DCM to the (1-2-1) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler121(double C[3][3], double *q)
 {
-    q[0] = atan2(C[0][1], -C[0][2]);
-    q[1] = safeAcos(C[0][0]);
-    q[2] = atan2(C[1][0], C[2][0]);
+    C2EulerSequence(C, 0, 1, 1, q);
 }
 
-/*
- * C2Euler123(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (1-2-3) Euler angle set.
+/**
+ * @brief Convert a DCM to the (1-2-3) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler123(double C[3][3], double *q)
 {
-    q[0] = atan2(-C[2][1], C[2][2]);
-    q[1] = safeAsin(C[2][0]);
-    q[2] = atan2(-C[1][0], C[0][0]);
+    C2EulerSequence(C, 0, 1, 0, q);
 }
 
-/*
- * C2Euler131(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (1-3-1) Euler angle set.
+/**
+ * @brief Convert a DCM to the (1-3-1) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler131(double C[3][3], double *q)
 {
-    q[0] = atan2(C[0][2], C[0][1]);
-    q[1] = safeAcos(C[0][0]);
-    q[2] = atan2(C[2][0], -C[1][0]);
+    C2EulerSequence(C, 0, 2, 1, q);
 }
 
-/*
- * C2Euler132(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (1-3-2) Euler angle set.
+/**
+ * @brief Convert a DCM to the (1-3-2) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler132(double C[3][3], double *q)
 {
-    q[0] = atan2(C[1][2], C[1][1]);
-    q[1] = safeAsin(-C[1][0]);
-    q[2] = atan2(C[2][0], C[0][0]);
+    C2EulerSequence(C, 0, 2, 0, q);
 }
 
-/*
- * C2Euler212(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (2-1-2) Euler angle set.
+/**
+ * @brief Convert a DCM to the (2-1-2) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler212(double C[3][3], double *q)
 {
-    q[0] = atan2(C[1][0], C[1][2]);
-    q[1] = safeAcos(C[1][1]);
-    q[2] = atan2(C[0][1], -C[2][1]);
+    C2EulerSequence(C, 1, 0, 1, q);
 }
 
-/*
- * C2Euler213(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (2-1-3) Euler angle set.
+/**
+ * @brief Convert a DCM to the (2-1-3) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler213(double C[3][3], double *q)
 {
-    q[0] = atan2(C[2][0], C[2][2]);
-    q[1] = safeAsin(-C[2][1]);
-    q[2] = atan2(C[0][1], C[1][1]);
+    C2EulerSequence(C, 1, 0, 0, q);
 }
 
-/*
- * C2Euler231(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (2-3-1) Euler angle set.
+/**
+ * @brief Convert a DCM to the (2-3-1) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler231(double C[3][3], double *q)
 {
-    q[0] = atan2(-C[0][2], C[0][0]);
-    q[1] = safeAsin(C[0][1]);
-    q[2] = atan2(-C[2][1], C[1][1]);
+    C2EulerSequence(C, 1, 2, 0, q);
 }
 
-/*
- * C2Euler232(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (2-3-2) Euler angle set.
+/**
+ * @brief Convert a DCM to the (2-3-2) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler232(double C[3][3], double *q)
 {
-    q[0] = atan2(C[1][2], -C[1][0]);
-    q[1] = safeAcos(C[1][1]);
-    q[2] = atan2(C[2][1], C[0][1]);
+    C2EulerSequence(C, 1, 2, 1, q);
 }
 
-/*
- * C2Euler312(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (3-1-2) Euler angle set.
+/**
+ * @brief Convert a DCM to the (3-1-2) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler312(double C[3][3], double *q)
 {
-    q[0] = atan2(-C[1][0], C[1][1]);
-    q[1] = safeAsin(C[1][2]);
-    q[2] = atan2(-C[0][2], C[2][2]);
+    C2EulerSequence(C, 2, 0, 0, q);
 }
 
-/*
- * C2Euler313(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (3-1-3) Euler angle set.
+/**
+ * @brief Convert a DCM to the (3-1-3) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler313(double C[3][3], double *q)
 {
-    q[0] = atan2(C[2][0], -C[2][1]);
-    q[1] = safeAcos(C[2][2]);
-    q[2] = atan2(C[0][2], C[1][2]);
+    C2EulerSequence(C, 2, 0, 1, q);
 }
 
-/*
- * C2Euler321(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (3-2-1) Euler angle set.
+/**
+ * @brief Convert a DCM to the (3-2-1) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler321(double C[3][3], double *q)
 {
-    q[0] = atan2(C[0][1], C[0][0]);
-    q[1] = safeAsin(-C[0][2]);
-    q[2] = atan2(C[1][2], C[2][2]);
+    C2EulerSequence(C, 2, 1, 0, q);
 }
 
-/*
- * C2Euler323(C,Q) translates the 3x3 direction cosine matrix
- * C into the corresponding (3-2-3) Euler angle set.
+/**
+ * @brief Convert a DCM to the (3-2-3) Euler angle set.
+ * @param C Input direction cosine matrix.
+ * @param q Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void C2Euler323(double C[3][3], double *q)
 {
-    q[0] = atan2(C[2][1], C[2][0]);
-    q[1] = safeAcos(C[2][2]);
-    q[2] = atan2(C[1][2], -C[0][2]);
+    C2EulerSequence(C, 2, 1, 1, q);
 }
 
 /*
@@ -1949,238 +1963,196 @@ void EP2C(double *q, double C[3][3])
     C[2][2] = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3;
 }
 
-/*
- * EP2Euler121(Q,E) translates the Euler parameter
- * vector Q into the corresponding (1-2-1) Euler angle
- * vector E.
+/**
+ * @brief Extract repeated-axis Euler angles while preserving nonsingular angle branches.
+ * @param q Input scalar-first unit quaternion.
+ * @param firstAxis Zero-based first rotation axis.
+ * @param secondAxis Zero-based second rotation axis.
+ * @param e Output Euler angles [rad]. The third angle is zero at a singularity.
+ */
+static void EP2EulerRepeated(double *q, int firstAxis, int secondAxis, double e[3])
+{
+    int remainingAxis = 3 - firstAxis - secondAxis;
+    double parity = secondAxis == (firstAxis + 1) % 3 ? 1.0 : -1.0;
+    double sineHalf = hypot(q[secondAxis + 1], q[remainingAxis + 1]);
+    double cosineHalf = hypot(q[0], q[firstAxis + 1]);
+    const double singularityTolerance = 1e-14;  // [-] sine of the middle angle near either endpoint
+    double difference;
+    double total;
+    double C[3][3];
+
+    if (2.0 * fmin(sineHalf, cosineHalf) <= singularityTolerance) {
+        EP2C(q, C);
+        C2EulerSequence(C, firstAxis, secondAxis, 1, e);
+        return;
+    }
+    difference = atan2(q[remainingAxis + 1], q[secondAxis + 1]);
+    total = atan2(q[firstAxis + 1], q[0]);
+    e[0] = total + parity * difference;
+    e[1] = 2.0 * atan2(sineHalf, cosineHalf);
+    e[2] = total - parity * difference;
+}
+
+/**
+ * @brief Convert Euler parameters to the (1-2-1) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler121(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[3], q[2]);
-    t2 = atan2(q[1], q[0]);
-
-    e[0] = t1 + t2;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
-    e[2] = t2 - t1;
+    EP2EulerRepeated(q, 0, 1, e);
 }
 
-/*
- * EP2Euler123(Q,E) translates the Euler parameter vector
- * Q into the corresponding (1-2-3) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (1-2-3) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler123(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
-    e[1] = safeAsin(2 * (q1 * q3 + q0 * q2));
-    e[2] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
+    EP2C(q, C);
+    C2Euler123(C, e);
 }
 
-/*
- * EP2Euler131(Q,E) translates the Euler parameter
- * vector Q into the corresponding (1-3-1) Euler angle
- * vector E.
+/**
+ * @brief Convert Euler parameters to the (1-3-1) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler131(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[2], q[3]);
-    t2 = atan2(q[1], q[0]);
-
-    e[0] = t2 - t1;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[1] * q[1]));
-    e[2] = t2 + t1;
+    EP2EulerRepeated(q, 0, 2, e);
 }
 
-/*
- * EP2Euler132(Q,E) translates the Euler parameter vector
- * Q into the corresponding (1-3-2) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (1-3-2) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler132(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
-    e[1] = safeAsin(-2 * (q1 * q2 - q0 * q3));
-    e[2] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
+    EP2C(q, C);
+    C2Euler132(C, e);
 }
 
-/*
- * EP2Euler212(Q,E) translates the Euler parameter
- * vector Q into the corresponding (2-1-2) Euler angle
- * vector E.
+/**
+ * @brief Convert Euler parameters to the (2-1-2) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler212(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[3], q[1]);
-    t2 = atan2(q[2], q[0]);
-
-    e[0] = t2 - t1;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
-    e[2] = t2 + t1;
+    EP2EulerRepeated(q, 1, 0, e);
 }
 
-/*
- * EP2Euler213(Q,E) translates the Euler parameter vector
- * Q into the corresponding (2-1-3) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (2-1-3) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler213(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
-    e[1] = safeAsin(-2 * (q2 * q3 - q0 * q1));
-    e[2] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
+    EP2C(q, C);
+    C2Euler213(C, e);
 }
 
-/*
- * EP2Euler231(Q,E) translates the Euler parameter vector
- * Q into the corresponding (2-3-1) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (2-3-1) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler231(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = safeAsin(2 * (q1 * q2 + q0 * q3));
-    e[2] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
+    EP2C(q, C);
+    C2Euler231(C, e);
 }
 
-/*
- * EP2Euler232(Q,E) translates the Euler parameter
- * vector Q into the corresponding (2-3-2) Euler angle
- * vector E.
+/**
+ * @brief Convert Euler parameters to the (2-3-2) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler232(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[1], q[3]);
-    t2 = atan2(q[2], q[0]);
-
-    e[0] = t1 + t2;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[2] * q[2]));
-    e[2] = t2 - t1;
+    EP2EulerRepeated(q, 1, 2, e);
 }
 
-/*
- * EP2Euler312(Q,E) translates the Euler parameter vector
- * Q into the corresponding (3-1-2) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (3-1-2) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler312(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
-    e[1] = safeAsin(2 * (q2 * q3 + q0 * q1));
-    e[2] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
+    EP2C(q, C);
+    C2Euler312(C, e);
 }
 
-/*
- * EP2Euler313(Q,E) translates the Euler parameter
- * vector Q into the corresponding (3-1-3) Euler angle
- * vector E.
+/**
+ * @brief Convert Euler parameters to the (3-1-3) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler313(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[2], q[1]);
-    t2 = atan2(q[3], q[0]);
-
-    e[0] = t1 + t2;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
-    e[2] = t2 - t1;
+    EP2EulerRepeated(q, 2, 0, e);
 }
 
-/*
- * EP2Euler321(Q,E) translates the Euler parameter vector
- * Q into the corresponding (3-2-1) Euler angle set.
+/**
+ * @brief Convert Euler parameters to the (3-2-1) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler321(double *q, double *e)
 {
-    double q0;
-    double q1;
-    double q2;
-    double q3;
+    double C[3][3];
 
-    q0 = q[0];
-    q1 = q[1];
-    q2 = q[2];
-    q3 = q[3];
-
-    e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
-    e[1] = safeAsin(-2 * (q1 * q3 - q0 * q2));
-    e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
+    EP2C(q, C);
+    C2Euler321(C, e);
 }
 
-/*
- * EP2Euler323(Q,E) translates the Euler parameter
- * vector Q into the corresponding (3-2-3) Euler angle
- * vector E.
+/**
+ * @brief Convert Euler parameters to the (3-2-3) Euler angle set.
+ * @param q Input scalar-first unit quaternion.
+ * @param e Output Euler angles [rad].
+ * @note At a singularity, the third angle is zero and the first angle carries
+ * the observable combined rotation.
  */
 void EP2Euler323(double *q, double *e)
 {
-    double t1;
-    double t2;
-
-    t1 = atan2(q[1], q[2]);
-    t2 = atan2(q[3], q[0]);
-
-    e[0] = t2 - t1;
-    e[1] = 2 * safeAcos(sqrt(q[0] * q[0] + q[3] * q[3]));
-    e[2] = t2 + t1;
+    EP2EulerRepeated(q, 2, 1, e);
 }
 
 /*
@@ -4116,29 +4088,23 @@ void subEP(double *b1, double *b2, double *q)
     q[3] = -b2[3] * b1[0] + b2[2] * b1[1] - b2[1] * b1[2] + b2[0] * b1[3];
 }
 
-/*
- * subEuler121(E,E1,E2) computes the relative
- * (1-2-1) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (1-2-1) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler121(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double cp2;
-    double dum;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler1212C(e, C);
+    Euler1212C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler121(C2, e2);
 }
 
 /*
@@ -4157,29 +4123,23 @@ void subEuler123(double *e, double *e1, double *e2)
     C2Euler123(C2, e2);
 }
 
-/*
- * subEuler131(E,E1,E2) computes the relative
- * (1-3-1) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (1-3-1) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler131(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler1312C(e, C);
+    Euler1312C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler131(C2, e2);
 }
 
 /*
@@ -4198,29 +4158,23 @@ void subEuler132(double *e, double *e1, double *e2)
     C2Euler132(C2, e2);
 }
 
-/*
- * subEuler212(E,E1,E2) computes the relative
- * (2-1-2) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (2-1-2) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler212(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler2122C(e, C);
+    Euler2122C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler212(C2, e2);
 }
 
 /*
@@ -4255,29 +4209,23 @@ void subEuler231(double *e, double *e1, double *e2)
     C2Euler231(C2, e2);
 }
 
-/*
- * subEuler232(E,E1,E2) computes the relative
- * (2-3-2) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (2-3-2) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler232(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler2322C(e, C);
+    Euler2322C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler232(C2, e2);
 }
 
 /*
@@ -4296,29 +4244,23 @@ void subEuler312(double *e, double *e1, double *e2)
     C2Euler312(C2, e2);
 }
 
-/*
- * subEuler313(E,E1,E2) computes the relative
- * (3-1-3) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (3-1-3) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler313(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler3132C(e, C);
+    Euler3132C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler313(C2, e2);
 }
 
 /*
@@ -4337,29 +4279,23 @@ void subEuler321(double *e, double *e1, double *e2)
     C2Euler321(C2, e2);
 }
 
-/*
- * subEuler323(E,E1,E2) computes the relative
- * (3-2-3) Euler angle vector from E1 to E.
+/**
+ * @brief Return the relative (3-2-3) rotation from e1 to e.
+ * @param e Final Euler angle vector [rad].
+ * @param e1 Reference Euler angle vector [rad].
+ * @param e2 Output relative Euler angle vector [rad].
+ * @note At a singularity, the third angle is zero.
  */
 void subEuler323(double *e, double *e1, double *e2)
 {
-    double cp;
-    double cp1;
-    double sp;
-    double sp1;
-    double dum;
-    double cp2;
+    double C[3][3];
+    double C1[3][3];
+    double C2[3][3];
 
-    cp = cos(e[1]);
-    cp1 = cos(e1[1]);
-    sp = sin(e[1]);
-    sp1 = sin(e1[1]);
-    dum = e[0] - e1[0];
-
-    e2[1] = safeAcos(cp1 * cp + sp1 * sp * cos(dum));
-    cp2 = cos(e2[1]);
-    e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
-    e2[2] = wrapToPi(e[2] - atan2(sp1 * sp * sin(dum), cp1 - cp * cp2));
+    Euler3232C(e, C);
+    Euler3232C(e1, C1);
+    m33MultM33t(C, C1, C2);
+    C2Euler323(C2, e2);
 }
 
 /*
