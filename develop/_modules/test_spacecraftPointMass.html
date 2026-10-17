@@ -260,6 +260,30 @@
 
 
 
+<div class="viewcode-block" id="test_spacecraftPointMass_zeroAccelerationsBeforeIntegration">
+<a class="viewcode-back" href="../Documentation/simulation/dynamics/spacecraft/_UnitTest/test_spacecraftPointMass.html#test_spacecraftPointMass.test_spacecraftPointMass_zeroAccelerationsBeforeIntegration">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"pointMassMode"</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftPointMass_zeroAccelerationsBeforeIntegration</span><span class="p">(</span><span class="n">pointMassMode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The state message must not hold uninitialized accelerations.</span>
+
+<span class="sd">    The non-conservative acceleration and the angular acceleration are only computed after an integration step in the</span>
+<span class="sd">    6-DOF mode and never in the point-mass mode. Before that they must be zero, and the angular acceleration must stay</span>
+<span class="sd">    zero in the point-mass mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pointMassMode (bool): if ``True``, run the spacecraft in ``pointMassTranslationalOnly`` mode</span>
+<span class="sd">    """</span>
+
+    <span class="n">dataLog</span> <span class="o">=</span> <span class="n">_runSpacecraft</span><span class="p">(</span><span class="n">pointMassMode</span><span class="o">=</span><span class="n">pointMassMode</span><span class="p">,</span> <span class="n">addExternalForce</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">nonConservativeAccelpntB_B</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">omegaDot_BN_B</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pointMassMode</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">omegaDot_BN_B</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">dataLog</span><span class="o">.</span><span class="n">omegaDot_BN_B</span><span class="p">))</span></div>
+
+
+
 <div class="viewcode-block" id="test_spacecraftPointMass_rejectsStateEffectors">
 <a class="viewcode-back" href="../Documentation/simulation/dynamics/spacecraft/_UnitTest/test_spacecraftPointMass.html#test_spacecraftPointMass.test_spacecraftPointMass_rejectsStateEffectors">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_spacecraftPointMass_rejectsStateEffectors</span><span class="p">():</span>

@@ -8661,7 +8661,9 @@
 </li>
       <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor16current_sigma_BNE">ImuSensor::current_sigma_BN (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor25current_TotalAccumDV_BN_BE">ImuSensor::current_TotalAccumDV_BN_B (C++ member)</a>
+      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor25current_TotalAccumDV_CN_NE">ImuSensor::current_TotalAccumDV_CN_N (C++ member)</a>
+</li>
+      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor14current_v_SC_NE">ImuSensor::current_v_SC_N (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor6dcm_PBE">ImuSensor::dcm_PB (C++ member)</a>
 </li>
@@ -8711,11 +8713,11 @@
 </li>
       <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor11PMatrixGyroE">ImuSensor::PMatrixGyro (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor19previous_omega_BN_BE">ImuSensor::previous_omega_BN_B (C++ member)</a>
-</li>
       <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor17previous_sigma_BNE">ImuSensor::previous_sigma_BN (C++ member)</a>
 </li>
-      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor26previous_TotalAccumDV_BN_BE">ImuSensor::previous_TotalAccumDV_BN_B (C++ member)</a>
+      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor26previous_TotalAccumDV_CN_NE">ImuSensor::previous_TotalAccumDV_CN_N (C++ member)</a>
+</li>
+      <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor15previous_v_SC_NE">ImuSensor::previous_v_SC_N (C++ member)</a>
 </li>
       <li><a href="Documentation/simulation/sensors/imuSensor/imuSensor.html#_CPPv4N9ImuSensor12PreviousTimeE">ImuSensor::PreviousTime (C++ member)</a>
 </li>
@@ -8933,10 +8935,10 @@
 </li>
       <li><a href="Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.html#_CPPv4N17InertialUKFConfig14filtDataOutMsgE">InertialUKFConfig::filtDataOutMsg (C++ member)</a>
 </li>
-      <li><a href="Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.html#_CPPv4N17InertialUKFConfig17firstPassCompleteE">InertialUKFConfig::firstPassComplete (C++ member)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.html#_CPPv4N17InertialUKFConfig17firstPassCompleteE">InertialUKFConfig::firstPassComplete (C++ member)</a>
+</li>
       <li><a href="Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.html#_CPPv4N17InertialUKFConfig5gammaE">InertialUKFConfig::gamma (C++ member)</a>
 </li>
       <li><a href="Documentation/fswAlgorithms/attDetermination/InertialUKF/inertialUKF.html#_CPPv4N17InertialUKFConfig13gyrAggTimeTagE">InertialUKFConfig::gyrAggTimeTag (C++ member)</a>
@@ -29282,6 +29284,12 @@
         <li><a href="Documentation/simulation/sensors/imuSensor/_UnitTest/test_imu_sensor.html#module-test_imu_sensor">module</a>
 </li>
       </ul></li>
+      <li><a href="Documentation/simulation/sensors/imuSensor/_UnitTest/test_imu_sensor.html#test_imu_sensor.test_imuDeltaVIgnoresRotationOfAccumulatedDeltaV">test_imuDeltaVIgnoresRotationOfAccumulatedDeltaV() (in module test_imu_sensor)</a>
+</li>
+      <li><a href="Documentation/simulation/sensors/imuSensor/_UnitTest/test_imu_sensor.html#test_imu_sensor.test_imuDeltaVWithSpacecraft">test_imuDeltaVWithSpacecraft() (in module test_imu_sensor)</a>
+</li>
+      <li><a href="Documentation/simulation/sensors/imuSensor/_UnitTest/test_imu_sensor.html#test_imu_sensor.test_imuResetDiscardsPreviousState">test_imuResetDiscardsPreviousState() (in module test_imu_sensor)</a>
+</li>
       <li>
     test_imuSensorNoise
 
@@ -31328,6 +31336,8 @@
       <li><a href="Documentation/simulation/dynamics/spacecraft/_UnitTest/test_spacecraftPointMass.html#test_spacecraftPointMass.test_spacecraftPointMass_matchesStandardSpacecraftWithDynamicForce">test_spacecraftPointMass_matchesStandardSpacecraftWithDynamicForce() (in module test_spacecraftPointMass)</a>
 </li>
       <li><a href="Documentation/simulation/dynamics/spacecraft/_UnitTest/test_spacecraftPointMass.html#test_spacecraftPointMass.test_spacecraftPointMass_rejectsStateEffectors">test_spacecraftPointMass_rejectsStateEffectors() (in module test_spacecraftPointMass)</a>
+</li>
+      <li><a href="Documentation/simulation/dynamics/spacecraft/_UnitTest/test_spacecraftPointMass.html#test_spacecraftPointMass.test_spacecraftPointMass_zeroAccelerationsBeforeIntegration">test_spacecraftPointMass_zeroAccelerationsBeforeIntegration() (in module test_spacecraftPointMass)</a>
 </li>
       <li>
     test_spacecraftReconfig

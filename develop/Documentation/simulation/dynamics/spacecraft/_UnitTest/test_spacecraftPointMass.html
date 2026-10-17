@@ -208,6 +208,20 @@ from the integrated equations of motion.</p>
 <dd><p>Point-mass mode must reject state effectors because they add internal states.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="test_spacecraftPointMass.test_spacecraftPointMass_zeroAccelerationsBeforeIntegration">
+<span class="sig-prename descclassname"><span class="pre">test_spacecraftPointMass.</span></span><span class="sig-name descname"><span class="pre">test_spacecraftPointMass_zeroAccelerationsBeforeIntegration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pointMassMode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/test_spacecraftPointMass.html#test_spacecraftPointMass_zeroAccelerationsBeforeIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#test_spacecraftPointMass.test_spacecraftPointMass_zeroAccelerationsBeforeIntegration" title="Link to this definition"></a></dt>
+<dd><p>The state message must not hold uninitialized accelerations.</p>
+<p>The non-conservative acceleration and the angular acceleration are only computed after an integration step in the
+6-DOF mode and never in the point-mass mode. Before that they must be zero, and the angular acceleration must stay
+zero in the point-mass mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pointMassMode</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, run the spacecraft in <code class="docutils literal notranslate"><span class="pre">pointMassTranslationalOnly</span></code> mode</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
