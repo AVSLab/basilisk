@@ -30,7 +30,7 @@ Discretize::Discretize()
 
 /*! This lets the user initialized the discretization model to the right size*/
 Discretize::Discretize(uint8_t numStates)
-  : Discretize()
+    : Discretize()
 {
     this->numStates = numStates;
     this->LSB.resize(this->numStates);

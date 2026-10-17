@@ -87,7 +87,7 @@ void HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
     }
     if (!pointMassTranslationalOnly && !eigenIsValidInertiaMatrix(this->IHubPntBc_B)) {
         bskLogger.bskError(
-          "hubEffector: IHubPntBc_B is not a valid inertia tensor. It may not have been set properly by the user.");
+            "hubEffector: IHubPntBc_B is not a valid inertia tensor. It may not have been set properly by the user.");
     }
 }
 
@@ -170,7 +170,7 @@ void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 
     // - Give inertia of hub about point B to mass props
     this->effProps.IEffPntB_B =
-      this->IHubPntBc_B + this->mHub * eigenTilde(this->r_BcB_B) * eigenTilde(this->r_BcB_B).transpose();
+        this->IHubPntBc_B + this->mHub * eigenTilde(this->r_BcB_B) * eigenTilde(this->r_BcB_B).transpose();
 
     // - Give position of center of mass of hub with respect to point B to mass props
     this->effProps.rEff_CB_B = this->r_BcB_B;
@@ -224,13 +224,13 @@ void HubEffector::computeDerivatives(double integTime [[maybe_unused]],
     intermediateVector = this->hubBackSubMatrices.vecRot -
                          this->hubBackSubMatrices.matrixC * matrixAInverse * this->hubBackSubMatrices.vecTrans;
     intermediateMatrix =
-      hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC * matrixAInverse * hubBackSubMatrices.matrixB;
+        hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC * matrixAInverse * hubBackSubMatrices.matrixB;
     omegaDotLocal_BN_B = intermediateMatrix.inverse() * intermediateVector;
     omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
     velocityState->derivativeView().noalias() =
-      dcm_NB * matrixAInverse * (hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB * omegaDotLocal_BN_B);
+        dcm_NB * matrixAInverse * (hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB * omegaDotLocal_BN_B);
 
     // - Set gravity velocity derivatives
     gravVelocityState->setDerivative(gLocal_N);
@@ -260,7 +260,7 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
     Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
 
     Eigen::Vector3d translationalAccel_N =
-      *this->g_N + (forceExternal_N + dcm_NB * forceExternal_B) / this->effProps.mEff;
+        *this->g_N + (forceExternal_N + dcm_NB * forceExternal_B) / this->effProps.mEff;
 
     // Compare values at use so resets and direct mass-property updates refresh the cache.
     if (!this->hubOnlyInertiaValid || (this->hubOnlyInertia.array() != this->effProps.IEffPntB_B.array()).any()) {
@@ -271,7 +271,7 @@ void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal
 
     Eigen::Vector3d rotAngularMomentumPntB_B = this->effProps.IEffPntB_B * omegaLocal_BN_B;
     Eigen::Vector3d omegaDotLocal_BN_B =
-      this->hubOnlyInertiaLDLT.solve(torquePntB_B - omegaLocal_BN_B.cross(rotAngularMomentumPntB_B));
+        this->hubOnlyInertiaLDLT.solve(torquePntB_B - omegaLocal_BN_B.cross(rotAngularMomentumPntB_B));
 
     this->posState->setDerivative(rDotLocal_BN_N);
     this->velocityState->setDerivative(translationalAccel_N);
@@ -306,7 +306,7 @@ void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]]
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr =
-      1.0 / 2.0 * omegaLocal_BN_B.dot(IHubPntBc_B * omegaLocal_BN_B) + 1.0 / 2.0 * mHub * rDot_BcB_B.dot(rDot_BcB_B);
+        1.0 / 2.0 * omegaLocal_BN_B.dot(IHubPntBc_B * omegaLocal_BN_B) + 1.0 / 2.0 * mHub * rDot_BcB_B.dot(rDot_BcB_B);
 
     return;
 }

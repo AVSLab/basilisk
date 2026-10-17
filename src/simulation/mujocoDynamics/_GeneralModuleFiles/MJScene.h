@@ -668,7 +668,7 @@ class MJScene : public DynamicObject
     bool getHighOrderAttitudeIntegration() const noexcept;
 
     Message<MJSceneStateMsgPayload>
-      stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
+        stateOutMsg; ///< Message with all the the scene's position, velocity, and actuators states.
 
     /**
      * @brief Returns the full position vector, matching the layout of
@@ -783,9 +783,9 @@ class MJScene : public DynamicObject
 
     SysModelTask dynamicsTask; ///< Task managing models involved in the dynamics of this scene.
     SysModelTask
-      dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
+        dynamicsDiffusionTask; ///< Task managing models involved in the diffusion stochastic dynamics of this scene.
     std::vector<std::unique_ptr<SysModel>>
-      ownedSysModel; ///< System models that should be cleared on this scene destruction.
+        ownedSysModel; ///< System models that should be cleared on this scene destruction.
 
     StateData* massState = nullptr;                ///< Bulk mass state (one entry per body).
     StateData* actState = nullptr;                 ///< Bulk actuator state (entire `act`).

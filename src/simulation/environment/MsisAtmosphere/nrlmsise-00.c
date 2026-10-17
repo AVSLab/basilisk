@@ -315,7 +315,7 @@ void spline(double* x, double* y, int n, double yp1, double ypn, double* y2)
         p = sig * y2[i - 1] + 2.0;
         y2[i] = (sig - 1.0) / p;
         u[i] = (6.0 * ((y[i + 1] - y[i]) / (x[i + 1] - x[i]) - (y[i] - y[i - 1]) / (x[i] - x[i - 1])) /
-                  (x[i + 1] - x[i - 1]) -
+                    (x[i + 1] - x[i - 1]) -
                 sig * u[i - 1]) /
                p;
     }
@@ -749,7 +749,7 @@ double globe7(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
                 t[8] = apt[0] * (p[50] + p[96] * plg[0][2] + p[54] * plg[0][4] +
                                  (p[125] * plg[0][1] + p[126] * plg[0][3] + p[127] * plg[0][5]) * cd14 * flags->swc[5] +
                                  (p[128] * plg[1][1] + p[129] * plg[1][3] + p[130] * plg[1][5]) * flags->swc[7] *
-                                   cos(hr * (tloc - p[131])));
+                                     cos(hr * (tloc - p[131])));
             }
         }
     } else {
@@ -764,7 +764,7 @@ double globe7(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
             t[8] = apdf * (p[32] + p[45] * plg[0][2] + p[34] * plg[0][4] +
                            (p[100] * plg[0][1] + p[101] * plg[0][3] + p[102] * plg[0][5]) * cd14 * flags->swc[5] +
                            (p[121] * plg[1][1] + p[122] * plg[1][3] + p[123] * plg[1][5]) * flags->swc[7] *
-                             cos(hr * (tloc - p[124])));
+                               cos(hr * (tloc - p[124])));
         }
     }
 
@@ -776,11 +776,11 @@ double globe7(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
                     ((p[64] * plg[1][2] + p[65] * plg[1][4] + p[66] * plg[1][6] + p[103] * plg[1][1] +
                       p[104] * plg[1][3] + p[105] * plg[1][5] +
                       flags->swc[5] * (p[109] * plg[1][1] + p[110] * plg[1][3] + p[111] * plg[1][5]) * cd14) *
-                       cos(dgtr * input->g_long) +
+                         cos(dgtr * input->g_long) +
                      (p[90] * plg[1][2] + p[91] * plg[1][4] + p[92] * plg[1][6] + p[106] * plg[1][1] +
                       p[107] * plg[1][3] + p[108] * plg[1][5] +
                       flags->swc[5] * (p[112] * plg[1][1] + p[113] * plg[1][3] + p[114] * plg[1][5]) * cd14) *
-                       sin(dgtr * input->g_long));
+                         sin(dgtr * input->g_long));
         }
 
         /* ut and mixed ut, longitude */
@@ -797,23 +797,23 @@ double globe7(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
             if (flags->sw[9] == -1) {
                 if ((int)p[51]) {
                     t[12] = apt[0] * flags->swc[11] * (1. + p[132] * plg[0][1]) *
-                              ((p[52] * plg[1][2] + p[98] * plg[1][4] + p[67] * plg[1][6]) *
-                               cos(dgtr * (input->g_long - p[97]))) +
+                                ((p[52] * plg[1][2] + p[98] * plg[1][4] + p[67] * plg[1][6]) *
+                                 cos(dgtr * (input->g_long - p[97]))) +
                             apt[0] * flags->swc[11] * flags->swc[5] *
-                              (p[133] * plg[1][1] + p[134] * plg[1][3] + p[135] * plg[1][5]) * cd14 *
-                              cos(dgtr * (input->g_long - p[136])) +
+                                (p[133] * plg[1][1] + p[134] * plg[1][3] + p[135] * plg[1][5]) * cd14 *
+                                cos(dgtr * (input->g_long - p[136])) +
                             apt[0] * flags->swc[12] * (p[55] * plg[0][1] + p[56] * plg[0][3] + p[57] * plg[0][5]) *
-                              cos(sr * (input->sec - p[58]));
+                                cos(sr * (input->sec - p[58]));
                 }
             } else {
                 t[12] = apdf * flags->swc[11] * (1.0 + p[120] * plg[0][1]) *
-                          ((p[60] * plg[1][2] + p[61] * plg[1][4] + p[62] * plg[1][6]) *
-                           cos(dgtr * (input->g_long - p[63]))) +
+                            ((p[60] * plg[1][2] + p[61] * plg[1][4] + p[62] * plg[1][6]) *
+                             cos(dgtr * (input->g_long - p[63]))) +
                         apdf * flags->swc[11] * flags->swc[5] *
-                          (p[115] * plg[1][1] + p[116] * plg[1][3] + p[117] * plg[1][5]) * cd14 *
-                          cos(dgtr * (input->g_long - p[118])) +
+                            (p[115] * plg[1][1] + p[116] * plg[1][3] + p[117] * plg[1][5]) * cd14 *
+                            cos(dgtr * (input->g_long - p[118])) +
                         apdf * flags->swc[12] * (p[83] * plg[0][1] + p[84] * plg[0][3] + p[85] * plg[0][5]) *
-                          cos(sr * (input->sec - p[75]));
+                            cos(sr * (input->sec - p[75]));
             }
         }
     }
@@ -879,7 +879,7 @@ double glob7s(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
         t71 = p[11] * plg[1][2] * cd14 * flags->swc[5];
         t72 = p[12] * plg[1][2] * cd14 * flags->swc[5];
         t[6] =
-          ((p[3] * plg[1][1] + p[4] * plg[1][3] + t71) * ctloc + (p[6] * plg[1][1] + p[7] * plg[1][3] + t72) * stloc);
+            ((p[3] * plg[1][1] + p[4] * plg[1][3] + t71) * ctloc + (p[6] * plg[1][1] + p[7] * plg[1][3] + t72) * stloc);
     }
 
     /* SEMIDIURNAL */
@@ -913,10 +913,10 @@ double glob7s(double* p, struct nrlmsise_input* input, struct nrlmsise_flags* fl
                  p[87] * flags->swc[4] * cos(2.0 * dr * (input->doy - p[88]))) *
                 ((p[64] * plg[1][2] + p[65] * plg[1][4] + p[66] * plg[1][6] + p[74] * plg[1][1] + p[75] * plg[1][3] +
                   p[76] * plg[1][5]) *
-                   cos(dgtr * input->g_long) +
+                     cos(dgtr * input->g_long) +
                  (p[90] * plg[1][2] + p[91] * plg[1][4] + p[92] * plg[1][6] + p[77] * plg[1][1] + p[78] * plg[1][3] +
                   p[79] * plg[1][5]) *
-                   sin(dgtr * input->g_long));
+                     sin(dgtr * input->g_long));
     }
     tt = 0;
     for (i = 0; i < 14; i++)
@@ -1267,7 +1267,7 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
         zh04 = pdm[0][2];
         /*  Mixed density at Zlb */
         b04 = densu(
-          zh04, db04, tinf, tlb, 4. - xmm, alpha[0] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+            zh04, db04, tinf, tlb, 4. - xmm, alpha[0] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         /*  Mixed density at Alt */
         dm04 = densu(z, b04, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         zhm04 = zhm28;
@@ -1294,8 +1294,19 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
         /*   Turbopause */
         zh16 = pdm[1][2];
         /*  Mixed density at Zlb */
-        b16 = densu(
-          zh16, db16, tinf, tlb, 16.0 - xmm, (alpha[1] - 1.0), &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+        b16 = densu(zh16,
+                    db16,
+                    tinf,
+                    tlb,
+                    16.0 - xmm,
+                    (alpha[1] - 1.0),
+                    &output->t[1],
+                    ptm[5],
+                    s,
+                    mn1,
+                    zn1,
+                    meso_tn1,
+                    meso_tgn1);
         /*  Mixed density at Alt */
         dm16 = densu(z, b16, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         zhm16 = zhm28;
@@ -1328,8 +1339,19 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
             /*   Turbopause */
             zh32 = pdm[3][2];
             /*  Mixed density at Zlb */
-            b32 = densu(
-              zh32, db32, tinf, tlb, 32. - xmm, alpha[3] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+            b32 = densu(zh32,
+                        db32,
+                        tinf,
+                        tlb,
+                        32. - xmm,
+                        alpha[3] - 1.,
+                        &output->t[1],
+                        ptm[5],
+                        s,
+                        mn1,
+                        zn1,
+                        meso_tn1,
+                        meso_tgn1);
             /*  Mixed density at Alt */
             dm32 = densu(z, b32, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
             zhm32 = zhm28;
@@ -1364,7 +1386,7 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
         zh40 = pdm[4][2];
         /*  Mixed density at Zlb */
         b40 = densu(
-          zh40, db40, tinf, tlb, 40. - xmm, alpha[4] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+            zh40, db40, tinf, tlb, 40. - xmm, alpha[4] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         /*  Mixed density at Alt */
         dm40 = densu(z, b40, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         zhm40 = zhm28;
@@ -1392,7 +1414,7 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
         zh01 = pdm[5][2];
         /*  Mixed density at Zlb */
         b01 = densu(
-          zh01, db01, tinf, tlb, 1. - xmm, alpha[6] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+            zh01, db01, tinf, tlb, 1. - xmm, alpha[6] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         /*  Mixed density at Alt */
         dm01 = densu(z, b01, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         zhm01 = zhm28;
@@ -1425,7 +1447,7 @@ void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrl
         zh14 = pdm[6][2];
         /*  Mixed density at Zlb */
         b14 = densu(
-          zh14, db14, tinf, tlb, 14. - xmm, alpha[7] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
+            zh14, db14, tinf, tlb, 14. - xmm, alpha[7] - 1., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         /*  Mixed density at Alt */
         dm14 = densu(z, b14, tinf, tlb, xmm, 0., &output->t[1], ptm[5], s, mn1, zn1, meso_tn1, meso_tgn1);
         zhm14 = zhm28;

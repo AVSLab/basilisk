@@ -60,9 +60,9 @@ class SpacecraftLocation : public SysModel
     double theta_solar;     //!< [r] (optional) illumination half-cone angle, treating aHat_B as the surface normal
     double theta_view;      //!< [rad] (optional) maximum angle from the surface normal to the tracked spacecraft
     double
-      min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
+        min_illumination_factor; //!< [] (optional) minimum amount of illumination due to eclipse necessary to observe
     double
-      min_shadow_factor;   //!< [] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead.
+        min_shadow_factor; //!< [] (DEPRECATED) Alias for min_illumination_factor. Use min_illumination_factor instead.
     double glareThreshold; //!< [-] minimum specular alignment classified as glare; defaults to 0.95
     bool useGlareConstraint; //!< [-] if true, detected glare prevents access; defaults to false
 
@@ -73,7 +73,7 @@ class SpacecraftLocation : public SysModel
     std::vector<Message<AccessMsgPayload>*> accessOutMsgs;      //!< vector of ground location access messages
     std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs; //!< vector of other sc state input messages
     Eigen::Vector3d
-      r_LB_B; //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
+        r_LB_B; //!< [m]  position of the location relative to the spacecraft frame origin B, in B frame components
 
     BSKLogger bskLogger; //!< -- BSK Logging
 

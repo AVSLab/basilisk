@@ -29,8 +29,8 @@
 
 /*! @brief external pulsed torque module class */
 class ExtPulsedTorque final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     ExtPulsedTorque();
@@ -48,7 +48,7 @@ class ExtPulsedTorque final
 
   public:
     Eigen::Vector3d pulsedTorqueExternalPntB_B =
-      Eigen::Vector3d::Zero(); //!< [N*m] pulsed torque about B in B components
+        Eigen::Vector3d::Zero(); //!< [N*m] pulsed torque about B in B components
     int countOnPulse = 0; //!< Number of pulse intervals for each positive and negative pulse; zero disables the torque
     int countOff = 0;     //!< Number of pulse intervals with no torque between pulse pairs
     double pulseInterval = 1.0; //!< [s] Duration of one pulse-count interval, independent of the integrator step

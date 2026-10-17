@@ -27,12 +27,12 @@
 #include "gravityEffector.h"
 
 GravBodyData::GravBodyData()
-  : gravityModel{ std::make_shared<PointMassGravityModel>() }
-  , localPlanet{ std::invoke([]() {
-      SpicePlanetStateMsgPayload payload{};
-      m33SetIdentity(payload.J20002Pfix); // Initialize rotation matrix to identity
-      return payload;
-  }) }
+    : gravityModel{ std::make_shared<PointMassGravityModel>() }
+    , localPlanet{ std::invoke([]() {
+        SpicePlanetStateMsgPayload payload{};
+        m33SetIdentity(payload.J20002Pfix); // Initialize rotation matrix to identity
+        return payload;
+    }) }
 {
 }
 
@@ -109,7 +109,7 @@ void GravBodyData::registerProperties(DynParamManager& statesIn)
     this->muPlanet = statesIn.createProperty(this->planetName + ".mu", muInit);
 
     this->J20002Pfix =
-      statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix));
+        statesIn.createProperty(this->planetName + ".J20002Pfix", c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix));
     this->J20002Pfix_dot = statesIn.createProperty(this->planetName + ".J20002Pfix_dot",
                                                    c2DArray2EigenMatrix3d(this->localPlanet.J20002Pfix_dot));
 }
@@ -246,7 +246,7 @@ void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vec
         Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
         *this->inertialPositionProperty = r_CN_N + r_BF_N;
         *this->inertialVelocityProperty =
-          cArray2EigenVector3d(this->centralBody->localPlanet.VelocityVector) + rDot_BF_N;
+            cArray2EigenVector3d(this->centralBody->localPlanet.VelocityVector) + rDot_BF_N;
     } else {
         *this->inertialPositionProperty = r_BF_N;
         *this->inertialVelocityProperty = rDot_BF_N;

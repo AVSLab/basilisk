@@ -137,7 +137,7 @@ bool DownlinkHandling::setRemovalPolicy(int64_t removalPolicy)
     }
 
     bskLogger.bskError(
-      "DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
+        "DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
 }
 
 /*! Set packet-gating behavior flag */
@@ -240,7 +240,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, 
     const StorageSelection selection = this->selectStorageSelection();
     this->availableDataBits = selection.availableBits;
     const bool selectedDataNameValid =
-      this->setDataNameFromStorageSelection(selection, this->nodeDataName, sizeof(this->nodeDataName));
+        this->setDataNameFromStorageSelection(selection, this->nodeDataName, sizeof(this->nodeDataName));
 
     std::snprintf(this->downlinkOutBuffer.dataName, sizeof(this->downlinkOutBuffer.dataName), "%s", this->nodeDataName);
     this->downlinkOutBuffer.availableDataBits = this->availableDataBits;
@@ -251,7 +251,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, 
             blockedRouteReason = "selected storage target does not provide an explicit partition name";
         } else if (this->storageUnitMsgsBuffer.size() > 1) {
             blockedRouteReason =
-              "multiple linked storage units cannot be safely targeted through DataNodeUsageMsgPayload";
+                "multiple linked storage units cannot be safely targeted through DataNodeUsageMsgPayload";
         } else if (selection.partitionIndex < 0) {
             blockedRouteReason = "selected storage target has no explicit partition name";
         } else {
@@ -334,7 +334,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, 
         // Convert RF quality to per-bit energy so BER reflects user-selected bit rate.
         this->downlinkOutBuffer.cnr_dB = 10.0 * std::log10(selectedCnr);
         this->downlinkOutBuffer.cNo_dBHz =
-          this->downlinkOutBuffer.cnr_dB + 10.0 * std::log10(this->downlinkOutBuffer.bandwidth);
+            this->downlinkOutBuffer.cnr_dB + 10.0 * std::log10(this->downlinkOutBuffer.bandwidth);
         this->downlinkOutBuffer.ebN0_dB = this->downlinkOutBuffer.cNo_dBHz - 10.0 * std::log10(this->bitRateRequest);
 
         ber = this->clampProbability(this->computeBerFromEbN0dB(this->downlinkOutBuffer.ebN0_dB));
@@ -403,7 +403,7 @@ void DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, 
 
     const double removedBitsThisStep = storageRemovalRate * this->currentTimeStep; // [bit]
     this->downlinkOutBuffer.estimatedRemainingDataBits =
-      this->sanitizeNonNegative(this->availableDataBits - removedBitsThisStep);
+        this->sanitizeNonNegative(this->availableDataBits - removedBitsThisStep);
 
     if (this->currentTimeStep > 0.0) {
         this->cumulativeAttemptedBits += attemptedDataRate * this->currentTimeStep;
@@ -533,9 +533,9 @@ void DownlinkHandling::selectReceiver(double* cnrLinear, uint32_t* receiverIndex
     const bool rx1 = this->isReceiverState(this->linkBudgetBuffer.antennaState1);
     const bool rx2 = this->isReceiverState(this->linkBudgetBuffer.antennaState2);
     const double cnr1 =
-      (rx1 && this->isFinitePositive(this->linkBudgetBuffer.CNR1)) ? this->linkBudgetBuffer.CNR1 : 0.0;
+        (rx1 && this->isFinitePositive(this->linkBudgetBuffer.CNR1)) ? this->linkBudgetBuffer.CNR1 : 0.0;
     const double cnr2 =
-      (rx2 && this->isFinitePositive(this->linkBudgetBuffer.CNR2)) ? this->linkBudgetBuffer.CNR2 : 0.0;
+        (rx2 && this->isFinitePositive(this->linkBudgetBuffer.CNR2)) ? this->linkBudgetBuffer.CNR2 : 0.0;
 
     if (this->receiverAntenna == 1) {
         if (cnr1 > 0.0) {

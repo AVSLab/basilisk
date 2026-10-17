@@ -169,14 +169,15 @@ void Update_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, in
           - Set the previous call time value for cooldown check */
     if (bestMatch > 0.0) {
         outputData.OnTimeRequest[selectedThruster] =
-          v3Dot(configData->currDMDir, &(configData->thrTorqueMap[selectedThruster * 3]));
+            v3Dot(configData->currDMDir, &(configData->thrTorqueMap[selectedThruster * 3]));
         outputData.OnTimeRequest[selectedThruster] = outputData.OnTimeRequest[selectedThruster] > configData->maxFiring
-                                                       ? configData->maxFiring
-                                                       : outputData.OnTimeRequest[selectedThruster];
+                                                         ? configData->maxFiring
+                                                         : outputData.OnTimeRequest[selectedThruster];
         configData->previousFiring = callTime;
         configData->totalAccumFiring += outputData.OnTimeRequest[selectedThruster];
-        v3Scale(
-          outputData.OnTimeRequest[selectedThruster], &(configData->thrAlignMap[selectedThruster * 3]), singleSpeedVec);
+        v3Scale(outputData.OnTimeRequest[selectedThruster],
+                &(configData->thrAlignMap[selectedThruster * 3]),
+                singleSpeedVec);
         v3Add(configData->accumulatedImp, singleSpeedVec, configData->accumulatedImp);
     }
 

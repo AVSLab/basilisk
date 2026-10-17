@@ -34,7 +34,7 @@ void requireFiniteNonzeroDivisor(double value, BSKLogger& logger, size_t index, 
 {
     if (!std::isfinite(value) || value == 0.0 || !std::isfinite(1.0 / value)) {
         logger.bskError(
-          "vscmgStateEffector: device %zu %s must be finite and nonzero with a finite reciprocal.", index, name);
+            "vscmgStateEffector: device %zu %s must be finite and nonzero with a finite reciprocal.", index, name);
     }
 }
 }
@@ -105,7 +105,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
     this->OmegasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGOmegasState);
     this->gammasState = states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammasState);
     this->gammaDotsState =
-      states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
+        states.registerState(static_cast<uint32_t>(this->numVSCMG), 1, this->nameOfVSCMGGammaDotsState);
 
     this->OmegasState->setState(omegasForInit);
     this->gammasState->setState(gammasForInit);
@@ -113,7 +113,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 
     if (numVSCMGJitter > 0) {
         this->thetasState =
-          states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
+            states.registerState(static_cast<uint32_t>(this->numVSCMGJitter), 1, this->nameOfVSCMGThetasState);
         Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter, 1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
@@ -176,7 +176,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
             //! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
             Eigen::Matrix3d IPrimeGIMPntGc_G;
             IPrimeGIMPntGc_G << 0., it->gammaDot * (it->IG1 - it->IG2), 0., it->gammaDot * (it->IG1 - it->IG2), 0., 0.,
-              0., 0., 0.;
+                0., 0., 0.;
             it->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
 
             //! wheel inertia tensor about wheel center of mass represented in B frame
@@ -207,7 +207,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
             this->effProps.mEff += it->massV;
             this->effProps.rEff_CB_B += it->massV * it->rGB_B;
             this->effProps.IEffPntB_B +=
-              it->IWPntWc_B + it->IGPntGc_B + it->massV * it->rTildeWcB_B * it->rTildeWcB_B.transpose();
+                it->IWPntWc_B + it->IGPntGc_B + it->massV * it->rTildeWcB_B * it->rTildeWcB_B.transpose();
             this->effProps.rEffPrime_CB_B += it->massV * it->rPrimeWcB_B;
             this->effProps.IEffPrimePntB_B += it->IPrimeWPntWc_B + it->IPrimeGPntGc_B;
 
@@ -223,7 +223,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
             //! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
             Eigen::Matrix3d IPrimeGIMPntGc_G;
             IPrimeGIMPntGc_G << -2 * it->IG12, (it->IG1 - it->IG2), -it->IG23, (it->IG1 - it->IG2), 2 * it->IG12,
-              it->IG13, -it->IG23, it->IG13, 0.;
+                it->IG13, -it->IG23, it->IG13, 0.;
             IPrimeGIMPntGc_G *= it->gammaDot;
             it->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
 
@@ -268,10 +268,10 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused
                                          it->massW * it->rTildeWcB_B * it->rTildeWcB_B.transpose();
             this->effProps.rEffPrime_CB_B += it->massG * it->rPrimeGcB_B + it->massW * it->rPrimeWcB_B;
             this->effProps.IEffPrimePntB_B +=
-              it->IPrimeGPntGc_B + it->massG * it->rPrimeTildeGcB_B * it->rTildeGcB_B.transpose() +
-              it->massG * it->rTildeGcB_B * it->rPrimeTildeGcB_B.transpose() + it->IPrimeWPntWc_B +
-              it->massW * it->rPrimeTildeWcB_B * it->rTildeWcB_B.transpose() +
-              it->massW * it->rTildeWcB_B * it->rPrimeTildeWcB_B.transpose();
+                it->IPrimeGPntGc_B + it->massG * it->rPrimeTildeGcB_B * it->rTildeGcB_B.transpose() +
+                it->massG * it->rTildeGcB_B * it->rPrimeTildeGcB_B.transpose() + it->IPrimeWPntWc_B +
+                it->massW * it->rPrimeTildeWcB_B * it->rTildeWcB_B.transpose() +
+                it->massW * it->rTildeWcB_B * it->rPrimeTildeWcB_B.transpose();
         }
     }
 
@@ -338,13 +338,13 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
 
         if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
             backSubContr.matrixD -=
-              it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
+                it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
             backSubContr.vecRot -=
-              (it->u_s_current - it->IW1 * omegat * it->gammaDot) * it->gsHat_B +
-              it->IW1 * it->Omega * it->gammaDot * it->gtHat_B +
-              (it->u_g_current + (it->IV1 - it->IV2) * omegas * omegat + it->IW1 * it->Omega * omegat) * it->ggHat_B +
-              omegaLoc_BN_B.cross(it->IGPntGc_B * it->gammaDot * it->ggHat_B) +
-              omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WB_B);
+                (it->u_s_current - it->IW1 * omegat * it->gammaDot) * it->gsHat_B +
+                it->IW1 * it->Omega * it->gammaDot * it->gtHat_B +
+                (it->u_g_current + (it->IV1 - it->IV2) * omegas * omegat + it->IW1 * it->Omega * omegat) * it->ggHat_B +
+                omegaLoc_BN_B.cross(it->IGPntGc_B * it->gammaDot * it->ggHat_B) +
+                omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WB_B);
             if (it->VSCMGModel == vscmgJitterSimple) {
                 /* static imbalance force: Fs = Us * Omega^2 */
                 tempF = it->U_s * OmegaSquared * it->w2Hat_B;
@@ -382,9 +382,9 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
             Eigen::Vector3d rPrimeWcVc_B = rPrimeWcG_B - rPrimeVcG_B;
 
             Eigen::Matrix3d P =
-              it->massW * it->rhoG * rTildeWcVc_B - it->massG * it->rhoW * rTildeGcVc_B + it->massW * rTildeVcG_B;
+                it->massW * it->rhoG * rTildeWcVc_B - it->massG * it->rhoW * rTildeGcVc_B + it->massW * rTildeVcG_B;
             Eigen::Matrix3d Q =
-              it->massG * it->rhoW * rTildeGcVc_B - it->massW * it->rhoG * rTildeWcVc_B + it->massG * rTildeVcG_B;
+                it->massG * it->rhoW * rTildeGcVc_B - it->massW * it->rhoG * rTildeWcVc_B + it->massG * rTildeVcG_B;
 
             it->egamma = it->ggHat_B.dot(it->IGPntGc_B * it->ggHat_B + it->IWPntWc_B * it->ggHat_B +
                                          P * (it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B) +
@@ -392,44 +392,45 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
             requireFiniteNonzeroDivisor(it->egamma, this->bskLogger, index, "egamma");
             it->agamma = 1.0 / it->egamma * it->massV * rVcG_B.cross(it->ggHat_B);
             it->bgamma =
-              -1.0 / it->egamma * (IVPntVc_B * it->ggHat_B - it->massV * rVcB_B.cross(rVcG_B.cross(it->ggHat_B)));
+                -1.0 / it->egamma * (IVPntVc_B * it->ggHat_B - it->massV * rVcB_B.cross(rVcG_B.cross(it->ggHat_B)));
             it->cgamma = -1.0 / it->egamma *
                          (it->ggHat_B.dot(it->IWPntWc_B * it->gsHat_B) + it->d * it->ggHat_B.dot(P * it->w3Hat_B));
             it->dgamma =
-              -1.0 / it->egamma *
-                it->ggHat_B.dot(
-                  it->gammaDot * Q * it->ggHat_B.cross(rPrimeGcG_B) +
-                  P *
-                    ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
-                     it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B) +
-                  it->IPrimeGPntGc_B * omega_GN_B + omegaLoc_BN_B.cross(it->IGPntGc_B * omega_GN_B) +
-                  it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WN_B +
-                  omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WN_B) +
-                  it->massG * rGcVc_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeGcVc_B) +
-                                            omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rGcVc_B))) +
-                  it->massW * rWcVc_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeWcVc_B) +
-                                            omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rWcVc_B))) +
-                  it->massV * rVcG_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeVcB_B) +
-                                           omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rVcB_B)))) +
-              1.0 / it->egamma * (it->u_g_current + it->gravityTorqueGimbal_g);
+                -1.0 / it->egamma *
+                    it->ggHat_B.dot(
+                        it->gammaDot * Q * it->ggHat_B.cross(rPrimeGcG_B) +
+                        P * ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) *
+                                 it->gsHat_B -
+                             it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B -
+                             it->d * OmegaSquared * it->w2Hat_B) +
+                        it->IPrimeGPntGc_B * omega_GN_B + omegaLoc_BN_B.cross(it->IGPntGc_B * omega_GN_B) +
+                        it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WN_B +
+                        omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WN_B) +
+                        it->massG * rGcVc_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeGcVc_B) +
+                                                  omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rGcVc_B))) +
+                        it->massW * rWcVc_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeWcVc_B) +
+                                                  omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rWcVc_B))) +
+                        it->massV * rVcG_B.cross(2.0 * omegaLoc_BN_B.cross(rPrimeVcB_B) +
+                                                 omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(rVcB_B)))) +
+                1.0 / it->egamma * (it->u_g_current + it->gravityTorqueGimbal_g);
 
             it->eOmega = it->IW1 + it->massW * dSquared;
             requireFiniteNonzeroDivisor(it->eOmega, this->bskLogger, index, "eOmega");
             it->aOmega = -1.0 / it->eOmega * it->massW * it->d * it->w3Hat_B;
             it->bOmega =
-              -1.0 / it->eOmega *
-              (it->IWPntWc_B * it->gsHat_B - it->massW * it->d * it->rWcB_B.cross(it->w2Hat_B.cross(it->gsHat_B)));
+                -1.0 / it->eOmega *
+                (it->IWPntWc_B * it->gsHat_B - it->massW * it->d * it->rWcB_B.cross(it->w2Hat_B.cross(it->gsHat_B)));
             it->cOmega = -1.0 / it->eOmega * (it->IW13 * cos(it->theta) - it->massW * it->d * it->l * sin(it->theta));
             it->dOmega =
-              -1.0 / it->eOmega *
-                (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B) +
-                 it->gsHat_B.dot(omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WN_B)) +
-                 it->massW * it->d *
-                   it->gsHat_B.dot(it->w2Hat_B.cross(2.0 * omegaLoc_BN_B.cross(it->rPrimeWcB_B) +
-                                                     omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(it->rWcB_B))))) +
-              (1.0 / it->eOmega) * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot -
-                                    it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta) +
-                                    it->u_s_current + it->gravityTorqueWheel_s);
+                -1.0 / it->eOmega *
+                    (it->gsHat_B.dot(it->IPrimeWPntWc_B * omega_WN_B) +
+                     it->gsHat_B.dot(omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WN_B)) +
+                     it->massW * it->d *
+                         it->gsHat_B.dot(it->w2Hat_B.cross(2.0 * omegaLoc_BN_B.cross(it->rPrimeWcB_B) +
+                                                           omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(it->rWcB_B))))) +
+                (1.0 / it->eOmega) * (it->IW13 * sin(it->theta) * it->Omega * it->gammaDot -
+                                      it->massW * dSquared * gammaDotSquared * cos(it->theta) * sin(it->theta) +
+                                      it->u_s_current + it->gravityTorqueWheel_s);
 
             const double couplingDenominator = 1.0 - it->cOmega * it->cgamma; // [-]
             requireFiniteNonzeroDivisor(couplingDenominator, this->bskLogger, index, "1 - cOmega*cgamma");
@@ -440,34 +441,35 @@ void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
             ur = it->massG * it->ggHat_B.cross(it->rGcG_B) - it->massW * it->d * cos(it->theta) * it->gsHat_B +
                  it->massW * it->l * it->gtHat_B;
             vr = it->massW * it->d * it->w3Hat_B;
-            kr = it->massG * it->gammaDot * it->ggHat_B.cross(it->rPrimeGcB_B) +
-                 it->massW *
-                   ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
-                    it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
+            kr =
+                it->massG * it->gammaDot * it->ggHat_B.cross(it->rPrimeGcB_B) +
+                it->massW *
+                    ((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
+                     it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
 
             uomega = it->IGPntGc_B * it->ggHat_B + it->massG * it->rGcB_B.cross(it->ggHat_B.cross(it->rGcG_B)) +
                      it->IWPntWc_B * it->ggHat_B +
                      it->massW * it->rWcB_B.cross(it->l * it->gtHat_B - it->d * cos(it->theta) * it->gsHat_B);
             vomega = it->IWPntWc_B * it->gsHat_B + it->massW * it->d * it->rWcB_B.cross(it->w3Hat_B);
-            komega =
-              it->IPrimeGPntGc_B * it->gammaDot * it->ggHat_B +
-              omegaLoc_BN_B.cross(it->IGPntGc_B * it->gammaDot * it->ggHat_B) +
-              it->massG * omegaLoc_BN_B.cross(it->rGcB_B.cross(it->rPrimeGcB_B)) +
-              it->massG * it->gammaDot * it->rGcB_B.cross(it->ggHat_B.cross(rPrimeGcG_B)) +
-              it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WB_B +
-              omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WB_B) +
-              it->massW * omegaLoc_BN_B.cross(it->rWcB_B.cross(it->rPrimeWcB_B)) +
-              it->massW *
-                it->rWcB_B.cross(
-                  (2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) - it->l * gammaDotSquared) * it->gsHat_B -
-                  it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B - it->d * OmegaSquared * it->w2Hat_B);
+            komega = it->IPrimeGPntGc_B * it->gammaDot * it->ggHat_B +
+                     omegaLoc_BN_B.cross(it->IGPntGc_B * it->gammaDot * it->ggHat_B) +
+                     it->massG * omegaLoc_BN_B.cross(it->rGcB_B.cross(it->rPrimeGcB_B)) +
+                     it->massG * it->gammaDot * it->rGcB_B.cross(it->ggHat_B.cross(rPrimeGcG_B)) +
+                     it->IWPntWc_B * it->Omega * it->gammaDot * it->gtHat_B + it->IPrimeWPntWc_B * omega_WB_B +
+                     omegaLoc_BN_B.cross(it->IWPntWc_B * omega_WB_B) +
+                     it->massW * omegaLoc_BN_B.cross(it->rWcB_B.cross(it->rPrimeWcB_B)) +
+                     it->massW * it->rWcB_B.cross((2.0 * it->d * it->gammaDot * it->Omega * sin(it->theta) -
+                                                   it->l * gammaDotSquared) *
+                                                      it->gsHat_B -
+                                                  it->d * gammaDotSquared * cos(it->theta) * it->gtHat_B -
+                                                  it->d * OmegaSquared * it->w2Hat_B);
 
             backSubContr.matrixA += ur * it->agamma.transpose() + (vr + ur * it->cgamma) * it->p.transpose();
             backSubContr.matrixB += ur * it->bgamma.transpose() + (vr + ur * it->cgamma) * it->q.transpose();
             backSubContr.matrixC +=
-              uomega * it->agamma.transpose() + (vomega + uomega * it->cgamma) * it->p.transpose();
+                uomega * it->agamma.transpose() + (vomega + uomega * it->cgamma) * it->p.transpose();
             backSubContr.matrixD +=
-              uomega * it->bgamma.transpose() + (vomega + uomega * it->cgamma) * it->q.transpose();
+                uomega * it->bgamma.transpose() + (vomega + uomega * it->cgamma) * it->q.transpose();
             backSubContr.vecTrans -= kr + ur * it->dgamma + (vr + ur * it->cgamma) * it->s;
             backSubContr.vecRot -= komega + uomega * it->dgamma + (vomega + uomega * it->cgamma) * it->s;
         }
@@ -528,9 +530,9 @@ void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]],
             OmegasDot(VSCMGi, 0) = -omegat * it->gammaDot - it->gsHat_B.transpose() * omegaDotBNLoc_B +
                                    (it->u_s_current + it->gravityTorqueWheel_s) / it->IW1;
             gammaDotsDot(VSCMGi, 0) =
-              1 / it->IV3 *
-              ((it->u_g_current + it->gravityTorqueGimbal_g) + (it->IV1 - it->IV2) * omegas * omegat +
-               it->IW1 * it->Omega * omegat - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
+                1 / it->IV3 *
+                ((it->u_g_current + it->gravityTorqueGimbal_g) + (it->IV1 - it->IV2) * omegas * omegat +
+                 it->IW1 * it->Omega * omegat - it->IV3 * it->ggHat_B.transpose() * omegaDotBNLoc_B);
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
             OmegasDot(VSCMGi, 0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
             gammaDotsDot(VSCMGi, 0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B) +
@@ -574,7 +576,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_u
             it->rWcB_B = it->rGB_B;
             Eigen::Vector3d rDotWcB_B = omegaLoc_BN_B.cross(it->rWcB_B);
             rotAngMomPntCContr_B +=
-              it->IWPntWc_B * omega_WN_B + it->IGPntGc_B * omega_GN_B + it->massV * it->rWcB_B.cross(rDotWcB_B);
+                it->IWPntWc_B * omega_WN_B + it->IGPntGc_B * omega_GN_B + it->massV * it->rWcB_B.cross(rDotWcB_B);
             rotEnergyContr += 1.0 / 2.0 * omega_WN_B.dot(it->IWPntWc_B * omega_WN_B) +
                               1.0 / 2.0 * omega_GN_B.dot(it->IGPntGc_B * omega_GN_B) +
                               1.0 / 2.0 * it->massV * rDotWcB_B.dot(rDotWcB_B);
@@ -619,7 +621,7 @@ void VSCMGStateEffector::initializeConfiguration()
 {
     if (this->VSCMGData.size() > MAX_EFF_CNT) {
         this->bskLogger.bskError(
-          "vscmgStateEffector: device count %zu exceeds MAX_EFF_CNT (%d).", this->VSCMGData.size(), MAX_EFF_CNT);
+            "vscmgStateEffector: device count %zu exceeds MAX_EFF_CNT (%d).", this->VSCMGData.size(), MAX_EFF_CNT);
     }
     std::vector<VSCMGConfigMsgPayload>::iterator it;
     for (it = VSCMGData.begin(); it != VSCMGData.end(); it++) {
@@ -687,7 +689,7 @@ void VSCMGStateEffector::initializeConfiguration()
         requireFinite(it->IG3, "IG3");
         if (it->IW1 < 0.0 || it->IW2 < 0.0 || it->IW3 < 0.0 || it->IG1 < 0.0 || it->IG2 < 0.0 || it->IG3 < 0.0) {
             this->bskLogger.bskError(
-              "vscmgStateEffector: device %zu wheel and gimbal diagonal inertias must be nonnegative.", index);
+                "vscmgStateEffector: device %zu wheel and gimbal diagonal inertias must be nonnegative.", index);
         }
         if (!it->rGB_B.allFinite()) {
             this->bskLogger.bskError("vscmgStateEffector: device %zu rGB_B must be finite.", index);
@@ -965,7 +967,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unuse
 
         if (!std::isfinite(u_s) || !std::isfinite(u_g)) {
             this->bskLogger.bskError(
-              "vscmgStateEffector: device %zu motor processing produced a non-finite applied torque.", it);
+                "vscmgStateEffector: device %zu motor processing produced a non-finite applied torque.", it);
         }
         this->VSCMGData[it].u_s_current = u_s; // save actual torque for wheel motor
         this->VSCMGData[it].u_g_current = u_g; // save actual torque for wheel motor

@@ -93,9 +93,9 @@ void Update_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, 
 void applyDBLogic_simpleDeadband(simpleDeadbandConfig* configData)
 {
     uint32_t areErrorsBelowUpperThresh =
-      (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
+        (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
     uint32_t areErrorsBelowLowerThresh =
-      (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
+        (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
 
     if (areErrorsBelowUpperThresh) {
         if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && configData->wasControlOff)) {

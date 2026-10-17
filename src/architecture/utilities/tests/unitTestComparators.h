@@ -141,7 +141,7 @@ inline ::testing::AssertionResult vector3Near(const char* firstExpression,
         double error = scale == 0.0 ? difference
                                     : (std::isfinite(difference) ? difference / scale
                                                                  : std::fabs(first[i] / scale - second[i] / scale)) /
-                                        scaledNorm;
+                                          scaledNorm;
         if (std::isinf(error) && std::isfinite(difference) && scaledNorm > 1.0) {
             // Dividing by a tiny scale can overflow before the scaled norm reduces the result.
             error = (difference / scaledNorm) / scale;

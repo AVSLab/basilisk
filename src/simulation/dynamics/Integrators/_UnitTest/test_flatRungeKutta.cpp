@@ -173,7 +173,7 @@ class UnequalExtentDynamics final : public DynamicObject
         spec.diffusionTangent = { 3, 1 };
         spec.updateKind = StateUpdateKind::Special;
         this->state =
-          this->dynManager.registerState("unequalExtentState", spec, std::make_unique<UnequalExtentPolicy>());
+            this->dynManager.registerState("unequalExtentState", spec, std::make_unique<UnequalExtentPolicy>());
         Eigen::MatrixXd initialState(4, 1);
         initialState << 1.0, -2.0, 3.0, -4.0;
         this->state->setState(initialState);
@@ -237,7 +237,7 @@ class MixedUpdateDynamics final : public DynamicObject
         specialSpec.diffusionTangent = { 3, 1 };
         specialSpec.updateKind = StateUpdateKind::Special;
         this->specialState =
-          this->dynManager.registerState("special", specialSpec, std::make_unique<MixedUpdatePolicy>());
+            this->dynManager.registerState("special", specialSpec, std::make_unique<MixedUpdatePolicy>());
         Eigen::MatrixXd specialValue(4, 1);
         specialValue << -0.75, 1.5, -2.25, 3.0;
         this->specialState->setState(specialValue);
@@ -337,7 +337,7 @@ class RungeKuttaCandidateProbe final : public svIntegratorRungeKutta<numberStage
 {
   public:
     RungeKuttaCandidateProbe(DynamicObject* dynamics, const RKCoefficients<numberStages>& coefficients)
-      : svIntegratorRungeKutta<numberStages>(dynamics, coefficients)
+        : svIntegratorRungeKutta<numberStages>(dynamics, coefficients)
     {
     }
 
@@ -387,13 +387,13 @@ class RungeKuttaCandidateProbe final : public svIntegratorRungeKutta<numberStage
             for (const auto& descriptor : this->flatStateDescriptors()) {
                 const auto offset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
                 Eigen::Map<Eigen::MatrixXd> scaledDerivative(
-                  scaled.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+                    scaled.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
                 Eigen::Map<Eigen::MatrixXd> combinedDerivative(
-                  combined.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+                    combined.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
                 const Eigen::Map<const Eigen::MatrixXd> stageDerivative(
-                  this->kStorage.col(static_cast<Eigen::Index>(stageIndex)).data() + offset,
-                  descriptor.derivativeRows,
-                  descriptor.derivativeColumns);
+                    this->kStorage.col(static_cast<Eigen::Index>(stageIndex)).data() + offset,
+                    descriptor.derivativeRows,
+                    descriptor.derivativeColumns);
                 scaledDerivative = stageDerivative * coefficient;
                 if (!haveTerm) {
                     combinedDerivative = scaledDerivative;
@@ -413,11 +413,11 @@ class RungeKuttaCandidateProbe final : public svIntegratorRungeKutta<numberStage
             const auto stateOffset = static_cast<Eigen::Index>(descriptor.stateOffset);
             const auto derivativeOffset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
             const Eigen::Map<const Eigen::MatrixXd> base(
-              this->baseState.data() + stateOffset, descriptor.stateRows, descriptor.stateColumns);
+                this->baseState.data() + stateOffset, descriptor.stateRows, descriptor.stateColumns);
             const Eigen::Map<const Eigen::MatrixXd> combinedDrift(
-              combined.data() + derivativeOffset, descriptor.derivativeRows, descriptor.derivativeColumns);
+                combined.data() + derivativeOffset, descriptor.derivativeRows, descriptor.derivativeColumns);
             Eigen::Map<Eigen::MatrixXd> candidate(
-              output.data() + stateOffset, descriptor.stateRows, descriptor.stateColumns);
+                output.data() + stateOffset, descriptor.stateRows, descriptor.stateColumns);
             if (descriptor.updateKind == StateUpdateKind::Special) {
                 descriptor.specialUpdate->buildDriftCandidate(base, combinedDrift, timeStep, candidate);
             } else {
@@ -434,7 +434,7 @@ class RungeKuttaStorageProbe final : public svIntegratorRungeKutta<numberStages>
 {
   public:
     RungeKuttaStorageProbe(DynamicObject* dynamics, const RKCoefficients<numberStages>& coefficients)
-      : svIntegratorRungeKutta<numberStages>(dynamics, coefficients)
+        : svIntegratorRungeKutta<numberStages>(dynamics, coefficients)
     {
     }
 };
@@ -446,7 +446,7 @@ class AdaptiveToleranceProbe final : public svIntegratorAdaptiveRungeKutta<numbe
     AdaptiveToleranceProbe(DynamicObject* dynamics,
                            const RKAdaptiveCoefficients<numberStages>& coefficients,
                            double methodLargestOrder)
-      : svIntegratorAdaptiveRungeKutta<numberStages>(dynamics, coefficients, methodLargestOrder)
+        : svIntegratorAdaptiveRungeKutta<numberStages>(dynamics, coefficients, methodLargestOrder)
     {
     }
 
@@ -650,8 +650,8 @@ TEST(FlatRungeKutta, NativeConstructorsRejectNonfiniteTableausAndOrder)
     adaptiveCoefficients.bStarArray = { { 0.0 } };
     EXPECT_THROW((svIntegratorAdaptiveRungeKutta<1>(&dynamics, adaptiveCoefficients, 0.0)), std::invalid_argument);
     EXPECT_THROW(
-      (svIntegratorAdaptiveRungeKutta<1>(&dynamics, adaptiveCoefficients, std::numeric_limits<double>::infinity())),
-      std::invalid_argument);
+        (svIntegratorAdaptiveRungeKutta<1>(&dynamics, adaptiveCoefficients, std::numeric_limits<double>::infinity())),
+        std::invalid_argument);
 
     RKCoefficients<2> implicitCoefficients;
     implicitCoefficients.aMatrix = { { { { 0.0, 0.25 } }, { { 1.0, 0.0 } } } };
@@ -1083,7 +1083,7 @@ TEST(FlatRungeKutta, SurvivingDynamicsAdvanceAfterSynchronizedPeerDestruction)
             for (auto* object : { primary.get(), secondary.get() }) {
                 if (adaptive) {
                     object->setIntegrator(
-                      new svIntegratorAdaptiveRungeKutta<4>(object, bogackiShampineCoefficients(), 3.0));
+                        new svIntegratorAdaptiveRungeKutta<4>(object, bogackiShampineCoefficients(), 3.0));
                 } else {
                     object->setIntegrator(new svIntegratorRungeKutta<4>(object, rk4Coefficients()));
                 }

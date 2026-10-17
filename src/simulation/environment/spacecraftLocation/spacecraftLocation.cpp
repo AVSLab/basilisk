@@ -43,7 +43,7 @@ SpacecraftLocation::SpacecraftLocation()
     this->theta_view = -1.0; // [rad] negative disables the viewing-angle requirement
     this->min_illumination_factor = -1.0;
     this->min_shadow_factor =
-      -2.0;                      // Initialize to -2 (different from min_illumination_factor to detect if user sets it
+        -2.0;                    // Initialize to -2 (different from min_illumination_factor to detect if user sets it
     this->glareThreshold = 0.95; // [-]
     this->useGlareConstraint = false;
 
@@ -63,7 +63,7 @@ void SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->scStateInMsgs.size() == 0) {
         bskLogger.bskError(
-          "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
+            "SpacecraftLocation module must have at least one spacecraft added through `addSpacecraftToModel`");
     }
 
     if (!this->primaryScStateInMsg.isLinked()) {

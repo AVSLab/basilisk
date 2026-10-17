@@ -71,9 +71,9 @@ void MJSystemMassMatrix::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
             if (!bodyIsTreeRoot || !jointIsFirstOnBody) {
                 bskLogger.bskError(
-                  "MJSystemMassMatrix: Free joint j=%d on body b=%d must be the first joint on a tree root body.",
-                  j,
-                  b);
+                    "MJSystemMassMatrix: Free joint j=%d on body b=%d must be the first joint on a tree root body.",
+                    j,
+                    b);
             }
         }
     }

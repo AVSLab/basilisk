@@ -61,19 +61,19 @@ class Albedo : public PlanetRadiationBase
                              Eigen::Vector3d nHat_B,
                              Eigen::Vector3d r_IB_B); //!< @brief adds instrument configuration (overloaded function)
     void addPlanetandAlbedoAverageModel(
-      Message<SpicePlanetStateMsgPayload>*
-        msg); //!< @brief This method adds planet msg and albedo average model name (overloaded function)
+        Message<SpicePlanetStateMsgPayload>*
+            msg); //!< @brief This method adds planet msg and albedo average model name (overloaded function)
     void addPlanetandAlbedoAverageModel(
-      Message<SpicePlanetStateMsgPayload>* msg,
-      double ALB_avg,
-      int numLat,
-      int numLon); //!< @brief This method adds planet name and albedo average model name (overloaded function)
+        Message<SpicePlanetStateMsgPayload>* msg,
+        double ALB_avg,
+        int numLat,
+        int numLon); //!< @brief This method adds planet name and albedo average model name (overloaded function)
     void addPlanetandAlbedoDataModel(
-      Message<SpicePlanetStateMsgPayload>* msg,
-      std::string dataPath,
-      std::string fileName); //!< @brief This method adds planet name and albedo data model
+        Message<SpicePlanetStateMsgPayload>* msg,
+        std::string dataPath,
+        std::string fileName); //!< @brief This method adds planet name and albedo data model
     double getAlbedoAverage(
-      std::string planetSpiceName); //!< @brief gets the average albedo value of the specified planet
+        std::string planetSpiceName); //!< @brief gets the average albedo value of the specified planet
 
     std::vector<Message<AlbedoMsgPayload>*> albOutMsgs; //!< output messages (one per instrument)
 
@@ -104,7 +104,7 @@ class Albedo : public PlanetRadiationBase
 
   private:
     std::pair<double, double> lookupPlanetRadius(
-      const std::string& name); //!< gets the planet's equatorial and polar radii in meters
+        const std::string& name); //!< gets the planet's equatorial and polar radii in meters
 
     std::vector<Eigen::Vector3d> r_IB_Bs;      //!< [m] instrument misalignment, body frame
     std::vector<Eigen::Vector3d> nHat_Bs;      //!< [-] instrument unit normal, body frame

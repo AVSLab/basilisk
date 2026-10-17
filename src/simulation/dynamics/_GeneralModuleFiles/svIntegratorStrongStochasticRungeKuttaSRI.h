@@ -163,10 +163,10 @@ class svIntegratorStrongStochasticRungeKuttaSRI : public StochasticRKIntegratorB
 
 template<size_t numberStages>
 svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::svIntegratorStrongStochasticRungeKuttaSRI(
-  DynamicObject* dynIn,
-  const SRICoefficients<numberStages>& coefficients)
-  : StochasticRKIntegratorBase(dynIn)
-  , coefficients(coefficients)
+    DynamicObject* dynIn,
+    const SRICoefficients<numberStages>& coefficients)
+    : StochasticRKIntegratorBase(dynIn)
+    , coefficients(coefficients)
 {
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A0);
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A1);
@@ -221,15 +221,15 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrateImpl(doub
         workspace.captureDiffusion(slot, stage);
     };
     auto buildCandidate =
-      [&](double driftStep, const Eigen::VectorXd& diffusionSteps, size_t slotBegin, size_t slotEnd) {
-          this->buildStochasticCandidate(this->stochasticAcceptedState(),
-                                         workspace.drift(),
-                                         driftStep,
-                                         workspace.diffusions(),
-                                         diffusionSteps,
-                                         slotBegin,
-                                         slotEnd);
-      };
+        [&](double driftStep, const Eigen::VectorXd& diffusionSteps, size_t slotBegin, size_t slotEnd) {
+            this->buildStochasticCandidate(this->stochasticAcceptedState(),
+                                           workspace.drift(),
+                                           driftStep,
+                                           workspace.diffusions(),
+                                           diffusionSteps,
+                                           slotBegin,
+                                           slotEnd);
+        };
 
     try {
         evaluateDrift(currentTime, 0);
@@ -259,7 +259,7 @@ void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrateImpl(doub
         const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
         if (coalesceFinalUpdate) {
             this->beginAllEuclideanFinalCandidate(
-              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), this->flatDW());
+                this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), this->flatDW());
         } else {
             buildCandidate(timeStep, this->flatDW(), 0, noiseCount);
         }

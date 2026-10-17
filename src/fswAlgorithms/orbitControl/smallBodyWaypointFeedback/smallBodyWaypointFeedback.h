@@ -93,7 +93,7 @@ class SmallBodyWaypointFeedback : public SysModel
     Eigen::Vector3d r_SN_N;
     Eigen::Matrix3d dcm_ON; //!< DCM from the inertial frame to the small-body's hill frame
     Eigen::Vector3d
-      r_SO_O; //!< Vector from the small body's origin to the inertial frame origin in small-body hill frame components
+        r_SO_O; //!< Vector from the small body's origin to the inertial frame origin in small-body hill frame components
     Eigen::Vector3d f_curr;
     Eigen::Vector3d f_ref;
     Eigen::Vector3d x1;

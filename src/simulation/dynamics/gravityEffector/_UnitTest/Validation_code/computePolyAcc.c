@@ -358,7 +358,7 @@ void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
          * per-face factor*/
         wf = 2 * atan2(dotProduct(ri_idx, cross_rj_rk),
                        norm_ri_idx * norm_rj_idx * norm_rk_idx + norm_ri_idx * dotProduct(rj_idx, rk_idx) +
-                         norm_rj_idx * dotProduct(rk_idx, ri_idx) + norm_rk_idx * dotProduct(ri_idx, rj_idx));
+                           norm_rj_idx * dotProduct(rk_idx, ri_idx) + norm_rk_idx * dotProduct(ri_idx, rj_idx));
 
         /* Compute auxiliary dot product for solid angle contribution.
          * rf is taken as ri */

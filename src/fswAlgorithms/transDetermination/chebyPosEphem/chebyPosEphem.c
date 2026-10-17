@@ -120,9 +120,9 @@ void Update_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int6
 
     for (i = 0; i < 3; i++) {
         configData->outputState.r_BdyZero_N[i] = calculateChebyValue(
-          &(currRec->posChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
+            &(currRec->posChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
         configData->outputState.v_BdyZero_N[i] = calculateChebyValue(
-          &(currRec->velChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
+            &(currRec->velChebyCoeff[i * currRec->nChebCoeff]), currRec->nChebCoeff, currentScaledValue);
     }
 
     EphemerisMsg_C_write(&configData->outputState, &configData->posFitOutMsg, moduleID, callTime);

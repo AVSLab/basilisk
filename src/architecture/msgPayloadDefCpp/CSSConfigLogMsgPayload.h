@@ -25,8 +25,8 @@
     measurement states.
  */
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  CSSConfigLogMsgPayload
+    //@cond DOXYGEN_IGNORE
+    CSSConfigLogMsgPayload
 //@endcond
 {
     double r_B[3] = { 0 }; //!< [m] sensor position vector in the spacecraft, "B", body frame

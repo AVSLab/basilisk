@@ -30,7 +30,7 @@
 #include <utility>
 
 DynParamManager::DynParamManager()
-  : registry(new StateRegistry())
+    : registry(new StateRegistry())
 {
 }
 

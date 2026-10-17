@@ -52,7 +52,7 @@ class MJSystemCoM : public SysModel
 
   private:
     std::vector<std::pair<int, MJBody*>>
-      namedBodies; //!< MuJoCo body index paired with its scene body, resolved in Reset
+        namedBodies; //!< MuJoCo body index paired with its scene body, resolved in Reset
 };
 
 #endif

@@ -48,13 +48,13 @@ SpinningBodyOneDOFStateEffector::SpinningBodyOneDOFStateEffector()
     this->nameOfThetaState = "spinningBodyTheta" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfThetaDotState = "spinningBodyThetaDot" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfInertialPositionProperty =
-      "spinningBodyInertialPosition" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+        "spinningBodyInertialPosition" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfInertialVelocityProperty =
-      "spinningBodyInertialVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+        "spinningBodyInertialVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfInertialAttitudeProperty =
-      "spinningBodyInertialAttitude" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+        "spinningBodyInertialAttitude" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     this->nameOfInertialAngVelocityProperty =
-      "spinningBodyInertialAngVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
+        "spinningBodyInertialAngVelocity" + std::to_string(SpinningBodyOneDOFStateEffector::effectorID);
     SpinningBodyOneDOFStateEffector::effectorID++;
 }
 
@@ -296,8 +296,8 @@ void SpinningBodyOneDOFStateEffector::updateEffectorMassProps(double integTime [
     // Find body time derivative of IPntSc_B
     Eigen::Matrix3d rPrimeTilde_ScB_B = eigenTilde(this->rPrime_ScB_B);
     this->effProps.IEffPrimePntB_B =
-      this->omegaTilde_SB_B * this->IPntSc_B - this->IPntSc_B * this->omegaTilde_SB_B -
-      this->mass * (rPrimeTilde_ScB_B * this->rTilde_ScB_B + this->rTilde_ScB_B * rPrimeTilde_ScB_B);
+        this->omegaTilde_SB_B * this->IPntSc_B - this->IPntSc_B * this->omegaTilde_SB_B -
+        this->mass * (rPrimeTilde_ScB_B * this->rTilde_ScB_B + this->rTilde_ScB_B * rPrimeTilde_ScB_B);
 }
 
 /*! This method allows the SB state effector to give its contributions to the matrices needed for the back-sub
@@ -344,14 +344,14 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
     // Loop through to collect forces and torques from any connected dynamic effectors
     Eigen::Vector3d attBodyForce_S = Eigen::Vector3d::Zero(); // sum of external forces in S frame components
     Eigen::Vector3d attBodyTorquePntS_S =
-      Eigen::Vector3d::Zero(); // sum of external torque about point S in S frame components
+        Eigen::Vector3d::Zero(); // sum of external torque about point S in S frame components
     std::vector<DynamicEffector*>::iterator dynIt;
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++) {
         // Compute the force and torque contributions from the dynamicEffectors in parent frame
         (*dynIt)->computeForceTorque(integTime, double(0.0));
         // a child's "_B" loads are already in this parent's S frame, so only "_N" is rotated
         attBodyForce_S +=
-          (*dynIt)->forceExternal_B + this->dcm_BS.transpose() * this->dcm_BN * (*dynIt)->forceExternal_N;
+            (*dynIt)->forceExternal_B + this->dcm_BS.transpose() * this->dcm_BN * (*dynIt)->forceExternal_N;
         attBodyTorquePntS_S += (*dynIt)->torqueExternalPntB_B;
     }
 
@@ -372,11 +372,11 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
         this->rDot_SB_B = this->omega_BN_B.cross(this->r_SB_B);
         Eigen::Vector3d gravityTorquePntS_B = this->r_ScS_B.cross(this->mass * g_B);
         this->cTheta =
-          (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef) +
-           this->sHat_B.dot(gravityTorquePntS_B - this->omega_SN_B.cross(IPntS_B * this->omega_SN_B) -
-                            IPntS_B * this->omega_BN_B.cross(this->omega_SB_B) + this->dcm_BS * attBodyTorquePntS_S -
-                            this->mass * this->r_ScS_B.cross(this->omega_BN_B.cross(this->rDot_SB_B)))) /
-          this->mTheta;
+            (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef) +
+             this->sHat_B.dot(gravityTorquePntS_B - this->omega_SN_B.cross(IPntS_B * this->omega_SN_B) -
+                              IPntS_B * this->omega_BN_B.cross(this->omega_SB_B) + this->dcm_BS * attBodyTorquePntS_S -
+                              this->mass * this->r_ScS_B.cross(this->omega_BN_B.cross(this->rDot_SB_B)))) /
+            this->mTheta;
     }
 
     // For documentation on contributions see Vaz Carneiro, Allard, Schaub spinning body paper
@@ -388,7 +388,7 @@ void SpinningBodyOneDOFStateEffector::updateContributions(double integTime,
 
     // Rotation contributions
     Eigen::Vector3d rotThetaFactor_B =
-      this->IPntSc_B * this->sHat_B - this->mass * this->r_ScB_B.cross(rScSCrossSHat_B);
+        this->IPntSc_B * this->sHat_B - this->mass * this->r_ScB_B.cross(rScSCrossSHat_B);
     backSubContr.matrixC = rotThetaFactor_B * this->aTheta.transpose();
     backSubContr.matrixD = rotThetaFactor_B * this->bTheta.transpose();
     backSubContr.vecRot = -this->omega_SN_B.cross(this->IPntSc_B * this->omega_SB_B) -
@@ -447,9 +447,9 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Matrix3d IPntSc_P = this->IPntSc_B;
     Eigen::Matrix3d rTilde_ScP_P = eigenTilde(r_ScP_P);
     backSubContr.matrixD +=
-      -this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->bTheta.transpose() -
-      (IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
-        this->aTheta.transpose() * rTilde_PB_P;
+        -this->mass * rTilde_PB_P * rTilde_ScS_P * sHat_P * this->bTheta.transpose() -
+        (IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
+            this->aTheta.transpose() * rTilde_PB_P;
 
     Eigen::Vector3d r_ScB_P = r_ScP_P + r_PB_P;
     Eigen::Matrix3d rTilde_ScB_P = eigenTilde(r_ScB_P);
@@ -461,23 +461,23 @@ void SpinningBodyOneDOFStateEffector::addPrescribedMotionCouplingContributions(B
     Eigen::Vector3d omega_PN_P = omega_PB_P + omega_BN_P;
     Eigen::Matrix3d omegaTilde_PN_P = eigenTilde(omega_PN_P);
     backSubContr.vecRot +=
-      -IPntSc_P * (omegaTilde_PB_P * omega_SP_P + omegaPrime_PB_P) - omegaTilde_SN_P * IPntSc_P * omega_PB_P -
-      this->mass * rTilde_PB_P * omegaTilde_SP_P * rPPrime_ScS_P -
-      this->mass * rTilde_ScB_P *
-        (2.0 * omegaTilde_PB_P * rPPrime_ScP_P + omegaPrimeTilde_PB_P * r_ScP_P +
-         omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P + rPrimePrime_PB_P) +
-      this->mass * omegaTilde_PB_P * rTilde_ScP_P * rPPrime_ScP_P -
-      this->mass * omegaTilde_PN_P * rTilde_PB_P * rPPrime_ScP_P +
-      this->mass * omegaTilde_PB_P * rTilde_PB_P * rPPrime_ScP_P -
-      this->mass * omegaTilde_PN_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P) +
-      this->mass * omegaTilde_PB_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P) -
-      this->mass * this->cTheta * rTilde_PB_P * rTilde_ScS_P * sHat_P -
-      ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
-       this->aTheta.transpose()) *
-        (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P) -
-      ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
-       this->bTheta.transpose()) *
-        (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
+        -IPntSc_P * (omegaTilde_PB_P * omega_SP_P + omegaPrime_PB_P) - omegaTilde_SN_P * IPntSc_P * omega_PB_P -
+        this->mass * rTilde_PB_P * omegaTilde_SP_P * rPPrime_ScS_P -
+        this->mass * rTilde_ScB_P *
+            (2.0 * omegaTilde_PB_P * rPPrime_ScP_P + omegaPrimeTilde_PB_P * r_ScP_P +
+             omegaTilde_PB_P * omegaTilde_PB_P * r_ScP_P + rPrimePrime_PB_P) +
+        this->mass * omegaTilde_PB_P * rTilde_ScP_P * rPPrime_ScP_P -
+        this->mass * omegaTilde_PN_P * rTilde_PB_P * rPPrime_ScP_P +
+        this->mass * omegaTilde_PB_P * rTilde_PB_P * rPPrime_ScP_P -
+        this->mass * omegaTilde_PN_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P) +
+        this->mass * omegaTilde_PB_P * rTilde_ScB_P * (omegaTilde_PB_P * r_ScP_P + rPrime_PB_P) -
+        this->mass * this->cTheta * rTilde_PB_P * rTilde_ScS_P * sHat_P -
+        ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
+         this->aTheta.transpose()) *
+            (rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P) -
+        ((IPntSc_P - this->mass * rTilde_ScP_P * rTilde_ScS_P - this->mass * rTilde_PB_P * rTilde_ScS_P) * sHat_P *
+         this->bTheta.transpose()) *
+            (omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P);
 }
 
 /*! This method is used to find the derivatives for the SB stateEffector: thetaDDot and the kinematic derivative

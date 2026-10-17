@@ -49,10 +49,10 @@ double validateAndClampAlphaEB(double alphaEB, unsigned int spacecraftIndex, BSK
 {
     if (!std::isfinite(alphaEB)) {
         bskLogger.bskLog(
-          BSK_WARNING,
-          "SpacecraftChargingEquilibrium: spacecraft %d received non-finite alphaEB (%g). Using default alphaEB=1.0.",
-          spacecraftIndex,
-          alphaEB);
+            BSK_WARNING,
+            "SpacecraftChargingEquilibrium: spacecraft %d received non-finite alphaEB (%g). Using default alphaEB=1.0.",
+            spacecraftIndex,
+            alphaEB);
         return 1.0;
     }
     const double clampedAlpha = std::clamp(alphaEB, 0.0, 1.0);
@@ -95,8 +95,8 @@ void SpacecraftChargingEquilibrium::setYieldSEEelectron(const Eigen::VectorXd& y
 void SpacecraftChargingEquilibrium::setYieldSEEion(const Eigen::VectorXd& yieldVector)
 {
     if (!isValidYieldVector(yieldVector)) {
-        this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setYieldSEEion requires a non-empty vector with finite non-negative values.");
+        this->bskLogger.bskError("SpacecraftChargingEquilibrium: setYieldSEEion requires a non-empty vector with "
+                                 "finite non-negative values.");
     }
     this->yieldSEEion = yieldVector;
 }
@@ -129,13 +129,13 @@ void SpacecraftChargingEquilibrium::setSunlitAreaDefault(unsigned int spacecraft
 {
     if (!std::isfinite(sunlitArea) || sunlitArea < 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setSunlitAreaDefault requires a finite non-negative area.");
+            "SpacecraftChargingEquilibrium: setSunlitAreaDefault requires a finite non-negative area.");
     }
     if (spacecraftIndex >= this->scSunlitAreaDefaults.size()) {
-        this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setSunlitAreaDefault index %u is out of range (configured spacecraft: %lu).",
-          spacecraftIndex,
-          this->scSunlitAreaDefaults.size());
+        this->bskLogger.bskError("SpacecraftChargingEquilibrium: setSunlitAreaDefault index %u is out of range "
+                                 "(configured spacecraft: %lu).",
+                                 spacecraftIndex,
+                                 this->scSunlitAreaDefaults.size());
     }
     this->scSunlitAreaDefaults[spacecraftIndex] = sunlitArea;
     if (spacecraftIndex < this->scSunlitAreaWarned.size()) {
@@ -166,7 +166,7 @@ void SpacecraftChargingEquilibrium::setSunlitAreaFallback(double sunlitArea)
 {
     if (!std::isfinite(sunlitArea) || sunlitArea < 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setSunlitAreaFallback requires a finite non-negative area.");
+            "SpacecraftChargingEquilibrium: setSunlitAreaFallback requires a finite non-negative area.");
     }
     this->sunlitAreaFallback = sunlitArea;
 }
@@ -180,7 +180,7 @@ void SpacecraftChargingEquilibrium::setRootSolveBounds(double lowerBound, double
 {
     if (!std::isfinite(lowerBound) || !std::isfinite(upperBound) || lowerBound >= upperBound) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setRootSolveBounds requires finite lowerBound < upperBound.");
+            "SpacecraftChargingEquilibrium: setRootSolveBounds requires finite lowerBound < upperBound.");
     }
     this->rootSolveLowerBound = lowerBound;
     this->rootSolveUpperBound = upperBound;
@@ -200,7 +200,7 @@ void SpacecraftChargingEquilibrium::setSurfaceAreaDefault(double area)
 {
     if (!std::isfinite(area) || area <= 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setSurfaceAreaDefault requires a finite positive area.");
+            "SpacecraftChargingEquilibrium: setSurfaceAreaDefault requires a finite positive area.");
     }
     this->defaultSurfaceArea = area;
 }
@@ -214,7 +214,7 @@ void SpacecraftChargingEquilibrium::setPhotoelectronFlux(double photoelectronFlu
 {
     if (!std::isfinite(photoelectronFluxIn) || photoelectronFluxIn < 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setPhotoelectronFlux requires a finite non-negative value.");
+            "SpacecraftChargingEquilibrium: setPhotoelectronFlux requires a finite non-negative value.");
     }
     this->photoelectronFlux = photoelectronFluxIn;
 }
@@ -228,7 +228,7 @@ void SpacecraftChargingEquilibrium::setPhotoelectronTemperature(double photoelec
 {
     if (!std::isfinite(photoelectronTemperatureIn) || photoelectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setPhotoelectronTemperature requires a finite positive value.");
+            "SpacecraftChargingEquilibrium: setPhotoelectronTemperature requires a finite positive value.");
     }
     this->photoelectronTemperature = photoelectronTemperatureIn;
 }
@@ -242,7 +242,7 @@ void SpacecraftChargingEquilibrium::setSecondaryElectronTemperature(double secon
 {
     if (!std::isfinite(secondaryElectronTemperatureIn) || secondaryElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setSecondaryElectronTemperature requires a finite positive value.");
+            "SpacecraftChargingEquilibrium: setSecondaryElectronTemperature requires a finite positive value.");
     }
     this->secondaryElectronTemperature = secondaryElectronTemperatureIn;
 }
@@ -256,7 +256,7 @@ void SpacecraftChargingEquilibrium::setBackscatterElectronTemperature(double bac
 {
     if (!std::isfinite(backscatterElectronTemperatureIn) || backscatterElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setBackscatterElectronTemperature requires a finite positive value.");
+            "SpacecraftChargingEquilibrium: setBackscatterElectronTemperature requires a finite positive value.");
     }
     this->backscatterElectronTemperature = backscatterElectronTemperatureIn;
 }
@@ -270,7 +270,7 @@ void SpacecraftChargingEquilibrium::setBeamElectronTemperature(double beamElectr
 {
     if (!std::isfinite(beamElectronTemperatureIn) || beamElectronTemperatureIn <= 0.0) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium: setBeamElectronTemperature requires a finite positive value.");
+            "SpacecraftChargingEquilibrium: setBeamElectronTemperature requires a finite positive value.");
     }
     this->beamElectronTemperature = beamElectronTemperatureIn;
 }
@@ -354,8 +354,8 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
 {
     if (this->numSat != 2) {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium.UpdateState called with numSat=%u. Exactly two spacecraft are required.",
-          this->numSat);
+            "SpacecraftChargingEquilibrium.UpdateState called with numSat=%u. Exactly two spacecraft are required.",
+            this->numSat);
     }
     if (!this->validateSolveConfiguration()) {
         return;
@@ -431,9 +431,9 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     const int sID = 0;
     std::function<double(double)> sumCurrentsServicer = [&](double phiS) -> double {
         const double nonBeamCurrents =
-          electronCurrent(phiS, spaceCrafts[sID].A) + ionCurrent(phiS, spaceCrafts[sID].A) +
-          SEEelectronCurrent(phiS, spaceCrafts[sID].A) + SEEionCurrent(phiS, spaceCrafts[sID].A) +
-          backscatteringCurrent(phiS, spaceCrafts[sID].A) + photoelectricCurrent(phiS, spaceCrafts[sID].A_sunlit);
+            electronCurrent(phiS, spaceCrafts[sID].A) + ionCurrent(phiS, spaceCrafts[sID].A) +
+            SEEelectronCurrent(phiS, spaceCrafts[sID].A) + SEEionCurrent(phiS, spaceCrafts[sID].A) +
+            backscatteringCurrent(phiS, spaceCrafts[sID].A) + photoelectricCurrent(phiS, spaceCrafts[sID].A_sunlit);
 
         const double iBeamS = electronBeamCurrent(phiS,
                                                   servicerTargetReferencePotential,
@@ -459,9 +459,9 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
     const double fixedPhiS = equilibriums[0];
     std::function<double(double)> sumCurrentsTarget = [&](double phiT) -> double {
         const double nonBeamCurrents =
-          electronCurrent(phiT, spaceCrafts[tID].A) + ionCurrent(phiT, spaceCrafts[tID].A) +
-          SEEelectronCurrent(phiT, spaceCrafts[tID].A) + SEEionCurrent(phiT, spaceCrafts[tID].A) +
-          backscatteringCurrent(phiT, spaceCrafts[tID].A) + photoelectricCurrent(phiT, spaceCrafts[tID].A_sunlit);
+            electronCurrent(phiT, spaceCrafts[tID].A) + ionCurrent(phiT, spaceCrafts[tID].A) +
+            SEEelectronCurrent(phiT, spaceCrafts[tID].A) + SEEionCurrent(phiT, spaceCrafts[tID].A) +
+            backscatteringCurrent(phiT, spaceCrafts[tID].A) + photoelectricCurrent(phiT, spaceCrafts[tID].A_sunlit);
 
         const double iBeamT = electronBeamCurrent(fixedPhiS,
                                                   phiT,
@@ -542,11 +542,11 @@ void SpacecraftChargingEquilibrium::UpdateState(uint64_t CurrentSimNanos)
                                                                      spaceCrafts[0].electronGun.currentEB,
                                                                      spaceCrafts[0].electronGun.alphaEB);
             currentMsgBuffer.beamBackscatteringCurrent =
-              electronBeamBackscattering(equilibriums[0],
-                                         equilibriums[1],
-                                         spaceCrafts[0].electronGun.energyEB,
-                                         spaceCrafts[0].electronGun.currentEB,
-                                         spaceCrafts[0].electronGun.alphaEB);
+                electronBeamBackscattering(equilibriums[0],
+                                           equilibriums[1],
+                                           spaceCrafts[0].electronGun.energyEB,
+                                           spaceCrafts[0].electronGun.currentEB,
+                                           spaceCrafts[0].electronGun.alphaEB);
         }
 
         currentMsgBuffer.totalCurrent = currentMsgBuffer.nonBeamCurrent + currentMsgBuffer.beamCurrent +
@@ -1007,6 +1007,6 @@ double SpacecraftChargingEquilibrium::getYield(double E, const std::string& yiel
         return yield;
     } else {
         this->bskLogger.bskError(
-          "SpacecraftChargingEquilibrium.getYield: yield type must be electron, ion, or backscattered");
+            "SpacecraftChargingEquilibrium.getYield: yield type must be electron, ion, or backscattered");
     }
 }

@@ -103,9 +103,9 @@ struct SpinningBody
     Eigen::Vector3d sHat_S = { 1.0, 0.0, 0.0 };        //!< spinning axis in S frame components
     Eigen::Matrix3d dcm_S0S = Eigen::Matrix3d::Identity(); //!< DCM from the S0 frame to S frame (rotated by theta)
     Eigen::Matrix3d dcm_S0P =
-      Eigen::Matrix3d::Identity(); //!< DCM from the parent frame to the S0 frame (S frame for theta=0)
+        Eigen::Matrix3d::Identity(); //!< DCM from the parent frame to the S0 frame (S frame for theta=0)
     Eigen::Matrix3d ISPntSc_S =
-      Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
+        Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of spinning body about point Sc in S frame components
 
     double theta = 0.0;        //!< [rad] current spinning body angle
     double thetaDot = 0.0;     //!< [rad/s] current spinning body angle rate
@@ -124,28 +124,28 @@ struct SpinningBody
     Eigen::Vector3d r_ScB_B = Eigen::Vector3d::Zero(); //!< [m] vector pointing from body frame B origin to point Sc
                                                        //!< (center of mass of the spinner) in B frame components
     Eigen::Vector3d rPrime_SP_B =
-      Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_SP_B in B frame components
+        Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_SP_B in B frame components
     Eigen::Vector3d rPrime_SB_B =
-      Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_SB_B in B frame components
+        Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_SB_B in B frame components
     Eigen::Vector3d rPrime_ScS_B =
-      Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_ScS_B in B frame components
+        Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_ScS_B in B frame components
     Eigen::Vector3d rPrime_ScB_B =
-      Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_ScB_B in B frame components
+        Eigen::Vector3d::Zero(); //!< [m/s] body frame time derivative of r_ScB_B in B frame components
     Eigen::Vector3d rDot_ScB_B =
-      Eigen::Vector3d::Zero(); //!< [m/s] inertial time derivative of r_ScB_B in B frame components
+        Eigen::Vector3d::Zero(); //!< [m/s] inertial time derivative of r_ScB_B in B frame components
     Eigen::Vector3d omega_SP_B =
-      Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the P frame in B frame components
+        Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the P frame in B frame components
     Eigen::Vector3d omega_SB_B =
-      Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components
+        Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the B frame in B frame components
     Eigen::Vector3d omega_SN_B =
-      Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components
+        Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the S frame wrt the N frame in B frame components
     Eigen::Vector3d extForce_S =
-      Eigen::Vector3d::Zero(); //!< [N] external force acting on the spinning body in S frame components
+        Eigen::Vector3d::Zero(); //!< [N] external force acting on the spinning body in S frame components
     Eigen::Vector3d extTorquePntS_S = Eigen::Vector3d::Zero(); //!< [N-m] external torque acting on the spinning body
                                                                //!< about point Sc in S frame components
 
     Eigen::Matrix3d ISPntSc_B =
-      Eigen::Matrix3d::Identity(); //!< [kg-m^2] inertia of spinning body about point Sc in S frame components
+        Eigen::Matrix3d::Identity(); //!< [kg-m^2] inertia of spinning body about point Sc in S frame components
     Eigen::Matrix3d IPrimeSPntSc_B = Eigen::Matrix3d::Zero();  //!< [kg-m^2] body frame derivative of the inertia of
                                                                //!< spinning body about point Sc in S frame components
     Eigen::Matrix3d dcm_BS = Eigen::Matrix3d::Identity();      //!< DCM from spinner frame to body frame
@@ -160,10 +160,10 @@ struct SpinningBody
     std::string nameOfInertialAngVelocityProperty; //!< identifier for the inertial angular velocity property
 
     Eigen::Vector3d
-      r_ScN_N; //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
+        r_ScN_N; //!< [m] position vector of the spinning body center of mass Sc relative to the inertial frame origin N
     Eigen::Vector3d v_ScN_N; //!< [m/s] inertial velocity vector of Sc relative to inertial frame
     Eigen::MatrixXd*
-      r_SN_N; //!< [m] position vector of the spinning body frame origin S relative to the inertial frame origin N
+        r_SN_N; //!< [m] position vector of the spinning body frame origin S relative to the inertial frame origin N
     Eigen::MatrixXd* v_SN_N;     //!< [m/s] inertial velocity vector of S relative to inertial frame
     Eigen::MatrixXd* sigma_SN;   //!< MRP attitude of frame S relative to inertial frame
     Eigen::MatrixXd* omega_SN_S; //!< [rad/s] inertial spinning body frame angular velocity vector
@@ -183,8 +183,8 @@ struct SpinningBody
 
 /*! spinning rigid body state effector class */
 class SpinningBodyNDOFStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs;   //!< state output message
@@ -192,7 +192,7 @@ class SpinningBodyNDOFStateEffector final
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg;               //!< (optional) motor torque input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;                //!< (optional) lock flag input message
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
-      spinningBodyRefInMsgs; //!< (optional) reference state input message
+        spinningBodyRefInMsgs; //!< (optional) reference state input message
 
     SpinningBodyNDOFStateEffector();           //!< Constructor
     ~SpinningBodyNDOFStateEffector() override; //!< Destructor
@@ -278,9 +278,9 @@ class SpinningBodyNDOFStateEffector final
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>>
-      ownedSpinningBodyOutMsgs; //!< Storage for spinningBodyOutMsgs.
+        ownedSpinningBodyOutMsgs; //!< Storage for spinningBodyOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>>
-      ownedSpinningBodyConfigLogOutMsgs; //!< Storage for spinningBodyConfigLogOutMsgs.
+        ownedSpinningBodyConfigLogOutMsgs; //!< Storage for spinningBodyConfigLogOutMsgs.
 };
 
 #endif /* SPINNING_BODY_N_DOF_STATE_EFFECTOR_H */

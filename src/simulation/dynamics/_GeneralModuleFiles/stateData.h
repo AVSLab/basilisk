@@ -208,7 +208,7 @@ class StateData
     MutableMatrixView derivativeView()
     {
         return MutableMatrixView(
-          this->activeDerivative, this->viewDerivativeShape.rows, this->viewDerivativeShape.cols);
+            this->activeDerivative, this->viewDerivativeShape.rows, this->viewDerivativeShape.cols);
     }
 
     /** @brief Return a constant borrowed view of active derivative storage.

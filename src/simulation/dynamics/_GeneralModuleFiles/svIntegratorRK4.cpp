@@ -20,7 +20,7 @@
 #include "svIntegratorRK4.h"
 
 svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn)
-  : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients())
+    : svIntegratorRungeKutta(dyn, svIntegratorRK4::getCoefficients())
 {
 }
 

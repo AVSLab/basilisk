@@ -46,7 +46,7 @@ class FuelTankModel
     Eigen::Vector3d r_TcT_T;          //!< [m] position vector from B to tank point in B frame comp.
     Eigen::Vector3d rPrime_TcT_T;     //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
     Eigen::Vector3d
-      rPPrime_TcT_T; //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
+        rPPrime_TcT_T; //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
     virtual void computeTankProps(double mFuel) = 0;                       //!< class method
     virtual void computeTankPropDerivs(double mFuel, double mDotFuel) = 0; //!< class method
     FuelTankModel() { this->r_TcT_TInit.setZero(); }
@@ -67,13 +67,13 @@ class FuelTankModelConstantVolume : public FuelTankModel
     {
         this->r_TcT_T = this->r_TcT_TInit;
         this->ITankPntT_T =
-          2.0 / 5.0 * mFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
+            2.0 / 5.0 * mFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
     }
 
     void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override
     {
         this->IPrimeTankPntT_T =
-          2.0 / 5.0 * mDotFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
+            2.0 / 5.0 * mDotFuel * this->radiusTankInit * this->radiusTankInit * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
     }
@@ -100,7 +100,7 @@ class FuelTankModelConstantDensity : public FuelTankModel
     void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override
     {
         this->IPrimeTankPntT_T =
-          2.0 / 3.0 * mDotFuel * this->radiusTank * this->radiusTank * Eigen::Matrix3d::Identity();
+            2.0 / 3.0 * mDotFuel * this->radiusTank * this->radiusTank * Eigen::Matrix3d::Identity();
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
     }
@@ -123,8 +123,8 @@ class FuelTankModelEmptying : public FuelTankModel
 
     void computeTankProps(double mFuel) override
     {
-        this->rhoFuel =
-          this->propMassInit / (4.0 / 3.0 * M_PI * this->radiusTankInit * this->radiusTankInit * this->radiusTankInit);
+        this->rhoFuel = this->propMassInit /
+                        (4.0 / 3.0 * M_PI * this->radiusTankInit * this->radiusTankInit * this->radiusTankInit);
         double rtank = this->radiusTankInit;
         double volume;
         double deltaRadiusK3;
@@ -134,7 +134,7 @@ class FuelTankModelEmptying : public FuelTankModel
             double rhoFuel = this->rhoFuel;
             std::function<double(double)> f = [rhoFuel, rtank, mFuel](double thetaStar) -> double {
                 return 2.0 / 3.0 * M_PI * rhoFuel * rtank * rtank * rtank *
-                         (1 + 3.0 / 2.0 * cos(thetaStar) - 1.0 / 2.0 * pow(cos(thetaStar), 3)) -
+                           (1 + 3.0 / 2.0 * cos(thetaStar) - 1.0 / 2.0 * pow(cos(thetaStar), 3)) -
                        mFuel;
             };
             std::function<double(double)> fPrime = [rhoFuel, rtank](double thetaStar) -> double {
@@ -159,15 +159,15 @@ class FuelTankModelEmptying : public FuelTankModel
         this->ITankPntT_T.setZero();
         this->IPrimeTankPntT_T.setZero();
         this->ITankPntT_T(2, 2) =
-          2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) *
-          (2.0 / 3.0 + 1.0 / 4.0 * std::cos(this->thetaStar) * std::pow(std::sin(this->thetaStar), 4) -
-           1 / 12.0 * (std::cos(3 * this->thetaStar) - 9 * std::cos(this->thetaStar)));
+            2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) *
+            (2.0 / 3.0 + 1.0 / 4.0 * std::cos(this->thetaStar) * std::pow(std::sin(this->thetaStar), 4) -
+             1 / 12.0 * (std::cos(3 * this->thetaStar) - 9 * std::cos(this->thetaStar)));
         this->ITankPntT_T(0, 0) = this->ITankPntT_T(1, 1) =
-          2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) *
-          (2.0 / 3.0 - 1.0 / 4.0 * std::pow(std::cos(this->thetaStar), 5) +
-           1 / 24.0 * (std::cos(3 * this->thetaStar) - 9 * std::cos(this->thetaStar)) +
-           5.0 / 4.0 * cos(this->thetaStar) +
-           1 / 8.0 * std::cos(this->thetaStar) * std::pow(std::sin(this->thetaStar), 4));
+            2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) *
+            (2.0 / 3.0 - 1.0 / 4.0 * std::pow(std::cos(this->thetaStar), 5) +
+             1 / 24.0 * (std::cos(3 * this->thetaStar) - 9 * std::cos(this->thetaStar)) +
+             5.0 / 4.0 * cos(this->thetaStar) +
+             1 / 8.0 * std::cos(this->thetaStar) * std::pow(std::sin(this->thetaStar), 4));
     }
 
     void computeTankPropDerivs(double mFuel, double mDotFuel) override
@@ -176,27 +176,27 @@ class FuelTankModelEmptying : public FuelTankModel
         const double cosTheta = std::cos(this->thetaStar);
         if (mFuel != this->propMassInit) {
             this->thetaDotStar =
-              -mDotFuel / (M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 3) * std::pow(sinTheta, 3));
+                -mDotFuel / (M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 3) * std::pow(sinTheta, 3));
             this->thetaDDotStar =
-              -3 * this->thetaDotStar * this->thetaDotStar * cosTheta / sinTheta; // Assumes mDDotFuel = 0
+                -3 * this->thetaDotStar * this->thetaDotStar * cosTheta / sinTheta; // Assumes mDDotFuel = 0
         } else {
             this->thetaDotStar = 0.0;
             this->thetaDDotStar = 0.0;
         }
         this->IPrimeTankPntT_T(2, 2) =
-          2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
-          (std::pow(cosTheta, 2) * std::pow(sinTheta, 3) - 1.0 / 4.0 * std::pow(sinTheta, 5) +
-           1 / 4.0 * std::sin(3 * this->thetaStar) - 3.0 / 4.0 * sinTheta);
+            2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
+            (std::pow(cosTheta, 2) * std::pow(sinTheta, 3) - 1.0 / 4.0 * std::pow(sinTheta, 5) +
+             1 / 4.0 * std::sin(3 * this->thetaStar) - 3.0 / 4.0 * sinTheta);
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
-          2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
-          (5.0 / 4.0 * sinTheta * std::pow(cosTheta, 4) - 5.0 / 4.0 * sinTheta -
-           1 / 8.0 * std::sin(3 * this->thetaStar) + 3.0 / 8.0 * sinTheta +
-           1 / 2.0 * std::pow(cosTheta, 2) * std::pow(sinTheta, 3) - 1 / 8.0 * std::pow(sinTheta, 5));
+            2.0 / 5.0 * M_PI * this->rhoFuel * std::pow(this->radiusTankInit, 5) * this->thetaDotStar *
+            (5.0 / 4.0 * sinTheta * std::pow(cosTheta, 4) - 5.0 / 4.0 * sinTheta -
+             1 / 8.0 * std::sin(3 * this->thetaStar) + 3.0 / 8.0 * sinTheta +
+             1 / 2.0 * std::pow(cosTheta, 2) * std::pow(sinTheta, 3) - 1 / 8.0 * std::pow(sinTheta, 5));
         if (mFuel != 0) {
             const double q = std::pow(sinTheta, 4);
             const double qDot = 4 * std::pow(sinTheta, 3) * cosTheta * this->thetaDotStar;
             const double qDDot = 4 * ((3 * std::pow(sinTheta, 2) * std::pow(cosTheta, 2) - std::pow(sinTheta, 4)) *
-                                        this->thetaDotStar * this->thetaDotStar +
+                                          this->thetaDotStar * this->thetaDotStar +
                                       std::pow(sinTheta, 3) * cosTheta * this->thetaDDotStar);
             const double centerOfMassFactor = -M_PI * std::pow(this->radiusTankInit, 4) * this->rhoFuel / 4.0;
             this->rPrime_TcT_T = centerOfMassFactor * (qDot / mFuel - q * mDotFuel / (mFuel * mFuel)) * this->k3;
@@ -227,7 +227,7 @@ class FuelTankModelUniformBurn : public FuelTankModel
         this->r_TcT_T = this->r_TcT_TInit;
         this->ITankPntT_T.setZero();
         this->ITankPntT_T(0, 0) = this->ITankPntT_T(1, 1) =
-          mFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
+            mFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
         this->ITankPntT_T(2, 2) = mFuel * this->radiusTankInit * this->radiusTankInit / 2;
     }
 
@@ -235,7 +235,7 @@ class FuelTankModelUniformBurn : public FuelTankModel
     {
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
-          mDotFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
+            mDotFuel * (this->radiusTankInit * this->radiusTankInit / 4.0 + this->lengthTank * this->lengthTank / 12.0);
         this->IPrimeTankPntT_T(2, 2) = mDotFuel * this->radiusTankInit * this->radiusTankInit / 2;
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -258,21 +258,21 @@ class FuelTankModelCentrifugalBurn : public FuelTankModel
     {
         double rhoFuel = this->propMassInit / (M_PI * this->radiusTankInit * this->radiusTankInit * this->lengthTank);
         this->radiusInner = std::sqrt(
-          std::max(this->radiusTankInit * this->radiusTankInit - mFuel / (M_PI * this->lengthTank * rhoFuel), 0.0));
+            std::max(this->radiusTankInit * this->radiusTankInit - mFuel / (M_PI * this->lengthTank * rhoFuel), 0.0));
         this->r_TcT_T = this->r_TcT_TInit;
         this->ITankPntT_T.setZero();
         this->ITankPntT_T(0, 0) = this->ITankPntT_T(1, 1) =
-          mFuel * ((this->radiusTankInit * this->radiusTankInit + this->radiusInner * this->radiusInner) / 4.0 +
-                   this->lengthTank * this->lengthTank / 12.0);
+            mFuel * ((this->radiusTankInit * this->radiusTankInit + this->radiusInner * this->radiusInner) / 4.0 +
+                     this->lengthTank * this->lengthTank / 12.0);
         this->ITankPntT_T(2, 2) =
-          mFuel * (this->radiusTankInit * this->radiusTankInit + this->radiusInner * this->radiusInner) / 2;
+            mFuel * (this->radiusTankInit * this->radiusTankInit + this->radiusInner * this->radiusInner) / 2;
     }
 
     void computeTankPropDerivs(double mFuel [[maybe_unused]], double mDotFuel) override
     {
         this->IPrimeTankPntT_T.setZero();
         this->IPrimeTankPntT_T(0, 0) = this->IPrimeTankPntT_T(1, 1) =
-          mDotFuel * (this->radiusInner * this->radiusInner / 2.0 + this->lengthTank * this->lengthTank / 12.0);
+            mDotFuel * (this->radiusInner * this->radiusInner / 2.0 + this->lengthTank * this->lengthTank / 12.0);
         this->IPrimeTankPntT_T(2, 2) = mDotFuel * this->radiusInner * this->radiusInner;
         this->rPrime_TcT_T.setZero();
         this->rPPrime_TcT_T.setZero();
@@ -281,8 +281,8 @@ class FuelTankModelCentrifugalBurn : public FuelTankModel
 
 /*! Fuel tank effector model class */
 class FuelTank final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     std::vector<FuelSlosh*> fuelSloshParticles;            //!< vector of fuel slosh particles

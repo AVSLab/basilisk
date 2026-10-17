@@ -133,7 +133,7 @@ secular variation of each of the Geomagnetic elements
     LegendreFunction = MAG_AllocateLegendreFunctionMemory(NumTerms); /* For storing the ALF functions */
     SphVariables = MAG_AllocateSphVarMemory(TimedMagneticModel->nMax);
     MAG_ComputeSphericalHarmonicVariables(
-      Ellip, CoordSpherical, TimedMagneticModel->nMax, SphVariables); /* Compute Spherical Harmonic variables  */
+        Ellip, CoordSpherical, TimedMagneticModel->nMax, SphVariables); /* Compute Spherical Harmonic variables  */
     MAG_AssociatedLegendreFunction(CoordSpherical, TimedMagneticModel->nMax, LegendreFunction); /* Compute ALF  */
     MAG_Summation(LegendreFunction,
                   TimedMagneticModel,
@@ -150,16 +150,16 @@ secular variation of each of the Geomagnetic elements
                              MagneticResultsSph,
                              &MagneticResultsGeo); /* Map the computed Magnetic fields to Geodeitic coordinates  */
     MAG_RotateMagneticVector(
-      CoordSpherical,
-      CoordGeodetic,
-      MagneticResultsSphVar,
-      &MagneticResultsGeoVar); /* Map the secular variation field components to Geodetic coordinates*/
+        CoordSpherical,
+        CoordGeodetic,
+        MagneticResultsSphVar,
+        &MagneticResultsGeoVar); /* Map the secular variation field components to Geodetic coordinates*/
     MAG_CalculateGeoMagneticElements(
-      &MagneticResultsGeo,
-      GeoMagneticElements); /* Calculate the Geomagnetic elements, Equation 19 , WMM Technical report */
+        &MagneticResultsGeo,
+        GeoMagneticElements); /* Calculate the Geomagnetic elements, Equation 19 , WMM Technical report */
     MAG_CalculateSecularVariationElements(
-      MagneticResultsGeoVar,
-      GeoMagneticElements); /*Calculate the secular variation of each of the Geomagnetic elements*/
+        MagneticResultsGeoVar,
+        GeoMagneticElements); /*Calculate the secular variation of each of the Geomagnetic elements*/
 
     MAG_FreeLegendreMemory(LegendreFunction);
     MAG_FreeSphVarMemory(SphVariables);
@@ -218,7 +218,7 @@ void MAG_Gradient(MAGtype_Ellipsoid Ellip,
 
     MAG_GeodeticToSpherical(Ellip, CoordGeodetic, &AdjCoordSpherical);
     MAG_GradY(
-      Ellip, AdjCoordSpherical, CoordGeodetic, TimedMagneticModel, GeomagneticElements, &(Gradient->GradLambda));
+        Ellip, AdjCoordSpherical, CoordGeodetic, TimedMagneticModel, GeomagneticElements, &(Gradient->GradLambda));
 
     /*Gradient along z*/
     AdjCoordGeodetic.HeightAboveEllipsoid = CoordGeodetic.HeightAboveEllipsoid + hDelta;
@@ -273,7 +273,7 @@ int MAG_SetDefaults(MAGtype_Ellipsoid* Ellip, MAGtype_Geoid* Geoid)
 int MAG_robustReadMagneticModel_Large(char* filename, char* filenameSV, MAGtype_MagneticModel** MagneticModel)
 {
     char line[MAXLINELENGTH],
-      ModelName[] = "Enhanced Magnetic Model"; /*Model Name must be no longer than 31 characters*/
+        ModelName[] = "Enhanced Magnetic Model"; /*Model Name must be no longer than 31 characters*/
     int n, nMax = 0, nMaxSV = 0, num_terms, a, epochlength = 5, i;
     FILE* MODELFILE;
     MODELFILE = fopen(filename, "r");
@@ -673,11 +673,11 @@ CALLS : none
                 *a_step_size);
     else
         fprintf(
-          fileout,
-          "Minimum Altitude above WGS-84 Ellipsoid: %f\tMaximum Altitude above WGS-84 Ellipsoid: %f\tStep Size: %f\n",
-          minimum->HeightAboveEllipsoid,
-          maximum->HeightAboveEllipsoid,
-          *a_step_size);
+            fileout,
+            "Minimum Altitude above WGS-84 Ellipsoid: %f\tMaximum Altitude above WGS-84 Ellipsoid: %f\tStep Size: %f\n",
+            minimum->HeightAboveEllipsoid,
+            maximum->HeightAboveEllipsoid,
+            *a_step_size);
     fprintf(fileout,
             "Starting Date: %f\t\tEnding Date: %f\t\tStep Time: %f\n\n\n",
             StartDate->DecimalYear,
@@ -823,8 +823,8 @@ decimal longitude.) MAG_ValidateDMSstringlong(buffer, Error_Message) MAG_Validat
                         done = 0;
                         i = -1;
                         buffer[0] = '\0';
-                        printf(
-                          "\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or MM/DD/YYYY):\n");
+                        printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or "
+                               "MM/DD/YYYY):\n");
                         while (NULL == fgets(buffer, 40, stdin)) {
                             printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or "
                                    "MM/DD/YYYY):\n");
@@ -1150,7 +1150,7 @@ CALLS : none
             printf("	Email:	geomag.models@noaa.gov\n");
             printf("	Web: http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml\n");
             printf(
-              "\n VALID RANGE  = %d - %d\n", (int)MagneticModel->epoch, (int)MagneticModel->CoefficientFileEndDate);
+                "\n VALID RANGE  = %d - %d\n", (int)MagneticModel->epoch, (int)MagneticModel->CoefficientFileEndDate);
             printf(" TIME   = %f\n", value);
             while (1) {
                 printf("\nPlease press 'C' to continue, 'N' to enter new data or 'X' to exit...\n");
@@ -1593,7 +1593,7 @@ void MAG_PrintWMMFormat(char* filename, MAGtype_MagneticModel* MagneticModel)
     snprintf(Datestring, sizeof(Datestring), "%d/%d/%d", Date.Month, Date.Day, Date.Year);
     OUT = fopen(filename, "w");
     fprintf(
-      OUT, "    %.1f               %s              %s\n", MagneticModel->epoch, MagneticModel->ModelName, Datestring);
+        OUT, "    %.1f               %s              %s\n", MagneticModel->epoch, MagneticModel->ModelName, Datestring);
     for (n = 1; n <= MagneticModel->nMax; n++) {
         for (m = 0; m <= n; m++) {
             index = (n * (n + 1) / 2 + m);
@@ -1632,7 +1632,7 @@ void MAG_PrintEMMFormat(char* filename, char* filenameSV, MAGtype_MagneticModel*
     snprintf(Datestring, sizeof(Datestring), "%d/%d/%d", Date.Month, Date.Day, Date.Year);
     OUT = fopen(filename, "w");
     fprintf(
-      OUT, "    %.1f               %s              %s\n", MagneticModel->epoch, MagneticModel->ModelName, Datestring);
+        OUT, "    %.1f               %s              %s\n", MagneticModel->epoch, MagneticModel->ModelName, Datestring);
     for (n = 1; n <= MagneticModel->nMax; n++) {
         for (m = 0; m <= n; m++) {
             index = (n * (n + 1) / 2 + m);
@@ -2094,9 +2094,9 @@ CALLS : none
     GeoMagneticElements->Z = MagneticResultsGeo->Bz;
 
     GeoMagneticElements->H =
-      sqrt(MagneticResultsGeo->Bx * MagneticResultsGeo->Bx + MagneticResultsGeo->By * MagneticResultsGeo->By);
+        sqrt(MagneticResultsGeo->Bx * MagneticResultsGeo->Bx + MagneticResultsGeo->By * MagneticResultsGeo->By);
     GeoMagneticElements->F =
-      sqrt(GeoMagneticElements->H * GeoMagneticElements->H + MagneticResultsGeo->Bz * MagneticResultsGeo->Bz);
+        sqrt(GeoMagneticElements->H * GeoMagneticElements->H + MagneticResultsGeo->Bz * MagneticResultsGeo->Bz);
     GeoMagneticElements->Decl = RAD2DEG(atan2(GeoMagneticElements->Y, GeoMagneticElements->X));
     GeoMagneticElements->Incl = RAD2DEG(atan2(GeoMagneticElements->Z, GeoMagneticElements->H));
 
@@ -2147,7 +2147,7 @@ void MAG_CalculateGradientElements(MAGtype_MagneticResults GradResults,
     GradElements->Z = GradResults.Bz;
 
     GradElements->H =
-      (GradElements->X * MagneticElements.X + GradElements->Y * MagneticElements.Y) / MagneticElements.H;
+        (GradElements->X * MagneticElements.X + GradElements->Y * MagneticElements.Y) / MagneticElements.H;
     GradElements->F = (GradElements->X * MagneticElements.X + GradElements->Y * MagneticElements.Y +
                        GradElements->Z * MagneticElements.Z) /
                       MagneticElements.F;
@@ -2175,18 +2175,18 @@ int MAG_CalculateSecularVariationElements(MAGtype_MagneticResults MagneticVariat
     MagneticElements->Ydot = MagneticVariation.By;
     MagneticElements->Zdot = MagneticVariation.Bz;
     MagneticElements->Hdot =
-      (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot) /
-      MagneticElements->H; /* See equation 19 in the WMM technical report */
+        (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot) /
+        MagneticElements->H; /* See equation 19 in the WMM technical report */
     MagneticElements->Fdot =
-      (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot +
-       MagneticElements->Z * MagneticElements->Zdot) /
-      MagneticElements->F;
+        (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot +
+         MagneticElements->Z * MagneticElements->Zdot) /
+        MagneticElements->F;
     MagneticElements->Decldot =
-      180.0 / M_PI * (MagneticElements->X * MagneticElements->Ydot - MagneticElements->Y * MagneticElements->Xdot) /
-      (MagneticElements->H * MagneticElements->H);
+        180.0 / M_PI * (MagneticElements->X * MagneticElements->Ydot - MagneticElements->Y * MagneticElements->Xdot) /
+        (MagneticElements->H * MagneticElements->H);
     MagneticElements->Incldot =
-      180.0 / M_PI * (MagneticElements->H * MagneticElements->Zdot - MagneticElements->Z * MagneticElements->Hdot) /
-      (MagneticElements->F * MagneticElements->F);
+        180.0 / M_PI * (MagneticElements->H * MagneticElements->Zdot - MagneticElements->Z * MagneticElements->Hdot) /
+        (MagneticElements->F * MagneticElements->F);
     MagneticElements->GVdot = MagneticElements->Decldot;
     return TRUE;
 } /*MAG_CalculateSecularVariationElements*/
@@ -2318,8 +2318,10 @@ CALLS : none
 
     /******************Validation********************************/
     if (CalendarDate->Month <= 0 || CalendarDate->Month > 12) {
-        snprintf(
-          Error, MAG_ERROR_MESSAGE_LENGTH, "%s", "\nError: The Month entered is invalid, valid months are '1 to 12'\n");
+        snprintf(Error,
+                 MAG_ERROR_MESSAGE_LENGTH,
+                 "%s",
+                 "\nError: The Month entered is invalid, valid months are '1 to 12'\n");
         return 0;
     }
     if (CalendarDate->Day <= 0 || CalendarDate->Day > MonthDays[CalendarDate->Month]) {
@@ -2409,10 +2411,10 @@ void MAG_ErrorCalc(MAGtype_GeoMagneticElements B, MAGtype_GeoMagneticElements* E
     eI = DEG2RAD(Errors->Incl);
     EDSq = eD * eD;
     EISq = eI * eI;
-    Errors->X =
-      sqrt(cos2D * cos2I * Errors->F * Errors->F + B.F * B.F * sin2D * cos2I * EDSq + B.F * B.F * cos2D * sin2I * EISq);
-    Errors->Y =
-      sqrt(sin2D * cos2I * Errors->F * Errors->F + B.F * B.F * cos2D * cos2I * EDSq + B.F * B.F * sin2D * sin2I * EISq);
+    Errors->X = sqrt(cos2D * cos2I * Errors->F * Errors->F + B.F * B.F * sin2D * cos2I * EDSq +
+                     B.F * B.F * cos2D * sin2I * EISq);
+    Errors->Y = sqrt(sin2D * cos2I * Errors->F * Errors->F + B.F * B.F * cos2D * cos2I * EDSq +
+                     B.F * B.F * sin2D * sin2I * EISq);
     Errors->Z = sqrt(sin2I * Errors->F * Errors->F + B.F * B.F * cos2I * EISq);
     Errors->H = sqrt(cos2I * Errors->F * Errors->F + B.F * B.F * sin2I * EISq);
 }
@@ -3003,7 +3005,7 @@ CALLS : none
         ExtraDay = 1;
 
     DayOfTheYear =
-      floor((CalendarDate->DecimalYear - (double)CalendarDate->Year) * (365.0 + (double)ExtraDay) + 0.5) + 1;
+        floor((CalendarDate->DecimalYear - (double)CalendarDate->Year) * (365.0 + (double)ExtraDay) + 0.5) + 1;
     /*The above floor is used for rounding, this only works for positive integers*/
 
     MonthDays[0] = 0;
@@ -3094,9 +3096,9 @@ CALLS : none
  */
 {
     CoordGeodetic->phi =
-      CoordGeodetic->phi < (-90.0 + MAG_GEO_POLE_TOLERANCE) ? (-90.0 + MAG_GEO_POLE_TOLERANCE) : CoordGeodetic->phi;
+        CoordGeodetic->phi < (-90.0 + MAG_GEO_POLE_TOLERANCE) ? (-90.0 + MAG_GEO_POLE_TOLERANCE) : CoordGeodetic->phi;
     CoordGeodetic->phi =
-      CoordGeodetic->phi > (90.0 - MAG_GEO_POLE_TOLERANCE) ? (90.0 - MAG_GEO_POLE_TOLERANCE) : CoordGeodetic->phi;
+        CoordGeodetic->phi > (90.0 - MAG_GEO_POLE_TOLERANCE) ? (90.0 - MAG_GEO_POLE_TOLERANCE) : CoordGeodetic->phi;
     return TRUE;
 } /*MAG_CheckGeographicPole*/
 
@@ -3151,9 +3153,9 @@ int MAG_ComputeSphericalHarmonicVariables(MAGtype_Ellipsoid Ellip,
     SphVariables->sin_mlambda[1] = sin_lambda;
     for (m = 2; m <= nMax; m++) {
         SphVariables->cos_mlambda[m] =
-          SphVariables->cos_mlambda[m - 1] * cos_lambda - SphVariables->sin_mlambda[m - 1] * sin_lambda;
+            SphVariables->cos_mlambda[m - 1] * cos_lambda - SphVariables->sin_mlambda[m - 1] * sin_lambda;
         SphVariables->sin_mlambda[m] =
-          SphVariables->cos_mlambda[m - 1] * sin_lambda + SphVariables->sin_mlambda[m - 1] * cos_lambda;
+            SphVariables->cos_mlambda[m - 1] * sin_lambda + SphVariables->sin_mlambda[m - 1] * cos_lambda;
     }
     return TRUE;
 } /*MAG_ComputeSphericalHarmonicVariables*/
@@ -3174,7 +3176,7 @@ void MAG_GradY(MAGtype_Ellipsoid Ellip,
     LegendreFunction = MAG_AllocateLegendreFunctionMemory(NumTerms); /* For storing the ALF functions */
     SphVariables = MAG_AllocateSphVarMemory(TimedMagneticModel->nMax);
     MAG_ComputeSphericalHarmonicVariables(
-      Ellip, CoordSpherical, TimedMagneticModel->nMax, SphVariables); /* Compute Spherical Harmonic variables  */
+        Ellip, CoordSpherical, TimedMagneticModel->nMax, SphVariables); /* Compute Spherical Harmonic variables  */
     MAG_AssociatedLegendreFunction(CoordSpherical, TimedMagneticModel->nMax, LegendreFunction); /* Compute ALF  */
     MAG_GradYSummation(LegendreFunction,
                        TimedMagneticModel,
@@ -3186,9 +3188,9 @@ void MAG_GradY(MAGtype_Ellipsoid Ellip,
                              GradYResultsSph,
                              &GradYResultsGeo); /* Map the computed Magnetic fields to Geodetic coordinates  */
     MAG_CalculateGradientElements(
-      GradYResultsGeo,
-      GeoMagneticElements,
-      GradYElements); /* Calculate the Geomagnetic elements, Equation 18 , WMM Technical report */
+        GradYResultsGeo,
+        GeoMagneticElements,
+        GradYElements); /* Calculate the Geomagnetic elements, Equation 18 , WMM Technical report */
 
     MAG_FreeLegendreMemory(LegendreFunction);
     MAG_FreeSphVarMemory(SphVariables);
@@ -3478,7 +3480,7 @@ int MAG_PcupLow(double* Pcup, double* dPcup, double x, int nMax)
             index = (n * (n + 1) / 2 + m);
             index1 = (n * (n + 1) / 2 + m - 1);
             schmidtQuasiNorm[index] =
-              schmidtQuasiNorm[index1] * sqrt((double)((n - m + 1) * (m == 1 ? 2 : 1)) / (double)(n + m));
+                schmidtQuasiNorm[index1] * sqrt((double)((n - m + 1) * (m == 1 ? 2 : 1)) / (double)(n + m));
         }
     }
 
@@ -3801,14 +3803,14 @@ CALLS : none
             index = (n * (n + 1) / 2 + m);
             if (index <= b) {
                 TimedMagneticModel->Main_Field_Coeff_H[index] =
-                  MagneticModel->Main_Field_Coeff_H[index] +
-                  (UserDate.DecimalYear - MagneticModel->epoch) * MagneticModel->Secular_Var_Coeff_H[index];
+                    MagneticModel->Main_Field_Coeff_H[index] +
+                    (UserDate.DecimalYear - MagneticModel->epoch) * MagneticModel->Secular_Var_Coeff_H[index];
                 TimedMagneticModel->Main_Field_Coeff_G[index] =
-                  MagneticModel->Main_Field_Coeff_G[index] +
-                  (UserDate.DecimalYear - MagneticModel->epoch) * MagneticModel->Secular_Var_Coeff_G[index];
+                    MagneticModel->Main_Field_Coeff_G[index] +
+                    (UserDate.DecimalYear - MagneticModel->epoch) * MagneticModel->Secular_Var_Coeff_G[index];
                 TimedMagneticModel->Secular_Var_Coeff_H[index] =
-                  MagneticModel->Secular_Var_Coeff_H[index]; /* We need a copy of the secular var coef to calculate
-                                                                secular change */
+                    MagneticModel->Secular_Var_Coeff_H[index]; /* We need a copy of the secular var coef to calculate
+                                                                  secular change */
                 TimedMagneticModel->Secular_Var_Coeff_G[index] = MagneticModel->Secular_Var_Coeff_G[index];
             } else {
                 TimedMagneticModel->Main_Field_Coeff_H[index] = MagneticModel->Main_Field_Coeff_H[index];

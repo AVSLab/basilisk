@@ -103,12 +103,12 @@ void VscmgGimbalRateServo::UpdateState(uint64_t CurrentSimNanos)
         omegat = BG.col(1).transpose() * omega_BN_B;
 
         this->outputTorques.wheelTorque[VSCMGi] =
-          vscmgConfigParams.IwsList[VSCMGi] *
-          (VSCMGRefStates.wheelAccels[VSCMGi] + VSCMGSpeeds.gimbalRates[VSCMGi] * omegat);
+            vscmgConfigParams.IwsList[VSCMGi] *
+            (VSCMGRefStates.wheelAccels[VSCMGi] + VSCMGSpeeds.gimbalRates[VSCMGi] * omegat);
         this->outputTorques.gimbalTorque[VSCMGi] =
-          vscmgConfigParams.JgList[VSCMGi] * gammaDotDot -
-          (vscmgConfigParams.JsList[VSCMGi] - vscmgConfigParams.JtList[VSCMGi]) * omegas * omegat -
-          vscmgConfigParams.IwsList[VSCMGi] * VSCMGSpeeds.wheelSpeeds[VSCMGi] * omegat;
+            vscmgConfigParams.JgList[VSCMGi] * gammaDotDot -
+            (vscmgConfigParams.JsList[VSCMGi] - vscmgConfigParams.JtList[VSCMGi]) * omegas * omegat -
+            vscmgConfigParams.IwsList[VSCMGi] * VSCMGSpeeds.wheelSpeeds[VSCMGi] * omegat;
     }
 
     // Write the output message for the VSCMG torques

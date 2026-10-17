@@ -25,8 +25,8 @@
 
 /*! @brief Structure used to contain a single VizEventDialog panel response from Vizard */
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  VizEventReply
+    //@cond DOXYGEN_IGNORE
+    VizEventReply
 //@endcond
 {
     std::string eventHandlerID; //!< Name provided when setting up the VizEventDialog object
@@ -38,8 +38,8 @@ typedef struct
 /*! @brief Structure containing all keyboard inputs and EventReply objects recorded since
            the message was last read */
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  VizUserInputMsgPayload
+    //@cond DOXYGEN_IGNORE
+    VizUserInputMsgPayload
 //@endcond
 {
     int frameNumber;                            //!< Vizard frame number

@@ -26,10 +26,10 @@
 /*! This is the constructor.  It sets some default initializers that can be
  overridden by the user.*/
 RadiationPressure::RadiationPressure()
-  : area(0.0) // [m^2]
-  , coefficientReflection(1.2)
-  , srpModel(SRP_CANNONBALL_MODEL)
-  , stateRead(false)
+    : area(0.0) // [m^2]
+    , coefficientReflection(1.2)
+    , srpModel(SRP_CANNONBALL_MODEL)
+    , stateRead(false)
 {
     this->sunVisibilityFactor.illuminationFactor = 1.0;
     this->forceExternal_N.setZero();

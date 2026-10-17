@@ -131,7 +131,7 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint6
     /*! - Compute the wheel speed feedback.*/
     vSubtract(rwSpeedsInMsgBuffer.wheelSpeeds, numRW, configData->wheelSpeedBiases, configData->wheelSpeedError_W);
     vElementwiseMult(
-      configData->rwConfigParams.JsList, numRW, configData->wheelSpeedError_W, configData->hDeltaWheels_W);
+        configData->rwConfigParams.JsList, numRW, configData->wheelSpeedError_W, configData->hDeltaWheels_W);
     mMultV(Gs, 3, numRW, configData->hDeltaWheels_W, configData->hDeltaWheels_B);
     vScale(-configData->cGain, configData->hDeltaWheels_W, numRW, configData->tauIdealRW_W);
     mMultV(Gs, 3, numRW, configData->tauIdealRW_W, configData->tauIdealRW_B);
@@ -171,8 +171,10 @@ void Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint6
      * Write output messages.
      */
     MTBCmdMsg_C_write(&mtbCmdOutputMsgBuffer, &configData->mtbCmdOutMsg, moduleID, callTime);
-    vAdd(
-      configData->tauDesiredRW_W, numRW, rwMotorTorqueOutMsgBuffer.motorTorque, rwMotorTorqueOutMsgBuffer.motorTorque);
+    vAdd(configData->tauDesiredRW_W,
+         numRW,
+         rwMotorTorqueOutMsgBuffer.motorTorque,
+         rwMotorTorqueOutMsgBuffer.motorTorque);
     ArrayMotorTorqueMsg_C_write(&rwMotorTorqueOutMsgBuffer, &configData->rwMotorTorqueOutMsg, moduleID, callTime);
 
     return;

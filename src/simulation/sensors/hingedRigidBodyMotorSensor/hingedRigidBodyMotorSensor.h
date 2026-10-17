@@ -50,7 +50,7 @@ class HingedRigidBodyMotorSensor : public SysModel
     double thetaDotLSB;      //!< [rad/s] discretization for theta dot
 
     ReadFunctor<HingedRigidBodyMsgPayload>
-      hingedRigidBodyMotorSensorInMsg; //!< input message for true rigid body state (theta, theta dot)
+        hingedRigidBodyMotorSensorInMsg; //!< input message for true rigid body state (theta, theta dot)
 
     Message<HingedRigidBodyMsgPayload> hingedRigidBodyMotorSensorOutMsg; //!< output message for sensed rigid body state
 

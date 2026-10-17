@@ -72,7 +72,7 @@ class CppModuleTemplate : public SysModel
   private:
     double updateCounter = {}; //!< [-] Runtime counter; Reset clears it and UpdateState increments it.
     std::array<double, 3>
-      sampleConfigVector = {}; //!< [-] Sample configuration for logging; retained by Reset and unused by UpdateState.
+        sampleConfigVector = {}; //!< [-] Sample configuration for logging; retained by Reset and unused by UpdateState.
 };
 
 #endif

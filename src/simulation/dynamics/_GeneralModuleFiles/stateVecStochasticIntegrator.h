@@ -188,7 +188,7 @@ class StateVecStochasticIntegrator : public StateVecIntegrator
         }
         for (const auto& binding : this->noiseBindings) {
             std::copy_n(
-              binding.liveData, binding.scalarCount, output.data() + static_cast<Eigen::Index>(binding.packedOffset));
+                binding.liveData, binding.scalarCount, output.data() + static_cast<Eigen::Index>(binding.packedOffset));
         }
     }
 
@@ -218,7 +218,7 @@ class StateVecStochasticIntegrator : public StateVecIntegrator
                                   const Eigen::VectorXd& globalPseudoSteps)
     {
         this->buildStochasticCandidate(
-          base, drift, timeStep, diffusions, globalPseudoSteps, 0, this->globalNoiseCount());
+            base, drift, timeStep, diffusions, globalPseudoSteps, 0, this->globalNoiseCount());
     }
 
     /** Builds and scatters the drift baseline for sparse per-slot candidates. */

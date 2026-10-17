@@ -50,7 +50,7 @@ std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(
         for (size_t m = 0; m <= i; m++) {
             if (i >= m + 2) {
                 n1Row[m] =
-                  sqrt(static_cast<double>((2 * i + 1) * (2 * i - 1)) / static_cast<double>((i - m) * (i + m)));
+                    sqrt(static_cast<double>((2 * i + 1) * (2 * i - 1)) / static_cast<double>((i - m) * (i + m)));
                 n2Row[m] = sqrt(static_cast<double>((i + m - 1) * (2 * i + 1) * (i - m - 1)) /
                                 static_cast<double>((i + m) * (i - m) * (2 * i - 3)));
             }

@@ -263,12 +263,12 @@ void calc_RelativeMotionControl(etSphericalControlConfig* configData,
 
     double Fvector[3];
     v3Set(1. / 4. * L *
-            (n * n * (-6. * cos(2. * theta) * cos(phi) * cos(phi) + 5. * cos(2. * phi) + 1.) +
-             4. * thetaDot * cos(phi) * cos(phi) * (2. * n + thetaDot) + 4. * phiDot * phiDot),
+              (n * n * (-6. * cos(2. * theta) * cos(phi) * cos(phi) + 5. * cos(2. * phi) + 1.) +
+               4. * thetaDot * cos(phi) * cos(phi) * (2. * n + thetaDot) + 4. * phiDot * phiDot),
           (3. * n * n * sin(theta) * cos(theta) + 2. * phiDot * tan(phi) * (n + thetaDot)) -
-            2. * LDot / L * (n + thetaDot),
+              2. * LDot / L * (n + thetaDot),
           1. / 4. * sin(2. * phi) * (n * n * (3. * cos(2. * theta) - 5.) - 2. * thetaDot * (2. * n + thetaDot)) -
-            2. * LDot / L * phiDot,
+              2. * LDot / L * phiDot,
           Fvector);
     double GmatrixInv[3][3]; // inverse of [G]
     m33Set(1., 0., 0., 0., L * cos(phi), 0., 0., 0., -L, GmatrixInv);

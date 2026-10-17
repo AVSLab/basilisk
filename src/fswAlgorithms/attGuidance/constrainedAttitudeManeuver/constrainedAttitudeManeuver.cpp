@@ -321,8 +321,8 @@ void ConstrainedAttitudeManeuver::ReadInputs()
     }
     if (!this->keepOutCelBodyInMsg.isWritten() && !this->keepInCelBodyInMsg.isWritten()) {
         bskLogger.bskLog(
-          BSK_WARNING,
-          "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n");
+            BSK_WARNING,
+            "ConstraintAttitudeManeuver: no celBodyMsgs are connected. There are no rotational constraints. \n");
     }
 }
 
@@ -358,7 +358,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                                 }
                             }
                             this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] =
-                              Node(sigma_BN, this->constraints, this->boresights);
+                                Node(sigma_BN, this->constraints, this->boresights);
                         }
                     }
                 }
@@ -379,9 +379,9 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
                                 if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                      mirrorIndices[m][2]) == 0) {
+                                        mirrorIndices[m][2]) == 0) {
                                     sigma_BN[0] =
-                                      mirrorIndices[m][0] / indices[0] * pow(1 - pow(u[j], 2) - pow(u[k], 2), 0.5);
+                                        mirrorIndices[m][0] / indices[0] * pow(1 - pow(u[j], 2) - pow(u[k], 2), 0.5);
                                     if (indices[1] != 0) {
                                         sigma_BN[1] = mirrorIndices[m][1] / indices[1] * u[indices[1]];
                                     } else {
@@ -393,7 +393,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                                         sigma_BN[2] = 0;
                                     }
                                     this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] =
-                                      Node(sigma_BN, this->constraints, this->boresights);
+                                        Node(sigma_BN, this->constraints, this->boresights);
                                 }
                             }
                         }
@@ -405,21 +405,21 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
                                 if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                      mirrorIndices[m][2]) == 0) {
+                                        mirrorIndices[m][2]) == 0) {
                                     if (indices[0] != 0) {
                                         sigma_BN[0] = mirrorIndices[m][0] / indices[0] * u[indices[0]];
                                     } else {
                                         sigma_BN[0] = 0;
                                     }
                                     sigma_BN[1] =
-                                      mirrorIndices[m][1] / indices[1] * pow(1 - pow(u[i], 2) - pow(u[k], 2), 0.5);
+                                        mirrorIndices[m][1] / indices[1] * pow(1 - pow(u[i], 2) - pow(u[k], 2), 0.5);
                                     if (indices[2] != 0) {
                                         sigma_BN[2] = mirrorIndices[m][2] / indices[2] * u[indices[2]];
                                     } else {
                                         sigma_BN[2] = 0;
                                     }
                                     this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] =
-                                      Node(sigma_BN, this->constraints, this->boresights);
+                                        Node(sigma_BN, this->constraints, this->boresights);
                                 }
                             }
                         }
@@ -431,7 +431,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                             mirrorFunction(indices, mirrorIndices);
                             for (int m = 0; m < 8; m++) {
                                 if (this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]].count(
-                                      mirrorIndices[m][2]) == 0) {
+                                        mirrorIndices[m][2]) == 0) {
                                     if (indices[0] != 0) {
                                         sigma_BN[0] = mirrorIndices[m][0] / indices[0] * u[indices[0]];
                                     } else {
@@ -443,9 +443,9 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                                         sigma_BN[1] = 0;
                                     }
                                     sigma_BN[2] =
-                                      mirrorIndices[m][2] / indices[2] * pow(1 - pow(u[i], 2) - pow(u[j], 2), 0.5);
+                                        mirrorIndices[m][2] / indices[2] * pow(1 - pow(u[i], 2) - pow(u[j], 2), 0.5);
                                     this->NodesMap[mirrorIndices[m][0]][mirrorIndices[m][1]][mirrorIndices[m][2]] =
-                                      Node(sigma_BN, this->constraints, this->boresights);
+                                        Node(sigma_BN, this->constraints, this->boresights);
                                 }
                             }
                         }
@@ -470,7 +470,7 @@ void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
                         if (this->NodesMap[indices[0]][indices[1]][indices[2]].isFree &&
                             this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]].isFree) {
                             this->NodesMap[indices[0]][indices[1]][indices[2]].appendNeighbor(
-                              &this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]]);
+                                &this->NodesMap[neighbors[n][0]][neighbors[n][1]][neighbors[n][2]]);
                         }
                     }
                 }

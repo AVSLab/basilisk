@@ -143,8 +143,8 @@ class svIntegratorRungeKutta : public StateVecIntegrator
 template<size_t numberStages>
 svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(DynamicObject* dynIn,
                                                              const RKCoefficients<numberStages>& coefficients)
-  : StateVecIntegrator(dynIn)
-  , coefficients(coefficients)
+    : StateVecIntegrator(dynIn)
+    , coefficients(coefficients)
 {
     const auto requireFinite = [](double value) {
         if (!std::isfinite(value)) {
@@ -194,16 +194,16 @@ void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, dou
         }
         // A single Euclidean buffer is already a contiguous candidate buffer.
         const bool candidateIsLive =
-          this->flatBinding.updatesAreAllEuclidean() && this->flatBinding.objects().size() == 1;
+            this->flatBinding.updatesAreAllEuclidean() && this->flatBinding.objects().size() == 1;
         Eigen::Map<Eigen::VectorXd> candidate(candidateIsLive ? this->flatBinding.objects().front().stateData
                                                               : this->candidateState.data(),
                                               this->baseState.size());
         for (size_t stageIndex = 0; stageIndex < numberStages; ++stageIndex) {
             const auto& stageCoefficients = this->coefficients.aMatrix.at(stageIndex);
             const bool reuseGatheredBase =
-              stageIndex == 0 && std::none_of(stageCoefficients.cbegin(),
-                                              stageCoefficients.cend(),
-                                              [](double coefficient) { return coefficient != 0.0; });
+                stageIndex == 0 && std::none_of(stageCoefficients.cbegin(),
+                                                stageCoefficients.cend(),
+                                                [](double coefficient) { return coefficient != 0.0; });
             if (!reuseGatheredBase) {
                 this->buildFlatCandidate(timeStep, stageCoefficients, stageIndex, candidate);
                 if (!candidateIsLive) {

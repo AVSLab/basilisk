@@ -79,8 +79,8 @@ double ItuAtmosphere::calcTempISA(double altitude_m) const
         } else if (Z < 100.0) {
             return 263.1905 -
                    76.3232 *
-                     std::sqrt(1 - std::pow((Z - 91.0) / (19.9429),
-                                            2)); // [K] Linear increase between 91 km and 100 km (ITU-R P.835-7 eq 4b)
+                       std::sqrt(1 - std::pow((Z - 91.0) / (19.9429),
+                                              2)); // [K] Linear increase between 91 km and 100 km (ITU-R P.835-7 eq 4b)
         } else {
             return 195.08134; // [K] Above 100 km, assume constant temperature
         }

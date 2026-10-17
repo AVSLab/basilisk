@@ -23,8 +23,8 @@
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  THROutputMsgPayload
+    //@cond DOXYGEN_IGNORE
+    THROutputMsgPayload
 //@endcond
 {
     double maxThrust;                     //!< [N] Steady state thrust of thruster

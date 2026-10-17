@@ -267,7 +267,7 @@ void Albedo::evaluatePlanet(const SCStatesMsgPayload& /*scMsg*/,
         const Eigen::Vector3d r_IN_N = r_IB_N + this->r_BN_N;           // [m]
         const double r_IN_arr[3] = { r_IN_N[0], r_IN_N[1], r_IN_N[2] }; // [m]
         const std::vector<PatchResult> patches = entry.grid.computePatches(
-          r_IN_arr, sunMsg.PositionVector, planetMsg.PositionVector, planetMsg.J20002Pfix, entry.R_planet, S_sun);
+            r_IN_arr, sunMsg.PositionVector, planetMsg.PositionVector, planetMsg.J20002Pfix, entry.R_planet, S_sun);
 
         const Eigen::Vector3d nHat_N = dcm_BN.transpose() * this->nHat_Bs[instIdx]; // [-]
 
@@ -341,8 +341,8 @@ std::pair<double, double> Albedo::lookupPlanetRadius(const std::string& name)
         return { REQ_NEPTUNE * 1000.0, -1.0 };
     } else {
         this->bskLogger.bskError(
-          "Albedo Module (lookupPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.",
-          name.c_str());
+            "Albedo Module (lookupPlanetRadius): The planet's radius cannot be obtained. The planet (%s) is not found.",
+            name.c_str());
     }
 }
 
@@ -370,7 +370,7 @@ double Albedo::getAlbedoAverage(std::string planetSpiceName)
         return 0.31;
     } else {
         this->bskLogger.bskError(
-          "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).",
-          planetSpiceName.c_str());
+            "Albedo Module (getAlbedoAverage): The average albedo value is not defined for the specified planet (%s).",
+            planetSpiceName.c_str());
     }
 }

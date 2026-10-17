@@ -49,7 +49,7 @@ class HingedRigidBodyMotor : public SysModel
 
     ReadFunctor<HingedRigidBodyMsgPayload> hingedBodyStateSensedInMsg; //!< sensed rigid body state (theta, theta dot)
     ReadFunctor<HingedRigidBodyMsgPayload>
-      hingedBodyStateReferenceInMsg; //!< reference hinged rigid body state (theta, theta dot)
+        hingedBodyStateReferenceInMsg; //!< reference hinged rigid body state (theta, theta dot)
 
     Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg; //!< motor torque on hinged rigid body
 

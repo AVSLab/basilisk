@@ -67,7 +67,7 @@ typedef struct
     HingedRigidBodyMsg_C hingedRigidBodyRef2OutMsg; //!< output msg containing theta2 reference and thetaDot2 reference
     BodyHeadingMsg_C bodyHeadingOutMsg; //!< output msg containing the thrust heading in body frame coordinates
     CmdTorqueBodyMsg_C
-      thrusterTorqueOutMsg; //!< output msg containing the opposite of the thruster torque to be compensated by RW's
+        thrusterTorqueOutMsg; //!< output msg containing the opposite of the thruster torque to be compensated by RW's
     THRConfigMsg_C thrusterConfigBOutMsg; //!< output msg containing the thruster configuration infor in B-frame
 
     BSKLogger* bskLogger; //!< BSK Logging

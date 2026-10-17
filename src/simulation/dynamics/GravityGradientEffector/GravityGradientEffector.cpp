@@ -53,7 +53,7 @@ void GravityGradientEffector::validateConfiguration()
 {
     if (this->planetPropertyNames.empty()) {
         bskLogger.bskError(
-          "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
+            "planetPropertyNames array is empty, you must specify at least one planet using addPlanetName().");
     }
 }
 

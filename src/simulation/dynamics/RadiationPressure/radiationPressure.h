@@ -44,8 +44,8 @@ typedef enum
 //  SRP effects on body
 /*! @brief solar radiation pressure dynamic effector */
 class RadiationPressure final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     RadiationPressure();

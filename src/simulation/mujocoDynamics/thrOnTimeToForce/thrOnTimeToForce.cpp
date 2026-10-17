@@ -30,9 +30,9 @@ void ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
 
     if (this->thrMag.size() > MAX_EFF_CNT) {
         bskLogger.bskError(
-          "ThrOnTimeToForce configured for %zu thrusters, but THRArrayOnTimeCmdMsgPayload supports at most %d.",
-          this->thrMag.size(),
-          MAX_EFF_CNT);
+            "ThrOnTimeToForce configured for %zu thrusters, but THRArrayOnTimeCmdMsgPayload supports at most %d.",
+            this->thrMag.size(),
+            MAX_EFF_CNT);
     }
 
     if (this->numThr != this->thrMag.size()) {
@@ -68,10 +68,10 @@ void ThrOnTimeToForce::UpdateState(uint64_t CurrentSimNanos)
             const double cmdTime = onTime.OnTimeRequest[i];
             if (cmdTime < 0.0) { // negative on-time commands are treated as zero with a warning
                 bskLogger.bskLog(
-                  BSK_WARNING,
-                  "ThrOnTimeToForce received negative on-time command (%f s) for thruster %zu. Setting to 0.",
-                  cmdTime,
-                  i);
+                    BSK_WARNING,
+                    "ThrOnTimeToForce received negative on-time command (%f s) for thruster %zu. Setting to 0.",
+                    cmdTime,
+                    i);
                 this->firingTimeRemaining[i] = 0.0;
             } else {
                 this->firingTimeRemaining[i] = cmdTime;

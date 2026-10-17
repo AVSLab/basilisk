@@ -270,7 +270,7 @@ void* operator new[](std::size_t size, std::align_val_t alignment)
 void operator delete(void* memory, std::align_val_t) noexcept
 {
     integrator_allocation_test::detail::recordAllocationCall(
-      integrator_allocation_test::AllocationApi::CppAlignedDelete);
+        integrator_allocation_test::AllocationApi::CppAlignedDelete);
     ScopedCppAllocation guard;
     freeAligned(memory);
 }
@@ -370,8 +370,8 @@ extern "C" int basilisk_test_posix_memalign(void** result, std::size_t alignment
         const void* replacement;                                                                                       \
         const void* replacee;                                                                                          \
     } basilisk_interpose_##replacee                                                                                    \
-      __attribute__((section("__DATA,__interpose"))) = { reinterpret_cast<const void*>(replacement),                   \
-                                                         reinterpret_cast<const void*>(replacee) }
+        __attribute__((section("__DATA,__interpose"))) = { reinterpret_cast<const void*>(replacement),                 \
+                                                           reinterpret_cast<const void*>(replacee) }
 
 BASILISK_DYLD_INTERPOSE(basilisk_test_malloc, malloc);
 BASILISK_DYLD_INTERPOSE(basilisk_test_calloc, calloc);

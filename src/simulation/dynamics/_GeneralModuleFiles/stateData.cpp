@@ -50,10 +50,10 @@ void copyValues(MutableMatrixView target, const Eigen::Ref<const Eigen::MatrixXd
 }
 
 StateData::StateData(StateRegistry* registry, size_t registrationSlot, const StateSpec& spec)
-  : owner(registry)
-  , slot(registrationSlot)
-  , viewStateShape(spec.state)
-  , viewDerivativeShape(spec.derivative)
+    : owner(registry)
+    , slot(registrationSlot)
+    , viewStateShape(spec.state)
+    , viewDerivativeShape(spec.derivative)
 {
 }
 
@@ -105,7 +105,7 @@ void StateData::setDiffusion(Eigen::Ref<const Eigen::MatrixXd> newDiffusion, siz
         requireShape(newDiffusion, spec.diffusionTangent, this->owner->handleName(this->slot), "diffusion");
     }
     MutableMatrixView target(
-      this->owner->activeDiffusionData(this->slot, index), spec.diffusionTangent.rows, spec.diffusionTangent.cols);
+        this->owner->activeDiffusionData(this->slot, index), spec.diffusionTangent.rows, spec.diffusionTangent.cols);
     copyValues(target, newDiffusion);
 }
 

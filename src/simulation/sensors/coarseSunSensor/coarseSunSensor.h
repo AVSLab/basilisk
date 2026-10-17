@@ -83,8 +83,8 @@ class CoarseSunSensor : public SysModel
     void Reset(uint64_t CurrentClock);          //!< Method for reseting the module
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(
-      double cssThetaPerturb,
-      double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
+        double cssThetaPerturb,
+        double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw,
                               double pitch,
                               double roll); //!< @brief utility method to configure the platform DCM

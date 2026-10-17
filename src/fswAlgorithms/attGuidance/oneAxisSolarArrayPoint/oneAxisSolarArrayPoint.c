@@ -60,8 +60,8 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint
         configData->bodyAxisInput = inputBodyHeadingParameter;
     } else {
         _bskError(
-          configData->bskLogger,
-          " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
+            configData->bskLogger,
+            " oneAxisSolarArrayPoint.bodyHeadingInMsg wasn't connected and no body heading h1Hat_B was specified.");
     }
 
     // check how the input inertial heading is provided
@@ -75,9 +75,9 @@ void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint
         }
     } else if (EphemerisMsg_C_isLinked(&configData->ephemerisInMsg)) {
         if (!NavTransMsg_C_isLinked(&configData->transNavInMsg)) {
-            _bskError(
-              configData->bskLogger,
-              " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg was not.");
+            _bskError(configData->bskLogger,
+                      " oneAxisSolarArrayPoint.ephemerisInMsg was specified but oneAxisSolarArrayPoint.transNavInMsg "
+                      "was not.");
         } else {
             configData->inertialAxisInput = inputEphemerisMsg;
         }
@@ -173,7 +173,7 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uin
     if (v3Norm(configData->h2Hat_B) > epsilon) {
         // compute second reference frame
         oasapComputeFinalRotation(
-          configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
+            configData->alignmentPriority, BN, rHat_SB_B, configData->h2Hat_B, hReqHat_B, a1Hat_B, a2Hat_B, RN);
 
         // compute the relative rotation DCM and Sun direction in relative frame
         m33MultM33t(RN, BN, RB);
@@ -236,12 +236,12 @@ void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uin
         T2Seconds = diffNanoToSec(configData->T2NanoSeconds, callTime);
         for (int j = 0; j < 3; j++) {
             sigmaDot_RN[j] = ((sigma_RN_1[j] * T2Seconds * T2Seconds - sigma_RN_2[j] * T1Seconds * T1Seconds) /
-                                (T2Seconds - T1Seconds) -
+                                  (T2Seconds - T1Seconds) -
                               sigma_RN[j] * (T2Seconds + T1Seconds)) /
                              T1Seconds / T2Seconds;
             sigmaDDot_RN[j] =
-              2 * ((sigma_RN_1[j] * T2Seconds - sigma_RN_2[j] * T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) /
-              T1Seconds / T2Seconds;
+                2 * ((sigma_RN_1[j] * T2Seconds - sigma_RN_2[j] * T1Seconds) / (T1Seconds - T2Seconds) + sigma_RN[j]) /
+                T1Seconds / T2Seconds;
         }
         // store information for next time step
         configData->T2NanoSeconds = configData->T1NanoSeconds;

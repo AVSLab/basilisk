@@ -124,9 +124,9 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig* configD
         // If the target has not been imaged
         if (!configData->imaged) {
             unsigned int constraintsMet =
-              (sigma_BR_norm <= configData->attErrTolerance) &&
-              (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) &&
-              (accessInMsgBuffer.hasAccess);
+                (sigma_BR_norm <= configData->attErrTolerance) &&
+                (!configData->useRateTolerance || (omega_BR_norm <= configData->rateErrTolerance)) &&
+                (accessInMsgBuffer.hasAccess);
 
             if (constraintsMet) {
                 // Default: immediate imaging
@@ -164,8 +164,8 @@ void Update_simpleInstrumentController(simpleInstrumentControllerConfig* configD
 
                     // Determine the effective time to image: cannot exceed allowedTime
                     double effectiveImageTime = (configData->acquisitionTime > configData->allowedTime)
-                                                  ? configData->allowedTime
-                                                  : configData->acquisitionTime;
+                                                    ? configData->allowedTime
+                                                    : configData->acquisitionTime;
 
                     if (configData->elapsedTime >= effectiveImageTime) {
                         // Capture only while the acquisition and imaging window remain within the allowed duration

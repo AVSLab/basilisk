@@ -19,7 +19,7 @@
 #include "svIntegratorWeakSIESME.h"
 
 svIntegratorWeakSIESME::svIntegratorWeakSIESME(DynamicObject* dynIn, const SIESMECoefficients& coefficients)
-  : StochasticRKIntegratorBase(dynIn)
-  , coefficients(coefficients)
+    : StochasticRKIntegratorBase(dynIn)
+    , coefficients(coefficients)
 {
 }

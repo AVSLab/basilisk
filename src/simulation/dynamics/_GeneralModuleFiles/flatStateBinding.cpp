@@ -32,29 +32,29 @@ namespace {
 const char* finalizedTopologyError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
-             ? "Runge-Kutta binding requires every state manager to be finalized."
-             : "Stochastic integrator binding requires finalized state topology.";
+               ? "Runge-Kutta binding requires every state manager to be finalized."
+               : "Stochastic integrator binding requires finalized state topology.";
 }
 
 const char* inconsistentLayoutError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
-             ? "A finalized state manager has inconsistent state-layout metadata."
-             : "A finalized stochastic state manager has inconsistent state-layout metadata.";
+               ? "A finalized state manager has inconsistent state-layout metadata."
+               : "A finalized stochastic state manager has inconsistent state-layout metadata.";
 }
 
 const char* synchronizedDynamicsError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
-             ? "Runge-Kutta synchronized dynamics changed after integrator binding."
-             : "Stochastic integrator synchronized dynamics changed after binding.";
+               ? "Runge-Kutta synchronized dynamics changed after integrator binding."
+               : "Stochastic integrator synchronized dynamics changed after binding.";
 }
 
 const char* unfinalizedStorageError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
-             ? "A bound state manager has no finalized storage."
-             : "A bound stochastic state manager has no finalized storage.";
+               ? "A bound state manager has no finalized storage."
+               : "A bound stochastic state manager has no finalized storage.";
 }
 
 size_t checkedBindingAdd(size_t left, size_t right, const char* quantity)
@@ -90,8 +90,8 @@ void FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mo
         DynamicObject* object = dynamics.at(dynamicObjectIndex);
         if (object == nullptr) {
             throw std::logic_error(mode == Mode::Stochastic
-                                     ? "Stochastic integrator cannot bind a null DynamicObject."
-                                     : "Runge-Kutta integrator cannot bind a null DynamicObject.");
+                                       ? "Stochastic integrator cannot bind a null DynamicObject."
+                                       : "Runge-Kutta integrator cannot bind a null DynamicObject.");
         }
 
         StateRegistry& registry = object->dynManager.getStateRegistry();
@@ -159,7 +159,7 @@ void FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mo
         if (!states.empty()) {
             const StateBufferSegment stateSegment = registry.getStateSegment(0, newStateCount - objectStateOffset);
             const StateBufferSegment derivativeSegment =
-              registry.getDerivativeSegment(0, newDerivativeCount - objectDerivativeOffset);
+                registry.getDerivativeSegment(0, newDerivativeCount - objectDerivativeOffset);
             stateData = registry.stateSegmentData(stateSegment);
             derivativeData = registry.derivativeSegmentData(derivativeSegment);
         }
@@ -183,7 +183,7 @@ void FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mo
             auto& previous = newUpdateRuns.back();
             const bool stateIsContiguous = previous.stateOffset + previous.stateCount == descriptor.stateOffset;
             const bool derivativeIsContiguous =
-              previous.derivativeOffset + previous.derivativeCount == descriptor.derivativeOffset;
+                previous.derivativeOffset + previous.derivativeCount == descriptor.derivativeOffset;
             if (previous.updateKind == StateUpdateKind::Euclidean && stateIsContiguous && derivativeIsContiguous) {
                 previous.stateCount += descriptor.stateCount;
                 previous.derivativeCount += descriptor.derivativeCount;
@@ -256,11 +256,12 @@ void FlatStateBinding::writeDriftCandidate(const Eigen::VectorXd& base,
         const auto derivativeOffset = static_cast<Eigen::Index>(run.derivativeOffset);
         if (run.updateKind == StateUpdateKind::Special) {
             const auto& descriptor = this->stateDescriptors.at(run.firstDescriptorIndex);
-            descriptor.specialUpdate->buildDriftCandidate(
-              descriptor.stateView(base),
-              descriptor.derivativeView(drift),
-              timeStep,
-              MutableMatrixView(output.data() + descriptor.stateOffset, descriptor.stateRows, descriptor.stateColumns));
+            descriptor.specialUpdate->buildDriftCandidate(descriptor.stateView(base),
+                                                          descriptor.derivativeView(drift),
+                                                          timeStep,
+                                                          MutableMatrixView(output.data() + descriptor.stateOffset,
+                                                                            descriptor.stateRows,
+                                                                            descriptor.stateColumns));
             continue;
         }
 

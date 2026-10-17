@@ -44,8 +44,8 @@
 
 /*! @brief thruster dynamic effector class */
 class ThrusterDynamicEffector final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     ThrusterDynamicEffector();
@@ -98,7 +98,7 @@ class ThrusterDynamicEffector final
     THRArrayOnTimeCmdMsgPayload incomingCmdBuffer;      //!< One-time allocation for savings
 
     std::vector<ReadFunctor<SCStatesMsgPayload>>
-      attachedBodyInMsgs; //!< vector of body states message where the thrusters attach to
+        attachedBodyInMsgs; //!< vector of body states message where the thrusters attach to
     SCStatesMsgPayload attachedBodyBuffer;
     std::vector<BodyToHubInfo> bodyToHubInfo;
 

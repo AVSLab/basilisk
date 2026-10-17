@@ -74,7 +74,7 @@ class VscmgVelocitySteering : public SysModel
     std::vector<double> h_bar;                //!< [kg-m^2/s] vector of nominal RW angular momentums
     VSCMGRefStatesMsgPayload outputRefStates; //!< [-] output reference states for the VSCMGs
     VSCMGArrayConfigMsgPayload
-      vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
+        vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
 };
 
 #endif

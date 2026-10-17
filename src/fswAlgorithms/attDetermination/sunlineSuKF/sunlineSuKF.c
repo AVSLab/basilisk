@@ -102,8 +102,8 @@ void Reset_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
-      (double)configData->numStates;
+        configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
+        (double)configData->numStates;
     configData->gamma = sqrt((double)configData->numStates + configData->lambdaVal);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
@@ -123,10 +123,10 @@ void Reset_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t
     vSetZero(configData->statePrev, configData->numStates);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->sBar);
     badUpdate +=
-      ukfCholDecomp(configData->sBar, (int32_t)configData->numStates, (int32_t)configData->numStates, tempMatrix);
+        ukfCholDecomp(configData->sBar, (int32_t)configData->numStates, (int32_t)configData->numStates, tempMatrix);
     mCopy(tempMatrix, configData->numStates, configData->numStates, configData->sBar);
     badUpdate += ukfCholDecomp(
-      configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
+        configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates, configData->numStates, configData->sQnoise);
 
     if (CSSArraySensorMsg_C_isWritten(&configData->cssDataInMsg)) {
@@ -361,7 +361,7 @@ int sunlineSuKFTimeUpdate(SunlineSuKFConfig* configData, double updateTime)
            configData->numStates * configData->numStates * sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(
-      AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
+        AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates, configData->sBar);
 
@@ -419,7 +419,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig* configData)
         /*! - Scale the measurement by the kelly factor.*/
         if (configData->kellFits[i].cssKellFact > 0.0) {
             kellDelta -=
-              exp(-pow(expectedMeas, configData->kellFits[i].cssKellPow) / configData->kellFits[i].cssKellFact);
+                exp(-pow(expectedMeas, configData->kellFits[i].cssKellPow) / configData->kellFits[i].cssKellFact);
             expectedMeas *= kellDelta;
             expectedMeas *= configData->kellFits[i].cssRelScale;
         }
@@ -437,8 +437,8 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig* configData)
                 kellDelta = 1.0;
                 /*! - Scale the measurement by the kelly factor.*/
                 if (configData->kellFits[i].cssKellFact > 0.0) {
-                    kellDelta -=
-                      exp(-pow(expectedMeas, configData->kellFits[i].cssKellPow) / configData->kellFits[i].cssKellFact);
+                    kellDelta -= exp(-pow(expectedMeas, configData->kellFits[i].cssKellPow) /
+                                     configData->kellFits[i].cssKellFact);
                     expectedMeas *= kellDelta;
                     expectedMeas *= configData->kellFits[i].cssRelScale;
                 }
@@ -473,7 +473,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig* configData, double updateTime)
     double rAT[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];
     double sy[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS], Ucol[SKF_N_STATES_SWITCH];
     double updMat[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
-      Umat[SKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
+        Umat[SKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
     badUpdate = 0;
 
     vCopy(configData->state, configData->numStates, configData->statePrev);
@@ -630,11 +630,21 @@ void sunlineSuKFSwitch(double* bVec_B, double* states, double* covar)
     mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 3);
 
     mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);
-    mMultM(
-      switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMatP);
+    mMultM(switchMat,
+           SKF_N_STATES_SWITCH,
+           SKF_N_STATES_SWITCH,
+           covar,
+           SKF_N_STATES_SWITCH,
+           SKF_N_STATES_SWITCH,
+           switchMatP);
     mTranspose(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat);
-    mMultM(
-      switchMatP, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
+    mMultM(switchMatP,
+           SKF_N_STATES_SWITCH,
+           SKF_N_STATES_SWITCH,
+           switchMat,
+           SKF_N_STATES_SWITCH,
+           SKF_N_STATES_SWITCH,
+           covar);
     return;
 }
 

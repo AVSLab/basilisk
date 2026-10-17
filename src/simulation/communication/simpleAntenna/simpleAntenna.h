@@ -153,8 +153,8 @@ class SimpleAntenna : public SysModel
     ReadFunctor<AntennaStateMsgPayload> antennaSetStateInMsg; //!< setting antenna to [off / Rx / Tx / RxTx]
     ReadFunctor<SpicePlanetStateMsgPayload> sunInMsg;         //!< [-] sun data input message
     std::vector<ReadFunctor<SpicePlanetStateMsgPayload>>
-      planetInMsgs; //!< A vector of planet incoming state message names ordered by the sequence in which planet are
-                    //!< added to the module
+        planetInMsgs; //!< A vector of planet incoming state message names ordered by the sequence in which planet are
+                      //!< added to the module
     ReadFunctor<EclipseMsgPayload> sunEclipseInMsg; //!< [-] sun eclipse state input message
 
     // Variables to store (input) message data
@@ -177,7 +177,7 @@ class SimpleAntenna : public SysModel
 
     std::string antennaName; //!< [-]     Antenna name
     AntennaTypes::EnvironmentType
-      environment; //!< [-]     Antenna environment of antenna 0: SPACE, 1: EARTH, -1: UNKNOWN
+        environment; //!< [-]     Antenna environment of antenna 0: SPACE, 1: EARTH, -1: UNKNOWN
     AntennaTypes::AntennaStateEnum antennaState; //!< [-]     Antenna state: 0: off, 1: Rx, 2: Tx, 3: RxTx, -1: UNKNOWN
     std::vector<SpicePlanetStateMsgPayload> planetBuffer; //!< [-]     Buffer of the spacecraft state input messages
     double frequency;                                     //!< [Hz]    Antenna operating frequency (center frequency)
@@ -200,9 +200,9 @@ class SimpleAntenna : public SysModel
     Eigen::Vector3d r_AB_B;   //!< [m]     Antenna position relative to body frame
     Eigen::MRPd sigma_AB;     //!< [-]     Antenna orientation relative to body frame
     Eigen::Vector3d
-      r_AP_N; //!< [m]     Position of the antenna wrt to the celestial body frame {P} (used for ground antennas only)
+        r_AP_N; //!< [m]     Position of the antenna wrt to the celestial body frame {P} (used for ground antennas only)
     Eigen::Vector3d
-      r_BN_N; //!< [m]     Position of the SC in the inertial frame {N} AND Spacecraft B position relative to sun S
+        r_BN_N; //!< [m]     Position of the SC in the inertial frame {N} AND Spacecraft B position relative to sun S
     Eigen::Vector3d nHat_A; //!< [-]     Antenna boresight vector in antenna frame
     bool useHaslamMap;      //!< [bool]  Flag to use Haslam sky map data structure (slower but more accurate)
     SpicePlanetStateMsgPayload sunData; //!< [-]     Sun data structure

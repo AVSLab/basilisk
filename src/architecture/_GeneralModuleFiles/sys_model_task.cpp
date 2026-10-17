@@ -26,9 +26,9 @@
         After this time the task is executed at integer amounts of InputPeriod again
  */
 SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
-  : NextStartTime(FirstStartTime)
-  , TaskPeriod(InputPeriod)
-  , FirstTaskTime(FirstStartTime)
+    : NextStartTime(FirstStartTime)
+    , TaskPeriod(InputPeriod)
+    , FirstTaskTime(FirstStartTime)
 {
     this->NextPickupTime = this->NextStartTime + this->TaskPeriod;
 }

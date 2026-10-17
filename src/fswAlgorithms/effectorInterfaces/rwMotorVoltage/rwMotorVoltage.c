@@ -116,7 +116,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, 
                 if (rwAvailability.wheelAvailability[i] == AVAILABLE && configData->resetFlag == BOOL_FALSE) {
                     OmegaDot[i] = (rwSpeed.wheelSpeeds[i] - configData->rwSpeedOld[i]) / dt;
                     torqueCmd.motorTorque[i] -=
-                      configData->K * (configData->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd.motorTorque[i]);
+                        configData->K * (configData->rwConfigParams.JsList[i] * OmegaDot[i] - torqueCmd.motorTorque[i]);
                 }
                 configData->rwSpeedOld[i] = rwSpeed.wheelSpeeds[i];
             }
@@ -129,7 +129,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, 
     for (int i = 0; i < configData->rwConfigParams.numRW; i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] =
-              (configData->VMax - configData->VMin) / configData->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
+                (configData->VMax - configData->VMin) / configData->rwConfigParams.uMax[i] * torqueCmd.motorTorque[i];
             if (voltage[i] > 0.0)
                 voltage[i] += configData->VMin;
             if (voltage[i] < 0.0)

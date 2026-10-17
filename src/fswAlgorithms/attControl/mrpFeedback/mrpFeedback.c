@@ -141,7 +141,7 @@ void Update_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_
     if (configData->rwConfigParams.numRW > 0) {
         wheelSpeeds = RWSpeedMsg_C_read(&configData->rwSpeedsInMsg);
         wheelsAvailability =
-          RWAvailabilityMsg_C_zeroMsgPayload(); /* wheelAvailability set to 0 (AVAILABLE) by default */
+            RWAvailabilityMsg_C_zeroMsgPayload(); /* wheelAvailability set to 0 (AVAILABLE) by default */
         if (RWAvailabilityMsg_C_isLinked(&configData->rwAvailInMsg)) {
             wheelsAvailability = RWAvailabilityMsg_C_read(&configData->rwAvailInMsg);
         }
@@ -170,8 +170,9 @@ void Update_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_
                 configData->int_sigma[i] *= configData->integralLimit / intCheck;
             }
         } /* keep int_sigma less than integralLimit */
-        m33MultV3(
-          RECAST3X3 configData->ISCPntB_B, guidCmd.omega_BR_B, v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+        m33MultV3(RECAST3X3 configData->ISCPntB_B,
+                  guidCmd.omega_BR_B,
+                  v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
         v3Add(configData->int_sigma, v3_2, configData->z);
     }
 

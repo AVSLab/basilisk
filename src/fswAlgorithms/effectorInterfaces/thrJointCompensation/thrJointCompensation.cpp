@@ -120,7 +120,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
                 // subsequent joints must be hinges
                 if (jointType != 3) {
                     bskLogger.bskError(
-                      "ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                        "ThrJointCompensation: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(joint);
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -165,7 +165,9 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             auto itTree = this->treeMap.find(treeId);
             if (itTree == this->treeMap.end()) {
                 bskLogger.bskError(
-                  "ThrJointCompensation: treeId %d for arm %zu was not found in joint reaction tree data.", treeId, a);
+                    "ThrJointCompensation: treeId %d for arm %zu was not found in joint reaction tree data.",
+                    treeId,
+                    a);
             }
             const auto& hinges = itTree->second.hingeGlobalIdxs;
             size_t& cur = treeCursor[treeId];
@@ -280,12 +282,12 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         const Eigen::Vector3d& r_CB_B = this->jointPoseFlat[kFlat].r_CB_B;
 
         Eigen::Vector3d fhat_P(
-          this->kinCfg.fhat_P[3 * i + 0], this->kinCfg.fhat_P[3 * i + 1], this->kinCfg.fhat_P[3 * i + 2]);
+            this->kinCfg.fhat_P[3 * i + 0], this->kinCfg.fhat_P[3 * i + 1], this->kinCfg.fhat_P[3 * i + 2]);
         const double Fcmd = thrForces(static_cast<Eigen::Index>(i));
         const Eigen::Vector3d f_B = dcm_CB.transpose() * (fhat_P * Fcmd);
 
         Eigen::Vector3d r_TP_P(
-          this->kinCfg.r_TP_P[3 * i + 0], this->kinCfg.r_TP_P[3 * i + 1], this->kinCfg.r_TP_P[3 * i + 2]);
+            this->kinCfg.r_TP_P[3 * i + 0], this->kinCfg.r_TP_P[3 * i + 1], this->kinCfg.r_TP_P[3 * i + 2]);
         const Eigen::Vector3d r_TB_B = r_CB_B + dcm_CB.transpose() * r_TP_P;
         const size_t hAttachGlobal = this->kinCfg.armHingeGlobalIdx[kFlat];
         const int treeId = this->hingeToTree[hAttachGlobal];
@@ -301,7 +303,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             const Eigen::Vector3d& r_JB_B = this->jointPoseFlat[kJ].r_CB_B;
 
             Eigen::Vector3d shat_P(
-              this->kinCfg.shat_P[3 * kJ + 0], this->kinCfg.shat_P[3 * kJ + 1], this->kinCfg.shat_P[3 * kJ + 2]);
+                this->kinCfg.shat_P[3 * kJ + 0], this->kinCfg.shat_P[3 * kJ + 1], this->kinCfg.shat_P[3 * kJ + 2]);
 
             const Eigen::Vector3d s_B = dcm_JB.transpose() * shat_P;
             const Eigen::Vector3d r_TJ_B = r_TB_B - r_JB_B;
@@ -317,8 +319,8 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     nonActuatorForces.setZero();
     for (size_t k = 0; k < nDOF; ++k) {
         nonActuatorForces(static_cast<Eigen::Index>(k)) =
-          reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] + reactionForcesIn.appliedForces[k] -
-          reactionForcesIn.biasForces[k];
+            reactionForcesIn.passiveForces[k] + reactionForcesIn.constraintForces[k] +
+            reactionForcesIn.appliedForces[k] - reactionForcesIn.biasForces[k];
     }
 
     constexpr size_t nBaseDOF = 6;
@@ -364,7 +366,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
             for (size_t c = 0; c < nTreeDOF; ++c) {
                 const size_t colIdx = dofIdx[c];
                 Mfull(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c)) =
-                  massMatrixData[rowIdx * nDOF + colIdx];
+                    massMatrixData[rowIdx * nDOF + colIdx];
             }
         }
 
@@ -385,7 +387,7 @@ void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd jointBias(nHingeJointsEigen);
         for (size_t i = 0; i < nHingeJoints; ++i) {
             jointBias(static_cast<Eigen::Index>(i)) =
-              nonActuatorForces(static_cast<Eigen::Index>(dofIdx[nBaseDOF + i]));
+                nonActuatorForces(static_cast<Eigen::Index>(dofIdx[nBaseDOF + i]));
         }
 
         Eigen::VectorXd tauThrTree(nHingeJointsEigen);

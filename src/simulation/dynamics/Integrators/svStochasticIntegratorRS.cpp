@@ -22,15 +22,15 @@
 #include <cmath>
 
 svStochasticIntegratorRS::svStochasticIntegratorRS(DynamicObject* dynIn, const RSCoefficients& coefficients)
-  : StochasticRKIntegratorBase(dynIn)
-  , coefficients(coefficients)
+    : StochasticRKIntegratorBase(dynIn)
+    , coefficients(coefficients)
 {
 }
 
 // ---- RS1 / RS2 coefficients (RS1 / RS2 tableaux) ----
 
 svStochasticIntegratorRS1::svStochasticIntegratorRS1(DynamicObject* dyn)
-  : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS1::getCoefficients())
+    : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS1::getCoefficients())
 {
 }
 
@@ -74,7 +74,7 @@ RSCoefficients svStochasticIntegratorRS1::getCoefficients()
 }
 
 svStochasticIntegratorRS2::svStochasticIntegratorRS2(DynamicObject* dyn)
-  : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS2::getCoefficients())
+    : svStochasticIntegratorRS(dyn, svStochasticIntegratorRS2::getCoefficients())
 {
 }
 
@@ -137,13 +137,13 @@ void svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep
     Eigen::VectorXd& sqrtStep = workspace.vector(3);
     for (size_t k = 0; k < m; k++) {
         Ihat(static_cast<Eigen::Index>(k)) =
-          stochasticWeakRV::threePoint(this->flatDW()(static_cast<Eigen::Index>(k)), h);
+            stochasticWeakRV::threePoint(this->flatDW()(static_cast<Eigen::Index>(k)), h);
         Itilde(static_cast<Eigen::Index>(k)) = 0.0;
         sqrtStep(static_cast<Eigen::Index>(k)) = sqh;
     }
     for (size_t k = 0; k + 1 < m; k++) {
         Itilde(static_cast<Eigen::Index>(k)) =
-          stochasticWeakRV::twoPoint(this->flatDZ()(static_cast<Eigen::Index>(k)), sqh);
+            stochasticWeakRV::twoPoint(this->flatDZ()(static_cast<Eigen::Index>(k)), sqh);
     }
     auto Ihat2 = [&](size_t k, size_t l) -> double {
         if (l < k) {
@@ -166,7 +166,7 @@ void svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep
     };
     auto buildCandidate = [&](double driftStep, const Eigen::VectorXd& diffusionSteps) {
         this->buildStochasticCandidate(
-          this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
+            this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
     };
 
     auto row = [](double x0, double x1, double x2, double x3) { return std::array<double, 4>{ x0, x1, x2, x3 }; };
@@ -242,7 +242,7 @@ void svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep
         const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
         if (coalesceFinalUpdate) {
             this->beginAllEuclideanFinalCandidate(
-              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), Ihat);
+                this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), Ihat);
         } else {
             buildCandidate(timeStep, Ihat);
         }

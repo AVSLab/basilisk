@@ -233,7 +233,7 @@ class NoiseCallbackPolicy final : public StateUpdatePolicy
 {
   public:
     explicit NoiseCallbackPolicy(std::function<void()>* callback)
-      : callback(callback)
+        : callback(callback)
     {
     }
 
@@ -268,7 +268,7 @@ class NoisePolicyDynamics final : public DynamicObject
 {
   public:
     explicit NoisePolicyDynamics(std::function<void()>* callback)
-      : callback(callback)
+        : callback(callback)
     {
     }
 
@@ -283,7 +283,7 @@ class NoisePolicyDynamics final : public DynamicObject
         spec.noiseCount = 1;
         spec.updateKind = StateUpdateKind::Special;
         this->state = this->dynManager.registerState(
-          "noiseCallbackState", spec, std::make_unique<NoiseCallbackPolicy>(this->callback));
+            "noiseCallbackState", spec, std::make_unique<NoiseCallbackPolicy>(this->callback));
         this->state->stateView()(0, 0) = 0.0;
         this->dynManager.finalizeStates();
     }
@@ -371,8 +371,8 @@ class SparseSequenceIntegrator final : public StochasticRKIntegratorBase
 {
   public:
     SparseSequenceIntegrator(DynamicObject* dynamics, bool sparse)
-      : StochasticRKIntegratorBase(dynamics)
-      , useSparsePath(sparse)
+        : StochasticRKIntegratorBase(dynamics)
+        , useSparsePath(sparse)
     {
     }
 
@@ -395,7 +395,7 @@ class SparseSequenceIntegrator final : public StochasticRKIntegratorBase
 
         if (this->useSparsePath) {
             this->beginStochasticSparseCandidates(
-              this->stochasticAcceptedState(), this->stochasticPackedDerivatives(), timeStep);
+                this->stochasticAcceptedState(), this->stochasticPackedDerivatives(), timeStep);
         }
         for (size_t slot = 0; slot < this->globalNoiseCount(); ++slot) {
             const double pseudoStep = 0.125 * static_cast<double>(slot + 1);
@@ -449,7 +449,7 @@ class BindingInvariantProbe final : public StochasticRKIntegratorBase
         Eigen::VectorXd pseudoSteps(static_cast<Eigen::Index>(this->globalNoiseCount()));
         pseudoSteps.setZero();
         this->appendAllEuclideanFinalCandidate(
-          this->stochasticPackedDerivatives(), 1.0, this->stochasticPackedDiffusions(), pseudoSteps);
+            this->stochasticPackedDerivatives(), 1.0, this->stochasticPackedDiffusions(), pseudoSteps);
     }
 };
 
@@ -527,10 +527,10 @@ class ReentrantNoiseGenerator final : public GaussianNoiseGenerator
                             std::shared_ptr<GaussianNoiseGenerator> replacement,
                             bool& destroyed,
                             bool& destroyedDuringCall)
-      : owner(owner)
-      , replacement(std::move(replacement))
-      , destroyed(destroyed)
-      , destroyedDuringCall(destroyedDuringCall)
+        : owner(owner)
+        , replacement(std::move(replacement))
+        , destroyed(destroyed)
+        , destroyedDuringCall(destroyedDuringCall)
     {
     }
 
@@ -744,8 +744,8 @@ class FinalCandidateProbe final : public StochasticRKIntegratorBase
 {
   public:
     FinalCandidateProbe(DynamicObject* dynamics, bool coalesce)
-      : StochasticRKIntegratorBase(dynamics)
-      , coalesce(coalesce)
+        : StochasticRKIntegratorBase(dynamics)
+        , coalesce(coalesce)
     {
     }
 
@@ -779,9 +779,9 @@ class FinalCandidateProbe final : public StochasticRKIntegratorBase
                                                   this->stochasticPackedDiffusions(),
                                                   this->firstSteps);
             this->appendAllEuclideanFinalCandidate(
-              this->stochasticPackedDerivatives(), 0.0, this->stochasticPackedDiffusions(), this->secondSteps);
+                this->stochasticPackedDerivatives(), 0.0, this->stochasticPackedDiffusions(), this->secondSteps);
             this->appendAllEuclideanFinalCandidate(
-              this->stochasticPackedDerivatives(), 0.0, this->stochasticPackedDiffusions(), this->thirdSteps);
+                this->stochasticPackedDerivatives(), 0.0, this->stochasticPackedDiffusions(), this->thirdSteps);
             this->commitAllEuclideanFinalCandidate();
             return;
         }
@@ -1056,7 +1056,7 @@ TEST(FlatStochastic, BookkeepingAndNativeGenerationDoNotAllocateAfterBind)
     stepIntegrator(integrator, 0.0, 0.0);
 
     const auto observed =
-      integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+        integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
     EXPECT_EQ(observed.allocationCalls(), 0U);
 }
 
@@ -1121,7 +1121,7 @@ TEST(FlatStochastic, ReentrantGeneratorReplacementRetainsActiveCall)
     bool seedGeneratorDestroyed = false;
     bool seedGeneratorDestroyedDuringCall = false;
     auto seedGenerator = std::make_shared<ReentrantNoiseGenerator>(
-      integrator, replacement, seedGeneratorDestroyed, seedGeneratorDestroyedDuringCall);
+        integrator, replacement, seedGeneratorDestroyed, seedGeneratorDestroyedDuringCall);
     std::weak_ptr<GaussianNoiseGenerator> seedLifetime = seedGenerator;
     integrator.setNoiseGenerator(seedGenerator);
     seedGenerator.reset();
@@ -1135,7 +1135,7 @@ TEST(FlatStochastic, ReentrantGeneratorReplacementRetainsActiveCall)
     bool sampleGeneratorDestroyed = false;
     bool sampleGeneratorDestroyedDuringCall = false;
     auto sampleGenerator = std::make_shared<ReentrantNoiseGenerator>(
-      integrator, replacement, sampleGeneratorDestroyed, sampleGeneratorDestroyedDuringCall);
+        integrator, replacement, sampleGeneratorDestroyed, sampleGeneratorDestroyedDuringCall);
     std::weak_ptr<GaussianNoiseGenerator> sampleLifetime = sampleGenerator;
     integrator.setNoiseGenerator(sampleGenerator);
     sampleGenerator.reset();
@@ -1150,7 +1150,7 @@ TEST(FlatStochastic, ReentrantGeneratorReplacementRetainsActiveCall)
     bool auxiliaryGeneratorDestroyed = false;
     bool auxiliaryGeneratorDestroyedDuringCall = false;
     auto auxiliaryGenerator = std::make_shared<ReentrantNoiseGenerator>(
-      auxiliaryIntegrator, replacement, auxiliaryGeneratorDestroyed, auxiliaryGeneratorDestroyedDuringCall);
+        auxiliaryIntegrator, replacement, auxiliaryGeneratorDestroyed, auxiliaryGeneratorDestroyedDuringCall);
     std::weak_ptr<GaussianNoiseGenerator> auxiliaryLifetime = auxiliaryGenerator;
     auxiliaryIntegrator.setNoiseGenerator(auxiliaryGenerator);
     auxiliaryGenerator.reset();

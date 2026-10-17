@@ -131,7 +131,7 @@ void Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t ca
     /*! - write the module output messages */
     AttRefMsg_C_write(&attRefOutMsgBuffer, &configData->attRefOutMsg, moduleID, callTime);
     ReconfigBurnArrayInfoMsg_C_write(
-      &configData->burnArrayInfoOutMsgBuffer, &configData->burnArrayInfoOutMsg, moduleID, callTime);
+        &configData->burnArrayInfoOutMsgBuffer, &configData->burnArrayInfoOutMsg, moduleID, callTime);
     if (configData->thrustOnFlag == 1) {
         // only when thrustOnFlag is 1, thrustOnMessage is output
         THRArrayOnTimeCmdMsg_C_write(&thrustOnMsgBuffer, &configData->onTimeOutMsg, moduleID, callTime);
@@ -176,7 +176,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         // sort three burns (dvArray structures) in ascending order
         qsort(configData->burnArrayInfoOutMsgBuffer.burnArray,
               sizeof(configData->burnArrayInfoOutMsgBuffer) /
-                sizeof(configData->burnArrayInfoOutMsgBuffer.burnArray[0]),
+                  sizeof(configData->burnArrayInfoOutMsgBuffer.burnArray[0]),
               sizeof(ReconfigBurnInfoMsgPayload),
               CompareTime);
     }
@@ -195,15 +195,15 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         }
         // middle of thruster burn duration time is located at the expected exact timing of impulsive control
         if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
-                       (2 * thrustConfigMsgBuffer.numThrusters) &&
+                         (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 1) {
             configData->thrustOnFlag = 1; // thrustOnFlag is ON
             configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag =
-              2; // first burn is regarded as finished by setting this to 2
+                2; // first burn is regarded as finished by setting this to 2
             int i = 0;
             for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
-                thrustOnMsgBuffer->OnTimeRequest[i] =
-                  configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
+                                                      thrustConfigMsgBuffer.numThrusters;
             }
         } else {
             configData->thrustOnFlag = 0; // thrustOnFlag is OFF
@@ -214,7 +214,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 &&
             configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t +
                                     configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
-                                      (2 * thrustConfigMsgBuffer.numThrusters))) {
+                                        (2 * thrustConfigMsgBuffer.numThrusters))) {
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         } else if (t_left > configData->attControlTime && configData->attRefInIsLinked) {
@@ -225,14 +225,14 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
         if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
-                       (2 * thrustConfigMsgBuffer.numThrusters) &&
+                         (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 1) {
             configData->thrustOnFlag = 1;
             configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag = 2;
             int i = 0;
             for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
-                thrustOnMsgBuffer->OnTimeRequest[i] =
-                  configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
+                                                      thrustConfigMsgBuffer.numThrusters;
             }
         } else {
             configData->thrustOnFlag = 0;
@@ -243,13 +243,13 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         if (configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 2 &&
             configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[1].t +
                                     configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
-                                      (2 * thrustConfigMsgBuffer.numThrusters))) {
+                                        (2 * thrustConfigMsgBuffer.numThrusters))) {
             // in this case, second burn is still executed, so second burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[1].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         } else if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2 &&
                    configData->tCurrent < (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t +
                                            configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
-                                             (2 * thrustConfigMsgBuffer.numThrusters))) {
+                                               (2 * thrustConfigMsgBuffer.numThrusters))) {
             // in this case, first burn is still executed, so first burn attitude is set as target
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[0].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         } else if (t_left > configData->attControlTime && configData->attRefInIsLinked) {
@@ -260,14 +260,14 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
             v3Copy(configData->burnArrayInfoOutMsgBuffer.burnArray[2].sigma_RN, attRefOutMsgBuffer->sigma_RN);
         }
         if (t_left < (int)configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
-                       (2 * thrustConfigMsgBuffer.numThrusters) &&
+                         (2 * thrustConfigMsgBuffer.numThrusters) &&
             configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 1) {
             configData->thrustOnFlag = 1;
             configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 2;
             int i = 0;
             for (i = 0; i < thrustConfigMsgBuffer.numThrusters; ++i) {
-                thrustOnMsgBuffer->OnTimeRequest[i] =
-                  configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime / thrustConfigMsgBuffer.numThrusters;
+                thrustOnMsgBuffer->OnTimeRequest[i] = configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
+                                                      thrustConfigMsgBuffer.numThrusters;
             }
         } else {
             configData->thrustOnFlag = 0;
@@ -279,7 +279,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag == 2) {
             if (configData->tCurrent > (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t +
                                         configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime /
-                                          (2 * thrustConfigMsgBuffer.numThrusters)) &&
+                                            (2 * thrustConfigMsgBuffer.numThrusters)) &&
                 configData->attRefInIsLinked) {
                 *attRefOutMsgBuffer = attRefInMsgBuffer;
             } else {
@@ -288,7 +288,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         } else if (configData->burnArrayInfoOutMsgBuffer.burnArray[1].flag == 2) {
             if (configData->tCurrent > (configData->burnArrayInfoOutMsgBuffer.burnArray[1].t +
                                         configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime /
-                                          (2 * thrustConfigMsgBuffer.numThrusters)) &&
+                                            (2 * thrustConfigMsgBuffer.numThrusters)) &&
                 configData->attRefInIsLinked) {
                 *attRefOutMsgBuffer = attRefInMsgBuffer;
             } else {
@@ -297,7 +297,7 @@ void UpdateManeuver(spacecraftReconfigConfig* configData,
         } else if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].flag == 2) {
             if (configData->tCurrent > (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t +
                                         configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime /
-                                          (2 * thrustConfigMsgBuffer.numThrusters)) &&
+                                            (2 * thrustConfigMsgBuffer.numThrusters)) &&
                 configData->attRefInIsLinked) {
                 *attRefOutMsgBuffer = attRefInMsgBuffer;
             } else {
@@ -457,13 +457,13 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t < configData->burnArrayInfoOutMsgBuffer.burnArray[1].t) {
         dM = dM - 3.0 / 2.0 * n / oe_c.a * da * configData->burnArrayInfoOutMsgBuffer.burnArray[0].t -
              3.0 / 2.0 * n / oe_c.a * (da + 2.0 * oe_c.a * oe_c.a / h * p / rp * dvtp_mag) *
-               (configData->burnArrayInfoOutMsgBuffer.burnArray[1].t -
-                configData->burnArrayInfoOutMsgBuffer.burnArray[0].t);
+                 (configData->burnArrayInfoOutMsgBuffer.burnArray[1].t -
+                  configData->burnArrayInfoOutMsgBuffer.burnArray[0].t);
     } else {
         dM = dM - 3.0 / 2.0 * n / oe_c.a * da * configData->burnArrayInfoOutMsgBuffer.burnArray[1].t -
              3.0 / 2.0 * n / oe_c.a * (da + 2.0 * oe_c.a * oe_c.a / h * p / ra * dvta_mag) *
-               (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t -
-                configData->burnArrayInfoOutMsgBuffer.burnArray[1].t);
+                 (configData->burnArrayInfoOutMsgBuffer.burnArray[0].t -
+                  configData->burnArrayInfoOutMsgBuffer.burnArray[1].t);
     }
     double dvrp_mag = -n * oe_c.a / 4 * (pow(1 + oe_c.e, 2) / eta * ((-domega) + (-dOmega) * cos(oe_c.i)) + (-dM));
     double dvra_mag = -n * oe_c.a / 4 * (pow(1 - oe_c.e, 2) / eta * ((-domega) + (-dOmega) * cos(oe_c.i)) + (-dM));
@@ -472,40 +472,40 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     // 5. calculate thrustOnTime
     // if timings of any two burns are close to each other, they are combined into one burn
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t - configData->burnArrayInfoOutMsgBuffer.burnArray[0].t <
-          configData->attControlTime &&
+            configData->attControlTime &&
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].t - configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-          configData->attControlTime) {
+            configData->attControlTime) {
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime =
-          sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag + dvn_mag * dvn_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag + dvn_mag * dvn_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime =
-          sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime = 0.0;
         configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 3;
     } else if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t -
-                   configData->burnArrayInfoOutMsgBuffer.burnArray[1].t <
-                 configData->attControlTime &&
+                       configData->burnArrayInfoOutMsgBuffer.burnArray[1].t <
+                   configData->attControlTime &&
                configData->burnArrayInfoOutMsgBuffer.burnArray[1].t -
-                   configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-                 configData->attControlTime) {
+                       configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
+                   configData->attControlTime) {
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime =
-          sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime =
-          sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag + dvn_mag * dvn_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag + dvn_mag * dvn_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime = 0.0;
         configData->burnArrayInfoOutMsgBuffer.burnArray[2].flag = 3;
     } else {
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].thrustOnTime =
-          sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvrp_mag * dvrp_mag + dvtp_mag * dvtp_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[1].thrustOnTime =
-          sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag) * vehicleConfigMsgBuffer.massSC /
-          thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            sqrt(dvra_mag * dvra_mag + dvta_mag * dvta_mag) * vehicleConfigMsgBuffer.massSC /
+            thrustConfigMsgBuffer.thrusters[0].maxThrust;
         configData->burnArrayInfoOutMsgBuffer.burnArray[2].thrustOnTime =
-          dvn_mag * vehicleConfigMsgBuffer.massSC / thrustConfigMsgBuffer.thrusters[0].maxThrust;
+            dvn_mag * vehicleConfigMsgBuffer.massSC / thrustConfigMsgBuffer.thrusters[0].maxThrust;
     }
     // if thrustOnTime is smaller than a cerain threshold, the impulse is neglected
     // 1.0 second is temporarily set as threshold regarding whether small impulse is neglected or not
@@ -568,9 +568,9 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     v3Add(rVec_d_dvrtp, tVec_d_dvrtp, thrustVec_dvrtp);
     // in case two burns are combined, target attitude also has to be adjusted
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t - configData->burnArrayInfoOutMsgBuffer.burnArray[0].t <
-          configData->attControlTime &&
+            configData->attControlTime &&
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].t - configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-          configData->attControlTime) {
+            configData->attControlTime) {
         v3Normalize(hVec_d_dvrtp, hVec_d_dvrtp);
         v3Scale(dvn_mag, hVec_d_dvrtp, hVec_d_dvrtp);
         // add normal direction vector
@@ -606,9 +606,9 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     v3Add(rVec_d_dvrta, tVec_d_dvrta, thrustVec_dvrta);
     // in case two burns are combined, target attitude also has to be adjusted
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t - configData->burnArrayInfoOutMsgBuffer.burnArray[1].t <
-          configData->attControlTime &&
+            configData->attControlTime &&
         configData->burnArrayInfoOutMsgBuffer.burnArray[1].t - configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-          configData->attControlTime) {
+            configData->attControlTime) {
         v3Normalize(hVec_d_dvrta, hVec_d_dvrta);
         v3Scale(dvn_mag, hVec_d_dvrta, hVec_d_dvrta);
         // add normal direction vector
@@ -640,16 +640,16 @@ void ScheduleDV(spacecraftReconfigConfig* configData,
     v3Normalize(hVec_d_dvn, dcm_RN[2]);
     v3Cross(dcm_RN[2], dcm_RN[0], dcm_RN[1]);
     if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t - configData->burnArrayInfoOutMsgBuffer.burnArray[0].t <
-          configData->attControlTime &&
+            configData->attControlTime &&
         configData->burnArrayInfoOutMsgBuffer.burnArray[0].t - configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-          configData->attControlTime) {
+            configData->attControlTime) {
         C2MRP(dcm_TN_dvrtp, configData->burnArrayInfoOutMsgBuffer.burnArray[2].sigma_RN);
     } else if (configData->burnArrayInfoOutMsgBuffer.burnArray[2].t -
-                   configData->burnArrayInfoOutMsgBuffer.burnArray[1].t <
-                 configData->attControlTime &&
+                       configData->burnArrayInfoOutMsgBuffer.burnArray[1].t <
+                   configData->attControlTime &&
                configData->burnArrayInfoOutMsgBuffer.burnArray[1].t -
-                   configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
-                 configData->attControlTime) {
+                       configData->burnArrayInfoOutMsgBuffer.burnArray[2].t <
+                   configData->attControlTime) {
         C2MRP(dcm_TN_dvrta, configData->burnArrayInfoOutMsgBuffer.burnArray[2].sigma_RN);
     } else {
         // calculate dcm_TN = dcm_TR * dcm_RN

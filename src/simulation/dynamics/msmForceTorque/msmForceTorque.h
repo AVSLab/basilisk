@@ -61,7 +61,7 @@ class MsmForceTorque : public SysModel
 
     std::vector<Message<CmdTorqueBodyMsgPayload>*> eTorqueOutMsgs; //!< vector of E-torques in body frame components
     std::vector<Message<CmdForceInertialMsgPayload>*>
-      eForceOutMsgs;                                             //!< vector of E-forces in inertial frame components
+        eForceOutMsgs;                                           //!< vector of E-forces in inertial frame components
     std::vector<Message<ChargeMsmMsgPayload>*> chargeMsmOutMsgs; //!< vector of spacecraft MSM charge values
 
     BSKLogger bskLogger; //!< -- BSK Logging
@@ -78,7 +78,7 @@ class MsmForceTorque : public SysModel
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<CmdTorqueBodyMsgPayload>>> ownedETorqueOutMsgs; //!< Storage for eTorqueOutMsgs.
     std::vector<std::unique_ptr<Message<CmdForceInertialMsgPayload>>>
-      ownedEForceOutMsgs;                                                             //!< Storage for eForceOutMsgs.
+        ownedEForceOutMsgs;                                                           //!< Storage for eForceOutMsgs.
     std::vector<std::unique_ptr<Message<ChargeMsmMsgPayload>>> ownedChargeMsmOutMsgs; //!< Storage for chargeMsmOutMsgs.
 };
 

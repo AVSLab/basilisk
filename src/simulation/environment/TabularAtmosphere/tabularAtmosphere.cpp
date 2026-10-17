@@ -79,11 +79,11 @@ void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double
         for (uint32_t i = 0; i <= this->altList.size() - 1; i++) {
             if (this->altList[i] > this->orbitAltitude) {
                 msg->neutralDensity = this->rhoList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
-                                                               (this->rhoList[i] - this->rhoList[i - 1]) /
-                                                               (this->altList[i] - this->altList[i - 1]);
+                                                                 (this->rhoList[i] - this->rhoList[i - 1]) /
+                                                                 (this->altList[i] - this->altList[i - 1]);
                 msg->localTemp = this->tempList[i - 1] + (this->orbitAltitude - this->altList[i - 1]) *
-                                                           (this->tempList[i] - this->tempList[i - 1]) /
-                                                           (this->altList[i] - this->altList[i - 1]);
+                                                             (this->tempList[i] - this->tempList[i - 1]) /
+                                                             (this->altList[i] - this->altList[i - 1]);
                 break;
             }
         }

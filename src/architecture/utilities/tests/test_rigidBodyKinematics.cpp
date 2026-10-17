@@ -276,7 +276,7 @@ TEST(PrvKinematics, RateMatrices)
             for (int column = 0; column < 3; ++column) {
                 ASSERT_TRUE(std::isfinite(matrix[row][column]));
                 EXPECT_NEAR(
-                  inverse[row][column], expected[row][column], 3e-14 * std::abs(expected[row][column]) + 1e-22);
+                    inverse[row][column], expected[row][column], 3e-14 * std::abs(expected[row][column]) + 1e-22);
                 double product = 0.0;
                 for (int inner = 0; inner < 3; ++inner) {
                     product += expected[row][inner] * matrix[inner][column];

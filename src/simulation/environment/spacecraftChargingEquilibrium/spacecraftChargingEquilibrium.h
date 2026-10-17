@@ -217,7 +217,7 @@ class SpacecraftChargingEquilibrium : public SysModel
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<VoltMsgPayload>>> ownedVoltOutMsgs; //!< Storage for voltOutMsgs.
     std::vector<std::unique_ptr<Message<ScChargingCurrentsMsgPayload>>>
-      ownedCurrentsOutMsgs; //!< Storage for currentsOutMsgs.
+        ownedCurrentsOutMsgs; //!< Storage for currentsOutMsgs.
 };
 
 #endif

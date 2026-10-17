@@ -40,8 +40,8 @@
 
 /*! @brief hinged rigid body state effector class */
 class HingedRigidBodyStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     double mass;                     //!< [kg] mass of hinged rigid body
@@ -64,7 +64,7 @@ class HingedRigidBodyStateEffector final
     Message<HingedRigidBodyMsgPayload> hingedRigidBodyOutMsg; //!< state output message name
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< (optional) motor torque input message name
     ReadFunctor<HingedRigidBodyMsgPayload>
-      hingedRigidBodyRefMsg;                                    //!< (optional) rigid body reference input message name
+        hingedRigidBodyRefMsg;                                  //!< (optional) rigid body reference input message name
     Message<SCStatesMsgPayload> hingedRigidBodyConfigLogOutMsg; //!< panel state config log message name
     HingedRigidBodyMsgPayload HRBoutputStates;                  //!< instance of messaging system message struct
     BSKLogger bskLogger;                                        //!< BSK Logging
@@ -154,7 +154,7 @@ class HingedRigidBodyStateEffector final
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for HRB to compute its derivatives
     void updateEffectorMassProps(
-      double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
+        double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime,
                                       Eigen::Vector3d& rotAngMomPntCContr_B,
                                       double& rotEnergyContr,

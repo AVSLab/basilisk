@@ -108,7 +108,7 @@ void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
     if (this->jointAngleWrappingEnabled && !std::isfinite(this->jointAngleWrapStart)) {
         this->bskLogger.bskError(
-          "JointArrayRefProfiler.jointAngleWrapStart must be finite when joint-angle wrapping is enabled.");
+            "JointArrayRefProfiler.jointAngleWrapStart must be finite when joint-angle wrapping is enabled.");
     }
 
     this->profileStartTime = 0; // [ns]
@@ -128,15 +128,15 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     JointArrayStateMsgPayload desJointStatesIn = this->desJointStatesInMsg();
     if (desJointStatesIn.states.size() != static_cast<std::size_t>(this->numHingedJoints)) {
         this->bskLogger.bskError(
-          "JointArrayRefProfiler.desJointStatesInMsg.states size does not match numHingedJoints.");
+            "JointArrayRefProfiler.desJointStatesInMsg.states size does not match numHingedJoints.");
     }
     if (desJointStatesIn.stateDots.size() != static_cast<std::size_t>(this->numHingedJoints)) {
         this->bskLogger.bskError(
-          "JointArrayRefProfiler.desJointStatesInMsg.stateDots size does not match numHingedJoints.");
+            "JointArrayRefProfiler.desJointStatesInMsg.stateDots size does not match numHingedJoints.");
     }
     if (desJointStatesIn.stateDDots.size() != static_cast<std::size_t>(this->numHingedJoints)) {
         this->bskLogger.bskError(
-          "JointArrayRefProfiler.desJointStatesInMsg.stateDDots size does not match numHingedJoints.");
+            "JointArrayRefProfiler.desJointStatesInMsg.stateDDots size does not match numHingedJoints.");
     }
 
     bool newDesiredStateMsg = false;
@@ -161,16 +161,17 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
             ScalarJointStateMsgPayload jointStateDotIn = this->jointStateDotsInMsgs[i]();
             const Eigen::Index jointIndex = static_cast<Eigen::Index>(i);
             this->startJointAngles[jointIndex] = this->jointAngleWrappingEnabled
-                                                   ? wrapJointAngle(jointStateIn.state, this->jointAngleWrapStart)
-                                                   : jointStateIn.state;
+                                                     ? wrapJointAngle(jointStateIn.state, this->jointAngleWrapStart)
+                                                     : jointStateIn.state;
             this->startJointRates[jointIndex] = jointStateDotIn.state;
             const double desJointAngle = this->jointAngleWrappingEnabled
-                                           ? wrapJointAngle(desJointStatesIn.states[i], this->jointAngleWrapStart)
-                                           : desJointStatesIn.states[i];
+                                             ? wrapJointAngle(desJointStatesIn.states[i], this->jointAngleWrapStart)
+                                             : desJointStatesIn.states[i];
             this->targetJointAngles[jointIndex] =
-              this->useShortestPath ? this->startJointAngles[jointIndex] +
-                                        shortestAngularDisplacement(desJointAngle - this->startJointAngles[jointIndex])
-                                    : desJointAngle;
+                this->useShortestPath
+                    ? this->startJointAngles[jointIndex] +
+                          shortestAngularDisplacement(desJointAngle - this->startJointAngles[jointIndex])
+                    : desJointAngle;
         }
 
         if (this->profileType == "lowPass") {
@@ -199,8 +200,8 @@ void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     desJointStatesOut.stateDDots.resize(static_cast<std::size_t>(this->numHingedJoints), 0.0);
     for (int i = 0; i < this->numHingedJoints; ++i) {
         desJointStatesOut.states[static_cast<std::size_t>(i)] =
-          this->jointAngleWrappingEnabled ? wrapJointAngle(this->refJointAngles[i], this->jointAngleWrapStart)
-                                          : this->refJointAngles[i];
+            this->jointAngleWrappingEnabled ? wrapJointAngle(this->refJointAngles[i], this->jointAngleWrapStart)
+                                            : this->refJointAngles[i];
         desJointStatesOut.stateDots[static_cast<std::size_t>(i)] = this->refJointRates[i];
         desJointStatesOut.stateDDots[static_cast<std::size_t>(i)] = this->refJointAccels[i];
     }
@@ -319,7 +320,7 @@ void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos)
         this->refJointAngles[i] = a0 + a1 * tau + a2 * tau * tau + a3 * tau * tau * tau + a4 * tau * tau * tau * tau +
                                   a5 * tau * tau * tau * tau * tau;
         this->refJointRates[i] =
-          a1 + 2.0 * a2 * tau + 3.0 * a3 * tau * tau + 4.0 * a4 * tau * tau * tau + 5.0 * a5 * tau * tau * tau * tau;
+            a1 + 2.0 * a2 * tau + 3.0 * a3 * tau * tau + 4.0 * a4 * tau * tau * tau + 5.0 * a5 * tau * tau * tau * tau;
         this->refJointAccels[i] = 2.0 * a2 + 6.0 * a3 * tau + 12.0 * a4 * tau * tau + 20.0 * a5 * tau * tau * tau;
     }
 }

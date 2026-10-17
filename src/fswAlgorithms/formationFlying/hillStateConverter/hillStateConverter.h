@@ -35,7 +35,7 @@ typedef struct
 {
     /* declare module IO interfaces */
     HillRelStateMsg_C
-      hillStateOutMsg; //!< Output message containing relative state of deputy to chief in chief hill coordinates
+        hillStateOutMsg; //!< Output message containing relative state of deputy to chief in chief hill coordinates
     NavTransMsg_C chiefStateInMsg; //!< Input message containing chief inertial translational state estimate
     NavTransMsg_C depStateInMsg;   //!< Input message containing deputy inertial translational state estimate
 

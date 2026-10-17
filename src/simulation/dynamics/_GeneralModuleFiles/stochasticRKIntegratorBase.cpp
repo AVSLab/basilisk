@@ -55,7 +55,7 @@ void StochasticRKIntegratorBase::generateNoise(double timeStep, size_t auxiliary
     this->validateStochasticTimeStep(timeStep);
     if (this->nativeGenerator != nullptr) {
         this->nativeGenerator->RandomGaussianNoiseGenerator::generateWithAuxiliaryInto(
-          this->dW, this->dZ, this->globalNoiseCount(), auxiliaryCount, timeStep);
+            this->dW, this->dZ, this->globalNoiseCount(), auxiliaryCount, timeStep);
         return;
     }
     const auto generator = this->noiseGenerator();
@@ -67,7 +67,7 @@ void StochasticRKIntegratorBase::generateWienerNoise(double timeStep)
     this->validateStochasticTimeStep(timeStep);
     if (this->nativeGenerator != nullptr) {
         this->nativeGenerator->RandomGaussianNoiseGenerator::generateWienerInto(
-          this->dW, this->globalNoiseCount(), timeStep);
+            this->dW, this->globalNoiseCount(), timeStep);
         return;
     }
     const auto generator = this->noiseGenerator();
@@ -88,8 +88,8 @@ void StochasticRKIntegratorBase::setNoiseGenerator(std::shared_ptr<GaussianNoise
     this->rvGenerator = std::move(generator);
     auto* activeGenerator = this->rvGenerator.get();
     this->nativeGenerator = typeid(*activeGenerator) == typeid(RandomGaussianNoiseGenerator)
-                              ? static_cast<RandomGaussianNoiseGenerator*>(activeGenerator)
-                              : nullptr;
+                                ? static_cast<RandomGaussianNoiseGenerator*>(activeGenerator)
+                                : nullptr;
 }
 
 void StochasticRKIntegratorBase::prepareIntegrationBinding()

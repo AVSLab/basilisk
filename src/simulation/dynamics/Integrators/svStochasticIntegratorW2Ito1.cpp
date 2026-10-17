@@ -21,7 +21,7 @@
 #include <cmath>
 
 svStochasticIntegratorW2Ito1::svStochasticIntegratorW2Ito1(DynamicObject* dyn)
-  : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
+    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito1::getCoefficients())
 {
 }
 

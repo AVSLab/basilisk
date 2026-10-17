@@ -45,8 +45,8 @@ typedef struct
 
     /* Other. */
     MTBArrayConfigMsgPayload
-      mtbArrayConfigParams; //!< configuration parameters for all the torque bars used on the vehicle
-    BSKLogger* bskLogger;   //!< BSK Logging
+        mtbArrayConfigParams; //!< configuration parameters for all the torque bars used on the vehicle
+    BSKLogger* bskLogger;     //!< BSK Logging
 } dipoleMappingConfig;
 
 #ifdef __cplusplus

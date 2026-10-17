@@ -146,8 +146,8 @@ void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing()
     this->t_b1 = this->tInit + this->coastOptionBangDuration;
 
     // Determine the hub-relative angle and rate at time t_b1
-    this->theta_tb1 =
-      sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration + this->thetaInit;
+    this->theta_tb1 = sign * 0.5 * this->thetaDDotMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+                      this->thetaInit;
     this->thetaDot_tb1 = sign * this->thetaDDotMax * this->coastOptionBangDuration;
 
     // Determine the angle traveled during the coast period
@@ -183,15 +183,15 @@ void PrescribedRotation1DOF::computeSmoothedBangBangParameters()
     // Determine the hub-relative angle and rate at time t_s1
     this->thetaDot_ts1 = sign * 0.5 * this->thetaDDotMax * this->smoothingDuration;
     this->theta_ts1 =
-      sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration + this->thetaInit;
+        sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration + this->thetaInit;
 
     // Determine the duration of the bang segment bangDuration
     double aTerm = sign * 0.5 * this->thetaDDotMax;
     double bTerm = (sign * this->thetaDDotMax * this->smoothingDuration + this->thetaDot_ts1) / aTerm;
     double cTerm =
-      (sign * (2.0 / 5.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration +
-       this->thetaDot_ts1 * this->smoothingDuration + this->theta_ts1 - 0.5 * (this->thetaRef + this->thetaInit)) /
-      aTerm;
+        (sign * (2.0 / 5.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration +
+         this->thetaDot_ts1 * this->smoothingDuration + this->theta_ts1 - 0.5 * (this->thetaRef + this->thetaInit)) /
+        aTerm;
     double bangDuration = (-bTerm + sqrt(bTerm * bTerm - 4.0 * cTerm)) / 2.0;
 
     // Determine the time at the end of the first bang segment t_b1
@@ -235,7 +235,7 @@ void PrescribedRotation1DOF::computeSmoothedBangCoastBangParameters()
     // Determine the hub-relative angle and rate at time t_s1
     this->thetaDot_ts1 = sign * 0.5 * this->thetaDDotMax * this->smoothingDuration;
     this->theta_ts1 =
-      sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration + this->thetaInit;
+        sign * (3.0 / 20.0) * this->thetaDDotMax * this->smoothingDuration * this->smoothingDuration + this->thetaInit;
 
     // Determine the time at the end of the first bang segment t_b1
     this->t_b1 = this->t_s1 + this->coastOptionBangDuration;
@@ -487,8 +487,8 @@ void PrescribedRotation1DOF::computeFirstSmoothedSegment(double t)
     double term1 = (3.0 * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
     double term2 = (2.0 * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
                    (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term3 =
-      ((t - this->tInit) * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
+    double term3 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (this->smoothingDuration * this->smoothingDuration);
     double term4 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
                    (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term5 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
@@ -548,7 +548,7 @@ void PrescribedRotation1DOF::computeSecondSmoothedSegment(double t)
     this->thetaDDot = sign * this->thetaDDotMax * (1.0 - term1 + term2);
     this->thetaDot = sign * this->thetaDDotMax * ((t - this->t_b1) - term3 + term4) + this->thetaDot_tb1;
     this->theta =
-      sign * this->thetaDDotMax * (term5 - term6 + term7) + this->thetaDot_tb1 * (t - this->t_b1) + this->theta_tb1;
+        sign * this->thetaDDotMax * (term5 - term6 + term7) + this->thetaDot_tb1 * (t - this->t_b1) + this->theta_tb1;
 }
 
 /*! This method computes the third smoothing segment scalar rotational states for the smoothed profiler options.
@@ -572,7 +572,7 @@ void PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
         term2 = (2.0 * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
                 (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term3 =
-          ((t - this->t_c) * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
+            ((t - this->t_c) * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
         term4 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
                 (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term5 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
@@ -583,7 +583,7 @@ void PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
         this->thetaDDot = -sign * this->thetaDDotMax * (term1 - term2);
         this->thetaDot = -sign * this->thetaDDotMax * (term3 - term4) + this->thetaDot_tc;
         this->theta =
-          -sign * this->thetaDDotMax * (term5 - term6) + this->thetaDot_tc * (t - this->t_c) + this->theta_tc;
+            -sign * this->thetaDDotMax * (term5 - term6) + this->thetaDot_tc * (t - this->t_c) + this->theta_tc;
     } else {
         term1 = (3.0 * (t - this->t_b2) * (t - this->t_b2)) / (this->smoothingDuration * this->smoothingDuration);
         term2 = (2.0 * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
@@ -600,8 +600,8 @@ void PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
 
         this->thetaDDot = sign * this->thetaDDotMax * (-1.0 + term1 - term2);
         this->thetaDot = sign * this->thetaDDotMax * (-(t - this->t_b2) + term3 - term4) + this->thetaDot_tb2;
-        this->theta =
-          sign * this->thetaDDotMax * (term5 + term6 - term7) + this->thetaDot_tb2 * (t - this->t_b2) + this->theta_tb2;
+        this->theta = sign * this->thetaDDotMax * (term5 + term6 - term7) + this->thetaDot_tb2 * (t - this->t_b2) +
+                      this->theta_tb2;
     }
 }
 
@@ -615,7 +615,7 @@ void PrescribedRotation1DOF::computeFourthSmoothedSegment(double t)
     double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
                    (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term3 =
-      ((this->t_f - t) * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
+        ((this->t_f - t) * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
     double term4 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
                    (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term5 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /

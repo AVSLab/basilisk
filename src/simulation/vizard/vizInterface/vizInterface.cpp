@@ -40,17 +40,17 @@ class ZmqMessage
 {
   public:
     ZmqMessage()
-      : initialized(zmq_msg_init(&this->message) == 0)
+        : initialized(zmq_msg_init(&this->message) == 0)
     {
     }
 
     explicit ZmqMessage(size_t size)
-      : initialized(zmq_msg_init_size(&this->message, size) == 0)
+        : initialized(zmq_msg_init_size(&this->message, size) == 0)
     {
     }
 
     ZmqMessage(const void* data, size_t size)
-      : ZmqMessage(size)
+        : ZmqMessage(size)
     {
         if (this->initialized) {
             std::memcpy(this->data(), data, size);
@@ -160,7 +160,7 @@ void VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         }
 
         text =
-          "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
+            "Waiting for Vizard at " + this->reqComProtocol + "://" + this->reqComAddress + ":" + this->reqPortNumber;
         bskLogger.bskLog(BSK_INFORMATION, "%s", text.c_str());
 
         ZmqMessage request("PING", 4);
@@ -424,11 +424,11 @@ void VizInterface::ReadBSKMessages()
                                 if (stateMsgBuffer.baudRate < 0.0) {
                                     /* sending data */
                                     scIt->transceiverList[idx]->transceiverState =
-                                      scIt->transceiverList[idx]->transceiverState | 1;
+                                        scIt->transceiverList[idx]->transceiverState | 1;
                                 } else if (stateMsgBuffer.baudRate > 0.0) {
                                     /* receiving data */
                                     scIt->transceiverList[idx]->transceiverState =
-                                      scIt->transceiverList[idx]->transceiverState | 2;
+                                        scIt->transceiverList[idx]->transceiverState | 2;
                                 }
                             }
                         }
@@ -480,7 +480,7 @@ void VizInterface::ReadBSKMessages()
                     if ((size_t)msmChargeMsgBuffer.q.size() == scIt->msmInfo.msmList.size()) {
                         for (size_t idx = 0; idx < (size_t)scIt->msmInfo.msmList.size(); idx++) {
                             scIt->msmInfo.msmList[idx]->currentValue =
-                              msmChargeMsgBuffer.q[static_cast<Eigen::Index>(idx)];
+                                msmChargeMsgBuffer.q[static_cast<Eigen::Index>(idx)];
                         }
                     } else {
                         bskLogger.bskError("vizInterface: the number of charged in MSM message and the number of msm "
@@ -558,18 +558,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_ambient(this->settings.ambient);
         if (this->settings.ambient > 8.0 || (this->settings.ambient < 0.0 && this->settings.ambient != -1.0)) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.",
-              this->settings.ambient);
+                BSK_WARNING,
+                "vizInterface: The Vizard ambient light value must be within [0,8].  A value of %f was received.",
+                this->settings.ambient);
         }
 
         // define if osculating orbit lines should be shown
         vizSettings->set_orbitlineson(this->settings.orbitLinesOn);
         if (abs(this->settings.orbitLinesOn) > 2) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.",
-              this->settings.orbitLinesOn);
+                BSK_WARNING,
+                "vizInterface: The Vizard orbitLinesOn flag must be either -1, 0, 1 or 2.  A value of %d was received.",
+                this->settings.orbitLinesOn);
         }
 
         // define if true orbit lines should be shown
@@ -585,18 +585,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_spacecraftcson(this->settings.spacecraftCSon);
         if (abs(this->settings.spacecraftCSon) > 1) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.spacecraftCSon);
+                BSK_WARNING,
+                "vizInterface: The Vizard spacecraftCSon flag must be either -1, 0 or 1.  A value of %d was received.",
+                this->settings.spacecraftCSon);
         }
 
         // define if planet axes should be shown
         vizSettings->set_planetcson(this->settings.planetCSon);
         if (abs(this->settings.planetCSon) > 1) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.planetCSon);
+                BSK_WARNING,
+                "vizInterface: The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.",
+                this->settings.planetCSon);
         }
 
         // define the skyBox variable
@@ -652,19 +652,19 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // define if camera HUD should be shown
         vizSettings->set_viewcameraviewhud(this->settings.viewCameraViewHUD);
         if (abs(this->settings.viewCameraViewHUD) > 1) {
-            bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard viewCameraViewHUD flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.viewCameraViewHUD);
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard viewCameraViewHUD flag must be either -1, 0 or 1.  A value of "
+                             "%d was received.",
+                             this->settings.viewCameraViewHUD);
         }
 
         // define if coordinate system labels should be shown
         vizSettings->set_showcslabels(this->settings.showCSLabels);
         if (abs(this->settings.showCSLabels) > 1) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.showCSLabels);
+                BSK_WARNING,
+                "vizInterface: The Vizard showCSLabels flag must be either -1, 0 or 1.  A value of %d was received.",
+                this->settings.showCSLabels);
         }
 
         // define if celestial body labels should be shown
@@ -688,10 +688,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // define if camera labels should be shown
         vizSettings->set_showcameralabels(this->settings.showCameraLabels);
         if (abs(this->settings.showCameraLabels) > 1) {
-            bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.showCameraLabels);
+            bskLogger.bskLog(BSK_WARNING,
+                             "vizInterface: The Vizard showCameraLabels flag must be either -1, 0 or 1.  A value of %d "
+                             "was received.",
+                             this->settings.showCameraLabels);
         }
 
         // define the GUI scaling factor
@@ -728,9 +728,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_show24hrclock(this->settings.show24hrClock);
         if (abs(this->settings.show24hrClock) > 1) {
             bskLogger.bskLog(
-              BSK_WARNING,
-              "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.",
-              this->settings.show24hrClock);
+                BSK_WARNING,
+                "vizInterface: The Vizard show24hrClock flag must be either -1, 0 or 1.  A value of %d was received.",
+                this->settings.show24hrClock);
         }
 
         // define if the data frame rate should be shown
@@ -771,7 +771,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_atmospheresoff(this->settings.atmospheresOff);
         vizSettings->set_scviewtoplanetviewboundarymultiplier(this->settings.scViewToPlanetViewBoundaryMultiplier);
         vizSettings->set_planetviewtohelioviewboundarymultiplier(
-          this->settings.planetViewToHelioViewBoundaryMultiplier);
+            this->settings.planetViewToHelioViewBoundaryMultiplier);
         vizSettings->set_sunintensity(this->settings.sunIntensity);
         vizSettings->set_attenuatesunlightwithdistance(this->settings.attenuateSunLightWithDistance);
         vizSettings->set_showlightlabels(this->settings.showLightLabels);
@@ -787,14 +787,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings->set_celestialbodyorbitlinewidth(this->settings.celestialBodyOrbitLineWidth);
         vizSettings->set_linesandframeslinewidth(this->settings.linesAndFramesLineWidth);
         vizSettings->set_uselinerenderersfortargetlinesandframes(
-          this->settings.useLineRenderersForTargetLinesAndFrames);
+            this->settings.useLineRenderersForTargetLinesAndFrames);
         for (size_t i = 0; i < settings.osculatingOrbitLineRange.size(); i++) {
             vizSettings->add_osculatingorbitlinerange(
-              static_cast<int32_t>(std::lround(this->settings.osculatingOrbitLineRange[i] * R2D)));
+                static_cast<int32_t>(std::lround(this->settings.osculatingOrbitLineRange[i] * R2D)));
         }
         for (size_t i = 0; i < settings.osculatingGroundTrackRange.size(); i++) {
             vizSettings->add_osculatinggroundtrackrange(
-              static_cast<int32_t>(std::lround(this->settings.osculatingGroundTrackRange[i] * R2D)));
+                static_cast<int32_t>(std::lround(this->settings.osculatingGroundTrackRange[i] * R2D)));
         }
         vizSettings->set_showosculatinggroundtracklines(this->settings.showOsculatingGroundTrackLines);
         vizSettings->set_showtruepathgroundtracklines(this->settings.showTruePathGroundTrackLines);
@@ -1213,7 +1213,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 camera->add_camerapos_b(this->cameraConfigBuffers[camCounter].cameraPos_B[j]);
             }
             camera->set_renderrate(
-              this->cameraConfigBuffers[camCounter].renderRate); // Unity expects nano-seconds between images
+                this->cameraConfigBuffers[camCounter].renderRate); // Unity expects nano-seconds between images
             camera->set_cameraid(this->cameraConfigBuffers[camCounter].cameraID);
             camera->set_fieldofview(this->cameraConfigBuffers[camCounter].fieldOfView * R2D); // Unity expects degrees
             camera->set_skybox(this->cameraConfigBuffers[camCounter].skyBox);
@@ -1287,7 +1287,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             google::protobuf::uint8 varIntBuffer[4];
             uint32_t byteCount = (uint32_t)message->ByteSizeLong();
             google::protobuf::uint8* end =
-              google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
+                google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
             unsigned long varIntBytes = (unsigned long)(end - varIntBuffer);
             // Save message to file if saveFile flag is true, and if Vizard is not being terminated
             if (this->saveFile && !this->liveSettings.terminateVizard) {
@@ -1502,7 +1502,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
 
         // Receive VizBroadcastSyncSettings
         vizProtobufferMessage::VizBroadcastSyncSettings* broadcastSyncSettings =
-          msgRecv.mutable_broadcastsyncsettings();
+            msgRecv.mutable_broadcastsyncsettings();
 
         // Iterate through VizEventReply objects
         for (int i = 0; i < msgRecv.replies_size(); i++) {
@@ -1536,7 +1536,7 @@ void VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
                 bskLogger.bskError("Broadcast header did not send to socket.");
             }
             sendStatus =
-              zmq_send(this->publisher_socket, serializedSyncSettings.data(), serializedSyncSettings.size(), 0);
+                zmq_send(this->publisher_socket, serializedSyncSettings.data(), serializedSyncSettings.size(), 0);
             if (sendStatus == -1) {
                 bskLogger.bskError("Broadcast protobuffer did not send to socket.");
             }

@@ -50,8 +50,8 @@
 
 /*! @brief reaction wheel state effector class */
 class ReactionWheelStateEffector final
-  : public SysModel
-  , public StateEffector
+    : public SysModel
+    , public StateEffector
 {
   public:
     ReactionWheelStateEffector();
@@ -154,7 +154,7 @@ class ReactionWheelStateEffector final
     Eigen::MatrixXd* g_N;             //!< [m/s^2] Gravitational acceleration in N frame components
 
     double maxWheelAcceleration =
-      1.0e6; //!< [rad/s^2] Maximum allowed wheel acceleration to prevent numerical instability
+        1.0e6; //!< [rad/s^2] Maximum allowed wheel acceleration to prevent numerical instability
     double largeTorqueThreshold = 10.0; //!< [Nm] Threshold for warning about large torque with unlimited torque setting
 
   public:

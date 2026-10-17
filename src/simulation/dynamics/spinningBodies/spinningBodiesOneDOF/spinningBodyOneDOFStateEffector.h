@@ -41,8 +41,8 @@
 
 /*! @brief spinning body state effector class */
 class SpinningBodyOneDOFStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
 
   public:
@@ -72,7 +72,7 @@ class SpinningBodyOneDOFStateEffector final
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< (optional) motor torque input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;  //!< (optional) motor lock flag input message
     ReadFunctor<HingedRigidBodyMsgPayload>
-      spinningBodyRefInMsg;                     //!< (optional) spinning body reference input message name
+        spinningBodyRefInMsg;                   //!< (optional) spinning body reference input message name
     std::vector<DynamicEffector*> dynEffectors; //!< Vector of dynamic effectors attached
 
     SpinningBodyOneDOFStateEffector();                             //!< Constructor
@@ -86,7 +86,7 @@ class SpinningBodyOneDOFStateEffector final
                             int segment = 1) override;         //!< Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override; //!< Method for registering the SB inertial properties
     void linkInPrescribedMotionProperties(
-      DynParamManager& states) override; //!< Method for getting access to prescribed motion properties
+        DynParamManager& states) override; //!< Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::MRPd sigma_BN,
@@ -97,15 +97,15 @@ class SpinningBodyOneDOFStateEffector final
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for SB to compute its derivatives
     void updateEffectorMassProps(
-      double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
+        double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(
-      double integTime,
-      Eigen::Vector3d& rotAngMomPntCContr_B,
-      double& rotEnergyContr,
-      Eigen::Vector3d omega_BN_B) override;   //!< Method for computing energy and momentum for SBs
+        double integTime,
+        Eigen::Vector3d& rotAngMomPntCContr_B,
+        double& rotEnergyContr,
+        Eigen::Vector3d omega_BN_B) override; //!< Method for computing energy and momentum for SBs
     void computeSpinningBodyInertialStates(); //!< Method for computing the SB's states
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
-      override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+        override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
   private:
     void validateConfiguration(); //!< Validate and normalize the user-supplied configuration
@@ -186,9 +186,9 @@ class SpinningBodyOneDOFStateEffector final
     double thetaDot = 0.0;              //!< [rad/s] spinning body angle rate
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty =
-      nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+        nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty =
-      nullptr;                          //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase
+        nullptr;                        //!< [m/s] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData* thetaState = nullptr;    //!< state manager of theta for spinning body
     StateData* thetaDotState = nullptr; //!< state manager of thetaDot for spinning body
 

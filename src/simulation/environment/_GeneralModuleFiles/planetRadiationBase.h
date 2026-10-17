@@ -153,7 +153,7 @@ class PlanetRadiationBase : public SysModel
     BSKLogger bskLogger; //!< BSK logging
 
     bool eclipseCase =
-      false; //!< true = compute eclipse shadowing at each patch. Deprecated, will be removed after May 1st 2027.
+        false; //!< true = compute eclipse shadowing at each patch. Deprecated, will be removed after May 1st 2027.
 
     std::vector<PlanetEntry> planets; //!< registered planets, built in Reset() or addPlanetEntry()
 

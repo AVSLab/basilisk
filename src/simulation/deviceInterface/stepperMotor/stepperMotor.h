@@ -43,7 +43,7 @@ class StepperMotor : public SysModel
     void setStepTime(const double stepTime);
 
     ReadFunctor<MotorStepCommandMsgPayload>
-      motorStepCommandInMsg;                            //!< Input msg for the number of commanded motor step counts
+        motorStepCommandInMsg;                          //!< Input msg for the number of commanded motor step counts
     Message<StepperMotorMsgPayload> stepperMotorOutMsg; //!< Output msg for the stepper motor state information
 
   private:

@@ -25,8 +25,8 @@
 /*! @brief Structure used by the messaging system to communicate details about the array of joint states in the
  * system.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  JointArrayStateMsgPayload
+    //@cond DOXYGEN_IGNORE
+    JointArrayStateMsgPayload
 //@endcond
 
 {

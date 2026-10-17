@@ -166,7 +166,7 @@ class ImuSensor : public SysModel
     Eigen::Vector3d previous_v_SC_N; //!< [m/s] sensor velocity relative to the center of mass at the previous call,
                                      //!< inertial components
     Eigen::Vector3d
-      current_v_SC_N; //!< [m/s] sensor velocity relative to the center of mass at the current call, inertial components
+        current_v_SC_N; //!< [m/s] sensor velocity relative to the center of mass at the current call, inertial components
 
     Eigen::Vector3d accel_SN_P_out; //!< -- rDotDot_SN_P for either next method or output messages
     Eigen::Vector3d DV_SN_P_out;    //!< -- time step deltaV for either next method or output messages

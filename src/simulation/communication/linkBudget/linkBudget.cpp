@@ -55,7 +55,7 @@ LinkBudget::LinkBudget()
                            // full bandwidth overlap
     this->centerfreq = {}; // [Hz] Center frequency of the two antennas
     this->atmosAtt =
-      false; // [-]  Disable atmospheric attenuation by default (default value for L_atm = 0 dB, can be set by setter)
+        false; // [-]  Disable atmospheric attenuation by default (default value for L_atm = 0 dB, can be set by setter)
     this->pointingLoss = true; // [-]  Enable pointing loss by default (default value for L_point calculated, if
                                // disabled L_point = 0 dB & settable set by setter)
     this->freqLoss = true;     // [-]  Enable frequency offset loss by default (default value for L_freq calculated, if
@@ -101,7 +101,7 @@ void LinkBudget::initialization()
         // -------- Both antennas are on EARTH --> not supported --------
         this->antennaPlacement = LinkBudgetTypes::AntennaPlacement::_UNKNOWN_BLOCKED;
         bskLogger.bskError(
-          "This module does currently not support link budget calculations between two ground stations.");
+            "This module does currently not support link budget calculations between two ground stations.");
     } else if (this->env1 == AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH &&
                this->env2 == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
         // -------- Antenna 1 is on EARTH, antenna 2 is in SPACE --------
@@ -141,12 +141,12 @@ void LinkBudget::initialization()
         double T_0 = ItuAtmosphere::getTempISA(this->h_0); // [K]     Temperature at ground antenna altitude
         double P_0 = ItuAtmosphere::getPresISA(this->h_0); // [hPa]   Pressure at ground antenna altitude
         double rho_0 =
-          ItuAtmosphere::getWaterVapDensityISA(this->h_0); // [g/m3]  Water vapor density at ground antenna altitude
+            ItuAtmosphere::getWaterVapDensityISA(this->h_0); // [g/m3]  Water vapor density at ground antenna altitude
         double e_0 = (rho_0 * T_0) /
                      (216.7); // [hPa]   Water vapor partial pressure at ground antenna altitude (ITU-R P.453-14 eq: 10)
         // Refractivity at ground antenna altitude
         n_0 = 1 + (77.6 * (P_0 / T_0) - 5.6 * (e_0 / T_0) + 3.75e5 * (e_0 / (T_0 * T_0))) *
-                    1e-6; // [-] (ITU-R P.453-14 eq: 1 & eq: 6)
+                      1e-6; // [-] (ITU-R P.453-14 eq: 1 & eq: 6)
 
         // (done once at initialization, during simulation lookup)
         this->generateLookupTable(LinkBudgetTypes::GasType::OXYGEN, &this->oxygenLookup);
@@ -197,7 +197,7 @@ void LinkBudget::calculateLinkBudget()
         // If frequency offset loss calculation is disabled, calculate
         // bandwidth overlap and center frequency for FSPL calculation
         this->B_overlap = std::min(
-          this->antennaIn_1.B, this->antennaIn_2.B); // [Hz] If frequency loss disabled, assume full bandwidth overlap
+            this->antennaIn_1.B, this->antennaIn_2.B); // [Hz] If frequency loss disabled, assume full bandwidth overlap
         this->centerfreq = (this->antennaIn_1.frequency + this->antennaIn_2.frequency) / 2.0; // [Hz] Average frequency
         if (this->B_overlap > 0.0) {
             this->linkValid = true;
@@ -252,7 +252,7 @@ void LinkBudget::calculateAtmosphericLoss()
                                this->gndAntPnt->nHat_LP_N[1],
                                this->gndAntPnt->nHat_LP_N[2] }; // n-vector at antenna location in {N} frame
     double cosSlant_i =
-      this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N); // [cos(rad)] Cosinus of slant angle at the ground
+        this->calcCosSlantGround(r_AgN_N, n_Ag_n, r_AsN_N); // [cos(rad)] Cosinus of slant angle at the ground
     cosSlant_i = std::clamp(cosSlant_i, -1.0, 1.0);
 
     // Check initial elevation angle and warn once if below minimum
@@ -266,8 +266,8 @@ void LinkBudget::calculateAtmosphericLoss()
         h_i = this->attenuationLookup.layer_i[i];     // [m]     Altitude layer i
         gamma_i = this->attenuationLookup.gamma_i[i]; // [dB/km] Attenuation value at altitude layer i
         delta_h_layer_i =
-          this->attenuationLookup.delta_h_layer_i[i]; // [m]     Thickness of altitude layer i (ITU-R P.676-13 eq 16a)
-        n_i = this->attenuationLookup.n_i[i];         // [-]     Refractivity at altitude layer i
+            this->attenuationLookup.delta_h_layer_i[i]; // [m]     Thickness of altitude layer i (ITU-R P.676-13 eq 16a)
+        n_i = this->attenuationLookup.n_i[i];           // [-]     Refractivity at altitude layer i
 
         sinSlant_i = std::sqrt(std::max(0.0, 1.0 - cosSlant_i * cosSlant_i));
         if (sinSlant_i < MIN_SIN_ELEVATION) {
@@ -289,7 +289,7 @@ double LinkBudget::calcCosSlantGround(Eigen::Vector3d r_AgN_N, Eigen::Vector3d n
 {
     // (ITU-R P.676-13 eq 12)
     Eigen::Vector3d n_AsAg_N =
-      (r_AsN_N - r_AgN_N).normalized(); // Vector from ground antenna to spacecraft in {N} frame
+        (r_AsN_N - r_AgN_N).normalized(); // Vector from ground antenna to spacecraft in {N} frame
     double v_n = n_AsAg_N.dot(n_Ag_N.normalized());
     double v_t = std::sqrt(1.0 - v_n * v_n);
     double alpha0 = std::atan2(v_n, v_t);
@@ -305,8 +305,8 @@ Eigen::Vector2d LinkBudget::getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vec
     double deltaNorm = r_A2A1_N.norm();
     if (deltaNorm <= std::numeric_limits<double>::epsilon()) {
         bskLogger.bskLog(
-          BSK_WARNING,
-          "LinkBudget.getPointingError: antenna positions are coincident; returning zero pointing errors.");
+            BSK_WARNING,
+            "LinkBudget.getPointingError: antenna positions are coincident; returning zero pointing errors.");
         return { 0.0, 0.0 };
     }
     // Calculate the unit vector from antenna 1 to antenna 2, decomposed in antenna 1 frame
@@ -333,13 +333,13 @@ void LinkBudget::calculatePointingLoss()
                                                          cArray2EigenVector3d(this->antennaIn_1.r_AN_N),
                                                          cArray2EigenMRPd(this->antennaIn_2.sigma_AN));
         double L_point1 =
-          10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
-          ((errors1[0] * errors1[0]) / (this->antennaIn_1.HPBW_az * this->antennaIn_1.HPBW_az) +
-           (errors1[1] * errors1[1]) / (this->antennaIn_1.HPBW_el * this->antennaIn_1.HPBW_el)); // [dB] Pointing loss
+            10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
+            ((errors1[0] * errors1[0]) / (this->antennaIn_1.HPBW_az * this->antennaIn_1.HPBW_az) +
+             (errors1[1] * errors1[1]) / (this->antennaIn_1.HPBW_el * this->antennaIn_1.HPBW_el)); // [dB] Pointing loss
         double L_point2 =
-          10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
-          ((errors2[0] * errors2[0]) / (this->antennaIn_2.HPBW_az * this->antennaIn_2.HPBW_az) +
-           (errors2[1] * errors2[1]) / (this->antennaIn_2.HPBW_el * this->antennaIn_2.HPBW_el)); // [dB] Pointing loss
+            10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
+            ((errors2[0] * errors2[0]) / (this->antennaIn_2.HPBW_az * this->antennaIn_2.HPBW_az) +
+             (errors2[1] * errors2[1]) / (this->antennaIn_2.HPBW_el * this->antennaIn_2.HPBW_el)); // [dB] Pointing loss
         this->L_point = L_point1 + L_point2;
         return;
     } else if (this->gndAntPnt != nullptr && this->scAntPnt != nullptr) {
@@ -349,9 +349,9 @@ void LinkBudget::calculatePointingLoss()
                                                         cArray2EigenVector3d(this->gndAntPnt->r_AN_N),
                                                         cArray2EigenMRPd(this->scAntPnt->sigma_AN));
         this->L_point =
-          10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
-          ((errors[0] * errors[0]) / (this->scAntPnt->HPBW_az * this->scAntPnt->HPBW_az) +
-           (errors[1] * errors[1]) / (this->scAntPnt->HPBW_el * this->scAntPnt->HPBW_el)); // [dB] Pointing loss
+            10 * std::log10(std::exp(1.0)) * 4.0 * std::log(2.0) *
+            ((errors[0] * errors[0]) / (this->scAntPnt->HPBW_az * this->scAntPnt->HPBW_az) +
+             (errors[1] * errors[1]) / (this->scAntPnt->HPBW_el * this->scAntPnt->HPBW_el)); // [dB] Pointing loss
         return;
     }
 }
@@ -615,7 +615,7 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
                            (P_i * pow(theta_i, this->waterVaporLookup.l_4[j]) +
                             this->waterVaporLookup.l_5[j] * e_i * pow(theta_i, this->waterVaporLookup.l_6[j]));
             delta_f_wv_i =
-              0.535 * delta_f_wv_i + sqrt(0.217 * delta_f_wv_i * delta_f_wv_i + (2.1316e-12 * f_j * f_j) / theta_i);
+                0.535 * delta_f_wv_i + sqrt(0.217 * delta_f_wv_i * delta_f_wv_i + (2.1316e-12 * f_j * f_j) / theta_i);
             // Calculate F_j (ITU-R P.676-13 eq 5)
             den_Fj = (f_j - f_GHz) * (f_j - f_GHz) + delta_f_wv_i * delta_f_wv_i;
             F_j = (f_GHz) / (f_j) * 2 * ((delta_f_wv_i) / (den_Fj));
@@ -632,7 +632,7 @@ void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable
         gamma_i = 0.1820 * f_GHz * (N_ox_i + N_wv_i + N_D_i); // [dB/km] (ITU-R P.676-13 eq 1)
         // Calculate refractive apparent index
         n_i = 1 + (77.6 * (P_i / T_i) - 5.6 * (e_i / T_i) + 3.75e5 * (e_i / (T_i * T_i))) *
-                    1e-6; // [-] Refractivity at altitude h_i (ITU-R P.453-12 eq 1 & 6)
+                      1e-6; // [-] Refractivity at altitude h_i (ITU-R P.453-12 eq 1 & 6)
         //        n_i = 1 + n_0 * 1e-6 * exp(-h_i/7350.0);                                                   // [-]
         //        Alternative calculation (ITU-R P.453-12 eq 11)
 
@@ -670,9 +670,9 @@ void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
                   "%s",
                   this->antennaIn_2.antennaName); // [-]  ID of antenna 2
     linkBudgetOutPayloadBuffer.antennaState1 =
-      this->antennaIn_1.antennaState; // [-]  State of antenna 1 (Off/Tx/Rx/TxRx)
+        this->antennaIn_1.antennaState; // [-]  State of antenna 1 (Off/Tx/Rx/TxRx)
     linkBudgetOutPayloadBuffer.antennaState2 =
-      this->antennaIn_2.antennaState;                        // [-]  State of antenna 2 (Off/Tx/Rx/TxRx)
+        this->antennaIn_2.antennaState;                      // [-]  State of antenna 2 (Off/Tx/Rx/TxRx)
     linkBudgetOutPayloadBuffer.CNR1 = this->CNR1;            // [-]  Carrier-to-Noise Ratio for antenna 1
     linkBudgetOutPayloadBuffer.CNR2 = this->CNR2;            // [-]  Carrier-to-Noise Ratio for antenna 2
     linkBudgetOutPayloadBuffer.distance = this->distance;    // [m]  Distance between the two antennas
@@ -695,14 +695,14 @@ void LinkBudget::calculateCNR()
     auto state2 = static_cast<AntennaTypes::AntennaStateEnum>(this->antennaIn_2.antennaState);
 
     // Helper booleans for readability
-    bool ant1_rx =
-      (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RX || state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
-    bool ant1_tx =
-      (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_TX || state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
-    bool ant2_rx =
-      (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RX || state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
-    bool ant2_tx =
-      (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_TX || state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant1_rx = (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
+                    state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant1_tx = (state1 == AntennaTypes::AntennaStateEnum::ANTENNA_TX ||
+                    state1 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant2_rx = (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RX ||
+                    state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
+    bool ant2_tx = (state2 == AntennaTypes::AntennaStateEnum::ANTENNA_TX ||
+                    state2 == AntennaTypes::AntennaStateEnum::ANTENNA_RXTX);
 
     // Calculate the received power P_Rx for the receiver
     // Check which antenna is the receiver

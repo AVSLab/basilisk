@@ -65,8 +65,8 @@ class VizInterface : public SysModel
     std::vector<QuadMap*> quadMaps;                                   //!< vector of QuadMap regions
     std::vector<GravBodyInfo> gravBodyInformation;                    //!< vector of gravitational body info
     std::vector<Message<CameraImageMsgPayload>*>
-      opnavImageOutMsgs; //!< vector of vizard instrument camera output messages
-    bool saveFile;       //!< [Bool] Set True if Vizard should save a file of the data.
+        opnavImageOutMsgs; //!< vector of vizard instrument camera output messages
+    bool saveFile;         //!< [Bool] Set True if Vizard should save a file of the data.
 
     bool liveStream;      //!< [Bool] Set True if Vizard should receive a live stream of BSK data.
     bool broadcastStream; //!< [Bool] Set True if messages should be broadcast for listener Vizards to pick up.
@@ -120,7 +120,7 @@ class VizInterface : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<CameraImageMsgPayload>>>
-      ownedOpnavImageOutMsgs; //!< Storage for opnavImageOutMsgs.
+        ownedOpnavImageOutMsgs; //!< Storage for opnavImageOutMsgs.
 };
 
 #endif /* VIZ_INTERFACE_H */

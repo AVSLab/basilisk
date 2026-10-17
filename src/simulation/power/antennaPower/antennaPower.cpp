@@ -81,7 +81,7 @@ void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsage)
             break;
         case AntennaTypes::AntennaStateEnum::ANTENNA_RXTX:
             powerUsage->netPower =
-              -this->antennaStatusMsgBuffer.P_Rx - this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
+                -this->antennaStatusMsgBuffer.P_Rx - this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
             break;
         default:
             bskLogger.bskError("AntennaPower: Invalid antenna state.");

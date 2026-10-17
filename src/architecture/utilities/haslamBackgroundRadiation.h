@@ -39,7 +39,7 @@ inline const Eigen::Matrix3d dcm_GN = (Eigen::Matrix3d() << -0.054875539390,
                                        -0.867666135681,
                                        -0.198076389622,
                                        +0.455983794523)
-                                        .finished();
+                                          .finished();
 
 /*! @brief Singleton class for Haslam 408 MHz all-sky background radiation map
  *

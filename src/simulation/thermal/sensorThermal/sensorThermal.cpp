@@ -183,7 +183,7 @@ void SensorThermal::evaluateThermalModel(double CurrentSimSeconds)
 
     //! - Compute Q_out
     this->Q_out =
-      this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
+        this->sensorArea * this->sensorEmissivity * this->boltzmannConst * pow((this->sensorTemp + 273.15), 4);
 
     //! - Compute change in energy using Euler integration
     double dT = (this->Q_in - this->Q_out) / (this->sensorSpecificHeat * this->sensorMass);

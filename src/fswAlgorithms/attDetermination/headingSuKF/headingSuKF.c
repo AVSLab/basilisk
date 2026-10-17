@@ -89,7 +89,7 @@ void Reset_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * (configData->numStates + configData->kappa) - configData->numStates;
+        configData->alpha * configData->alpha * (configData->numStates + configData->kappa) - configData->numStates;
     configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
@@ -307,7 +307,7 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig* configData, double updateTime)
     }
     /*! - Zero the AT matrix prior to assembly*/
     mSetZero(
-      AT, (2 * (size_t)configData->countHalfSPs + (size_t)configData->numStates), (size_t)configData->countHalfSPs);
+        AT, (2 * (size_t)configData->countHalfSPs + (size_t)configData->numStates), (size_t)configData->countHalfSPs);
     /*! - Assemble the AT matrix.  Note that this matrix is the internals of
           the qr decomposition call in the source design documentation.  It is
           the inside of equation 20 in that document*/
@@ -365,7 +365,7 @@ void headingSuKFMeasModel(HeadingSuKFConfig* configData)
     for (j = 0; j < configData->countHalfSPs * 2 + 1; j++) {
         for (i = 0; i < 3; i++)
             configData->yMeas[i * (configData->countHalfSPs * 2 + 1) + j] =
-              configData->SP[i + j * HEAD_N_STATES_SWITCH];
+                configData->SP[i + j * HEAD_N_STATES_SWITCH];
     }
 
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/

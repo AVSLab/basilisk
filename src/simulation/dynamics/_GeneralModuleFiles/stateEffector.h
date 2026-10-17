@@ -63,7 +63,7 @@ class StateEffector
   public:
     EffectorMassProps effProps; //!< stateEffectors instantiation of effector mass props
     Eigen::VectorXd
-      stateDerivContribution;      //!< stateEffector contribution to another stateEffector to prevent double-counting
+        stateDerivContribution;    //!< stateEffector contribution to another stateEffector to prevent double-counting
     Eigen::Vector3d forceOnBody_B; //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B; //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B; //!< [N] Torque that the state effector applies to the body about point B
@@ -161,8 +161,8 @@ class StateEffector
                                      Eigen::Vector3d omega_BN_B,
                                      Eigen::Vector3d g_N); //!< Back-sub contributions
     virtual void addPrescribedMotionCouplingContributions(
-      BackSubMatrices&
-        backSubContr); //!< Method for adding coupling contributions for state effector branching on prescribed motion
+        BackSubMatrices&
+            backSubContr); //!< Method for adding coupling contributions for state effector branching on prescribed motion
     virtual void updateEnergyMomContributions(double integTime,
                                               Eigen::Vector3d& rotAngMomPntCContr_B,
                                               double& rotEnergyContr,
@@ -177,12 +177,12 @@ class StateEffector
                                     int segment);           //!< Method to attach a dynamic effector
     virtual void linkInStates(DynParamManager& states) = 0; //!< Method for stateEffectors to get other states
     virtual void linkInPrescribedMotionProperties(
-      DynParamManager& properties); //!< Method for stateEffectors to access prescribed motion properties
+        DynParamManager& properties); //!< Method for stateEffectors to access prescribed motion properties
     virtual void computeDerivatives(
-      double integTime,
-      Eigen::Vector3d rDDot_BN_N,
-      Eigen::Vector3d omegaDot_BN_B,
-      Eigen::MRPd sigma_BN) = 0; //!< Method for each stateEffector to calculate derivatives
+        double integTime,
+        Eigen::Vector3d rDDot_BN_N,
+        Eigen::Vector3d omegaDot_BN_B,
+        Eigen::MRPd sigma_BN) = 0; //!< Method for each stateEffector to calculate derivatives
 
     /** Commit dimension-defining collections after successful registration. */
     virtual void freezeTopology() noexcept { this->topologyFrozen = true; }
@@ -223,12 +223,12 @@ class StateEffector
     Eigen::MatrixXd* prescribedPositionProperty = nullptr; //!< [m] r_PB_B prescribed position relative to hub
     Eigen::MatrixXd* prescribedVelocityProperty = nullptr; //!< [m/s] rPrime_PB_B prescribed velocity relative to hub
     Eigen::MatrixXd* prescribedAccelerationProperty =
-      nullptr; //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
+        nullptr; //!< [m/s^2] rPrimePrime_PB_B prescribed acceleration relative to hub
     Eigen::MatrixXd* prescribedAttitudeProperty = nullptr; //!< sigma_PB prescribed MRP attitude relative to hub
     Eigen::MatrixXd* prescribedAngVelocityProperty =
-      nullptr; //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
+        nullptr; //!< [rad/s] omega_PB_P prescribed angular velocity relative to hub
     Eigen::MatrixXd* prescribedAngAccelerationProperty =
-      nullptr; //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
+        nullptr; //!< [rad/s^2] omegaPrime_PB_P prescribed angular acceleration relative to hub
 };
 
 #endif /* STATE_EFFECTOR_H */

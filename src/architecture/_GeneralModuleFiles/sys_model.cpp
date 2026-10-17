@@ -21,6 +21,6 @@
 #include "architecture/utilities/moduleIdGenerator/moduleIdGenerator.h"
 
 SysModel::SysModel()
-  : moduleID(ModuleIdGenerator::GetInstance()->checkoutModuleID())
+    : moduleID(ModuleIdGenerator::GetInstance()->checkoutModuleID())
 {
 }

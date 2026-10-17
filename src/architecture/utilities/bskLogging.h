@@ -88,12 +88,12 @@ class BasiliskError : public std::runtime_error
 {
   public:
     explicit BasiliskError(const std::string& message)
-      : std::runtime_error(message)
+        : std::runtime_error(message)
     {
     }
 
     explicit BasiliskError(const char* message)
-      : std::runtime_error(message)
+        : std::runtime_error(message)
     {
     }
 };

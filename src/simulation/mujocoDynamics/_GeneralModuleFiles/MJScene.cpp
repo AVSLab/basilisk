@@ -53,8 +53,8 @@ class ScopedFlag
 {
   public:
     explicit ScopedFlag(bool& flag) noexcept
-      : flag(flag)
-      , previous(flag)
+        : flag(flag)
+        , previous(flag)
     {
         flag = true;
     }
@@ -92,7 +92,7 @@ void forEachUniqueTaskModel(SysModelTask& dynamicsTask, SysModelTask& diffusionT
 }
 
 MJScene::MJScene(std::string xml, const std::vector<std::string>& files)
-  : spec(*this, xml, files)
+    : spec(*this, xml, files)
 {
     this->AddFwdKinematicsToDynamicsTask(MJScene::FWD_KINEMATICS_PRIORITY);
     this->setIntegrator(new svIntegratorRK4(this));
@@ -190,7 +190,7 @@ void MJScene::registerAndBindDynamicsState(mjModel* model, mjData* data, bool to
 
     if (!topologyAlreadyFinalized) {
         this->massState->setState(
-          Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(model->body_mass, model->nbody));
+            Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(model->body_mass, model->nbody));
         if (this->actState) {
             this->actState->setState(Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1>>(data->act, model->na));
         }
@@ -281,7 +281,7 @@ void MJScene::bindMujocoStateSegments(mjModel* model,
         segments.qvelDerivative = this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qvelSlot], nv);
         if (!highOrderAttitude) {
             segments.qposDerivative =
-              this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qposSlot], nv);
+                this->dynManager.getStateRegistry().getDerivativeSegment(jointSlots[qposSlot], nv);
         }
         double* qposData = this->dynManager.getStateRegistry().stateSegmentData(segments.qposState);
         double* qvelData = this->dynManager.getStateRegistry().stateSegmentData(segments.qvelState);
@@ -404,7 +404,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
 
     if (model->nv > 0) {
         double* qvelDerivativeData =
-          this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQvelDerivativeSegment);
+            this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQvelDerivativeSegment);
         std::copy_n(data->qacc, model->nv, qvelDerivativeData);
         if (this->modelTopology.highOrderAttitude) {
             for (auto&& body : this->spec.getBodies()) {
@@ -412,7 +412,7 @@ void MJScene::equationsOfMotion(double t, double timeStep [[maybe_unused]])
             }
         } else {
             double* qposDerivativeData =
-              this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQposDerivativeSegment);
+                this->dynManager.getStateRegistry().derivativeSegmentData(this->jointQposDerivativeSegment);
             std::copy_n(data->qvel, model->nv, qposDerivativeData);
         }
     }
@@ -481,8 +481,8 @@ void MJScene::writeFwdKinematicsMessages(uint64_t CurrentSimNanos)
 void MJScene::saveToFile(std::string filename)
 {
     std::string suffix = ".mjb";
-    bool binary_file =
-      filename.size() >= suffix.size() && filename.compare(filename.size() - suffix.size(), suffix.size(), suffix) == 0;
+    bool binary_file = filename.size() >= suffix.size() &&
+                       filename.compare(filename.size() - suffix.size(), suffix.size(), suffix) == 0;
 
     if (binary_file) {
         mj_saveModel(this->getMujocoModel(), filename.c_str(), NULL, 0);
@@ -528,7 +528,7 @@ MJBody& MJScene::getBody(const std::string& name)
 {
     auto& bodies = this->spec.getBodies();
     auto bodyPtr =
-      std::find_if(std::begin(bodies), std::end(bodies), [&](auto&& obj) { return obj.getName() == name; });
+        std::find_if(std::begin(bodies), std::end(bodies), [&](auto&& obj) { return obj.getName() == name; });
 
     if (bodyPtr == std::end(bodies)) {
         this->bskLogger.bskError("Unknown body '%s' in MJScene", name.c_str());
@@ -549,7 +549,7 @@ MJEquality& MJScene::getEquality(const std::string& name)
 {
     auto& equalities = this->spec.getEqualities();
     auto equalityPtr =
-      std::find_if(std::begin(equalities), std::end(equalities), [&](auto&& obj) { return obj.getName() == name; });
+        std::find_if(std::begin(equalities), std::end(equalities), [&](auto&& obj) { return obj.getName() == name; });
 
     if (equalityPtr == std::end(equalities)) {
         this->bskLogger.bskError("Unknown equality '%s' in MJScene", name.c_str());
@@ -703,9 +703,9 @@ void MJScene::copyMujocoArraysFromStates(mjModel* model, mjData* data)
 bool MJScene::updateForwardKinematicsFromStates(mjModel* model, mjData* data)
 {
     const double* qposData =
-      model->nq > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment) : nullptr;
+        model->nq > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment) : nullptr;
     const double* qvelData =
-      model->nv > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment) : nullptr;
+        model->nv > 0 ? this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment) : nullptr;
     const bool qposChanged = model->nq > 0 && !std::equal(qposData, qposData + model->nq, data->qpos);
     const bool qvelChanged = model->nv > 0 && !std::equal(qvelData, qvelData + model->nv, data->qvel);
 
@@ -776,7 +776,7 @@ Eigen::VectorXd MJScene::assembleFullQpos()
         return Eigen::VectorXd(0);
     }
     return Eigen::Map<const Eigen::VectorXd>(
-      this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment), model->nq);
+        this->dynManager.getStateRegistry().stateSegmentData(this->jointQposStateSegment), model->nq);
 }
 
 Eigen::VectorXd MJScene::assembleFullQvel()
@@ -786,13 +786,13 @@ Eigen::VectorXd MJScene::assembleFullQvel()
         return Eigen::VectorXd(0);
     }
     return Eigen::Map<const Eigen::VectorXd>(
-      this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment), model->nv);
+        this->dynManager.getStateRegistry().stateSegmentData(this->jointQvelStateSegment), model->nv);
 }
 
 void MJScene::writeOutputStateMessages(uint64_t CurrentSimNanos)
 {
     this->writeOutputStateMessages(
-      CurrentSimNanos, this->modelTopology.nq, this->modelTopology.nv, this->modelTopology.na);
+        CurrentSimNanos, this->modelTopology.nq, this->modelTopology.nv, this->modelTopology.na);
 }
 
 void MJScene::writeOutputStateMessages(uint64_t currentSimNanos, mjtSize nq, mjtSize nv, mjtSize na)

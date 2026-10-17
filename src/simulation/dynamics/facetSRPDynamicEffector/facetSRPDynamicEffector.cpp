@@ -243,9 +243,9 @@ void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]
             facetSRPForcePntB_B = -SRPPressure * projectedArea *
                                   ((1 - this->scGeometry.facetSpecularCoeffList[i]) * sHat +
                                    2 *
-                                     ((this->scGeometry.facetDiffuseCoeffList[i] / 3) +
-                                      this->scGeometry.facetSpecularCoeffList[i] * cosTheta) *
-                                     this->facetNHat_BList[i]);
+                                       ((this->scGeometry.facetDiffuseCoeffList[i] / 3) +
+                                        this->scGeometry.facetSpecularCoeffList[i] * cosTheta) *
+                                       this->facetNHat_BList[i]);
             facetSRPTorquePntB_B = this->scGeometry.facetR_CopB_BList[i].cross(facetSRPForcePntB_B);
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft

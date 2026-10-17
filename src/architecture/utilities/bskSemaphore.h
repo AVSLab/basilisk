@@ -34,7 +34,7 @@ class BSKSemaphore
   public:
     /*! method description */
     BSKSemaphore(size_t count_in = 0)
-      : count(count_in)
+        : count(count_in)
     {
     }
 

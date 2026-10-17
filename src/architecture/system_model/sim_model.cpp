@@ -58,8 +58,8 @@ void activateNewThread(void* threadData)
 }
 
 SimThreadExecution::SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos)
-  : currentThreadNanos(currentSimNanos)
-  , threadID(threadIdent)
+    : currentThreadNanos(currentSimNanos)
+    , threadID(threadIdent)
 {
 }
 
@@ -291,9 +291,9 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
             }
 
             this->NextTaskTime =
-              simThread->NextTaskTime < this->NextTaskTime ? simThread->NextTaskTime : this->NextTaskTime;
+                simThread->NextTaskTime < this->NextTaskTime ? simThread->NextTaskTime : this->NextTaskTime;
             this->CurrentNanos =
-              simThread->CurrentNanos < this->CurrentNanos ? simThread->CurrentNanos : this->CurrentNanos;
+                simThread->CurrentNanos < this->CurrentNanos ? simThread->CurrentNanos : this->CurrentNanos;
         }
     }
 }

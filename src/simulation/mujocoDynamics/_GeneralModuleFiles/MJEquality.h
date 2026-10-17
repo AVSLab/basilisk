@@ -57,8 +57,8 @@ class MJEquality : public MJObject<mjsEquality>
      * @param spec Reference to the `MJSpec` object where this equality is defined.
      */
     MJEquality(mjsEquality* mjsequality, MJSpec& spec)
-      : MJObject(mjsequality)
-      , spec(spec)
+        : MJObject(mjsequality)
+        , spec(spec)
     {
     }
 

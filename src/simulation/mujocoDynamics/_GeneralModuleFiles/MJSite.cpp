@@ -27,8 +27,8 @@
 #include <sstream>
 
 MJSite::MJSite(mjsSite* site, MJBody& body)
-  : MJObject(site)
-  , body(body)
+    : MJObject(site)
+    , body(body)
 {
 }
 

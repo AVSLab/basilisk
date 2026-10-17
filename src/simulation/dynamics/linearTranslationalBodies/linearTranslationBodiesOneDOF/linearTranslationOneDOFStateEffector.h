@@ -34,15 +34,15 @@
 
 /*! @brief linear spring mass damper state effector class */
 class LinearTranslationOneDOFStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     Message<LinearTranslationRigidBodyMsgPayload> translatingBodyOutMsg; //!< state output message
     Message<SCStatesMsgPayload> translatingBodyConfigLogOutMsg;          //!< translating body state config log message
     ReadFunctor<ArrayMotorForceMsgPayload> motorForceInMsg;              //!< (optional) motor force input message
     ReadFunctor<LinearTranslationRigidBodyMsgPayload>
-      translatingBodyRefInMsg;                               //!< (optional) reference state input message
+        translatingBodyRefInMsg;                             //!< (optional) reference state input message
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg; //!< (optional) lock flag input message
 
     LinearTranslationOneDOFStateEffector();  //!< Constructor
@@ -99,11 +99,11 @@ class LinearTranslationOneDOFStateEffector final
     double rhoDotInit = 0;                   //!< [m/s] Initial displacement rate offset
     Eigen::Vector3d fHat_B{ 1.0, 0.0, 0.0 }; //!< unit vector axis of translation in B frame components.
     Eigen::Vector3d r_FcF_F =
-      Eigen::Vector3d::Zero(); //!< [m] vector pointing from location F to FC in F frame components
+        Eigen::Vector3d::Zero(); //!< [m] vector pointing from location F to FC in F frame components
     Eigen::Vector3d r_F0B_B = Eigen::Vector3d::Zero(); //!< [m] vector pointing from body frame B origin to point to F0
                                                        //!< origin of F frame in B frame components
     Eigen::Matrix3d IPntFc_F =
-      Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of pc about point Fc in F frame component
+        Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of pc about point Fc in F frame component
     Eigen::Matrix3d dcm_FB = Eigen::Matrix3d::Identity(); //!< DCM from the body frame to the F frame
     std::string nameOfRhoState{};                         //!< Identifier for the rho state data container
     std::string nameOfRhoDotState{};                      //!< Identifier for the rhoDot state data container
@@ -120,7 +120,7 @@ class LinearTranslationOneDOFStateEffector final
     double rhoDotRef = 0.0;    //!< [m/s] translating body reference velocity
     double motorForce = 0.0;   //!< [N] optional motor force
     Eigen::Vector3d r_FcB_B =
-      Eigen::Vector3d::Zero(); //!< [m] position vector from B to center of mass location of effector
+        Eigen::Vector3d::Zero(); //!< [m] position vector from B to center of mass location of effector
     Eigen::Vector3d r_FcF0_B = Eigen::Vector3d::Zero(); //!< [m] vector pointing from point p0 origin of F frame to
                                                         //!< center of mass location of effector in B frame components
     Eigen::Matrix3d rTilde_FcF_B = Eigen::Matrix3d::Zero();      //!< [m] tilde matrix of r_FcF_B
@@ -130,10 +130,10 @@ class LinearTranslationOneDOFStateEffector final
     Eigen::Vector3d rPrime_FcB_B = Eigen::Vector3d::Zero();      //!< [m/s] Body time derivative of r_FcB_B
     Eigen::Matrix3d rPrimeTilde_FcB_B = Eigen::Matrix3d::Zero(); //!< [m/s] Tilde matrix of rPrime_FcB_B
     Eigen::Matrix3d IPntFc_B =
-      Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of Fc about point B in B frame components
+        Eigen::Matrix3d::Identity(); //!< [kg-m^2] Inertia of Fc about point B in B frame components
     Eigen::Matrix3d dcm_BN = Eigen::Matrix3d::Identity(); //!< DCM from the B frame to the N frame
     Eigen::Vector3d omega_BN_B =
-      Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components.
+        Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity of the B frame wrt the N frame in B frame components.
 
     Eigen::Vector3d aRho = Eigen::Vector3d::Zero(); //!< Term needed for back-sub method
     Eigen::Vector3d bRho = Eigen::Vector3d::Zero(); //!< Term needed for back-sub method
@@ -144,17 +144,17 @@ class LinearTranslationOneDOFStateEffector final
     Eigen::MatrixXd* g_N = nullptr;     //!< [m/s^2] gravitational acceleration in N frame components
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty =
-      nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+        nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty =
-      nullptr;                  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+        nullptr;                //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     static uint64_t effectorID; //!< ID number of this panel
 
     Eigen::Vector3d r_FcN_N = Eigen::Vector3d::Zero(); //!< [m] position vector of translating body's center of mass Fc
                                                        //!< relative to the inertial frame origin N
     Eigen::Vector3d v_FcN_N =
-      Eigen::Vector3d::Zero(); //!< [m/s] inertial velocity vector of Fc relative to inertial frame
+        Eigen::Vector3d::Zero(); //!< [m/s] inertial velocity vector of Fc relative to inertial frame
     Eigen::MatrixXd* r_FN_N =
-      nullptr; //!< [m] position vector of translating body's frame origin F relative to the inertial frame origin N
+        nullptr; //!< [m] position vector of translating body's frame origin F relative to the inertial frame origin N
     Eigen::MatrixXd* v_FN_N = nullptr;     //!< [m/s] inertial velocity vector of F relative to inertial frame
     Eigen::MatrixXd* sigma_FN = nullptr;   //!< MRP attitude of frame F relative to inertial frame
     Eigen::MatrixXd* omega_FN_F = nullptr; //!< [rad/s] inertial translating body frame angular velocity vector
@@ -186,7 +186,7 @@ class LinearTranslationOneDOFStateEffector final
     void computeBackSubContributions(BackSubMatrices& backSubContr, const Eigen::Vector3d& F_g, double integTime);
     void readInputMessages();
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
-      override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+        override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
     // Properties required for prescribed motion branching/attachment
     StateData* hubOmega; //!< [rad/s] hub inertial angular velocity vector

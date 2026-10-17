@@ -42,8 +42,8 @@ class PrescribedRotation1DOF : public SysModel
     void setCoastOptionBangDuration(const double bangDuration); //!< Setter for the coast option bang duration
     void setRotHat_M(const Eigen::Vector3d& rotHat_M);          //!< Setter for the spinning body rotation axis
     void setSmoothingDuration(
-      const double smoothingDuration); //!< Setter method for the duration the acceleration is smoothed until reaching
-                                       //!< the given maximum acceleration value
+        const double smoothingDuration); //!< Setter method for the duration the acceleration is smoothed until reaching
+                                         //!< the given maximum acceleration value
     void setThetaDDotMax(const double thetaDDotMax); //!< Setter for the bang segment scalar angular acceleration
     void setThetaInit(const double thetaInit);       //!< Setter for the initial spinning body angle
     double getCoastOptionBangDuration() const;       //!< Getter for the coast option bang duration
@@ -60,18 +60,18 @@ class PrescribedRotation1DOF : public SysModel
     double getInitDisplacement() const;                      //!< Getter for the initial linear displacement
 
     ReadFunctor<HingedRigidBodyMsgPayload>
-      spinningBodyInMsg; //!< Input msg for the spinning body reference angle and angle rate
+        spinningBodyInMsg; //!< Input msg for the spinning body reference angle and angle rate
     Message<HingedRigidBodyMsgPayload> spinningBodyOutMsg; //!< Output msg for the spinning body angle and angle rate
     Message<PrescribedRotationMsgPayload>
-      prescribedRotationOutMsg; //!< Output msg for the spinning body prescribed rotational states
+        prescribedRotationOutMsg; //!< Output msg for the spinning body prescribed rotational states
     Message<PrescribedTranslationMsgPayload>
-      prescribedTranslationOutMsg; //!< Output msg for the prescribed translational states if screw motion is configured
+        prescribedTranslationOutMsg; //!< Output msg for the prescribed translational states if screw motion is configured
     HingedRigidBodyMsg_C spinningBodyOutMsgC = {}; //!< C-wrapped output msg for the spinning body angle and angle rate
     PrescribedRotationMsg_C
-      prescribedRotationOutMsgC = {}; //!< C-wrapped output msg for the spinning body prescribed rotational states
+        prescribedRotationOutMsgC = {}; //!< C-wrapped output msg for the spinning body prescribed rotational states
     PrescribedTranslationMsg_C
-      prescribedTranslationOutMsgC = {}; //!< C-wrapped output msg for the prescribed translational  states if screw
-                                         //!< motion is configured
+        prescribedTranslationOutMsgC = {}; //!< C-wrapped output msg for the prescribed translational  states if screw
+                                           //!< motion is configured
 
     BSKLogger* bskLogger; //!< BSK Logging
 
@@ -92,23 +92,23 @@ class PrescribedRotation1DOF : public SysModel
     void computeCurrentState(double time); //!< Intermediate method used to group the calculation of the current
                                            //!< rotational states into a single method
     bool isInFirstBangSegment(
-      double time) const; //!< Method for determining if the current time is within the first bang segment
+        double time) const; //!< Method for determining if the current time is within the first bang segment
     bool isInSecondBangSegment(
-      double time) const; //!< Method for determining if the current time is within the second bang segment
+        double time) const; //!< Method for determining if the current time is within the second bang segment
     bool isInFirstSmoothedSegment(double time) const;  //!< Method for determining if the current time is within the
                                                        //!< first smoothing segment for the smoothed profiler options
     bool isInSecondSmoothedSegment(double time) const; //!< Method for determining if the current time is within the
                                                        //!< second smoothing segment for the smoothed profiler options
     bool isInThirdSmoothedSegment(double time) const;  //!< Method for determining if the current time is within the
                                                        //!< third smoothing segment for the smoothed profiler options
-    bool isInFourthSmoothedSegment(
-      double time) const; //!< Method for determining if the current time is within the fourth smoothing segment for the
-                          //!< smoothed bang-coast-bang option
+    bool isInFourthSmoothedSegment(double time)
+        const; //!< Method for determining if the current time is within the fourth smoothing segment for the
+               //!< smoothed bang-coast-bang option
     bool isInCoastSegment(
-      double time) const; //!< Method for determining if the current time is within the coast segment
+        double time) const; //!< Method for determining if the current time is within the coast segment
     void computeFirstBangSegment(double time); //!< Method for computing the first bang segment scalar rotational states
     void computeSecondBangSegment(
-      double time); //!< Method for computing the second bang segment scalar rotational states
+        double time); //!< Method for computing the second bang segment scalar rotational states
     void computeFirstSmoothedSegment(double time);  //!< Method for computing the first smoothing segment scalar
                                                     //!< rotational states for the smoothed profiler options
     void computeSecondSmoothedSegment(double time); //!< Method for computing the second smoothing segment scalar

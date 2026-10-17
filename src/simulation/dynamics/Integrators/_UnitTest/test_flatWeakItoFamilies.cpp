@@ -37,7 +37,7 @@ class WeakItoDynamics final : public DynamicObject
 {
   public:
     explicit WeakItoDynamics(size_t noiseCount, bool mixedTopology = false)
-      : mixedTopology(mixedTopology)
+        : mixedTopology(mixedTopology)
     {
         StateSpec spec;
         spec.state = { 1, 1 };
@@ -54,7 +54,7 @@ class WeakItoDynamics final : public DynamicObject
         } else {
             for (size_t noiseIndex = 0; noiseIndex < noiseCount; ++noiseIndex) {
                 this->dynManager.registerSharedNoiseSource(
-                  { { *this->first, noiseIndex }, { *this->second, noiseIndex } });
+                    { { *this->first, noiseIndex }, { *this->second, noiseIndex } });
             }
         }
         this->dynManager.finalizeStates();
@@ -211,7 +211,7 @@ void expectNoAllocationAfterBind()
     stepIntegrator(integrator, 0.0, 0.0);
 
     const auto observed =
-      integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+        integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
     EXPECT_EQ(observed.allocationCalls(), 0U);
 }
 
@@ -261,7 +261,7 @@ TEST(FlatWeakItoFamilies, W2ItoPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorW2Ito1 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ 0.017225447734423038, 0.1831984663246682 }, { 0.19143508986887522, -0.1501571687945868 }));
+            prescribed({ 0.017225447734423038, 0.1831984663246682 }, { 0.19143508986887522, -0.1501571687945868 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.4886843990979673);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.9537920887170881);
@@ -270,7 +270,7 @@ TEST(FlatWeakItoFamilies, W2ItoPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorW2Ito2 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ 0.08714682860793878, 0.07301273674452739 }, { -0.37346576044084245, -0.5112353004834385 }));
+            prescribed({ 0.08714682860793878, 0.07301273674452739 }, { -0.37346576044084245, -0.5112353004834385 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.48945470733642576);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.9543821243286132);
@@ -282,7 +282,7 @@ TEST(FlatWeakItoFamilies, DRI1PaperReferenceBits)
     WeakItoDynamics dynamics(2);
     svStochasticIntegratorDRI1 integrator(&dynamics);
     integrator.setNoiseGenerator(
-      prescribed({ -0.13976011088567203, 0.09330800242534518 }, { 0.21044072177715215, -0.20696984404638655 }));
+        prescribed({ -0.13976011088567203, 0.09330800242534518 }, { 0.21044072177715215, -0.20696984404638655 }));
     stepIntegrator(integrator, 0.0, 0.125);
     EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.4875825195312499);
     EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.9558728841145833);
@@ -305,7 +305,7 @@ TEST(FlatWeakItoFamilies, RIFamilyPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorRI1 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ 0.3214313724988835, 0.26565882991430884 }, { -0.07854918074676295, 0.06465323920073543 }));
+            prescribed({ 0.3214313724988835, 0.26565882991430884 }, { -0.07854918074676295, 0.06465323920073543 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.49130517578125005);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.9527543945312499);
@@ -314,7 +314,7 @@ TEST(FlatWeakItoFamilies, RIFamilyPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorRI3 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ 0.14084505263670893, -0.19898809924898814 }, { -0.4066940192839459, 0.059843829693812356 }));
+            prescribed({ 0.14084505263670893, -0.19898809924898814 }, { -0.4066940192839459, 0.059843829693812356 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.49130517578125005);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.9527543945312499);
@@ -323,7 +323,7 @@ TEST(FlatWeakItoFamilies, RIFamilyPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorRI5 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ -0.014115498539039673, -0.44467708215560936 }, { 0.09780314160098916, -0.12406419972642377 }));
+            prescribed({ -0.014115498539039673, -0.44467708215560936 }, { 0.09780314160098916, -0.12406419972642377 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.5789940869001351);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 1.0376344341650983);
@@ -332,7 +332,7 @@ TEST(FlatWeakItoFamilies, RIFamilyPaperReferenceBits)
         WeakItoDynamics dynamics(2);
         svStochasticIntegratorRI6 integrator(&dynamics);
         integrator.setNoiseGenerator(
-          prescribed({ -0.4024065724993792, 0.2726672203670614 }, { -0.2912841140397067, 0.22757946014224292 }));
+            prescribed({ -0.4024065724993792, 0.2726672203670614 }, { -0.2912841140397067, 0.22757946014224292 }));
         stepIntegrator(integrator, 0.0, 0.125);
         EXPECT_DOUBLE_EQ(dynamics.first->stateView()(0, 0), 0.41054982655179995);
         EXPECT_DOUBLE_EQ(dynamics.second->stateView()(0, 0), 0.8957075905642796);

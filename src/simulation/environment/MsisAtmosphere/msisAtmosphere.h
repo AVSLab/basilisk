@@ -78,9 +78,9 @@ class MsisAtmosphere : public AtmosphereBase
     double f107;
     double f107A;
     bool useApparentSolarTime =
-      false; //!< [-] if true the local solar time input is the apparent solar time, otherwise the mean solar time
+        false; //!< [-] if true the local solar time input is the apparent solar time, otherwise the mean solar time
     bool useApHistory =
-      false; //!< [-] if true NRLMSISE-00 uses the 3-hour Ap history (switch 9 set to -1), otherwise the daily Ap
+        false; //!< [-] if true NRLMSISE-00 uses the 3-hour Ap history (switch 9 set to -1), otherwise the daily Ap
 };
 
 #endif /* EXPONENTIAL_ATMOSPHERE_H */

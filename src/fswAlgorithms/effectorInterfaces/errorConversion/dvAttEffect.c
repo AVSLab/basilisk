@@ -56,7 +56,7 @@ void Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t
     for (uint32_t i = 0; i < configData->numThrGroups; i = i + 1) {
         configData->thrGroups[i].cmdRequests = THRArrayOnTimeCmdMsg_C_zeroMsgPayload();
         THRArrayOnTimeCmdMsg_C_write(
-          &configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
+            &configData->thrGroups[i].cmdRequests, &configData->thrGroups[i].thrOnTimeOutMsg, moduleID, callTime);
     }
 }
 

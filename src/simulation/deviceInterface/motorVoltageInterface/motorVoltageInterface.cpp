@@ -71,8 +71,8 @@ void MotorVoltageInterface::computeMotorTorque()
     for (size_t i = 0; i < MAX_EFF_CNT; i++) {
         const Eigen::Index eigenIndex = static_cast<Eigen::Index>(i);
         this->outputTorqueBuffer.motorTorque[i] =
-          this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(eigenIndex) * this->scaleFactor(eigenIndex) +
-          this->bias(eigenIndex);
+            this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(eigenIndex) * this->scaleFactor(eigenIndex) +
+            this->bias(eigenIndex);
     }
     return;
 }

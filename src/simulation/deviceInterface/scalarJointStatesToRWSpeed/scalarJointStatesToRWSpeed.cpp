@@ -22,12 +22,12 @@
 #include "scalarJointStatesToRWSpeed.h"
 
 ScalarJointStatesToRWSpeed::ScalarJointStatesToRWSpeed()
-  : numJoints(0)
+    : numJoints(0)
 {
 }
 
 ScalarJointStatesToRWSpeed::ScalarJointStatesToRWSpeed(uint32_t numJointsIn)
-  : numJoints(numJointsIn)
+    : numJoints(numJointsIn)
 {
     this->ensureSizes();
 }

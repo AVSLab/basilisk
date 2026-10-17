@@ -43,8 +43,8 @@ class CountingIntegrator : public StateVecIntegrator
 {
   public:
     CountingIntegrator(DynamicObject* object, int& destructions)
-      : StateVecIntegrator(object)
-      , destructions(destructions)
+        : StateVecIntegrator(object)
+        , destructions(destructions)
     {
     }
     ~CountingIntegrator() override { ++destructions; }
@@ -110,7 +110,7 @@ TEST(DynamicObjectOwnership, UniquePointerTransferAndReplacement)
         TestDynamicObject object;
         object.setIntegrator(std::make_unique<CountingIntegrator>(&object, oldDestructions));
         std::unique_ptr<StateVecIntegrator> replacement =
-          std::make_unique<CountingIntegrator>(&object, newDestructions);
+            std::make_unique<CountingIntegrator>(&object, newDestructions);
         auto* expected = replacement.get();
         object.setIntegrator(std::move(replacement));
         EXPECT_EQ(replacement, nullptr);

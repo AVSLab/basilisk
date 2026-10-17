@@ -34,8 +34,8 @@
 
 /*! @brief gravity gradient gradient module */
 class GravityGradientEffector final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     GravityGradientEffector();

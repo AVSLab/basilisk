@@ -45,7 +45,7 @@ MsisAtmosphere::MsisAtmosphere()
     this->updateInputParams();
 
     this->msisFlags.switches[0] =
-      1; //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
+        1; //! NRLMSISE-00 should output in kg/m^3 for consistency with other atmospheric modules.
     //! Set default settings for NRLMSISE-00; we're using all the settings by default
     for (int switchInd = 1; switchInd < 24; ++switchInd) {
         this->msisFlags.switches[switchInd] = 1;
@@ -150,7 +150,7 @@ double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDa
     // days from the Unix epoch to January 1 of the year, valid for years from 1970
     const int y = year - 1;
     const long daysFromEpoch =
-      365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400); // [day]
+        365L * (year - 1970) + (y / 4 - 1969 / 4) - (y / 100 - 1969 / 100) + (y / 400 - 1969 / 400); // [day]
     const double julianDate = static_cast<double>(daysFromEpoch + dayOfYear - 1) +
                               2440587.5 +                // [day] JD of the Unix epoch
                               secondOfDay / 86400.0;     // [day]
@@ -287,7 +287,7 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double cu
     //! Compute the geodetic position using the planet orientation.
 
     this->currentLLA =
-      PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius, this->getPlanetPolarRadius());
+        PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius, this->getPlanetPolarRadius());
     this->msisInput.g_lat = R2D * this->currentLLA[0];
     this->msisInput.g_long = R2D * this->currentLLA[1];
     this->msisInput.alt = this->currentLLA[2] / 1000.0; // NRLMSISE Altitude input must be in kilometers!
@@ -301,14 +301,14 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double cu
     this->msisInput.doy = localDateTime.tm_yday + 1; // Jan 1 is the 1st day of year, not 0th
     double fracSecond = currentTime - (int)currentTime;
     this->msisInput.sec =
-      localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
+        localDateTime.tm_hour * 3600.0 + localDateTime.tm_min * 60.0 + localDateTime.tm_sec + fracSecond;
 
     // Local solar time [hr]. By default this is the mean solar time. The apparent solar time, which NRLMSISE-00 is
     // defined with, adds the equation of time.
     this->msisInput.lst = this->msisInput.sec / 3600.0 + this->msisInput.g_long / 15.0;
     if (this->useApparentSolarTime) {
         this->msisInput.lst +=
-          this->equationOfTime(this->msisInput.year, this->msisInput.doy, this->msisInput.sec) / 3600.0;
+            this->equationOfTime(this->msisInput.year, this->msisInput.doy, this->msisInput.sec) / 3600.0;
     }
 
     //!  NRLMSISE-00 uses different models depending on the altitude.

@@ -226,14 +226,14 @@ void MagneticFieldWMM::computeWmmField(double decimalYear, MAGtype_CoordSpherica
 
     /* Compute Spherical Harmonic variables  */
     MAG_ComputeSphericalHarmonicVariables(
-      this->ellip, coordSpherical, this->timedMagneticModel->nMax, this->SphVariables);
+        this->ellip, coordSpherical, this->timedMagneticModel->nMax, this->SphVariables);
 
     /* Compute ALF  */
     MAG_AssociatedLegendreFunction(coordSpherical, this->timedMagneticModel->nMax, this->LegendreFunction);
 
     /* Accumulate the spherical harmonic coefficients*/
     MAG_Summation(
-      this->LegendreFunction, this->timedMagneticModel, *this->SphVariables, coordSpherical, &MagneticResultsSph);
+        this->LegendreFunction, this->timedMagneticModel, *this->SphVariables, coordSpherical, &MagneticResultsSph);
 
     v3Set(MagneticResultsSph.Bx, MagneticResultsSph.By, MagneticResultsSph.Bz, B_M);
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */

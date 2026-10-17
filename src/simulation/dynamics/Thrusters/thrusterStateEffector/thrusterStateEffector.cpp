@@ -85,7 +85,7 @@ void ThrusterStateEffector::validateConfiguration()
     this->validateRegisteredCount();
     if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
         this->bskLogger.bskError(
-          "ThrusterStateEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.", MAX_EFF_CNT);
+            "ThrusterStateEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.", MAX_EFF_CNT);
     }
     if (this->kappaInit.size() != this->thrusterData.size()) {
         this->bskLogger.bskError("ThrusterStateEffector: kappaInit must contain one entry per thruster.");
@@ -196,14 +196,14 @@ void ThrusterStateEffector::ConfigureThrustRequests()
             //! - For each case where we are above the minimum firing request, reset the thruster
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd = *CmdIt;
             this->thrusterData[THIter]->ThrustOps.fireCounter +=
-              this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0 : 1;
+                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0 : 1;
         } else {
             //! - Will ensure that thruster shuts down once this cmd expires
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd =
-              this->thrusterData[THIter]->ThrustOps.ThrustFactor > 1E-5 ? *CmdIt : 0.0;
+                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 1E-5 ? *CmdIt : 0.0;
         }
         this->thrusterData[THIter]->ThrustOps.ThrusterEndTime =
-          this->prevCommandTime + this->thrusterData[THIter]->ThrustOps.ThrustOnCmd;
+            this->prevCommandTime + this->thrusterData[THIter]->ThrustOps.ThrustOnCmd;
         //! After we have assigned the firing to the internal thruster, zero the command request.
         *CmdIt = 0.0;
         THIter++;
@@ -471,7 +471,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unuse
 
         //! - Compute the point B relative torque and aggregate into the composite body torque
         SingleThrusterTorque =
-          thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
+            thrustLocation_B.cross(SingleThrusterForce) + ops->ThrustFactor * it->MaxSwirlTorque * thrustDirection_B;
         this->torqueOnBodyPntB_B += SingleThrusterTorque;
 
         if (!it->updateOnly) {
@@ -481,7 +481,7 @@ void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unuse
                 mDotNozzle = it->MaxThrust * ops->ThrustFactor / (EARTH_GRAV * it->steadyIsp);
             }
             this->forceOnBody_B +=
-              2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
+                2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
             //! - Add the mass depletion torque contribution
             BM1 = thrustDirection_B;

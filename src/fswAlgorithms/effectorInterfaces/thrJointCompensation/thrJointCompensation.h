@@ -114,7 +114,7 @@ class ThrJointCompensation : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>>
-      ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
+        ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
 };
 
 #endif

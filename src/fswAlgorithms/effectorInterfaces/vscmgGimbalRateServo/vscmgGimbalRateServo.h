@@ -59,7 +59,7 @@ class VscmgGimbalRateServo : public SysModel
     double K_gammaDot;                        //!< [1/s] proportional gain applied to gimbal rate errors
     VSCMGArrayTorqueMsgPayload outputTorques; //!< [-] output torques for the VSCMGs
     VSCMGArrayConfigMsgPayload
-      vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
+        vscmgConfigParams; //!< [-] struct to store message containing VSCMG config parameters in body B frame
 };
 
 #endif

@@ -120,7 +120,7 @@ class GaussMarkov
     Eigen::VectorXd currentState; //!< -- State of the markov model
     Eigen::MatrixXd propMatrix;   //!< -- Matrix to propagate error state with
     Eigen::MatrixXd
-      noiseMatrix; //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
+        noiseMatrix; //!< -- Cholesky-decomposition or matrix square root of the covariance matrix to apply errors with
     BSKLogger bskLogger; //!< -- BSK Logging
 
   private:

@@ -21,7 +21,7 @@
 #include "dynamicObject.h"
 
 StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn)
-  : dynPtrs{ dynIn }
+    : dynPtrs{ dynIn }
 {
 }
 

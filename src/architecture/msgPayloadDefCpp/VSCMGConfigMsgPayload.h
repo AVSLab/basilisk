@@ -33,13 +33,13 @@ enum VSCMGModels
 
 /*! @brief Structure used to define the individual VSCMG configuration data message*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  VSCMGConfigMsgPayload
+    //@cond DOXYGEN_IGNORE
+    VSCMGConfigMsgPayload
 //@endcond
 {
     VSCMGModels VSCMGModel; //!< [-], type of imbalance model to use
     Eigen::Vector3d
-      rGB_B; //!< [m], vector pointing from body frame B origin to VSCMG frame G origin in B frame components
+        rGB_B; //!< [m], vector pointing from body frame B origin to VSCMG frame G origin in B frame components
     Eigen::Vector3d gsHat0_B; //!< [-] first axis of the G frame in B frame components (G frame for gamma=0)]
     Eigen::Vector3d gsHat_B;  //!< [-] first axis of the G frame in B frame components
     Eigen::Vector3d gtHat0_B; //!< [-] second axis of the G frame in B frame components (G frame for gamma=0)]
@@ -92,9 +92,9 @@ typedef struct
                                       //!< linearly
 
     Eigen::Matrix3d
-      IGPntGc_B; //!< [kg-m^2] inertia of the gimbal about point Gc (center of mass of the gimbal) in B frame components
+        IGPntGc_B; //!< [kg-m^2] inertia of the gimbal about point Gc (center of mass of the gimbal) in B frame components
     Eigen::Matrix3d
-      IWPntWc_B; //!< [kg-m^2] inertia of the wheel about point Wc (center of mass of the wheel) in B frame components
+        IWPntWc_B; //!< [kg-m^2] inertia of the wheel about point Wc (center of mass of the wheel) in B frame components
     Eigen::Matrix3d IPrimeGPntGc_B; //!< [kg-m^2] body frame time derivative of IGPntGc_B
     Eigen::Matrix3d IPrimeWPntWc_B; //!< [kg-m^2] body frame time derivative of IWPntWc_B
     Eigen::Vector3d rGcG_G; //!< [m] vector pointing from VSCMG frame G origin to point Gc (center of mass of the

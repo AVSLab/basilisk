@@ -66,7 +66,7 @@ typedef struct
     double tauIdealRW_W[MAX_EFF_CNT];   //!<  [N-m-s] Ideal individual wheel torques
     double tauIdealRW_B[MAX_EFF_CNT];   //!<  [N-m-s] Ideal wheel torque in the body frame
     double
-      wheelSpeedError_W[MAX_EFF_CNT]; //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
+        wheelSpeedError_W[MAX_EFF_CNT]; //!<  [N-m-s] difference between current wheel speeds and desired wheel speeds
     RWArrayConfigMsgPayload rwConfigParams;   //!< configuration for RW's
     MTBArrayConfigMsgPayload mtbConfigParams; //!< configuration for MTB layout
 

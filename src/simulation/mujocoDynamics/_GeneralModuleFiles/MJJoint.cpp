@@ -109,7 +109,7 @@ void MJJoint::checkInitialized() const
 {
     if (!this->qposAdr.has_value() || !this->statesRegistered) {
         body.getSpec().getScene().bskLogger.bskError(
-          "Tried to manipulate joint state before the joint was configured.");
+            "Tried to manipulate joint state before the joint was configured.");
     }
 }
 
@@ -118,8 +118,8 @@ void MJJoint::checkInitialized() const
 // ---------------------------------------------------------------------------
 
 MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
-  : MJJoint(joint, body)
-  , constrainedEquality(createConstrainedEquality(name, body.getSpec().getMujocoSpec()), body.getSpec())
+    : MJJoint(joint, body)
+    , constrainedEquality(createConstrainedEquality(name, body.getSpec().getMujocoSpec()), body.getSpec())
 {
     body.getSpec().markAsNeedingToRecompileModel();
 }

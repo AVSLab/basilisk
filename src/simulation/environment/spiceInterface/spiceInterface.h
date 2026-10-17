@@ -219,9 +219,9 @@ class SpiceInterface : public SysModel
     std::vector<Message<SpicePlanetStateMsgPayload>*> planetStateOutMsgs; //!< vector of planet state output messages
     std::vector<Message<SCStatesMsgPayload>*> scStateOutMsgs; //!< vector of spacecraft state output messages
     std::vector<Message<AttRefMsgPayload>*>
-      attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
+        attRefStateOutMsgs; //!< vector of spacecraft attitude reference state output messages
     std::vector<Message<TransRefMsgPayload>*>
-      transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
+        transRefStateOutMsgs; //!< vector of spacecraft translational reference state output messages
 
     std::string SPICEDataPath;  //!< -- Path on file to SPICE data
     std::string referenceBase;  //!< -- Base reference frame to use
@@ -231,7 +231,7 @@ class SpiceInterface : public SysModel
     std::string UTCCalInit;     //!< -- UTC time string for init time
 
     std::vector<std::string>
-      planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
+        planetFrames; //!< -- Optional vector of planet frame names.  Default values are IAU_ + planet name
 
     bool timeDataInit;        //!< -- Flag indicating whether time has been init
     double J2000ETInit;       //!< s Seconds elapsed since J2000 at init
@@ -289,12 +289,12 @@ class SpiceInterface : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<SpicePlanetStateMsgPayload>>>
-      ownedPlanetStateOutMsgs;                                                     //!< Storage for planetStateOutMsgs.
+        ownedPlanetStateOutMsgs;                                                   //!< Storage for planetStateOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>> ownedScStateOutMsgs; //!< Storage for scStateOutMsgs.
     std::vector<std::unique_ptr<Message<AttRefMsgPayload>>>
-      ownedAttRefStateOutMsgs; //!< Storage for attRefStateOutMsgs.
+        ownedAttRefStateOutMsgs; //!< Storage for attRefStateOutMsgs.
     std::vector<std::unique_ptr<Message<TransRefMsgPayload>>>
-      ownedTransRefStateOutMsgs; //!< Storage for transRefStateOutMsgs.
+        ownedTransRefStateOutMsgs; //!< Storage for transRefStateOutMsgs.
 };
 
 #endif

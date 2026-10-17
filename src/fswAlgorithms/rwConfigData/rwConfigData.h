@@ -31,7 +31,7 @@ typedef struct
 {
     /* declare module private variables */
     RWConstellationMsgPayload
-      rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
+        rwConstellation; /*!< struct to populate input RW config parameters in structural S frame */
     RWArrayConfigMsgPayload rwConfigParamsOut; /*!< struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
     RWConstellationMsg_C rwConstellationInMsg; /*!< RW array input message */

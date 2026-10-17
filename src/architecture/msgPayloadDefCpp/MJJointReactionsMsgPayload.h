@@ -25,8 +25,8 @@
 /*! @brief Structure used by the messaging system to communicate details about the spacecraft system including the
  * reaction forces and torques acting on the joints.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  MJJointReactionsMsgPayload
+    //@cond DOXYGEN_IGNORE
+    MJJointReactionsMsgPayload
 //@endcond
 
 {
@@ -37,7 +37,7 @@ typedef struct
     std::vector<double> biasForces;      //!< [-] bias reaction forces and torques on the joint DOFs in the system
     std::vector<double> passiveForces;   //!< [-] passive reaction forces and torques on the joint DOFs in the system
     std::vector<double>
-      constraintForces;                 //!< [-] constraint reaction forces and torques on the joint DOFs in the system
+        constraintForces;               //!< [-] constraint reaction forces and torques on the joint DOFs in the system
     std::vector<double> appliedForces;  //!< [-] applied reaction forces and torques on the joint DOFs in the system
     std::vector<double> actuatorForces; //!< [-] actuator reaction forces and torques on the joint DOFs in the system
 } MJJointReactionsMsgPayload;

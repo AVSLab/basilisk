@@ -368,8 +368,8 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
             } else {
                 double W2 = 4.0 / (4.0 + Tdiff);
                 x0Sol1 = x01_1 * (1.0 + (1.0 + this->numberOfRevolutions + c42 * (theta / (2 * M_PI) - 0.5)) /
-                                          (1.0 - c3 * this->numberOfRevolutions) * x01_1 *
-                                          (c1 * W2 - c2 * x01_1 * pow(W2, 1.0 / 2.0)));
+                                            (1.0 - c3 * this->numberOfRevolutions) * x01_1 *
+                                            (c1 * W2 - c2 * x01_1 * pow(W2, 1.0 / 2.0)));
             }
         }
 
@@ -378,10 +378,10 @@ std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
         double x01_2 = x_M + sqrt(term2);
         double W = x_M + x01_2;
         W = W * 4.0 / (4.0 + TdiffM) + pow(1.0 - W, 2);
-        x0Sol2 =
-          x01_2 * (1.0 - (1.0 + this->numberOfRevolutions + c41 * (theta / (2 * M_PI) - 0.5)) /
-                           (1.0 - c3 * this->numberOfRevolutions) * x01_2 * (c1 * W + c2 * x01_2 * pow(W, 1.0 / 2.0))) -
-          x_M;
+        x0Sol2 = x01_2 * (1.0 - (1.0 + this->numberOfRevolutions + c41 * (theta / (2 * M_PI) - 0.5)) /
+                                    (1.0 - c3 * this->numberOfRevolutions) * x01_2 *
+                                    (c1 * W + c2 * x01_2 * pow(W, 1.0 / 2.0))) -
+                 x_M;
     }
 
     std::array<double, 2> x0 = { x0Sol1, x0Sol2 };
@@ -542,8 +542,8 @@ std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
 
         double delta = tof - T;
         // compute new x using 3rd order householder algorithm
-        xnew =
-          x0 - delta * (pow(DT, 2) - delta * D2T / 2.0) / (DT * (pow(DT, 2) - delta * D2T) + D3T * pow(delta, 2) / 6.0);
+        xnew = x0 -
+               delta * (pow(DT, 2) - delta * D2T / 2.0) / (DT * (pow(DT, 2) - delta * D2T) + D3T * pow(delta, 2) / 6.0);
 
         err = abs(x0 - xnew);
         x0 = xnew;

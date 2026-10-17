@@ -49,11 +49,11 @@ typedef struct
     double a1Hat_B[3]; //!< solar array drive axis in body frame coordinates
     double a2Hat_B[3]; //!< solar array surface normal at zero rotation
     AttitudeFrame
-      attitudeFrame;  //!< attitudeFrame = 1: compute theta reference based on body frame instead of reference frame
-    double r_AB_B[3]; //!< location of the array center of pressure in body frame coordinates
-    double ThetaMax;  //!< [rad] maximum deflection angle allowed in momentum management mode
-    double sigma;     //!< [-] gain of the momentum management control law
-    double n;         //!< [-] design parameter of the momentum management control law
+        attitudeFrame; //!< attitudeFrame = 1: compute theta reference based on body frame instead of reference frame
+    double r_AB_B[3];  //!< location of the array center of pressure in body frame coordinates
+    double ThetaMax;   //!< [rad] maximum deflection angle allowed in momentum management mode
+    double sigma;      //!< [-] gain of the momentum management control law
+    double n;          //!< [-] design parameter of the momentum management control law
 
     /*! declare these variables for internal computations */
     int count;                              //!< counter variable for finite differences
@@ -70,7 +70,7 @@ typedef struct
     RWArrayConfigMsg_C rwConfigDataInMsg;      //!< input RWA configuration message
     HingedRigidBodyMsg_C hingedRigidBodyInMsg; //!< input hinged rigid body message
     HingedRigidBodyMsg_C
-      hingedRigidBodyRefOutMsg; //!< output msg containing hinged rigid body target angle and angle rate
+        hingedRigidBodyRefOutMsg; //!< output msg containing hinged rigid body target angle and angle rate
 
     BSKLogger* bskLogger; //!< BSK Logging
 

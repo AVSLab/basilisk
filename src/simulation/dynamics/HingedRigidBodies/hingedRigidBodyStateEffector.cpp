@@ -297,12 +297,12 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime,
     Eigen::Vector3d gravityTorquePntH_P;
     gravityTorquePntH_P = -this->d * this->sHat1_P.cross(this->mass * g_P);
     this->cTheta =
-      1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d) *
-      (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef) +
-       this->sHat2_P.dot(gravityTorquePntH_P + this->dcm_SP.transpose() * attBodyTorquePntS_S) +
-       (this->IPntS_S(2, 2) - this->IPntS_S(0, 0) + this->mass * this->d * this->d) * this->omega_PN_S(2) *
-         this->omega_PN_S(0) -
-       this->mass * this->d * this->sHat3_P.dot(this->omegaLoc_PN_P.cross(this->omegaLoc_PN_P.cross(this->r_HB_B))));
+        1.0 / (this->IPntS_S(1, 1) + this->mass * this->d * this->d) *
+        (this->u - this->k * (this->theta - this->thetaRef) - this->c * (this->thetaDot - this->thetaDotRef) +
+         this->sHat2_P.dot(gravityTorquePntH_P + this->dcm_SP.transpose() * attBodyTorquePntS_S) +
+         (this->IPntS_S(2, 2) - this->IPntS_S(0, 0) + this->mass * this->d * this->d) * this->omega_PN_S(2) *
+             this->omega_PN_S(0) -
+         this->mass * this->d * this->sHat3_P.dot(this->omegaLoc_PN_P.cross(this->omegaLoc_PN_P.cross(this->r_HB_B))));
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
@@ -314,13 +314,14 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime,
 
     // - Define rotational matrice contributions
     Eigen::Vector3d rotThetaFactor_P =
-      this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->r_SP_P.cross(this->sHat3_P);
+        this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->r_SP_P.cross(this->sHat3_P);
     backSubContr.matrixC = rotThetaFactor_P * this->aTheta.transpose();
     backSubContr.matrixD = rotThetaFactor_P * this->bTheta.transpose();
     backSubContr.vecRot =
-      -(this->thetaDot * this->omegaLoc_PN_P.cross(rotThetaFactor_P) + this->cTheta * rotThetaFactor_P +
-        this->mass * this->d * this->thetaDot * this->thetaDot * this->r_SP_P.cross(this->sHat1_P)) +
-      (this->dcm_SP.transpose() * attBodyTorquePntS_S) + this->r_HB_B.cross(this->dcm_SP.transpose() * attBodyForce_S);
+        -(this->thetaDot * this->omegaLoc_PN_P.cross(rotThetaFactor_P) + this->cTheta * rotThetaFactor_P +
+          this->mass * this->d * this->thetaDot * this->thetaDot * this->r_SP_P.cross(this->sHat1_P)) +
+        (this->dcm_SP.transpose() * attBodyTorquePntS_S) +
+        this->r_HB_B.cross(this->dcm_SP.transpose() * attBodyForce_S);
 
     return;
 }
@@ -442,15 +443,15 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
 
     // - Calculate torque that the HRB is applying about point B
     Eigen::Vector3d torqueFactorPntB_P =
-      this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->r_SP_P.cross(this->sHat3_P);
+        this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * this->r_SP_P.cross(this->sHat3_P);
     Eigen::Vector3d inertiaPrimeOmegaPntB_P =
-      this->ISPrimePntS_P * omegaLocal_PN_P -
-      this->mass * (this->rPrime_SP_P.cross(this->r_SP_P.cross(omegaLocal_PN_P)) +
-                    this->r_SP_P.cross(this->rPrime_SP_P.cross(omegaLocal_PN_P)));
+        this->ISPrimePntS_P * omegaLocal_PN_P -
+        this->mass * (this->rPrime_SP_P.cross(this->r_SP_P.cross(omegaLocal_PN_P)) +
+                      this->r_SP_P.cross(this->rPrime_SP_P.cross(omegaLocal_PN_P)));
     this->torqueOnBodyPntB_B =
-      -(torqueFactorPntB_P * thetaDDotLocal + inertiaPrimeOmegaPntB_P +
-        this->thetaDot * this->omegaLoc_PN_P.cross(torqueFactorPntB_P) +
-        this->mass * this->d * this->thetaDot * this->thetaDot * this->r_SP_P.cross(this->sHat1_P));
+        -(torqueFactorPntB_P * thetaDDotLocal + inertiaPrimeOmegaPntB_P +
+          this->thetaDot * this->omegaLoc_PN_P.cross(torqueFactorPntB_P) +
+          this->mass * this->d * this->thetaDot * this->thetaDot * this->r_SP_P.cross(this->sHat1_P));
 
     // - Define values needed to get the torque about point C
     Eigen::Vector3d cLocal_B = *this->c_B;
@@ -460,10 +461,10 @@ void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime [[mayb
 
     // - Calculate the torque about point C
     Eigen::Vector3d torqueFactorPntC_P =
-      this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * r_SC_B.cross(this->sHat3_P);
+        this->IPntS_S(1, 1) * this->sHat2_P + this->mass * this->d * r_SC_B.cross(this->sHat3_P);
     Eigen::Vector3d inertiaPrimeOmegaPntC_P =
-      this->ISPrimePntS_P * omegaLocal_PN_P - this->mass * (rPrime_SC_B.cross(r_SC_B.cross(omegaLocal_PN_P)) +
-                                                            r_SC_B.cross(rPrime_SC_B.cross(omegaLocal_PN_P)));
+        this->ISPrimePntS_P * omegaLocal_PN_P - this->mass * (rPrime_SC_B.cross(r_SC_B.cross(omegaLocal_PN_P)) +
+                                                              r_SC_B.cross(rPrime_SC_B.cross(omegaLocal_PN_P)));
     this->torqueOnBodyPntC_B = -(torqueFactorPntC_P * thetaDDotLocal + inertiaPrimeOmegaPntC_P +
                                  this->thetaDot * this->omegaLoc_PN_P.cross(torqueFactorPntC_P) +
                                  this->mass * this->d * this->thetaDot * this->thetaDot * r_SC_B.cross(this->sHat1_P));

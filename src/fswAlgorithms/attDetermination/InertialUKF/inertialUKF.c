@@ -90,8 +90,8 @@ void Reset_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t
 
     /*! - Set lambda/gamma to standard value for unscented Kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
-      (double)configData->numStates;                                                 /* [-] */
+        configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
+        (double)configData->numStates;                                               /* [-] */
     configData->gamma = sqrt((double)configData->numStates + configData->lambdaVal); /* [-] */
 
     /*! - Set the wM/wC vectors to standard values for unscented Kalman filters*/
@@ -110,10 +110,10 @@ void Reset_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t
     mCopy(configData->covarInit, configData->numStates, configData->numStates, configData->covar);
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate +=
-      ukfCholDecomp(configData->sBar, (int32_t)configData->numStates, (int32_t)configData->numStates, tempMatrix);
+        ukfCholDecomp(configData->sBar, (int32_t)configData->numStates, (int32_t)configData->numStates, tempMatrix);
 
     badUpdate += ukfCholDecomp(
-      configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
+        configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
 
     mCopy(tempMatrix, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates, configData->numStates, configData->sQnoise);
@@ -428,7 +428,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig* configData, double updateTime)
            configData->numStates * configData->numStates * sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(
-      AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
+        AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
 
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates, configData->sBar);

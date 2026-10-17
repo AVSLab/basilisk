@@ -58,7 +58,7 @@ class DataStorageUnitBase : public SysModel
     virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
     int messageInStoredData(
-      DataNodeUsageMsgPayload* tmpNodeMsg);    //!< Returns index of the dataName if it's already in storedData
+        DataNodeUsageMsgPayload* tmpNodeMsg);  //!< Returns index of the dataName if it's already in storedData
     int64_t sumAllData();                      //!< Sums all of the data in the storedData vector
     int64_t computeDataDelta(double baudRate); //!< Converts an integrated baud rate to a checked integer bit count
     bool dataFitsInCapacity(int64_t dataDelta, bool allowEqual) const; //!< Checks a data change without overflowing
@@ -68,9 +68,9 @@ class DataStorageUnitBase : public SysModel
   public:
     std::vector<ReadFunctor<DataNodeUsageMsgPayload>> nodeDataUseInMsgs; //!< Vector of data node input message names
     Message<DataStorageStatusMsgPayload>
-      storageUnitDataOutMsg; //!< Vector of message names to be written out by the storage unit
-    int64_t storageCapacity; //!< Storage capacity of the storage unit
-    BSKLogger bskLogger;     //!< logging variable
+        storageUnitDataOutMsg; //!< Vector of message names to be written out by the storage unit
+    int64_t storageCapacity;   //!< Storage capacity of the storage unit
+    BSKLogger bskLogger;       //!< logging variable
 
   protected:
     DataStorageStatusMsgPayload storageStatusMsg;      //!< class variable

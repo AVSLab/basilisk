@@ -26,13 +26,13 @@
 /*! @brief Structure used by the messaging system to communicate details about the spacecraft system configuration
 for spacecraft with thruster arms.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  THRArmConfigMsgPayload
+    //@cond DOXYGEN_IGNORE
+    THRArmConfigMsgPayload
 //@endcond
 {
     double hubMass; //!< [kg] mass of the spacecraft's hub
     std::vector<double>
-      r_BcB_B; //!< [m] position vector from the hub body frame origin to the hub center of mass (body frame)
+        r_BcB_B; //!< [m] position vector from the hub body frame origin to the hub center of mass (body frame)
 
     std::vector<int> bodyArmIdx;   //!< [-] index for which arm a body belongs to
     std::vector<int> bodyJointIdx; //!< [-] local joint index of the closest parent joint for each body
@@ -44,7 +44,7 @@ typedef struct
     std::vector<double> r_CP_P; //!< [m] position vector from the parent joint to the child joint(parent joint's frame),
                                 //!< column-major order
     std::vector<double>
-      shat_P; //!< [-] spin axis unit vector of a child joint (parent joint's frame), column-major order
+        shat_P; //!< [-] spin axis unit vector of a child joint (parent joint's frame), column-major order
     std::vector<double> dcm_C0P; //!< [-] direction cosine matrix from the child joint frame zero angle orientation to
                                  //!< the parent joint frame, column-major order
 

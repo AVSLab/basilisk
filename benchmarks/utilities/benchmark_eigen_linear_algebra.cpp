@@ -714,9 +714,9 @@ int main(int argc, char** argv)
         std::vector<BenchmarkResult> results;
 
         results.push_back(runBenchmarkPair(
-          "v3 dot", benchmarkIterations(20000000, options), runEigenVector3Dot, runLinearAlgebraVector3Dot));
+            "v3 dot", benchmarkIterations(20000000, options), runEigenVector3Dot, runLinearAlgebraVector3Dot));
         results.push_back(runBenchmarkPair(
-          "v3 cross", benchmarkIterations(10000000, options), runEigenVector3Cross, runLinearAlgebraVector3Cross));
+            "v3 cross", benchmarkIterations(10000000, options), runEigenVector3Cross, runLinearAlgebraVector3Cross));
         results.push_back(runBenchmarkPair("3x3 multiply",
                                            benchmarkIterations(5000000, options),
                                            runEigenMatrix3Multiply,
@@ -733,8 +733,10 @@ int main(int argc, char** argv)
                                            benchmarkIterations(1000000, options),
                                            runEigenMatrix3Inverse,
                                            runLinearAlgebraMatrix3Inverse));
-        results.push_back(runBenchmarkPair(
-          "4x4 inverse", benchmarkIterations(200000, options), runEigenMatrix4Inverse, runLinearAlgebraMatrix4Inverse));
+        results.push_back(runBenchmarkPair("4x4 inverse",
+                                           benchmarkIterations(200000, options),
+                                           runEigenMatrix4Inverse,
+                                           runLinearAlgebraMatrix4Inverse));
         results.push_back(runBenchmarkPair("6x6 multiply",
                                            benchmarkIterations(800000, options),
                                            runEigenMatrix6Multiply,
@@ -744,15 +746,15 @@ int main(int argc, char** argv)
                                            runEigenMatrix6VectorMultiply,
                                            runLinearAlgebraMatrix6VectorMultiply));
         results.push_back(runBenchmarkPair(
-          "dynamic 6x6 multiply",
-          benchmarkIterations(500000, options),
-          [](std::uint64_t iterations) { return runEigenDynamicMultiply(iterations, 6); },
-          [](std::uint64_t iterations) { return runLinearAlgebraDynamicMultiply(iterations, 6); }));
+            "dynamic 6x6 multiply",
+            benchmarkIterations(500000, options),
+            [](std::uint64_t iterations) { return runEigenDynamicMultiply(iterations, 6); },
+            [](std::uint64_t iterations) { return runLinearAlgebraDynamicMultiply(iterations, 6); }));
         results.push_back(runBenchmarkPair(
-          "dynamic 12x12 multiply",
-          benchmarkIterations(100000, options),
-          [](std::uint64_t iterations) { return runEigenDynamicMultiply(iterations, 12); },
-          [](std::uint64_t iterations) { return runLinearAlgebraDynamicMultiply(iterations, 12); }));
+            "dynamic 12x12 multiply",
+            benchmarkIterations(100000, options),
+            [](std::uint64_t iterations) { return runEigenDynamicMultiply(iterations, 12); },
+            [](std::uint64_t iterations) { return runLinearAlgebraDynamicMultiply(iterations, 12); }));
         results.push_back(runBenchmarkPair("generic 6x6 inverse",
                                            benchmarkIterations(200, options),
                                            runEigenGeneralMatrix6Inverse,

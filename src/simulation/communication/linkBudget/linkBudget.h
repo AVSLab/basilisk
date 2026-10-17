@@ -171,7 +171,7 @@ class LinkBudget : public SysModel
     AntennaLogMsgPayload* scAntPnt = nullptr;  //!< [-]   Pointer to the spacecraft antenna msg payload
     LookupTable oxygenLookup; //!< [-]   Oxygen absorption coefficients (frequency plus ITU-R P.676 a1..a6 coefficients)
     LookupTable
-      waterVaporLookup; //!< [-]   Water vapor absorption coefficients (frequency plus ITU-R P.676 b1..b6 coefficients)
+        waterVaporLookup; //!< [-]   Water vapor absorption coefficients (frequency plus ITU-R P.676 b1..b6 coefficients)
     std::string oxygenLookupFilePath;         //!< [-]   Optional oxygen lookup table JSON file path override
     std::string waterVaporLookupFilePath;     //!< [-]   Optional water-vapor lookup table JSON file path override
     AttenuationLookupTable attenuationLookup; //!< [-]   Atmospheric attenuation lookup table

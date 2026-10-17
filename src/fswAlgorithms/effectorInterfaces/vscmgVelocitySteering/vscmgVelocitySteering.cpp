@@ -88,10 +88,10 @@ void VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d gtHat0_B;   /*![-] second gimbal unit axis when rotation angle is 0*/
     Eigen::Vector3d ggHat_B;    /*![-] third gimbal unit axis*/
     Eigen::VectorXd etaDot(
-      2 * vscmgConfigParams.numVSCMG); /*![rad/s^2] and [rad/s] desired RW accelerations and gimbal rates*/
-    Eigen::Matrix3d BG0;               /*![-] DCM between body frame and gimbal frame when rotation angle is zero */
-    Eigen::Matrix3d GG0;               /*![-] DCM between gimbal frame and gimbal frame when rotation angle is zero */
-    Eigen::Matrix3d BG;                /*![-] DCM between body frame and gimbal frame */
+        2 * vscmgConfigParams.numVSCMG); /*![rad/s^2] and [rad/s] desired RW accelerations and gimbal rates*/
+    Eigen::Matrix3d BG0;                 /*![-] DCM between body frame and gimbal frame when rotation angle is zero */
+    Eigen::Matrix3d GG0;                 /*![-] DCM between gimbal frame and gimbal frame when rotation angle is zero */
+    Eigen::Matrix3d BG;                  /*![-] DCM between body frame and gimbal frame */
     Eigen::Matrix3d QWQT;
     Eigen::Matrix3Xd D0(3, vscmgConfigParams.numVSCMG);
     Eigen::Matrix3Xd D1(3, vscmgConfigParams.numVSCMG);
@@ -150,9 +150,9 @@ void VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
 
         D0.col(i) = BG.col(0) * vscmgConfigParams.IwsList[i];
         D1.col(i) =
-          (vscmgConfigParams.IwsList[i] * VSCMGSpeeds.wheelSpeeds[i] + 0.5 * vscmgConfigParams.JsList[i] * omegas) *
-            BG.col(1) +
-          0.5 * vscmgConfigParams.JsList[i] * omegat * BG.col(0);
+            (vscmgConfigParams.IwsList[i] * VSCMGSpeeds.wheelSpeeds[i] + 0.5 * vscmgConfigParams.JsList[i] * omegas) *
+                BG.col(1) +
+            0.5 * vscmgConfigParams.JsList[i] * omegat * BG.col(0);
         D2.col(i) = 0.5 * vscmgConfigParams.JtList[i] * (omegat * BG.col(0) + omegas * BG.col(1));
         D3.col(i) = vscmgConfigParams.JgList[i] * (omegat * BG.col(0) - omegas * BG.col(1));
         D4.col(i) = 0.5 * (vscmgConfigParams.JsList[i] - vscmgConfigParams.JtList[i]) *

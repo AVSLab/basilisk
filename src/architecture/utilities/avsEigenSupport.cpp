@@ -320,7 +320,7 @@ double bisectionSolve(double* interval, double accuracy, std::function<double(do
     // check if interval has opposite signs
     if ((fLeft * fRight) > 0) {
         bskLogger.bskError(
-          "avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
+            "avsEigenSupport.bisectionSolve: function values at interval bounds must have opposite signs");
     }
     // find root
     while ((right - left) >= accuracy) {

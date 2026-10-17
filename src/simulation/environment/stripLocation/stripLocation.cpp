@@ -47,7 +47,7 @@ StripLocation::StripLocation()
     this->r_LP_P_End.fill(0.0);   // [m] Ending point of the strip relative to PCPF.
 
     this->OldSimNanos =
-      0; // [ns] Currrent time when the simulation starts, used to compute the time already spent to image the strip.
+        0; // [ns] Currrent time when the simulation starts, used to compute the time already spent to image the strip.
 
     this->acquisitionSpeed = 3 * 1e-6; // [m/ns] Required acquisition speed.
 
@@ -125,9 +125,12 @@ void StripLocation::newpstart()
     double line_speed_ratio = this->lengthCentralLine / this->acquisitionSpeed;
     double t = this->preImagingTime * -1 / line_speed_ratio;
 
-    this->pStartUpdated = this->PositionCentralLine(
-      t, this->theta, this->pStart, this->pEnd); //[m] Updated starting point of the strip relative to PCPF, taking into
-                                                 // account the pre-imaging time (Spherical Extrapolation).
+    this->pStartUpdated =
+        this->PositionCentralLine(t,
+                                  this->theta,
+                                  this->pStart,
+                                  this->pEnd); //[m] Updated starting point of the strip relative to PCPF, taking into
+                                               // account the pre-imaging time (Spherical Extrapolation).
     this->isStartPositionUpdated = true;
 }
 
@@ -356,7 +359,7 @@ void StripLocation::computeAccess()
         // w_PN is in P components, so the planet-rotation velocity is evaluated with the P components of r_BP
         Eigen::Vector3d r_BP_P = this->dcm_PN * r_BP_N;
         Eigen::Vector3d v_BP_P =
-          this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - v_PN_N) - this->w_PN.cross(r_BP_P);
+            this->dcm_PN * (cArray2EigenVector3d(scStatesMsgIt->v_BN_N) - v_PN_N) - this->w_PN.cross(r_BP_P);
         Eigen::Vector3d v_BL_L = this->dcm_LP * (v_BP_P - this->v_LP_P) - omega_LP_L.cross(r_BL_L);
         eigenVector3d2CArray(v_BL_L, accessMsgIt->v_BL_L);
         accessMsgIt->range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
@@ -375,8 +378,8 @@ void StripLocation::computeAccess()
             accessMsgIt->azimuth = atan2(sin_az, cos_az);
             accessMsgIt->az_dot = (-r_BL_L[0] * v_BL_L[1] + r_BL_L[1] * v_BL_L[0]) / pow(xy_norm, 2);
             accessMsgIt->el_dot =
-              (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3)) /
-              (1 + pow(r_BL_L[2] / xy_norm, 2));
+                (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3)) /
+                (1 + pow(r_BL_L[2] / xy_norm, 2));
         }
 
         if ((viewAngle > this->minimumElevation) && (r_BL_mag <= this->maximumRange || this->maximumRange < 0) &&

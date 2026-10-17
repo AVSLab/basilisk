@@ -22,12 +22,12 @@
 #include "arrayMotorTorqueToSingleActuators.h"
 
 ArrayMotorTorqueToSingleActuators::ArrayMotorTorqueToSingleActuators()
-  : numActuators(0)
+    : numActuators(0)
 {
 }
 
 ArrayMotorTorqueToSingleActuators::ArrayMotorTorqueToSingleActuators(uint32_t numActuatorsIn)
-  : numActuators(numActuatorsIn)
+    : numActuators(numActuatorsIn)
 {
     this->ensureSizes();
 }

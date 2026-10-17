@@ -109,8 +109,9 @@ void computeAttitudeError(double sigma_R0R[3],
     m33MultV3(dcm_BN, ref.omega_RN_N, attGuidOut->omega_RN_B); /*! - compute reference omega in body frame components */
 
     v3Subtract(
-      nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B); /*! - delta_omega = omega_B - [BR].omega.r */
+        nav.omega_BN_B, attGuidOut->omega_RN_B, attGuidOut->omega_BR_B); /*! - delta_omega = omega_B - [BR].omega.r */
 
-    m33MultV3(
-      dcm_BN, ref.domega_RN_N, attGuidOut->domega_RN_B); /*! - compute reference d(omega)/dt in body frame components */
+    m33MultV3(dcm_BN,
+              ref.domega_RN_N,
+              attGuidOut->domega_RN_B); /*! - compute reference d(omega)/dt in body frame components */
 }

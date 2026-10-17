@@ -30,8 +30,8 @@ SimpleAntenna::SimpleAntenna()
     this->antennaName = "";                                                  // --        Antenna name
     this->environment = AntennaTypes::EnvironmentType::_ENVIRONMENT_UNKNOWN; // [-]       Antenna environment of antenna
                                                                              // 0: SPACE, 1: GROUND
-    this->antennaState =
-      AntennaTypes::AntennaStateEnum::ANTENNA_OFF; // [-]       Antenna state (OFF, RX, TX, RXTX, UNKNOWN) (default OFF)
+    this->antennaState = AntennaTypes::AntennaStateEnum::
+        ANTENNA_OFF; // [-]       Antenna state (OFF, RX, TX, RXTX, UNKNOWN) (default OFF)
     // Antenna Properties (set by user)
     this->frequency = -1; // [Hz]      Antenna operating frequency (default 2.2 GHz -> S-band)
     this->B = -1;         // [Hz]      Antenna frequency bandwidth (default 5 MHz)
@@ -57,9 +57,9 @@ SimpleAntenna::SimpleAntenna()
     this->v_AN_N = Eigen::Vector3d::Zero();   // [m/s]     Antenna velocity in N frame (stub, future use)
     // SPACE
     this->r_AB_B =
-      Eigen::Vector3d::Zero(); // [m]       Antenna position relative to body frame    (default aligned with body)
+        Eigen::Vector3d::Zero(); // [m]       Antenna position relative to body frame    (default aligned with body)
     this->sigma_AB =
-      Eigen::MRPd::Identity(); // [-]       Antenna orientation relative to body frame (default aligned with body)
+        Eigen::MRPd::Identity(); // [-]       Antenna orientation relative to body frame (default aligned with body)
     // GROUND
     this->r_AP_N = Eigen::Vector3d::Zero(); // [m]       Position of the antenna wrt to the celestial body frame {P}
                                             // (used for ground antennas only)
@@ -138,9 +138,9 @@ void SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         // SPACE antenna
         if (!this->sunInMsg.isLinked()) {
             // Sun data message is NOT linked -> space background temperature is uniform (warning only)
-            bskLogger.bskLog(
-              BSK_INFORMATION,
-              "SimpleAntenna.sunInMsg was not linked --> Space background temperature is set to uniform temperature.");
+            bskLogger.bskLog(BSK_INFORMATION,
+                             "SimpleAntenna.sunInMsg was not linked --> Space background temperature is set to uniform "
+                             "temperature.");
         }
         if (this->planetInMsgs.size() == 0) {
             bskLogger.bskLog(BSK_INFORMATION,
@@ -150,8 +150,8 @@ void SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         if (!this->sunEclipseInMsg.isLinked()) {
             // Sun eclipse message is NOT linked for a space antenna -> cannot determine if Sun is eclipsed
             bskLogger.bskLog(
-              BSK_INFORMATION,
-              "SimpleAntenna.sunEclipseInMsg was not linked --> Space antenna cannot determine eclipse state.");
+                BSK_INFORMATION,
+                "SimpleAntenna.sunEclipseInMsg was not linked --> Space antenna cannot determine eclipse state.");
         }
     }
 
@@ -174,9 +174,9 @@ void SimpleAntenna::initializeAntenna()
 
     // Calculate HPBW_el && HPBW_az based on k and G
     double dir_lin = pow(10, this->DdB / 10); // [-]   Linear scale directivity
-    double HPBW_el =
-      sqrt((log(2) * 16) / (dir_lin * this->k)); // [rad] HPBW in elevation (derived for a gaussian beam pattern) (with
-                                                 // default values HPBW_el = 0.333 rad = 19.1 deg)
+    double HPBW_el = sqrt((log(2) * 16) /
+                          (dir_lin * this->k)); // [rad] HPBW in elevation (derived for a gaussian beam pattern) (with
+                                                // default values HPBW_el = 0.333 rad = 19.1 deg)
     double HPBW_az = this->k * HPBW_el; // [rad] HPBW in azimuth (with default values HPBW_az = 0.333 rad = 19.1 deg)
     this->HPBW = { HPBW_az, HPBW_el };  // [rad] store HPBW in azimuth and elevation
 
@@ -243,7 +243,7 @@ void SimpleAntenna::writeOutputMessages(uint64_t CurrentSimNanos)
     this->populateOutputMsg(&this->antennaPhysicalStateMsgBuffer);
     // Write the output message
     this->antennaOutMsg.write(
-      &this->antennaPhysicalStateMsgBuffer, this->moduleID, CurrentSimNanos); // write antenna state message
+        &this->antennaPhysicalStateMsgBuffer, this->moduleID, CurrentSimNanos); // write antenna state message
 }
 
 /* Calculate sky temperature based on environmental parameters
@@ -280,7 +280,7 @@ double SimpleAntenna::calculateTsky()
             // Check if the Sun is in the field of view
             r_SN_N = cArray2EigenVector3d(this->sunData.PositionVector);
             double sunCoverage =
-              this->calculatePlanetCoverage(REQ_SUN * 1000, r_SN_N, this->HPBW[0] / 2, this->HPBW[1] / 2);
+                this->calculatePlanetCoverage(REQ_SUN * 1000, r_SN_N, this->HPBW[0] / 2, this->HPBW[1] / 2);
 
             if (!this->planetInMsgs.empty()) {
                 for (planetIt = this->planetBuffer.begin(); planetIt != this->planetBuffer.end(); planetIt++) {
@@ -288,17 +288,17 @@ double SimpleAntenna::calculateTsky()
                     std::string plName = planetIt->PlanetName;
                     double planetRadius = this->getPlanetEquatorialRadius(plName);
                     double planetCoverage =
-                      this->calculatePlanetCoverage(planetRadius, r_PN_N, this->HPBW[0] / 2, this->HPBW[1] / 2);
+                        this->calculatePlanetCoverage(planetRadius, r_PN_N, this->HPBW[0] / 2, this->HPBW[1] / 2);
 
                     if (plName == "earth") {
                         T_earth = getBrightnessTemperatureFromData(
-                          "Earth", this->frequency); // [K] Get earth brightness temperature from data file
-                        T_earth *= planetCoverage;   // [K] Scale by earth coverage factor
+                            "Earth", this->frequency); // [K] Get earth brightness temperature from data file
+                        T_earth *= planetCoverage;     // [K] Scale by earth coverage factor
                         galaxyCoverage = galaxyCoverage - planetCoverage; // [-] Scale galaxy coverage factor
                     } else if (plName == "moon") {
                         T_moon = getBrightnessTemperatureFromData(
-                          "Moon", this->frequency); // [K] Get moon brightness temperature from data file
-                        T_moon *= planetCoverage;   // [K] Scale by moon coverage factor
+                            "Moon", this->frequency); // [K] Get moon brightness temperature from data file
+                        T_moon *= planetCoverage;     // [K] Scale by moon coverage factor
                         galaxyCoverage = galaxyCoverage - planetCoverage; // [-] Scale galaxy coverage factor
                     }
                 }
@@ -309,16 +309,16 @@ double SimpleAntenna::calculateTsky()
                 }
             }
             T_sun = getBrightnessTemperatureFromData(
-              "Sun", this->frequency);                     // [K] Get sun brightness temperature from data file
+                "Sun", this->frequency);                   // [K] Get sun brightness temperature from data file
             T_sun *= sunCoverage;                          // [K] Scale by sun coverage factor
             galaxyCoverage = galaxyCoverage - sunCoverage; // [-] Scale galaxy coverage factor
 
             if (this->useHaslamMap) {
                 // Get sky brightness temperature from Haslam map at 408 MHz and scale to frequency of interest
                 Eigen::Vector3d n_A_N =
-                  this->sigma_AN.toRotationMatrix() * Eigen::Vector3d::UnitZ(); // Antenna boresight in inertial frame
+                    this->sigma_AN.toRotationMatrix() * Eigen::Vector3d::UnitZ(); // Antenna boresight in inertial frame
                 double samplingAngle =
-                  0.5 * std::sqrt(this->HPBW[0] * this->HPBW[1]); // [rad] geometric mean half-angle
+                    0.5 * std::sqrt(this->HPBW[0] * this->HPBW[1]); // [rad] geometric mean half-angle
                 double T_b_408MHz = HaslamMap::getInstance().getBrightnessTemperature(n_A_N, samplingAngle);
                 T_galaxy = HaslamMap::getInstance().scaleToFrequency(T_b_408MHz, this->frequency) +
                            CMB_TEMPERATURE; // [K] Scale brightness temperature to frequency of interest and add CMB
@@ -482,8 +482,8 @@ double SimpleAntenna::calculateTambient()
                                this->groundState.r_LP_N[2] * this->groundState.r_LP_N[2]) -
                           REQ_EARTH * 1000.0; // [m] Altitude above spherical Earth surface
         T_ambientLocal =
-          T_groundLocal -
-          dTdh_local * altitude; // [K] ITU-R P.835-6 eq. 1 (assumption altitude of ground station always < 11 km)
+            T_groundLocal -
+            dTdh_local * altitude; // [K] ITU-R P.835-6 eq. 1 (assumption altitude of ground station always < 11 km)
     } else {
         // UNKNOWN environment (FUTURE EXPANSION)
         bskLogger.bskError("SimpleAntenna: Unable to calculate ambient temperature due to unknown environment.");
@@ -546,24 +546,24 @@ void SimpleAntenna::calculateAntennaPositionAndOrientation()
         Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();            // Calculate DCM_NB from MRP_BN
         this->r_BN_N = cArray2EigenVector3d(this->scState.r_BN_N);       // Convert c-array to Eigen Vector3d
         this->r_AN_N =
-          this->r_BN_N +
-          dcm_NB * this->r_AB_B; // Antenna position in N-frame, decomposed in N-frame:   r_AN_N = r_AB_N + r_BN_N
+            this->r_BN_N +
+            dcm_NB * this->r_AB_B; // Antenna position in N-frame, decomposed in N-frame:   r_AN_N = r_AB_N + r_BN_N
 
         // Calculate the antenna orientation in {N} frame
         dcm_NA =
-          dcm_NB * this->sigma_AB.toRotationMatrix();    // DCM from {A} frame to {N} frame:   dcm_NA = dcm_NB * dcm_BA
+            dcm_NB * this->sigma_AB.toRotationMatrix();  // DCM from {A} frame to {N} frame:   dcm_NA = dcm_NB * dcm_BA
         this->sigma_AN = eigenC2MRP(dcm_NA.transpose()); // Convert DCM to MRP
 
         // Calculate the antenna velocity in the {N} frame
         this->v_AN_N = cArray2EigenVector3d(
-          this->scState.v_BN_N); // Antenna velocity in {N} frame (assumed same as spacecraft velocity)
+            this->scState.v_BN_N); // Antenna velocity in {N} frame (assumed same as spacecraft velocity)
     } else if (this->environment == AntennaTypes::EnvironmentType::ENVIRONMENT_EARTH) {
         // GROUND environment
         // Antenna position and orientation are defined in the groundState message
         this->r_AN_N =
-          cArray2EigenVector3d(this->groundState.r_LN_N); // Antenna position in {N} frame (same as ground location)
+            cArray2EigenVector3d(this->groundState.r_LN_N); // Antenna position in {N} frame (same as ground location)
         this->v_AN_N =
-          Eigen::Vector3d::Zero(); // FUTURE EXPANSION: Antenna velocity in {N} frame (currently assumed zero)
+            Eigen::Vector3d::Zero(); // FUTURE EXPANSION: Antenna velocity in {N} frame (currently assumed zero)
 
         this->r_AP_N = cArray2EigenVector3d(this->groundState.r_LP_N); // Antenna position in {P} frame
     }
@@ -587,7 +587,7 @@ void SimpleAntenna::calculateAntennaNoise()
 
     // Calculate antenna G/T_N
     this->G_TN =
-      this->DdB + 10 * log10(this->eta_r) - 10 * log10(T_S); // [dB/K] Antenna gain over system noise temperature
+        this->DdB + 10 * log10(this->eta_r) - 10 * log10(T_S); // [dB/K] Antenna gain over system noise temperature
 }
 
 /*! Configure the path to the Haslam 408 MHz all-sky brightness temperature FITS file.
@@ -626,7 +626,7 @@ void SimpleAntenna::setAntennaFrequency(double var)
 {
     if (var <= 3e7 || var >= 6e10) { // Center frequency shall be between 30 Hz and 60 GHz
         bskLogger.bskError(
-          "SimpleAntenna operating frequency [Hz] is set outside the valid range of 30 MHz to 60 GHz.");
+            "SimpleAntenna operating frequency [Hz] is set outside the valid range of 30 MHz to 60 GHz.");
     }
     this->frequency = var; // [Hz] antenna operating frequency
 }
@@ -634,7 +634,7 @@ void SimpleAntenna::setAntennaBandwidth(double var)
 {
     if (var <= minThreshold) { // Bandwidth cannot be zero or negative
         bskLogger.bskError(
-          "SimpleAntenna bandwidth B [Hz] is too small, must be larger than minimum threshold (10^-6 Hz).");
+            "SimpleAntenna bandwidth B [Hz] is too small, must be larger than minimum threshold (10^-6 Hz).");
     }
     this->B = var; // [Hz] antenna frequency bandwidth
 }
@@ -666,8 +666,8 @@ void SimpleAntenna::setAntennaP_Rx(double var)
 {
     if (var < 0) {
         bskLogger.bskLog(
-          BSK_WARNING,
-          "SimpleAntenna: Attempting to set to a negative receive power P_Rx [W]. Value must be non-negative");
+            BSK_WARNING,
+            "SimpleAntenna: Attempting to set to a negative receive power P_Rx [W]. Value must be non-negative");
         return;
     }
     this->P_Rx = var; // [W] receive power
@@ -683,8 +683,8 @@ void SimpleAntenna::setAntennaEquivalentNoiseTemp(double var)
 void SimpleAntenna::setAntennaRadEfficiency(double var)
 {
     if (var < 0 || var > 1) {
-        bskLogger.bskError(
-          "SimpleAntenna: Attempting to set invalid antenna radiation efficiency eta_r. Value must be between 0 and 1");
+        bskLogger.bskError("SimpleAntenna: Attempting to set invalid antenna radiation efficiency eta_r. Value must be "
+                           "between 0 and 1");
     }
     this->eta_r = var; // [-] antenna radiation efficiency
 }

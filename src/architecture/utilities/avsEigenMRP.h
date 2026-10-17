@@ -328,20 +328,20 @@ class MRP : public MRPBase<MRP<_Scalar, _Options>>
      * its three coefficients \a x, \a y and \a z.
      */
     inline MRP(const Scalar& x, const Scalar& y, const Scalar& z)
-      : m_coeffs(x, y, z)
+        : m_coeffs(x, y, z)
     {
     }
 
     /** Constructs and initialize a MRP from the array data */
     inline MRP(const Scalar* data)
-      : m_coeffs(data)
+        : m_coeffs(data)
     {
     }
 
     /** Explicit copy constructor with scalar conversion */
     template<typename OtherScalar, int OtherOptions>
     explicit inline MRP(const MRP<OtherScalar, OtherOptions>& other)
-      : m_coeffs(other.coeffs().template cast<Scalar>())
+        : m_coeffs(other.coeffs().template cast<Scalar>())
     {
     }
 
@@ -418,7 +418,7 @@ typedef MRP<double> MRPd;
 namespace internal {
 template<typename _Scalar, int _Options>
 struct traits<Map<MRP<_Scalar>, _Options>>
-  : traits<MRP<_Scalar, (int(_Options) & Aligned) == Aligned ? AutoAlign : DontAlign>>
+    : traits<MRP<_Scalar, (int(_Options) & Aligned) == Aligned ? AutoAlign : DontAlign>>
 {
     typedef Map<Matrix<_Scalar, 3, 1>, _Options> Coefficients;
 };
@@ -427,7 +427,7 @@ struct traits<Map<MRP<_Scalar>, _Options>>
 namespace internal {
 template<typename _Scalar, int _Options>
 struct traits<Map<const MRP<_Scalar>, _Options>>
-  : traits<MRP<_Scalar, (int(_Options) & Aligned) == Aligned ? AutoAlign : DontAlign>>
+    : traits<MRP<_Scalar, (int(_Options) & Aligned) == Aligned ? AutoAlign : DontAlign>>
 {
     typedef Map<const Matrix<_Scalar, 3, 1>, _Options> Coefficients;
     typedef traits<MRP<_Scalar, (int(_Options) & Aligned) == Aligned ? AutoAlign : DontAlign>> TraitsBase;
@@ -467,7 +467,7 @@ class Map<const MRP<_Scalar>, _Options> : public MRPBase<Map<const MRP<_Scalar>,
      *
      * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
     EIGEN_STRONG_INLINE Map(const Scalar* coeffs)
-      : m_coeffs(coeffs)
+        : m_coeffs(coeffs)
     {
     }
 
@@ -506,7 +506,7 @@ class Map<MRP<_Scalar>, _Options> : public MRPBase<Map<MRP<_Scalar>, _Options>>
      *
      * If the template parameter _Options is set to Aligned, then the pointer coeffs must be aligned. */
     EIGEN_STRONG_INLINE Map(Scalar* coeffs)
-      : m_coeffs(coeffs)
+        : m_coeffs(coeffs)
     {
     }
 
@@ -568,7 +568,7 @@ struct mrp_product
             det = Scalar(1) + s1N2 * s2N2 - Scalar(2) * a.dot(s2);
         }
         answer = MRP<Scalar>(
-          ((Scalar(1) - s1N2) * s2.vec() + (Scalar(1) - s2N2) * a.vec() - Scalar(2) * s2.vec().cross(a.vec())) / det);
+            ((Scalar(1) - s1N2) * s2.vec() + (Scalar(1) - s2N2) * a.vec() - Scalar(2) * s2.vec().cross(a.vec())) / det);
         if (answer.squaredNorm() > Scalar(1))
             answer = answer.shadow();
         return answer;
@@ -580,11 +580,11 @@ struct mrp_product
 template<class Derived>
 template<class OtherDerived>
 EIGEN_STRONG_INLINE MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::operator*(
-  const MRPBase<OtherDerived>& other) const
+    const MRPBase<OtherDerived>& other) const
 {
     EIGEN_STATIC_ASSERT(
-      (internal::is_same<typename Derived::Scalar, typename OtherDerived::Scalar>::value),
-      YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
+        (internal::is_same<typename Derived::Scalar, typename OtherDerived::Scalar>::value),
+        YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
     return internal::mrp_product < Architecture::Target, Derived, OtherDerived,
            typename internal::traits<Derived>::Scalar,
            internal::traits<Derived>::IsAligned && internal::traits<OtherDerived>::IsAligned > ::run(*this, other);
@@ -663,8 +663,8 @@ template<class MatrixDerived>
 inline Derived& MRPBase<Derived>::operator=(const MatrixBase<MatrixDerived>& xpr)
 {
     EIGEN_STATIC_ASSERT(
-      (internal::is_same<typename Derived::Scalar, typename MatrixDerived::Scalar>::value),
-      YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
+        (internal::is_same<typename Derived::Scalar, typename MatrixDerived::Scalar>::value),
+        YOU_MIXED_DIFFERENT_NUMERIC_TYPES__YOU_NEED_TO_USE_THE_CAST_METHOD_OF_MATRIXBASE_TO_CAST_NUMERIC_TYPES_EXPLICITLY)
     internal::MRPbase_assign_impl<MatrixDerived>::run(*this, xpr.derived());
     return derived();
 }
@@ -833,7 +833,7 @@ inline MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::conjuga
 template<class Derived>
 template<class OtherDerived>
 inline typename internal::traits<Derived>::Scalar MRPBase<Derived>::angularDistance(
-  const MRPBase<OtherDerived>& other) const
+    const MRPBase<OtherDerived>& other) const
 {
     using std::abs;
     using std::atan;

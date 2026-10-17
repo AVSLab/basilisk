@@ -2,6 +2,9 @@
 BasedOnStyle: Mozilla
 BreakAfterReturnType: Automatic
 ColumnLimit: '120'
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
 IndentWidth: '4'
+ReflowComments: IndentOnly
 TabWidth:    '4'
 ...

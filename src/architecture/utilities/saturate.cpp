@@ -28,7 +28,7 @@ Saturate::Saturate()
 }
 
 Saturate::Saturate(int64_t size)
-  : Saturate()
+    : Saturate()
 {
     this->numStates = size;
     this->stateBounds.resize(numStates, 2);

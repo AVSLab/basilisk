@@ -54,9 +54,9 @@ class JointArrayRefProfiler : public SysModel
 
   public:
     std::vector<ReadFunctor<ScalarJointStateMsgPayload>>
-      jointStatesInMsgs; //!< vector of current joint state input messages
+        jointStatesInMsgs; //!< vector of current joint state input messages
     std::vector<ReadFunctor<ScalarJointStateMsgPayload>>
-      jointStateDotsInMsgs; //!< vector of current joint state-derivative input messages
+        jointStateDotsInMsgs; //!< vector of current joint state-derivative input messages
     ReadFunctor<JointArrayStateMsgPayload> desJointStatesInMsg; //!< Desired joint-array state input message
 
     Message<JointArrayStateMsgPayload> desJointStatesOutMsg; //!< Joint-array reference output message
@@ -111,7 +111,7 @@ class JointArrayRefProfiler : public SysModel
     Eigen::VectorXd refJointRates;          //!< [rad/s] current profiled joint angle rates
     Eigen::VectorXd refJointAccels;         //!< [rad/s^2] current profiled joint angle accelerations
     JointArrayStateMsgPayload
-      prevDesJointStates; //!< previous desired joint states, used to detect changes in the desired state command
+        prevDesJointStates; //!< previous desired joint states, used to detect changes in the desired state command
 
     /*! Method for computing the low pass filtered joint reference profile
      * @param CurrentSimNanos current simulation time in nanoseconds

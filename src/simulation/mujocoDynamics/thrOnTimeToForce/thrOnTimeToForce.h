@@ -74,7 +74,7 @@ class ThrOnTimeToForce : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>>
-      ownedThrusterForceOutMsgs; //!< Storage for thrusterForceOutMsgs.
+        ownedThrusterForceOutMsgs; //!< Storage for thrusterForceOutMsgs.
 };
 
 #endif

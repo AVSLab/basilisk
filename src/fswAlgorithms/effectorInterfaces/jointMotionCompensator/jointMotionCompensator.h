@@ -86,7 +86,7 @@ class JointMotionCompensator : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>>
-      ownedHubTorqueOutMsgs; //!< Storage for hubTorqueOutMsgs.
+        ownedHubTorqueOutMsgs; //!< Storage for hubTorqueOutMsgs.
 };
 
 #endif

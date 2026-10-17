@@ -33,9 +33,9 @@
 
 /*! @brief linear spring mass damper state effector class */
 class LinearSpringMassDamper final
-  : public StateEffector
-  , public SysModel
-  , public FuelSlosh
+    : public StateEffector
+    , public SysModel
+    , public FuelSlosh
 {
   public:
     double k;                       //!< [N/m] linear spring constant for spring mass damper
@@ -78,7 +78,7 @@ class LinearSpringMassDamper final
     void linkInStates(DynParamManager& states) override;   //!< Method for SMD to get access of other states
     void retrieveMassValue(double integTime) override;
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
-      override; //!< Force and torque on s/c due to linear spring mass damper
+        override; //!< Force and torque on s/c due to linear spring mass damper
     void updateEffectorMassProps(double integTime) override; //!< Method for stateEffector to give mass contributions
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,

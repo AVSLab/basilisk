@@ -128,7 +128,7 @@ void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]
     const double scaledMean = this->mean / scale;
     const double scaledStd = this->sigmaStationary / scale;
     const double sigma =
-      (std::sqrt(2.0) / std::sqrt(this->timeConstant)) * (scaledStd / std::hypot(scaledMean, scaledStd));
+        (std::sqrt(2.0) / std::sqrt(this->timeConstant)) * (scaledStd / std::hypot(scaledMean, scaledStd));
 
     Eigen::MatrixXd diffusion(1, 1);
     diffusion(0, 0) = sigma * factor;

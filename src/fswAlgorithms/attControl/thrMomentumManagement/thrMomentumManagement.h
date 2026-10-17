@@ -34,7 +34,7 @@ typedef struct
     /* declare module private variables */
     int initRequest; //!< [-] status flag of the momentum dumping management
     RWArrayConfigMsgPayload
-      rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+        rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module public variables */
     double hs_min; //!< [Nms]  minimum RW cluster momentum for dumping

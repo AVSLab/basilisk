@@ -36,8 +36,8 @@
  * All NumbaModel features (messages, memory, rng, bskLogger) are also available.
  */
 class StatefulNumbaModel
-  : public NumbaModel
-  , public StatefulSysModel
+    : public NumbaModel
+    , public StatefulSysModel
 {
   public:
     /** Default constructor */

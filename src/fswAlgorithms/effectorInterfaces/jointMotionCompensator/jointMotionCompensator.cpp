@@ -73,7 +73,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
                 // subsequent joints are hinges
                 if (jointType != 3) {
                     bskLogger.bskError(
-                      "JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                        "JointMotionCompensator: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -203,7 +203,7 @@ void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
             SingleActuatorMsgPayload hubTorqueOut;
             hubTorqueOut.input = hubTorques(sc * 3 + axis);
             this->hubTorqueOutMsgs[static_cast<size_t>(sc * 3 + axis)]->write(
-              &hubTorqueOut, this->moduleID, CurrentSimNanos);
+                &hubTorqueOut, this->moduleID, CurrentSimNanos);
         }
     }
 }

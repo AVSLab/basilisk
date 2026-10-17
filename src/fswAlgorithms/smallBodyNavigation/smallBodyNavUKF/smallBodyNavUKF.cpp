@@ -266,7 +266,7 @@ void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos)
 
     /* Write to the C-wrapped output messages */
     SmallBodyNavUKFMsg_C_write(
-      &smallBodyNavUKFOutMsgBuffer, &this->smallBodyNavUKFOutMsgC, this->moduleID, CurrentSimNanos);
+        &smallBodyNavUKFOutMsgBuffer, &this->smallBodyNavUKFOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
 /*! This is the main method that gets called every time the module is updated.

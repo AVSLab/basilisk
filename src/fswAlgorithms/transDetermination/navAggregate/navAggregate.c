@@ -81,8 +81,8 @@ void Reset_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t
     for (uint32_t i = 0; i < configData->transMsgCount; i = i + 1) {
         if (!NavTransMsg_C_isLinked(&configData->transMsgs[i].navTransInMsg)) {
             _bskError(
-              configData->bskLogger,
-              "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
+                configData->bskLogger,
+                "A translation input message name was not specified.  Be sure that transMsgCount is set properly.");
         }
     }
 

@@ -58,25 +58,25 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 
     // Set the property names
     this->nameOfInertialPositionProperty =
-      "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfInertialVelocityProperty =
-      "prescribedObjectInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfInertialAttitudeProperty =
-      "prescribedObjectInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfInertialAngVelocityProperty =
-      "prescribedObjectInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedPositionProperty =
-      "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedVelocityProperty =
-      "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedAccelerationProperty =
-      "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedAttitudeProperty =
-      "prescribedObjectAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedAngVelocityProperty =
-      "prescribedObjectAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
     this->nameOfPrescribedAngAccelerationProperty =
-      "prescribedObjectAngAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
+        "prescribedObjectAngAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
 
     PrescribedMotionStateEffector::effectorID++;
 }
@@ -285,7 +285,7 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
         (*it)->updateEffectorMassProps(integTime);
         if ((*it)->effProps.hasMassPropertyRateDynamics || (*it)->effProps.mEffDot != 0.0) {
             this->bskLogger.bskLog(
-              BSK_ERROR, "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
+                BSK_ERROR, "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
         }
 
         this->effProps.mEff += (*it)->effProps.mEff;
@@ -307,14 +307,14 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
         Eigen::Matrix3d rTilde_EcB_B = eigenTilde(r_EcB_B);
         Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
         this->effProps.IEffPntB_B +=
-          IEffPntP_B + (*it)->effProps.mEff * (rTilde_EcP_B * rTilde_EcP_B - rTilde_EcB_B * rTilde_EcB_B);
+            IEffPntP_B + (*it)->effProps.mEff * (rTilde_EcP_B * rTilde_EcP_B - rTilde_EcB_B * rTilde_EcB_B);
 
         Eigen::Matrix3d rPrimeTilde_EcB_B = eigenTilde(rPrime_EcB_B);
         Eigen::Matrix3d rPrimeTilde_EcP_B = eigenTilde(rPrime_EcP_B);
         Eigen::Matrix3d IEffPPrimePntP_P = (*it)->effProps.IEffPrimePntB_B;
         Eigen::Matrix3d IEffPPrimePntP_B = this->dcm_BP * IEffPPrimePntP_P * this->dcm_BP.transpose();
         Eigen::Matrix3d IEffPrimePntP_B =
-          IEffPPrimePntP_B + this->omegaTilde_PB_B * IEffPntP_B + IEffPntP_B * this->omegaTilde_PB_B.transpose();
+            IEffPPrimePntP_B + this->omegaTilde_PB_B * IEffPntP_B + IEffPntP_B * this->omegaTilde_PB_B.transpose();
         this->effProps.IEffPrimePntB_B += IEffPrimePntP_B -
                                           (*it)->effProps.mEff * rPrimeTilde_EcP_B * rTilde_EcP_B.transpose() -
                                           (*it)->effProps.mEff * rTilde_EcP_B * rPrimeTilde_EcP_B.transpose() +
@@ -411,9 +411,9 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
     Eigen::Matrix3d IPrimePntPc_B;
     IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
     backSubContr.vecRot +=
-      -(this->mass * this->r_PcB_B.cross(this->rPrimePrime_PcB_B)) - IPrimePntPc_B * this->omega_PB_B -
-      this->omega_BN_B.cross(this->IPntPc_B * this->omega_PB_B) - this->IPntPc_B * this->omegaPrime_PB_B -
-      this->mass * this->omega_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B));
+        -(this->mass * this->r_PcB_B.cross(this->rPrimePrime_PcB_B)) - IPrimePntPc_B * this->omega_PB_B -
+        this->omega_BN_B.cross(this->IPntPc_B * this->omega_PB_B) - this->IPntPc_B * this->omegaPrime_PB_B -
+        this->mass * this->omega_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B));
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -446,7 +446,7 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
 
         // Compute omegaDot_PN_P
         Eigen::Vector3d omegaDot_PN_B =
-          this->omegaPrime_PM_B + this->omega_BN_B.cross(this->omega_PM_B) + omegaDot_BN_B;
+            this->omegaPrime_PM_B + this->omega_BN_B.cross(this->omega_PM_B) + omegaDot_BN_B;
         Eigen::Vector3d omegaDot_PN_P = this->dcm_BP.transpose() * omegaDot_PN_B;
 
         // Compute rDDot_PN_N

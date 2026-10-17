@@ -288,7 +288,7 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
 
             initialStates.at(static_cast<size_t>(c2 * stateSize + c1)) = dcm_HN_state.transpose() * X0minDV_H;
             initialStates.at(static_cast<size_t>(2 * stateSize + c2 * stateSize + c1)) =
-              dcm_HN_state.transpose() * X0maxDV_H;
+                dcm_HN_state.transpose() * X0maxDV_H;
         }
     }
 
@@ -326,7 +326,7 @@ void LambertValidator::countViolations(const InitialStates& initialStates)
         const StateVector& X0 = initialStates.at(c);
 
         PropagationResult states =
-          this->propagate(this->EOM_2BP, { this->maneuverTime, this->finalTime }, X0, this->timestep);
+            this->propagate(this->EOM_2BP, { this->maneuverTime, this->finalTime }, X0, this->timestep);
         this->checkConstraintViolations(states.first, states.second);
     }
 }

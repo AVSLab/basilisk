@@ -62,16 +62,16 @@ class MagneticFieldBase : public SysModel
 
   public:
     std::vector<ReadFunctor<SCStatesMsgPayload>>
-      scStateInMsgs; //!< Vector of the spacecraft position/velocity input message
+        scStateInMsgs; //!< Vector of the spacecraft position/velocity input message
     std::vector<Message<MagneticFieldMsgPayload>*>
-      envOutMsgs; //!< Vector of message names to be written out by the environment
+        envOutMsgs; //!< Vector of message names to be written out by the environment
     ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg; //!< Message name for the planet's SPICE position message
     ReadFunctor<EpochMsgPayload> epochInMsg;                //!< (optional) epoch date/time input message
 
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off
                         //!< (neg. value)
     double
-      envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
+        envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double planetRadius; //!< [m]      Radius of the planet
     BSKLogger bskLogger; //!< -- BSK Logging
 

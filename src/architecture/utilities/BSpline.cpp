@@ -48,7 +48,7 @@ InputDataSet::InputDataSet(const Eigen::VectorXd& X1, const Eigen::VectorXd& X2,
 
     if ((N1 != N2) || (N1 != N3) || (N2 != N3)) {
         std::cout
-          << "Error in BSpline.InputDataSet: \n the Input coordinate vectors X1, X2, X3 have different sizes. \n";
+            << "Error in BSpline.InputDataSet: \n the Input coordinate vectors X1, X2, X3 have different sizes. \n";
     }
 
     return;
