@@ -17,10 +17,6 @@ extern "C"
 {
 #endif
 
-#ifndef _POSIX_C_SOURCE
-#define _POSIX_C_SOURCE
-#endif
-
     /*
      #ifndef EPOCHRANGE
      #define EPOCHRANGE (int)5
