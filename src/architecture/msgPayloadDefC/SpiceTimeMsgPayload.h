@@ -25,9 +25,9 @@
 //! The SPICE time output structure outputs time information to the rest of the system
 typedef struct
 {
-    double J2000Current;      //!< s Current J2000 elapsed time
-    double JulianDateCurrent; //!< d Current JulianDate
-    double GPSSeconds;        //!< s Current GPS seconds
+    double J2000Current;      //!< s Current ephemeris time (TDB) elapsed since J2000
+    double JulianDateCurrent; //!< d Current UTC Julian date
+    double GPSSeconds;        //!< s Current GPS seconds of week
     uint16_t GPSWeek;         //!< -- Current GPS week value
     uint64_t GPSRollovers;    //!< -- Count on the number of GPS rollovers
 } SpiceTimeMsgPayload;
