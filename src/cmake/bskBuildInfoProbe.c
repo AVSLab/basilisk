@@ -18,8 +18,7 @@
 
 #include "architecture/utilities/bskAbiDescriptor.h"
 
-const BskCAbiInfo*
-bskGetCompiledCAbiInfo(void)
+const BskCAbiInfo* bskGetCompiledCAbiInfo(void)
 {
     static BskCAbiInfo info;
     info = bskCreateCAbiInfo();

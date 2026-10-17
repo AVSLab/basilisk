@@ -36,8 +36,7 @@ namespace {
  * @brief Assigns scene-local names to unnamed bodies before model compilation.
  * @param spec The parsed MuJoCo specification.
  */
-void
-nameUnnamedBodies(mjSpec* spec)
+void nameUnnamedBodies(mjSpec* spec)
 {
     std::unordered_set<std::string> bodyNames;
     std::vector<mjsBody*> unnamedBodies;
@@ -63,8 +62,7 @@ nameUnnamedBodies(mjSpec* spec)
     }
 }
 
-std::string
-compileErrorMessage(mjSpec* spec, const char* context)
+std::string compileErrorMessage(mjSpec* spec, const char* context)
 {
     const char* detail = mjs_getError(spec);
     if (detail == nullptr || detail[0] == '\0') {
@@ -73,8 +71,7 @@ compileErrorMessage(mjSpec* spec, const char* context)
     return std::string(context) + ": " + detail;
 }
 
-std::vector<std::string>
-readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[maybe_unused]])
+std::vector<std::string> readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[maybe_unused]])
 {
     std::string value;
 
@@ -91,8 +88,10 @@ readCustomSingleSplit(mjSpec* spec, const std::string& key, char delimiter [[may
     return tokens;
 }
 
-std::vector<std::pair<std::string, std::string>>
-readCustomDoubleSplit(mjSpec* spec, const std::string& key, char delimiter1, char delimiter2)
+std::vector<std::pair<std::string, std::string>> readCustomDoubleSplit(mjSpec* spec,
+                                                                       const std::string& key,
+                                                                       char delimiter1,
+                                                                       char delimiter2)
 {
     auto input = readCustomSingleSplit(spec, key, delimiter1);
     std::vector<std::pair<std::string, std::string>> result;
@@ -177,8 +176,7 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
     }
 }
 
-void
-MJSpec::loadBodies()
+void MJSpec::loadBodies()
 {
     // Start at 1 to skip the worldbody
     for (auto i = 1; i < this->model->nbody; i++) {
@@ -191,8 +189,7 @@ MJSpec::loadBodies()
     }
 }
 
-void
-MJSpec::loadActuators()
+void MJSpec::loadActuators()
 {
 
     // Iterate over all the existing actuators in the spec
@@ -237,8 +234,7 @@ MJSpec::loadActuators()
     }
 }
 
-void
-MJSpec::loadEqualities()
+void MJSpec::loadEqualities()
 {
     for (auto element = mjs_firstElement(this->spec.get(), mjOBJ_EQUALITY); element;
          element = mjs_nextElement(this->spec.get(), element)) {
@@ -250,36 +246,31 @@ MJSpec::loadEqualities()
     }
 }
 
-mjModel*
-MJSpec::getMujocoModel()
+mjModel* MJSpec::getMujocoModel()
 {
     recompileIfNeeded();
     return this->model.get();
 }
 
-mjData*
-MJSpec::getMujocoData()
+mjData* MJSpec::getMujocoData()
 {
     recompileIfNeeded();
     return this->data.get();
 }
 
-mjSpec*
-MJSpec::getMujocoSpec()
+mjSpec* MJSpec::getMujocoSpec()
 {
     this->scene.requireSceneMutationAllowed("Mutable MuJoCo specification access");
     return this->spec.get();
 }
 
-void
-MJSpec::markAsNeedingToRecompileModel()
+void MJSpec::markAsNeedingToRecompileModel()
 {
     this->scene.requireSceneMutationAllowed("MuJoCo specification changes");
     this->shouldRecompile = true;
 }
 
-std::vector<std::string>
-MJSpec::getBodyNames() const
+std::vector<std::string> MJSpec::getBodyNames() const
 {
     std::vector<std::string> names;
     names.reserve(this->bodies.size());
@@ -289,8 +280,7 @@ MJSpec::getBodyNames() const
     return names;
 }
 
-std::string
-MJSpec::getBodyParentName(const std::string& bodyName) const
+std::string MJSpec::getBodyParentName(const std::string& bodyName) const
 {
     int bodyId = mj_name2id(this->model.get(), mjOBJ_BODY, bodyName.c_str());
     if (bodyId < 0) {
@@ -303,8 +293,7 @@ MJSpec::getBodyParentName(const std::string& bodyName) const
     return std::string(this->model->names + this->model->name_bodyadr[parentId]);
 }
 
-std::vector<MJGeomInfo>
-MJSpec::getGeomInfos() const
+std::vector<MJGeomInfo> MJSpec::getGeomInfos() const
 {
     std::vector<MJGeomInfo> geoms;
     auto m = this->model.get();
@@ -333,16 +322,14 @@ MJSpec::getGeomInfos() const
     return geoms;
 }
 
-bool
-MJSpec::hasActuator(const std::string& name)
+bool MJSpec::hasActuator(const std::string& name)
 {
     return std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) {
                return obj->getName() == name;
            }) != std::end(actuators);
 }
 
-MJSingleActuator&
-MJSpec::addJointSingleActuator(const std::string& name, const std::string& joint)
+MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name, const std::string& joint)
 {
     if (this->hasActuator(name)) {
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.",
@@ -363,8 +350,9 @@ MJSpec::addJointSingleActuator(const std::string& name, const std::string& joint
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
-MJSingleActuator&
-MJSpec::addSingleActuator(const std::string& name, const std::string& site, const Eigen::Vector6d& gear)
+MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
+                                            const std::string& site,
+                                            const Eigen::Vector6d& gear)
 {
     if (this->hasActuator(name)) {
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.",
@@ -386,8 +374,7 @@ MJSpec::addSingleActuator(const std::string& name, const std::string& site, cons
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
-bool
-MJSpec::recompileIfNeeded()
+bool MJSpec::recompileIfNeeded()
 {
     if (!(this->shouldRecompile && this->shouldRecompileWhenAsked)) {
         return false;
@@ -479,8 +466,7 @@ MJSpec::recompileIfNeeded()
     return true;
 }
 
-void
-MJSpec::recompileUntilStable()
+void MJSpec::recompileUntilStable()
 {
     this->scene.requireSceneMutationAllowed("MuJoCo recompilation");
     while (this->shouldRecompile) {
@@ -490,8 +476,7 @@ MJSpec::recompileUntilStable()
     }
 }
 
-void
-MJSpec::configureForStateRegistration()
+void MJSpec::configureForStateRegistration()
 {
     this->scene.requireSceneMutationAllowed("MuJoCo state-registration configuration");
     if (!this->shouldRecompile) {
@@ -500,8 +485,7 @@ MJSpec::configureForStateRegistration()
     this->recompileUntilStable();
 }
 
-void
-MJSpec::configure()
+void MJSpec::configure()
 {
     this->scene.requireSceneMutationAllowed("MuJoCo configuration");
     for (auto& body : this->bodies) {

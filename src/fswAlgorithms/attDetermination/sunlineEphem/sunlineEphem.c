@@ -30,8 +30,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_sunlineEphem(sunlineEphemConfig* configData, int64_t moduleID)
+void SelfInit_sunlineEphem(sunlineEphemConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -44,8 +43,7 @@ SelfInit_sunlineEphem(sunlineEphemConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)configData;
     (void)callTime;
@@ -58,8 +56,7 @@ Reset_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t mo
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunlineEphem(sunlineEphemConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double r_SB_N[3];     /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */
     double r_SB_N_hat[3]; /* [m] difference between the sun and spacecrat in the inertial frame (unit length) */

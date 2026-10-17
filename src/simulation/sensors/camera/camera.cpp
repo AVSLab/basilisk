@@ -58,10 +58,7 @@ Camera::~Camera()
 
  @param currentSimNanos current time (ns)
  */
-void
-Camera::Reset(uint64_t currentSimNanos [[maybe_unused]])
-{
-}
+void Camera::Reset(uint64_t currentSimNanos [[maybe_unused]]) {}
 
 /*!
  * Adjusts the HSV values of each pixel.
@@ -70,8 +67,7 @@ Camera::Reset(uint64_t currentSimNanos [[maybe_unused]])
  * @param mDst destination of modified image
  *
  */
-void
-Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst)
+void Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst)
 {
     cv::Mat localHsv;
     cvtColor(mSrc, localHsv, cv::COLOR_BGR2HSV);
@@ -116,8 +112,7 @@ Camera::hsvAdjust(const cv::Mat& mSrc, cv::Mat& mDst)
  * @param mDst destination of modified image
  *
  */
-void
-Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst)
+void Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst)
 {
     cv::Mat mBGR = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mBGR, mSrc.type());
@@ -153,8 +148,7 @@ Camera::bgrAdjustPercent(const cv::Mat& mSrc, cv::Mat& mDst)
  * @param StdDev standard deviation of pixel value
  *
  */
-void
-Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, double StdDev)
+void Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, double StdDev)
 {
     cv::Mat mSrc_16SC;
     // CV_16SC3 means signed 16 bit shorts three channels
@@ -176,8 +170,7 @@ Camera::addGaussianNoise(const cv::Mat& mSrc, cv::Mat& mDst, double Mean, double
  * @param pb probability of hot pixels
  *
  */
-void
-Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float pb)
+void Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float pb)
 {
     /*! These lines will make the hot and dead pixels different every time.*/
     // uint64 initValue = time(0);
@@ -224,8 +217,7 @@ Camera::addSaltPepper(const cv::Mat& mSrc, cv::Mat& mDst, float pa, float pb)
  * @param maxSize max length of cosmic ray
  *
  */
-void
-Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshhold, double randOffset, int maxSize)
+void Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshhold, double randOffset, int maxSize)
 {
     /*! Uses the current sim time and the random offset to ensure a different ray every time.*/
     uint64 initValue = this->localCurrentSimNanos;
@@ -260,8 +252,7 @@ Camera::addCosmicRay(const cv::Mat& mSrc, cv::Mat& mDst, float probThreshhold, d
  * @param num number of cosmic rays to be added
  *
  */
-void
-Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num)
+void Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num)
 {
     cv::Mat mCosmic = cv::Mat(mSrc.size(), mSrc.type());
     mSrc.convertTo(mCosmic, mSrc.type());
@@ -281,8 +272,7 @@ Camera::addCosmicRayBurst(const cv::Mat& mSrc, cv::Mat& mDst, double num)
  * @param mDst destination of modified image
  *
  */
-void
-Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst)
+void Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst)
 {
 
     cv::Mat mFilters(mSource.size(), mSource.type());
@@ -329,8 +319,7 @@ Camera::applyFilters(cv::Mat& mSource, cv::Mat& mDst)
 
  @param currentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-Camera::UpdateState(uint64_t currentSimNanos)
+void Camera::UpdateState(uint64_t currentSimNanos)
 {
     this->localCurrentSimNanos = currentSimNanos;
     std::string localPath;

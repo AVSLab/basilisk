@@ -33,8 +33,7 @@ namespace {
  * Returns true if the first three scalar joints are translational
  * and along the main axis ([1,0,0], [0,1,0], [0,0,1]).
  */
-bool
-areJoints3DTranslation(std::list<MJScalarJoint>& joints)
+bool areJoints3DTranslation(std::list<MJScalarJoint>& joints)
 {
     if (joints.size() < 3)
         return false;
@@ -100,8 +99,7 @@ MJBody::MJBody(mjsBody* body, MJSpec& spec)
     }
 }
 
-void
-MJBody::configure(mjModel* mujocoModel)
+void MJBody::configure(mjModel* mujocoModel)
 {
     MJObject::configure(mujocoModel);
     for (auto& joint : this->scalarJoints) {
@@ -126,8 +124,7 @@ MJBody::configure(mjModel* mujocoModel)
     }
 }
 
-MJSite&
-MJBody::getSite(const std::string& name)
+MJSite& MJBody::getSite(const std::string& name)
 {
     auto sitePtr = std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) { return obj.getName() == name; });
 
@@ -139,8 +136,7 @@ MJBody::getSite(const std::string& name)
     return *sitePtr;
 }
 
-MJScalarJoint&
-MJBody::getScalarJoint(const std::string& name)
+MJScalarJoint& MJBody::getScalarJoint(const std::string& name)
 {
     auto jointPtr =
       std::find_if(std::begin(scalarJoints), std::end(scalarJoints), [&](auto&& obj) { return obj.getName() == name; });
@@ -152,8 +148,7 @@ MJBody::getScalarJoint(const std::string& name)
       "Unknown scalar joint '%s' in body '%s'", name.c_str(), this->getName().c_str());
 }
 
-MJBallJoint&
-MJBody::getBallJoint()
+MJBallJoint& MJBody::getBallJoint()
 {
     if (!this->ballJoint.has_value()) {
         this->getSpec().getScene().bskLogger.bskError("Tried to get a ball joint for a body without ball joints: %s",
@@ -162,8 +157,7 @@ MJBody::getBallJoint()
     return this->ballJoint.value();
 }
 
-MJFreeJoint&
-MJBody::getFreeJoint()
+MJFreeJoint& MJBody::getFreeJoint()
 {
     if (!this->freeJoint.has_value()) {
         this->getSpec().getScene().bskLogger.bskError("Tried to get a free joint for a body without free joints: %s",
@@ -172,8 +166,7 @@ MJBody::getFreeJoint()
     return this->freeJoint.value();
 }
 
-void
-MJBody::setPosition(const Eigen::Vector3d& position)
+void MJBody::setPosition(const Eigen::Vector3d& position)
 {
     if (this->freeJoint.has_value()) {
         this->freeJoint.value().setPosition(position);
@@ -191,8 +184,7 @@ MJBody::setPosition(const Eigen::Vector3d& position)
     }
 }
 
-void
-MJBody::setVelocity(const Eigen::Vector3d& velocity)
+void MJBody::setVelocity(const Eigen::Vector3d& velocity)
 {
     if (this->freeJoint.has_value()) {
         this->freeJoint.value().setVelocity(velocity);
@@ -210,8 +202,7 @@ MJBody::setVelocity(const Eigen::Vector3d& velocity)
     }
 }
 
-void
-MJBody::setAttitude(const Eigen::MRPd& attitude)
+void MJBody::setAttitude(const Eigen::MRPd& attitude)
 {
     if (!this->freeJoint.has_value()) {
         this->getSpec().getScene().bskLogger.bskError("Tried to set attitude in non-free body: %s", name.c_str());
@@ -219,8 +210,7 @@ MJBody::setAttitude(const Eigen::MRPd& attitude)
     this->freeJoint.value().setAttitude(attitude);
 }
 
-void
-MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
+void MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     if (!this->freeJoint.has_value()) {
         this->getSpec().getScene().bskLogger.bskError("Tried to set attitude rate in non-free body: %s", name.c_str());
@@ -228,16 +218,14 @@ MJBody::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
     this->freeJoint.value().setAttitudeRate(attitudeRate);
 }
 
-void
-MJBody::writeFwdKinematicsMessages(mjModel* m, mjData* d, uint64_t CurrentSimNanos)
+void MJBody::writeFwdKinematicsMessages(mjModel* m, mjData* d, uint64_t CurrentSimNanos)
 {
     for (auto&& site : this->sites) {
         site.writeFwdKinematicsMessage(m, d, CurrentSimNanos);
     }
 }
 
-void
-MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
+void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 {
     SCMassPropsMsgPayload massPropertiesOutMsgPayload;
 
@@ -250,47 +238,41 @@ MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
     }
 }
 
-void
-MJBody::registerJointPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+void MJBody::registerJointPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
 {
     for (MJJoint* joint : this->orderedJoints) {
         joint->registerPositionStates(registerer, highOrderAttitude);
     }
 }
 
-void
-MJBody::registerJointVelocityStates(DynParamRegisterer registerer)
+void MJBody::registerJointVelocityStates(DynParamRegisterer registerer)
 {
     for (MJJoint* joint : this->orderedJoints) {
         joint->registerVelocityStates(registerer);
     }
 }
 
-void
-MJBody::setJointPositionDerivativesFromMujoco(const mjData* data)
+void MJBody::setJointPositionDerivativesFromMujoco(const mjData* data)
 {
     for (MJJoint* joint : this->orderedJoints) {
         joint->setPositionDerivativeFromMujoco(data);
     }
 }
 
-void
-MJBody::validateJointStateLayout(const double* qposBase, const double* qvelBase) const
+void MJBody::validateJointStateLayout(const double* qposBase, const double* qvelBase) const
 {
     for (const MJJoint* joint : this->orderedJoints) {
         joint->validateStateLayout(qposBase, qvelBase);
     }
 }
 
-double
-MJBody::getMass()
+double MJBody::getMass()
 {
     // This body's mass lives at its body id in the scene's bulk mass state.
     return this->getSpec().getScene().getMassState()->stateView()(static_cast<Eigen::Index>(this->getId()));
 }
 
-void
-MJBody::applyPrevalidatedMass(mjModel* model, double newMass) noexcept
+void MJBody::applyPrevalidatedMass(mjModel* model, double newMass) noexcept
 {
     const double oldMass = model->body_mass[this->getId()];
     constexpr double massEpsilon = 10.0 * std::numeric_limits<double>::epsilon();
@@ -315,8 +297,7 @@ MJBody::applyPrevalidatedMass(mjModel* model, double newMass) noexcept
     }
 }
 
-void
-MJBody::updateMassPropsDerivative()
+void MJBody::updateMassPropsDerivative()
 {
     if (this->derivativeMassPropertiesInMsg.isLinked()) {
         auto deriv = this->derivativeMassPropertiesInMsg();
@@ -326,16 +307,14 @@ MJBody::updateMassPropsDerivative()
     }
 }
 
-void
-MJBody::updateConstrainedEqualityJoints()
+void MJBody::updateConstrainedEqualityJoints()
 {
     for (auto&& joint : this->scalarJoints) {
         joint.updateConstrainedEquality();
     }
 }
 
-void
-MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude)
+void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::MRPd& attitude)
 {
 
     if (this->hasSite(name)) {
@@ -353,8 +332,7 @@ MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Eigen::
     site.setAttitudeRelativeToBody(attitude);
 }
 
-bool
-MJBody::hasSite(const std::string& name) const
+bool MJBody::hasSite(const std::string& name) const
 {
     return std::find_if(std::begin(sites), std::end(sites), [&](auto&& obj) { return obj.getName() == name; }) !=
            std::end(sites);

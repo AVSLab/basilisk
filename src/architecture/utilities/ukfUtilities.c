@@ -22,8 +22,7 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include <math.h>
 
-void
-ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat)
+void ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat)
 {
     int32_t i, j, k, dimi, dimj;
     double qMat[UKF_MAX_DIM * UKF_MAX_DIM];
@@ -62,8 +61,7 @@ ukfQRDJustR(double* inMat, int32_t nRow, int32_t nCol, double* destMat)
     return;
 }
 
-int32_t
-ukfLInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
+int32_t ukfLInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
 {
     int i, j, k, mat_dim;
 
@@ -91,8 +89,7 @@ ukfLInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
     return 0;
 }
 
-int32_t
-ukfUInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
+int32_t ukfUInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
 {
     int i, j, k, mat_dim;
 
@@ -119,8 +116,7 @@ ukfUInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
     return 0;
 }
 
-int32_t
-ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, int32_t* indx)
+int32_t ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, int32_t* indx)
 {
     double vv[UKF_MAX_DIM];
     int32_t i, j, k, imax;
@@ -193,8 +189,7 @@ ukfLUD(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat, int32_t* 
     return 0;
 }
 
-int32_t
-ukfLUBckSlv(double* sourceMat, int32_t nRow, int32_t nCol, int32_t* indx, double* bmat, double* destMat)
+int32_t ukfLUBckSlv(double* sourceMat, int32_t nRow, int32_t nCol, int32_t* indx, double* bmat, double* destMat)
 {
     int i, ip, j;
     int ii = -1;
@@ -234,8 +229,7 @@ ukfLUBckSlv(double* sourceMat, int32_t nRow, int32_t nCol, int32_t* indx, double
     return 0;
 }
 
-int32_t
-ukfMatInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
+int32_t ukfMatInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
 {
     double LUMatrix[UKF_MAX_DIM * UKF_MAX_DIM];
     double invCol[UKF_MAX_DIM];
@@ -260,8 +254,7 @@ ukfMatInv(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
     return badCall;
 }
 
-int32_t
-ukfCholDecomp(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
+int32_t ukfCholDecomp(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
 {
     int32_t i, j, k;
     double sigma;
@@ -296,8 +289,7 @@ ukfCholDecomp(double* sourceMat, int32_t nRow, int32_t nCol, double* destMat)
     return 0;
 }
 
-int32_t
-ukfCholDownDate(double* rMat, double* xVec, double beta, int32_t nStates, double* rOut)
+int32_t ukfCholDownDate(double* rMat, double* xVec, double beta, int32_t nStates, double* rOut)
 {
     int i, j;
     double wVec[UKF_MAX_DIM];

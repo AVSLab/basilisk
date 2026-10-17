@@ -100,8 +100,7 @@ MsisAtmosphere::~MsisAtmosphere()
  differs from the mean solar time by the equation of time, up to about 16 minutes during the year.
  @param useApparent true to add the equation of time to the local solar time
  */
-void
-MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
+void MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
 {
     this->useApparentSolarTime = useApparent;
 }
@@ -109,8 +108,7 @@ MsisAtmosphere::setUseApparentSolarTime(bool useApparent)
 /*! Returns whether the apparent solar time is used as the local solar time input.
  @return true if the equation of time is added to the mean solar time
  */
-bool
-MsisAtmosphere::getUseApparentSolarTime() const
+bool MsisAtmosphere::getUseApparentSolarTime() const
 {
     return this->useApparentSolarTime;
 }
@@ -122,8 +120,7 @@ MsisAtmosphere::getUseApparentSolarTime() const
  storm more closely than the daily Ap, which applies from midnight.
  @param useHistory true to use the 3-hour Ap history, false to use the daily Ap
  */
-void
-MsisAtmosphere::setUseApHistory(bool useHistory)
+void MsisAtmosphere::setUseApHistory(bool useHistory)
 {
     this->useApHistory = useHistory;
     this->msisFlags.switches[9] = useHistory ? -1 : 1;
@@ -132,8 +129,7 @@ MsisAtmosphere::setUseApHistory(bool useHistory)
 /*! Returns whether NRLMSISE-00 uses the 3-hour Ap history instead of the daily Ap.
  @return true if the 3-hour Ap history is used
  */
-bool
-MsisAtmosphere::getUseApHistory() const
+bool MsisAtmosphere::getUseApHistory() const
 {
     return this->useApHistory;
 }
@@ -145,8 +141,7 @@ MsisAtmosphere::getUseApHistory() const
  @param secondOfDay [s] second of the day, UTC
  @return [s] equation of time
  */
-double
-MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
+double MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
 {
     if (year < 1970) {
         bskLogger.bskError("MsisAtmosphere: the apparent solar time requires an epoch year of 1970 or later.");
@@ -179,8 +174,7 @@ MsisAtmosphere::equationOfTime(int year, int dayOfYear, double secondOfDay)
 /*! This method is used to reset the module.
 
  */
-void
-MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     for (size_t ind = 0; ind < 23; ind++) {
         if (!this->swDataInMsgs[ind].isLinked()) {
@@ -193,8 +187,7 @@ MsisAtmosphere::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
    message is set then this variable is not used.
 
  */
-void
-MsisAtmosphere::customSetEpochFromVariable()
+void MsisAtmosphere::customSetEpochFromVariable()
 {
     //! - only convert if the day-in-year variable was set to a non-zero value.  Otherwise use the BSK epoch default
     //! setup by the base class.
@@ -212,8 +205,7 @@ MsisAtmosphere::customSetEpochFromVariable()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
 }
@@ -222,8 +214,7 @@ MsisAtmosphere::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
  associated spacecraft positions for computing the atmosphere.
 
  */
-bool
-MsisAtmosphere::customReadMessages()
+bool MsisAtmosphere::customReadMessages()
 {
     bool swRead = false;
     int failCount = 0;
@@ -247,8 +238,7 @@ MsisAtmosphere::customReadMessages()
     return (swRead);
 }
 
-void
-MsisAtmosphere::updateInputParams()
+void MsisAtmosphere::updateInputParams()
 {
     this->msisInput.ap = this->ap;
     this->msisInput.ap_a->a[0] = this->aph.a[0];
@@ -263,8 +253,7 @@ MsisAtmosphere::updateInputParams()
     this->msisInput.f107 = this->f107;
 }
 
-void
-MsisAtmosphere::updateSwIndices()
+void MsisAtmosphere::updateSwIndices()
 {
     this->ap = this->swDataList[0].dataValue;
     this->aph.a[0] = this->swDataList[0].dataValue;
@@ -291,8 +280,7 @@ MsisAtmosphere::updateSwIndices()
     this->f107 = this->swDataList[22].dataValue;
 }
 
-void
-MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime)
+void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime)
 {
     this->updateSwIndices();
     this->updateInputParams();

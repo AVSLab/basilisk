@@ -27,8 +27,7 @@
 
  @param currentSimNanos [ns] Time the method is called
 */
-void
-FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 
@@ -38,8 +37,7 @@ FacetSRPDynamicEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 
 /*! This method runs every configuration check from each initialization path, since Reset() runs
  only when the effector is also added to a task */
-void
-FacetSRPDynamicEffector::validateConfiguration()
+void FacetSRPDynamicEffector::validateConfiguration()
 {
     if (!this->sunInMsg.isLinked()) {
         bskLogger.bskError("FacetSRPDynamicEffector.sunInMsg was not linked.");
@@ -71,14 +69,13 @@ FacetSRPDynamicEffector::validateConfiguration()
  @param diffuseCoeff  Facet diffuse reflection optical coefficient
  @param specularCoeff  Facet spectral reflection optical coefficient
 */
-void
-FacetSRPDynamicEffector::addFacet(double area,
-                                  Eigen::Matrix3d dcm_F0B,
-                                  Eigen::Vector3d nHat_F,
-                                  Eigen::Vector3d rotHat_F,
-                                  Eigen::Vector3d r_CopB_B,
-                                  double diffuseCoeff,
-                                  double specularCoeff)
+void FacetSRPDynamicEffector::addFacet(double area,
+                                       Eigen::Matrix3d dcm_F0B,
+                                       Eigen::Vector3d nHat_F,
+                                       Eigen::Vector3d rotHat_F,
+                                       Eigen::Vector3d r_CopB_B,
+                                       double diffuseCoeff,
+                                       double specularCoeff)
 {
     this->scGeometry.facetAreaList.push_back(area);
     this->scGeometry.facetDcm_F0BList.push_back(dcm_F0B);
@@ -96,14 +93,12 @@ articulatedFacetDataInMsgs input messages.
 
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
-void
-FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg)
+void FacetSRPDynamicEffector::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg)
 {
     this->addArticulatedFacet(tmpMsg->addSubscriber());
 }
 
-void
-FacetSRPDynamicEffector::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader)
+void FacetSRPDynamicEffector::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader)
 {
     this->articulatedFacetDataInMsgs.push_back(reader);
 }
@@ -118,8 +113,7 @@ FacetSRPDynamicEffector::FacetSRPDynamicEffector()
 
  @param states Dynamic parameter states
 */
-void
-FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
+void FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
 {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubPosition = states.getStateObject(this->stateNameOfPosition);
@@ -130,8 +124,7 @@ FacetSRPDynamicEffector::linkInStates(DynParamManager& states)
 
  @param properties Dynamic parameter properties
 */
-void
-FacetSRPDynamicEffector::linkInProperties(DynParamManager& properties)
+void FacetSRPDynamicEffector::linkInProperties(DynParamManager& properties)
 {
     this->inertialAttitudeProperty = properties.getPropertyReference(this->propName_inertialAttitude);
     this->inertialPositionProperty = properties.getPropertyReference(this->propName_inertialPosition);
@@ -142,8 +135,7 @@ FacetSRPDynamicEffector::linkInProperties(DynParamManager& properties)
 the articulation angle messages are also read.
 
 */
-void
-FacetSRPDynamicEffector::ReadMessages()
+void FacetSRPDynamicEffector::ReadMessages()
 {
     // Read the Sun state input message
     if (this->sunInMsg.isLinked() && this->sunInMsg.isWritten()) {
@@ -177,8 +169,7 @@ FacetSRPDynamicEffector::ReadMessages()
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
-void
-FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     // Read the input messages
     ReadMessages();
@@ -276,8 +267,7 @@ FacetSRPDynamicEffector::computeForceTorque(double callTime [[maybe_unused]], do
 
  @param numFacets Total number of spacecraft facets
 */
-void
-FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets)
+void FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets)
 {
     this->numFacets = numFacets;
 }
@@ -286,8 +276,7 @@ FacetSRPDynamicEffector::setNumFacets(const uint64_t numFacets)
 
  @param numArticulatedFacets Number of articulated spacecraft facets
 */
-void
-FacetSRPDynamicEffector::setNumArticulatedFacets(const uint64_t numArticulatedFacets)
+void FacetSRPDynamicEffector::setNumArticulatedFacets(const uint64_t numArticulatedFacets)
 {
     this->numArticulatedFacets = numArticulatedFacets;
 }
@@ -295,8 +284,7 @@ FacetSRPDynamicEffector::setNumArticulatedFacets(const uint64_t numArticulatedFa
 /*! Getter method for the total number of facets used to model the spacecraft structure.
  @return uint64_t
 */
-uint64_t
-FacetSRPDynamicEffector::getNumFacets() const
+uint64_t FacetSRPDynamicEffector::getNumFacets() const
 {
     return this->numFacets;
 }
@@ -304,8 +292,7 @@ FacetSRPDynamicEffector::getNumFacets() const
 /*! Getter method for the number of articulated facets used to model the spacecraft articulating components.
  @return uint64_t
 */
-uint64_t
-FacetSRPDynamicEffector::getNumArticulatedFacets() const
+uint64_t FacetSRPDynamicEffector::getNumArticulatedFacets() const
 {
     return this->numArticulatedFacets;
 }

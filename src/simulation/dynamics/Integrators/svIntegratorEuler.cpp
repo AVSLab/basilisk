@@ -24,8 +24,7 @@ svIntegratorEuler::svIntegratorEuler(DynamicObject* dyn)
 {
 }
 
-RKCoefficients<1>
-svIntegratorEuler::getCoefficients()
+RKCoefficients<1> svIntegratorEuler::getCoefficients()
 {
     RKCoefficients<1> coefficients;
 

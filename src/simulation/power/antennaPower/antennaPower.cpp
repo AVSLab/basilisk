@@ -30,8 +30,7 @@ AntennaPower::~AntennaPower() {}
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
  */
-void
-AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
+void AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // Check that basePowerNeed is non-negative
     if (this->basePowerNeed < 0.0) {
@@ -41,8 +40,7 @@ AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This method is used to read incoming antenna state message.
  */
-bool
-AntennaPower::customReadMessages()
+bool AntennaPower::customReadMessages()
 {
     //! - read in the power node use/supply messages
     bool antennaRead = true;
@@ -62,8 +60,7 @@ AntennaPower::customReadMessages()
 
 /*! Computes the antenna power load. Determines the netPower attribute in powerUsageSimMessage.
  */
-void
-AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsage)
+void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsage)
 {
     // Read the input message to get the current antenna state
     if (!this->customReadMessages()) {

@@ -80,8 +80,7 @@ ImuSensor::ImuSensor()
 /*!
     set body orientation DCM relative to platform
  */
-void
-ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
+void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     this->dcm_PB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
 
@@ -97,8 +96,7 @@ ImuSensor::~ImuSensor()
 
  @param CurrentSimNanos current time (ns)
  */
-void
-ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -144,8 +142,7 @@ ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*!
     read input messages
  */
-void
-ImuSensor::readInputMessages()
+void ImuSensor::readInputMessages()
 {
     this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
     if (this->scStateInMsg.isLinked()) {
@@ -170,8 +167,7 @@ ImuSensor::readInputMessages()
 /*!
     write output messages
  */
-void
-ImuSensor::writeOutputMessages(uint64_t Clock)
+void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
     IMUSensorMsgPayload localOutput;
 
@@ -188,8 +184,7 @@ ImuSensor::writeOutputMessages(uint64_t Clock)
 /*!
     set LSB values
  */
-void
-ImuSensor::setLSBs(double LSBa, double LSBo)
+void ImuSensor::setLSBs(double LSBa, double LSBo)
 {
     this->aDisc.setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
     this->oDisc.setLSB(Eigen::Vector3d(LSBo, LSBo, LSBo));
@@ -199,8 +194,7 @@ ImuSensor::setLSBs(double LSBa, double LSBo)
 /*!
     set Carry error value
  */
-void
-ImuSensor::setCarryError(bool aCarry, bool oCarry)
+void ImuSensor::setCarryError(bool aCarry, bool oCarry)
 {
     this->aDisc.setCarryError(aCarry);
     this->oDisc.setCarryError(oCarry);
@@ -210,8 +204,7 @@ ImuSensor::setCarryError(bool aCarry, bool oCarry)
 /*!
     set round direction value
  */
-void
-ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound)
+void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound)
 {
 
     this->aDisc.setRoundDirection(aRound);
@@ -224,8 +217,7 @@ ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound)
     apply sensor direction
     @param CurrentTime
  */
-void
-ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
+void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
 
     double dt = diffNanoToSec(CurrentTime, this->PreviousTime);
@@ -249,8 +241,7 @@ ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     set o saturation bounds
     @param oSatBounds
  */
-void
-ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds)
+void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds)
 {
     this->oSat.setBounds(oSatBounds);
 }
@@ -259,8 +250,7 @@ ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds)
     set a saturation bounds
     @param aSatBounds
  */
-void
-ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds)
+void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds)
 {
     this->aSat.setBounds(aSatBounds);
 }
@@ -268,8 +258,7 @@ ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds)
 /*!
     scale truth method
  */
-void
-ImuSensor::scaleTruth()
+void ImuSensor::scaleTruth()
 {
     this->omega_PN_P_out = this->omega_PN_P_out.cwiseProduct(this->gyroScale);
     this->prv_PN_out = this->prv_PN_out.cwiseProduct(this->gyroScale);
@@ -281,8 +270,7 @@ ImuSensor::scaleTruth()
 /*!
     apply sensor errors
  */
-void
-ImuSensor::applySensorErrors(uint64_t CurrentTime)
+void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
     Eigen::Vector3d OmegaErrors; // angular noise plus bias
     Eigen::Vector3d AccelErrors; // linear noise plus bias
@@ -304,8 +292,7 @@ ImuSensor::applySensorErrors(uint64_t CurrentTime)
 /*!
  compute sensor errors
  */
-void
-ImuSensor::computeSensorErrors()
+void ImuSensor::computeSensorErrors()
 {
     this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
     this->errorModelAccel.computeNextState();
@@ -320,8 +307,7 @@ ImuSensor::computeSensorErrors()
 /*!
     apply sensor saturation
  */
-void
-ImuSensor::applySensorSaturation(uint64_t CurrentTime)
+void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
     double dt = diffNanoToSec(CurrentTime, PreviousTime);
 
@@ -349,8 +335,7 @@ ImuSensor::applySensorSaturation(uint64_t CurrentTime)
     to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
     spacecraft output message and passed through to theother IMU functions which add noise, etc.
  */
-void
-ImuSensor::computePlatformDR()
+void ImuSensor::computePlatformDR()
 {
     double dcm_P2P1_cArray[9]; // dcm_P2P1 as cArray for C2PRV conversion
     double prv_PN_cArray[3];   // cArray of PRV
@@ -380,8 +365,7 @@ ImuSensor::computePlatformDR()
     a new delta-v.
     @param CurrentTime [ns] current simulation time
  */
-void
-ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
+void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
 {
     // Calculate "instantaneous" linear acceleration
     Eigen::Vector3d
@@ -405,8 +389,7 @@ ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
     update module states
     @param CurrentSimNanos current time (ns)
  */
-void
-ImuSensor::UpdateState(uint64_t CurrentSimNanos)
+void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
 
@@ -443,8 +426,7 @@ ImuSensor::UpdateState(uint64_t CurrentSimNanos)
     Setter for `AMatrixAccel`
     @param propMatrix Matrix to set
 */
-void
-ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
+void ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
 {
     this->AMatrixAccel = propMatrix;
     this->errorModelAccel.setPropMatrix(propMatrix);
@@ -454,8 +436,7 @@ ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
     Setter for `AMatrixGyro`
     @param propMatrix Matrix to set
 */
-void
-ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
+void ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
 {
     this->AMatrixGyro = propMatrix;
     this->errorModelGyro.setPropMatrix(propMatrix);
@@ -465,8 +446,7 @@ ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
     Getter for `AMatrixAccel`
     @return Current matrix
 */
-Eigen::MatrixXd
-ImuSensor::getAMatrixAccel() const
+Eigen::MatrixXd ImuSensor::getAMatrixAccel() const
 {
     return this->AMatrixAccel;
 }
@@ -475,8 +455,7 @@ ImuSensor::getAMatrixAccel() const
     Getter for `AMatrixGyro`
     @return Current matrix
 */
-Eigen::MatrixXd
-ImuSensor::getAMatrixGyro() const
+Eigen::MatrixXd ImuSensor::getAMatrixGyro() const
 {
     return this->AMatrixGyro;
 }
@@ -485,8 +464,7 @@ ImuSensor::getAMatrixGyro() const
     Setter for `walkBoundsAccel`
     @param bounds Bounds vector to set
 */
-void
-ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
+void ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
 {
     this->walkBoundsAccel = bounds;
     this->errorModelAccel.setUpperBounds(bounds);
@@ -496,8 +474,7 @@ ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
     Setter for `walkBoundsGyro`
     @param bounds Bounds vector to set
 */
-void
-ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
+void ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
 {
     this->walkBoundsGyro = bounds;
     this->errorModelGyro.setUpperBounds(bounds);
@@ -507,8 +484,7 @@ ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
     Getter for `walkBoundsAccel`
     @return Current bounds
 */
-Eigen::Vector3d
-ImuSensor::getWalkBoundsAccel() const
+Eigen::Vector3d ImuSensor::getWalkBoundsAccel() const
 {
     return this->walkBoundsAccel;
 }
@@ -517,8 +493,7 @@ ImuSensor::getWalkBoundsAccel() const
     Getter for `walkBoundsGyro`
     @return Current bounds
 */
-Eigen::Vector3d
-ImuSensor::getWalkBoundsGyro() const
+Eigen::Vector3d ImuSensor::getWalkBoundsGyro() const
 {
     return this->walkBoundsGyro;
 }
@@ -527,8 +502,7 @@ ImuSensor::getWalkBoundsGyro() const
     Setter for `errorBoundsAccel`
     @param bounds Bounds vector to set
 */
-void
-ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
+void ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
 {
     this->errorBoundsAccel = bounds;
     this->errorModelAccel.setUpperBounds(bounds);
@@ -538,8 +512,7 @@ ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
     Setter for `errorBoundsGyro`
     @param bounds Bounds vector to set
 */
-void
-ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
+void ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
 {
     this->errorBoundsGyro = bounds;
     this->errorModelGyro.setUpperBounds(bounds);
@@ -549,8 +522,7 @@ ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
     Getter for `errorBoundsAccel`
     @return Current bounds
 */
-Eigen::Vector3d
-ImuSensor::getErrorBoundsAccel() const
+Eigen::Vector3d ImuSensor::getErrorBoundsAccel() const
 {
     return this->errorBoundsAccel;
 }
@@ -559,8 +531,7 @@ ImuSensor::getErrorBoundsAccel() const
     Getter for `errorBoundsGyro`
     @return Current bounds
 */
-Eigen::Vector3d
-ImuSensor::getErrorBoundsGyro() const
+Eigen::Vector3d ImuSensor::getErrorBoundsGyro() const
 {
     return this->errorBoundsGyro;
 }

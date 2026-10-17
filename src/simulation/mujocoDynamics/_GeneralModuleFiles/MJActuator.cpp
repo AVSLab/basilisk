@@ -19,29 +19,25 @@
 
 #include "MJActuator.h"
 
-void
-MJActuatorObject::updateCtrl(mjData* data, double value)
+void MJActuatorObject::updateCtrl(mjData* data, double value)
 {
     data->ctrl[this->getId()] = value;
 }
 
-void
-MJActuator::configure(const mjModel* model)
+void MJActuator::configure(const mjModel* model)
 {
     for (auto& sub : this->subActuators) {
         sub.configure(model);
     }
 }
 
-void
-MJSingleActuator::updateCtrl(mjData* data)
+void MJSingleActuator::updateCtrl(mjData* data)
 {
     const double value = this->actuatorInMsg.isLinked() ? this->actuatorInMsg().input : 0.0;
     this->subActuators[0].updateCtrl(data, value);
 }
 
-void
-MJForceActuator::updateCtrl(mjData* data)
+void MJForceActuator::updateCtrl(mjData* data)
 {
     const auto input = this->forceInMsg.isLinked() ? this->forceInMsg() : this->forceInMsg.zeroMsgPayload;
     for (size_t index = 0; index < 3; ++index) {
@@ -49,8 +45,7 @@ MJForceActuator::updateCtrl(mjData* data)
     }
 }
 
-void
-MJTorqueActuator::updateCtrl(mjData* data)
+void MJTorqueActuator::updateCtrl(mjData* data)
 {
     const auto input = this->torqueInMsg.isLinked() ? this->torqueInMsg() : this->torqueInMsg.zeroMsgPayload;
     for (size_t index = 0; index < 3; ++index) {
@@ -58,8 +53,7 @@ MJTorqueActuator::updateCtrl(mjData* data)
     }
 }
 
-void
-MJForceTorqueActuator::updateCtrl(mjData* data)
+void MJForceTorqueActuator::updateCtrl(mjData* data)
 {
     const auto force = this->forceInMsg.isLinked() ? this->forceInMsg() : this->forceInMsg.zeroMsgPayload;
     const auto torque = this->torqueInMsg.isLinked() ? this->torqueInMsg() : this->torqueInMsg.zeroMsgPayload;

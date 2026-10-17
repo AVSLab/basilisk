@@ -36,8 +36,7 @@ LambertPlanner::~LambertPlanner() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -54,8 +53,7 @@ LambertPlanner::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertPlanner::UpdateState(uint64_t currentSimNanos)
+void LambertPlanner::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -85,8 +83,7 @@ LambertPlanner::UpdateState(uint64_t currentSimNanos)
 /*! This method sets the lambert solver algorithm that should be used to the method by Izzo.
 
 */
-void
-LambertPlanner::useSolverIzzoMethod()
+void LambertPlanner::useSolverIzzoMethod()
 {
     this->solverMethod = IZZO;
 }
@@ -94,8 +91,7 @@ LambertPlanner::useSolverIzzoMethod()
 /*! This method sets the lambert solver algorithm that should be used to the method by Gooding.
 
 */
-void
-LambertPlanner::useSolverGoodingMethod()
+void LambertPlanner::useSolverGoodingMethod()
 {
     this->solverMethod = GOODING;
 }
@@ -104,8 +100,7 @@ LambertPlanner::useSolverGoodingMethod()
     It also checks if the message contents are valid for this module.
 
 */
-void
-LambertPlanner::readMessages()
+void LambertPlanner::readMessages()
 {
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
 
@@ -122,8 +117,7 @@ LambertPlanner::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertPlanner::writeMessages(uint64_t currentSimNanos)
+void LambertPlanner::writeMessages(uint64_t currentSimNanos)
 {
     LambertProblemMsgPayload lambertProblemOutMsgBuffer;
     lambertProblemOutMsgBuffer = this->lambertProblemOutMsg.zeroMsgPayload;
@@ -149,11 +143,10 @@ LambertPlanner::writeMessages(uint64_t currentSimNanos)
     @param dt Time step.
     @return Time values and corresponding six-element state vectors.
 */
-LambertPlanner::PropagationResult
-LambertPlanner::propagate(const EquationsOfMotion& EOM,
-                          std::array<double, 2> interval,
-                          const StateVector& X0,
-                          double dt)
+LambertPlanner::PropagationResult LambertPlanner::propagate(const EquationsOfMotion& EOM,
+                                                            std::array<double, 2> interval,
+                                                            const StateVector& X0,
+                                                            double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
@@ -187,8 +180,10 @@ LambertPlanner::propagate(const EquationsOfMotion& EOM,
     @param dt Time step.
     @return Integrated six-element state vector.
 */
-LambertPlanner::StateVector
-LambertPlanner::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X0, double t0, double dt)
+LambertPlanner::StateVector LambertPlanner::RK4(const EquationsOfMotion& ODEfunction,
+                                                const StateVector& X0,
+                                                double t0,
+                                                double dt)
 {
     double h = dt;
 
@@ -202,26 +197,22 @@ LambertPlanner::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X0,
     return X;
 }
 
-void
-LambertPlanner::setR_TN_N(const Eigen::Vector3d value)
+void LambertPlanner::setR_TN_N(const Eigen::Vector3d value)
 {
     this->r_TN_N = value;
 }
 
-void
-LambertPlanner::setFinalTime(const double value)
+void LambertPlanner::setFinalTime(const double value)
 {
     this->finalTime = value;
 }
 
-void
-LambertPlanner::setManeuverTime(const double value)
+void LambertPlanner::setManeuverTime(const double value)
 {
     this->maneuverTime = value;
 }
 
-void
-LambertPlanner::setMu(const double value)
+void LambertPlanner::setMu(const double value)
 {
     if (value < 0.0) {
         bskLogger.bskError("lambertPlanner: mu must be positive.");
@@ -229,8 +220,7 @@ LambertPlanner::setMu(const double value)
     this->mu = value;
 }
 
-void
-LambertPlanner::setNumRevolutions(const int value)
+void LambertPlanner::setNumRevolutions(const int value)
 {
     this->numRevolutions = value;
 }

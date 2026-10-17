@@ -47,8 +47,7 @@
  * @return A string view representing the body type.
  */
 template<>
-constexpr std::string_view
-MJBasilisk::detail::getObjectTypeName<mjsBody>()
+constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsBody>()
 {
     return "body";
 }

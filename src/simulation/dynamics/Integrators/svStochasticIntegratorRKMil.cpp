@@ -44,8 +44,7 @@ svStochasticIntegratorRKMil::svStochasticIntegratorRKMil(DynamicObject* dynIn)
 
 svStochasticIntegratorRKMil::~svStochasticIntegratorRKMil() noexcept = default;
 
-void
-svStochasticIntegratorRKMil::bindFlatStorage()
+void svStochasticIntegratorRKMil::bindFlatStorage()
 {
     auto storage = std::make_unique<FlatStorage>();
     const auto stateSize = this->stochasticAcceptedState().size();
@@ -65,13 +64,12 @@ svStochasticIntegratorRKMil::bindFlatStorage()
     this->flatStorage = std::move(storage);
 }
 
-void
-svStochasticIntegratorRKMil::applyCandidate(const Eigen::VectorXd& base,
-                                            const Eigen::VectorXd& drift,
-                                            double timeStep,
-                                            const Eigen::VectorXd& diffusions,
-                                            const Eigen::VectorXd& pseudoSteps,
-                                            Eigen::VectorXd& output)
+void svStochasticIntegratorRKMil::applyCandidate(const Eigen::VectorXd& base,
+                                                 const Eigen::VectorXd& drift,
+                                                 double timeStep,
+                                                 const Eigen::VectorXd& diffusions,
+                                                 const Eigen::VectorXd& pseudoSteps,
+                                                 Eigen::VectorXd& output)
 {
     const auto& localNoiseSlots = this->stochasticLocalNoiseSlots();
     const auto& packedOffsets = this->stochasticLocalNoisePackedOffsets();
@@ -97,8 +95,7 @@ svStochasticIntegratorRKMil::applyCandidate(const Eigen::VectorXd& base,
     }
 }
 
-void
-svStochasticIntegratorRKMil::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorRKMil::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

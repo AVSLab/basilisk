@@ -26,8 +26,7 @@
 /*! This method self initializes the C-wrapped output message.
 
 */
-void
-PrescribedLinearTranslation::SelfInit()
+void PrescribedLinearTranslation::SelfInit()
 {
     PrescribedTranslationMsg_C_init(&this->prescribedTranslationOutMsgC);
 }
@@ -36,8 +35,7 @@ PrescribedLinearTranslation::SelfInit()
 
  @param callTime [ns] Time the method is called
 */
-void
-PrescribedLinearTranslation::Reset(uint64_t callTime [[maybe_unused]])
+void PrescribedLinearTranslation::Reset(uint64_t callTime [[maybe_unused]])
 {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
         _bskLog(
@@ -57,8 +55,7 @@ The prescribed translational states are then written to the output message.
 
  @param callTime [ns] Time the method is called
 */
-void
-PrescribedLinearTranslation::UpdateState(uint64_t callTime)
+void PrescribedLinearTranslation::UpdateState(uint64_t callTime)
 {
     // Read the input message
     LinearTranslationRigidBodyMsgPayload linearTranslationRigidBodyIn = LinearTranslationRigidBodyMsgPayload();
@@ -99,8 +96,7 @@ PrescribedLinearTranslation::UpdateState(uint64_t callTime)
 /*! This intermediate method groups the calculation of translation parameters into a single method.
 
 */
-void
-PrescribedLinearTranslation::computeTranslationParameters()
+void PrescribedLinearTranslation::computeTranslationParameters()
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -120,8 +116,7 @@ PrescribedLinearTranslation::computeTranslationParameters()
 /*! This method computes the required parameters for the translation with a non-smoothed bang-bang acceleration profile.
 
 */
-void
-PrescribedLinearTranslation::computeBangBangParametersNoSmoothing()
+void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing()
 {
     // Determine the total time required for the translation
     double totalTransTime = sqrt(((0.5 * fabs(this->transPosRef - this->transPosInit)) * 8.0) / this->transAccelMax);
@@ -142,8 +137,7 @@ PrescribedLinearTranslation::computeBangBangParametersNoSmoothing()
    profile.
 
 */
-void
-PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing()
+void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing()
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -179,8 +173,7 @@ PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing()
 /*! This method computes the required parameters for the translation with a smoothed bang-bang acceleration profile.
 
 */
-void
-PrescribedLinearTranslation::computeSmoothedBangBangParameters()
+void PrescribedLinearTranslation::computeSmoothedBangBangParameters()
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -233,8 +226,7 @@ PrescribedLinearTranslation::computeSmoothedBangBangParameters()
    profile.
 
 */
-void
-PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
+void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -296,8 +288,7 @@ PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
 /*! This intermediate method groups the calculation of the current translational states into a single method.
 
 */
-void
-PrescribedLinearTranslation::computeCurrentState(double t)
+void PrescribedLinearTranslation::computeCurrentState(double t)
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -360,8 +351,7 @@ PrescribedLinearTranslation::computeCurrentState(double t)
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInFirstBangSegment(double t) const
+bool PrescribedLinearTranslation::isInFirstBangSegment(double t) const
 {
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s1 && t <= this->t_b1 && this->t_f - this->tInit != 0.0);
@@ -374,8 +364,7 @@ PrescribedLinearTranslation::isInFirstBangSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInSecondBangSegment(double t) const
+bool PrescribedLinearTranslation::isInSecondBangSegment(double t) const
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -396,8 +385,7 @@ PrescribedLinearTranslation::isInSecondBangSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInFirstSmoothedSegment(double t) const
+bool PrescribedLinearTranslation::isInFirstSmoothedSegment(double t) const
 {
     return (t <= this->t_s1 && this->t_f - this->tInit != 0.0);
 }
@@ -407,8 +395,7 @@ PrescribedLinearTranslation::isInFirstSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const
+bool PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const
 {
     return (t > this->t_b1 && t <= this->t_s2 && this->t_f - this->tInit != 0.0);
 }
@@ -417,8 +404,7 @@ PrescribedLinearTranslation::isInSecondSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const
+bool PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const
 {
     if (this->coastOptionBangDuration > 0.0) {
         return (t > this->t_c && t <= this->t_s3 && this->t_f - this->tInit != 0.0);
@@ -432,8 +418,7 @@ PrescribedLinearTranslation::isInThirdSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const
+bool PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const
 {
     return (t > this->t_b2 && t <= this->t_f && this->t_f - this->tInit != 0.0);
 }
@@ -442,8 +427,7 @@ PrescribedLinearTranslation::isInFourthSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedLinearTranslation::isInCoastSegment(double t) const
+bool PrescribedLinearTranslation::isInCoastSegment(double t) const
 {
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s2 && t <= this->t_c && this->t_f - this->tInit != 0.0);
@@ -456,8 +440,7 @@ PrescribedLinearTranslation::isInCoastSegment(double t) const
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeFirstBangSegment(double t)
+void PrescribedLinearTranslation::computeFirstBangSegment(double t)
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
     this->transAccel = sign * this->transAccelMax;
@@ -476,8 +459,7 @@ PrescribedLinearTranslation::computeFirstBangSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeSecondBangSegment(double t)
+void PrescribedLinearTranslation::computeSecondBangSegment(double t)
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
     this->transAccel = -sign * this->transAccelMax;
@@ -502,8 +484,7 @@ PrescribedLinearTranslation::computeSecondBangSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeFirstSmoothedSegment(double t)
+void PrescribedLinearTranslation::computeFirstSmoothedSegment(double t)
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -528,8 +509,7 @@ PrescribedLinearTranslation::computeFirstSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeSecondSmoothedSegment(double t)
+void PrescribedLinearTranslation::computeSecondSmoothedSegment(double t)
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -579,8 +559,7 @@ PrescribedLinearTranslation::computeSecondSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
+void PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
 {
     double sign = (this->transPosRef - this->transPosInit) / abs(this->transPosRef - this->transPosInit);
 
@@ -635,8 +614,7 @@ PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeFourthSmoothedSegment(double t)
+void PrescribedLinearTranslation::computeFourthSmoothedSegment(double t)
 {
     double term1 = (3.0 * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
     double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
@@ -661,8 +639,7 @@ PrescribedLinearTranslation::computeFourthSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedLinearTranslation::computeCoastSegment(double t)
+void PrescribedLinearTranslation::computeCoastSegment(double t)
 {
     this->transAccel = 0.0;
 
@@ -678,8 +655,7 @@ PrescribedLinearTranslation::computeCoastSegment(double t)
 /*! This method computes the scalar translational states when the translation is complete.
 
 */
-void
-PrescribedLinearTranslation::computeTranslationComplete()
+void PrescribedLinearTranslation::computeTranslationComplete()
 {
     this->transAccel = 0.0;
     this->transVel = 0.0;
@@ -690,8 +666,7 @@ PrescribedLinearTranslation::computeTranslationComplete()
 /*! This method writes the module output messages and computes the output message data.
 
 */
-void
-PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime)
+void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime)
 {
     // Create the output buffer message
     PrescribedTranslationMsgPayload prescribedTranslationMsgOut;
@@ -728,8 +703,7 @@ PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime)
 
  @param coastOptionBangDuration [s] Bang segment time duration
 */
-void
-PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOptionBangDuration)
+void PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOptionBangDuration)
 {
     this->coastOptionBangDuration = coastOptionBangDuration;
 }
@@ -738,8 +712,7 @@ PrescribedLinearTranslation::setCoastOptionBangDuration(const double coastOption
 
  @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void
-PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration)
+void PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration)
 {
     this->smoothingDuration = smoothingDuration;
 }
@@ -748,8 +721,7 @@ PrescribedLinearTranslation::setSmoothingDuration(const double smoothingDuration
 
  @param transAccelMax [m/s^2] Bang segment linear angular acceleration
 */
-void
-PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax)
+void PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax)
 {
     this->transAccelMax = transAccelMax;
 }
@@ -758,8 +730,7 @@ PrescribedLinearTranslation::setTransAccelMax(const double transAccelMax)
 
  @param transHat_M Translating body axis of translation (unit vector)
 */
-void
-PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d& transHat_M)
+void PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d& transHat_M)
 {
     this->transHat_M = transHat_M;
 }
@@ -768,8 +739,7 @@ PrescribedLinearTranslation::setTransHat_M(const Eigen::Vector3d& transHat_M)
 
  @param transPosInit [m] Initial translating body position relative to the hub
 */
-void
-PrescribedLinearTranslation::setTransPosInit(const double transPosInit)
+void PrescribedLinearTranslation::setTransPosInit(const double transPosInit)
 {
     this->transPosInit = transPosInit;
 }
@@ -777,8 +747,7 @@ PrescribedLinearTranslation::setTransPosInit(const double transPosInit)
 /*! Getter method for the coast option bang duration.
  @return double
 */
-double
-PrescribedLinearTranslation::getCoastOptionBangDuration() const
+double PrescribedLinearTranslation::getCoastOptionBangDuration() const
 {
     return this->coastOptionBangDuration;
 }
@@ -786,8 +755,7 @@ PrescribedLinearTranslation::getCoastOptionBangDuration() const
 /*! Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.
  @return double
 */
-double
-PrescribedLinearTranslation::getSmoothingDuration() const
+double PrescribedLinearTranslation::getSmoothingDuration() const
 {
     return this->smoothingDuration;
 }
@@ -795,8 +763,7 @@ PrescribedLinearTranslation::getSmoothingDuration() const
 /*! Getter method for the bang segment scalar linear acceleration.
  @return double
 */
-double
-PrescribedLinearTranslation::getTransAccelMax() const
+double PrescribedLinearTranslation::getTransAccelMax() const
 {
     return this->transAccelMax;
 }
@@ -804,8 +771,7 @@ PrescribedLinearTranslation::getTransAccelMax() const
 /*! Getter method for the translating body axis of translation.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d&
-PrescribedLinearTranslation::getTransHat_M() const
+const Eigen::Vector3d& PrescribedLinearTranslation::getTransHat_M() const
 {
     return this->transHat_M;
 }
@@ -813,8 +779,7 @@ PrescribedLinearTranslation::getTransHat_M() const
 /*! Getter method for the initial translating body position.
  @return double
 */
-double
-PrescribedLinearTranslation::getTransPosInit() const
+double PrescribedLinearTranslation::getTransPosInit() const
 {
     return this->transPosInit;
 }

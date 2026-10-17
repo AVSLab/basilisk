@@ -59,8 +59,7 @@ Config::Config()
 Config::~Config() {}
 
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function) */
-void
-Albedo::addInstrumentConfig(instConfig_t configMsg)
+void Albedo::addInstrumentConfig(instConfig_t configMsg)
 {
     addOwnedMessage(this->ownedAlbOutMsgs, this->albOutMsgs);
 
@@ -91,8 +90,7 @@ Albedo::addInstrumentConfig(instConfig_t configMsg)
 }
 
 /*! Adds the instrument configuration and automatically creates an output message name (overloaded function) */
-void
-Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B)
+void Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d r_IB_B)
 {
     addOwnedMessage(this->ownedAlbOutMsgs, this->albOutMsgs);
 
@@ -130,8 +128,7 @@ Albedo::addInstrumentConfig(double fov, Eigen::Vector3d nHat_B, Eigen::Vector3d 
  *    nLat = 0, nLon = 0  → use base-class defaultNumLat/defaultNumLon
  */
 /*! This method subscribes to the planet msg and sets the albedo average model (overloaded function) */
-void
-Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg)
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg)
 {
     PlanetGrid cfg;
     cfg.useAlbedoData = false;
@@ -144,8 +141,10 @@ Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg)
 }
 
 /*! This method subscribes to the planet msg and sets the albedo average model (overloaded function) */
-void
-Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg, double ALB_avg, int numLat, int numLon)
+void Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg,
+                                            double ALB_avg,
+                                            int numLat,
+                                            int numLon)
 {
     PlanetGrid cfg;
     cfg.useAlbedoData = false;
@@ -158,10 +157,9 @@ Albedo::addPlanetandAlbedoAverageModel(Message<SpicePlanetStateMsgPayload>* msg,
 }
 
 /*! This method subscribes to the planet msg and sets the albedo data model */
-void
-Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* msg,
-                                    std::string dataPath,
-                                    std::string fileName)
+void Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* msg,
+                                         std::string dataPath,
+                                         std::string fileName)
 {
     PlanetGrid cfg;
     cfg.useAlbedoData = true;
@@ -176,8 +174,7 @@ Albedo::addPlanetandAlbedoDataModel(Message<SpicePlanetStateMsgPayload>* msg,
 }
 
 /*! Fills in planet-dependent grid parameters (REQ_m, RP_m, albedoAvg, nLat, nLon) from the planet name */
-void
-Albedo::resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg, PlanetGrid& grid, int /*idx*/)
+void Albedo::resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg, PlanetGrid& grid, int /*idx*/)
 {
     const std::string name(planetMsg.PlanetName);
 
@@ -197,8 +194,7 @@ Albedo::resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg, PlanetGr
 }
 
 /*! This method resets the module; validates that instruments and planets have been configured */
-void
-Albedo::customReset(uint64_t /*nanos*/)
+void Albedo::customReset(uint64_t /*nanos*/)
 {
     if (this->planets.empty()) {
         this->bskLogger.bskError("Albedo (Reset): no planets registered. "
@@ -218,8 +214,7 @@ Albedo::customReset(uint64_t /*nanos*/)
 }
 
 /*! This method reads the messages and caches spacecraft/sun state; clears per-instrument accumulators */
-void
-Albedo::onUpdateBegin(const SCStatesMsgPayload& scMsg, const SpicePlanetStateMsgPayload& sunMsg, uint64_t nanos)
+void Albedo::onUpdateBegin(const SCStatesMsgPayload& scMsg, const SpicePlanetStateMsgPayload& sunMsg, uint64_t nanos)
 {
     this->r_BN_N = Eigen::Vector3d(scMsg.r_BN_N); // [m]
     const Eigen::MRPd sigma_BN(scMsg.sigma_BN);
@@ -236,13 +231,12 @@ Albedo::onUpdateBegin(const SCStatesMsgPayload& scMsg, const SpicePlanetStateMsg
 }
 
 /*! This method evaluates the albedo model for one planet: applies FOV and eclipse filtering per instrument */
-void
-Albedo::evaluatePlanet(const SCStatesMsgPayload& /*scMsg*/,
-                       const SpicePlanetStateMsgPayload& sunMsg,
-                       SpicePlanetStateMsgPayload planetMsg,
-                       PlanetEntry& entry,
-                       const double S_sun,
-                       uint64_t /*nanos*/)
+void Albedo::evaluatePlanet(const SCStatesMsgPayload& /*scMsg*/,
+                            const SpicePlanetStateMsgPayload& sunMsg,
+                            SpicePlanetStateMsgPayload planetMsg,
+                            PlanetEntry& entry,
+                            const double S_sun,
+                            uint64_t /*nanos*/)
 {
     const Eigen::Vector3d r_PN_N(planetMsg.PositionVector); // [m]
     const Eigen::Vector3d r_SP_N = this->r_SN_N - r_PN_N;   // [m]
@@ -309,8 +303,7 @@ Albedo::evaluatePlanet(const SCStatesMsgPayload& /*scMsg*/,
 }
 
 /*! This method writes the output albedo messages from accumulated per-instrument data */
-void
-Albedo::onUpdateEnd(uint64_t nanos)
+void Albedo::onUpdateEnd(uint64_t nanos)
 {
     AlbedoMsgPayload localMsg;
     std::memset(&localMsg, 0x0, sizeof(localMsg));
@@ -326,8 +319,7 @@ Albedo::onUpdateEnd(uint64_t nanos)
 
 /*! Planet's equatorial radii and polar radii (if exists) in meters
  *  @return pair {REQ_m, RP_m}; RP_m < 0 for spherical bodies */
-std::pair<double, double>
-Albedo::lookupPlanetRadius(const std::string& name)
+std::pair<double, double> Albedo::lookupPlanetRadius(const std::string& name)
 {
     if (name == "mercury") {
         return { REQ_MERCURY * 1000.0, -1.0 };
@@ -356,8 +348,7 @@ Albedo::lookupPlanetRadius(const std::string& name)
 
 /*! This method gets the average albedo value of the planet
  *  @return double */
-double
-Albedo::getAlbedoAverage(std::string planetSpiceName)
+double Albedo::getAlbedoAverage(std::string planetSpiceName)
 {
     if (planetSpiceName == "mercury") {
         return 0.119;

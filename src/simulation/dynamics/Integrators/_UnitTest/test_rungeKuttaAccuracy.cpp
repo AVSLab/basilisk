@@ -101,8 +101,7 @@ class AccuracyProbe final : public svIntegratorRungeKutta<numberStages>
 };
 
 template<size_t numberStages>
-void
-checkAccuracy()
+void checkAccuracy()
 {
     std::mt19937_64 generator(123);
     for (unsigned int scalarCount : { 1U, 3U, 18U, 65U }) {

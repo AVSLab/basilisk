@@ -34,16 +34,14 @@ FormationBarycenter::~FormationBarycenter() {}
 
 /*! This method self initializes the C-wrapped output message.
  */
-void
-FormationBarycenter::SelfInit()
+void FormationBarycenter::SelfInit()
 {
     NavTransMsg_C_init(&this->transOutMsgC);
 }
 
 /*! This method is used to reset the module and checks that required input messages are connected.
  */
-void
-FormationBarycenter::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void FormationBarycenter::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (this->scNavInMsgs.size() == 0 || this->scPayloadInMsgs.size() == 0) {
@@ -60,9 +58,8 @@ FormationBarycenter::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! Adds a scNav and scPayload messages name to the vector of names to be subscribed to.
  */
-void
-FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
-                                          Message<VehicleConfigMsgPayload>* tmpScPayloadMsg)
+void FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavMsg,
+                                               Message<VehicleConfigMsgPayload>* tmpScPayloadMsg)
 {
     this->scNavInMsgs.push_back(tmpScNavMsg->addSubscriber());
     this->scPayloadInMsgs.push_back(tmpScPayloadMsg->addSubscriber());
@@ -70,8 +67,7 @@ FormationBarycenter::addSpacecraftToModel(Message<NavTransMsgPayload>* tmpScNavM
 
 /*! Reads the input messages
  */
-void
-FormationBarycenter::ReadInputMessages()
+void FormationBarycenter::ReadInputMessages()
 {
 
     NavTransMsgPayload scNavMsg;
@@ -92,8 +88,7 @@ FormationBarycenter::ReadInputMessages()
 
 /*! Does the barycenter calculations
  */
-void
-FormationBarycenter::computeBaricenter()
+void FormationBarycenter::computeBaricenter()
 {
     // create temporarary variables
     double barycenter[]{ 0, 0, 0 };
@@ -164,8 +159,7 @@ FormationBarycenter::computeBaricenter()
 
 /*! writes the output messages
  */
-void
-FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock)
+void FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock)
 {
     // write C++ output message
     this->transOutMsg.write(&this->transOutBuffer, this->moduleID, CurrentClock);
@@ -176,8 +170,7 @@ FormationBarycenter::WriteOutputMessage(uint64_t CurrentClock)
 
 /*! This is the main method that gets called every time the module is updated.
  */
-void
-FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
+void FormationBarycenter::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadInputMessages();
     this->transOutBuffer = this->transOutMsg.zeroMsgPayload; // zero the output message buffer

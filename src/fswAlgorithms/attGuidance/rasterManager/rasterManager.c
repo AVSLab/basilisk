@@ -33,15 +33,13 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-void
-SelfInit_rasterManager(rasterManagerConfig* configData, int64_t moduleID)
+void SelfInit_rasterManager(rasterManagerConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttStateMsg_C_init(&configData->attStateOutMsg);
 }
 
-void
-Reset_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -49,8 +47,7 @@ Reset_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t 
     configData->scanSelector = 0;
 }
 
-void
-Update_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rasterManager(rasterManagerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double currentMnvrTime;
     configData->scanSelector = configData->scanSelector % configData->numRasters;

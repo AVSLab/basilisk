@@ -43,8 +43,7 @@ SmallBodyWaypointFeedback::SmallBodyWaypointFeedback()
 SmallBodyWaypointFeedback::~SmallBodyWaypointFeedback() {}
 
 /*! Initialize C-wrapped output messages */
-void
-SmallBodyWaypointFeedback::SelfInit()
+void SmallBodyWaypointFeedback::SelfInit()
 {
     CmdForceBodyMsg_C_init(&this->forceOutMsgC);
 }
@@ -52,8 +51,7 @@ SmallBodyWaypointFeedback::SelfInit()
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void
-SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -73,8 +71,7 @@ SmallBodyWaypointFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This method reads the input messages each call of updateState
 
 */
-void
-SmallBodyWaypointFeedback::readMessages()
+void SmallBodyWaypointFeedback::readMessages()
 {
     /* read in the input messages */
     navTransInMsgBuffer = this->navTransInMsg();
@@ -86,8 +83,7 @@ SmallBodyWaypointFeedback::readMessages()
 /*! This method computes the control using a Lyapunov feedback law
 
 */
-void
-SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos [[maybe_unused]])
+void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
@@ -155,8 +151,7 @@ SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos [[maybe_unuse
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
 
 */
-void
-SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->computeControl(CurrentSimNanos);
@@ -167,8 +162,7 @@ SmallBodyWaypointFeedback::UpdateState(uint64_t CurrentSimNanos)
 /*! This method reads the input messages each call of updateState
 
 */
-void
-SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos)
+void SmallBodyWaypointFeedback::writeMessages(uint64_t CurrentSimNanos)
 {
     /* Create the output message buffer */
     CmdForceBodyMsgPayload forceOutMsgBuffer;

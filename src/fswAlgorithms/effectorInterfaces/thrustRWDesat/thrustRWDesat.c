@@ -29,15 +29,13 @@
  @param configData The configuration data associated with the thruster desat
  @param moduleID The module ID associated with configData
  */
-void
-SelfInit_thrustRWDesat(thrustRWDesatConfig* configData, int64_t moduleID)
+void SelfInit_thrustRWDesat(thrustRWDesatConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrCmdOutMsg);
 }
 
-void
-Reset_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     RWConstellationMsgPayload localRWData;
     THRArrayConfigMsgPayload localThrustData;
@@ -95,8 +93,7 @@ Reset_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrustRWDesat(thrustRWDesatConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     int32_t i;
     int32_t selectedThruster;               /* Thruster index to fire */

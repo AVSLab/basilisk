@@ -60,8 +60,7 @@ StripLocation::StripLocation()
 StripLocation::~StripLocation() = default;
 
 /*! reset the module.*/
-void
-StripLocation::Reset(uint64_t currentSimNanos)
+void StripLocation::Reset(uint64_t currentSimNanos)
 {
     this->isStartPositionUpdated = false;
     this->durationStripImaging = 0;
@@ -83,8 +82,7 @@ StripLocation::Reset(uint64_t currentSimNanos)
  * @param longitude
  * @param alt
  */
-void
-StripLocation::specifyLocationStart(double lat, double longitude, double alt)
+void StripLocation::specifyLocationStart(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Start = LLA2PCPF(tmpLLAPosition, this->planetRadius);
@@ -96,8 +94,7 @@ StripLocation::specifyLocationStart(double lat, double longitude, double alt)
  * @param longitude
  * @param alt
  */
-void
-StripLocation::specifyLocationEnd(double lat, double longitude, double alt)
+void StripLocation::specifyLocationEnd(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_End = LLA2PCPF(tmpLLAPosition, this->planetRadius);
@@ -105,8 +102,7 @@ StripLocation::specifyLocationEnd(double lat, double longitude, double alt)
 
 /*! update the starting point of the strip to take into account the specified pre-imaging time
  */
-void
-StripLocation::newpstart()
+void StripLocation::newpstart()
 {
     this->pStart = this->r_LP_P_Start.normalized() *
                    this->planetRadius; //[m] Making sure the location of the starting point is on the Earth surface for
@@ -138,8 +134,7 @@ StripLocation::newpstart()
 /*! add a scState message name to the vector of names to be subscribed to (also creates a corresponding access message
  * output name)
  */
-void
-StripLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void StripLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -153,8 +148,7 @@ StripLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 
 /*! read module messages
  */
-bool
-StripLocation::ReadMessages()
+bool StripLocation::ReadMessages()
 {
     SCStatesMsgPayload scMsg;
 
@@ -187,8 +181,7 @@ StripLocation::ReadMessages()
 
 /*! write module messages
  */
-void
-StripLocation::WriteMessages(uint64_t currentClock)
+void StripLocation::WriteMessages(uint64_t currentClock)
 {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
@@ -199,8 +192,7 @@ StripLocation::WriteMessages(uint64_t currentClock)
 
 /*! compute inertial position and velocity of the target point on the strip
  */
-void
-StripLocation::updateInertialPosition()
+void StripLocation::updateInertialPosition()
 {
     // Rotation matrix from the inertial to planet frame from SPICE:
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
@@ -234,11 +226,10 @@ StripLocation::updateInertialPosition()
 }
 
 /*! return target point on the central line of the strip relative to PCPF */
-Eigen::Vector3d
-StripLocation::PositionCentralLine(double t,
-                                   double teta,
-                                   const Eigen::Vector3d& pStart,
-                                   const Eigen::Vector3d& pEnd) const
+Eigen::Vector3d StripLocation::PositionCentralLine(double t,
+                                                   double teta,
+                                                   const Eigen::Vector3d& pStart,
+                                                   const Eigen::Vector3d& pEnd) const
 {
     // If points are too close (theta ~ 0), return pStart to avoid division by zero
     if (std::abs(teta) < this->smallAngle) {
@@ -255,11 +246,10 @@ StripLocation::PositionCentralLine(double t,
 }
 
 /*! return the tangent velocity vector to the central line path of the target point relative to PCPF */
-Eigen::Vector3d
-StripLocation::VelocityCentralLine(double t,
-                                   double teta,
-                                   const Eigen::Vector3d& pStart,
-                                   const Eigen::Vector3d& pEnd) const
+Eigen::Vector3d StripLocation::VelocityCentralLine(double t,
+                                                   double teta,
+                                                   const Eigen::Vector3d& pStart,
+                                                   const Eigen::Vector3d& pEnd) const
 {
     // If points are too close (theta ~ 0), return zero velocity to avoid division by zero
     if (std::abs(teta) < this->smallAngle) {
@@ -276,8 +266,7 @@ StripLocation::VelocityCentralLine(double t,
 }
 
 /*! update the target point on the central line in PCPF */
-void
-StripLocation::updateTargetPositionPCPF(uint64_t currentClock)
+void StripLocation::updateTargetPositionPCPF(uint64_t currentClock)
 {
     if (!this->isStartPositionUpdated) {
         this->newpstart();
@@ -317,8 +306,7 @@ StripLocation::updateTargetPositionPCPF(uint64_t currentClock)
 }
 
 /*! compute access to the target point on the central line */
-void
-StripLocation::computeAccess()
+void StripLocation::computeAccess()
 {
     // Update the groundLocation's inertial position
     this->updateInertialPosition();
@@ -404,8 +392,7 @@ StripLocation::computeAccess()
  update module
  @param currentSimNanos
  */
-void
-StripLocation::UpdateState(uint64_t currentSimNanos)
+void StripLocation::UpdateState(uint64_t currentSimNanos)
 {
     // Update the target point
     this->ReadMessages();

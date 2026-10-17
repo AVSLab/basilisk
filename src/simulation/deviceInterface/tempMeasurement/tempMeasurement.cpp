@@ -40,8 +40,7 @@ TempMeasurement::~TempMeasurement() = default;
 /*! This method is used to reset the module and checks that required input messages are connected.
 
 */
-void
-TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->tempInMsg.isLinked()) {
         bskLogger.bskError("TempMeasurement.tempInMsg was not linked.");
@@ -69,8 +68,7 @@ TempMeasurement::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This method adds noise, bias, and fault behaviors to the read-in temperature message.
 
 */
-void
-TempMeasurement::applySensorErrors()
+void TempMeasurement::applySensorErrors()
 {
     // apply noise and bias
     double sensorError;
@@ -105,8 +103,7 @@ TempMeasurement::applySensorErrors()
 /*! This is the main method that gets called every time the module is updated.
 
 */
-void
-TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
+void TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
 {
     TemperatureMsgPayload tempInMsgBuffer;  //!< local copy of message buffer
     TemperatureMsgPayload tempOutMsgBuffer; //!< local copy of message buffer
@@ -126,8 +123,7 @@ TempMeasurement::UpdateState(uint64_t CurrentSimNanos)
     this->tempOutMsg.write(&tempOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void
-TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
+void TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
 {
     if (propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("TempMeasurement: Propagation matrix must be 1x1");
@@ -136,8 +132,7 @@ TempMeasurement::setAMatrix(const Eigen::VectorXd& propMatrix)
     this->noiseModel.setPropMatrix(propMatrix);
 }
 
-Eigen::VectorXd
-TempMeasurement::getAMatrix() const
+Eigen::VectorXd TempMeasurement::getAMatrix() const
 {
     return this->propagationMatrix;
 }

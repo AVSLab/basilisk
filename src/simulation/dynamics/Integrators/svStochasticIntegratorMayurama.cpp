@@ -18,8 +18,7 @@
  */
 #include "svStochasticIntegratorMayurama.h"
 
-void
-svStochasticIntegratorMayurama::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorMayurama::integrateImpl(double currentTime, double timeStep)
 {
     // Initialization binds topology and scratch but consumes no random sample.
     if (timeStep == 0.0) {

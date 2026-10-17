@@ -78,8 +78,7 @@ CoarseSunSensor::~CoarseSunSensor()
  *   @param[in] cssPhiPerturb   [rad] css elevation angle, measured positive toward the body z axis from the x-y plane
  *   @param[in] cssThetaPerturb [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
  */
-void
-CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb)
+void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb)
 {
     double tempPhi = this->phi + cssPhiPerturb;
     double tempTheta = this->theta + cssThetaPerturb;
@@ -105,8 +104,7 @@ CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, 
  *   @param pitch (radians) second axis rotation about interim frame +y
  *   @param roll  (radians) first axis rotation about platform frame +x
  */
-void
-CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
+void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = { yaw, pitch, roll };
     double dcm_PBcArray[9];
@@ -117,8 +115,7 @@ CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void
-CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     //! - If either messages is not valid, send a warning message
     if (!this->sunInMsg.isLinked()) {
@@ -172,8 +169,7 @@ CoarseSunSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->noiseModel.setPropMatrix(this->propagationMatrix);
 }
 
-void
-CoarseSunSensor::readInputMessages()
+void CoarseSunSensor::readInputMessages()
 {
     //! - Zero ephemeris information
     this->sunData = this->sunInMsg.zeroMsgPayload;
@@ -201,8 +197,7 @@ CoarseSunSensor::readInputMessages()
 
 /*! This method computes the sun-vector heading information in the vehicle
  body frame.*/
-void
-CoarseSunSensor::computeSunData()
+void CoarseSunSensor::computeSunData()
 {
     Eigen::Vector3d Sc2Sun_Inrtl;
     Eigen::Vector3d sHat_N;
@@ -233,8 +228,7 @@ CoarseSunSensor::computeSunData()
 }
 
 /*! This method computes the true sensed values for the sensor */
-void
-CoarseSunSensor::computeTrueOutput()
+void CoarseSunSensor::computeTrueOutput()
 {
     // If sun heading is within sensor field of view, compute signal
     double signal = this->nHat_B.dot(this->sHat_B);
@@ -267,8 +261,7 @@ CoarseSunSensor::computeTrueOutput()
 
 /*! This method takes the true observed cosine value and converts
  it over to an errored value.  It applies noise to the truth. */
-void
-CoarseSunSensor::applySensorErrors()
+void CoarseSunSensor::applySensorErrors()
 {
     double sensorError;
     if (this->senNoiseStd <= 0.0) { // only include sensor bias
@@ -303,15 +296,13 @@ CoarseSunSensor::applySensorErrors()
     this->pastValue = this->sensedValue;
 }
 
-void
-CoarseSunSensor::scaleSensorValues()
+void CoarseSunSensor::scaleSensorValues()
 {
     this->sensedValue = this->sensedValue * this->scaleFactor;
     this->trueValue = this->trueValue * this->scaleFactor;
 }
 
-void
-CoarseSunSensor::applySaturation()
+void CoarseSunSensor::applySaturation()
 {
     Eigen::VectorXd sensedEigen;
     sensedEigen = cArray2EigenMatrixXd(&this->sensedValue, 1, 1);
@@ -323,8 +314,7 @@ CoarseSunSensor::applySaturation()
  current output of the CSS converted over to some discrete "counts" to
  emulate ADC conversion of S/C.
  @param Clock The current simulation time*/
-void
-CoarseSunSensor::writeOutputMessages(uint64_t Clock)
+void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     if (this->cssDataOutMsg.isLinked()) {
         CSSRawDataMsgPayload localMessage;
@@ -358,8 +348,7 @@ CoarseSunSensor::writeOutputMessages(uint64_t Clock)
  calls to compute the current sun information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture*/
-void
-CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
+void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();
@@ -393,8 +382,7 @@ CSSConstellation::~CSSConstellation()
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void
-CSSConstellation::Reset(uint64_t CurrentSimNanos)
+void CSSConstellation::Reset(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor* it;
@@ -408,8 +396,7 @@ CSSConstellation::Reset(uint64_t CurrentSimNanos)
     this->outputBuffer = this->constellationOutMsg.zeroMsgPayload;
 }
 
-void
-CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
+void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor*>::iterator itp;
     CoarseSunSensor* it;
@@ -431,15 +418,13 @@ CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
     this->constellationOutMsg.write(&this->outputBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void
-CSSConstellation::appendCSS(CoarseSunSensor* newSensor)
+void CSSConstellation::appendCSS(CoarseSunSensor* newSensor)
 {
     sensorList.push_back(newSensor);
     return;
 }
 
-void
-CoarseSunSensor::setAMatrix(const Eigen::VectorXd& propMatrix)
+void CoarseSunSensor::setAMatrix(const Eigen::VectorXd& propMatrix)
 {
     if (propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("CoarseSunSensor: Propagation matrix must be 1x1");
@@ -448,8 +433,7 @@ CoarseSunSensor::setAMatrix(const Eigen::VectorXd& propMatrix)
     this->noiseModel.setPropMatrix(propMatrix);
 }
 
-Eigen::VectorXd
-CoarseSunSensor::getAMatrix() const
+Eigen::VectorXd CoarseSunSensor::getAMatrix() const
 {
     return this->propagationMatrix;
 }

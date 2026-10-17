@@ -45,8 +45,7 @@ PartitionedStorageUnit::~PartitionedStorageUnit()
  @param currentClock
 
  */
-void
-PartitionedStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
+void PartitionedStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
 {
     if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
@@ -58,8 +57,7 @@ PartitionedStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
  @param dataName
 
  */
-void
-PartitionedStorageUnit::addPartition(std::string dataName)
+void PartitionedStorageUnit::addPartition(std::string dataName)
 {
     dataInstance tmpDataInstance;
     if (dataName.size() >= sizeof(tmpDataInstance.dataInstanceName)) {
@@ -79,8 +77,7 @@ PartitionedStorageUnit::addPartition(std::string dataName)
  @param data            //Vector of data to be added to each partition in partitionNames
 
  */
-void
-PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data)
+void PartitionedStorageUnit::setDataBuffer(std::vector<std::string> partitionNames, std::vector<long long int> data)
 {
 
     for (size_t i = 0; i < partitionNames.size(); i++) {

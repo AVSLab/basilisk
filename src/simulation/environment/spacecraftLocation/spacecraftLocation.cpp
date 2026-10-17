@@ -59,8 +59,7 @@ SpacecraftLocation::SpacecraftLocation()
 SpacecraftLocation::~SpacecraftLocation() = default;
 
 /*! Resets the internal position to the specified initial position.*/
-void
-SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->scStateInMsgs.size() == 0) {
         bskLogger.bskError(
@@ -113,8 +112,7 @@ SpacecraftLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
  * output name.
  */
-void
-SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -128,8 +126,7 @@ SpacecraftLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 
 /*! Read module messages
  */
-bool
-SpacecraftLocation::ReadMessages()
+bool SpacecraftLocation::ReadMessages()
 {
     SCStatesMsgPayload scMsg;
 
@@ -186,8 +183,7 @@ SpacecraftLocation::ReadMessages()
 
 /*! write module messages
  */
-void
-SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
+void SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
@@ -197,8 +193,7 @@ SpacecraftLocation::WriteMessages(uint64_t CurrentClock)
 
 /*! compute the spacecraft to spacecraft access messages
  */
-void
-SpacecraftLocation::computeAccess()
+void SpacecraftLocation::computeAccess()
 {
     Eigen::Vector3d r_LP_P; //!< [m] spacecraft Location relative to planet origin vector
 
@@ -354,8 +349,7 @@ SpacecraftLocation::computeAccess()
  update module
  @param CurrentSimNanos
  */
-void
-SpacecraftLocation::UpdateState(uint64_t CurrentSimNanos)
+void SpacecraftLocation::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
     this->computeAccess();

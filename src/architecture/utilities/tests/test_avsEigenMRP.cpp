@@ -28,16 +28,14 @@ constexpr double kTolerance = 1e-12;           // [-]
 constexpr double kLooseTolerance = 1e-6;       // [-]
 constexpr double kPi = 3.14159265358979323846; // [rad]
 
-void
-expectVectorNear(const Eigen::Vector3d& actual, const Eigen::Vector3d& expected, double tolerance)
+void expectVectorNear(const Eigen::Vector3d& actual, const Eigen::Vector3d& expected, double tolerance)
 {
     for (int i = 0; i < 3; i++) {
         EXPECT_NEAR(actual(i), expected(i), tolerance);
     }
 }
 
-void
-expectMatrixNear(const Eigen::Matrix3d& actual, const Eigen::Matrix3d& expected, double tolerance)
+void expectMatrixNear(const Eigen::Matrix3d& actual, const Eigen::Matrix3d& expected, double tolerance)
 {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -46,16 +44,14 @@ expectMatrixNear(const Eigen::Matrix3d& actual, const Eigen::Matrix3d& expected,
     }
 }
 
-void
-expectFiniteMRP(const Eigen::MRPd& sigma)
+void expectFiniteMRP(const Eigen::MRPd& sigma)
 {
     for (int i = 0; i < 3; i++) {
         EXPECT_TRUE(std::isfinite(sigma.coeffs()(i)));
     }
 }
 
-Eigen::Matrix3d
-expectedBmat(const Eigen::MRPd& sigma)
+Eigen::Matrix3d expectedBmat(const Eigen::MRPd& sigma)
 {
     const double sigmaSquared = sigma.squaredNorm();                               // [-]
     Eigen::Matrix3d expected = (1.0 - sigmaSquared) * Eigen::Matrix3d::Identity(); // [-]

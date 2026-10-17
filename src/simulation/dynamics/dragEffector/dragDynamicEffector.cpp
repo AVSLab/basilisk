@@ -47,15 +47,13 @@ DragDynamicEffector::~DragDynamicEffector()
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void
-DragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void DragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! Validate that the required atmospheric density input is connected. */
-void
-DragDynamicEffector::validateConfiguration()
+void DragDynamicEffector::validateConfiguration()
 {
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
@@ -67,8 +65,7 @@ DragDynamicEffector::validateConfiguration()
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
+void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -77,8 +74,7 @@ DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 and update the internal density/atmospheric data.
 
  */
-bool
-DragDynamicEffector::ReadInputs()
+bool DragDynamicEffector::ReadInputs()
 {
     bool dataGood;
     dataGood = this->atmoDensInMsg.isWritten();
@@ -99,8 +95,7 @@ DragDynamicEffector::ReadInputs()
 
     @param states simulation states
  */
-void
-DragDynamicEffector::linkInStates(DynParamManager& states)
+void DragDynamicEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
@@ -116,8 +111,7 @@ DragDynamicEffector::linkInStates(DynParamManager& states)
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
  * It accounts for wind velocity if the wind message is linked.
  */
-void
-DragDynamicEffector::updateDragDir()
+void DragDynamicEffector::updateDragDir()
 {
     Eigen::MRPd sigmaBN(this->hubSigma->stateView().data());
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
@@ -145,8 +139,7 @@ DragDynamicEffector::updateDragDir()
 /** This method obtains the density from the input data and applies a correction based on the
  * density correction state (if it was configured)
  */
-double
-DragDynamicEffector::getDensity()
+double DragDynamicEffector::getDensity()
 {
     double density = this->atmoInData.neutralDensity;
     if (this->densityCorrection) {
@@ -160,8 +153,7 @@ DragDynamicEffector::getDensity()
 
 /*! This method implements a simple "cannonball" (attitude-independent) drag model.
  */
-void
-DragDynamicEffector::cannonballDrag()
+void DragDynamicEffector::cannonballDrag()
 {
     //! Begin method steps
     //! - Zero out the structure force/torque for the drag set
@@ -186,8 +178,7 @@ selecting the model type based on the settable attribute "modelType."
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void
-DragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void DragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     updateDragDir();
     if (this->modelType == "cannonball") {
@@ -201,8 +192,7 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     ReadInputs();
     return;

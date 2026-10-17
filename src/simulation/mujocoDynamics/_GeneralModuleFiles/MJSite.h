@@ -38,8 +38,7 @@ class MJBody;
  * @return A string view representing the site type.
  */
 template<>
-constexpr std::string_view
-MJBasilisk::detail::getObjectTypeName<mjsSite>()
+constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsSite>()
 {
     return "site";
 }

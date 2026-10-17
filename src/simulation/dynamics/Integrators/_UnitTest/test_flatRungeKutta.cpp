@@ -476,8 +476,7 @@ class AdaptiveToleranceProbe final : public svIntegratorAdaptiveRungeKutta<numbe
     }
 };
 
-RKCoefficients<1>
-eulerCoefficients()
+RKCoefficients<1> eulerCoefficients()
 {
     RKCoefficients<1> coefficients;
     coefficients.aMatrix = { { { { 0.0 } } } };
@@ -486,8 +485,7 @@ eulerCoefficients()
     return coefficients;
 }
 
-RKCoefficients<4>
-rk4Coefficients()
+RKCoefficients<4> rk4Coefficients()
 {
     RKCoefficients<4> coefficients;
     coefficients.aMatrix = { { { { 0.0, 0.0, 0.0, 0.0 } },
@@ -499,8 +497,7 @@ rk4Coefficients()
     return coefficients;
 }
 
-RKAdaptiveCoefficients<4>
-bogackiShampineCoefficients()
+RKAdaptiveCoefficients<4> bogackiShampineCoefficients()
 {
     RKAdaptiveCoefficients<4> coefficients;
     coefficients.aMatrix = { { { { 0.0, 0.0, 0.0, 0.0 } },
@@ -513,8 +510,7 @@ bogackiShampineCoefficients()
     return coefficients;
 }
 
-RKAdaptiveCoefficients<1>
-unequalEmbeddedEulerCoefficients()
+RKAdaptiveCoefficients<1> unequalEmbeddedEulerCoefficients()
 {
     RKAdaptiveCoefficients<1> coefficients;
     coefficients.aMatrix = { { { { 0.0 } } } };
@@ -524,16 +520,14 @@ unequalEmbeddedEulerCoefficients()
     return coefficients;
 }
 
-uint64_t
-doubleBits(double value)
+uint64_t doubleBits(double value)
 {
     uint64_t bits = 0;
     std::memcpy(&bits, &value, sizeof(bits));
     return bits;
 }
 
-void
-expectStateBitsEqual(const TestDynamics& first, const TestDynamics& second)
+void expectStateBitsEqual(const TestDynamics& first, const TestDynamics& second)
 {
     const auto firstMatrix = first.matrixState->stateView();
     const auto secondMatrix = second.matrixState->stateView();
@@ -550,8 +544,7 @@ expectStateBitsEqual(const TestDynamics& first, const TestDynamics& second)
     }
 }
 
-void
-configureTolerances(svIntegratorAdaptiveRungeKutta<4>& integrator, const TestDynamics& dynamics)
+void configureTolerances(svIntegratorAdaptiveRungeKutta<4>& integrator, const TestDynamics& dynamics)
 {
     integrator.setRelativeTolerance(2.5e-7);
     integrator.setAbsoluteTolerance(3.0e-10);
@@ -563,8 +556,7 @@ configureTolerances(svIntegratorAdaptiveRungeKutta<4>& integrator, const TestDyn
 
 } // namespace
 
-void*
-operator new(std::size_t size)
+void* operator new(std::size_t size)
 {
     allocationCount.fetch_add(1, std::memory_order_relaxed);
     if (void* memory = std::malloc(size)) {
@@ -573,32 +565,27 @@ operator new(std::size_t size)
     throw std::bad_alloc();
 }
 
-void*
-operator new[](std::size_t size)
+void* operator new[](std::size_t size)
 {
     return ::operator new(size);
 }
 
-void
-operator delete(void* memory) noexcept
+void operator delete(void* memory) noexcept
 {
     std::free(memory);
 }
 
-void
-operator delete[](void* memory) noexcept
+void operator delete[](void* memory) noexcept
 {
     std::free(memory);
 }
 
-void
-operator delete(void* memory, std::size_t) noexcept
+void operator delete(void* memory, std::size_t) noexcept
 {
     std::free(memory);
 }
 
-void
-operator delete[](void* memory, std::size_t) noexcept
+void operator delete[](void* memory, std::size_t) noexcept
 {
     std::free(memory);
 }

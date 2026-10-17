@@ -59,8 +59,7 @@ HubEffector::~HubEffector()
 }
 
 /*! @brief Validate the configured hub properties before the owning spacecraft initializes dynamics. */
-void
-HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
+void HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
 {
     if (!std::isfinite(this->mHub) || this->mHub <= 0.0) {
         bskLogger.bskError("hubEffector: mHub must be greater than 0 and finite.");
@@ -97,8 +96,7 @@ HubEffector::validateConfiguration(bool pointMassTranslationalOnly)
  *
  * @param[in] statesIn Dynamic parameter manager containing the required states.
  */
-void
-HubEffector::linkInStates(DynParamManager& statesIn)
+void HubEffector::linkInStates(DynParamManager& statesIn)
 {
     this->g_N = statesIn.getPropertyReference("g_N");
     return;
@@ -108,8 +106,7 @@ HubEffector::linkInStates(DynParamManager& statesIn)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-HubEffector::registerStates(DynParamManager& states)
+void HubEffector::registerStates(DynParamManager& states)
 {
     // - Register the hub states and set with initial values
     this->posState = states.registerState(3, 1, this->nameOfHubPosition);
@@ -135,8 +132,7 @@ HubEffector::registerStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-HubEffector::registerTranslationalStates(DynParamManager& states)
+void HubEffector::registerTranslationalStates(DynParamManager& states)
 {
     // - Register the hub translational states and set with initial values
     this->posState = states.registerState(3, 1, this->nameOfHubPosition);
@@ -152,8 +148,7 @@ HubEffector::registerTranslationalStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-HubEffector::registerAttitudeStates(DynParamManager& states)
+void HubEffector::registerAttitudeStates(DynParamManager& states)
 {
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
@@ -168,8 +163,7 @@ HubEffector::registerAttitudeStates(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Give the mass to mass props
     this->effProps.mEff = this->mHub;
@@ -196,11 +190,10 @@ HubEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-HubEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                Eigen::MRPd sigma_BN)
+void HubEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                     Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                     Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                     Eigen::MRPd sigma_BN)
 {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
@@ -256,10 +249,9 @@ HubEffector::computeDerivatives(double integTime [[maybe_unused]],
  * @param[in] forceExternal_B [N] External force expressed in body-frame components.
  * @param[in] torquePntB_B [N*m] External torque about point B in body-frame components.
  */
-void
-HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
-                                       const Eigen::Vector3d& forceExternal_B,
-                                       const Eigen::Vector3d& torquePntB_B)
+void HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
+                                            const Eigen::Vector3d& forceExternal_B,
+                                            const Eigen::Vector3d& torquePntB_B)
 {
     Eigen::Vector3d rDotLocal_BN_N = this->velocityState->stateView();
     Eigen::MRPd sigmaLocal_BN;
@@ -298,11 +290,10 @@ HubEffector::computeHubOnlyDerivatives(const Eigen::Vector3d& forceExternal_N,
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                          Eigen::Vector3d& rotAngMomPntCContr_B,
-                                          double& rotEnergyContr,
-                                          Eigen::Vector3d omega_BN_B [[maybe_unused]])
+void HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                               Eigen::Vector3d& rotAngMomPntCContr_B,
+                                               double& rotEnergyContr,
+                                               Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -324,8 +315,7 @@ HubEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-HubEffector::modifyStates(double integTime [[maybe_unused]])
+void HubEffector::modifyStates(double integTime [[maybe_unused]])
 {
     // Lets switch those MRPs!!
     Eigen::MRPd sigmaBNLoc(this->sigmaState->stateView().data());
@@ -341,8 +331,7 @@ HubEffector::modifyStates(double integTime [[maybe_unused]])
  *
  * @param[in] v_CN_N [m/s] Unused center-of-mass velocity retained for interface compatibility.
  */
-void
-HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
+void HubEffector::matchGravitytoVelocityState(Eigen::Vector3d v_CN_N)
 {
     this->gravVelocityState->setState(this->velocityState->stateView());
     this->gravVelocityBcState->setState(v_CN_N);

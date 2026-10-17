@@ -44,8 +44,7 @@ HingedRigidBodyMotorSensor::~HingedRigidBodyMotorSensor() {}
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void
-HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     //!< check that required input messages are connected
     if (!this->hingedRigidBodyMotorSensorInMsg.isLinked()) {
@@ -56,8 +55,7 @@ HingedRigidBodyMotorSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This allows the RNGSeed to be changed.
 
 */
-void
-HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
+void HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
 {
     this->rGen.seed((unsigned int)newSeed);
 }
@@ -66,8 +64,7 @@ HingedRigidBodyMotorSensor::setRNGSeed(unsigned int newSeed)
    diescretizes output.
 
 */
-void
-HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! variables for  calculations
     double trueTheta;       //! [rad] actual planel angle

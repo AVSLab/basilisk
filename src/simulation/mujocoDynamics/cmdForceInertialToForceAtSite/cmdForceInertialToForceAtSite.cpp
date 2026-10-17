@@ -3,8 +3,7 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include <Eigen/Dense>
 
-void
-CmdForceInertialToForceAtSite::UpdateState(uint64_t CurrentSimNanos)
+void CmdForceInertialToForceAtSite::UpdateState(uint64_t CurrentSimNanos)
 {
     // 'S' denotes the 'site' reference frame
     Eigen::MRPd sigma_SN;
@@ -23,8 +22,7 @@ CmdForceInertialToForceAtSite::UpdateState(uint64_t CurrentSimNanos)
     this->forceOutMsg.write(&forcePayload, this->moduleID, CurrentSimNanos);
 }
 
-void
-CmdForceInertialToForceAtSite::Reset(uint64_t /*CurrentSimNanos*/)
+void CmdForceInertialToForceAtSite::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->cmdForceInertialInMsg.isLinked()) {
         bskLogger.bskError("CmdForceInertialToForceAtSite: cmdForceInertialInMsg is not linked. "

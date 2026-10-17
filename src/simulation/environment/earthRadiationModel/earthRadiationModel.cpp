@@ -20,10 +20,9 @@
 
 #include <cmath>
 
-void
-EarthRadiationModel::onUpdateBegin(const SCStatesMsgPayload& /*scMsg*/,
-                                   const SpicePlanetStateMsgPayload& /*sunMsg*/,
-                                   uint64_t nanos)
+void EarthRadiationModel::onUpdateBegin(const SCStatesMsgPayload& /*scMsg*/,
+                                        const SpicePlanetStateMsgPayload& /*sunMsg*/,
+                                        uint64_t nanos)
 {
     this->albedoFlux = 0.0;     // [W/m^2]
     this->irFlux = 0.0;         // [W/m^2]
@@ -32,13 +31,12 @@ EarthRadiationModel::onUpdateBegin(const SCStatesMsgPayload& /*scMsg*/,
     std::fill(std::begin(this->irVec_N), std::end(this->irVec_N), 0.0);
 }
 
-void
-EarthRadiationModel::evaluatePlanet(const SCStatesMsgPayload& scMsg,
-                                    const SpicePlanetStateMsgPayload& sunMsg,
-                                    SpicePlanetStateMsgPayload planetMsg,
-                                    PlanetEntry& entry,
-                                    const double S_sun,
-                                    uint64_t /*nanos*/)
+void EarthRadiationModel::evaluatePlanet(const SCStatesMsgPayload& scMsg,
+                                         const SpicePlanetStateMsgPayload& sunMsg,
+                                         SpicePlanetStateMsgPayload planetMsg,
+                                         PlanetEntry& entry,
+                                         const double S_sun,
+                                         uint64_t /*nanos*/)
 {
     std::vector<PatchResult> patches = entry.grid.computePatches(
       scMsg.r_BN_N, sunMsg.PositionVector, planetMsg.PositionVector, planetMsg.J20002Pfix, entry.R_planet, S_sun);
@@ -61,8 +59,7 @@ EarthRadiationModel::evaluatePlanet(const SCStatesMsgPayload& scMsg,
     }
 }
 
-void
-EarthRadiationModel::onUpdateEnd(uint64_t nanos)
+void EarthRadiationModel::onUpdateEnd(uint64_t nanos)
 {
     // Normalise direction vectors; zero if no flux
     double albedoDir_N[3] = { 0.0, 0.0, 0.0 }; // [-]

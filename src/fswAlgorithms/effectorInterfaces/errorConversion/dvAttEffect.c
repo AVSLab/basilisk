@@ -29,8 +29,7 @@
  @param configData The configuration data associated with the sun safe control
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_dvAttEffect(dvAttEffectConfig* configData, int64_t moduleID)
+void SelfInit_dvAttEffect(dvAttEffectConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     uint32_t i;
@@ -47,8 +46,7 @@ SelfInit_dvAttEffect(dvAttEffectConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!CmdTorqueBodyMsg_C_isLinked(&configData->cmdTorqueBodyInMsg)) {
@@ -69,8 +67,7 @@ Reset_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i;
     CmdTorqueBodyMsgPayload cntrRequest;
@@ -85,11 +82,10 @@ Update_dvAttEffect(dvAttEffectConfig* configData, uint64_t callTime, int64_t mod
     return;
 }
 
-void
-computeSingleThrustBlock(ThrustGroupData* thrData,
-                         uint64_t callTime,
-                         CmdTorqueBodyMsgPayload* contrReq,
-                         int64_t moduleID)
+void computeSingleThrustBlock(ThrustGroupData* thrData,
+                              uint64_t callTime,
+                              CmdTorqueBodyMsgPayload* contrReq,
+                              int64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];
@@ -122,8 +118,7 @@ computeSingleThrustBlock(ThrustGroupData* thrData,
     THRArrayOnTimeCmdMsg_C_write(&thrData->cmdRequests, &thrData->thrOnTimeOutMsg, moduleID, callTime);
 }
 
-void
-effectorVSort(effPairs* Input, effPairs* Output, size_t dim)
+void effectorVSort(effPairs* Input, effPairs* Output, size_t dim)
 {
     size_t i, j;
     int Swapped;

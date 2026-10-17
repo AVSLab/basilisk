@@ -42,8 +42,7 @@ static double sqrarg;
 #define SQR(a) ((sqrarg = (a)) == 0.0 ? 0.0 : sqrarg * sqrarg)
 
 // calculates sqrt( a^2 + b^2 )
-double
-pythag(double a, double b)
+double pythag(double a, double b)
 {
     double absa, absb;
 
@@ -63,8 +62,7 @@ pythag(double a, double b)
  returns.  The diagonal matrix W is output as a vector w[dim2].
  V (not V transpose) is output as the matrix V[dim2 * dim2].
  */
-int
-svdcmp(double* mx, size_t dim1Value, size_t dim2Value, double* w, double* v)
+int svdcmp(double* mx, size_t dim1Value, size_t dim2Value, double* w, double* v)
 {
     if (dim1Value > INT_MAX || dim2Value > INT_MAX) {
         return -1;
@@ -301,8 +299,7 @@ svdcmp(double* mx, size_t dim1Value, size_t dim2Value, double* w, double* v)
     return (0);
 }
 
-void
-solveSVD(double* mx, size_t dim1, size_t dim2, double* x, double* b, double minSV)
+void solveSVD(double* mx, size_t dim1, size_t dim2, double* x, double* b, double minSV)
 {
     double mxCopy[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double w[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];

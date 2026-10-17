@@ -23,26 +23,22 @@
 #include "simulation/dynamics/_GeneralModuleFiles/gravityEffector.h"
 
 namespace {
-std::shared_ptr<GravityModel>
-getGravityModel(const GravitySource& source)
+std::shared_ptr<GravityModel> getGravityModel(const GravitySource& source)
 {
     return source.gravBody ? source.gravBody->gravityModel : source.model;
 }
 
-bool
-isCentral(const GravitySource& source)
+bool isCentral(const GravitySource& source)
 {
     return source.gravBody ? source.gravBody->isCentralBody : source.isCentralBody;
 }
 
-bool
-isStateLinked(GravitySource& source)
+bool isStateLinked(GravitySource& source)
 {
     return source.stateInMsg.isLinked() || (source.gravBody && source.gravBody->planetBodyInMsg.isLinked());
 }
 
-SpicePlanetStateMsgPayload
-readState(GravitySource& source, BSKLogger& bskLogger)
+SpicePlanetStateMsgPayload readState(GravitySource& source, BSKLogger& bskLogger)
 {
     if (source.stateInMsg.isLinked()) {
         return source.stateInMsg();
@@ -54,8 +50,7 @@ readState(GravitySource& source, BSKLogger& bskLogger)
 }
 } // namespace
 
-void
-NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     std::string errorPrefix = "In NBodyGravity '" + ModelTag + "': ";
     for (auto&& [name, target] : targets) {
@@ -107,8 +102,7 @@ NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-void
-NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
+void NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
 {
     for (auto&& [_, target] : targets) {
         auto targetStatePayload = target.centerOfMassStateInMsg();
@@ -130,8 +124,9 @@ NBodyGravity::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-GravitySource&
-NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravityModel> gravityModel, bool isCentralBody)
+GravitySource& NBodyGravity::addGravitySource(std::string name,
+                                              std::shared_ptr<GravityModel> gravityModel,
+                                              bool isCentralBody)
 {
     auto [source, actuallyEmplaced] =
       this->sources.emplace(name, GravitySource{ gravityModel, {}, isCentralBody, nullptr });
@@ -143,8 +138,7 @@ NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravityModel> g
     return source->second;
 }
 
-GravitySource&
-NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravBodyData> gravBody)
+GravitySource& NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravBodyData> gravBody)
 {
     if (!gravBody) {
         bskLogger.bskError("Cannot add source '%s' from a null GravBodyData.", name.c_str());
@@ -160,8 +154,7 @@ NBodyGravity::addGravitySource(std::string name, std::shared_ptr<GravBodyData> g
     return source->second;
 }
 
-GravityTarget&
-NBodyGravity::addGravityTarget(std::string name)
+GravityTarget& NBodyGravity::addGravityTarget(std::string name)
 {
     // Obscure addition strategy required so that we build in place the
     // GravityTarget. This avoids copying the `Message<...>` in GravityTarget,
@@ -177,8 +170,7 @@ NBodyGravity::addGravityTarget(std::string name)
     return target->second;
 }
 
-GravityTarget&
-NBodyGravity::addGravityTarget(std::string name, MJSite& site)
+GravityTarget& NBodyGravity::addGravityTarget(std::string name, MJSite& site)
 {
     auto& target = addGravityTarget(name);
 
@@ -193,16 +185,14 @@ NBodyGravity::addGravityTarget(std::string name, MJSite& site)
     return target;
 }
 
-GravityTarget&
-NBodyGravity::addGravityTarget(std::string name, MJBody& body)
+GravityTarget& NBodyGravity::addGravityTarget(std::string name, MJBody& body)
 {
     auto& target = addGravityTarget(std::move(name), body.getCenterOfMass());
     target.massPropertiesInMsg.subscribeTo(&body.massPropertiesOutMsg);
     return target;
 }
 
-Eigen::Vector3d
-NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector3d r_J2000)
+Eigen::Vector3d NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector3d r_J2000)
 {
     // Orientation and position of the gravity source in J2000
     Eigen::Matrix3d dcm_sourceFixedJ2000 = Eigen::Matrix3d::Identity();
@@ -229,8 +219,7 @@ NBodyGravity::computeAccelerationFromSource(GravitySource& source, Eigen::Vector
     return dcm_sourceFixedJ2000.transpose() * grav_sourceFix;
 }
 
-Eigen::Vector3d
-NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
+Eigen::Vector3d NBodyGravity::computeAccelerationOnTarget(GravityTarget& target)
 {
     /* List of points and frames of interest in this function:
 

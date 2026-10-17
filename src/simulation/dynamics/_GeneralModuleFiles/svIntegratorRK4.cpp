@@ -24,8 +24,7 @@ svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn)
 {
 }
 
-RKCoefficients<4>
-svIntegratorRK4::getCoefficients()
+RKCoefficients<4> svIntegratorRK4::getCoefficients()
 {
     RKCoefficients<4> coefficients;
     coefficients.aMatrix.at(1).at(0) = 0.5;

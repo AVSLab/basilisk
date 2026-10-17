@@ -43,8 +43,7 @@
  * Converts nanoseconds to seconds (double), with basic precision check.
  * Returns NAN if conversion would lose precision.
  */
-static inline double
-nanoToSec(uint64_t nanos)
+static inline double nanoToSec(uint64_t nanos)
 {
     // Double precision loses exact integer values past 2^53
     const uint64_t MAX_SAFE_UINT64_FOR_DOUBLE = (1ULL << DBL_MANT_DIG); // Usually 2^53
@@ -66,8 +65,7 @@ nanoToSec(uint64_t nanos)
  * with basic precision check.
  * Returns NAN if conversion would lose precision.
  */
-static inline double
-diffNanoToSec(uint64_t time1Nano, uint64_t time2Nano)
+static inline double diffNanoToSec(uint64_t time1Nano, uint64_t time2Nano)
 {
     double signedTimeDifference;
 
@@ -84,8 +82,7 @@ diffNanoToSec(uint64_t time1Nano, uint64_t time2Nano)
  * Converts seconds (double) to nanoseconds (uint64_t).
  * Returns NAN on error (e.g. negative input or overflow)
  */
-static inline uint64_t
-secToNano(double seconds)
+static inline uint64_t secToNano(double seconds)
 {
     if (seconds < 0.0) {
         fprintf(stderr, "[secToNano] ERROR: Negative time value passed (%.15f seconds). Returning 0.\n", seconds);

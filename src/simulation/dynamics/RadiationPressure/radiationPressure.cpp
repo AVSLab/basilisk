@@ -50,15 +50,13 @@ RadiationPressure::~RadiationPressure()
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void
-RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! Validate the required Sun input and dimensions of the selected lookup model. */
-void
-RadiationPressure::validateConfiguration()
+void RadiationPressure::validateConfiguration()
 {
     if (!this->sunEphmInMsg.isLinked()) {
         bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
@@ -69,8 +67,7 @@ RadiationPressure::validateConfiguration()
 }
 
 /*! @brief Validate lookup dimensions before selecting or indexing a table entry. */
-void
-RadiationPressure::validateLookupDimensions()
+void RadiationPressure::validateLookupDimensions()
 {
     if (this->lookupSHat_B.empty() || this->lookupForce_B.size() != this->lookupSHat_B.size() ||
         this->lookupTorque_B.size() != this->lookupSHat_B.size()) {
@@ -84,8 +81,7 @@ RadiationPressure::validateLookupDimensions()
 
  @param[in] statesIn Dynamic parameter manager containing the required states.
  */
-void
-RadiationPressure::linkInStates(DynParamManager& statesIn)
+void RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
@@ -98,8 +94,7 @@ RadiationPressure::linkInStates(DynParamManager& statesIn)
  buffer structure.
 
  */
-void
-RadiationPressure::readInputMessages()
+void RadiationPressure::readInputMessages()
 {
     /* read in sun state message */
     this->sunEphmInBuffer = this->sunEphmInMsg();
@@ -118,8 +113,7 @@ RadiationPressure::readInputMessages()
  @param integTime Current simulation integration time
  @param timeStep Current integration time step used
  */
-void
-RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
@@ -148,8 +142,7 @@ RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double 
 
  @param CurrentSimNanos current simulation time in nanoseconds
  */
-void
-RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->readInputMessages();
 }
@@ -157,8 +150,7 @@ RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! Sets the model to the cannonball model in computing the solar radiation force
 
  */
-void
-RadiationPressure::setUseCannonballModel()
+void RadiationPressure::setUseCannonballModel()
 {
     this->srpModel = SRP_CANNONBALL_MODEL;
 }
@@ -166,8 +158,7 @@ RadiationPressure::setUseCannonballModel()
 /*! Sets the model to the faceted table-lookup model, evaluated on the CPU, in computing the solar radiation force
 
  */
-void
-RadiationPressure::setUseFacetedCPUModel()
+void RadiationPressure::setUseFacetedCPUModel()
 {
     this->srpModel = SRP_FACETED_CPU_MODEL;
 }
@@ -183,8 +174,7 @@ RadiationPressure::setUseFacetedCPUModel()
 
  @param[in] rSunB_N [m] Spacecraft-to-Sun position vector expressed in inertial-frame components.
  */
-void
-RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
+void RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
 {
     /* Magnitude of the spacecraft-to-Sun vector */
     double sunDist = rSunB_N.norm();
@@ -206,8 +196,7 @@ RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
 
  @param[in] rSunB_B [m] Spacecraft-to-Sun position vector expressed in body-frame components.
  */
-void
-RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
+void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 {
     this->validateLookupDimensions();
     double tmpDotProduct = 0;
@@ -247,8 +236,7 @@ RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 
  @param vec (N) Force vector for particular attitude in lookup table
  */
-void
-RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
+void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupForce_B.push_back(vec);
 }
@@ -258,8 +246,7 @@ RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 
  @param vec (Nm) Torque vector for particular attitude in lookup table
  */
-void
-RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
+void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupTorque_B.push_back(vec);
 }
@@ -269,8 +256,7 @@ RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 
  @param vec sun unit direction vector in body frame
  */
-void
-RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)
+void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupSHat_B.push_back(vec);
 }

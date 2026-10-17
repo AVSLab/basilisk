@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_spacecraftReconfig(spacecraftReconfigConfig* configData, int64_t moduleID)
+void SelfInit_spacecraftReconfig(spacecraftReconfigConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -48,8 +47,7 @@ SelfInit_spacecraftReconfig(spacecraftReconfigConfig* configData, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -85,8 +83,7 @@ Reset_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // in
     NavTransMsgPayload chiefTransMsgBuffer;
@@ -156,17 +153,16 @@ Update_spacecraftReconfig(spacecraftReconfigConfig* configData, uint64_t callTim
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-UpdateManeuver(spacecraftReconfigConfig* configData,
-               NavTransMsgPayload chiefTransMsgBuffer,
-               NavTransMsgPayload deputyTransMsgBuffer,
-               AttRefMsgPayload attRefInMsgBuffer,
-               THRArrayConfigMsgPayload thrustConfigMsgBuffer,
-               VehicleConfigMsgPayload vehicleConfigMsgBuffer,
-               AttRefMsgPayload* attRefOutMsgBuffer,
-               THRArrayOnTimeCmdMsgPayload* thrustOnMsgBuffer,
-               uint64_t callTime,
-               int64_t moduleID)
+void UpdateManeuver(spacecraftReconfigConfig* configData,
+                    NavTransMsgPayload chiefTransMsgBuffer,
+                    NavTransMsgPayload deputyTransMsgBuffer,
+                    AttRefMsgPayload attRefInMsgBuffer,
+                    THRArrayConfigMsgPayload thrustConfigMsgBuffer,
+                    VehicleConfigMsgPayload vehicleConfigMsgBuffer,
+                    AttRefMsgPayload* attRefOutMsgBuffer,
+                    THRArrayOnTimeCmdMsgPayload* thrustOnMsgBuffer,
+                    uint64_t callTime,
+                    int64_t moduleID)
 {
     /* conversion from r,v to classical orbital elements */
     ClassicElements oe_c, oe_d;
@@ -329,8 +325,7 @@ UpdateManeuver(spacecraftReconfigConfig* configData,
  @param upper upper threshold
  @param angle an angle which you want to be between lower and upper
 */
-double
-AdjustRange(double lower, double upper, double angle)
+double AdjustRange(double lower, double upper, double angle)
 {
     if (upper < lower) {
         printf("illegal parameters\n");
@@ -353,8 +348,7 @@ AdjustRange(double lower, double upper, double angle)
  @param n1
  @param n2
  */
-int
-CompareTime(const void* n1, const void* n2)
+int CompareTime(const void* n1, const void* n2)
 {
     if (((ReconfigBurnInfoMsgPayload*)n1)->t > ((ReconfigBurnInfoMsgPayload*)n2)->t) {
         return 1;
@@ -374,12 +368,11 @@ CompareTime(const void* n1, const void* n2)
  @param thrustConfigMsgBuffer
  @param vehicleConfigMsgBuffer deputy's vehicle config information
  */
-void
-ScheduleDV(spacecraftReconfigConfig* configData,
-           ClassicElements oe_c,
-           ClassicElements oe_d,
-           THRArrayConfigMsgPayload thrustConfigMsgBuffer,
-           VehicleConfigMsgPayload vehicleConfigMsgBuffer)
+void ScheduleDV(spacecraftReconfigConfig* configData,
+                ClassicElements oe_c,
+                ClassicElements oe_d,
+                THRArrayConfigMsgPayload thrustConfigMsgBuffer,
+                VehicleConfigMsgPayload vehicleConfigMsgBuffer)
 {
     // calculation necessary variables
     double da = oe_d.a - oe_c.a;

@@ -61,8 +61,7 @@ InputDataSet::~InputDataSet()
 }
 
 /*! Set the first derivative of the starting point (optional) */
-void
-InputDataSet::setXDot_0(Eigen::Vector3d XDot_0)
+void InputDataSet::setXDot_0(Eigen::Vector3d XDot_0)
 {
     this->XDot_0 = XDot_0;
     this->XDot_0_flag = true;
@@ -70,8 +69,7 @@ InputDataSet::setXDot_0(Eigen::Vector3d XDot_0)
 }
 
 /*! Set the first derivative of the last point (optional) */
-void
-InputDataSet::setXDot_N(Eigen::Vector3d XDot_N)
+void InputDataSet::setXDot_N(Eigen::Vector3d XDot_N)
 {
     this->XDot_N = XDot_N;
     this->XDot_N_flag = true;
@@ -79,8 +77,7 @@ InputDataSet::setXDot_N(Eigen::Vector3d XDot_N)
 }
 
 /*! Set the second derivative of the starting point (optional) */
-void
-InputDataSet::setXDDot_0(Eigen::Vector3d XDDot_0)
+void InputDataSet::setXDDot_0(Eigen::Vector3d XDDot_0)
 {
     this->XDDot_0 = XDDot_0;
     this->XDDot_0_flag = true;
@@ -88,8 +85,7 @@ InputDataSet::setXDDot_0(Eigen::Vector3d XDDot_0)
 }
 
 /*! Set the second derivative of the last point (optional) */
-void
-InputDataSet::setXDDot_N(Eigen::Vector3d XDDot_N)
+void InputDataSet::setXDDot_N(Eigen::Vector3d XDDot_N)
 {
     this->XDDot_N = XDDot_N;
     this->XDDot_N_flag = true;
@@ -97,8 +93,7 @@ InputDataSet::setXDDot_N(Eigen::Vector3d XDDot_N)
 }
 
 /*! Set the time tags for each waypoint (optional). Cannot be imposed together with avg velocity norm below */
-void
-InputDataSet::setT(const Eigen::VectorXd& T)
+void InputDataSet::setT(const Eigen::VectorXd& T)
 {
     this->T = T;
     this->T_flag = true;
@@ -107,8 +102,7 @@ InputDataSet::setT(const Eigen::VectorXd& T)
 }
 
 /*! Set the average velocity norm (optional). Cannot be imposed together with time tag vector above */
-void
-InputDataSet::setAvgXDot(double AvgXDot)
+void InputDataSet::setAvgXDot(double AvgXDot)
 {
     this->AvgXDot = AvgXDot;
     this->AvgXDot_flag = true;
@@ -117,8 +111,7 @@ InputDataSet::setAvgXDot(double AvgXDot)
 }
 
 /*! Set the weights for each waypoint. Weights are used in the LS approximation */
-void
-InputDataSet::setW(const Eigen::VectorXd& W)
+void InputDataSet::setW(const Eigen::VectorXd& W)
 {
     this->W = W;
     this->W_flag = true;
@@ -138,8 +131,7 @@ OutputDataSet::~OutputDataSet()
 }
 
 /*! This method returns x, xDot and xDDot at the desired input time T */
-void
-OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3])
+void OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3])
 {
     int N = (int)this->T.size() - 1;
     double Ttot = this->T[N];
@@ -176,8 +168,7 @@ OutputDataSet::getData(double T, double x[3], double xDot[3], double xDDot[3])
 
 /*! This method returns single coordinates of x, xDot and xDDot at the desired input time T. */
 /*! It is designed to be accessible from Python */
-double
-OutputDataSet::getStates(double T, int derivative, int index)
+double OutputDataSet::getStates(double T, int derivative, int index)
 {
     int N = (int)this->T.size() - 1;
     double Ttot = this->T[N];
@@ -279,8 +270,7 @@ OutputDataSet::getStates(double T, int derivative, int index)
 
 /*! This function takes the Input structure, performs the BSpline interpolation and outputs the result into Output
  * structure */
-void
-interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output)
+void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output)
 {
     Output->P = P;
 
@@ -470,8 +460,7 @@ interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output)
 
 /*! This function takes the Input structure, performs the BSpline LS approximation and outputs the result into Output
  * structure */
-void
-approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output)
+void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output)
 {
     Output->P = P;
 
@@ -766,8 +755,7 @@ approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Out
 
 /*! This function calculates the basis functions NN of order P, and derivatives NN1, NN2, for a given time t and knot
  * vector U */
-void
-basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN, double* NN1, double* NN2)
+void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN, double* NN1, double* NN2)
 {
     Eigen::MatrixXd N(I, P + 1);
     Eigen::MatrixXd N1(I, P + 1);

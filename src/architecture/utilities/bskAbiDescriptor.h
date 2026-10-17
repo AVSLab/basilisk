@@ -99,8 +99,7 @@ typedef struct
     size_t msgHeaderModuleIdOffset;
 } BskCAbiInfo;
 
-BSK_ABI_INLINE BskCAbiInfo
-bskCreateCAbiInfo(void)
+BSK_ABI_INLINE BskCAbiInfo bskCreateCAbiInfo(void)
 {
 #ifdef __cplusplus
     BskCAbiInfo info{};
@@ -249,8 +248,7 @@ struct CxxAbiInfo
     bool pythonFreeThreadedBuild;
 };
 
-inline CxxAbiInfo
-createCxxAbiInfo()
+inline CxxAbiInfo createCxxAbiInfo()
 {
     CxxAbiInfo info{};
 

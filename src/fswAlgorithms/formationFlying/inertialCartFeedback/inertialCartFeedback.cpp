@@ -19,14 +19,12 @@
 
 #include "fswAlgorithms/formationFlying/inertialCartFeedback/inertialCartFeedback.h"
 
-void
-InertialCartFeedback::SelfInit()
+void InertialCartFeedback::SelfInit()
 {
     CmdForceInertialMsg_C_init(&this->forceOutMsgC);
 }
 
-void
-InertialCartFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void InertialCartFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->deputyNavInMsg.isLinked()) {
         bskLogger.bskError("InertialCartFeedback.deputyNavInMsg was not linked.");
@@ -52,8 +50,7 @@ InertialCartFeedback::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-void
-InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
+void InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
 {
     NavTransMsgPayload depNav = this->deputyNavInMsg();
     TransRefMsgPayload depRef = this->deputyRefInMsg();
@@ -87,8 +84,7 @@ InertialCartFeedback::UpdateState(uint64_t CurrentSimNanos)
     CmdForceInertialMsg_C_write(&forceOut, &this->forceOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
-void
-InertialCartFeedback::setMu(const double value)
+void InertialCartFeedback::setMu(const double value)
 {
     if (value < 0.0) {
         bskLogger.bskError("inertialCartFeedback: mu must be non-negative.");
@@ -97,8 +93,7 @@ InertialCartFeedback::setMu(const double value)
     }
 }
 
-void
-InertialCartFeedback::setK(const std::vector<double>& value)
+void InertialCartFeedback::setK(const std::vector<double>& value)
 {
     if (value.size() != 9) {
         bskLogger.bskError("inertialCartFeedback: K must contain exactly 9 elements.");
@@ -116,8 +111,7 @@ InertialCartFeedback::setK(const std::vector<double>& value)
     this->setKFlag = true;
 }
 
-void
-InertialCartFeedback::setP(const std::vector<double>& value)
+void InertialCartFeedback::setP(const std::vector<double>& value)
 {
     if (value.size() != 9) {
         bskLogger.bskError("inertialCartFeedback: P must contain exactly 9 elements.");

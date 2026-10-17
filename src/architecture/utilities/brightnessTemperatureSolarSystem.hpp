@@ -36,8 +36,7 @@
  * @param frequency_Hz  Frequency in Hz [Hz]
  * @return              Brightness temperature in Kelvin [K]
  */
-inline double
-getBrightnessTemperatureFromData(const std::string& celestialBody, double frequency_Hz)
+inline double getBrightnessTemperatureFromData(const std::string& celestialBody, double frequency_Hz)
 {
     static BSKLogger bskLogger;
     constexpr double T_0 = 290.0; // [K]  Reference temperature according to ITU-R P.372-17

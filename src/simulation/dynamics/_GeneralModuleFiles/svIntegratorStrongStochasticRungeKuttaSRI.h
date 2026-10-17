@@ -182,8 +182,7 @@ svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::svIntegratorStrongStoch
 }
 
 template<size_t numberStages>
-void
-svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrateImpl(double currentTime, double timeStep)
+void svIntegratorStrongStochasticRungeKuttaSRI<numberStages>::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

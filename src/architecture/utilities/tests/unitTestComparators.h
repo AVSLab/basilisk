@@ -29,8 +29,7 @@
  * @param accuracy Finite, nonnegative absolute tolerance.
  * @return Nonzero if the values satisfy the tolerance, otherwise zero.
  */
-static inline int
-isEqual(double a, double b, double accuracy)
+static inline int isEqual(double a, double b, double accuracy)
 {
     return isfinite(a) && isfinite(b) && isfinite(accuracy) && accuracy >= 0.0 && fabs(a - b) <= accuracy;
 }
@@ -44,8 +43,7 @@ isEqual(double a, double b, double accuracy)
  * @note A zero reference or zero tolerance requires exact equality. NaN and
  * infinity are rejected, including equal infinities.
  */
-static inline int
-isEqualRel(double a, double b, double accuracy)
+static inline int isEqualRel(double a, double b, double accuracy)
 {
     if (!isfinite(a) || !isfinite(b) || !isfinite(accuracy) || accuracy < 0.0) {
         return 0;
@@ -77,13 +75,12 @@ namespace unitTestComparators {
  * @param tolerance Finite, nonnegative relative tolerance (dimensionless).
  * @return An assertion result with the operands and tolerance on failure.
  */
-static inline ::testing::AssertionResult
-scalarNearRel(const char* firstExpression,
-              const char* secondExpression,
-              const char* toleranceExpression,
-              double first,
-              double second,
-              double tolerance)
+static inline ::testing::AssertionResult scalarNearRel(const char* firstExpression,
+                                                       const char* secondExpression,
+                                                       const char* toleranceExpression,
+                                                       double first,
+                                                       double second,
+                                                       double tolerance)
 {
     if (isEqualRel(first, second, tolerance)) {
         return ::testing::AssertionSuccess();
@@ -110,13 +107,12 @@ scalarNearRel(const char* firstExpression,
  * vector's units and check each component independently.
  */
 template<bool relative>
-inline ::testing::AssertionResult
-vector3Near(const char* firstExpression,
-            const char* secondExpression,
-            const char* toleranceExpression,
-            const double* first,
-            const double* second,
-            double tolerance)
+inline ::testing::AssertionResult vector3Near(const char* firstExpression,
+                                              const char* secondExpression,
+                                              const char* toleranceExpression,
+                                              const double* first,
+                                              const double* second,
+                                              double tolerance)
 {
     if (!std::isfinite(tolerance) || tolerance < 0.0) {
         return ::testing::AssertionFailure()

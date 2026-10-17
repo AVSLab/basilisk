@@ -44,24 +44,21 @@ AlgContain::~AlgContain()
     return;
 }
 
-void
-AlgContain::SelfInit()
+void AlgContain::SelfInit()
 {
     if (AlgSelfInit != NULL) {
         AlgSelfInit(DataPtr, (uint32_t)moduleID);
     }
 }
 
-void
-AlgContain::UpdateState(uint64_t CurrentSimNanos)
+void AlgContain::UpdateState(uint64_t CurrentSimNanos)
 {
     if (AlgUpdate != NULL) {
         AlgUpdate(DataPtr, CurrentSimNanos, (uint32_t)moduleID);
     }
 }
 
-void
-AlgContain::Reset(uint64_t CurrentSimNanos)
+void AlgContain::Reset(uint64_t CurrentSimNanos)
 {
     if (AlgReset != NULL) {
         AlgReset(DataPtr, CurrentSimNanos, (uint32_t)moduleID);

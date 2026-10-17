@@ -30,8 +30,7 @@ SimpleSolarPanel::~SimpleSolarPanel()
 
 /*! custom solar panel reset function
  */
-void
-SimpleSolarPanel::customReset(uint64_t CurrentClock [[maybe_unused]])
+void SimpleSolarPanel::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
 
     this->illuminationFactor = 1.0;
@@ -58,8 +57,7 @@ SimpleSolarPanel::customReset(uint64_t CurrentClock [[maybe_unused]])
     return;
 }
 
-bool
-SimpleSolarPanel::customReadMessages()
+bool SimpleSolarPanel::customReadMessages()
 {
     //! - Zero ephemeris information
     this->sunData = sunInMsg.zeroMsgPayload;
@@ -88,8 +86,7 @@ SimpleSolarPanel::customReadMessages()
  @param panelEfficiency: The efficiency of the solar panel in nondimensional units; typically ranges from 0.1 to 0.5.
 
  */
-void
-SimpleSolarPanel::setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency)
+void SimpleSolarPanel::setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, double panelEfficiency)
 {
     this->nHat_B = nHat_B;
     this->panelArea = panelArea;
@@ -101,8 +98,7 @@ SimpleSolarPanel::setPanelParameters(Eigen::Vector3d nHat_B, double panelArea, d
    the magnitude of the spacecraft sun vector.
 
  */
-void
-SimpleSolarPanel::computeSunData()
+void SimpleSolarPanel::computeSunData()
 {
     Eigen::Vector3d r_SB_N; //!< [m] Sun position relative to spacecraft body B
     Eigen::Vector3d sHat_N; //!< [] unit sun heading vector in inertial frame N
@@ -145,8 +141,7 @@ and eclipse illumination factor;
 attributes.
 
  */
-void
-SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageSimMsg)
+void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsageSimMsg)
 {
 
     this->computeSunData();

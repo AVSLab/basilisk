@@ -27,8 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, int64_t moduleID)
+void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*
@@ -47,8 +46,9 @@ SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configDa
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData,
+                                       uint64_t callTime,
+                                       int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -88,8 +88,9 @@ Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData,
+                                        uint64_t callTime,
+                                        int64_t moduleID)
 {
     /*
      * Initialize local variables.

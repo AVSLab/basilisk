@@ -26,8 +26,7 @@ svStochasticIntegratorSOSRA::svStochasticIntegratorSOSRA(DynamicObject* dyn)
 // Coefficients for the SOSRA (three-stage SRA) tableau. Matrix entries use the
 // plain [stage i][sub-term j] convention of SRACoefficients (a21 -> A0[1][0],
 // a31 -> A0[2][0], a32 -> A0[2][1], etc.).
-SRACoefficients<3>
-svStochasticIntegratorSOSRA::getCoefficients()
+SRACoefficients<3> svStochasticIntegratorSOSRA::getCoefficients()
 {
     SRACoefficients<3> c;
 

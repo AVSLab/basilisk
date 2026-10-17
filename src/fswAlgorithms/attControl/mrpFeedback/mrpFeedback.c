@@ -35,8 +35,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
 */
-void
-SelfInit_mrpFeedback(mrpFeedbackConfig* configData, int64_t moduleID)
+void SelfInit_mrpFeedback(mrpFeedbackConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
@@ -50,8 +49,7 @@ SelfInit_mrpFeedback(mrpFeedbackConfig* configData, int64_t moduleID)
  @param configData The configuration data associated with the MRP steering control
  @param moduleID The module identifier
 */
-void
-Reset_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -106,8 +104,7 @@ Reset_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mrpFeedback(mrpFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttGuidMsgPayload guidCmd;                   /* attitude tracking error message */
     RWSpeedMsgPayload wheelSpeeds;               /* Reaction wheel speed message */

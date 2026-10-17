@@ -34,8 +34,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void
-SelfInit_thrMomentumManagement(thrMomentumManagementConfig* configData, int64_t moduleID)
+void SelfInit_thrMomentumManagement(thrMomentumManagementConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CmdTorqueBodyMsg_C_init(&configData->deltaHOutMsg);
@@ -48,8 +47,7 @@ SelfInit_thrMomentumManagement(thrMomentumManagementConfig* configData, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -76,8 +74,7 @@ Reset_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrMomentumManagement(thrMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     RWSpeedMsgPayload rwSpeedMsg;          /* Reaction wheel speed estimate message */
     CmdTorqueBodyMsgPayload controlOutMsg; /* Control torque output message */

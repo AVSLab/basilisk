@@ -70,8 +70,7 @@ SimpleAntenna::SimpleAntenna()
 }
 /*! This method is used to reset the module and checks that required input messages are connected.
  */
-void
-SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // ERRORS
     // check that required input messages are connected
@@ -160,8 +159,7 @@ SimpleAntenna::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->initializeAntenna();
 }
 
-void
-SimpleAntenna::initializeAntenna()
+void SimpleAntenna::initializeAntenna()
 {
     // Determine environment (SPACE or EARTH)  -->  Check if groundMsg or Spacecraft is linked
     if (this->scStateInMsg.isLinked()) {
@@ -201,8 +199,7 @@ SimpleAntenna::initializeAntenna()
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
  */
-void
-SimpleAntenna::UpdateState(uint64_t CurrentSimNanos)
+void SimpleAntenna::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();                      // Read in the input messages
     this->calculateAntennaPositionAndOrientation(); // Calculate antenna position and attitude in {N} frame
@@ -210,8 +207,7 @@ SimpleAntenna::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);     // Write the output messages
 }
 
-void
-SimpleAntenna::readInputMessages()
+void SimpleAntenna::readInputMessages()
 {
     if (this->environment == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
         // SPACE environment
@@ -239,8 +235,7 @@ SimpleAntenna::readInputMessages()
     }
 }
 
-void
-SimpleAntenna::writeOutputMessages(uint64_t CurrentSimNanos)
+void SimpleAntenna::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     // Zero the output message buffer
     this->antennaPhysicalStateMsgBuffer = this->antennaOutMsg.zeroMsgPayload;
@@ -253,8 +248,7 @@ SimpleAntenna::writeOutputMessages(uint64_t CurrentSimNanos)
 
 /* Calculate sky temperature based on environmental parameters
  */
-double
-SimpleAntenna::calculateTsky()
+double SimpleAntenna::calculateTsky()
 {
     /* NOTE: This is a simplified model for sky brightness temperature calculation
              Neglected are: - Noise due to lightning and other static electrical discharges
@@ -358,8 +352,10 @@ SimpleAntenna::calculateTsky()
  * @param elevation Beam half-angle in elevation [rad]
  * @return coverage fraction [0..1]
  */
-double
-SimpleAntenna::calculatePlanetCoverage(double planetRadius, Eigen::Vector3d r_PN_N, double azimuth, double elevation)
+double SimpleAntenna::calculatePlanetCoverage(double planetRadius,
+                                              Eigen::Vector3d r_PN_N,
+                                              double azimuth,
+                                              double elevation)
 {
     Eigen::Vector3d r_PB_N; //!< [m] Planet position relative to spacecraft body B
     Eigen::Matrix3d dcm_BN; //!< [] DCM from inertial frame N to body frame B
@@ -423,8 +419,7 @@ SimpleAntenna::calculatePlanetCoverage(double planetRadius, Eigen::Vector3d r_PN
  @param tmpSpMsg The planet name
 
  */
-void
-SimpleAntenna::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
+void SimpleAntenna::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
 {
     this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
 
@@ -437,8 +432,7 @@ SimpleAntenna::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
  @param  planetSpiceName The planet name according to the spice NAIF Integer ID codes.
  @return double  The equatorial radius in metres associated with the given planet name.
  */
-double
-SimpleAntenna::getPlanetEquatorialRadius(std::string planetSpiceName)
+double SimpleAntenna::getPlanetEquatorialRadius(std::string planetSpiceName)
 {
     if (planetSpiceName == "mercury") {
         return REQ_MERCURY * 1000.0; // [meters]
@@ -471,8 +465,7 @@ SimpleAntenna::getPlanetEquatorialRadius(std::string planetSpiceName)
     }
 }
 
-double
-SimpleAntenna::calculateTambient()
+double SimpleAntenna::calculateTambient()
 {
     double T_ambientLocal; // [K]
     double T_groundLocal;  // [K]
@@ -499,8 +492,7 @@ SimpleAntenna::calculateTambient()
     return T_ambientLocal;
 }
 
-void
-SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload* output)
+void SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload* output)
 {
     std::snprintf(output->antennaName, sizeof(output->antennaName), "%s", this->antennaName.c_str());
     output->antennaName[sizeof(output->antennaName) - 1] = '\0';
@@ -544,8 +536,7 @@ SimpleAntenna::populateOutputMsg(AntennaLogMsgPayload* output)
     }
 }
 
-void
-SimpleAntenna::calculateAntennaPositionAndOrientation()
+void SimpleAntenna::calculateAntennaPositionAndOrientation()
 {
     Eigen::Matrix3d dcm_NA; // DCM from antenna frame {A} to inertial frame {N}
     if (this->environment == AntennaTypes::EnvironmentType::ENVIRONMENT_SPACE) {
@@ -578,8 +569,7 @@ SimpleAntenna::calculateAntennaPositionAndOrientation()
     }
 }
 
-void
-SimpleAntenna::calculateAntennaNoise()
+void SimpleAntenna::calculateAntennaNoise()
 {
     // Calculate antenna noise temperature based on T_sky and T_Ambient
     double T_sky;
@@ -604,8 +594,7 @@ SimpleAntenna::calculateAntennaNoise()
 This must be called before setUseHaslamMap(true).
 @param file Full path to the Haslam FITS file
 */
-void
-SimpleAntenna::configureBrightnessFile(const std::string& file)
+void SimpleAntenna::configureBrightnessFile(const std::string& file)
 {
     HaslamMap::getInstance().configureBrightnessFile(file);
 }
@@ -613,8 +602,7 @@ SimpleAntenna::configureBrightnessFile(const std::string& file)
 /*******************/
 /***** Setters *****/
 /*******************/
-void
-SimpleAntenna::setAntennaName(const std::string& var)
+void SimpleAntenna::setAntennaName(const std::string& var)
 {
     /*Make sure antennaName is < 20 characters */
     if (var.length() >= 20) {
@@ -623,8 +611,7 @@ SimpleAntenna::setAntennaName(const std::string& var)
     this->antennaName = var;
 }
 
-void
-SimpleAntenna::setAntennaState(AntennaTypes::AntennaStateEnum var)
+void SimpleAntenna::setAntennaState(AntennaTypes::AntennaStateEnum var)
 {
     if (var < AntennaTypes::AntennaStateEnum::ANTENNA_OFF || var > AntennaTypes::AntennaStateEnum::ANTENNA_RXTX) {
         bskLogger.bskLog(BSK_WARNING,
@@ -635,8 +622,7 @@ SimpleAntenna::setAntennaState(AntennaTypes::AntennaStateEnum var)
     }
     this->antennaState = var; // [-] antenna state: 0: OFF, 1: Rx, 2: Tx, 3: RxTx
 }
-void
-SimpleAntenna::setAntennaFrequency(double var)
+void SimpleAntenna::setAntennaFrequency(double var)
 {
     if (var <= 3e7 || var >= 6e10) { // Center frequency shall be between 30 Hz and 60 GHz
         bskLogger.bskError(
@@ -644,8 +630,7 @@ SimpleAntenna::setAntennaFrequency(double var)
     }
     this->frequency = var; // [Hz] antenna operating frequency
 }
-void
-SimpleAntenna::setAntennaBandwidth(double var)
+void SimpleAntenna::setAntennaBandwidth(double var)
 {
     if (var <= minThreshold) { // Bandwidth cannot be zero or negative
         bskLogger.bskError(
@@ -653,8 +638,7 @@ SimpleAntenna::setAntennaBandwidth(double var)
     }
     this->B = var; // [Hz] antenna frequency bandwidth
 }
-void
-SimpleAntenna::setAntennaDirectivity_dB(double var)
+void SimpleAntenna::setAntennaDirectivity_dB(double var)
 {
     if (var <= 9) {
         bskLogger.bskError("SimpleAntenna: Attempting to set invalid low antenna directivity D[dB]. Value must be > "
@@ -662,8 +646,7 @@ SimpleAntenna::setAntennaDirectivity_dB(double var)
     }
     this->DdB = var; // [dB] antenna directivity
 }
-void
-SimpleAntenna::setAntennaHpbwRatio(double var)
+void SimpleAntenna::setAntennaHpbwRatio(double var)
 {
     if (var <= 0.5 || var >= 5.0) {
         bskLogger.bskError("SimpleAntenna: Attempting to set invalid antenna HPBW ratio. Value must be between 0.5 and "
@@ -671,8 +654,7 @@ SimpleAntenna::setAntennaHpbwRatio(double var)
     }
     this->k = var;
 }
-void
-SimpleAntenna::setAntennaP_Tx(double var)
+void SimpleAntenna::setAntennaP_Tx(double var)
 {
     if (var <= this->minThreshold) {
         bskLogger.bskError("SimpleAntenna transmit power P_Tx [W] is set to a value below the minimum threshold (10^-6 "
@@ -680,8 +662,7 @@ SimpleAntenna::setAntennaP_Tx(double var)
     }
     this->P_Tx = var; // [W] transmit power
 }
-void
-SimpleAntenna::setAntennaP_Rx(double var)
+void SimpleAntenna::setAntennaP_Rx(double var)
 {
     if (var < 0) {
         bskLogger.bskLog(
@@ -691,8 +672,7 @@ SimpleAntenna::setAntennaP_Rx(double var)
     }
     this->P_Rx = var; // [W] receive power
 }
-void
-SimpleAntenna::setAntennaEquivalentNoiseTemp(double var)
+void SimpleAntenna::setAntennaEquivalentNoiseTemp(double var)
 {
     if (var < this->minThreshold) {
         bskLogger.bskError("SimpleAntenna equivalent noise temperature T_E [K] is set to a negative value => Antenna "
@@ -700,8 +680,7 @@ SimpleAntenna::setAntennaEquivalentNoiseTemp(double var)
     }
     this->T_E = var; // [K] equivalent noise temperature
 }
-void
-SimpleAntenna::setAntennaRadEfficiency(double var)
+void SimpleAntenna::setAntennaRadEfficiency(double var)
 {
     if (var < 0 || var > 1) {
         bskLogger.bskError(
@@ -709,8 +688,7 @@ SimpleAntenna::setAntennaRadEfficiency(double var)
     }
     this->eta_r = var; // [-] antenna radiation efficiency
 }
-void
-SimpleAntenna::setAntennaEnvironmentTemperature(double var)
+void SimpleAntenna::setAntennaEnvironmentTemperature(double var)
 {
     if (var < this->minThreshold) {
         bskLogger.bskError("SimpleAntenna: Attempting to set an unrealistic environment temperature T_Ambient [K]. "
@@ -718,19 +696,16 @@ SimpleAntenna::setAntennaEnvironmentTemperature(double var)
     }
     this->T_AmbientSet = var;
 }
-void
-SimpleAntenna::setAntennaPositionBodyFrame(Eigen::Vector3d var)
+void SimpleAntenna::setAntennaPositionBodyFrame(Eigen::Vector3d var)
 {
     this->r_AB_B = var;
 }
-void
-SimpleAntenna::setAntennaOrientationBodyFrame(Eigen::MRPd var)
+void SimpleAntenna::setAntennaOrientationBodyFrame(Eigen::MRPd var)
 {
     this->sigma_AB = var;
 }
 
-void
-SimpleAntenna::setUseHaslamMap(bool var)
+void SimpleAntenna::setUseHaslamMap(bool var)
 {
     this->useHaslamMap = var;
 }

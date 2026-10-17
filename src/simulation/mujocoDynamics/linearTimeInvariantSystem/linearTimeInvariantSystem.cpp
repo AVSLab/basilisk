@@ -22,8 +22,7 @@
 #include <limits>
 #include <string>
 
-void
-LinearTimeInvariantSystem::registerStates(DynParamRegisterer registerer)
+void LinearTimeInvariantSystem::registerStates(DynParamRegisterer registerer)
 {
     const size_t stateSize = this->getStateSize();
     if (stateSize > 0) {
@@ -35,8 +34,7 @@ LinearTimeInvariantSystem::registerStates(DynParamRegisterer registerer)
     }
 }
 
-void
-LinearTimeInvariantSystem::UpdateState(uint64_t CurrentSimNanos)
+void LinearTimeInvariantSystem::UpdateState(uint64_t CurrentSimNanos)
 {
     const size_t stateSize = this->getStateSize();
     const size_t inputSize = this->getInputSize();
@@ -82,8 +80,7 @@ LinearTimeInvariantSystem::UpdateState(uint64_t CurrentSimNanos)
     writeOutput(CurrentSimNanos, y);
 }
 
-void
-LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
+void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
 {
     const size_t stateSize = this->getStateSize();
     const size_t inputSize = this->getInputSize();
@@ -162,56 +159,47 @@ LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
     }
 }
 
-const Eigen::MatrixXd&
-LinearTimeInvariantSystem::getA() const
+const Eigen::MatrixXd& LinearTimeInvariantSystem::getA() const
 {
     return A;
 }
 
-void
-LinearTimeInvariantSystem::setA(const Eigen::MatrixXd& Ain)
+void LinearTimeInvariantSystem::setA(const Eigen::MatrixXd& Ain)
 {
     A = Ain;
 }
 
-const Eigen::MatrixXd&
-LinearTimeInvariantSystem::getB() const
+const Eigen::MatrixXd& LinearTimeInvariantSystem::getB() const
 {
     return B;
 }
 
-void
-LinearTimeInvariantSystem::setB(const Eigen::MatrixXd& Bin)
+void LinearTimeInvariantSystem::setB(const Eigen::MatrixXd& Bin)
 {
     B = Bin;
 }
 
-const Eigen::MatrixXd&
-LinearTimeInvariantSystem::getC() const
+const Eigen::MatrixXd& LinearTimeInvariantSystem::getC() const
 {
     return C;
 }
 
-void
-LinearTimeInvariantSystem::setC(const Eigen::MatrixXd& Cin)
+void LinearTimeInvariantSystem::setC(const Eigen::MatrixXd& Cin)
 {
     C = Cin;
 }
 
-const Eigen::MatrixXd&
-LinearTimeInvariantSystem::getD() const
+const Eigen::MatrixXd& LinearTimeInvariantSystem::getD() const
 {
     return D;
 }
 
-void
-LinearTimeInvariantSystem::setD(const Eigen::MatrixXd& Din)
+void LinearTimeInvariantSystem::setD(const Eigen::MatrixXd& Din)
 {
     D = Din;
 }
 
-void
-LinearTimeInvariantSystem::configureSecondOrder(double wn, double zeta, double k)
+void LinearTimeInvariantSystem::configureSecondOrder(double wn, double zeta, double k)
 {
     if (wn <= 0.0) {
         bskLogger.bskLog(BSK_ERROR, "configureSecondOrder: natural frequency wn must be positive.");
@@ -238,10 +226,9 @@ LinearTimeInvariantSystem::configureSecondOrder(double wn, double zeta, double k
     D << 0.0;
 }
 
-void
-LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
-                                                const Eigen::VectorXd& zeta,
-                                                const Eigen::VectorXd& k)
+void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
+                                                     const Eigen::VectorXd& zeta,
+                                                     const Eigen::VectorXd& k)
 {
     const Eigen::Index n = wn.size();
 
@@ -328,8 +315,7 @@ LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
     }
 }
 
-Eigen::VectorXd
-LinearTimeInvariantSystem::getX()
+Eigen::VectorXd LinearTimeInvariantSystem::getX()
 {
     if (!xState) {
         bskLogger.bskLog(BSK_ERROR, "LinearTimeInvariantSystem::getX: state has not been registered.");
@@ -339,8 +325,7 @@ LinearTimeInvariantSystem::getX()
     return xState->stateView();
 }
 
-void
-LinearTimeInvariantSystem::setX(const Eigen::VectorXd& xin)
+void LinearTimeInvariantSystem::setX(const Eigen::VectorXd& xin)
 {
     if (!xState) {
         bskLogger.bskLog(BSK_ERROR, "LinearTimeInvariantSystem::setX: state has not been registered.");
@@ -356,8 +341,7 @@ LinearTimeInvariantSystem::setX(const Eigen::VectorXd& xin)
     xState->setState(xin);
 }
 
-size_t
-LinearTimeInvariantSystem::getInputSize() const
+size_t LinearTimeInvariantSystem::getInputSize() const
 {
     if (B.cols() > 0) {
         return static_cast<size_t>(B.cols());
@@ -368,8 +352,7 @@ LinearTimeInvariantSystem::getInputSize() const
     return 0;
 }
 
-size_t
-LinearTimeInvariantSystem::getStateSize() const
+size_t LinearTimeInvariantSystem::getStateSize() const
 {
     if (A.cols() > 0) {
         return static_cast<size_t>(A.cols());
@@ -383,8 +366,7 @@ LinearTimeInvariantSystem::getStateSize() const
     return 0;
 }
 
-size_t
-LinearTimeInvariantSystem::getOutputSize() const
+size_t LinearTimeInvariantSystem::getOutputSize() const
 {
     if (C.rows() > 0) {
         return static_cast<size_t>(C.rows());

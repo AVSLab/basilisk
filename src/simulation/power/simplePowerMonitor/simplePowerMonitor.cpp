@@ -36,8 +36,7 @@ SimplePowerMonitor::~SimplePowerMonitor()
 /*! This method integrates the net power across all the attached devices and stores it.
 
  */
-void
-SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
+void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
 {
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);

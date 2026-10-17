@@ -45,8 +45,7 @@ DataNodeBase::~DataNodeBase()
  @param CurrentSimNanos
 
  */
-void
-DataNodeBase::Reset(uint64_t CurrentSimNanos)
+void DataNodeBase::Reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -58,8 +57,7 @@ DataNodeBase::Reset(uint64_t CurrentSimNanos)
  @param CurrentClock
 
  */
-void
-DataNodeBase::writeMessages(uint64_t CurrentClock)
+void DataNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write dataNode output messages - baud rate and name
     this->nodeDataOutMsg.write(&this->nodeDataMsg, this->moduleID, CurrentClock);
@@ -72,8 +70,7 @@ DataNodeBase::writeMessages(uint64_t CurrentClock)
 /*! This method reads the device status messages and calls a customReadMessages method
  @return bool
  */
-bool
-DataNodeBase::readMessages()
+bool DataNodeBase::readMessages()
 {
     //! - read in the data node use/supply messages
     bool dataRead = true;
@@ -94,8 +91,7 @@ DataNodeBase::readMessages()
  @param CurrentTime
 
  */
-void
-DataNodeBase::computeDataStatus(double CurrentTime)
+void DataNodeBase::computeDataStatus(double CurrentTime)
 {
     if (this->dataStatus > 0) {
         this->evaluateDataModel(&this->nodeDataMsg, CurrentTime);
@@ -109,8 +105,7 @@ DataNodeBase::computeDataStatus(double CurrentTime)
  @param CurrentSimNanos
 
  */
-void
-DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Only update the data status if we were able to read in messages.
     if (this->readMessages()) {
@@ -127,8 +122,7 @@ DataNodeBase::UpdateState(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void
-DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -136,8 +130,7 @@ DataNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 /*! custom Write method, similar to customSelfInit.
 
  */
-void
-DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -145,8 +138,7 @@ DataNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 /*! Custom read method, similar to customSelfInit; returns `true` by default.
 
  */
-bool
-DataNodeBase::customReadMessages()
+bool DataNodeBase::customReadMessages()
 {
     return true;
 }

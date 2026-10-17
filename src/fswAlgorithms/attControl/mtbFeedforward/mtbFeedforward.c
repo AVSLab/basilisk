@@ -27,8 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_mtbFeedforward(mtbFeedforwardConfig* configData, int64_t moduleID)
+void SelfInit_mtbFeedforward(mtbFeedforwardConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*
@@ -45,8 +44,7 @@ SelfInit_mtbFeedforward(mtbFeedforwardConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -77,8 +75,7 @@ Reset_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
 {
 
     /*

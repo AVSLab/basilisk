@@ -20,8 +20,7 @@
 
 #include <cmath>
 
-void
-TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->thetaInMsg.isLinked()) {
         this->bskLogger.bskError("TwoHingeDamper.thetaInMsg is not linked.");
@@ -37,8 +36,7 @@ TwoHingeDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-void
-TwoHingeDamper::UpdateState(uint64_t CurrentSimNanos)
+void TwoHingeDamper::UpdateState(uint64_t CurrentSimNanos)
 {
     const double theta = this->thetaInMsg().state;
     const double cosTheta = std::cos(theta);

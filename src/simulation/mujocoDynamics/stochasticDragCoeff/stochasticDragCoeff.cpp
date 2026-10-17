@@ -18,8 +18,7 @@
  */
 #include "stochasticDragCoeff.h"
 
-void
-StochasticDragCoeff::writeOutput(uint64_t CurrentSimNanos, double x)
+void StochasticDragCoeff::writeOutput(uint64_t CurrentSimNanos, double x)
 {
     DragGeometryMsgPayload out = dragGeomInMsg();
     out.dragCoeff *= (1.0 + x);

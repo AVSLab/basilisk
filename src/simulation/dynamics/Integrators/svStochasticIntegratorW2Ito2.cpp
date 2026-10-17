@@ -24,8 +24,7 @@ svStochasticIntegratorW2Ito2::svStochasticIntegratorW2Ito2(DynamicObject* dyn)
 }
 
 // Coefficients for the W2Ito2 tableau (Tang & Xiao, Table 3). 4-stage explicit method.
-W2ItoCoefficients
-svStochasticIntegratorW2Ito2::getCoefficients()
+W2ItoCoefficients svStochasticIntegratorW2Ito2::getCoefficients()
 {
     W2ItoCoefficients c;
 

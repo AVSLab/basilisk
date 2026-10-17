@@ -25,8 +25,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void
-SelfInit_ephemDifference(EphemDifferenceData* configData, int64_t moduleID)
+void SelfInit_ephemDifference(EphemDifferenceData* configData, int64_t moduleID)
 {
     (void)moduleID;
     uint32_t i;
@@ -41,8 +40,7 @@ SelfInit_ephemDifference(EphemDifferenceData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Reset_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -75,8 +73,7 @@ Reset_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Update_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
+void Update_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i;
     EphemerisMsgPayload tmpBaseEphem;

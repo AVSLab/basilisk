@@ -32,8 +32,7 @@ CppModuleTemplate::~CppModuleTemplate()
 /*! This method is used to reset the module.
 
  */
-void
-CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
+void CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
 {
     /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
     this->updateCounter = 0.0;
@@ -44,8 +43,7 @@ CppModuleTemplate::Reset(uint64_t CurrentSimNanos)
     this->dataOutMsg.write(&outMsgBuffer, this->moduleID, CurrentSimNanos);
 }
 
-void
-CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+void CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 {
     // Zero the output buffer each update to avoid publishing uninitialized fields.
     CModuleTemplateMsgPayload outMsgBuffer = this->dataOutMsg.zeroMsgPayload;
@@ -75,8 +73,7 @@ CppModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
       BSK_INFORMATION, "C++ Module ID %lld ran Update at %fs", this->moduleID, (double)CurrentSimNanos / (1e9));
 }
 
-void
-CppModuleTemplate::setUpdateCounter(double value)
+void CppModuleTemplate::setUpdateCounter(double value)
 {
     // check that value is in acceptable range
     if (value > 0) {
@@ -87,8 +84,7 @@ CppModuleTemplate::setUpdateCounter(double value)
     }
 }
 
-void
-CppModuleTemplate::setSampleConfigVector(std::array<double, 3> value)
+void CppModuleTemplate::setSampleConfigVector(std::array<double, 3> value)
 {
     // check that value is in acceptable range
     for (size_t i = 0; i < value.size(); i++) {

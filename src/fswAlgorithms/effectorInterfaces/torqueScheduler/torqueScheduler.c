@@ -25,8 +25,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_torqueScheduler(torqueSchedulerConfig* configData, int64_t moduleID)
+void SelfInit_torqueScheduler(torqueSchedulerConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
@@ -40,8 +39,7 @@ SelfInit_torqueScheduler(torqueSchedulerConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!ArrayMotorTorqueMsg_C_isLinked(&configData->motorTorque1InMsg)) {
         _bskError(configData->bskLogger, "torqueScheduler.motorTorque1InMsg wasn't connected.");
@@ -65,8 +63,7 @@ Reset_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int6
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_torqueScheduler(torqueSchedulerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorque1In = ArrayMotorTorqueMsg_C_read(&configData->motorTorque1InMsg);

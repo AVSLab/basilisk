@@ -25,8 +25,7 @@
 #include "architecture/utilities/utcTime.h"
 
 namespace {
-struct tm
-makeDate(int year, int month, int day, int hour, int minute, int second)
+struct tm makeDate(int year, int month, int day, int hour, int minute, int second)
 {
     struct tm date{};
     date.tm_year = year - 1900;

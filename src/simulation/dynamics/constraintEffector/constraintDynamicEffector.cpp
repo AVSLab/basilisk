@@ -37,16 +37,14 @@ ConstraintDynamicEffector::~ConstraintDynamicEffector() {}
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void
-ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ConstraintDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
     this->initializeGains();
 }
 
 /*! Validate that either the tuning parameters or individual gains were configured. */
-void
-ConstraintDynamicEffector::validateConfiguration()
+void ConstraintDynamicEffector::validateConfiguration()
 {
     // Preserve support for partial explicit configurations, including zero unspecified gains.
     const bool gainset = this->k_dExplicit || this->c_dExplicit || this->k_aExplicit || this->c_aExplicit;
@@ -59,8 +57,7 @@ ConstraintDynamicEffector::validateConfiguration()
 }
 
 /*! @brief Recompute derived gains without replacing explicitly configured individual gains. */
-void
-ConstraintDynamicEffector::initializeGains()
+void ConstraintDynamicEffector::initializeGains()
 {
     const double k_d = this->k_dExplicit ? this->k_d : this->alpha * this->alpha; // [N/m]
     const double c_d = this->c_dExplicit ? this->c_d : 2.0 * this->beta;          // [N*s/m]
@@ -79,8 +76,7 @@ ConstraintDynamicEffector::initializeGains()
  *
  * @param[in] r_P2P1_B1Init [m] Initial separation from connection point P1 to P2.
  */
-void
-ConstraintDynamicEffector::setR_P2P1_B1Init(Eigen::Vector3d r_P2P1_B1Init)
+void ConstraintDynamicEffector::setR_P2P1_B1Init(Eigen::Vector3d r_P2P1_B1Init)
 {
     this->r_P2P1_B1Init = r_P2P1_B1Init;
 }
@@ -89,8 +85,7 @@ ConstraintDynamicEffector::setR_P2P1_B1Init(Eigen::Vector3d r_P2P1_B1Init)
  *
  * @param[in] r_P1B1_B1 [m] Position of connection point P1 relative to hub B1.
  */
-void
-ConstraintDynamicEffector::setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1)
+void ConstraintDynamicEffector::setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1)
 {
     this->r_P1B1_B1 = r_P1B1_B1;
 }
@@ -99,8 +94,7 @@ ConstraintDynamicEffector::setR_P1B1_B1(Eigen::Vector3d r_P1B1_B1)
  *
  * @param[in] r_P2B2_B2 [m] Position of connection point P2 relative to hub B2.
  */
-void
-ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2)
+void ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2)
 {
     this->r_P2B2_B2 = r_P2B2_B2;
 }
@@ -109,8 +103,7 @@ ConstraintDynamicEffector::setR_P2B2_B2(Eigen::Vector3d r_P2B2_B2)
  *
  * @param[in] sigma_B2B1Init Initial attitude of body B2 relative to body B1.
  */
-void
-ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init)
+void ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init)
 {
     this->dcm_B2B1Init = sigma_B2B1Init.toRotationMatrix().transpose();
 }
@@ -120,8 +113,7 @@ ConstraintDynamicEffector::setSigma_B2B1Init(Eigen::MRPd sigma_B2B1Init)
  * @param[in] alpha [-] Numerical proportional Baumgarte tuning parameter.
  * @note Its square supplies the numerical SI values of derived k_d [N/m] and k_a [N*m].
  */
-void
-ConstraintDynamicEffector::setAlpha(double alpha)
+void ConstraintDynamicEffector::setAlpha(double alpha)
 {
     if (std::isfinite(alpha) && alpha > 0.0)
         this->alpha = alpha;
@@ -135,8 +127,7 @@ ConstraintDynamicEffector::setAlpha(double alpha)
  * @param[in] beta [-] Numerical derivative Baumgarte tuning parameter.
  * @note Twice its value supplies the numerical SI values of derived c_d [N*s/m] and c_a [N*m*s].
  */
-void
-ConstraintDynamicEffector::setBeta(double beta)
+void ConstraintDynamicEffector::setBeta(double beta)
 {
     if (std::isfinite(beta) && beta > 0.0)
         this->beta = beta;
@@ -149,8 +140,7 @@ ConstraintDynamicEffector::setBeta(double beta)
  *
  * @param[in] k_d [N/m] Direction-constraint proportional gain.
  */
-void
-ConstraintDynamicEffector::setK_d(double k_d)
+void ConstraintDynamicEffector::setK_d(double k_d)
 {
     if (std::isfinite(k_d) && k_d > 0.0) {
         this->k_d = k_d;
@@ -164,8 +154,7 @@ ConstraintDynamicEffector::setK_d(double k_d)
  *
  * @param[in] c_d [N*s/m] Direction-constraint derivative gain.
  */
-void
-ConstraintDynamicEffector::setC_d(double c_d)
+void ConstraintDynamicEffector::setC_d(double c_d)
 {
     if (std::isfinite(c_d) && c_d > 0.0) {
         this->c_d = c_d;
@@ -179,8 +168,7 @@ ConstraintDynamicEffector::setC_d(double c_d)
  *
  * @param[in] k_a [N*m] Attitude-constraint proportional gain multiplying dimensionless MRP error.
  */
-void
-ConstraintDynamicEffector::setK_a(double k_a)
+void ConstraintDynamicEffector::setK_a(double k_a)
 {
     if (std::isfinite(k_a) && k_a > 0.0) {
         this->k_a = k_a;
@@ -194,8 +182,7 @@ ConstraintDynamicEffector::setK_a(double k_a)
  *
  * @param[in] c_a [N*m*s] Attitude-constraint derivative gain multiplying the MRP error rate.
  */
-void
-ConstraintDynamicEffector::setC_a(double c_a)
+void ConstraintDynamicEffector::setC_a(double c_a)
 {
     if (std::isfinite(c_a) && c_a > 0.0) {
         this->c_a = c_a;
@@ -209,8 +196,7 @@ ConstraintDynamicEffector::setC_a(double c_a)
  *
  * @param[in] value Position-state name to add.
  */
-void
-ConstraintDynamicEffector::setStateNameOfPosition(std::string value)
+void ConstraintDynamicEffector::setStateNameOfPosition(std::string value)
 {
     if (!value.empty()) {
         this->stateNameOfPosition.push_back(value);
@@ -223,8 +209,7 @@ ConstraintDynamicEffector::setStateNameOfPosition(std::string value)
  *
  * @param[in] value Velocity-state name to add.
  */
-void
-ConstraintDynamicEffector::setStateNameOfVelocity(std::string value)
+void ConstraintDynamicEffector::setStateNameOfVelocity(std::string value)
 {
     if (!value.empty()) {
         this->stateNameOfVelocity.push_back(value);
@@ -237,8 +222,7 @@ ConstraintDynamicEffector::setStateNameOfVelocity(std::string value)
  *
  * @param[in] value Attitude-state name to add.
  */
-void
-ConstraintDynamicEffector::setStateNameOfSigma(std::string value)
+void ConstraintDynamicEffector::setStateNameOfSigma(std::string value)
 {
     if (!value.empty()) {
         this->stateNameOfSigma.push_back(value);
@@ -251,8 +235,7 @@ ConstraintDynamicEffector::setStateNameOfSigma(std::string value)
  *
  * @param[in] value Angular-velocity-state name to add.
  */
-void
-ConstraintDynamicEffector::setStateNameOfOmega(std::string value)
+void ConstraintDynamicEffector::setStateNameOfOmega(std::string value)
 {
     if (!value.empty()) {
         this->stateNameOfOmega.push_back(value);
@@ -265,8 +248,7 @@ ConstraintDynamicEffector::setStateNameOfOmega(std::string value)
  *
  * @param[in] value Inertial-position property name to add.
  */
-void
-ConstraintDynamicEffector::setPropName_inertialPosition(std::string value)
+void ConstraintDynamicEffector::setPropName_inertialPosition(std::string value)
 {
     if (!value.empty()) {
         this->propName_inertialPosition.push_back(value);
@@ -279,8 +261,7 @@ ConstraintDynamicEffector::setPropName_inertialPosition(std::string value)
  *
  * @param[in] value Inertial-velocity property name to add.
  */
-void
-ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value)
+void ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value)
 {
     if (!value.empty()) {
         this->propName_inertialVelocity.push_back(value);
@@ -293,8 +274,7 @@ ConstraintDynamicEffector::setPropName_inertialVelocity(std::string value)
  *
  * @param[in] value Inertial-attitude property name to add.
  */
-void
-ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value)
+void ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value)
 {
     if (!value.empty()) {
         this->propName_inertialAttitude.push_back(value);
@@ -307,8 +287,7 @@ ConstraintDynamicEffector::setPropName_inertialAttitude(std::string value)
  *
  * @param[in] value Inertial-angular-velocity property name to add.
  */
-void
-ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string value)
+void ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string value)
 {
     if (!value.empty()) {
         this->propName_inertialAngVelocity.push_back(value);
@@ -325,8 +304,7 @@ ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string value)
  @param h The constant digital time step.
  @param k The damping coefficient
 */
-void
-ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k)
+void ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k)
 {
     if (wc > 0) {
         std::array<double, 3> num_coeffs = { pow(wc * h, 2), 2 * pow(wc * h, 2), pow(wc * h, 2) };
@@ -344,8 +322,7 @@ ConstraintDynamicEffector::setFilter_Data(double wc, double h, double k)
 }
 
 /*! This method allows the user to set the status of the constraint dynamic effector */
-void
-ConstraintDynamicEffector::readInputMessage()
+void ConstraintDynamicEffector::readInputMessage()
 {
     if (this->effectorStatusInMsg.isLinked()) {
         DeviceStatusMsgPayload statusMsg;
@@ -359,8 +336,7 @@ ConstraintDynamicEffector::readInputMessage()
 /*! This method allows the constraint effector to have access to the parent states
  @param states The states to link
  */
-void
-ConstraintDynamicEffector::linkInStates(DynParamManager& states)
+void ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 {
     if (this->scInitCounter > 1) {
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
@@ -397,8 +373,7 @@ ConstraintDynamicEffector::linkInStates(DynParamManager& states)
 /*! This method is used to link properties to the constraint effector.
  @param properties The parameter manager to collect from
  */
-void
-ConstraintDynamicEffector::linkInProperties(DynParamManager& properties)
+void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties)
 {
     if (this->scInitCounter > 1) {
         bskLogger.bskError("constraintDynamicEffector: tried to attach more than 2 parents");
@@ -443,8 +418,7 @@ ConstraintDynamicEffector::linkInProperties(DynParamManager& properties)
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
-void
-ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     if (this->scInitCounter == 2) {      // only proceed once both spacecraft are added
         if (this->effectorStatus == 0) { // disabled: apply and report no loads, but keep measuring the violations
@@ -559,8 +533,7 @@ ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unused]],
  messaging system.
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void
-ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
+void ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 {
     ConstDynEffectorMsgPayload outputForces;
     outputForces = this->constraintElements.zeroMsgPayload;
@@ -577,8 +550,7 @@ ConstraintDynamicEffector::writeOutputStateMessage(uint64_t CurrentClock)
 /*! Update state method
  @param CurrentSimNanos The current simulation time
  */
-void
-ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessage();
     this->computeFilteredForce(CurrentSimNanos);
@@ -589,8 +561,7 @@ ConstraintDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 /*! Filtering method to calculate filtered Constraint Force
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void
-ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock [[maybe_unused]])
+void ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock [[maybe_unused]])
 {
     double F_t[3];
     eigenVector3d2CArray(this->Fc_N, F_t);
@@ -606,8 +577,7 @@ ConstraintDynamicEffector::computeFilteredForce(uint64_t CurrentClock [[maybe_un
 /*! Filtering method to calculate filtered Constraint Torque
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void
-ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock [[maybe_unused]])
+void ConstraintDynamicEffector::computeFilteredTorque(uint64_t CurrentClock [[maybe_unused]])
 {
     double T_t1[3];
     eigenVector3d2CArray(this->T_B1, T_t1);

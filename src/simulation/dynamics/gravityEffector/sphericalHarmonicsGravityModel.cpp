@@ -22,15 +22,13 @@
 
 namespace {
 // Computes the term (2 - d_l), where d_l is the kronecker delta.
-inline double
-getK(const size_t degree)
+inline double getK(const size_t degree)
 {
     return (degree == 0) ? 1.0 : 2.0;
 }
 }
 
-std::optional<std::string>
-SphericalHarmonicsGravityModel::initializeParameters()
+std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters()
 {
     if (this->cBar.size() == 0 || this->sBar.size() == 0) {
         return "Could not initialize spherical harmonics: the 'C' or 'S' parameters were not "
@@ -81,24 +79,21 @@ SphericalHarmonicsGravityModel::initializeParameters()
     return {}; // No error!
 }
 
-std::optional<std::string>
-SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body)
+std::optional<std::string> SphericalHarmonicsGravityModel::initializeParameters(const GravBodyData& body)
 {
     this->radEquator = body.radEquator;
     this->muBody = body.mu;
     return this->initializeParameters();
 }
 
-Eigen::Vector3d
-SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const
+Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed) const
 {
     return this->computeField(position_planetFixed, this->maxDeg, true);
 }
 
-Eigen::Vector3d
-SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed,
-                                             size_t degree,
-                                             bool include_zero_degree) const
+Eigen::Vector3d SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_planetFixed,
+                                                             size_t degree,
+                                                             bool include_zero_degree) const
 {
     if (degree > this->maxDeg) {
         auto errorMsg = "Requested degree greater than maximum degree in Spherical Harmonics gravity model";
@@ -201,14 +196,12 @@ SphericalHarmonicsGravityModel::computeField(const Eigen::Vector3d& position_pla
     return { a1 + s * a4, a2 + t * a4, a3 + u * a4 };
 }
 
-double
-SphericalHarmonicsGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const
+double SphericalHarmonicsGravityModel::computePotentialEnergy(const Eigen::Vector3d& positionWrtPlanet_N) const
 {
     return -this->muBody / positionWrtPlanet_N.norm();
 }
 
-bool
-SphericalHarmonicsGravityModel::dependsOnOrientation() const
+bool SphericalHarmonicsGravityModel::dependsOnOrientation() const
 {
     // Only terms of order m >= 1 (tesseral/sectoral) vary with the body's
     // longitude; zonal terms (m == 0) depend on latitude alone. Scan the

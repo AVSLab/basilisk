@@ -35,8 +35,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_thrMomentumDumping(thrMomentumDumpingConfig* configData, int64_t moduleID)
+void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrusterOnTimeOutMsg);
@@ -49,8 +48,7 @@ SelfInit_thrMomentumDumping(thrMomentumDumpingConfig* configData, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -108,8 +106,7 @@ Reset_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrMomentumDumping(thrMomentumDumpingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double dt;             /* [s]    control update period */
     double* Delta_P_input; /* []     pointer to vector of requested net thruster impulses */

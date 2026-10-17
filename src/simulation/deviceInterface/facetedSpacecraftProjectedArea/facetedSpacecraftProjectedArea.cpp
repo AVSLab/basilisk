@@ -26,8 +26,7 @@ FacetedSpacecraftProjectedArea::~FacetedSpacecraftProjectedArea() = default;
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
-void
-FacetedSpacecraftProjectedArea::Reset(uint64_t callTime)
+void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime)
 {
     // If general heading is linked, no other messages can be linked
     if (this->bodyHeadingInMsg.isLinked() &&
@@ -74,8 +73,7 @@ FacetedSpacecraftProjectedArea::Reset(uint64_t callTime)
 /*! Module update method.
  @param callTime [ns] Time the method is called
 */
-void
-FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime)
+void FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime)
 {
     // Stop the simulation if Reset() failed
     if (this->facetAreaList.size() != this->numFacets || this->facetNHat_BList.size() != this->numFacets ||
@@ -110,8 +108,7 @@ FacetedSpacecraftProjectedArea::UpdateState(uint64_t callTime)
 /*! This method reads the module input messages and updates the current body heading vector. The method returns a
     boolean indicating whether reading the input messages was successful.
  */
-bool
-FacetedSpacecraftProjectedArea::readInputMessages()
+bool FacetedSpacecraftProjectedArea::readInputMessages()
 {
     // Set body heading vector default to zero
     this->bodyHeadingVec_B.setZero();
@@ -195,8 +192,7 @@ FacetedSpacecraftProjectedArea::readInputMessages()
 /*! Method to write module output messages.
  @param callTime [ns] Time the method is called
 */
-void
-FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime)
+void FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime)
 {
     // Write total spacecraft projected area output message
     ProjectedAreaMsgPayload totalProjectedAreaOut{};
@@ -219,8 +215,7 @@ FacetedSpacecraftProjectedArea::writeOutputMessages(uint64_t callTime)
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void
-FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets)
+void FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets)
 {
     this->numFacets = numFacets;
 
@@ -241,8 +236,7 @@ FacetedSpacecraftProjectedArea::setNumFacets(const uint64_t numFacets)
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t
-FacetedSpacecraftProjectedArea::getNumFacets() const
+uint64_t FacetedSpacecraftProjectedArea::getNumFacets() const
 {
     return this->numFacets;
 }

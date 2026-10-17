@@ -38,8 +38,7 @@
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_eulerRotation(eulerRotationConfig* configData, int64_t moduleID)
+void SelfInit_eulerRotation(eulerRotationConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -51,8 +50,7 @@ SelfInit_eulerRotation(eulerRotationConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -73,8 +71,7 @@ Reset_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttRefMsgPayload inputRef;
     AttRefMsgPayload attRefOut;
@@ -112,8 +109,7 @@ Update_eulerRotation(eulerRotationConfig* configData, uint64_t callTime, int64_t
 
  @param configData The configuration data associated with the mrpRotation module
  */
-void
-checkRasterCommands(eulerRotationConfig* configData)
+void checkRasterCommands(eulerRotationConfig* configData)
 {
     int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet, 1E-12) &&
                             v3IsEqual(configData->cmdRates, configData->priorCmdRates, 1E-12);
@@ -131,8 +127,7 @@ checkRasterCommands(eulerRotationConfig* configData)
  @param configData The configuration data associated with the mrpRotation module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void
-computeTimeStep(eulerRotationConfig* configData, uint64_t callTime)
+void computeTimeStep(eulerRotationConfig* configData, uint64_t callTime)
 {
     if (configData->priorTime == 0) {
         configData->dt = 0.0;
@@ -147,8 +142,7 @@ computeTimeStep(eulerRotationConfig* configData, uint64_t callTime)
  @param angleRates The 321 Euler angle rates
  @param B_inv_deriv the inv(B) matrix for 321 Euler angles
  */
-void
-computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3])
+void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3])
 {
     double s2;
     double c2;
@@ -180,12 +174,11 @@ computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double
  @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
-void
-computeEulerRotationReference(eulerRotationConfig* configData,
-                              double sigma_R0N[3],
-                              double omega_R0N_N[3],
-                              double domega_R0N_N[3],
-                              AttRefMsgPayload* attRefOut)
+void computeEulerRotationReference(eulerRotationConfig* configData,
+                                   double sigma_R0N[3],
+                                   double omega_R0N_N[3],
+                                   double domega_R0N_N[3],
+                                   AttRefMsgPayload* attRefOut)
 {
     /* Compute attitude reference*/
     double attIncrement[3]; /*!< [] increment in attitude coordinates  */

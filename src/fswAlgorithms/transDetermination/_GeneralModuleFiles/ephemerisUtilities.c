@@ -19,8 +19,7 @@
 
 #include "ephemerisUtilities.h"
 
-double
-calculateChebyValue(double* chebyCoeff, uint32_t nCoeff, double evalValue)
+double calculateChebyValue(double* chebyCoeff, uint32_t nCoeff, double evalValue)
 {
     double chebyPrev;
     double chebyNow;

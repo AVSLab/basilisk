@@ -56,8 +56,7 @@ SimpleVoltEstimator::~SimpleVoltEstimator()
      - Voltage error [0]
 
  */
-void
-SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->voltInMsg.isLinked()) {
@@ -85,8 +84,7 @@ SimpleVoltEstimator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This method reads the input message associated with the spacecraft voltage
  */
-void
-SimpleVoltEstimator::readInputMessages()
+void SimpleVoltEstimator::readInputMessages()
 {
     this->trueVoltState = this->voltInMsg();
 }
@@ -95,14 +93,12 @@ SimpleVoltEstimator::readInputMessages()
 
  @param Clock The clock time associated with the model call
  */
-void
-SimpleVoltEstimator::writeOutputMessages(uint64_t Clock)
+void SimpleVoltEstimator::writeOutputMessages(uint64_t Clock)
 {
     this->voltOutMsg.write(&this->estVoltState, this->moduleID, Clock);
 }
 
-void
-SimpleVoltEstimator::applyErrors()
+void SimpleVoltEstimator::applyErrors()
 {
     //! - Add errors
     this->estVoltState.voltage = this->trueVoltState.voltage + this->voltErrors.data()[0];
@@ -112,8 +108,7 @@ SimpleVoltEstimator::applyErrors()
  its GaussMarkov model.
 
  */
-void
-SimpleVoltEstimator::computeErrors()
+void SimpleVoltEstimator::computeErrors()
 {
     Eigen::MatrixXd localProp = this->AMatrix;
 
@@ -127,8 +122,7 @@ SimpleVoltEstimator::computeErrors()
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void
-SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
+void SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeErrors();
@@ -140,8 +134,7 @@ SimpleVoltEstimator::UpdateState(uint64_t CurrentSimNanos)
     Setter for `AMatrix` used for error propagation
     @param propMatrix Matrix to set
 */
-void
-SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
+void SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if (propMatrix.rows() != 1 || propMatrix.cols() != 1) {
         bskLogger.bskError("SimpleVoltEstimator: Propagation matrix must be 1x1");
@@ -154,8 +147,7 @@ SimpleVoltEstimator::setAMatrix(const Eigen::MatrixXd& propMatrix)
     Getter for `AMatrix` used for error propagation
     @return Current matrix
 */
-Eigen::MatrixXd
-SimpleVoltEstimator::getAMatrix() const
+Eigen::MatrixXd SimpleVoltEstimator::getAMatrix() const
 {
     return this->AMatrix;
 }

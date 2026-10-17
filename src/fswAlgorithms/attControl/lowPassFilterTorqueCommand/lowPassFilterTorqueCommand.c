@@ -34,8 +34,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, int64_t moduleID)
+void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*! - Initialize output message for module */
@@ -49,8 +48,7 @@ SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -76,8 +74,9 @@ Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, u
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig* configData,
+                                       uint64_t callTime,
+                                       int64_t moduleID)
 {
     double v3[3]; /*!<      3d vector sub-result */
     int i;

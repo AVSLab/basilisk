@@ -84,15 +84,13 @@ SpinningBodyTwoDOFStateEffector::~SpinningBodyTwoDOFStateEffector() = default;
 
  @param CurrentClock [ns] Time at which the reset occurs
  */
-void
-SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
+void SpinningBodyTwoDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! @brief Validate finite configuration values and normalize the configured spin axes. */
-void
-SpinningBodyTwoDOFStateEffector::validateConfiguration()
+void SpinningBodyTwoDOFStateEffector::validateConfiguration()
 {
     const auto requireFinite = [this](double value, const char* name) {
         if (!std::isfinite(value)) {
@@ -186,8 +184,7 @@ SpinningBodyTwoDOFStateEffector::validateConfiguration()
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->computeSpinningBodyInertialStates();
 
@@ -236,8 +233,7 @@ SpinningBodyTwoDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& states)
+void SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& states)
 {
     // Get access to the hub's states needed for dynamic coupling
     this->hubOmega = states.getStateObject("hubOmega");
@@ -254,8 +250,7 @@ SpinningBodyTwoDOFStateEffector::linkInStates(DynParamManager& states)
  *
  * @param[in] states Dynamic parameter manager containing the required properties.
  */
-void
-SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& states)
+void SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamManager& states)
 {
     this->prescribedPositionProperty = states.getPropertyReference(this->propName_prescribedPosition);
     this->prescribedVelocityProperty = states.getPropertyReference(this->propName_prescribedVelocity);
@@ -270,8 +265,7 @@ SpinningBodyTwoDOFStateEffector::linkInPrescribedMotionProperties(DynParamManage
  *
  * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
  */
-void
-SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& statesIn)
+void SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
@@ -299,8 +293,7 @@ SpinningBodyTwoDOFStateEffector::registerStates(DynParamManager& statesIn)
 /*! This method attaches a dynamicEffector to the specified SB
  @param newDynamicEffector the dynamic effector to be attached to the SB
  @param segment the integer number segment to be attached to (inner segment=1, outer segment=2) */
-void
-SpinningBodyTwoDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
+void SpinningBodyTwoDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
 {
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector, segment);
 
@@ -312,8 +305,7 @@ SpinningBodyTwoDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicE
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states)
+void SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
     this->r_S1N_N = states.createProperty(this->nameOfInertialPositionProperty1, stateInit);
@@ -337,8 +329,7 @@ SpinningBodyTwoDOFStateEffector::registerProperties(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // Give the mass of the spinning body to the effProps mass
     this->mass = this->mass1 + this->mass2;
@@ -434,12 +425,11 @@ SpinningBodyTwoDOFStateEffector::updateEffectorMassProps(double integTime [[mayb
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-SpinningBodyTwoDOFStateEffector::updateContributions(double integTime,
-                                                     BackSubMatrices& backSubContr,
-                                                     Eigen::MRPd sigma_BN,
-                                                     Eigen::Vector3d omega_BN_B,
-                                                     Eigen::Vector3d g_N)
+void SpinningBodyTwoDOFStateEffector::updateContributions(double integTime,
+                                                          BackSubMatrices& backSubContr,
+                                                          Eigen::MRPd sigma_BN,
+                                                          Eigen::Vector3d omega_BN_B,
+                                                          Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
@@ -627,8 +617,7 @@ SpinningBodyTwoDOFStateEffector::updateContributions(double integTime,
  *
  * @param[in,out] backSubContr Backsubstitution contributions.
  */
-void
-SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
+void SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
 {
 
     // Access prescribed motion properties
@@ -763,11 +752,10 @@ SpinningBodyTwoDOFStateEffector::addPrescribedMotionCouplingContributions(BackSu
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                    Eigen::Vector3d rDDot_BN_N,
-                                                    Eigen::Vector3d omegaDot_BN_B,
-                                                    Eigen::MRPd sigma_BN [[maybe_unused]])
+void SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                         Eigen::Vector3d rDDot_BN_N,
+                                                         Eigen::Vector3d omegaDot_BN_B,
+                                                         Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     // Grab omegaDot_BN_B
     Eigen::Vector3d omegaDotLocal_BN_B;
@@ -794,11 +782,10 @@ SpinningBodyTwoDOFStateEffector::computeDerivatives(double integTime [[maybe_unu
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                              Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                              double& rotEnergyContr,
-                                                              Eigen::Vector3d omega_BN_B)
+void SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                                   Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                                   double& rotEnergyContr,
+                                                                   Eigen::Vector3d omega_BN_B)
 {
     // Update omega_BN_B and omega_SN_B
     this->omega_BN_B = omega_BN_B;
@@ -826,8 +813,7 @@ SpinningBodyTwoDOFStateEffector::updateEnergyMomContributions(double integTime [
 }
 
 /*! This method computes the spinning body states relative to the inertial frame */
-void
-SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
+void SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
@@ -867,8 +853,7 @@ SpinningBodyTwoDOFStateEffector::computeSpinningBodyInertialStates()
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void SpinningBodyTwoDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the incoming command array
     if (this->motorTorqueInMsg.isLinked() && this->motorTorqueInMsg.isWritten()) {

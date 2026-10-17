@@ -41,8 +41,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_inertial3DSpin(inertial3DSpinConfig* configData, int64_t moduleID)
+void SelfInit_inertial3DSpin(inertial3DSpinConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*! - Create output message for module */
@@ -56,8 +55,7 @@ SelfInit_inertial3DSpin(inertial3DSpinConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -73,8 +71,7 @@ Reset_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     AttRefMsgPayload attRefInMsgBuffer;
@@ -105,12 +102,11 @@ Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, int64
     configData->priorTime = callTime;
 }
 
-void
-computeReference_inertial3DSpin(inertial3DSpinConfig* configData,
-                                double omega_R0N_N[3],
-                                double domega_R0N_N[3],
-                                double omega_RR0_R0[3],
-                                double dt)
+void computeReference_inertial3DSpin(inertial3DSpinConfig* configData,
+                                     double omega_R0N_N[3],
+                                     double domega_R0N_N[3],
+                                     double omega_RR0_R0[3],
+                                     double dt)
 {
     double omega_RN_N[3];
     double domega_RN_N[3];

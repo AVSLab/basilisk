@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_sunlineEKF(sunlineEKFConfig* configData, int64_t moduleID)
+void SelfInit_sunlineEKF(sunlineEKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -45,8 +44,7 @@ SelfInit_sunlineEKF(sunlineEKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -116,8 +114,7 @@ Reset_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
@@ -176,8 +173,7 @@ Update_sunlineEKF(sunlineEKFConfig* configData, uint64_t callTime, int64_t modul
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void
-sunlineTimeUpdate(sunlineEKFConfig* configData, double updateTime)
+void sunlineTimeUpdate(sunlineEKFConfig* configData, double updateTime)
 {
     double stmT[SKF_N_STATES * SKF_N_STATES], covPhiT[SKF_N_STATES * SKF_N_STATES];
     double Gamma[SKF_N_STATES][SKF_N_STATES_HALF];
@@ -231,8 +227,10 @@ sunlineTimeUpdate(sunlineEKFConfig* configData, double updateTime)
     @param stateInOut
     @param stateTransition
  */
-void
-sunlineStateSTMProp(double dynMat[SKF_N_STATES * SKF_N_STATES], double dt, double* stateInOut, double* stateTransition)
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES * SKF_N_STATES],
+                         double dt,
+                         double* stateInOut,
+                         double* stateTransition)
 {
 
     double propagatedVel[SKF_N_STATES_HALF];
@@ -274,8 +272,7 @@ sunlineStateSTMProp(double dynMat[SKF_N_STATES * SKF_N_STATES], double dt, doubl
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void
-sunlineDynMatrix(double states[SKF_N_STATES], double dt, double* dynMat)
+void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double* dynMat)
 {
     double dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
@@ -336,8 +333,7 @@ sunlineDynMatrix(double states[SKF_N_STATES], double dt, double* dynMat)
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void
-sunlineMeasUpdate(sunlineEKFConfig* configData, double updateTime)
+void sunlineMeasUpdate(sunlineEKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -399,16 +395,15 @@ sunlineMeasUpdate(sunlineEKFConfig* configData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void
-sunlineCKFUpdate(double xBar[SKF_N_STATES],
-                 double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
-                 double covarBar[SKF_N_STATES * SKF_N_STATES],
-                 double qObsVal,
-                 int numObs,
-                 double yObs[MAX_N_CSS_MEAS],
-                 double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
-                 double* x,
-                 double* covar)
+void sunlineCKFUpdate(double xBar[SKF_N_STATES],
+                      double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
+                      double covarBar[SKF_N_STATES * SKF_N_STATES],
+                      double qObsVal,
+                      int numObs,
+                      double yObs[MAX_N_CSS_MEAS],
+                      double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
+                      double* x,
+                      double* covar)
 {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES];
     double eye[SKF_N_STATES * SKF_N_STATES], kH[SKF_N_STATES * SKF_N_STATES];
@@ -465,16 +460,15 @@ sunlineCKFUpdate(double xBar[SKF_N_STATES],
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void
-sunlineEKFUpdate(double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
-                 double covarBar[SKF_N_STATES * SKF_N_STATES],
-                 double qObsVal,
-                 int numObs,
-                 double yObs[MAX_N_CSS_MEAS],
-                 double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
-                 double* states,
-                 double* x,
-                 double* covar)
+void sunlineEKFUpdate(double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
+                      double covarBar[SKF_N_STATES * SKF_N_STATES],
+                      double qObsVal,
+                      int numObs,
+                      double yObs[MAX_N_CSS_MEAS],
+                      double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
+                      double* states,
+                      double* x,
+                      double* covar)
 {
 
     double eye[SKF_N_STATES * SKF_N_STATES], kH[SKF_N_STATES * SKF_N_STATES];
@@ -535,17 +529,16 @@ sunlineEKFUpdate(double kalmanGain[SKF_N_STATES * MAX_N_CSS_MEAS],
  @param measMat Point to the H measurement matrix
  */
 
-void
-sunlineHMatrixYMeas(double states[SKF_N_STATES],
-                    int numCSS,
-                    double cssSensorCos[MAX_N_CSS_MEAS],
-                    double sensorUseThresh,
-                    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                    double CBias[MAX_NUM_CSS_SENSORS],
-                    double* obs,
-                    double* yMeas,
-                    int* numObs,
-                    double* measMat)
+void sunlineHMatrixYMeas(double states[SKF_N_STATES],
+                         int numCSS,
+                         double cssSensorCos[MAX_N_CSS_MEAS],
+                         double sensorUseThresh,
+                         double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
+                         double CBias[MAX_NUM_CSS_SENSORS],
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat)
 {
     int i;
     size_t obsCounter;
@@ -580,12 +573,11 @@ sunlineHMatrixYMeas(double states[SKF_N_STATES],
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void
-sunlineKalmanGain(double covarBar[SKF_N_STATES * SKF_N_STATES],
-                  double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
-                  double qObsVal,
-                  int numObs,
-                  double* kalmanGain)
+void sunlineKalmanGain(double covarBar[SKF_N_STATES * SKF_N_STATES],
+                       double hObs[MAX_N_CSS_MEAS * SKF_N_STATES],
+                       double qObsVal,
+                       int numObs,
+                       double* kalmanGain)
 {
     double hObsT[SKF_N_STATES * MAX_N_CSS_MEAS];
     double covHT[SKF_N_STATES * MAX_N_CSS_MEAS];

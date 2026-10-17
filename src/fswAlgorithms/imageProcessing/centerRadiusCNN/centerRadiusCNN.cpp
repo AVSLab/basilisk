@@ -51,8 +51,7 @@ CenterRadiusCNN::~CenterRadiusCNN()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-CenterRadiusCNN::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void CenterRadiusCNN::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -76,8 +75,7 @@ CenterRadiusCNN::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
+void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string filenamePre;
     CameraImageMsgPayload imageBuffer;

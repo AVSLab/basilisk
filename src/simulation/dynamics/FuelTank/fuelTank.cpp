@@ -45,15 +45,13 @@ FuelTank::~FuelTank() {}
  *
  * @param[in] nameOfMassState Name assigned to the tank mass state.
  */
-void
-FuelTank::setNameOfMassState(const std::string& nameOfMassState)
+void FuelTank::setNameOfMassState(const std::string& nameOfMassState)
 {
     this->nameOfMassState = nameOfMassState;
 }
 
 /*! get the name of the mass state used by the state manager */
-std::string
-FuelTank::getNameOfMassState() const
+std::string FuelTank::getNameOfMassState() const
 {
     return this->nameOfMassState;
 }
@@ -62,15 +60,13 @@ FuelTank::getNameOfMassState() const
  *
  * @param[in] dcm_TB Direction cosine matrix defining the tank orientation relative to the hub.
  */
-void
-FuelTank::setDcm_TB(const Eigen::Matrix3d& dcm_TB)
+void FuelTank::setDcm_TB(const Eigen::Matrix3d& dcm_TB)
 {
     this->dcm_TB = dcm_TB;
 }
 
 /*! get fuel tank orientation relative to the hub frame */
-Eigen::Matrix3d
-FuelTank::getDcm_TB() const
+Eigen::Matrix3d FuelTank::getDcm_TB() const
 {
     return this->dcm_TB;
 }
@@ -79,15 +75,13 @@ FuelTank::getDcm_TB() const
  *
  * @param[in] r_TB_B [m] Tank position relative to the hub, expressed in body-frame components.
  */
-void
-FuelTank::setR_TB_B(const Eigen::Vector3d& r_TB_B)
+void FuelTank::setR_TB_B(const Eigen::Vector3d& r_TB_B)
 {
     this->r_TB_B = r_TB_B;
 }
 
 /*! get fuel tank location relative to the hub frame */
-Eigen::Vector3d
-FuelTank::getR_TB_B() const
+Eigen::Vector3d FuelTank::getR_TB_B() const
 {
     return this->r_TB_B;
 }
@@ -96,15 +90,13 @@ FuelTank::getR_TB_B() const
  *
  * @param[in] updateOnly Flag selecting update-only mass depletion.
  */
-void
-FuelTank::setUpdateOnly(bool updateOnly)
+void FuelTank::setUpdateOnly(bool updateOnly)
 {
     this->updateOnly = updateOnly;
 }
 
 /*! get update only mass depletion flag */
-bool
-FuelTank::getUpdateOnly() const
+bool FuelTank::getUpdateOnly() const
 {
     return this->updateOnly;
 }
@@ -113,15 +105,13 @@ FuelTank::getUpdateOnly() const
  *
  * @param[in] fuelLeakRate [kg/s] Fuel leak mass flow rate.
  */
-void
-FuelTank::setFuelLeakRate(double fuelLeakRate)
+void FuelTank::setFuelLeakRate(double fuelLeakRate)
 {
     this->fuelLeakRate = fuelLeakRate;
 }
 
 /*! get fuel leak rate */
-double
-FuelTank::getFuelLeakRate() const
+double FuelTank::getFuelLeakRate() const
 {
     return this->fuelLeakRate;
 }
@@ -130,8 +120,7 @@ FuelTank::getFuelLeakRate() const
 
  @param model fuel tank model type
  */
-void
-FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model)
+void FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model)
 {
     this->fuelTankModel = model;
 }
@@ -142,8 +131,7 @@ FuelTank::setTankModel(std::shared_ptr<FuelTankModel> model)
  * @note The particle must be non-null. Python retains the supplied object for
  * the tank's lifetime; C++ callers must keep the borrowed particle alive.
  */
-void
-FuelTank::pushFuelSloshParticle(FuelSlosh* particle)
+void FuelTank::pushFuelSloshParticle(FuelSlosh* particle)
 {
     if (!particle) {
         this->bskLogger.bskError("FuelTank: fuel-slosh connections require a non-null particle");
@@ -159,8 +147,7 @@ FuelTank::pushFuelSloshParticle(FuelSlosh* particle)
  * Python retains the supplied object for the tank's lifetime; C++ callers
  * must keep the borrowed effector alive.
  */
-void
-FuelTank::addThrusterSet(ThrusterDynamicEffector* dynEff)
+void FuelTank::addThrusterSet(ThrusterDynamicEffector* dynEff)
 {
     if (!dynEff) {
         this->bskLogger.bskError("FuelTank: thruster connections require a non-null effector");
@@ -178,8 +165,7 @@ FuelTank::addThrusterSet(ThrusterDynamicEffector* dynEff)
  * @note The effector must be non-null. Python retains the supplied object for
  * the tank's lifetime; C++ callers must keep the borrowed effector alive.
  */
-void
-FuelTank::addThrusterSet(ThrusterStateEffector* stateEff)
+void FuelTank::addThrusterSet(ThrusterStateEffector* stateEff)
 {
     if (!stateEff) {
         this->bskLogger.bskError("FuelTank: thruster connections require a non-null effector");
@@ -191,8 +177,7 @@ FuelTank::addThrusterSet(ThrusterStateEffector* stateEff)
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-FuelTank::linkInStates(DynParamManager& states)
+void FuelTank::linkInStates(DynParamManager& states)
 {
     // Grab access to the hubs omega_BN_N
     this->omegaState = states.getStateObject(this->stateNameOfOmega);
@@ -206,8 +191,7 @@ FuelTank::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register the tank mass state.
  */
-void
-FuelTank::registerStates(DynParamManager& states)
+void FuelTank::registerStates(DynParamManager& states)
 {
     for (auto* fuelSloshParticle : this->fuelSloshParticles) {
         if (fuelSloshParticle->hasRegisteredStates) {
@@ -228,8 +212,7 @@ FuelTank::registerStates(DynParamManager& states)
  * @param[in] mass [kg] Mass value.
  * @param[in] massRate [kg/s] Mass rate.
  */
-void
-FuelTank::updateRetainedMassPropertyDerivatives(double mass, double massRate)
+void FuelTank::updateRetainedMassPropertyDerivatives(double mass, double massRate)
 {
     this->fuelTankModel->computeTankPropDerivs(mass, massRate);
     const Eigen::Matrix3d dcm_TBLocal = this->getDcm_TB();
@@ -249,8 +232,7 @@ FuelTank::updateRetainedMassPropertyDerivatives(double mass, double massRate)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-FuelTank::updateEffectorMassProps(double integTime)
+void FuelTank::updateEffectorMassProps(double integTime)
 {
     // Add contributions of the mass of the tank
     double massLocal = this->massState->stateView()(0, 0);
@@ -349,12 +331,11 @@ FuelTank::updateEffectorMassProps(double integTime)
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-FuelTank::updateContributions(double integTime [[maybe_unused]],
-                              BackSubMatrices& backSubContr,
-                              Eigen::MRPd sigma_BN [[maybe_unused]],
-                              Eigen::Vector3d omega_BN_B [[maybe_unused]],
-                              Eigen::Vector3d g_N [[maybe_unused]])
+void FuelTank::updateContributions(double integTime [[maybe_unused]],
+                                   BackSubMatrices& backSubContr,
+                                   Eigen::MRPd sigma_BN [[maybe_unused]],
+                                   Eigen::Vector3d omega_BN_B [[maybe_unused]],
+                                   Eigen::Vector3d g_N [[maybe_unused]])
 {
     Eigen::Vector3d omega_BN_BLocal;
 
@@ -393,11 +374,10 @@ FuelTank::updateContributions(double integTime [[maybe_unused]],
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-FuelTank::computeDerivatives(double integTime [[maybe_unused]],
-                             Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                             Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                             Eigen::MRPd sigma_BN [[maybe_unused]])
+void FuelTank::computeDerivatives(double integTime [[maybe_unused]],
+                                  Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                  Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                  Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     Eigen::MatrixXd conv(1, 1);
     double massLocal = this->massState->stateView()(0, 0);
@@ -416,11 +396,10 @@ FuelTank::computeDerivatives(double integTime [[maybe_unused]],
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-FuelTank::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                       Eigen::Vector3d& rotAngMomPntCContr_B,
-                                       double& rotEnergyContr,
-                                       Eigen::Vector3d omega_BN_B [[maybe_unused]])
+void FuelTank::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                            Eigen::Vector3d& rotAngMomPntCContr_B,
+                                            double& rotEnergyContr,
+                                            Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     // Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -441,8 +420,7 @@ FuelTank::updateEnergyMomContributions(double integTime [[maybe_unused]],
 
  @param currentClock The current simulation time (used for time stamping)
  */
-void
-FuelTank::writeOutputMessages(uint64_t currentClock)
+void FuelTank::writeOutputMessages(uint64_t currentClock)
 {
     this->fuelTankMassPropMsg = this->fuelTankOutMsg.zeroMsgPayload;
     this->fuelTankMassPropMsg.fuelMass = this->effProps.mEff;
@@ -455,8 +433,7 @@ FuelTank::writeOutputMessages(uint64_t currentClock)
 
  @param currentSimNanos The current simulation time in nanoseconds
  */
-void
-FuelTank::UpdateState(uint64_t currentSimNanos)
+void FuelTank::UpdateState(uint64_t currentSimNanos)
 {
     this->writeOutputMessages(currentSimNanos);
 }

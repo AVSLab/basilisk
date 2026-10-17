@@ -32,8 +32,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_rwMotorVoltage(rwMotorVoltageConfig* configData, int64_t moduleID)
+void SelfInit_rwMotorVoltage(rwMotorVoltageConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     ArrayMotorVoltageMsg_C_init(&configData->voltageOutMsg);
@@ -46,8 +45,7 @@ SelfInit_rwMotorVoltage(rwMotorVoltageConfig* configData, int64_t moduleID)
  @param callTime Sim time in nanos
  @param moduleID The ID associated with the configData
  */
-void
-Reset_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // check if the required input messages are included
     if (!RWArrayConfigMsg_C_isLinked(&configData->rwParamsInMsg)) {
@@ -77,8 +75,7 @@ Reset_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rwMotorVoltage(rwMotorVoltageConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read the input messages */
     //    double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */

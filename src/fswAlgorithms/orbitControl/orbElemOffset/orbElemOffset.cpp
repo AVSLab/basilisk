@@ -20,8 +20,7 @@
 
 #include "architecture/utilities/orbitalMotion.h"
 
-void
-OrbElemOffset::Reset(uint64_t /*CurrentSimNanos*/)
+void OrbElemOffset::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->mainElementsInMsg.isLinked()) {
         this->bskLogger.bskLog(BSK_ERROR, "OrbElemOffset::Reset: mainElementsInMsg is not linked.");
@@ -32,8 +31,7 @@ OrbElemOffset::Reset(uint64_t /*CurrentSimNanos*/)
     }
 }
 
-void
-OrbElemOffset::UpdateState(uint64_t CurrentSimNanos)
+void OrbElemOffset::UpdateState(uint64_t CurrentSimNanos)
 {
     ClassicElementsMsgPayload outPayload{};
     const ClassicElementsMsgPayload main = this->mainElementsInMsg();

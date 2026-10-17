@@ -46,8 +46,7 @@ uint64_t LinearTranslationNDOFStateEffector::effectorID = 1;
 /*! This is the destructor, releasing the per body output messages */
 LinearTranslationNDOFStateEffector::~LinearTranslationNDOFStateEffector() = default;
 
-void
-TranslatingBody::setMass(double mass)
+void TranslatingBody::setMass(double mass)
 {
     if (std::isfinite(mass) && mass >= 0.0)
         this->mass = mass;
@@ -56,8 +55,7 @@ TranslatingBody::setMass(double mass)
     }
 }
 
-void
-TranslatingBody::setFHat_P(Eigen::Vector3d fHat_P)
+void TranslatingBody::setFHat_P(Eigen::Vector3d fHat_P)
 {
     if (fHat_P.allFinite() && fHat_P.stableNorm() > 0.01) {
         this->fHat_P = (fHat_P / fHat_P.cwiseAbs().maxCoeff()).normalized();
@@ -66,8 +64,7 @@ TranslatingBody::setFHat_P(Eigen::Vector3d fHat_P)
     }
 }
 
-void
-TranslatingBody::setK(double k)
+void TranslatingBody::setK(double k)
 {
     if (std::isfinite(k) && k >= 0.0)
         this->k = k;
@@ -76,8 +73,7 @@ TranslatingBody::setK(double k)
     }
 }
 
-void
-TranslatingBody::setC(double c)
+void TranslatingBody::setC(double c)
 {
     if (std::isfinite(c) && c >= 0.0)
         this->c = c;
@@ -90,8 +86,7 @@ TranslatingBody::setC(double c)
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
+void LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -100,8 +95,7 @@ LinearTranslationNDOFStateEffector::Reset(uint64_t CurrentClock [[maybe_unused]]
  *
  * @param[in] newBody Translating-body configuration to add.
  */
-void
-LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody)
+void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_ptr<TranslatingBody> newBody)
 {
     this->requireMutableTopology("LinearTranslationNDOFStateEffector::addTranslatingBody");
     // Pushback new body
@@ -129,8 +123,7 @@ LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_ptr<Tra
  *
  * @param[in] index Zero-based body index.
  */
-std::shared_ptr<TranslatingBody>
-LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index)
+std::shared_ptr<TranslatingBody> LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index)
 {
     assert(("Index must be less than the number of translating body axes", index < static_cast<uint64_t>(this->N)));
 
@@ -138,8 +131,7 @@ LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index)
 }
 
 /*! This method reads motor force, lock flag, and reference state messages. */
-void
-LinearTranslationNDOFStateEffector::readInputMessages()
+void LinearTranslationNDOFStateEffector::readInputMessages()
 {
     //! - Read the incoming command array
     if (this->motorForceInMsg.isLinked() && this->motorForceInMsg.isWritten()) {
@@ -180,8 +172,7 @@ LinearTranslationNDOFStateEffector::readInputMessages()
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->computeTranslatingBodyInertialStates();
 
@@ -216,8 +207,7 @@ LinearTranslationNDOFStateEffector::writeOutputStateMessages(uint64_t CurrentClo
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& states)
+void LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& states)
 {
     this->inertialPositionProperty = states.getPropertyReference("r_BN_N");
     this->inertialVelocityProperty = states.getPropertyReference("v_BN_N");
@@ -226,8 +216,7 @@ LinearTranslationNDOFStateEffector::linkInStates(DynParamManager& states)
 
 /*! This method runs every configuration check. Spacecraft initialization always reaches it through
  registerStates(), whereas Reset() runs only when the effector is also added to a task */
-void
-LinearTranslationNDOFStateEffector::validateConfiguration()
+void LinearTranslationNDOFStateEffector::validateConfiguration()
 {
     for (auto& translatingBody : this->translatingBodyVec) {
         if (translatingBody->fHat_P.allFinite() && translatingBody->fHat_P.stableNorm() > 0.0) {
@@ -243,8 +232,7 @@ LinearTranslationNDOFStateEffector::validateConfiguration()
 }
 
 /*! This method checks each translating body's user set frame and inertia */
-void
-LinearTranslationNDOFStateEffector::checkBodyConfiguration()
+void LinearTranslationNDOFStateEffector::checkBodyConfiguration()
 {
     if (this->translatingBodyVec.empty()) {
         bskLogger.bskError("LinearTranslationNDOFStateEffector: at least one translating body is required.");
@@ -285,8 +273,7 @@ LinearTranslationNDOFStateEffector::checkBodyConfiguration()
 }
 
 /*! This method checks that the joint mass matrix the equations of motion invert is not singular */
-void
-LinearTranslationNDOFStateEffector::checkJointMassMatrix()
+void LinearTranslationNDOFStateEffector::checkJointMassMatrix()
 {
     // the axes are fixed in their parents and a translating body does not rotate, so the matrix
     // never changes during the integration and the equations of motion can build it here
@@ -312,8 +299,7 @@ LinearTranslationNDOFStateEffector::checkJointMassMatrix()
  *
  * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
  */
-void
-LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesIn)
+void LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
     // Register the rho states
@@ -337,8 +323,7 @@ LinearTranslationNDOFStateEffector::registerStates(DynParamManager& statesIn)
 
  @param newDynamicEffector the dynamic effector to be attached
  @param segment the translating body to attach to, counting outward from the hub starting at 1 */
-void
-LinearTranslationNDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
+void LinearTranslationNDOFStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
 {
     if (segment <= 0 || segment > this->N) {
         bskLogger.bskError("LinearTranslationNDOFStateEffector: specifying attachment to a "
@@ -355,8 +340,7 @@ LinearTranslationNDOFStateEffector::addDynamicEffector(DynamicEffector* newDynam
  manager and links them into dependent dynamic effectors
 
  @param states the dynamic parameter manager holding the published properties */
-void
-LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
+void LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
 {
     const Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
     for (auto& translatingBody : this->translatingBodyVec) {
@@ -377,8 +361,7 @@ LinearTranslationNDOFStateEffector::registerProperties(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B = Eigen::Vector3d::Zero();
@@ -472,12 +455,11 @@ LinearTranslationNDOFStateEffector::updateEffectorMassProps(double integTime [[m
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-LinearTranslationNDOFStateEffector::updateContributions(double integTime,
-                                                        BackSubMatrices& backSubContr,
-                                                        Eigen::MRPd sigma_BN,
-                                                        Eigen::Vector3d omega_BN_B,
-                                                        Eigen::Vector3d g_N)
+void LinearTranslationNDOFStateEffector::updateContributions(double integTime,
+                                                             BackSubMatrices& backSubContr,
+                                                             Eigen::MRPd sigma_BN,
+                                                             Eigen::Vector3d omega_BN_B,
+                                                             Eigen::Vector3d g_N)
 {
     // Find the DCM from N to B frames
     this->sigma_BN = sigma_BN;
@@ -518,8 +500,7 @@ LinearTranslationNDOFStateEffector::updateContributions(double integTime,
 
  @param backSubContr the Backsubstitution contributions this effector adds to the hub
  @param integTime the integration time the attached effectors evaluate their loads at */
-void
-LinearTranslationNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
+void LinearTranslationNDOFStateEffector::computeDependentEffectors(BackSubMatrices& backSubContr, double integTime)
 {
     for (auto& translatingBody : this->translatingBodyVec) {
         translatingBody->extForce_B.setZero();
@@ -542,8 +523,7 @@ LinearTranslationNDOFStateEffector::computeDependentEffectors(BackSubMatrices& b
  *
  * @param[out] MRho Translating-body joint mass matrix.
  */
-void
-LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
+void LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
 {
     for (int n = 0; n < this->N; n++) {
         const size_t nIndex = static_cast<size_t>(n);
@@ -566,8 +546,7 @@ LinearTranslationNDOFStateEffector::computeMRho(Eigen::MatrixXd& MRho)
  *
  * @param[out] ARhoStar A-rho-star Backsubstitution matrix.
  */
-void
-LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
+void LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
 {
     for (int n = 0; n < this->N; n++) {
         const size_t nIndex = static_cast<size_t>(n);
@@ -584,8 +563,7 @@ LinearTranslationNDOFStateEffector::computeARhoStar(Eigen::MatrixX3d& ARhoStar)
  *
  * @param[out] BRhoStar B-rho-star Backsubstitution matrix.
  */
-void
-LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
+void LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
 {
     for (int n = 0; n < this->N; n++) {
         const size_t nIndex = static_cast<size_t>(n);
@@ -606,8 +584,7 @@ LinearTranslationNDOFStateEffector::computeBRhoStar(Eigen::MatrixX3d& BRhoStar)
  * @param[out] CRhoStar C-rho-star Backsubstitution vector.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar, const Eigen::Vector3d& g_N)
+void LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar, const Eigen::Vector3d& g_N)
 {
     // Map gravity to body frame
     Eigen::Vector3d g_B;
@@ -643,8 +620,7 @@ LinearTranslationNDOFStateEffector::computeCRhoStar(Eigen::VectorXd& CRhoStar, c
  *
  * @param[in,out] backSubContr Backsubstitution contributions.
  */
-void
-LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
+void LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices& backSubContr) const
 {
     for (int i = 0; i < this->N; i++) {
         const size_t iIndex = static_cast<size_t>(i);
@@ -680,11 +656,10 @@ LinearTranslationNDOFStateEffector::computeBackSubContributions(BackSubMatrices&
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                       Eigen::Vector3d rDDot_BN_N,
-                                                       Eigen::Vector3d omegaDot_BN_B,
-                                                       Eigen::MRPd sigma_BN [[maybe_unused]])
+void LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                            Eigen::Vector3d rDDot_BN_N,
+                                                            Eigen::Vector3d omegaDot_BN_B,
+                                                            Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     // Find rDDotLoc_BN_B
     const Eigen::Vector3d& rDDotLocal_BN_N = rDDot_BN_N;
@@ -704,11 +679,10 @@ LinearTranslationNDOFStateEffector::computeDerivatives(double integTime [[maybe_
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                                 Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                                 double& rotEnergyContr,
-                                                                 Eigen::Vector3d omega_BN_B)
+void LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                                      double& rotEnergyContr,
+                                                                      Eigen::Vector3d omega_BN_B)
 {
     this->omega_BN_B = omega_BN_B;
 
@@ -733,8 +707,7 @@ LinearTranslationNDOFStateEffector::updateEnergyMomContributions(double integTim
 }
 
 /*! This method computes the translating body states relative to the inertial frame */
-void
-LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
+void LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
 {
     // - read live: the cached copy lags an integrator substep at write time
     const Eigen::MRPd sigmaHub_BN(this->hubSigmaState->stateView().data());
@@ -765,8 +738,7 @@ LinearTranslationNDOFStateEffector::computeTranslatingBodyInertialStates()
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-LinearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void LinearTranslationNDOFStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->writeOutputStateMessages(CurrentSimNanos);

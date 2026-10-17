@@ -35,8 +35,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, int64_t moduleID)
+void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CmdTorqueBodyMsg_C_init(&configData->cmdTorqueOutMsg);
@@ -49,8 +48,7 @@ SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -103,8 +101,7 @@ Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttGuidMsgPayload guidCmd;                   /*!< Guidance input Message */
     RWSpeedMsgPayload wheelSpeeds;               /*!< Reaction wheel speed estimates input message */

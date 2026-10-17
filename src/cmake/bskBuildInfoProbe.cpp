@@ -38,13 +38,11 @@
 #define BSK_SWIG_RUNTIME_VERSION ""
 #endif
 
-extern "C" const BskCAbiInfo*
-bskGetCompiledCAbiInfo(void);
+extern "C" const BskCAbiInfo* bskGetCompiledCAbiInfo(void);
 
 namespace {
 
-std::string
-pythonString(const std::string& value)
+std::string pythonString(const std::string& value)
 {
     std::ostringstream result;
     result << '"';
@@ -79,14 +77,12 @@ pythonString(const std::string& value)
     return result.str();
 }
 
-std::string
-optionalInteger(long long value)
+std::string optionalInteger(long long value)
 {
     return value < 0 ? "None" : std::to_string(value);
 }
 
-bool
-writeBuildAbiData(std::ostream& output)
+bool writeBuildAbiData(std::ostream& output)
 {
     const BskCAbiInfo& cInfo = *bskGetCompiledCAbiInfo();
     const bsk::abi::CxxAbiInfo cxxInfo = bsk::abi::createCxxAbiInfo();
@@ -228,8 +224,7 @@ writeBuildAbiData(std::ostream& output)
 
 } // namespace
 
-int
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
     if (argc != 2) {
         std::cerr << "Usage: bskBuildInfoProbe <output-file>\n";

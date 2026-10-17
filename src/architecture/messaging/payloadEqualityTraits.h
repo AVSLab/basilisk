@@ -36,8 +36,7 @@ struct PayloadEqualityTraits
 
 /*! Returns true if a field-wise equality comparison is defined for payload type T. */
 template<typename T>
-constexpr bool
-supportsPayloadEquality() noexcept
+constexpr bool supportsPayloadEquality() noexcept
 {
     return PayloadEqualityTraits<T>::supported;
 }
@@ -48,8 +47,7 @@ supportsPayloadEquality() noexcept
  *  Guard calls with supportsPayloadEquality<T>() via if constexpr, or add a specialization.
  */
 template<typename T>
-bool
-payloadsAreEqual(const T& lhs, const T& rhs)
+bool payloadsAreEqual(const T& lhs, const T& rhs)
 {
     static_assert(PayloadEqualityTraits<T>::supported,
                   "payloadsAreEqual: no equality comparison is defined for this payload type. "

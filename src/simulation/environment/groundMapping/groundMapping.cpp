@@ -52,8 +52,7 @@ GroundMapping::~GroundMapping() = default;
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void
-GroundMapping::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void GroundMapping::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
@@ -68,8 +67,7 @@ GroundMapping::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! Read module messages
  */
-void
-GroundMapping::ReadMessages()
+void GroundMapping::ReadMessages()
 {
 
     if (this->planetInMsg.isLinked()) {
@@ -82,8 +80,7 @@ GroundMapping::ReadMessages()
 /*! Method to add map points
  * @param r_LP_P_init: mapping point in planet-fixed frame
  */
-void
-GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init)
+void GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init)
 {
     /* Add the mapping point */
     this->mappingPoints.push_back(r_LP_P_init);
@@ -111,8 +108,7 @@ GroundMapping::addPointToModel(Eigen::Vector3d& r_LP_P_init)
 /*! Method to compute whether or not the spacecraft has access to the location
  * @param c: index of the given location
  */
-void
-GroundMapping::computeAccess(uint64_t c)
+void GroundMapping::computeAccess(uint64_t c)
 {
     //! Zero the output message buffers
     this->accessMsgBuffer.at(c) = this->accessOutMsgs.at(c)->zeroMsgPayload;
@@ -181,8 +177,7 @@ GroundMapping::computeAccess(uint64_t c)
 
 /*! Method to update the relevant rotations matrices
  */
-void
-GroundMapping::updateInertialPositions()
+void GroundMapping::updateInertialPositions()
 {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetInMsgBuffer.J20002Pfix);
@@ -205,8 +200,7 @@ GroundMapping::updateInertialPositions()
 
 /*! Method to compute whether or not the mapping point is in the instrument's FOV
  */
-uint64_t
-GroundMapping::checkInstrumentFOV()
+uint64_t GroundMapping::checkInstrumentFOV()
 {
     /* Compute the projection of the mapping point along the instrument's boresight */
     double boresightNormalProj =
@@ -234,8 +228,7 @@ GroundMapping::checkInstrumentFOV()
 
 /*! write module messages
  */
-void
-GroundMapping::WriteMessages(uint64_t CurrentClock)
+void GroundMapping::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
@@ -248,8 +241,7 @@ GroundMapping::WriteMessages(uint64_t CurrentClock)
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
 
 */
-void
-GroundMapping::UpdateState(uint64_t CurrentSimNanos)
+void GroundMapping::UpdateState(uint64_t CurrentSimNanos)
 {
     // Read messages
     this->ReadMessages();

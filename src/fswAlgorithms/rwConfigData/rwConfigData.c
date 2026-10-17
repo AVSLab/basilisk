@@ -37,8 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_rwConfigData(rwConfigData_Config* configData, int64_t moduleID)
+void SelfInit_rwConfigData(rwConfigData_Config* configData, int64_t moduleID)
 {
     (void)moduleID;
     RWArrayConfigMsg_C_init(&configData->rwParamsOutMsg);
@@ -51,8 +50,7 @@ SelfInit_rwConfigData(rwConfigData_Config* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID)
 {
     int i;
 
@@ -78,8 +76,7 @@ Reset_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t m
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID)
+void Update_rwConfigData(rwConfigData_Config* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)configData;
     (void)callTime;

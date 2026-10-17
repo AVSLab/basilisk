@@ -29,8 +29,7 @@
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The unique module identifier
  */
-void
-SelfInit_dvGuidance(dvGuidanceConfig* configData, int64_t moduleID)
+void SelfInit_dvGuidance(dvGuidanceConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -42,8 +41,7 @@ SelfInit_dvGuidance(dvGuidanceConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void
-Reset_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -62,8 +60,7 @@ Reset_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void
-Update_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_dvGuidance(dvGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double dcm_BubN[3][3];             /* dcm, inertial to base burn frame */
     double dcm_ButN[3][3];             /* dcm, inertial to current burn frame */

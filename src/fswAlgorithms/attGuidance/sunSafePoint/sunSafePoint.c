@@ -31,8 +31,7 @@
  @param configData The configuration data associated with the sun safe guidance
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_sunSafePoint(sunSafePointConfig* configData, int64_t moduleID)
+void SelfInit_sunSafePoint(sunSafePointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttGuidMsg_C_init(&configData->attGuidanceOutMsg);
@@ -45,8 +44,7 @@ SelfInit_sunSafePoint(sunSafePointConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -93,8 +91,7 @@ Reset_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t mo
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
 */
-void
-Update_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     NavAttMsgPayload navMsg;
     double ctSNormalized;

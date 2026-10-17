@@ -29,40 +29,35 @@
 #include <utility>
 
 namespace {
-const char*
-finalizedTopologyError(FlatStateBinding::Mode mode)
+const char* finalizedTopologyError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
              ? "Runge-Kutta binding requires every state manager to be finalized."
              : "Stochastic integrator binding requires finalized state topology.";
 }
 
-const char*
-inconsistentLayoutError(FlatStateBinding::Mode mode)
+const char* inconsistentLayoutError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
              ? "A finalized state manager has inconsistent state-layout metadata."
              : "A finalized stochastic state manager has inconsistent state-layout metadata.";
 }
 
-const char*
-synchronizedDynamicsError(FlatStateBinding::Mode mode)
+const char* synchronizedDynamicsError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
              ? "Runge-Kutta synchronized dynamics changed after integrator binding."
              : "Stochastic integrator synchronized dynamics changed after binding.";
 }
 
-const char*
-unfinalizedStorageError(FlatStateBinding::Mode mode)
+const char* unfinalizedStorageError(FlatStateBinding::Mode mode)
 {
     return mode == FlatStateBinding::Mode::DeterministicRungeKutta
              ? "A bound state manager has no finalized storage."
              : "A bound stochastic state manager has no finalized storage.";
 }
 
-size_t
-checkedBindingAdd(size_t left, size_t right, const char* quantity)
+size_t checkedBindingAdd(size_t left, size_t right, const char* quantity)
 {
     const size_t eigenLimit = static_cast<size_t>(std::numeric_limits<Eigen::Index>::max());
     if (right > eigenLimit || left > eigenLimit - right) {
@@ -72,8 +67,7 @@ checkedBindingAdd(size_t left, size_t right, const char* quantity)
 }
 }
 
-void
-FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mode)
+void FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mode)
 {
     if (this->bound) {
         if (this->bindingMode != mode) {
@@ -216,8 +210,7 @@ FlatStateBinding::bind(const std::vector<DynamicObject*>& dynamics, Mode mode)
     this->bound = true;
 }
 
-void
-FlatStateBinding::reset() noexcept
+void FlatStateBinding::reset() noexcept
 {
     this->bound = false;
     this->stateCount = 0;
@@ -230,8 +223,7 @@ FlatStateBinding::reset() noexcept
     std::vector<size_t>().swap(this->canonicalNoiseTraversalOrder);
 }
 
-void
-FlatStateBinding::validate(const std::vector<DynamicObject*>& dynamics) const
+void FlatStateBinding::validate(const std::vector<DynamicObject*>& dynamics) const
 {
     if (!this->bound || dynamics.size() != this->objectDescriptors.size()) {
         throw std::runtime_error(synchronizedDynamicsError(this->bindingMode));
@@ -248,11 +240,10 @@ FlatStateBinding::validate(const std::vector<DynamicObject*>& dynamics) const
     }
 }
 
-void
-FlatStateBinding::writeDriftCandidate(const Eigen::VectorXd& base,
-                                      const Eigen::VectorXd& drift,
-                                      double timeStep,
-                                      Eigen::Ref<Eigen::VectorXd> output) const
+void FlatStateBinding::writeDriftCandidate(const Eigen::VectorXd& base,
+                                           const Eigen::VectorXd& drift,
+                                           double timeStep,
+                                           Eigen::Ref<Eigen::VectorXd> output) const
 {
     if (base.size() != static_cast<Eigen::Index>(this->stateCount) ||
         output.size() != static_cast<Eigen::Index>(this->stateCount) ||

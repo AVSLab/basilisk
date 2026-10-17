@@ -26,8 +26,7 @@
  * @param tolerance Absolute tolerance, in the same units as first.
  * @return The absolute comparison result.
  */
-int
-compareAbsoluteFromC(double first, double second, double tolerance)
+int compareAbsoluteFromC(double first, double second, double tolerance)
 {
     return isEqual(first, second, tolerance);
 }
@@ -39,8 +38,7 @@ compareAbsoluteFromC(double first, double second, double tolerance)
  * @param tolerance Dimensionless relative tolerance.
  * @return The relative comparison result.
  */
-int
-compareRelativeFromC(double first, double second, double tolerance)
+int compareRelativeFromC(double first, double second, double tolerance)
 {
     return isEqualRel(first, second, tolerance);
 }

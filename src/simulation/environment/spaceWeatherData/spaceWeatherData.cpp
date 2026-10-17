@@ -32,8 +32,7 @@ namespace {
     @param token Raw token string extracted from a CSV field.
     @return Trimmed copy of the token, or an empty string if the token is all spaces.
 */
-std::string
-trimToken(const std::string& token)
+std::string trimToken(const std::string& token)
 {
     const std::string whiteSpace = " \t\r";
     const size_t firstChar = token.find_first_not_of(whiteSpace);
@@ -48,8 +47,7 @@ trimToken(const std::string& token)
     @param line One text line from a CSV file.
     @return Ordered vector of trimmed field strings.
 */
-std::vector<std::string>
-splitCsvLine(const std::string& line)
+std::vector<std::string> splitCsvLine(const std::string& line)
 {
     std::vector<std::string> tokens{};
     std::stringstream lineStream(line);
@@ -68,8 +66,7 @@ splitCsvLine(const std::string& line)
             or resolves to NaN or infinity.
     @throws std::out_of_range if the value is outside the representable double range.
 */
-double
-parseDouble(const std::string& str)
+double parseDouble(const std::string& str)
 {
     size_t pos = 0;
     const double value = std::stod(str, &pos);
@@ -86,8 +83,7 @@ parseDouble(const std::string& str)
     @param year Gregorian year.
     @return True if the year is divisible by 4, except for century years not divisible by 400.
 */
-bool
-isLeapYear(int year)
+bool isLeapYear(int year)
 {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
@@ -97,8 +93,7 @@ isLeapYear(int year)
     @param month Month of year in the range [1, 12].
     @return Day count for the month, or 0 if month is out of [1, 12].
 */
-int
-daysInMonth(int year, int month)
+int daysInMonth(int year, int month)
 {
     static const int days[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (month < 1 || month > 12) {
@@ -115,8 +110,7 @@ daysInMonth(int year, int month)
     @param key Column name to search for (case-sensitive).
     @return Non-negative index when the column is found; -1 otherwise.
 */
-int
-findHeaderIndex(const std::vector<std::string>& headerColumns, const std::string& key)
+int findHeaderIndex(const std::vector<std::string>& headerColumns, const std::string& key)
 {
     for (size_t index = 0; index < headerColumns.size(); index++) {
         if (headerColumns[index] == key) {
@@ -150,8 +144,7 @@ SpaceWeatherData::~SpaceWeatherData() = default;
 
     @param CurrentSimNanos Current simulation time in nanoseconds.
 */
-void
-SpaceWeatherData::Reset(uint64_t CurrentSimNanos)
+void SpaceWeatherData::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->epochInMsg.isLinked()) {
         this->bskLogger.bskError("SpaceWeatherData.epochInMsg was not linked.");
@@ -178,8 +171,7 @@ SpaceWeatherData::Reset(uint64_t CurrentSimNanos)
 
     @param CurrentSimNanos Current simulation time in nanoseconds.
 */
-void
-SpaceWeatherData::UpdateState(uint64_t CurrentSimNanos)
+void SpaceWeatherData::UpdateState(uint64_t CurrentSimNanos)
 {
     std::array<double, numSwMessages> swState = {};
 
@@ -207,8 +199,7 @@ SpaceWeatherData::UpdateState(uint64_t CurrentSimNanos)
 
     @param fileName Path to the space-weather CSV file (absolute or relative).
 */
-void
-SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
+void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
 {
     // Do not clear weatherData yet — preserve the existing table until the new
     // file is fully validated so that a failed reload does not destroy a
@@ -276,8 +267,7 @@ SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
 
     @param CurrentSimNanos Current simulation time in nanoseconds.
 */
-void
-SpaceWeatherData::publishZeroState(uint64_t CurrentSimNanos)
+void SpaceWeatherData::publishZeroState(uint64_t CurrentSimNanos)
 {
     for (uint64_t msgIndex = 0U; msgIndex < numSwMessages; msgIndex++) {
         SwDataMsgPayload outMsg = this->swDataOutMsgs[msgIndex]->zeroMsgPayload;
@@ -297,8 +287,7 @@ SpaceWeatherData::publishZeroState(uint64_t CurrentSimNanos)
     @param[out] currentDay   Unix day number of the current UTC date (days since 1970-01-01).
     @param[out] secondsOfDay Elapsed seconds since midnight of the current UTC day [0, 86400).
 */
-void
-SpaceWeatherData::getEpochState(double CurrentSimSeconds, int64_t& currentDay, double& secondsOfDay)
+void SpaceWeatherData::getEpochState(double CurrentSimSeconds, int64_t& currentDay, double& secondsOfDay)
 {
     if (!this->epochInMsg.isWritten()) {
         this->bskLogger.bskError("SpaceWeatherData space-weather epochInMsg was not written.");
@@ -332,8 +321,7 @@ SpaceWeatherData::getEpochState(double CurrentSimSeconds, int64_t& currentDay, d
     @return True if all required table entries were found and the state was assembled
             successfully; false if any required day is missing or the table is empty.
 */
-bool
-SpaceWeatherData::computeSwState(uint64_t CurrentSimNanos, std::array<double, numSwMessages>& swState)
+bool SpaceWeatherData::computeSwState(uint64_t CurrentSimNanos, std::array<double, numSwMessages>& swState)
 {
     if (this->weatherData.empty()) {
         return false;
@@ -412,8 +400,7 @@ SpaceWeatherData::computeSwState(uint64_t CurrentSimNanos, std::array<double, nu
                  depending on the month and whether year is a leap year.
     @return Signed count of days since 1970-01-01.
 */
-int64_t
-SpaceWeatherData::civilToUnixDayNumber(int year, unsigned month, unsigned day)
+int64_t SpaceWeatherData::civilToUnixDayNumber(int year, unsigned month, unsigned day)
 {
     year -= (month <= 2U);
     const int era = (year >= 0 ? year : year - 399) / 400;
@@ -436,10 +423,9 @@ SpaceWeatherData::civilToUnixDayNumber(int year, unsigned month, unsigned day)
     @return Populated DailySpaceWeather record on success, or a default-constructed
             record on failure.
 */
-SpaceWeatherData::DailySpaceWeather
-SpaceWeatherData::parseWeatherLine(const std::string& line,
-                                   const std::vector<std::string>& headerColumns,
-                                   bool& parseOk)
+SpaceWeatherData::DailySpaceWeather SpaceWeatherData::parseWeatherLine(const std::string& line,
+                                                                       const std::vector<std::string>& headerColumns,
+                                                                       bool& parseOk)
 {
     parseOk = false;
     DailySpaceWeather row = {};

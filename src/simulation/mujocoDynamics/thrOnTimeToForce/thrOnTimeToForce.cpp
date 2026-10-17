@@ -22,8 +22,7 @@
 #include "architecture/utilities/macroDefinitions.h"
 #include <algorithm>
 
-void
-ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
+void ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->onTimeInMsg.isLinked()) {
         bskLogger.bskError("ThrOnTimeToForce.onTimeInMsg was not linked.");
@@ -53,8 +52,7 @@ ThrOnTimeToForce::Reset(uint64_t CurrentSimNanos)
     this->prevCommandWriteNanos = 0xFFFFFFFFFFFFFFFF;
 }
 
-void
-ThrOnTimeToForce::UpdateState(uint64_t CurrentSimNanos)
+void ThrOnTimeToForce::UpdateState(uint64_t CurrentSimNanos)
 {
     const double currentTimeSec = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     bool newOnTimeCmd = false;
@@ -105,14 +103,12 @@ ThrOnTimeToForce::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void
-ThrOnTimeToForce::setThrMag(const std::vector<double>& value)
+void ThrOnTimeToForce::setThrMag(const std::vector<double>& value)
 {
     this->thrMag = value;
 }
 
-void
-ThrOnTimeToForce::addThruster()
+void ThrOnTimeToForce::addThruster()
 {
     ++this->numThr;
     addOwnedMessage(this->ownedThrusterForceOutMsgs, this->thrusterForceOutMsgs);

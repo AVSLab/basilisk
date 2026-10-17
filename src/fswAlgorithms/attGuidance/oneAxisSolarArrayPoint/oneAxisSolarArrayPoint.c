@@ -32,8 +32,7 @@ static const double epsilon = 1e-12; // [-] Module tolerance for zero
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, int64_t moduleID)
+void SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -46,8 +45,7 @@ SelfInit_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, int64_
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -103,8 +101,7 @@ Reset_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! create and zero the output message */
     AttRefMsgPayload attRefOut = AttRefMsg_C_zeroMsgPayload();
@@ -268,8 +265,7 @@ Update_oneAxisSolarArrayPoint(OneAxisSolarArrayPointConfig* configData, uint64_t
 }
 
 /*! This helper function computes the first rotation that aligns the body heading with the inertial heading */
-void
-oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
+void oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3][3])
 {
     /*! compute principal rotation angle (phi) and vector (e_phi) for the first rotation */
     double phi = acos(fmin(fmax(v3Dot(hRefHat_B, hReqHat_B), -1), 1));
@@ -293,12 +289,11 @@ oasapComputeFirstRotation(double hRefHat_B[3], double hReqHat_B[3], double R1B[3
 
 /*! This helper function computes the second rotation that achieves the best incidence on the solar arrays maintaining
  * the heading alignment */
-void
-oasapComputeSecondRotation(double hRefHat_B[3],
-                           double rHat_SB_R1[3],
-                           double a1Hat_B[3],
-                           double a2Hat_B[3],
-                           double R2R1[3][3])
+void oasapComputeSecondRotation(double hRefHat_B[3],
+                                double rHat_SB_R1[3],
+                                double a1Hat_B[3],
+                                double a2Hat_B[3],
+                                double R2R1[3][3])
 {
     /*! define second rotation vector to coincide with the thrust direction in B coordinates */
     double e_psi[3];
@@ -381,12 +376,11 @@ oasapComputeSecondRotation(double hRefHat_B[3],
 
 /*! This helper function computes the third rotation that breaks the heading alignment if needed, to achieve maximum
  * incidence on solar arrays */
-void
-oasapComputeThirdRotation(AlignmentPriority alignmentPriority,
-                          double hRefHat_B[3],
-                          double rHat_SB_R2[3],
-                          double a1Hat_B[3],
-                          double R3R2[3][3])
+void oasapComputeThirdRotation(AlignmentPriority alignmentPriority,
+                               double hRefHat_B[3],
+                               double rHat_SB_R2[3],
+                               double a1Hat_B[3],
+                               double R3R2[3][3])
 {
     double PRV_theta[3];
 
@@ -429,15 +423,14 @@ oasapComputeThirdRotation(AlignmentPriority alignmentPriority,
 }
 
 /*! This helper function computes the final rotation as a product of the first three DCMs */
-void
-oasapComputeFinalRotation(AlignmentPriority alignmentPriority,
-                          double BN[3][3],
-                          double rHat_SB_B[3],
-                          double hRefHat_B[3],
-                          double hReqHat_B[3],
-                          double a1Hat_B[3],
-                          double a2Hat_B[3],
-                          double RN[3][3])
+void oasapComputeFinalRotation(AlignmentPriority alignmentPriority,
+                               double BN[3][3],
+                               double rHat_SB_B[3],
+                               double hRefHat_B[3],
+                               double hReqHat_B[3],
+                               double a1Hat_B[3],
+                               double a2Hat_B[3],
+                               double RN[3][3])
 {
     /*! compute the first rotation DCM */
     double R1B[3][3];

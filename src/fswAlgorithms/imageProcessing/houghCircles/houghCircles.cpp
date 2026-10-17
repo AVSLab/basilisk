@@ -57,8 +57,7 @@ HoughCircles::~HoughCircles()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-HoughCircles::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void HoughCircles::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -71,8 +70,7 @@ HoughCircles::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-HoughCircles::UpdateState(uint64_t CurrentSimNanos)
+void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;

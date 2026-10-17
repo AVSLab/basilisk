@@ -321,8 +321,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::svIntegratorAdaptiveRungeKutta(
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::prepareIntegrationBinding()
+void svIntegratorAdaptiveRungeKutta<numberStages>::prepareIntegrationBinding()
 {
     try {
         svIntegratorRungeKutta<numberStages>::prepareIntegrationBinding();
@@ -348,8 +347,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::prepareIntegrationBinding()
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double startingTime, double desiredTimeStep)
+void svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double startingTime, double desiredTimeStep)
 {
     if (!std::isfinite(startingTime) || !std::isfinite(desiredTimeStep) || desiredTimeStep < 0.0) {
         throw std::invalid_argument("Adaptive Runge-Kutta integration requires finite time and a "
@@ -430,8 +428,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double startingTime,
 }
 
 template<size_t numberStages>
-double
-svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError()
+double svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError()
 {
     double maxRelativeError = 0.0;
     for (const auto& tolerance : this->toleranceSpans) {
@@ -484,8 +481,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError()
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool force)
+void svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool force)
 {
     const bool defaultTolerancesChanged =
       this->relTol != this->resolvedRelativeTolerance || this->absTol != this->resolvedAbsoluteTolerance;
@@ -543,8 +539,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool force)
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::validateTolerance(double tolerance, const char* toleranceName)
+void svIntegratorAdaptiveRungeKutta<numberStages>::validateTolerance(double tolerance, const char* toleranceName)
 {
     if (!std::isfinite(tolerance) || tolerance < 0.0) {
         throw std::invalid_argument(std::string("Adaptive Runge-Kutta ") + toleranceName +
@@ -553,8 +548,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::validateTolerance(double tolerance
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     this->relTol = relTol;
@@ -562,15 +556,13 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(double relTol
 }
 
 template<size_t numberStages>
-double
-svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
+double svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance()
 {
     return this->relTol;
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     this->absTol = absTol;
@@ -578,15 +570,13 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(double absTol
 }
 
 template<size_t numberStages>
-double
-svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
+double svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance()
 {
     return this->absTol;
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName, double relTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string stateName, double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     this->stateToleranceOverrides[stateName].relative = relTol;
@@ -594,8 +584,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(std::string s
 }
 
 template<size_t numberStages>
-std::optional<double>
-svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string stateName)
+std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string stateName)
 {
     const auto tolerance = this->stateToleranceOverrides.find(stateName);
     if (tolerance != this->stateToleranceOverrides.cend()) {
@@ -605,8 +594,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(std::string s
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName, double absTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string stateName, double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     this->stateToleranceOverrides[stateName].absolute = absTol;
@@ -614,8 +602,7 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(std::string s
 }
 
 template<size_t numberStages>
-std::optional<double>
-svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string stateName)
+std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string stateName)
 {
     const auto tolerance = this->stateToleranceOverrides.find(stateName);
     if (tolerance != this->stateToleranceOverrides.cend()) {
@@ -625,10 +612,9 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(std::string s
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const DynamicObject& dynamicObject,
-                                                                   std::string stateName,
-                                                                   double relTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const DynamicObject& dynamicObject,
+                                                                        std::string stateName,
+                                                                        double relTol)
 {
     this->validateTolerance(relTol, "relative tolerance");
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
@@ -637,9 +623,9 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const Dynamic
 }
 
 template<size_t numberStages>
-inline std::optional<double>
-svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(const DynamicObject& dynamicObject,
-                                                                   std::string stateName)
+inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(
+  const DynamicObject& dynamicObject,
+  std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -653,10 +639,9 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(const Dynamic
 }
 
 template<size_t numberStages>
-void
-svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const DynamicObject& dynamicObject,
-                                                                   std::string stateName,
-                                                                   double absTol)
+void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const DynamicObject& dynamicObject,
+                                                                        std::string stateName,
+                                                                        double absTol)
 {
     this->validateTolerance(absTol, "absolute tolerance");
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
@@ -665,9 +650,9 @@ svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const Dynamic
 }
 
 template<size_t numberStages>
-inline std::optional<double>
-svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(const DynamicObject& dynamicObject,
-                                                                   std::string stateName)
+inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(
+  const DynamicObject& dynamicObject,
+  std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -681,8 +666,8 @@ svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(const Dynamic
 }
 
 template<size_t numberStages>
-const DynamicObject*
-svIntegratorAdaptiveRungeKutta<numberStages>::requireDynamicObject(const DynamicObject& dynamicObject) const
+const DynamicObject* svIntegratorAdaptiveRungeKutta<numberStages>::requireDynamicObject(
+  const DynamicObject& dynamicObject) const
 {
     auto it = std::find(this->dynamics().cbegin(), this->dynamics().cend(), &dynamicObject);
     if (it == this->dynamics().end()) {

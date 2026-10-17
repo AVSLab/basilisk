@@ -57,16 +57,14 @@ using mjVFSDeleter = mjDeleter<mjVFS, mj_deleteVFS>;
 
 /** Returns the name of the given MuJoCo spec object. */
 template<typename T>
-inline std::string
-getSpecObjectName(T* object)
+inline std::string getSpecObjectName(T* object)
 {
     return mjs_getString(mjs_getName(object->element));
 }
 
 /** Sets the name of the given MuJoCo spec object. */
 template<typename T>
-inline void
-setSpecObjectName(T* object, const std::string& name)
+inline void setSpecObjectName(T* object, const std::string& name)
 {
     if (mjs_setName(object->element, name.c_str()) != 0) {
         BSKLogger{}.bskError("Could not set MuJoCo spec object name to: %s", name.c_str());
@@ -77,15 +75,13 @@ setSpecObjectName(T* object, const std::string& name)
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_error``.
  */
-void
-logMujocoError(const char* err);
+void logMujocoError(const char* err);
 
 /** Calls ``BSKLogger::bskLog`` with the given input
  *
  * Meant to be used as an error callback for MuJoCo's ``mju_user_warning``.
  */
-void
-logMujocoWarning(const char* err);
+void logMujocoWarning(const char* err);
 
 /**
  * Logs an error via BSKLogger then throws an exception of type @p ExceptionType.
@@ -94,8 +90,7 @@ logMujocoWarning(const char* err);
  * @param message        Human-readable error message.
  */
 template<typename ExceptionType = std::runtime_error>
-[[noreturn]] inline void
-logAndThrow(const std::string& message)
+[[noreturn]] inline void logAndThrow(const std::string& message)
 {
     BSKLogger{}.bskError("%s", message.c_str());
     throw ExceptionType(message);
@@ -111,8 +106,7 @@ logAndThrow(const std::string& message)
  * @throws std::overflow_error If @p value is negative or exceeds the destination range.
  */
 template<typename Target>
-inline Target
-checkedMjtSizeCast(mjtSize value, const std::string& quantityName)
+inline Target checkedMjtSizeCast(mjtSize value, const std::string& quantityName)
 {
     static_assert(std::is_integral_v<Target>, "MuJoCo sizes can only be converted to integral types");
     if (value < 0 || static_cast<uint64_t>(value) > static_cast<uint64_t>(std::numeric_limits<Target>::max())) {

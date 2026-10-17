@@ -27,8 +27,7 @@
 /*! This method self initializes the C-wrapped output messages.
 
 */
-void
-PrescribedRotation1DOF::SelfInit()
+void PrescribedRotation1DOF::SelfInit()
 {
     HingedRigidBodyMsg_C_init(&this->spinningBodyOutMsgC);
     PrescribedRotationMsg_C_init(&this->prescribedRotationOutMsgC);
@@ -39,8 +38,7 @@ PrescribedRotation1DOF::SelfInit()
 
  @param callTime [ns] Time the method is called
 */
-void
-PrescribedRotation1DOF::Reset(uint64_t callTime [[maybe_unused]])
+void PrescribedRotation1DOF::Reset(uint64_t callTime [[maybe_unused]])
 {
     if (!this->spinningBodyInMsg.isLinked()) {
         this->bskLogger->bskError("prescribedRotation1DOF.spinningBodyInMsg wasn't connected.");
@@ -59,8 +57,7 @@ PrescribedRotation1DOF::Reset(uint64_t callTime [[maybe_unused]])
 
  @param callTime [ns] Time the method is called
 */
-void
-PrescribedRotation1DOF::UpdateState(uint64_t callTime)
+void PrescribedRotation1DOF::UpdateState(uint64_t callTime)
 {
     // Read the input message
     HingedRigidBodyMsgPayload spinningBodyIn = HingedRigidBodyMsgPayload();
@@ -101,8 +98,7 @@ PrescribedRotation1DOF::UpdateState(uint64_t callTime)
 /*! This intermediate method groups the calculation of rotation parameters into a single method.
 
 */
-void
-PrescribedRotation1DOF::computeRotationParameters()
+void PrescribedRotation1DOF::computeRotationParameters()
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -122,8 +118,7 @@ PrescribedRotation1DOF::computeRotationParameters()
 /*! This method computes the required parameters for the rotation with a non-smoothed bang-bang acceleration profile.
 
 */
-void
-PrescribedRotation1DOF::computeBangBangParametersNoSmoothing()
+void PrescribedRotation1DOF::computeBangBangParametersNoSmoothing()
 {
     // Determine the total time required for the rotation
     double totalRotTime = sqrt(((0.5 * fabs(this->thetaRef - this->thetaInit)) * 8.0) / this->thetaDDotMax);
@@ -143,8 +138,7 @@ PrescribedRotation1DOF::computeBangBangParametersNoSmoothing()
    profile.
 
 */
-void
-PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing()
+void PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing()
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -179,8 +173,7 @@ PrescribedRotation1DOF::computeBangCoastBangParametersNoSmoothing()
 /*! This method computes the required parameters for the rotation with a smoothed bang-bang acceleration profile.
 
 */
-void
-PrescribedRotation1DOF::computeSmoothedBangBangParameters()
+void PrescribedRotation1DOF::computeSmoothedBangBangParameters()
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -232,8 +225,7 @@ PrescribedRotation1DOF::computeSmoothedBangBangParameters()
 /*! This method computes the required parameters for the rotation with a smoothed bang-coast-bang acceleration profile.
 
 */
-void
-PrescribedRotation1DOF::computeSmoothedBangCoastBangParameters()
+void PrescribedRotation1DOF::computeSmoothedBangCoastBangParameters()
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -292,8 +284,7 @@ PrescribedRotation1DOF::computeSmoothedBangCoastBangParameters()
 /*! This intermediate method groups the calculation of the current rotational states into a single method.
 
 */
-void
-PrescribedRotation1DOF::computeCurrentState(double t)
+void PrescribedRotation1DOF::computeCurrentState(double t)
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -356,8 +347,7 @@ PrescribedRotation1DOF::computeCurrentState(double t)
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInFirstBangSegment(double t) const
+bool PrescribedRotation1DOF::isInFirstBangSegment(double t) const
 {
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s1 && t <= this->t_b1 && this->t_f - this->tInit != 0.0);
@@ -370,8 +360,7 @@ PrescribedRotation1DOF::isInFirstBangSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInSecondBangSegment(double t) const
+bool PrescribedRotation1DOF::isInSecondBangSegment(double t) const
 {
     if (this->coastOptionBangDuration > 0.0) {
         if (this->smoothingDuration > 0.0) {
@@ -392,8 +381,7 @@ PrescribedRotation1DOF::isInSecondBangSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInFirstSmoothedSegment(double t) const
+bool PrescribedRotation1DOF::isInFirstSmoothedSegment(double t) const
 {
     return (t <= this->t_s1 && this->t_f - this->tInit != 0.0);
 }
@@ -403,8 +391,7 @@ PrescribedRotation1DOF::isInFirstSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInSecondSmoothedSegment(double t) const
+bool PrescribedRotation1DOF::isInSecondSmoothedSegment(double t) const
 {
     return (t > this->t_b1 && t <= this->t_s2 && this->t_f - this->tInit != 0.0);
 }
@@ -413,8 +400,7 @@ PrescribedRotation1DOF::isInSecondSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInThirdSmoothedSegment(double t) const
+bool PrescribedRotation1DOF::isInThirdSmoothedSegment(double t) const
 {
     if (this->coastOptionBangDuration > 0.0) {
         return (t > this->t_c && t <= this->t_s3 && this->t_f - this->tInit != 0.0);
@@ -428,8 +414,7 @@ PrescribedRotation1DOF::isInThirdSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInFourthSmoothedSegment(double t) const
+bool PrescribedRotation1DOF::isInFourthSmoothedSegment(double t) const
 {
     return (t > this->t_b2 && t <= this->t_f && this->t_f - this->tInit != 0.0);
 }
@@ -438,8 +423,7 @@ PrescribedRotation1DOF::isInFourthSmoothedSegment(double t) const
  @return bool
  @param t [s] Current simulation time
 */
-bool
-PrescribedRotation1DOF::isInCoastSegment(double t) const
+bool PrescribedRotation1DOF::isInCoastSegment(double t) const
 {
     if (this->smoothingDuration > 0.0) {
         return (t > this->t_s2 && t <= this->t_c && this->t_f - this->tInit != 0.0);
@@ -452,8 +436,7 @@ PrescribedRotation1DOF::isInCoastSegment(double t) const
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeFirstBangSegment(double t)
+void PrescribedRotation1DOF::computeFirstBangSegment(double t)
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
     this->thetaDDot = sign * this->thetaDDotMax;
@@ -472,8 +455,7 @@ PrescribedRotation1DOF::computeFirstBangSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeSecondBangSegment(double t)
+void PrescribedRotation1DOF::computeSecondBangSegment(double t)
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
     this->thetaDDot = -sign * this->thetaDDotMax;
@@ -498,8 +480,7 @@ PrescribedRotation1DOF::computeSecondBangSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeFirstSmoothedSegment(double t)
+void PrescribedRotation1DOF::computeFirstSmoothedSegment(double t)
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -524,8 +505,7 @@ PrescribedRotation1DOF::computeFirstSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeSecondSmoothedSegment(double t)
+void PrescribedRotation1DOF::computeSecondSmoothedSegment(double t)
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -575,8 +555,7 @@ PrescribedRotation1DOF::computeSecondSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
+void PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
 {
     double sign = (this->thetaRef - this->thetaInit) / abs(this->thetaRef - this->thetaInit);
 
@@ -630,8 +609,7 @@ PrescribedRotation1DOF::computeThirdSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeFourthSmoothedSegment(double t)
+void PrescribedRotation1DOF::computeFourthSmoothedSegment(double t)
 {
     double term1 = (3.0 * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
     double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
@@ -656,8 +634,7 @@ PrescribedRotation1DOF::computeFourthSmoothedSegment(double t)
 
  @param t [s] Current simulation time
 */
-void
-PrescribedRotation1DOF::computeCoastSegment(double t)
+void PrescribedRotation1DOF::computeCoastSegment(double t)
 {
     this->thetaDDot = 0.0;
 
@@ -673,8 +650,7 @@ PrescribedRotation1DOF::computeCoastSegment(double t)
 /*! This method computes the scalar rotational states when the rotation is complete.
 
 */
-void
-PrescribedRotation1DOF::computeRotationComplete()
+void PrescribedRotation1DOF::computeRotationComplete()
 {
     this->thetaDDot = 0.0;
     this->thetaDot = 0.0;
@@ -685,8 +661,7 @@ PrescribedRotation1DOF::computeRotationComplete()
 /*! This method writes the module output messages and computes the output message data.
 
 */
-void
-PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime)
+void PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime)
 {
     // Create the output buffer messages
     HingedRigidBodyMsgPayload spinningBodyOut;
@@ -734,8 +709,7 @@ PrescribedRotation1DOF::writeOutputMessages(uint64_t callTime)
 /*! This method computes the current spinning body MRP attitude relative to the mount frame: sigma_PM
 
 */
-Eigen::MRPd
-PrescribedRotation1DOF::computeSigma_PM()
+Eigen::MRPd PrescribedRotation1DOF::computeSigma_PM()
 {
     // Determine dcm_PP0 for the current spinning body attitude relative to the initial attitude
     double dcm_PP0[3][3];
@@ -766,8 +740,7 @@ PrescribedRotation1DOF::computeSigma_PM()
 
  @param bangDuration [s] Bang segment time duration
 */
-void
-PrescribedRotation1DOF::setCoastOptionBangDuration(const double bangDuration)
+void PrescribedRotation1DOF::setCoastOptionBangDuration(const double bangDuration)
 {
     this->coastOptionBangDuration = bangDuration;
 }
@@ -776,8 +749,7 @@ PrescribedRotation1DOF::setCoastOptionBangDuration(const double bangDuration)
 
  @param rotHat_M Spinning body rotation axis (unit vector)
 */
-void
-PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d& rotHat_M)
+void PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d& rotHat_M)
 {
     this->rotHat_M = rotHat_M / rotHat_M.norm();
 }
@@ -786,8 +758,7 @@ PrescribedRotation1DOF::setRotHat_M(const Eigen::Vector3d& rotHat_M)
 
  @param smoothingDuration [s] Duration the acceleration is smoothed until reaching the given maximum acceleration value
 */
-void
-PrescribedRotation1DOF::setSmoothingDuration(const double smoothingDuration)
+void PrescribedRotation1DOF::setSmoothingDuration(const double smoothingDuration)
 {
     this->smoothingDuration = smoothingDuration;
 }
@@ -796,8 +767,7 @@ PrescribedRotation1DOF::setSmoothingDuration(const double smoothingDuration)
 
  @param thetaDDotMax [rad/s^2] Bang segment scalar angular acceleration
 */
-void
-PrescribedRotation1DOF::setThetaDDotMax(const double thetaDDotMax)
+void PrescribedRotation1DOF::setThetaDDotMax(const double thetaDDotMax)
 {
     this->thetaDDotMax = thetaDDotMax;
 }
@@ -806,8 +776,7 @@ PrescribedRotation1DOF::setThetaDDotMax(const double thetaDDotMax)
 
  @param thetaInit [rad] Initial spinning body angle
 */
-void
-PrescribedRotation1DOF::setThetaInit(const double thetaInit)
+void PrescribedRotation1DOF::setThetaInit(const double thetaInit)
 {
     this->thetaInit = thetaInit;
 }
@@ -815,8 +784,7 @@ PrescribedRotation1DOF::setThetaInit(const double thetaInit)
 /*! Getter method for the coast option bang duration.
  @return double
 */
-double
-PrescribedRotation1DOF::getCoastOptionBangDuration() const
+double PrescribedRotation1DOF::getCoastOptionBangDuration() const
 {
     return this->coastOptionBangDuration;
 }
@@ -824,8 +792,7 @@ PrescribedRotation1DOF::getCoastOptionBangDuration() const
 /*! Getter method for the spinning body rotation axis.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d&
-PrescribedRotation1DOF::getRotHat_M() const
+const Eigen::Vector3d& PrescribedRotation1DOF::getRotHat_M() const
 {
     return this->rotHat_M;
 }
@@ -833,8 +800,7 @@ PrescribedRotation1DOF::getRotHat_M() const
 /*! Getter method for the duration the acceleration is smoothed until reaching the given maximum acceleration value.
  @return double
 */
-double
-PrescribedRotation1DOF::getSmoothingDuration() const
+double PrescribedRotation1DOF::getSmoothingDuration() const
 {
     return this->smoothingDuration;
 }
@@ -842,8 +808,7 @@ PrescribedRotation1DOF::getSmoothingDuration() const
 /*! Getter method for the ramp segment scalar angular acceleration.
  @return double
 */
-double
-PrescribedRotation1DOF::getThetaDDotMax() const
+double PrescribedRotation1DOF::getThetaDDotMax() const
 {
     return this->thetaDDotMax;
 }
@@ -851,8 +816,7 @@ PrescribedRotation1DOF::getThetaDDotMax() const
 /*! Getter method for the initial spinning body angle.
  @return double
 */
-double
-PrescribedRotation1DOF::getThetaInit() const
+double PrescribedRotation1DOF::getThetaInit() const
 {
     return this->thetaInit;
 }
@@ -861,8 +825,7 @@ PrescribedRotation1DOF::getThetaInit() const
 
  @param initDisplacement Initial linear displacement
 */
-void
-PrescribedRotation1DOF::setInitDisplacement(const double initDisplacement)
+void PrescribedRotation1DOF::setInitDisplacement(const double initDisplacement)
 {
     this->rhoInit = initDisplacement;
 }
@@ -871,8 +834,7 @@ PrescribedRotation1DOF::setInitDisplacement(const double initDisplacement)
 
  @param screwConstant Screw slope constant
 */
-void
-PrescribedRotation1DOF::setScrewConstant(const double screwConstant)
+void PrescribedRotation1DOF::setScrewConstant(const double screwConstant)
 {
     this->c_screw = screwConstant;
 }
@@ -880,8 +842,7 @@ PrescribedRotation1DOF::setScrewConstant(const double screwConstant)
 /*! Getter method for the initial linear displacement if screw motion is selected.
  @return double
 */
-double
-PrescribedRotation1DOF::getInitDisplacement() const
+double PrescribedRotation1DOF::getInitDisplacement() const
 {
     return this->rhoInit;
 }
@@ -889,8 +850,7 @@ PrescribedRotation1DOF::getInitDisplacement() const
 /*! Getter method for the screw constant.
  @return double
 */
-double
-PrescribedRotation1DOF::getScrewConstant() const
+double PrescribedRotation1DOF::getScrewConstant() const
 {
     return this->c_screw;
 }

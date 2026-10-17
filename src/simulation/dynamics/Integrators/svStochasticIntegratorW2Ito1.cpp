@@ -26,8 +26,7 @@ svStochasticIntegratorW2Ito1::svStochasticIntegratorW2Ito1(DynamicObject* dyn)
 }
 
 // Coefficients for the W2Ito1 tableau (Tang & Xiao, Table 2). 3-stage explicit method.
-W2ItoCoefficients
-svStochasticIntegratorW2Ito1::getCoefficients()
+W2ItoCoefficients svStochasticIntegratorW2Ito1::getCoefficients()
 {
     const double sqrt6 = std::sqrt(6.0);
     W2ItoCoefficients c;

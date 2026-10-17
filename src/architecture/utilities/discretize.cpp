@@ -50,8 +50,7 @@ Discretize::~Discretize() {}
 /*!@brief Sets the round direction (toZero, fromZero, near) for discretization
  @param direction
  */
-void
-Discretize::setRoundDirection(roundDirection_t direction)
+void Discretize::setRoundDirection(roundDirection_t direction)
 {
 
     this->roundDirection = direction;
@@ -64,8 +63,7 @@ Discretize::setRoundDirection(roundDirection_t direction)
     @param undiscretizedVector Truth values to discretize.
     @return Vector of discretized values.
 */
-Eigen::VectorXd
-Discretize::discretize(const Eigen::Ref<const Eigen::VectorXd>& undiscretizedVector)
+Eigen::VectorXd Discretize::discretize(const Eigen::Ref<const Eigen::VectorXd>& undiscretizedVector)
 {
 
     Eigen::VectorXd workingVector = undiscretizedVector;

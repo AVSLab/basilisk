@@ -26,17 +26,13 @@
 #include "architecture/utilities/orbitalMotion.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 
-static void
-calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
-                      NavTransMsgPayload chiefTransMsg,
-                      NavTransMsgPayload deputyTransMsg,
-                      CmdForceInertialMsgPayload* forceMsg);
-static void
-calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
-static void
-calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
-static double
-adjust_range(double lower, double upper, double angle);
+static void calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
+                                  NavTransMsgPayload chiefTransMsg,
+                                  NavTransMsgPayload deputyTransMsg,
+                                  CmdForceInertialMsgPayload* forceMsg);
+static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3]);
+static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3]);
+static double adjust_range(double lower, double upper, double angle);
 
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -45,8 +41,7 @@ adjust_range(double lower, double upper, double angle);
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_meanOEFeedback(meanOEFeedbackConfig* configData, int64_t moduleID)
+void SelfInit_meanOEFeedback(meanOEFeedbackConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CmdForceInertialMsg_C_init(&configData->forceOutMsg);
@@ -60,8 +55,7 @@ SelfInit_meanOEFeedback(meanOEFeedbackConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -92,8 +86,7 @@ Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // in
     NavTransMsgPayload chiefTransMsg;
@@ -121,11 +114,10 @@ Update_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64
  @param deputyTransMsg Deputy's position and velocity
  @param forceMsg force output (3-axis)
  */
-static void
-calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
-                      NavTransMsgPayload chiefTransMsg,
-                      NavTransMsgPayload deputyTransMsg,
-                      CmdForceInertialMsgPayload* forceMsg)
+static void calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
+                                  NavTransMsgPayload chiefTransMsg,
+                                  NavTransMsgPayload deputyTransMsg,
+                                  CmdForceInertialMsgPayload* forceMsg)
 {
     // position&velocity to osculating classic orbital elements
     ClassicElements oe_cl_osc_c, oe_cl_osc_d;
@@ -198,8 +190,7 @@ calc_LyapunovFeedback(meanOEFeedbackConfig* configData,
  @param oe_cl nonsingular orbital elements
  @param B
  */
-static void
-calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3])
+static void calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3])
 {
     // define parameters necessary to calculate Bmatrix
     double a = oe_cl.a;
@@ -254,8 +245,7 @@ calc_B_cl(double mu, ClassicElements oe_cl, double B[6][3])
  @param oe_eq nonsingular orbital elements
  @param B
  */
-static void
-calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3])
+static void calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3])
 {
     // define parameters necessary to calculate Bmatrix
     double a = oe_eq.a;
@@ -307,8 +297,7 @@ calc_B_eq(double mu, equinoctialElements oe_eq, double B[6][3])
  @param upper upper threshold
  @param angle an angle which you want to be between lower and upper
 */
-static double
-adjust_range(double lower, double upper, double angle)
+static double adjust_range(double lower, double upper, double angle)
 {
     if (upper < lower) {
         printf("illegal parameters\n");

@@ -42,8 +42,7 @@ SimpleStorageUnit::~SimpleStorageUnit()
 /*! Custom reset function
  @param currentClock
  */
-void
-SimpleStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
+void SimpleStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
 {
     if (this->storageCapacity <= 0) {
         bskLogger.bskLog(BSK_INFORMATION, "The storageCapacity variable must be set to a positive value.");
@@ -55,8 +54,7 @@ SimpleStorageUnit::customReset(uint64_t currentClock [[maybe_unused]])
  @param currentTime
 
  */
-void
-SimpleStorageUnit::integrateDataStatus(double currentTime)
+void SimpleStorageUnit::integrateDataStatus(double currentTime)
 {
     this->currentTimestep = currentTime - this->previousTime;
     this->netBaud = 0;
@@ -85,8 +83,7 @@ SimpleStorageUnit::integrateDataStatus(double currentTime)
  @param data //Data to be added to the "STORED DATA" partition
 
  */
-void
-SimpleStorageUnit::setDataBuffer(int64_t data)
+void SimpleStorageUnit::setDataBuffer(int64_t data)
 {
     std::string partitionName = "STORED DATA";
     SimpleStorageUnit::DataStorageUnitBase::setDataBuffer(partitionName, data);

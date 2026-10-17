@@ -30,8 +30,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, int64_t moduleID)
+void SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->motorTorqueOutMsg);
@@ -44,8 +43,7 @@ SelfInit_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, int6
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -68,8 +66,7 @@ Reset_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_hingedRigidBodyPIDMotor(hingedRigidBodyPIDMotorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign buffer messages */
     ArrayMotorTorqueMsgPayload motorTorqueOut = ArrayMotorTorqueMsg_C_zeroMsgPayload();

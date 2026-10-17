@@ -28,8 +28,7 @@ svStochasticIntegratorSIESME::svStochasticIntegratorSIESME(DynamicObject* dyn, c
 {
 }
 
-void
-svStochasticIntegratorSIESME::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorSIESME::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;
@@ -152,8 +151,7 @@ svStochasticIntegratorSIEA::svStochasticIntegratorSIEA(DynamicObject* dyn)
 {
 }
 
-SIESMECoefficients
-svStochasticIntegratorSIEA::getCoefficients()
+SIESMECoefficients svStochasticIntegratorSIEA::getCoefficients()
 {
     SIESMECoefficients c;
     c.alpha1 = 0.5;
@@ -183,8 +181,7 @@ svStochasticIntegratorSMEA::svStochasticIntegratorSMEA(DynamicObject* dyn)
 {
 }
 
-SIESMECoefficients
-svStochasticIntegratorSMEA::getCoefficients()
+SIESMECoefficients svStochasticIntegratorSMEA::getCoefficients()
 {
     SIESMECoefficients c;
     c.alpha1 = 0.0;
@@ -214,8 +211,7 @@ svStochasticIntegratorSIEB::svStochasticIntegratorSIEB(DynamicObject* dyn)
 {
 }
 
-SIESMECoefficients
-svStochasticIntegratorSIEB::getCoefficients()
+SIESMECoefficients svStochasticIntegratorSIEB::getCoefficients()
 {
     SIESMECoefficients c;
     c.alpha1 = 0.5;
@@ -245,8 +241,7 @@ svStochasticIntegratorSMEB::svStochasticIntegratorSMEB(DynamicObject* dyn)
 {
 }
 
-SIESMECoefficients
-svStochasticIntegratorSMEB::getCoefficients()
+SIESMECoefficients svStochasticIntegratorSMEB::getCoefficients()
 {
     SIESMECoefficients c;
     c.alpha1 = 0.0;

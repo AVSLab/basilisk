@@ -34,8 +34,7 @@
  @param configData The configuration data associated with the null space control
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_mrpRotation(mrpRotationConfig* configData, int64_t moduleID)
+void SelfInit_mrpRotation(mrpRotationConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -49,8 +48,7 @@ SelfInit_mrpRotation(mrpRotationConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -72,8 +70,7 @@ Reset_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /* - Read input messages */
     AttRefMsgPayload inputRef;  /* [-] read in the [R_0N] input reference message */
@@ -116,8 +113,7 @@ Update_mrpRotation(mrpRotationConfig* configData, uint64_t callTime, int64_t mod
 
  @param configData The configuration data associated with the mrpRotation module
  */
-void
-checkRasterCommands(mrpRotationConfig* configData)
+void checkRasterCommands(mrpRotationConfig* configData)
 {
     int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet, 1E-12) &&
                             v3IsEqual(configData->cmdRates, configData->priorCmdRates, 1E-12);
@@ -138,8 +134,7 @@ checkRasterCommands(mrpRotationConfig* configData)
  @param configData The configuration data associated with the mrpRotation module
  @param callTime The clock time at which the function was called (nanoseconds)
 */
-void
-computeTimeStep(mrpRotationConfig* configData, uint64_t callTime)
+void computeTimeStep(mrpRotationConfig* configData, uint64_t callTime)
 {
     if (configData->priorTime == 0) {
         configData->dt = 0.0;
@@ -157,12 +152,11 @@ computeTimeStep(mrpRotationConfig* configData, uint64_t callTime)
  @param domega_R0N_N The input reference frame angular acceleration vector
  @param attRefOut The output message copy
  */
-void
-computeMRPRotationReference(mrpRotationConfig* configData,
-                            double sigma_R0N[3],
-                            double omega_R0N_N[3],
-                            double domega_R0N_N[3],
-                            AttRefMsgPayload* attRefOut)
+void computeMRPRotationReference(mrpRotationConfig* configData,
+                                 double sigma_R0N[3],
+                                 double omega_R0N_N[3],
+                                 double domega_R0N_N[3],
+                                 AttRefMsgPayload* attRefOut)
 {
     double attIncrement[3]; /* [] increment in MRP attitude coordinates  */
     double RR0[3][3];       /* [] DCM rotating from R0 to R */

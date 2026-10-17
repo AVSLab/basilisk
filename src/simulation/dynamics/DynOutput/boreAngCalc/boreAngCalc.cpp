@@ -40,8 +40,7 @@ BoreAngCalc::~BoreAngCalc() = default;
 /*! This method is used to reset the module.
 
  */
-void
-BoreAngCalc::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void BoreAngCalc::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if required input messages have not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -62,8 +61,7 @@ BoreAngCalc::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentClock The current time in the system for output stamping
  */
-void
-BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
+void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->angOutMsg.write(&this->boresightAng, this->moduleID, CurrentClock);
 }
@@ -72,8 +70,7 @@ BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
  appropriate parameters
 
  */
-void
-BoreAngCalc::ReadInputs()
+void BoreAngCalc::ReadInputs()
 {
     //! - Read the input message into the correct pointer
     this->localState = this->scStateInMsg();
@@ -91,8 +88,7 @@ BoreAngCalc::ReadInputs()
     is used later to compute how far off that vector is in an angular sense.
 
 */
-void
-BoreAngCalc::computeCelestialAxisPoint()
+void BoreAngCalc::computeCelestialAxisPoint()
 {
     // Convert planet and body data to Eigen variables
     Eigen::Vector3d r_BN_N = cArray2EigenVector3d(this->localState.r_BN_N);          // spacecraft's inertial position
@@ -125,8 +121,7 @@ BoreAngCalc::computeCelestialAxisPoint()
     desired pointing vector projected into the y/z plane.
 
 */
-void
-BoreAngCalc::computeCelestialOutputData()
+void BoreAngCalc::computeCelestialOutputData()
 {
     // Define epsilon that will avoid atan2 giving a NaN.
     double eps = 1e-10;
@@ -145,8 +140,7 @@ BoreAngCalc::computeCelestialOutputData()
     computed using the body heading and the provided inertial heading
 
 */
-void
-BoreAngCalc::computeInertialOutputData()
+void BoreAngCalc::computeInertialOutputData()
 {
     // Compute the DCM from inertial do body frame
     Eigen::MRPd sigma_BN = cArray2EigenMRPd(this->localState.sigma_BN); // mrp, inertial to body frame
@@ -168,8 +162,7 @@ BoreAngCalc::computeInertialOutputData()
 
  @param CurrentSimNanos The current simulation time for system
  */
-void
-BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
+void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();

@@ -29,8 +29,7 @@
  @param configData The configuration data associated with the CSS sensor interface
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_cssProcessTelem(CSSConfigData* configData, int64_t moduleID)
+void SelfInit_cssProcessTelem(CSSConfigData* configData, int64_t moduleID)
 {
     (void)moduleID;
     CSSArraySensorMsg_C_init(&configData->cssArrayOutMsg);
@@ -43,8 +42,7 @@ SelfInit_cssProcessTelem(CSSConfigData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -87,8 +85,7 @@ Reset_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Update_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i, j;
     CSSArraySensorMsgPayload inMsgBuffer;

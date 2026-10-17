@@ -74,8 +74,7 @@ AtmosphereBase::~AtmosphereBase() = default;
 
  @param tmpScMsg A spacecraft state message name.
  */
-void
-AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
 
     /* add input message */
@@ -94,8 +93,7 @@ AtmosphereBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 /*! This method is used to reset the module.
 
  */
-void
-AtmosphereBase::Reset(uint64_t CurrentSimNanos)
+void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -140,8 +138,7 @@ AtmosphereBase::Reset(uint64_t CurrentSimNanos)
  is set by a module variable.
 
  */
-void
-AtmosphereBase::customSetEpochFromVariable()
+void AtmosphereBase::customSetEpochFromVariable()
 {
     return;
 }
@@ -149,8 +146,7 @@ AtmosphereBase::customSetEpochFromVariable()
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void
-AtmosphereBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void AtmosphereBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -159,8 +155,7 @@ AtmosphereBase::customReset(uint64_t CurrentClock [[maybe_unused]])
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-AtmosphereBase::writeMessages(uint64_t CurrentClock)
+void AtmosphereBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write density output messages for each spacecaft's locations
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
@@ -176,8 +171,7 @@ AtmosphereBase::writeMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
 
  */
-void
-AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -189,8 +183,7 @@ AtmosphereBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
  @param CurrentSimNanos [ns] current simulation time
  @return true if all required messages were read
  */
-bool
-AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
+bool AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload scMsg;
 
@@ -234,8 +227,7 @@ AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
 
  */
-bool
-AtmosphereBase::customReadMessages()
+bool AtmosphereBase::customReadMessages()
 {
     return true;
 }
@@ -246,8 +238,7 @@ AtmosphereBase::customReadMessages()
  The planet orientation message planetPosInMsg is required when the polar radius is set.
  @param polarRadius [m] planet polar radius; a negative value selects the spherical planet
  */
-void
-AtmosphereBase::setPlanetPolarRadius(double polarRadius)
+void AtmosphereBase::setPlanetPolarRadius(double polarRadius)
 {
     if (polarRadius == 0.0) {
         bskLogger.bskError(
@@ -264,8 +255,7 @@ AtmosphereBase::setPlanetPolarRadius(double polarRadius)
  that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
-void
-AtmosphereBase::setExtrapolateScStateToStepMidpoint(bool enable)
+void AtmosphereBase::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
@@ -273,8 +263,7 @@ AtmosphereBase::setExtrapolateScStateToStepMidpoint(bool enable)
 /*! Returns whether the spacecraft state extrapolation is enabled.
  @return [-] true if the spacecraft state is extrapolated
  */
-bool
-AtmosphereBase::getExtrapolateScStateToStepMidpoint() const
+bool AtmosphereBase::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
@@ -282,8 +271,7 @@ AtmosphereBase::getExtrapolateScStateToStepMidpoint() const
 /*! Returns the polar radius of the planet.
  @return [m] planet polar radius; a negative value means the planet is treated as a sphere
  */
-double
-AtmosphereBase::getPlanetPolarRadius() const
+double AtmosphereBase::getPlanetPolarRadius() const
 {
     return this->planetPolarRadius;
 }
@@ -293,8 +281,7 @@ AtmosphereBase::getPlanetPolarRadius() const
  @param scState A spacecraft states message struct.
 
  */
-void
-AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState)
+void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
@@ -322,8 +309,7 @@ AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCSta
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
 
  */
-void
-AtmosphereBase::updateLocalAtmosphere(double currentTime)
+void AtmosphereBase::updateLocalAtmosphere(double currentTime)
 {
     std::vector<SCStatesMsgPayload>::iterator scIt;
 
@@ -353,8 +339,7 @@ AtmosphereBase::updateLocalAtmosphere(double currentTime)
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
+void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
     std::vector<AtmoPropsMsgPayload>::iterator it;

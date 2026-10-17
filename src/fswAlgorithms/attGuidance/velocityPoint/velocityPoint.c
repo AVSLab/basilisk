@@ -36,8 +36,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_velocityPoint(velocityPointConfig* configData, int64_t moduleID)
+void SelfInit_velocityPoint(velocityPointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -49,8 +48,7 @@ SelfInit_velocityPoint(velocityPointConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -68,8 +66,7 @@ Reset_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     NavTransMsgPayload navData;
@@ -95,13 +92,12 @@ Update_velocityPoint(velocityPointConfig* configData, uint64_t callTime, int64_t
     return;
 }
 
-void
-computeVelocityPointingReference(velocityPointConfig* configData,
-                                 double r_BN_N[3],
-                                 double v_BN_N[3],
-                                 double celBdyPositonVector[3],
-                                 double celBdyVelocityVector[3],
-                                 AttRefMsgPayload* attRefOut)
+void computeVelocityPointingReference(velocityPointConfig* configData,
+                                      double r_BN_N[3],
+                                      double v_BN_N[3],
+                                      double celBdyPositonVector[3],
+                                      double celBdyVelocityVector[3],
+                                      AttRefMsgPayload* attRefOut)
 {
     double dcm_RN[3][3]; /* DCM from inertial to reference frame */
 

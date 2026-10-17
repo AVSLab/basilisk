@@ -42,8 +42,7 @@ ClockSynch::~ClockSynch()
     @param currentSimNanos
 
 */
-void
-ClockSynch::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void ClockSynch::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     this->timeInitialized = false;
     //! - Set the overrun counter to zero
@@ -58,8 +57,7 @@ ClockSynch::Reset(uint64_t currentSimNanos [[maybe_unused]])
 
     @param currentSimNanos The clock time associated with the model call
 */
-void
-ClockSynch::UpdateState(uint64_t currentSimNanos)
+void ClockSynch::UpdateState(uint64_t currentSimNanos)
 {
     std::chrono::high_resolution_clock::time_point currentTime; // current time variable
     int64_t sleepAmountNano;                                    // [ns] time for module to sleep

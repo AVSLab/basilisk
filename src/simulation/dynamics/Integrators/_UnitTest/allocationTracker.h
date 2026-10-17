@@ -73,32 +73,27 @@ struct AllocationSnapshot
 };
 
 /** @brief Clear all recorded allocation and deallocation counts. */
-void
-resetAllocationCounts() noexcept;
+void resetAllocationCounts() noexcept;
 /**
  * @brief Copy the current allocation and deallocation counts.
  * @return Snapshot of the recorded API call counts.
  */
-AllocationSnapshot
-allocationSnapshot() noexcept;
+AllocationSnapshot allocationSnapshot() noexcept;
 /**
  * @brief Report whether C allocation calls can be intercepted on this build.
  * @return True when the C allocator interception backend is enabled.
  */
-bool
-cAllocatorInterceptionAvailable() noexcept;
+bool cAllocatorInterceptionAvailable() noexcept;
 /**
  * @brief Report whether aligned C allocation calls can be intercepted on this build.
  * @return True when aligned C allocator interception is enabled.
  */
-bool
-alignedAllocatorInterceptionAvailable() noexcept;
+bool alignedAllocatorInterceptionAvailable() noexcept;
 /**
  * @brief Describe the allocator interception backend and any coverage limitation.
  * @return Pointer to a string literal describing the active backend.
  */
-const char*
-allocatorInterceptionDescription() noexcept;
+const char* allocatorInterceptionDescription() noexcept;
 
 /** @brief Nestable scope that enables allocation tracking on the current thread. */
 class ScopedAllocationTracking
@@ -120,8 +115,7 @@ class ScopedAllocationTracking
  * @return Snapshot of allocation and deallocation counts after the callable returns.
  */
 template<typename Callable>
-AllocationSnapshot
-trackAllocations(Callable&& callable)
+AllocationSnapshot trackAllocations(Callable&& callable)
 {
     resetAllocationCounts();
     {
@@ -145,14 +139,10 @@ class ScopedAllocationSuspension
 };
 
 namespace detail {
-void
-recordAllocationCall(AllocationApi api) noexcept;
-bool
-allocationTrackingActive() noexcept;
-void
-enterCppAllocation() noexcept;
-void
-leaveCppAllocation() noexcept;
+void recordAllocationCall(AllocationApi api) noexcept;
+bool allocationTrackingActive() noexcept;
+void enterCppAllocation() noexcept;
+void leaveCppAllocation() noexcept;
 }
 
 } // namespace integrator_allocation_test

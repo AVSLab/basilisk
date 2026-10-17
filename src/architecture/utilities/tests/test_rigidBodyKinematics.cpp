@@ -55,15 +55,13 @@ const EulerSequence sequences[] = { { "121", { 0, 1, 0 }, C2Euler121, EP2Euler12
                                     { "323", { 2, 1, 2 }, C2Euler323, EP2Euler323, addEuler323, subEuler323 } };
 
 /** @brief Identify a parameterized test by its Euler sequence. */
-void
-PrintTo(const EulerSequence& sequence, std::ostream* stream)
+void PrintTo(const EulerSequence& sequence, std::ostream* stream)
 {
     *stream << sequence.name;
 }
 
 /** @brief Build a passive DCM independently from elementary rotations. */
-void
-elementaryProduct(const EulerSequence& sequence, const double angles[3], double matrix[3][3], bool exact = false)
+void elementaryProduct(const EulerSequence& sequence, const double angles[3], double matrix[3][3], bool exact = false)
 {
     for (int row = 0; row < 3; ++row) {
         for (int column = 0; column < 3; ++column) {
@@ -100,8 +98,7 @@ elementaryProduct(const EulerSequence& sequence, const double angles[3], double 
 }
 
 /** @brief Verify finite Euler angles, their middle-angle range, and the recovered rotation. */
-void
-checkRotation(const EulerSequence& sequence, double matrix[3][3], double angles[3], bool singular)
+void checkRotation(const EulerSequence& sequence, double matrix[3][3], double angles[3], bool singular)
 {
     for (int index = 0; index < 3; ++index) {
         ASSERT_TRUE(std::isfinite(angles[index]));
@@ -122,8 +119,7 @@ checkRotation(const EulerSequence& sequence, double matrix[3][3], double angles[
 }
 
 /** @brief Check the DCM and both signs of the equivalent unit quaternion. */
-void
-checkConversions(const EulerSequence& sequence, double matrix[3][3], bool singular = false)
+void checkConversions(const EulerSequence& sequence, double matrix[3][3], bool singular = false)
 {
     double angles[3]; // [rad]
     sequence.fromDcm(matrix, angles);
@@ -368,8 +364,7 @@ TEST(PrvKinematics, SmallConversions)
 }
 
 /** @brief Independently evaluate a passive rotation matrix using the exponential series. */
-void
-rotationVectorMatrix(const double vector[3], double matrix[3][3])
+void rotationVectorMatrix(const double vector[3], double matrix[3][3])
 {
     double negativeSkew[3][3] = { { 0.0, vector[2], -vector[1] },
                                   { -vector[2], 0.0, vector[0] },

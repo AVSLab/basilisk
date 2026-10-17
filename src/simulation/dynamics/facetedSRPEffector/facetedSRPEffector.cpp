@@ -25,16 +25,14 @@
 
  @param currentSimNanos [ns] Time the method is called
 */
-void
-FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
     this->initializeFacetData();
 }
 
 /*! Validate the facet vector dimensions and required input-message connections. */
-void
-FacetedSRPEffector::validateConfiguration()
+void FacetedSRPEffector::validateConfiguration()
 {
     if (this->facetElementBodyInMsgs.size() != this->numFacets ||
         this->facetProjectedAreaInMsgs.size() != this->numFacets) {
@@ -59,8 +57,7 @@ FacetedSRPEffector::validateConfiguration()
 }
 
 /*! Size and initialize the cached facet data used during force evaluation. */
-void
-FacetedSRPEffector::initializeFacetData()
+void FacetedSRPEffector::initializeFacetData()
 {
     // Clear, allocate and initialize data lists
     this->facetAreaList.clear();
@@ -89,8 +86,7 @@ FacetedSRPEffector::initializeFacetData()
 
  @param states Dynamic parameter states
 */
-void
-FacetedSRPEffector::linkInStates(DynParamManager& states)
+void FacetedSRPEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
     this->initializeFacetData();
@@ -104,8 +100,7 @@ FacetedSRPEffector::linkInStates(DynParamManager& states)
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
-void
-FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     this->validateConfiguration();
 
@@ -203,8 +198,7 @@ FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double 
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void
-FacetedSRPEffector::setNumFacets(const uint64_t numFacets)
+void FacetedSRPEffector::setNumFacets(const uint64_t numFacets)
 {
     this->numFacets = numFacets;
 
@@ -223,8 +217,7 @@ FacetedSRPEffector::setNumFacets(const uint64_t numFacets)
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t
-FacetedSRPEffector::getNumFacets() const
+uint64_t FacetedSRPEffector::getNumFacets() const
 {
     return this->numFacets;
 }

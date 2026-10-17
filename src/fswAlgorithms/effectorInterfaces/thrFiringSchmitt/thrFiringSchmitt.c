@@ -34,8 +34,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_thrFiringSchmitt(thrFiringSchmittConfig* configData, int64_t moduleID)
+void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->onTimeOutMsg);
@@ -48,8 +47,7 @@ SelfInit_thrFiringSchmitt(thrFiringSchmittConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     THRArrayConfigMsgPayload localThrusterData; /* local copy of the thruster data message */
     int i;
@@ -87,8 +85,7 @@ Reset_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrFiringSchmitt(thrFiringSchmittConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     int i;
     double level;                             /* [-] duty cycle fraction */

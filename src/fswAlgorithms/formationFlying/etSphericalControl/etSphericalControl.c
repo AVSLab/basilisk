@@ -41,8 +41,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_etSphericalControl(etSphericalControlConfig* configData, int64_t moduleID)
+void SelfInit_etSphericalControl(etSphericalControlConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CmdForceInertialMsg_C_init(&configData->forceInertialOutMsg);
@@ -56,8 +55,7 @@ SelfInit_etSphericalControl(etSphericalControlConfig* configData, int64_t module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -117,8 +115,7 @@ Reset_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTime
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // in
     NavTransMsgPayload servicerTransInMsgBuffer;
@@ -174,16 +171,15 @@ Update_etSphericalControl(etSphericalControlConfig* configData, uint64_t callTim
  @param forceInertialOutMsgBuffer inertial force output (3-axis)
  @param forceBodyOutMsgBuffer body force output (3-axis)
  */
-void
-calc_RelativeMotionControl(etSphericalControlConfig* configData,
-                           NavTransMsgPayload servicerTransInMsgBuffer,
-                           NavTransMsgPayload debrisTransInMsgBuffer,
-                           NavAttMsgPayload servicerAttInMsgBuffer,
-                           VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
-                           VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
-                           CmdForceInertialMsgPayload eForceInMsgBuffer,
-                           CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
-                           CmdForceBodyMsgPayload* forceBodyOutMsgBuffer)
+void calc_RelativeMotionControl(etSphericalControlConfig* configData,
+                                NavTransMsgPayload servicerTransInMsgBuffer,
+                                NavTransMsgPayload debrisTransInMsgBuffer,
+                                NavAttMsgPayload servicerAttInMsgBuffer,
+                                VehicleConfigMsgPayload servicerVehicleConfigInMsgBuffer,
+                                VehicleConfigMsgPayload debrisVehicleConfigInMsgBuffer,
+                                CmdForceInertialMsgPayload eForceInMsgBuffer,
+                                CmdForceInertialMsgPayload* forceInertialOutMsgBuffer,
+                                CmdForceBodyMsgPayload* forceBodyOutMsgBuffer)
 {
     // relative motion control according to "Relative Motion Control For Two-Spacecraft Electrostatic Orbit Corrections"
     // https://doi.org/10.2514/1.56118

@@ -34,8 +34,7 @@ svStochasticIntegratorRS1::svStochasticIntegratorRS1(DynamicObject* dyn)
 {
 }
 
-RSCoefficients
-svStochasticIntegratorRS1::getCoefficients()
+RSCoefficients svStochasticIntegratorRS1::getCoefficients()
 {
     RSCoefficients c;
     c.a021 = 0.0;
@@ -79,8 +78,7 @@ svStochasticIntegratorRS2::svStochasticIntegratorRS2(DynamicObject* dyn)
 {
 }
 
-RSCoefficients
-svStochasticIntegratorRS2::getCoefficients()
+RSCoefficients svStochasticIntegratorRS2::getCoefficients()
 {
     RSCoefficients c;
     c.a021 = 2.0 / 3.0;
@@ -119,8 +117,7 @@ svStochasticIntegratorRS2::getCoefficients()
     return c;
 }
 
-void
-svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorRS::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

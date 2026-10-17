@@ -36,8 +36,7 @@ SensorThermal::~SensorThermal()
 
 /*! Thermal sensor reset function
  */
-void
-SensorThermal::Reset(uint64_t CurrentClock [[maybe_unused]])
+void SensorThermal::Reset(uint64_t CurrentClock [[maybe_unused]])
 {
 
     this->illuminationFactor = 1.0;
@@ -75,8 +74,7 @@ SensorThermal::Reset(uint64_t CurrentClock [[maybe_unused]])
     return;
 }
 
-void
-SensorThermal::readMessages()
+void SensorThermal::readMessages()
 {
     //! - Zero ephemeris information
     this->sunData = sunInMsg.zeroMsgPayload;
@@ -106,8 +104,7 @@ SensorThermal::readMessages()
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-SensorThermal::UpdateState(uint64_t CurrentSimNanos)
+void SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
 
     //! - Read in messages
@@ -123,8 +120,7 @@ SensorThermal::UpdateState(uint64_t CurrentSimNanos)
 /*! This method writes out a message.
 
  */
-void
-SensorThermal::writeMessages(uint64_t CurrentClock)
+void SensorThermal::writeMessages(uint64_t CurrentClock)
 {
     //! - write temperature output message
     this->temperatureOutMsg.write(&this->temperatureMsgBuffer, this->moduleID, CurrentClock);
@@ -136,8 +132,7 @@ SensorThermal::writeMessages(uint64_t CurrentClock)
    magnitude of the spacecraft sun vector.
 
  */
-void
-SensorThermal::computeSunData()
+void SensorThermal::computeSunData()
 {
     Eigen::Vector3d r_SB_N; //!< [m] Sun position relative to spacecraft body B
     Eigen::Vector3d sHat_N; //!< [] unit sun heading vector in inertial frame N
@@ -176,8 +171,7 @@ SensorThermal::computeSunData()
 5. Computing the current temperature based on the change in temperature
 
  */
-void
-SensorThermal::evaluateThermalModel(double CurrentSimSeconds)
+void SensorThermal::evaluateThermalModel(double CurrentSimSeconds)
 {
 
     //! - Compute the sun data

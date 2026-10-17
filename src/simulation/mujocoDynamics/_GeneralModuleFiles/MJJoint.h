@@ -42,8 +42,7 @@ class MJBody;
  * @return A string view representing the joint type.
  */
 template<>
-constexpr std::string_view
-MJBasilisk::detail::getObjectTypeName<mjsJoint>()
+constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsJoint>()
 {
     return "joint";
 }

@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_sunlineSuKF(SunlineSuKFConfig* configData, int64_t moduleID)
+void SelfInit_sunlineSuKF(SunlineSuKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -45,8 +44,7 @@ SelfInit_sunlineSuKF(SunlineSuKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -149,8 +147,7 @@ Reset_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double yBar[MAX_N_CSS_MEAS];
@@ -262,8 +259,7 @@ Update_sunlineSuKF(SunlineSuKFConfig* configData, uint64_t callTime, int64_t mod
     @param b_Vec b vector
     @param dt time step (s)
 */
-void
-sunlineStateProp(double* stateInOut, double* b_Vec, double dt)
+void sunlineStateProp(double* stateInOut, double* b_Vec, double dt)
 {
 
     double propagatedVel[SKF_N_STATES_HALF];
@@ -297,8 +293,7 @@ sunlineStateProp(double* stateInOut, double* b_Vec, double dt)
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-int
-sunlineSuKFTimeUpdate(SunlineSuKFConfig* configData, double updateTime)
+int sunlineSuKFTimeUpdate(SunlineSuKFConfig* configData, double updateTime)
 {
     size_t Index;
     int badUpdate;
@@ -405,8 +400,7 @@ sunlineSuKFTimeUpdate(SunlineSuKFConfig* configData, double updateTime)
  @param configData The configuration data associated with the CSS estimator
 
  */
-void
-sunlineSuKFMeasModel(SunlineSuKFConfig* configData)
+void sunlineSuKFMeasModel(SunlineSuKFConfig* configData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
@@ -467,8 +461,7 @@ sunlineSuKFMeasModel(SunlineSuKFConfig* configData)
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int
-sunlineSuKFMeasUpdate(SunlineSuKFConfig* configData, double updateTime)
+int sunlineSuKFMeasUpdate(SunlineSuKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     uint32_t i;
@@ -601,8 +594,7 @@ sunlineSuKFMeasUpdate(SunlineSuKFConfig* configData, double updateTime)
  @param covar Pointer to the covariance
  */
 
-void
-sunlineSuKFSwitch(double* bVec_B, double* states, double* covar)
+void sunlineSuKFSwitch(double* bVec_B, double* states, double* covar)
 {
     double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -646,8 +638,7 @@ sunlineSuKFSwitch(double* bVec_B, double* states, double* covar)
     return;
 }
 
-void
-sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm)
+void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm)
 {
     double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
@@ -679,8 +670,7 @@ sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N
 
  @param configData The configuration data associated with the CSS estimator
  */
-void
-sunlineSuKFCleanUpdate(SunlineSuKFConfig* configData)
+void sunlineSuKFCleanUpdate(SunlineSuKFConfig* configData)
 {
     int i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/

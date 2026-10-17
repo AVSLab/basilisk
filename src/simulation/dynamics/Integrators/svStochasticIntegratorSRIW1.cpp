@@ -26,8 +26,7 @@ svStochasticIntegratorSRIW1::svStochasticIntegratorSRIW1(DynamicObject* dyn)
 // Coefficients for the SRIW1 tableau, in unrolled per-stage form. Matrix entries
 // use the plain [stage i][sub-term j] convention of SRICoefficients (see
 // svIntegratorStrongStochasticRungeKuttaSRI.h).
-SRICoefficients<4>
-svStochasticIntegratorSRIW1::getCoefficients()
+SRICoefficients<4> svStochasticIntegratorSRIW1::getCoefficients()
 {
     SRICoefficients<4> c;
 

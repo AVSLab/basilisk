@@ -31,8 +31,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_rwNullSpace(rwNullSpaceConfig* configData, int64_t moduleID)
+void SelfInit_rwNullSpace(rwNullSpaceConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
@@ -45,8 +44,7 @@ SelfInit_rwNullSpace(rwNullSpaceConfig* configData, int64_t moduleID)
     @param callTime The clock time at which the function was called (nanoseconds)
     @param moduleID The ID associated with the configData
  */
-void
-Reset_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -110,8 +108,7 @@ Reset_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     ArrayMotorTorqueMsgPayload
       cntrRequest;                     /* [Nm]  array of the RW motor torque solution vector from the control module */

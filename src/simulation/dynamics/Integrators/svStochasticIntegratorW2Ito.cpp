@@ -27,8 +27,7 @@ svStochasticIntegratorW2Ito::svStochasticIntegratorW2Ito(DynamicObject* dyn, con
 {
 }
 
-void
-svStochasticIntegratorW2Ito::bindMethodStorage()
+void svStochasticIntegratorW2Ito::bindMethodStorage()
 {
     const size_t noiseCount = this->globalNoiseCount();
     const auto derivativeSize = this->stochasticPackedDerivatives().size();
@@ -57,23 +56,20 @@ svStochasticIntegratorW2Ito::bindMethodStorage()
     this->pseudoSteps.swap(newPseudoSteps);
 }
 
-void
-svStochasticIntegratorW2Ito::gatherDerivativeStage(size_t stageIndex)
+void svStochasticIntegratorW2Ito::gatherDerivativeStage(size_t stageIndex)
 {
     auto stage = this->derivativeStages.col(static_cast<Eigen::Index>(stageIndex));
     this->gatherStochasticDerivatives(stage.data(), stage.size());
 }
 
-void
-svStochasticIntegratorW2Ito::gatherAllDiffusionStages(size_t stageIndex)
+void svStochasticIntegratorW2Ito::gatherAllDiffusionStages(size_t stageIndex)
 {
     for (size_t globalNoiseIndex = 0; globalNoiseIndex < this->globalNoiseCount(); ++globalNoiseIndex) {
         this->gatherDiffusionStage(globalNoiseIndex, stageIndex);
     }
 }
 
-void
-svStochasticIntegratorW2Ito::gatherDiffusionStage(size_t globalNoiseIndex, size_t stageIndex)
+void svStochasticIntegratorW2Ito::gatherDiffusionStage(size_t globalNoiseIndex, size_t stageIndex)
 {
     const auto& slot = this->stochasticNoiseSlots().at(globalNoiseIndex);
     const size_t bindingEnd = slot.bindingBegin + slot.bindingCount;
@@ -88,8 +84,7 @@ svStochasticIntegratorW2Ito::gatherDiffusionStage(size_t globalNoiseIndex, size_
     }
 }
 
-void
-svStochasticIntegratorW2Ito::combineDrifts(const std::vector<double>& factors, size_t length)
+void svStochasticIntegratorW2Ito::combineDrifts(const std::vector<double>& factors, size_t length)
 {
     for (const auto& descriptor : this->stochasticStateDescriptors()) {
         const auto offset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
@@ -115,10 +110,9 @@ svStochasticIntegratorW2Ito::combineDrifts(const std::vector<double>& factors, s
     }
 }
 
-void
-svStochasticIntegratorW2Ito::combineDiffusion(size_t globalNoiseIndex,
-                                              const std::vector<double>& factors,
-                                              size_t length)
+void svStochasticIntegratorW2Ito::combineDiffusion(size_t globalNoiseIndex,
+                                                   const std::vector<double>& factors,
+                                                   size_t length)
 {
     const auto& slot = this->stochasticNoiseSlots().at(globalNoiseIndex);
     const size_t bindingEnd = slot.bindingBegin + slot.bindingCount;
@@ -150,8 +144,7 @@ svStochasticIntegratorW2Ito::combineDiffusion(size_t globalNoiseIndex,
     }
 }
 
-void
-svStochasticIntegratorW2Ito::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorW2Ito::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

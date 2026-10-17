@@ -119,8 +119,7 @@ TYPED_TEST_SUITE(AdaptiveRungeKuttaAccuracy, AdaptiveMethods, AdaptiveMethodName
  * @param duration Length of the requested integration interval [s].
  */
 template<typename Abscissae>
-void
-expectValidTrials(const std::vector<StageTime>& stages, const Abscissae& stageTimes, double start, double duration)
+void expectValidTrials(const std::vector<StageTime>& stages, const Abscissae& stageTimes, double start, double duration)
 {
     const std::size_t stageCount = stageTimes.size();
     ASSERT_FALSE(stages.empty());

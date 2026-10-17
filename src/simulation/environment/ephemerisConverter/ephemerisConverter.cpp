@@ -29,8 +29,7 @@ EphemerisConverter::~EphemerisConverter() = default;
 /*! Reset the module to origina configuration values.
 
  */
-void
-EphemerisConverter::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
+void EphemerisConverter::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 {
     // check if the spiceInMsgs is empty or not
     if (this->spiceInMsgs.size() == 0) {
@@ -41,8 +40,7 @@ EphemerisConverter::Reset(uint64_t CurrenSimNanos [[maybe_unused]])
 /*!
  add a planet spice input message
  */
-void
-EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* tmpMsg)
+void EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* tmpMsg)
 {
     this->spiceInMsgs.push_back(tmpMsg->addSubscriber());
 
@@ -61,8 +59,7 @@ EphemerisConverter::addSpiceInputMsg(Message<SpicePlanetStateMsgPayload>* tmpMsg
     convert ephemeris data
     @param clockNow
  */
-void
-EphemerisConverter::convertEphemData(uint64_t clockNow [[maybe_unused]])
+void EphemerisConverter::convertEphemData(uint64_t clockNow [[maybe_unused]])
 {
     Eigen::Matrix3d dcm_BN;
     Eigen::MRPd sigma_BN;
@@ -94,8 +91,7 @@ EphemerisConverter::convertEphemData(uint64_t clockNow [[maybe_unused]])
     }
 }
 
-void
-EphemerisConverter::readInputMessages()
+void EphemerisConverter::readInputMessages()
 {
     for (long unsigned int c = 0; c < this->spiceInMsgs.size(); c++) {
         this->spiceInBuffers.at(c) = this->spiceInMsgs.at(c)();
@@ -106,8 +102,7 @@ EphemerisConverter::readInputMessages()
     write output message
     @param CurrentSimNanos time in nano-seconds
  */
-void
-EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
+void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     for (long unsigned int c = 0; c < this->ephemOutMsgs.size(); c++) {
         this->ephemOutMsgs.at(c)->write(&this->ephemOutBuffers.at(c), this->moduleID, CurrentSimNanos);
@@ -118,8 +113,7 @@ EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
     update module states
     @param CurrentSimNanos time in nano-seconds
  */
-void
-EphemerisConverter::UpdateState(uint64_t CurrentSimNanos)
+void EphemerisConverter::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     convertEphemData(CurrentSimNanos);

@@ -26,8 +26,7 @@ given a rotation matrix.
 @param J20002Pfix: [-] 3x3 rotation matrix representing the rotation between PCPF and ECI frames
 @return pcpfPosition: [m] Position vector in PCPF coordinates
 */
-Eigen::Vector3d
-PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3])
+Eigen::Vector3d PCI2PCPF(Eigen::Vector3d pciPosition, double J20002Pfix[3][3])
 {
     // The source DCM is stored in row-major order.
     Eigen::Matrix3d dcm_PN = cArray2EigenMatrix3d(*J20002Pfix);
@@ -46,8 +45,7 @@ planet radius.
   [1] : [rad] longitude across planetary meridian
   [2] : [alt] altitude above planet radius
 */
-Eigen::Vector3d
-PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, double planetPoRad)
+Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, double planetPoRad)
 {
 
     Eigen::Vector3d llaPosition;
@@ -102,8 +100,7 @@ planet radius and rotation matrix.
   [1] : [rad] longitude across planetary meridian
   [2] : [alt] altitude above planet radius
 */
-Eigen::Vector3d
-PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad)
+Eigen::Vector3d PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad)
 {
     Eigen::Vector3d pcpfVec = PCI2PCPF(pciPosition, J20002Pfix);
     Eigen::Vector3d llaVec = PCPF2LLA(pcpfVec, planetEqRad, planetPoRad);
@@ -117,8 +114,7 @@ PCI2LLA(Eigen::Vector3d pciPosition, double J20002Pfix[3][3], double planetEqRad
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return pcpfPosition: [m] Final position in the planet-centered, planet-fixed frame.
 */
-Eigen::Vector3d
-LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double planetPoRad)
+Eigen::Vector3d LLA2PCPF(Eigen::Vector3d llaPosition, double planetEqRad, double planetPoRad)
 {
     Eigen::Vector3d pcpfPosition;
     pcpfPosition.fill(0.0);
@@ -141,8 +137,7 @@ rotation matrix.
 @param J20002Pfix: [-] Rotation between inertial and pcf coordinates.
 @return pciPosition: [m] Final position in the planet-centered inertial frame.
 */
-Eigen::Vector3d
-PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
+Eigen::Vector3d PCPF2PCI(Eigen::Vector3d pcpfPosition, double J20002Pfix[3][3])
 {
     // Transpose the row-major source DCM for the inverse transformation.
     Eigen::Matrix3d dcm_NP = cArray2EigenMatrix3d(*J20002Pfix).transpose();
@@ -162,16 +157,14 @@ planet radius and rotation matrix.
 @param planetPoRad: [m] Planetary polar used for elliptical surfaces if provided, otherwise spherical,
 @return pciPosition : [m] Position in inertial coordinates.
 */
-Eigen::Vector3d
-LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad)
+Eigen::Vector3d LLA2PCI(Eigen::Vector3d llaPosition, double J20002Pfix[3][3], double planetEqRad, double planetPoRad)
 {
     Eigen::Vector3d pcpfPosition = LLA2PCPF(llaPosition, planetEqRad, planetPoRad);
     Eigen::Vector3d pciPosition = PCPF2PCI(pcpfPosition, J20002Pfix);
     return pciPosition;
 }
 
-Eigen::Matrix3d
-C_PCPF2SEZ(double lat, double longitude)
+Eigen::Matrix3d C_PCPF2SEZ(double lat, double longitude)
 {
     double m1[3][3];
     double m2[3][3];

@@ -24,8 +24,7 @@
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void
-SolarFlux::Reset(uint64_t CurrentSimNanos)
+void SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -44,8 +43,7 @@ SolarFlux::Reset(uint64_t CurrentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
 
  */
-void
-SolarFlux::UpdateState(uint64_t CurrentSimNanos)
+void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages(CurrentSimNanos);
 
@@ -70,8 +68,7 @@ SolarFlux::UpdateState(uint64_t CurrentSimNanos)
  that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
-void
-SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
+void SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
@@ -79,8 +76,7 @@ SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
 /*! Returns whether the spacecraft state extrapolation is enabled.
  @return [-] true if the spacecraft state is extrapolated
  */
-bool
-SolarFlux::getExtrapolateScStateToStepMidpoint() const
+bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
@@ -91,8 +87,7 @@ SolarFlux::getExtrapolateScStateToStepMidpoint() const
  @param CurrentSimNanos [ns] current simulation time
 
  */
-void
-SolarFlux::readMessages(uint64_t CurrentSimNanos)
+void SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
@@ -119,8 +114,7 @@ SolarFlux::readMessages(uint64_t CurrentSimNanos)
 /*! This method is used to write the output flux message
 
  */
-void
-SolarFlux::writeMessages(uint64_t CurrentSimNanos)
+void SolarFlux::writeMessages(uint64_t CurrentSimNanos)
 {
     SolarFluxMsgPayload fluxMsgOutData = { this->fluxAtSpacecraft };
     this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, CurrentSimNanos);

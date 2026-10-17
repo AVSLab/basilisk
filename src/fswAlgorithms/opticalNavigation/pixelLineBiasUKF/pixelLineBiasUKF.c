@@ -27,8 +27,7 @@
  @param configData The configuration data associated with the OD filter
  @param moduleId The ID associated with the configData
  */
-void
-SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, int64_t moduleId)
+void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, int64_t moduleId)
 {
     (void)moduleId;
     NavTransMsg_C_init(&configData->navStateOutMsg);
@@ -42,8 +41,7 @@ SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, int64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
  */
-void
-Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, int64_t moduleId)
+void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, int64_t moduleId)
 {
     (void)moduleId;
     // check if the required message has not been connected
@@ -132,8 +130,7 @@ Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
  */
-void
-Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, int64_t moduleId)
+void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, int64_t moduleId)
 {
     double newTimeTag = 0.0; /* [s] Local Time-tag variable*/
     double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
@@ -220,8 +217,7 @@ Update_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTime, i
  @param stateInOut The state that is propagated
  @param dt Time step (s)
  */
-void
-relODStateProp(PixelLineBiasUKFConfig* configData, double* stateInOut, double dt)
+void relODStateProp(PixelLineBiasUKFConfig* configData, double* stateInOut, double dt)
 {
 
     double muPlanet;
@@ -274,8 +270,7 @@ relODStateProp(PixelLineBiasUKFConfig* configData, double* stateInOut, double dt
  @param muPlanet planet gravity constant
  @param stateDeriv derivative of state set
  */
-void
-pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double* stateDeriv)
+void pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, double* stateDeriv)
 {
     double rNorm;
     double dvdt[3];
@@ -294,8 +289,7 @@ pixelLineBiasUKFTwoBodyDyn(double state[PIXLINE_DYN_STATES], double muPlanet, do
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int
-pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig* configData, double updateTime)
+int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig* configData, double updateTime)
 {
     uint64_t i, Index;
     double sBarT[PIXLINE_N_STATES * PIXLINE_N_STATES]; // Sbar transpose (chol decomp of covar)
@@ -406,8 +400,7 @@ pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig* configData, double updateTime
 
  @param configData The configuration data associated with the OD filter
  */
-void
-pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig* configData)
+void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig* configData)
 {
     size_t i, j;
     double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
@@ -491,8 +484,7 @@ pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig* configData)
 
  @param configData The configuration data associated with the OD filter
  */
-int
-pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig* configData)
+int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig* configData)
 {
     uint32_t i;
     double yBar[PIXLINE_N_MEAS], syInv[PIXLINE_N_MEAS * PIXLINE_N_MEAS]; // measurement, Sy inv
@@ -630,8 +622,7 @@ pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig* configData)
 
  @param configData The configuration data associated with the OD filter
  */
-void
-pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig* configData)
+void pixelLineBiasUKFCleanUpdate(PixelLineBiasUKFConfig* configData)
 {
     size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/

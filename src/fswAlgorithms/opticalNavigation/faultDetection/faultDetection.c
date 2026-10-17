@@ -26,8 +26,7 @@
  @param configData The configuration data associated with the model
  @param moduleID The module identification integer
  */
-void
-SelfInit_faultDetection(FaultDetectionData* configData, int64_t moduleID)
+void SelfInit_faultDetection(FaultDetectionData* configData, int64_t moduleID)
 {
     (void)moduleID;
     OpNavMsg_C_init(&configData->opNavOutMsg);
@@ -39,8 +38,7 @@ SelfInit_faultDetection(FaultDetectionData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Reset_faultDetection(FaultDetectionData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_faultDetection(FaultDetectionData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -70,8 +68,7 @@ Reset_faultDetection(FaultDetectionData* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Update_faultDetection(FaultDetectionData* configData, uint64_t callTime, int64_t moduleID)
+void Update_faultDetection(FaultDetectionData* configData, uint64_t callTime, int64_t moduleID)
 {
     OpNavMsgPayload opNavIn1;
     OpNavMsgPayload opNavIn2;

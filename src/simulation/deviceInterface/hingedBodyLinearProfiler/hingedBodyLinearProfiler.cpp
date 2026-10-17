@@ -37,8 +37,7 @@ HingedBodyLinearProfiler::~HingedBodyLinearProfiler() {}
 /*! This method is used to reset the module and checks that required input messages are connected.
 
 */
-void
-HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (this->endTime - this->startTime > 0) {
@@ -52,8 +51,7 @@ HingedBodyLinearProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
    based on the current simulation time relative to the start and stop times for the linear deployment.
 
 */
-void
-HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
+void HingedBodyLinearProfiler::UpdateState(uint64_t CurrentSimNanos)
 {
     double refTheta;
     double refThetaDot;

@@ -30,16 +30,14 @@
  @param configData The configuration data associated with the celestial body guidance
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, int64_t moduleID)
+void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
     return;
 }
 
-void
-Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -65,8 +63,7 @@ Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Parse the input messages */
     parseInputMessages(configData, moduleID);
@@ -83,8 +80,7 @@ Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t c
  @param configData The configuration data associated with the celestial body guidance
  @param moduleID The ID associated with the configData
  */
-void
-parseInputMessages(celestialTwoBodyPointConfig* configData, int64_t moduleID)
+void parseInputMessages(celestialTwoBodyPointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavTransMsgPayload navData;
@@ -136,8 +132,7 @@ parseInputMessages(celestialTwoBodyPointConfig* configData, int64_t moduleID)
  @param configData The configuration data associated with the celestial body guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void
-computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime)
+void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig* configData, uint64_t callTime)
 {
     (void)callTime;
     double temp3[3];       /* Temporary vector */

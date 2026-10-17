@@ -41,8 +41,7 @@ SimpleInstrument::~SimpleInstrument()
 /*! Sets the name and baud rate for the data in the output message.
 
 */
-void
-SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime [[maybe_unused]])
+void SimpleInstrument::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime [[maybe_unused]])
 {
     dataUsageSimMsg->baudRate = this->nodeBaudRate;
     if (std::memchr(this->nodeDataName, '\0', sizeof(this->nodeDataName)) == nullptr) {

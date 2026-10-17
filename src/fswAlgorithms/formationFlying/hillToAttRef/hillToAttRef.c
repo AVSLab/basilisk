@@ -23,8 +23,7 @@
 #include "math.h"
 #include "string.h"
 
-void
-SelfInit_hillToAttRef(HillToAttRefConfig* configData, int64_t moduleID)
+void SelfInit_hillToAttRef(HillToAttRefConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -37,8 +36,7 @@ SelfInit_hillToAttRef(HillToAttRefConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -57,8 +55,7 @@ Reset_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t mo
     return;
 }
 
-AttRefMsgPayload
-RelativeToInertialMRP(HillToAttRefConfig* configData, double relativeAtt[3], double sigma_XN[3])
+AttRefMsgPayload RelativeToInertialMRP(HillToAttRefConfig* configData, double relativeAtt[3], double sigma_XN[3])
 {
     AttRefMsgPayload attRefOut;
     //  Check to see if the relative attitude components exceed specified bounds (by default these are non-physical and
@@ -84,8 +81,7 @@ RelativeToInertialMRP(HillToAttRefConfig* configData, double relativeAtt[3], dou
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_hillToAttRef(HillToAttRefConfig* configData, uint64_t callTime, int64_t moduleID)
 {
 
     HillRelStateMsgPayload hillStateInPayload;

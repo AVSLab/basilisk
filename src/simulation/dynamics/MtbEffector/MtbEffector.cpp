@@ -27,8 +27,7 @@ namespace {
  * @param config Magnetic torque bar configuration payload.
  * @param logger Logger used to report invalid counts.
  */
-void
-validateMtbCount(const MTBArrayConfigMsgPayload& config, BSKLogger& logger)
+void validateMtbCount(const MTBArrayConfigMsgPayload& config, BSKLogger& logger)
 {
     if (config.numMTB < 0 || config.numMTB > MAX_EFF_CNT) {
         logger.bskError("MtbEffector: numMTB must be between 0 and MAX_EFF_CNT (%d).", MAX_EFF_CNT);
@@ -47,8 +46,7 @@ MtbEffector::~MtbEffector() {}
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
 */
-void
-MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 
@@ -63,8 +61,7 @@ MtbEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! Validate required input connections and the count in an already-written configuration. */
-void
-MtbEffector::validateConfiguration()
+void MtbEffector::validateConfiguration()
 {
     /*
      * Check that required input messages are connected.
@@ -87,8 +84,7 @@ MtbEffector::validateConfiguration()
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-MtbEffector::UpdateState(uint64_t CurrentSimNanos)
+void MtbEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     /*
      * Write to the output message.
@@ -102,8 +98,7 @@ MtbEffector::UpdateState(uint64_t CurrentSimNanos)
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-MtbEffector::linkInStates(DynParamManager& states)
+void MtbEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
@@ -120,8 +115,7 @@ MtbEffector::linkInStates(DynParamManager& states)
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void
-MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     /*
      * Create local variables.
@@ -185,8 +179,7 @@ MtbEffector::computeForceTorque(double integTime [[maybe_unused]], double timeSt
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
+void MtbEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     /*
      * Initialize output message buffer.

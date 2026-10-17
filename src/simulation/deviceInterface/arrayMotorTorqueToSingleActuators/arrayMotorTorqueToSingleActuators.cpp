@@ -32,21 +32,18 @@ ArrayMotorTorqueToSingleActuators::ArrayMotorTorqueToSingleActuators(uint32_t nu
     this->ensureSizes();
 }
 
-void
-ArrayMotorTorqueToSingleActuators::setNumActuators(uint32_t numActuatorsIn)
+void ArrayMotorTorqueToSingleActuators::setNumActuators(uint32_t numActuatorsIn)
 {
     this->numActuators = numActuatorsIn;
     this->ensureSizes();
 }
 
-void
-ArrayMotorTorqueToSingleActuators::ensureSizes()
+void ArrayMotorTorqueToSingleActuators::ensureSizes()
 {
     this->actuatorOutMsgs.resize(this->numActuators);
 }
 
-void
-ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
+void ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
 {
     this->ensureSizes();
 
@@ -60,8 +57,7 @@ ArrayMotorTorqueToSingleActuators::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-void
-ArrayMotorTorqueToSingleActuators::UpdateState(uint64_t CurrentSimNanos)
+void ArrayMotorTorqueToSingleActuators::UpdateState(uint64_t CurrentSimNanos)
 {
     ArrayMotorTorqueMsgPayload inPayload = this->torqueInMsg();
     SingleActuatorMsgPayload outPayload = {};

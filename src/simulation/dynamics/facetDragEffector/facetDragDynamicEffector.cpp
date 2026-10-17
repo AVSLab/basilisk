@@ -47,15 +47,13 @@ FacetDragDynamicEffector::~FacetDragDynamicEffector()
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void
-FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! Validate that the required atmospheric density input is connected. */
-void
-FacetDragDynamicEffector::validateConfiguration()
+void FacetDragDynamicEffector::validateConfiguration()
 {
     // check if input message has not been included
     if (!this->atmoDensInMsg.isLinked()) {
@@ -69,8 +67,7 @@ FacetDragDynamicEffector::validateConfiguration()
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
+void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -79,8 +76,7 @@ FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock [[maybe_unus
 and update the internal density/atmospheric data.
 
  */
-bool
-FacetDragDynamicEffector::ReadInputs()
+bool FacetDragDynamicEffector::ReadInputs()
 {
     bool dataGood;
     dataGood = this->atmoDensInMsg.isWritten();
@@ -102,11 +98,10 @@ FacetDragDynamicEffector::ReadInputs()
  * @param[in] B_normal_hat [-] Facet normal expressed in the parent body frame.
  * @param[in] B_location [m] Facet location relative to the parent body-frame origin.
  */
-void
-FacetDragDynamicEffector::addFacet(double area,
-                                   double dragCoeff,
-                                   Eigen::Vector3d B_normal_hat,
-                                   Eigen::Vector3d B_location)
+void FacetDragDynamicEffector::addFacet(double area,
+                                        double dragCoeff,
+                                        Eigen::Vector3d B_normal_hat,
+                                        Eigen::Vector3d B_location)
 {
     this->scGeometry.facetAreas.push_back(area);
     this->scGeometry.facetCoeffs.push_back(dragCoeff);
@@ -121,8 +116,7 @@ which are required for calculating drag forces and torques.
  @param states dynamic parameter states
  */
 
-void
-FacetDragDynamicEffector::linkInStates(DynParamManager& states)
+void FacetDragDynamicEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
@@ -133,8 +127,7 @@ FacetDragDynamicEffector::linkInStates(DynParamManager& states)
 /*! This method is used to link the dragEffector to its parent state effector's properties
  @param properties The parameter manager to collect from
  */
-void
-FacetDragDynamicEffector::linkInProperties(DynParamManager& properties)
+void FacetDragDynamicEffector::linkInProperties(DynParamManager& properties)
 {
     this->validateConfiguration();
 
@@ -145,8 +138,7 @@ FacetDragDynamicEffector::linkInProperties(DynParamManager& properties)
 /*! This method updates the internal drag direction based on the spacecraft velocity vector.
  * It accounts for wind velocity if the wind message is linked.
  */
-void
-FacetDragDynamicEffector::updateDragDir()
+void FacetDragDynamicEffector::updateDragDir()
 {
     Eigen::MRPd sigmaBN;
     Eigen::Vector3d v_BN_N;
@@ -181,8 +173,7 @@ FacetDragDynamicEffector::updateDragDir()
 /*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
 dependence and lift forces.
 */
-void
-FacetDragDynamicEffector::plateDrag()
+void FacetDragDynamicEffector::plateDrag()
 {
     Eigen::Vector3d facetDragForce, facetDragTorque;
     Eigen::Vector3d totalDragForce, totalDragTorque;
@@ -223,8 +214,7 @@ selecting the model type based on the settable attribute "modelType."
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void
-FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void FacetDragDynamicEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     updateDragDir();
     plateDrag();
@@ -236,8 +226,7 @@ Naturally, this means that conditions are held piecewise-constant over an integr
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     ReadInputs();
     return;
@@ -245,8 +234,7 @@ FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /** This method obtains the density from the input data
  */
-double
-FacetDragDynamicEffector::getDensity()
+double FacetDragDynamicEffector::getDensity()
 {
     return this->atmoInData.neutralDensity;
 }

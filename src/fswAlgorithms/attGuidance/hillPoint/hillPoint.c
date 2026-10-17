@@ -33,8 +33,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_hillPoint(hillPointConfig* configData, int64_t moduleID)
+void SelfInit_hillPoint(hillPointConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -46,8 +45,7 @@ SelfInit_hillPoint(hillPointConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -65,8 +63,7 @@ Reset_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleID
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read input message */
     NavTransMsgPayload navData;
@@ -92,13 +89,12 @@ Update_hillPoint(hillPointConfig* configData, uint64_t callTime, int64_t moduleI
     return;
 }
 
-void
-computeHillPointingReference(hillPointConfig* configData,
-                             double r_BN_N[3],
-                             double v_BN_N[3],
-                             double celBdyPositonVector[3],
-                             double celBdyVelocityVector[3],
-                             AttRefMsgPayload* attRefOut)
+void computeHillPointingReference(hillPointConfig* configData,
+                                  double r_BN_N[3],
+                                  double v_BN_N[3],
+                                  double celBdyPositonVector[3],
+                                  double celBdyVelocityVector[3],
+                                  AttRefMsgPayload* attRefOut)
 {
     (void)configData;
 

@@ -48,8 +48,7 @@
 namespace {
 using integrator_step_test::stepIntegrator;
 
-uint64_t
-doubleBits(double value)
+uint64_t doubleBits(double value)
 {
     uint64_t bits = 0;
     std::memcpy(&bits, &value, sizeof(bits));
@@ -813,16 +812,14 @@ class FinalCandidateProbe final : public StochasticRKIntegratorBase
     Eigen::VectorXd thirdSteps;
 };
 
-std::shared_ptr<PrescribedGaussianNoiseGenerator>
-prescribed(std::initializer_list<double> dW)
+std::shared_ptr<PrescribedGaussianNoiseGenerator> prescribed(std::initializer_list<double> dW)
 {
     auto generator = std::make_shared<PrescribedGaussianNoiseGenerator>();
     generator->pushStep(std::vector<double>(dW));
     return generator;
 }
 
-void
-expectTopologyStep(TopologyDynamics& dynamics)
+void expectTopologyStep(TopologyDynamics& dynamics)
 {
     svStochasticIntegratorMayurama integrator(&dynamics);
     integrator.setNoiseGenerator(prescribed({ 2.0, 3.0, 5.0 }));
@@ -1367,8 +1364,7 @@ TEST(FlatStochastic, FailuresAfterEachAcceptanceRestoreEntryState)
 
 namespace {
 template<typename Method>
-StochasticRKIntegratorBase*
-makeLifecycleIntegrator(DynamicObject* object)
+StochasticRKIntegratorBase* makeLifecycleIntegrator(DynamicObject* object)
 {
     return new Method(object);
 }

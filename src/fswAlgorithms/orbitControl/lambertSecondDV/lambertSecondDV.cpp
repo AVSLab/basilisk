@@ -34,8 +34,7 @@ LambertSecondDV::~LambertSecondDV() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSecondDV::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void LambertSecondDV::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->lambertSolutionInMsg.isLinked()) {
@@ -50,8 +49,7 @@ LambertSecondDV::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSecondDV::UpdateState(uint64_t currentSimNanos)
+void LambertSecondDV::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -67,8 +65,7 @@ LambertSecondDV::UpdateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
 
 */
-void
-LambertSecondDV::readMessages()
+void LambertSecondDV::readMessages()
 {
     LambertSolutionMsgPayload lambertSolutionInMsgBuffer = this->lambertSolutionInMsg();
     DesiredVelocityMsgPayload desiredVelocityInMsgBuffer = this->desiredVelocityInMsg();
@@ -94,8 +91,7 @@ LambertSecondDV::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSecondDV::writeMessages(uint64_t currentSimNanos)
+void LambertSecondDV::writeMessages(uint64_t currentSimNanos)
 {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
     dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
@@ -119,8 +115,7 @@ LambertSecondDV::writeMessages(uint64_t currentSimNanos)
     this->dvBurnCmdOutMsg.write(&dvBurnCmdOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-void
-LambertSecondDV::setLambertSolutionSpecifier(const double value)
+void LambertSecondDV::setLambertSolutionSpecifier(const double value)
 {
     this->lambertSolutionSpecifier = value;
 }

@@ -31,8 +31,7 @@
 @param y2 Function value at point x2
 @param x Function x coordinate for interpolation
 */
-double
-linearInterpolation(double x1, double x2, double y1, double y2, double x)
+double linearInterpolation(double x1, double x2, double y1, double y2, double x)
 {
 
     assert(x1 < x && x < x2);

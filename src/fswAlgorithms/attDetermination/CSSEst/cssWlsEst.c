@@ -27,8 +27,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_cssWlsEst(CSSWLSConfig* configData, int64_t moduleID)
+void SelfInit_cssWlsEst(CSSWLSConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -44,8 +43,7 @@ SelfInit_cssWlsEst(CSSWLSConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_cssWlsEst(CSSWLSConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_cssWlsEst(CSSWLSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -89,8 +87,7 @@ Reset_cssWlsEst(CSSWLSConfig* configData, uint64_t callTime, int64_t moduleID)
     @param wlsEst The WLS estimate computed for the CSS measurements
     @param cssResiduals The measurement residuals output by this function
 */
-void
-computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double* wlsEst, double* cssResiduals)
+void computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double* wlsEst, double* cssResiduals)
 {
     double cssDotProd;
 
@@ -116,8 +113,7 @@ computeWlsResiduals(double* cssMeas, CSSConfigMsgPayload* cssConfig, double* wls
  @param y the observation vector for the valid sensors
  @param x The output least squares fit for the observations
  */
-int
-computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3])
+int computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3])
 {
     double m22[2 * 2];
     double m32[3 * 2];
@@ -163,8 +159,7 @@ computeWlsmn(int numActiveCss, double* H, double* W, double* y, double x[3])
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_cssWlsEst(CSSWLSConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_cssWlsEst(CSSWLSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     CSSArraySensorMsgPayload InputBuffer;                /* CSS measurements */
     double H[MAX_NUM_CSS_SENSORS * 3];                   /* The predicted pointing vector for each measurement */

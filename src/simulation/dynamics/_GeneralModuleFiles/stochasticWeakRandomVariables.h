@@ -47,8 +47,7 @@ constexpr double NORMAL_ONESIX_QUANTILE = -0.9674215661017014;
  * \f$\{1/6,\,2/3,\,1/6\}\f$. The scaled increment ``dW/sqrt(h)`` is thresholded
  * against the 1/6 quantile.
  */
-inline double
-threePoint(double dW, double h)
+inline double threePoint(double dW, double h)
 {
     const double sq3h = std::sqrt(3.0 * h);
     const double dWscaled = dW / std::sqrt(h);
@@ -64,8 +63,7 @@ threePoint(double dW, double h)
  * ``dZ > 0`` else \f$-s\f$. Uses a strictly-positive sign convention: a strictly
  * positive increment maps to ``+s`` and zero/negative maps to ``-s``.
  */
-inline double
-twoPoint(double dZ, double scale)
+inline double twoPoint(double dZ, double scale)
 {
     return (dZ > 0.0) ? scale : -scale;
 }

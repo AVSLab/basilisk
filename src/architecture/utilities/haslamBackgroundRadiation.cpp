@@ -28,15 +28,13 @@ HaslamMap::HaslamMap()
 {
 }
 
-HaslamMap&
-HaslamMap::getInstance()
+HaslamMap& HaslamMap::getInstance()
 {
     static HaslamMap instance;
     return instance;
 }
 
-bool
-HaslamMap::initialize()
+bool HaslamMap::initialize()
 {
     if (this->initialized) {
         this->bskLogger.bskLog(BSK_WARNING, "HaslamMap: Sky brightness map already loaded.");
@@ -49,8 +47,7 @@ HaslamMap::initialize()
     return false;
 }
 
-bool
-HaslamMap::loadHaslamMap()
+bool HaslamMap::loadHaslamMap()
 {
     fitsfile* fptr = nullptr;
     int status = 0;
@@ -164,14 +161,12 @@ HaslamMap::loadHaslamMap()
 /*! Method to configure the background temperature data file path
     @param file background temperature data file full path
 */
-void
-HaslamMap::configureBrightnessFile(const std::string& file)
+void HaslamMap::configureBrightnessFile(const std::string& file)
 {
     this->filepath = file;
 }
 
-long
-HaslamMap::ang2pix_ring(double theta, double phi) const
+long HaslamMap::ang2pix_ring(double theta, double phi) const
 {
     // Normalize angles
     while (phi < 0)
@@ -220,8 +215,7 @@ HaslamMap::ang2pix_ring(double theta, double phi) const
     return ipix;
 }
 
-void
-HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const
+void HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const
 {
     long nl2 = 2 * this->nside;
     long nl4 = 4 * this->nside;
@@ -254,8 +248,7 @@ HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const
     }
 }
 
-std::vector<long>
-HaslamMap::query_disc(double theta0, double phi0, double radius) const
+std::vector<long> HaslamMap::query_disc(double theta0, double phi0, double radius) const
 {
     std::vector<long> pixels;
 
@@ -280,8 +273,7 @@ HaslamMap::query_disc(double theta0, double phi0, double radius) const
     return pixels;
 }
 
-double
-HaslamMap::getPixelTemperature(long ipix) const
+double HaslamMap::getPixelTemperature(long ipix) const
 {
     if (ipix < 0 || ipix >= this->npix)
         return 0.0;
@@ -291,15 +283,13 @@ HaslamMap::getPixelTemperature(long ipix) const
     return val;
 }
 
-double
-HaslamMap::scaleToFrequency(double T_408, double targetFreq_Hz) const
+double HaslamMap::scaleToFrequency(double T_408, double targetFreq_Hz) const
 {
     // T_target = T_408 * (targetFreq / 408 MHz)^spectralIndex
     return T_408 * std::pow(targetFreq_Hz / this->f_408, this->spectralIndex);
 }
 
-double
-HaslamMap::getBrightnessTemperature(Eigen::Vector3d n_A_N, double beamRadius) const
+double HaslamMap::getBrightnessTemperature(Eigen::Vector3d n_A_N, double beamRadius) const
 {
     if (!this->initialized) {
         return 0.0;

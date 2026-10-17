@@ -26,8 +26,7 @@ svStochasticIntegratorSRA1::svStochasticIntegratorSRA1(DynamicObject* dyn)
 // Coefficients for the SRA1 tableau. Matrix
 // entries use the plain [stage i][sub-term j] convention of SRACoefficients (note that
 // some reference implementations store the transpose A0' internally; here we write A0 directly).
-SRACoefficients<2>
-svStochasticIntegratorSRA1::getCoefficients()
+SRACoefficients<2> svStochasticIntegratorSRA1::getCoefficients()
 {
     SRACoefficients<2> c;
 

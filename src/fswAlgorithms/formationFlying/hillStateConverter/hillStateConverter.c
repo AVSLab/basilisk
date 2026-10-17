@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_hillStateConverter(HillStateConverterConfig* configData, int64_t moduleID)
+void SelfInit_hillStateConverter(HillStateConverterConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     HillRelStateMsg_C_init(&configData->hillStateOutMsg);
@@ -44,8 +43,7 @@ SelfInit_hillStateConverter(HillStateConverterConfig* configData, int64_t module
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -64,8 +62,7 @@ Reset_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_hillStateConverter(HillStateConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input messages */
     NavTransMsgPayload chiefStateIn;

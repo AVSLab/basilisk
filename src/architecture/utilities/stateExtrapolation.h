@@ -56,8 +56,7 @@ struct PlanetSpin
  * @param dcm_NPfix_dot [1/s] time derivative of dcm_NPfix
  * @return the planet spin, with `isZero` set if the derivative is zero
  */
-static inline PlanetSpin
-planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+static inline PlanetSpin planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
 {
     PlanetSpin spin;
     if (dcm_NPfix_dot.isZero()) {
@@ -81,8 +80,7 @@ planetSpin(const Eigen::Matrix3d& dcm_NPfix, const Eigen::Matrix3d& dcm_NPfix_do
  * @param dt [s] signed time offset to advance the orientation by
  * @return the advanced orientation matrix, or dcm_NPfix if the spin or the offset is zero
  */
-static inline Eigen::Matrix3d
-advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
+static inline Eigen::Matrix3d advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
 {
     if (spin.isZero || dt == 0.0) {
         return dcm_NPfix;
@@ -111,8 +109,9 @@ advanceDcm(const Eigen::Matrix3d& dcm_NPfix, const PlanetSpin& spin, double dt)
  * @param dcm_NPfix_dot [1/s] time derivative before the advance, returned if the spin is zero
  * @return [1/s] the derivative at the advanced epoch
  */
-static inline Eigen::Matrix3d
-advanceDcmDot(const PlanetSpin& spin, const Eigen::Matrix3d& dcmAdvanced_NPfix, const Eigen::Matrix3d& dcm_NPfix_dot)
+static inline Eigen::Matrix3d advanceDcmDot(const PlanetSpin& spin,
+                                            const Eigen::Matrix3d& dcmAdvanced_NPfix,
+                                            const Eigen::Matrix3d& dcm_NPfix_dot)
 {
     if (spin.isZero) {
         return dcm_NPfix_dot;
@@ -133,8 +132,7 @@ advanceDcmDot(const PlanetSpin& spin, const Eigen::Matrix3d& dcmAdvanced_NPfix, 
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return true if the message is older than the current time and was written at the previous module update
  */
-static inline bool
-isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
+static inline bool isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t previousUpdateNanos)
 {
     return timeWrittenNanos < currentSimNanos && timeWrittenNanos == previousUpdateNanos;
 }
@@ -162,11 +160,10 @@ isStepLagMessage(uint64_t currentSimNanos, uint64_t timeWrittenNanos, uint64_t p
  * @param previousUpdateNanos [ns] time of the previous update of the calling environment module
  * @return copy of the payload with `r_BN_N` and `r_CN_N` advanced by `v * 0.5 * (currentSimNanos - timeWrittenNanos)`
  */
-static inline SCStatesMsgPayload
-extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
-                                 uint64_t currentSimNanos,
-                                 uint64_t timeWrittenNanos,
-                                 uint64_t previousUpdateNanos)
+static inline SCStatesMsgPayload extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
+                                                                  uint64_t currentSimNanos,
+                                                                  uint64_t timeWrittenNanos,
+                                                                  uint64_t previousUpdateNanos)
 {
     SCStatesMsgPayload extrapolated = scState;
     if (!isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos)) {
@@ -197,10 +194,9 @@ extrapolateScStateToStepMidpoint(const SCStatesMsgPayload& scState,
  * the target epoch, with no check on the age of the message. A message written once with a non-zero velocity is
  * projected forward over the whole simulation.
  */
-static inline SpicePlanetStateMsgPayload
-extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
-                              uint64_t targetNanos,
-                              uint64_t timeWrittenNanos)
+static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const SpicePlanetStateMsgPayload& planetState,
+                                                                       uint64_t targetNanos,
+                                                                       uint64_t timeWrittenNanos)
 {
     SpicePlanetStateMsgPayload extrapolated = planetState;
     const double dt = diffNanoToSec(targetNanos, timeWrittenNanos); // [s]

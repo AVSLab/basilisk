@@ -52,8 +52,7 @@ LimbFinding::~LimbFinding()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-LimbFinding::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void LimbFinding::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that the required message has not been connected
     if (!this->imageInMsg.isLinked()) {
@@ -66,8 +65,7 @@ LimbFinding::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-LimbFinding::UpdateState(uint64_t CurrentSimNanos)
+void LimbFinding::UpdateState(uint64_t CurrentSimNanos)
 {
     std::string dirName;
     CameraImageMsgPayload imageBuffer;

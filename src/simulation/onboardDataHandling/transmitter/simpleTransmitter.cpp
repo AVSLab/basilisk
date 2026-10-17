@@ -44,15 +44,13 @@ SimpleTransmitter::~SimpleTransmitter()
 
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
-void
-SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
+void SimpleTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
     return;
 }
 
-bool
-SimpleTransmitter::customReadMessages()
+bool SimpleTransmitter::customReadMessages()
 {
 
     DataStorageStatusMsgPayload nodeMsg;
@@ -81,8 +79,7 @@ SimpleTransmitter::customReadMessages()
 
 /*! Loads the nodeDataOut attribute into the dataUsageSimMessage instance.
  */
-void
-SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
+void SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
 {
 
     this->currentTimestep = currentTime - this->previousTime;
@@ -134,8 +131,7 @@ SimpleTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, d
     return;
 }
 
-int
-SimpleTransmitter::getMaxIndex()
+int SimpleTransmitter::getMaxIndex()
 {
     //! - Loop through storedData, select index w/ largest amt
     double maxVal = -1.0;

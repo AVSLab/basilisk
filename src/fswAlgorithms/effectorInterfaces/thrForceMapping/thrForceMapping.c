@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_thrForceMapping(thrForceMappingConfig* configData, int64_t moduleID)
+void SelfInit_thrForceMapping(thrForceMappingConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayCmdForceMsg_C_init(&configData->thrForceCmdOutMsg);
@@ -45,8 +44,7 @@ SelfInit_thrForceMapping(thrForceMappingConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -106,8 +104,7 @@ Reset_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int6
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t counterPosForces;   /* []      counter for number of positive thruster forces */
     double F[MAX_EFF_CNT];       /* [N]     vector of commanded thruster forces */
@@ -247,8 +244,7 @@ Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime, int
  will become zero, while other forces increase.  This assumes that the thrusters are aligned such that if all
  thrusters are firing, then no torque or force is applied.  This ensures only positive force values are computed.
  */
-void
-substractMin(double* F, uint32_t size)
+void substractMin(double* F, uint32_t size)
 {
     uint32_t i;
     double minValue = 0.0;
@@ -267,12 +263,11 @@ substractMin(double* F, uint32_t size)
  Use a least square inverse to determine the smallest set of thruster forces that yield the desired torque vector.  Note
  that this routine does not constrain yet the forces to be either positive or negative
  */
-void
-findMinimumNormForce(thrForceMappingConfig* configData,
-                     double D[3][MAX_EFF_CNT],
-                     double Lr_B_Bar[3],
-                     uint32_t numForces,
-                     double F[MAX_EFF_CNT])
+void findMinimumNormForce(thrForceMappingConfig* configData,
+                          double D[3][MAX_EFF_CNT],
+                          double Lr_B_Bar[3],
+                          uint32_t numForces,
+                          double F[MAX_EFF_CNT])
 {
 
     uint32_t i, j, k;          /* []     counters */
@@ -320,13 +315,12 @@ findMinimumNormForce(thrForceMappingConfig* configData,
 /*!
  Determine the angle between the desired torque vector and the actual torque vector.
  */
-double
-computeTorqueAngErr(double D[3][MAX_EFF_CNT],
-                    double BLr_B[3],
-                    uint32_t numForces,
-                    double epsilon,
-                    double F[MAX_EFF_CNT],
-                    double FMag[MAX_EFF_CNT])
+double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
+                           double BLr_B[3],
+                           uint32_t numForces,
+                           double epsilon,
+                           double F[MAX_EFF_CNT],
+                           double FMag[MAX_EFF_CNT])
 {
     double returnAngle = 0.0; /* [rad]  angle between requested and actual torque vector */
     /*! - make sure a control torque is requested, otherwise just return a zero angle error */

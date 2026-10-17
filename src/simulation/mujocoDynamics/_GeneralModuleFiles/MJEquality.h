@@ -35,8 +35,7 @@ class MJSpec;
  * @return A string view representing the equality constraint type.
  */
 template<>
-constexpr std::string_view
-MJBasilisk::detail::getObjectTypeName<mjsEquality>()
+constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsEquality>()
 {
     return "equality";
 }

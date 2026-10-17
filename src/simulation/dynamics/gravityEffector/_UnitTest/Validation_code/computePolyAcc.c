@@ -11,8 +11,7 @@
 #include <stdlib.h>
 
 /* The function that computes a dot product of two 3D vector */
-double
-dotProduct(double* a, double* b)
+double dotProduct(double* a, double* b)
 {
     /* Assign variable to dot product output */
     double c;
@@ -25,8 +24,7 @@ dotProduct(double* a, double* b)
 }
 
 /* The function that computes a cross product of two 3D vectors */
-void
-crossProduct(double* c, double* a, double* b)
+void crossProduct(double* c, double* a, double* b)
 {
     /* Compute cross product for each component */
     c[0] = a[1] * b[2] - a[2] * b[1];
@@ -35,8 +33,7 @@ crossProduct(double* c, double* a, double* b)
 }
 
 /* The function that computes a 3D vector norm L2 */
-double
-normVector(double* a)
+double normVector(double* a)
 {
     /* Declare variable to loop through its 3 components */
     int i_3D;
@@ -58,8 +55,7 @@ normVector(double* a)
 }
 
 /* The function that computes the min between two integer numbers */
-int
-intmin(int a, int b)
+int intmin(int a, int b)
 {
     /* Define output number */
     int c;
@@ -78,8 +74,7 @@ intmin(int a, int b)
 }
 
 /* The function that computes the dyad product between two 3D vectors */
-void
-dyadProduct(double c[3][3], double* a, double* b)
+void dyadProduct(double c[3][3], double* a, double* b)
 {
     /* Declare auxiliary variables to loop */
     int i, j;
@@ -95,8 +90,7 @@ dyadProduct(double c[3][3], double* a, double* b)
 
 /* The function that computes a product between a 3D matrix and vector and
  multiplies the result with a desired scalar if neccesary*/
-void
-matrixvectorProduct(double* c, double a[3][3], double* b, double factor, int flag)
+void matrixvectorProduct(double* c, double a[3][3], double* b, double factor, int flag)
 {
     /* Define for loops auxiliary variable */
     int i, j;
@@ -134,8 +128,7 @@ matrixvectorProduct(double* c, double a[3][3], double* b, double factor, int fla
 }
 
 /* The gateway function */
-void
-mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
+void mexFunction(int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 {
 /* Macros for the input arguments */
 #define r_IN prhs[0]

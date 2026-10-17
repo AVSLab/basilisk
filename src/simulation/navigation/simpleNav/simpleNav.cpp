@@ -60,8 +60,7 @@ SimpleNav::~SimpleNav()
      - Accumulated DV errors [15-17]
 
  */
-void
-SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -90,8 +89,7 @@ SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This method reads the input messages associated with the vehicle state and
  the sun state
  */
-void
-SimpleNav::readInputMessages()
+void SimpleNav::readInputMessages()
 {
     this->inertialState = this->scStateInMsg();
 
@@ -105,8 +103,7 @@ SimpleNav::readInputMessages()
 
  @param Clock The clock time associated with the model call
  */
-void
-SimpleNav::writeOutputMessages(uint64_t Clock)
+void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     /* time tage the output message */
     this->estAttState.timeTag = (double)Clock * NANO2SEC;
@@ -116,8 +113,7 @@ SimpleNav::writeOutputMessages(uint64_t Clock)
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
 }
 
-void
-SimpleNav::applyErrors()
+void SimpleNav::applyErrors()
 {
     //! - Add errors to the simple cases (everything except sun-pointing)
     v3Add(this->trueTransState.r_BN_N, &(this->navErrors.data()[0]), this->estTransState.r_BN_N);
@@ -140,8 +136,7 @@ SimpleNav::applyErrors()
 
     @param Clock The clock time associated with the model's update call
 */
-void
-SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
+void SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
 {
     //! - Set output state to truth data
     v3Copy(this->inertialState.r_BN_N, this->trueTransState.r_BN_N);
@@ -168,8 +163,7 @@ SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void
-SimpleNav::computeErrors(uint64_t CurrentSimNanos)
+void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
     StateMatrix localProp = this->AMatrix;
@@ -202,8 +196,7 @@ SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void
-SimpleNav::UpdateState(uint64_t CurrentSimNanos)
+void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeTrueOutput(CurrentSimNanos);

@@ -39,8 +39,7 @@ thread_local std::uint32_t trackingDepth = 0;
 thread_local std::uint32_t suspensionDepth = 0;
 thread_local std::uint32_t cppAllocationDepth = 0;
 
-std::size_t
-apiIndex(integrator_allocation_test::AllocationApi api) noexcept
+std::size_t apiIndex(integrator_allocation_test::AllocationApi api) noexcept
 {
     return static_cast<std::size_t>(api);
 }
@@ -53,8 +52,7 @@ class ScopedCppAllocation
     ~ScopedCppAllocation() { integrator_allocation_test::detail::leaveCppAllocation(); }
 };
 
-void*
-allocateWithAlignment(std::size_t size, std::size_t alignment)
+void* allocateWithAlignment(std::size_t size, std::size_t alignment)
 {
     void* memory = nullptr;
 #if defined(_WIN32)
@@ -69,8 +67,7 @@ allocateWithAlignment(std::size_t size, std::size_t alignment)
     return memory;
 }
 
-void
-freeAligned(void* memory) noexcept
+void freeAligned(void* memory) noexcept
 {
 #if defined(_WIN32)
     _aligned_free(memory);
@@ -87,36 +84,31 @@ freeAligned(void* memory) noexcept
 
 namespace integrator_allocation_test {
 
-std::uint64_t
-AllocationSnapshot::allocationCalls() const noexcept
+std::uint64_t AllocationSnapshot::allocationCalls() const noexcept
 {
     return (*this)[AllocationApi::CppNew] + (*this)[AllocationApi::CppAlignedNew] + (*this)[AllocationApi::Malloc] +
            (*this)[AllocationApi::Calloc] + (*this)[AllocationApi::Realloc] + (*this)[AllocationApi::AlignedAlloc] +
            (*this)[AllocationApi::PosixMemalign] + (*this)[AllocationApi::Memalign];
 }
 
-std::uint64_t
-AllocationSnapshot::deallocationCalls() const noexcept
+std::uint64_t AllocationSnapshot::deallocationCalls() const noexcept
 {
     return (*this)[AllocationApi::CppDelete] + (*this)[AllocationApi::CppAlignedDelete] + (*this)[AllocationApi::Free];
 }
 
-std::uint64_t
-AllocationSnapshot::totalCalls() const noexcept
+std::uint64_t AllocationSnapshot::totalCalls() const noexcept
 {
     return this->allocationCalls() + this->deallocationCalls();
 }
 
-void
-resetAllocationCounts() noexcept
+void resetAllocationCounts() noexcept
 {
     for (auto& count : callCounts) {
         count.store(0, std::memory_order_relaxed);
     }
 }
 
-AllocationSnapshot
-allocationSnapshot() noexcept
+AllocationSnapshot allocationSnapshot() noexcept
 {
     AllocationSnapshot snapshot;
     for (std::size_t index = 0; index < apiCount; ++index) {
@@ -125,8 +117,7 @@ allocationSnapshot() noexcept
     return snapshot;
 }
 
-bool
-cAllocatorInterceptionAvailable() noexcept
+bool cAllocatorInterceptionAvailable() noexcept
 {
 #if defined(__APPLE__) || defined(BASILISK_TEST_LINKER_WRAP_ALLOCATORS)
     return true;
@@ -135,14 +126,12 @@ cAllocatorInterceptionAvailable() noexcept
 #endif
 }
 
-bool
-alignedAllocatorInterceptionAvailable() noexcept
+bool alignedAllocatorInterceptionAvailable() noexcept
 {
     return cAllocatorInterceptionAvailable();
 }
 
-const char*
-allocatorInterceptionDescription() noexcept
+const char* allocatorInterceptionDescription() noexcept
 {
 #if defined(__APPLE__)
     return "macOS dyld interposition with malloc-zone forwarding";
@@ -176,28 +165,24 @@ ScopedAllocationSuspension::~ScopedAllocationSuspension()
 }
 
 namespace detail {
-void
-recordAllocationCall(AllocationApi api) noexcept
+void recordAllocationCall(AllocationApi api) noexcept
 {
     if (allocationTrackingActive()) {
         callCounts[apiIndex(api)].fetch_add(1, std::memory_order_relaxed);
     }
 }
 
-bool
-allocationTrackingActive() noexcept
+bool allocationTrackingActive() noexcept
 {
     return trackingDepth != 0 && suspensionDepth == 0 && cppAllocationDepth == 0;
 }
 
-void
-enterCppAllocation() noexcept
+void enterCppAllocation() noexcept
 {
     ++cppAllocationDepth;
 }
 
-void
-leaveCppAllocation() noexcept
+void leaveCppAllocation() noexcept
 {
     --cppAllocationDepth;
 }
@@ -205,8 +190,7 @@ leaveCppAllocation() noexcept
 
 } // namespace integrator_allocation_test
 
-void*
-operator new(std::size_t size)
+void* operator new(std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::CppNew);
     ScopedCppAllocation guard;
@@ -216,40 +200,34 @@ operator new(std::size_t size)
     throw std::bad_alloc();
 }
 
-void*
-operator new[](std::size_t size)
+void* operator new[](std::size_t size)
 {
     return ::operator new(size);
 }
 
-void
-operator delete(void* memory) noexcept
+void operator delete(void* memory) noexcept
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::CppDelete);
     ScopedCppAllocation guard;
     std::free(memory);
 }
 
-void
-operator delete[](void* memory) noexcept
+void operator delete[](void* memory) noexcept
 {
     ::operator delete(memory);
 }
 
-void
-operator delete(void* memory, std::size_t) noexcept
+void operator delete(void* memory, std::size_t) noexcept
 {
     ::operator delete(memory);
 }
 
-void
-operator delete[](void* memory, std::size_t) noexcept
+void operator delete[](void* memory, std::size_t) noexcept
 {
     ::operator delete(memory);
 }
 
-void*
-operator new(std::size_t size, const std::nothrow_t&) noexcept
+void* operator new(std::size_t size, const std::nothrow_t&) noexcept
 {
     try {
         return ::operator new(size);
@@ -258,27 +236,23 @@ operator new(std::size_t size, const std::nothrow_t&) noexcept
     }
 }
 
-void*
-operator new[](std::size_t size, const std::nothrow_t& tag) noexcept
+void* operator new[](std::size_t size, const std::nothrow_t& tag) noexcept
 {
     return ::operator new(size, tag);
 }
 
-void
-operator delete(void* memory, const std::nothrow_t&) noexcept
+void operator delete(void* memory, const std::nothrow_t&) noexcept
 {
     ::operator delete(memory);
 }
 
-void
-operator delete[](void* memory, const std::nothrow_t&) noexcept
+void operator delete[](void* memory, const std::nothrow_t&) noexcept
 {
     ::operator delete(memory);
 }
 
 #if defined(__cpp_aligned_new)
-void*
-operator new(std::size_t size, std::align_val_t alignment)
+void* operator new(std::size_t size, std::align_val_t alignment)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::CppAlignedNew);
     ScopedCppAllocation guard;
@@ -288,14 +262,12 @@ operator new(std::size_t size, std::align_val_t alignment)
     throw std::bad_alloc();
 }
 
-void*
-operator new[](std::size_t size, std::align_val_t alignment)
+void* operator new[](std::size_t size, std::align_val_t alignment)
 {
     return ::operator new(size, alignment);
 }
 
-void
-operator delete(void* memory, std::align_val_t) noexcept
+void operator delete(void* memory, std::align_val_t) noexcept
 {
     integrator_allocation_test::detail::recordAllocationCall(
       integrator_allocation_test::AllocationApi::CppAlignedDelete);
@@ -303,26 +275,22 @@ operator delete(void* memory, std::align_val_t) noexcept
     freeAligned(memory);
 }
 
-void
-operator delete[](void* memory, std::align_val_t alignment) noexcept
+void operator delete[](void* memory, std::align_val_t alignment) noexcept
 {
     ::operator delete(memory, alignment);
 }
 
-void
-operator delete(void* memory, std::size_t, std::align_val_t alignment) noexcept
+void operator delete(void* memory, std::size_t, std::align_val_t alignment) noexcept
 {
     ::operator delete(memory, alignment);
 }
 
-void
-operator delete[](void* memory, std::size_t, std::align_val_t alignment) noexcept
+void operator delete[](void* memory, std::size_t, std::align_val_t alignment) noexcept
 {
     ::operator delete(memory, alignment);
 }
 
-void*
-operator new(std::size_t size, std::align_val_t alignment, const std::nothrow_t&) noexcept
+void* operator new(std::size_t size, std::align_val_t alignment, const std::nothrow_t&) noexcept
 {
     try {
         return ::operator new(size, alignment);
@@ -331,50 +299,43 @@ operator new(std::size_t size, std::align_val_t alignment, const std::nothrow_t&
     }
 }
 
-void*
-operator new[](std::size_t size, std::align_val_t alignment, const std::nothrow_t& tag) noexcept
+void* operator new[](std::size_t size, std::align_val_t alignment, const std::nothrow_t& tag) noexcept
 {
     return ::operator new(size, alignment, tag);
 }
 
-void
-operator delete(void* memory, std::align_val_t alignment, const std::nothrow_t&) noexcept
+void operator delete(void* memory, std::align_val_t alignment, const std::nothrow_t&) noexcept
 {
     ::operator delete(memory, alignment);
 }
 
-void
-operator delete[](void* memory, std::align_val_t alignment, const std::nothrow_t&) noexcept
+void operator delete[](void* memory, std::align_val_t alignment, const std::nothrow_t&) noexcept
 {
     ::operator delete(memory, alignment);
 }
 #endif
 
 #if defined(__APPLE__)
-extern "C" void*
-basilisk_test_malloc(std::size_t size)
+extern "C" void* basilisk_test_malloc(std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Malloc);
     return malloc_zone_malloc(malloc_default_zone(), size);
 }
 
-extern "C" void*
-basilisk_test_calloc(std::size_t count, std::size_t size)
+extern "C" void* basilisk_test_calloc(std::size_t count, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Calloc);
     return malloc_zone_calloc(malloc_default_zone(), count, size);
 }
 
-extern "C" void*
-basilisk_test_realloc(void* memory, std::size_t size)
+extern "C" void* basilisk_test_realloc(void* memory, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Realloc);
     malloc_zone_t* zone = memory == nullptr ? malloc_default_zone() : malloc_zone_from_ptr(memory);
     return malloc_zone_realloc(zone == nullptr ? malloc_default_zone() : zone, memory, size);
 }
 
-extern "C" void
-basilisk_test_free(void* memory)
+extern "C" void basilisk_test_free(void* memory)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Free);
     if (memory != nullptr) {
@@ -383,8 +344,7 @@ basilisk_test_free(void* memory)
     }
 }
 
-extern "C" void*
-basilisk_test_aligned_alloc(std::size_t alignment, std::size_t size)
+extern "C" void* basilisk_test_aligned_alloc(std::size_t alignment, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::AlignedAlloc);
     if (alignment == 0 || size % alignment != 0) {
@@ -394,8 +354,7 @@ basilisk_test_aligned_alloc(std::size_t alignment, std::size_t size)
     return malloc_zone_memalign(malloc_default_zone(), alignment, size);
 }
 
-extern "C" int
-basilisk_test_posix_memalign(void** result, std::size_t alignment, std::size_t size)
+extern "C" int basilisk_test_posix_memalign(void** result, std::size_t alignment, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::PosixMemalign);
     if (result == nullptr || alignment < sizeof(void*) || (alignment & (alignment - 1)) != 0) {
@@ -433,50 +392,43 @@ extern "C"
     void* __real_memalign(std::size_t, std::size_t);
 }
 
-extern "C" void*
-__wrap_malloc(std::size_t size)
+extern "C" void* __wrap_malloc(std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Malloc);
     return __real_malloc(size);
 }
 
-extern "C" void*
-__wrap_calloc(std::size_t count, std::size_t size)
+extern "C" void* __wrap_calloc(std::size_t count, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Calloc);
     return __real_calloc(count, size);
 }
 
-extern "C" void*
-__wrap_realloc(void* memory, std::size_t size)
+extern "C" void* __wrap_realloc(void* memory, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Realloc);
     return __real_realloc(memory, size);
 }
 
-extern "C" void
-__wrap_free(void* memory)
+extern "C" void __wrap_free(void* memory)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Free);
     __real_free(memory);
 }
 
-extern "C" void*
-__wrap_aligned_alloc(std::size_t alignment, std::size_t size)
+extern "C" void* __wrap_aligned_alloc(std::size_t alignment, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::AlignedAlloc);
     return __real_aligned_alloc(alignment, size);
 }
 
-extern "C" int
-__wrap_posix_memalign(void** result, std::size_t alignment, std::size_t size)
+extern "C" int __wrap_posix_memalign(void** result, std::size_t alignment, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::PosixMemalign);
     return __real_posix_memalign(result, alignment, size);
 }
 
-extern "C" void*
-__wrap_memalign(std::size_t alignment, std::size_t size)
+extern "C" void* __wrap_memalign(std::size_t alignment, std::size_t size)
 {
     integrator_allocation_test::detail::recordAllocationCall(integrator_allocation_test::AllocationApi::Memalign);
     return __real_memalign(alignment, size);
