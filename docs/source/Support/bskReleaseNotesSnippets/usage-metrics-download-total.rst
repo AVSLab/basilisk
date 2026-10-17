@@ -1,0 +1,1 @@
+- Updated :ref:`usageMetrics` with a daily updated total and trend plot of recorded requests for known BSK ``.whl`` files from all clients except identified mirrors, including coverage dates and counting limitations.
