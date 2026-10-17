@@ -28,26 +28,28 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
-    NavTransMsg_C chiefTransInMsg;      //!< chief orbit input message
-    NavTransMsg_C deputyTransInMsg;     //!< deputy orbit input message
-    CmdForceInertialMsg_C forceOutMsg;  //!< deputy control force output message
+typedef struct
+{
+    NavTransMsg_C chiefTransInMsg;     //!< chief orbit input message
+    NavTransMsg_C deputyTransInMsg;    //!< deputy orbit input message
+    CmdForceInertialMsg_C forceOutMsg; //!< deputy control force output message
 
     double K[36];               //!< Lyapunov Gain (6*6)
-    double targetDiffOeMean[6];   //!< target mean orbital element difference
-    uint8_t oeType;            //!< 0: classic (default), 1: equinoctial
+    double targetDiffOeMean[6]; //!< target mean orbital element difference
+    uint8_t oeType;             //!< 0: classic (default), 1: equinoctial
     double mu;                  //!< [m^3/s^2] gravitational constant
     double req;                 //!< [m] equatorial planet radius
     double J2;                  //!< [] J2 planet oblateness parameter
-    BSKLogger *bskLogger;       //!< BSK Logging
+    BSKLogger* bskLogger;       //!< BSK Logging
 } meanOEFeedbackConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-void SelfInit_meanOEFeedback(meanOEFeedbackConfig *configData, int64_t moduleID);
-void Update_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
-void Reset_meanOEFeedback(meanOEFeedbackConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_meanOEFeedback(meanOEFeedbackConfig* configData, int64_t moduleID);
+    void Update_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID);
+    void Reset_meanOEFeedback(meanOEFeedbackConfig* configData, uint64_t callTime, int64_t moduleID);
 #ifdef __cplusplus
 }
 #endif

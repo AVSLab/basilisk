@@ -17,75 +17,73 @@
 
  */
 
-
 #ifndef FACET_DRAG_DYNAMIC_EFFECTOR_H
 #define FACET_DRAG_DYNAMIC_EFFECTOR_H
 
+#include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
 #include <Eigen/Dense>
 #include <cstdint>
 #include <vector>
-#include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "architecture/_GeneralModuleFiles/sys_model.h"
 
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/AtmoPropsMsgPayload.h"
 #include "architecture/msgPayloadDefC/WindMsgPayload.h"
-#include "architecture/messaging/messaging.h"
 
-#include "architecture/utilities/rigidBodyKinematics.h"
 #include "architecture/utilities/bskLogging.h"
-
-
-
-
+#include "architecture/utilities/rigidBodyKinematics.h"
 
 /*! @brief spacecraft geometry data */
-typedef struct {
-  std::vector<double> facetAreas;                   //!< vector of facet areas
-  std::vector<double> facetCoeffs;                  //!< vector of facet coefficients
-  std::vector<Eigen::Vector3d> facetNormals_B;      //!< vector of facet normals
-  std::vector<Eigen::Vector3d> facetLocations_B;    //!< vector of facet locations
-}SpacecraftGeometryData;
-
+typedef struct
+{
+    std::vector<double> facetAreas;                //!< vector of facet areas
+    std::vector<double> facetCoeffs;               //!< vector of facet coefficients
+    std::vector<Eigen::Vector3d> facetNormals_B;   //!< vector of facet normals
+    std::vector<Eigen::Vector3d> facetLocations_B; //!< vector of facet locations
+} SpacecraftGeometryData;
 
 /*! @brief faceted atmospheric drag dynamic effector */
-class FacetDragDynamicEffector final: public SysModel, public DynamicEffector {
-public:
-
-
+class FacetDragDynamicEffector final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     FacetDragDynamicEffector();
     ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states) override;
     void linkInProperties(DynParamManager& properties) override;
     void computeForceTorque(double integTime, double timeStep) override;
-    void Reset(uint64_t CurrentSimNanos) override;  //!< class method
+    void Reset(uint64_t CurrentSimNanos) override; //!< class method
     void UpdateState(uint64_t CurrentSimNanos) override;
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
-private:
+  private:
     void validateConfiguration();
     void plateDrag();
     void updateDragDir();
     double getDensity();
-public:
+
+  public:
     uint64_t numFacets;                             //!< number of facets
     ReadFunctor<AtmoPropsMsgPayload> atmoDensInMsg; //!< atmospheric density input message
     ReadFunctor<WindMsgPayload> windVelInMsg;       //!< wind velocity input message
-    StateData *hubSigma = nullptr;                  //!< Hub/Inertial attitude represented by MRP
-    StateData *hubVelocity = nullptr;               //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                            //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is linked, else relative to inertial frame N)
-    Eigen::Vector3d v_hat_B;                        //!< Drag force direction in the body frame
-    BSKLogger bskLogger;                            //!< BSK Logging
+    StateData* hubSigma = nullptr;                  //!< Hub/Inertial attitude represented by MRP
+    StateData* hubVelocity = nullptr;               //!< m/s Hub inertial velocity vector
+    Eigen::Vector3d v_B;     //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is
+                             //!< linked, else relative to inertial frame N)
+    Eigen::Vector3d v_hat_B; //!< Drag force direction in the body frame
+    BSKLogger bskLogger;     //!< BSK Logging
 
-private:
+  private:
     AtmoPropsMsgPayload atmoInData;
     WindMsgPayload windInData;
-    SpacecraftGeometryData scGeometry;              //!< Struct to hold spacecraft facet data
+    SpacecraftGeometryData scGeometry; //!< Struct to hold spacecraft facet data
 
-    Eigen::MatrixXd *inertialVelocityProperty = nullptr;  //!< m/s parent frame origin inertial velocity
-    Eigen::MatrixXd *inertialAttitudeProperty = nullptr;  //!< parent frame attitude relative to the inertial frame
+    Eigen::MatrixXd* inertialVelocityProperty = nullptr; //!< m/s parent frame origin inertial velocity
+    Eigen::MatrixXd* inertialAttitudeProperty = nullptr; //!< parent frame attitude relative to the inertial frame
 };
 
 #endif

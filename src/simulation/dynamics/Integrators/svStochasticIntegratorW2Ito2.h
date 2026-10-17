@@ -36,10 +36,11 @@
  *
  * @warning Stochastic integration is in beta.
  */
-class svStochasticIntegratorW2Ito2 : public svStochasticIntegratorW2Ito {
-public:
+class svStochasticIntegratorW2Ito2 : public svStochasticIntegratorW2Ito
+{
+  public:
     svStochasticIntegratorW2Ito2(DynamicObject* dyn); //!< Constructor
-private:
+  private:
     static W2ItoCoefficients getCoefficients();
 };
 

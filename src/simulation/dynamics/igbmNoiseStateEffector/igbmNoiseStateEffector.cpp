@@ -18,8 +18,8 @@
  */
 #include "igbmNoiseStateEffector.h"
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 uint64_t IgbmNoiseStateEffector::effectorID = 1;
 
@@ -31,12 +31,12 @@ IgbmNoiseStateEffector::IgbmNoiseStateEffector()
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
-    this->nameOfState = "igbmNoiseState"
-                        + std::to_string(IgbmNoiseStateEffector::effectorID);
+    this->nameOfState = "igbmNoiseState" + std::to_string(IgbmNoiseStateEffector::effectorID);
     IgbmNoiseStateEffector::effectorID++;
 }
 
-void IgbmNoiseStateEffector::setMean(double mean)
+void
+IgbmNoiseStateEffector::setMean(double mean)
 {
     if (!std::isfinite(mean) || mean <= 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setMean requires finite mean > 0.");
@@ -44,7 +44,8 @@ void IgbmNoiseStateEffector::setMean(double mean)
     this->mean = mean;
 }
 
-void IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
+void
+IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
@@ -52,7 +53,8 @@ void IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
     this->sigmaStationary = sigmaStationary;
 }
 
-void IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
+void
+IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (!std::isfinite(timeConstant) || timeConstant <= 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setTimeConstant requires finite timeConstant > 0.");
@@ -60,7 +62,8 @@ void IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
     this->timeConstant = timeConstant;
 }
 
-double IgbmNoiseStateEffector::getStateValue() const
+double
+IgbmNoiseStateEffector::getStateValue() const
 {
     if (this->state == nullptr) {
         return this->stateInitSet ? this->stateInit : this->mean - 1.0;
@@ -68,7 +71,8 @@ double IgbmNoiseStateEffector::getStateValue() const
     return this->state->stateView()(0, 0);
 }
 
-void IgbmNoiseStateEffector::setStateValue(double val)
+void
+IgbmNoiseStateEffector::setStateValue(double val)
 {
     // The state is the correction delta; the process is only well-posed from a positive
     // initial factor 1 + delta, so reject an initial condition that is zero or below.
@@ -87,7 +91,8 @@ void IgbmNoiseStateEffector::setStateValue(double val)
     }
 }
 
-void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
+void
+IgbmNoiseStateEffector::registerStates(DynParamManager& states)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -104,14 +109,16 @@ void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
     this->state->setState(state);
 }
 
-void IgbmNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
+void
+IgbmNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
 {
 }
 
-void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                                Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                                Eigen::MRPd sigma_BN [[maybe_unused]])
+void
+IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                           Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                           Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                           Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::computeDerivatives called before registerStates.");
@@ -130,8 +137,8 @@ void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]
     const double scale = std::max(this->mean, this->sigmaStationary);
     const double scaledMean = this->mean / scale;
     const double scaledStd = this->sigmaStationary / scale;
-    const double sigma = (std::sqrt(2.0) / std::sqrt(this->timeConstant))
-                         * (scaledStd / std::hypot(scaledMean, scaledStd));
+    const double sigma =
+      (std::sqrt(2.0) / std::sqrt(this->timeConstant)) * (scaledStd / std::hypot(scaledMean, scaledStd));
 
     Eigen::MatrixXd diffusion(1, 1);
     diffusion(0, 0) = sigma * factor;

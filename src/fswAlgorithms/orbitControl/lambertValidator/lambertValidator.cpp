@@ -21,10 +21,10 @@
 #include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/orbitalMotion.h"
-#include <cmath>
-#include <vector>
 #include <array>
+#include <cmath>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <vector>
 
 /*! This is the constructor for the module class.  It sets default variable
     values and initializes the various parts of the model */
@@ -40,7 +40,8 @@ LambertValidator::~LambertValidator() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void
+LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -57,7 +58,7 @@ void LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
     }
 
     // check that the provided input module parameters are valid
-    if (this->finalTime - this->maneuverTime < 0.0){
+    if (this->finalTime - this->maneuverTime < 0.0) {
         bskLogger.bskError("lambertValidator: Maneuver start time maneuverTime must be before final time finalTime.");
     }
 }
@@ -66,33 +67,28 @@ void LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertValidator::UpdateState(uint64_t currentSimNanos)
+void
+LambertValidator::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
 
     // initial state vector
     StateVector X0;
-    X0 << this->r_N,
-            this->v_N;
+    X0 << this->r_N, this->v_N;
 
     // equations of motion (assuming two body point mass gravity)
-    this->EOM_2BP = [this](double, const StateVector& state)
-    {
+    this->EOM_2BP = [this](double, const StateVector& state) {
         StateVector stateDerivative;
 
         stateDerivative.head<3>() = state.tail<3>();
-        stateDerivative.tail<3>() = -this->mu/(pow(state.head<3>().norm(),3)) * state.head<3>();
+        stateDerivative.tail<3>() = -this->mu / (pow(state.head<3>().norm(), 3)) * state.head<3>();
 
         return stateDerivative;
     };
 
     // propagate to obtain expected position at maneuver time
-    PropagationResult states = this->propagate(
-            this->EOM_2BP,
-            {this->time, this->maneuverTime},
-            X0,
-            10);
+    PropagationResult states = this->propagate(this->EOM_2BP, { this->time, this->maneuverTime }, X0, 10);
     const StateVector& finalState = states.second.back();
     this->rm_N = finalState.head<3>();
     this->vm_N = finalState.tail<3>();
@@ -122,7 +118,8 @@ void LambertValidator::UpdateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
 
 */
-void LambertValidator::readMessages()
+void
+LambertValidator::readMessages()
 {
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
@@ -130,12 +127,12 @@ void LambertValidator::readMessages()
     LambertPerformanceMsgPayload lambertPerformanceInMsgBuffer = this->lambertPerformanceInMsg();
 
     // check if input parameters are valid
-    if (lambertProblemInMsgBuffer.mu <= 0.0){
+    if (lambertProblemInMsgBuffer.mu <= 0.0) {
         bskLogger.bskError("lambertSolver: mu must be positive.");
     } else {
         this->mu = lambertProblemInMsgBuffer.mu;
     }
-    if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0){
+    if (this->maneuverTime - navTransInMsgBuffer.timeTag < 0.0) {
         bskLogger.bskError("lambertValidator: current time must be before maneuver time maneuverTime.");
     } else {
         this->time = navTransInMsgBuffer.timeTag;
@@ -149,14 +146,13 @@ void LambertValidator::readMessages()
     this->r_TN_N = cArray2EigenVector3d(lambertProblemInMsgBuffer.r2_N);
 
     // lambert solution and performance message content
-    if (this->lambertSolutionSpecifier == 1){
+    if (this->lambertSolutionSpecifier == 1) {
         this->vLambert_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v1_N);
         this->validLambert = lambertSolutionInMsgBuffer.valid;
         this->xLambert = lambertPerformanceInMsgBuffer.x;
         this->numIterLambert = lambertPerformanceInMsgBuffer.numIter;
         this->errXLambert = lambertPerformanceInMsgBuffer.errX;
-    }
-    else if (this->lambertSolutionSpecifier == 2){
+    } else if (this->lambertSolutionSpecifier == 2) {
         this->vLambert_N = cArray2EigenVector3d(lambertSolutionInMsgBuffer.v1Sol2_N);
         this->validLambert = lambertSolutionInMsgBuffer.validSol2;
         this->xLambert = lambertPerformanceInMsgBuffer.xSol2;
@@ -164,7 +160,7 @@ void LambertValidator::readMessages()
         this->errXLambert = lambertPerformanceInMsgBuffer.errXSol2;
     } else {
         bskLogger.bskError("lambertValidator: the parameter lambertSolutionSpecifier that specifies which "
-                         "Lambert solution should be used must be either 1 or 2.");
+                           "Lambert solution should be used must be either 1 or 2.");
     }
 }
 
@@ -172,7 +168,8 @@ void LambertValidator::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void LambertValidator::writeMessages(uint64_t currentSimNanos)
+void
+LambertValidator::writeMessages(uint64_t currentSimNanos)
 {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
     dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
@@ -240,7 +237,8 @@ void LambertValidator::writeMessages(uint64_t currentSimNanos)
 
     @return Fixed-size initial state vectors to propagate.
 */
-LambertValidator::InitialStates LambertValidator::getInitialStates()
+LambertValidator::InitialStates
+LambertValidator::getInitialStates()
 {
     // get direction cosine matrix (DCM) from inertial frame N to Hill frame H
     double rc_N[3];
@@ -259,13 +257,11 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
 
     // DCM block matrix that can be used on entire 6x1 state vector
     StateMatrix dcm_HN_state;
-    dcm_HN_state << this->dcm_HN, Eigen::Matrix3d::Zero(),
-                    Eigen::Matrix3d::Zero(), this->dcm_HN;
+    dcm_HN_state << this->dcm_HN, Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Zero(), this->dcm_HN;
 
     // nominal state vector (not perturbed) in Hill frame
     StateVector X0nom_H;
-    X0nom_H << rm_H,
-            vm_H;
+    X0nom_H << rm_H, vm_H;
 
     // square root of uncertainty covariance matrix
     StateMatrix Psqrt = this->uncertaintyStates;
@@ -274,7 +270,7 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
     // Perturb all states in + and - direction, and for each case use min and max expected DV magnitude
     InitialStates initialStates;
     for (Eigen::Index c1 = 0; c1 < stateSize; c1++) {
-        for (int c2=0; c2 < 2; c2++) {
+        for (int c2 = 0; c2 < 2; c2++) {
             StateVector X0_H;
             StateVector X0minDV_H;
             StateVector X0maxDV_H;
@@ -287,7 +283,7 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
             }
 
             // perturb initial state
-            X0_H = X0nom_H + multiplier*Psqrt.col(c1);
+            X0_H = X0nom_H + multiplier * Psqrt.col(c1);
             X0minDV_H = X0_H;
             X0maxDV_H = X0_H;
 
@@ -295,10 +291,9 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
             X0minDV_H.segment(3, 3) += dv_H - this->uncertaintyDV * dvHat_H;
             X0maxDV_H.segment(3, 3) += dv_H + this->uncertaintyDV * dvHat_H;
 
-            initialStates.at(static_cast<size_t>(c2 * stateSize + c1)) =
-                dcm_HN_state.transpose() * X0minDV_H;
+            initialStates.at(static_cast<size_t>(c2 * stateSize + c1)) = dcm_HN_state.transpose() * X0minDV_H;
             initialStates.at(static_cast<size_t>(2 * stateSize + c2 * stateSize + c1)) =
-                dcm_HN_state.transpose() * X0maxDV_H;
+              dcm_HN_state.transpose() * X0maxDV_H;
         }
     }
 
@@ -315,9 +310,9 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
     X0minDV_H.segment(3, 3) += dv_H - this->uncertaintyDV * dvHat_H;
     X0maxDV_H.segment(3, 3) += dv_H + this->uncertaintyDV * dvHat_H;
 
-    initialStates.at(4*stateSize) = dcm_HN_state.transpose() * X0_H;
-    initialStates.at(4*stateSize + 1) = dcm_HN_state.transpose() * X0minDV_H;
-    initialStates.at(4*stateSize + 2) = dcm_HN_state.transpose() * X0maxDV_H;
+    initialStates.at(4 * stateSize) = dcm_HN_state.transpose() * X0_H;
+    initialStates.at(4 * stateSize + 1) = dcm_HN_state.transpose() * X0minDV_H;
+    initialStates.at(4 * stateSize + 2) = dcm_HN_state.transpose() * X0maxDV_H;
 
     return initialStates;
 }
@@ -326,7 +321,8 @@ LambertValidator::InitialStates LambertValidator::getInitialStates()
     @param initialStates array of initial state vectors to be propagated
 
 */
-void LambertValidator::countViolations(const InitialStates& initialStates)
+void
+LambertValidator::countViolations(const InitialStates& initialStates)
 {
     this->violationsDistanceTarget = 0;
     this->violationsOrbitRadius = 0;
@@ -335,11 +331,8 @@ void LambertValidator::countViolations(const InitialStates& initialStates)
     for (size_t c = 0; c < NUM_INITIALSTATES; c++) {
         const StateVector& X0 = initialStates.at(c);
 
-        PropagationResult states = this->propagate(
-                this->EOM_2BP,
-                {this->maneuverTime, this->finalTime},
-                X0,
-                this->timestep);
+        PropagationResult states =
+          this->propagate(this->EOM_2BP, { this->maneuverTime, this->finalTime }, X0, this->timestep);
         this->checkConstraintViolations(states.first, states.second);
     }
 }
@@ -349,8 +342,8 @@ void LambertValidator::countViolations(const InitialStates& initialStates)
     @param X state for each time step
 
 */
-void LambertValidator::checkConstraintViolations(const std::vector<double>& t,
-                                                 const std::vector<StateVector>& X)
+void
+LambertValidator::checkConstraintViolations(const std::vector<double>& t, const std::vector<StateVector>& X)
 {
     // check maximum distance from target at final time constraint
     Eigen::Vector3d rf_BN_N = X.back().head<3>();
@@ -371,7 +364,8 @@ void LambertValidator::checkConstraintViolations(const std::vector<double>& t,
 /*! This method returns true only if the Lambert solution is valid, converged, and no constraints are violated
     @return bool
 */
-bool LambertValidator::checkPerformance() const
+bool
+LambertValidator::checkPerformance() const
 {
     // difference of Lambert solution w.r.t. previous time step
     double solutionDifference = xLambert - prevLambertSolutionX;
@@ -384,16 +378,12 @@ bool LambertValidator::checkPerformance() const
        Also return good solution if constraint violations (and convergence) should be ignored,
        as long as the Lambert solution is valid. */
     if ((this->validLambert == 1 &&
-        this->numIterLambert < this->maxNumIterLambert && // Lambert module should usually take only 2-3 iterations,
-        // so maxNumIterLambert is intentionally lower than in lambertSolver module
-        abs(this->errXLambert) < this->xToleranceLambert &&
-        abs(solutionDifference) < this->xConvergenceTolerance &&
-        abs(dvDifference) < this->dvConvergenceTolerance &&
-        this->violationsDistanceTarget == 0 &&
-        this->violationsOrbitRadius == 0)
-        ||
-        (this->validLambert == 1 && this->ignoreConstraintViolations))
-    {
+         this->numIterLambert < this->maxNumIterLambert && // Lambert module should usually take only 2-3 iterations,
+         // so maxNumIterLambert is intentionally lower than in lambertSolver module
+         abs(this->errXLambert) < this->xToleranceLambert && abs(solutionDifference) < this->xConvergenceTolerance &&
+         abs(dvDifference) < this->dvConvergenceTolerance && this->violationsDistanceTarget == 0 &&
+         this->violationsOrbitRadius == 0) ||
+        (this->validLambert == 1 && this->ignoreConstraintViolations)) {
         goodSolution = true;
     }
 
@@ -409,22 +399,22 @@ bool LambertValidator::checkPerformance() const
     @param dt Time step.
     @return Time values and corresponding six-element state vectors.
 */
-LambertValidator::PropagationResult LambertValidator::propagate(
-        const EquationsOfMotion& EOM,
-        std::array<double, 2> interval,
-        const StateVector& X0,
-        double dt)
+LambertValidator::PropagationResult
+LambertValidator::propagate(const EquationsOfMotion& EOM,
+                            std::array<double, 2> interval,
+                            const StateVector& X0,
+                            double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
 
-    std::vector<double> t = {t0};
-    std::vector<StateVector> X = {X0};
+    std::vector<double> t = { t0 };
+    std::vector<StateVector> X = { X0 };
 
     // propagate forward to tf
-    const size_t stepCount = static_cast<size_t>(ceil(abs(tf-t0)/dt));
+    const size_t stepCount = static_cast<size_t>(ceil(abs(tf - t0) / dt));
     for (size_t c = 0; c < stepCount; c++) {
-        double step = std::min(dt,abs(tf-t.at(c))); // for last time step, step size might be smaller than dt
+        double step = std::min(dt, abs(tf - t.at(c))); // for last time step, step size might be smaller than dt
         // special case for backwards propagation
         if (tf < t0) {
             step = -step;
@@ -436,7 +426,7 @@ LambertValidator::PropagationResult LambertValidator::propagate(
         t.push_back(tnew);
         X.push_back(Xnew);
     }
-    return {std::move(t), std::move(X)};
+    return { std::move(t), std::move(X) };
 }
 
 /*! This method provides the 4th order Runge-Kutta (RK4)
@@ -447,55 +437,71 @@ LambertValidator::PropagationResult LambertValidator::propagate(
     @param dt Time step.
     @return Integrated six-element state vector.
 */
-LambertValidator::StateVector LambertValidator::RK4(const EquationsOfMotion& ODEfunction,
-                                                    const StateVector& X0,
-                                                    double t0,
-                                                    double dt)
+LambertValidator::StateVector
+LambertValidator::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X0, double t0, double dt)
 {
     double h = dt;
 
     StateVector k1 = ODEfunction(t0, X0);
-    StateVector k2 = ODEfunction(t0 + h/2., X0 + h*k1/2.);
-    StateVector k3 = ODEfunction(t0 + h/2., X0 + h*k2/2.);
-    StateVector k4 = ODEfunction(t0 + h, X0 + h*k3);
+    StateVector k2 = ODEfunction(t0 + h / 2., X0 + h * k1 / 2.);
+    StateVector k3 = ODEfunction(t0 + h / 2., X0 + h * k2 / 2.);
+    StateVector k4 = ODEfunction(t0 + h, X0 + h * k3);
 
-    StateVector X = X0 + 1./6.*h*(k1 + 2.*k2 + 2.*k3 + k4);
+    StateVector X = X0 + 1. / 6. * h * (k1 + 2. * k2 + 2. * k3 + k4);
 
     return X;
 }
 
-void LambertValidator::setLambertSolutionSpecifier(const double value){
+void
+LambertValidator::setLambertSolutionSpecifier(const double value)
+{
     this->lambertSolutionSpecifier = value;
 }
 
-void LambertValidator::setFinalTime(const double value){
+void
+LambertValidator::setFinalTime(const double value)
+{
     this->finalTime = value;
 }
 
-void LambertValidator::setManeuverTime(const double value){
+void
+LambertValidator::setManeuverTime(const double value)
+{
     this->maneuverTime = value;
 }
 
-void LambertValidator::setMaxDistanceTarget(const double value){
+void
+LambertValidator::setMaxDistanceTarget(const double value)
+{
     this->maxDistanceTarget = value;
 }
 
-void LambertValidator::setMinOrbitRadius(const double value){
+void
+LambertValidator::setMinOrbitRadius(const double value)
+{
     this->minOrbitRadius = value;
 }
 
-void LambertValidator::setUncertaintyStates(const Eigen::MatrixXd& value){
+void
+LambertValidator::setUncertaintyStates(const Eigen::MatrixXd& value)
+{
     this->uncertaintyStates = value;
 }
 
-void LambertValidator::setUncertaintyDV(const double value){
+void
+LambertValidator::setUncertaintyDV(const double value)
+{
     this->uncertaintyDV = value;
 }
 
-void LambertValidator::setDvConvergenceTolerance(const double value){
+void
+LambertValidator::setDvConvergenceTolerance(const double value)
+{
     this->dvConvergenceTolerance = value;
 }
 
-void LambertValidator::setIgnoreConstraintViolations(const bool value){
+void
+LambertValidator::setIgnoreConstraintViolations(const bool value)
+{
     this->ignoreConstraintViolations = value;
 }

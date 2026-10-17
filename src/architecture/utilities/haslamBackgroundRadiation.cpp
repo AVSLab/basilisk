@@ -21,15 +21,23 @@
 #include <cstring>
 
 HaslamMap::HaslamMap()
-    : nside(0), npix(0), initialized(false), beamSize_arcmin(this->angularRes) {
+  : nside(0)
+  , npix(0)
+  , initialized(false)
+  , beamSize_arcmin(this->angularRes)
+{
 }
 
-HaslamMap& HaslamMap::getInstance() {
+HaslamMap&
+HaslamMap::getInstance()
+{
     static HaslamMap instance;
     return instance;
 }
 
-bool HaslamMap::initialize() {
+bool
+HaslamMap::initialize()
+{
     if (this->initialized) {
         this->bskLogger.bskLog(BSK_WARNING, "HaslamMap: Sky brightness map already loaded.");
         return true;
@@ -41,7 +49,9 @@ bool HaslamMap::initialize() {
     return false;
 }
 
-bool HaslamMap::loadHaslamMap() {
+bool
+HaslamMap::loadHaslamMap()
+{
     fitsfile* fptr = nullptr;
     int status = 0;
 
@@ -54,7 +64,8 @@ bool HaslamMap::loadHaslamMap() {
 
     auto closeFile = [&]() {
         int tmp = 0;
-        if (fptr) fits_close_file(fptr, &tmp);
+        if (fptr)
+            fits_close_file(fptr, &tmp);
         fptr = nullptr;
     };
 
@@ -72,7 +83,7 @@ bool HaslamMap::loadHaslamMap() {
 
     // Read COORDSYS (after moving to HDU 2)
     status = 0;
-    char coordsys[20] = {0};
+    char coordsys[20] = { 0 };
     if (fits_read_key(fptr, TSTRING, "COORDSYS", coordsys, nullptr, &status)) {
         this->bskLogger.bskError("HaslamMap: Error reading COORDSYS");
         closeFile();
@@ -95,7 +106,7 @@ bool HaslamMap::loadHaslamMap() {
     }
 
     this->nside = nside_header;
-    this->npix  = this->HEALPIX_BASE_PIXELS * this->nside * this->nside;
+    this->npix = this->HEALPIX_BASE_PIXELS * this->nside * this->nside;
 
     // Verify PIXTYPE and ORDERING
     status = 0;
@@ -106,7 +117,6 @@ bool HaslamMap::loadHaslamMap() {
         return false;
     }
 
-
     status = 0;
     fits_read_key(fptr, TSTRING, "ORDERING", ordering, nullptr, &status);
     if (status || strcmp(ordering, "RING") != 0) {
@@ -115,10 +125,9 @@ bool HaslamMap::loadHaslamMap() {
         return false;
     }
 
-
     status = 0;
     fits_read_key(fptr, TDOUBLE, "BEAMSIZE", &this->beamSize_arcmin, nullptr, &status);
-    status = 0;  // BEAMSIZE is optional
+    status = 0; // BEAMSIZE is optional
 
     // Verify pixel count
     long nrows, values_per_row = 1024;
@@ -134,8 +143,8 @@ bool HaslamMap::loadHaslamMap() {
     float nullval = 0.0;
     int anynull;
 
-    if (fits_read_col(fptr, TFLOAT, 1, 1, 1, this->npix, &nullval,
-                      this->brightnessTemperatures.data(), &anynull, &status)) {
+    if (fits_read_col(
+          fptr, TFLOAT, 1, 1, 1, this->npix, &nullval, this->brightnessTemperatures.data(), &anynull, &status)) {
         char err_text[256];
         fits_get_errstatus(status, err_text);
         this->bskLogger.bskError("HaslamMap: Error reading data: %s", err_text);
@@ -144,9 +153,10 @@ bool HaslamMap::loadHaslamMap() {
         return false;
     }
 
-    this->bskLogger.bskLog(BSK_INFORMATION,
-        "%s",
-        ("HaslamMap: Loaded NSIDE=" + std::to_string(this->nside) + ", NPIX=" + std::to_string(this->npix)).c_str());
+    this->bskLogger.bskLog(
+      BSK_INFORMATION,
+      "%s",
+      ("HaslamMap: Loaded NSIDE=" + std::to_string(this->nside) + ", NPIX=" + std::to_string(this->npix)).c_str());
     closeFile();
     return true;
 }
@@ -154,44 +164,52 @@ bool HaslamMap::loadHaslamMap() {
 /*! Method to configure the background temperature data file path
     @param file background temperature data file full path
 */
-void HaslamMap::configureBrightnessFile(const std::string& file) {
+void
+HaslamMap::configureBrightnessFile(const std::string& file)
+{
     this->filepath = file;
 }
 
-long HaslamMap::ang2pix_ring(double theta, double phi) const {
+long
+HaslamMap::ang2pix_ring(double theta, double phi) const
+{
     // Normalize angles
-    while (phi < 0) phi += 2.0 * M_PI;
-    while (phi >= 2.0 * M_PI) phi -= 2.0 * M_PI;
+    while (phi < 0)
+        phi += 2.0 * M_PI;
+    while (phi >= 2.0 * M_PI)
+        phi -= 2.0 * M_PI;
     theta = std::clamp(theta, 0.0, M_PI);
 
-    double z  = std::cos(theta);
+    double z = std::cos(theta);
     double za = std::abs(z);
     double tt = phi / (0.5 * M_PI);
     const double nside = static_cast<double>(this->nside);
 
-    long nl2  = 2 * this->nside;
-    long nl4  = 4 * this->nside;
+    long nl2 = 2 * this->nside;
+    long nl4 = 4 * this->nside;
     long ncap = nl2 * (this->nside - 1);
     long ipix;
 
-    if (za <= 2.0/3.0) {
+    if (za <= 2.0 / 3.0) {
         // Equatorial region
-        long jp     = long(nside * (0.5 + tt - z * 0.75));
-        long jm     = long(nside * (0.5 + tt + z * 0.75));
-        long ir     = this->nside + 1 + jp - jm;
+        long jp = long(nside * (0.5 + tt - z * 0.75));
+        long jm = long(nside * (0.5 + tt + z * 0.75));
+        long ir = this->nside + 1 + jp - jm;
         long kshift = (ir % 2 == 0) ? 1 : 0;
-        long ip     = ((jp + jm - this->nside + kshift + 1) / 2) + 1;
-        if (ip > nl4) ip -= nl4;
+        long ip = ((jp + jm - this->nside + kshift + 1) / 2) + 1;
+        if (ip > nl4)
+            ip -= nl4;
         ipix = ncap + nl4 * (ir - this->nside) + ip - 1;
     } else {
         // Polar caps
-        double tp  = tt - std::floor(tt);
+        double tp = tt - std::floor(tt);
         double tmp = std::sqrt(3.0 * (1.0 - za));
-        long jp    = std::min(this->nside - 1, long(nside * tp * tmp));
-        long jm    = std::min(this->nside - 1, long(nside * (1.0 - tp) * tmp));
-        long ir    = jp + jm + 1;
-        long ip    = long(tt * static_cast<double>(ir)) + 1;
-        if (ip > 4 * ir) ip -= 4 * ir;
+        long jp = std::min(this->nside - 1, long(nside * tp * tmp));
+        long jm = std::min(this->nside - 1, long(nside * (1.0 - tp) * tmp));
+        long ir = jp + jm + 1;
+        long ip = long(tt * static_cast<double>(ir)) + 1;
+        if (ip > 4 * ir)
+            ip -= 4 * ir;
 
         if (z > 0) {
             ipix = 2 * ir * (ir - 1) + ip - 1;
@@ -202,53 +220,57 @@ long HaslamMap::ang2pix_ring(double theta, double phi) const {
     return ipix;
 }
 
-void HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const {
-    long nl2  = 2 * this->nside;
-    long nl4  = 4 * this->nside;
+void
+HaslamMap::pix2ang_ring(long ipix, double& theta, double& phi) const
+{
+    long nl2 = 2 * this->nside;
+    long nl4 = 4 * this->nside;
     long ncap = nl2 * (this->nside - 1);
     const double nside = static_cast<double>(this->nside);
 
     if (ipix < ncap) {
         // North polar cap
         long iring = long(0.5 * (1.0 + std::sqrt(1.0 + 2.0 * static_cast<double>(ipix))));
-        long iphi  = ipix + 1 - 2 * iring * (iring - 1);
+        long iphi = ipix + 1 - 2 * iring * (iring - 1);
         const double iringDouble = static_cast<double>(iring);
-        theta      = std::acos(1.0 - iringDouble * iringDouble / (3.0 * nside * nside));
-        phi        = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
+        theta = std::acos(1.0 - iringDouble * iringDouble / (3.0 * nside * nside));
+        phi = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
     } else if (ipix < this->npix - ncap) {
         // Equatorial region
-        long ip     = ipix - ncap;
-        long iring  = ip / nl4 + this->nside;
-        long iphi   = ip % nl4 + 1;
+        long ip = ipix - ncap;
+        long iring = ip / nl4 + this->nside;
+        long iphi = ip % nl4 + 1;
         double fodd = ((iring + this->nside) % 2) ? 1.0 : 0.5;
-        theta       = std::acos(static_cast<double>(nl2 - iring) / (1.5 * nside));
-        phi         = (static_cast<double>(iphi) - fodd) * M_PI / static_cast<double>(nl2);
+        theta = std::acos(static_cast<double>(nl2 - iring) / (1.5 * nside));
+        phi = (static_cast<double>(iphi) - fodd) * M_PI / static_cast<double>(nl2);
     } else {
         // South polar cap
-        long ip    = this->npix - ipix;
+        long ip = this->npix - ipix;
         long iring = long(0.5 * (1.0 + std::sqrt(2.0 * static_cast<double>(ip) - 1.0)));
-        long iphi  = 4 * iring + 1 - (ip - 2 * iring * (iring - 1));
+        long iphi = 4 * iring + 1 - (ip - 2 * iring * (iring - 1));
         const double iringDouble = static_cast<double>(iring);
-        theta      = std::acos(-1.0 + iringDouble * iringDouble / (3.0 * nside * nside));
-        phi        = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
+        theta = std::acos(-1.0 + iringDouble * iringDouble / (3.0 * nside * nside));
+        phi = (static_cast<double>(iphi) - 0.5) * M_PI / (2.0 * iringDouble);
     }
 }
 
-std::vector<long> HaslamMap::query_disc(double theta0, double phi0, double radius) const {
+std::vector<long>
+HaslamMap::query_disc(double theta0, double phi0, double radius) const
+{
     std::vector<long> pixels;
 
     // Center direction vector
-    double          st0    = std::sin(theta0), ct0 = std::cos(theta0);
-    double          sp0    = std::sin(phi0),   cp0 = std::cos(phi0);
+    double st0 = std::sin(theta0), ct0 = std::cos(theta0);
+    double sp0 = std::sin(phi0), cp0 = std::cos(phi0);
     Eigen::Vector3d v0(st0 * cp0, st0 * sp0, ct0);
-    double          cosrad = std::cos(radius);
+    double cosrad = std::cos(radius);
 
     // Check all pixels
     for (long ipix = 0; ipix < this->npix; ++ipix) {
         double theta, phi;
         this->pix2ang_ring(ipix, theta, phi);
-        double          st = std::sin(theta), ct = std::cos(theta);
-        double          sp = std::sin(phi),   cp = std::cos(phi);
+        double st = std::sin(theta), ct = std::cos(theta);
+        double sp = std::sin(phi), cp = std::cos(phi);
         Eigen::Vector3d v(st * cp, st * sp, ct);
 
         if (v.dot(v0) >= cosrad) {
@@ -258,20 +280,27 @@ std::vector<long> HaslamMap::query_disc(double theta0, double phi0, double radiu
     return pixels;
 }
 
-double HaslamMap::getPixelTemperature(long ipix) const {
-    if (ipix < 0 || ipix >= this->npix) return 0.0;
-    const double val =
-        static_cast<double>(this->brightnessTemperatures[static_cast<size_t>(ipix)]);  // [K]
-    if (val < -1.0e30) return 0.0;  // BAD_DATA sentinel
+double
+HaslamMap::getPixelTemperature(long ipix) const
+{
+    if (ipix < 0 || ipix >= this->npix)
+        return 0.0;
+    const double val = static_cast<double>(this->brightnessTemperatures[static_cast<size_t>(ipix)]); // [K]
+    if (val < -1.0e30)
+        return 0.0; // BAD_DATA sentinel
     return val;
 }
 
-double HaslamMap::scaleToFrequency(double T_408, double targetFreq_Hz) const {
+double
+HaslamMap::scaleToFrequency(double T_408, double targetFreq_Hz) const
+{
     // T_target = T_408 * (targetFreq / 408 MHz)^spectralIndex
     return T_408 * std::pow(targetFreq_Hz / this->f_408, this->spectralIndex);
 }
 
-double HaslamMap::getBrightnessTemperature(Eigen::Vector3d n_A_N, double beamRadius) const {
+double
+HaslamMap::getBrightnessTemperature(Eigen::Vector3d n_A_N, double beamRadius) const
+{
     if (!this->initialized) {
         return 0.0;
     }
@@ -280,7 +309,7 @@ double HaslamMap::getBrightnessTemperature(Eigen::Vector3d n_A_N, double beamRad
 
     // Convert to spherical coordinates
     double theta0 = std::acos(boresight_G.z());
-    double phi0   = std::atan2(boresight_G.y(), boresight_G.x());
+    double phi0 = std::atan2(boresight_G.y(), boresight_G.x());
     if (phi0 < 0) {
         phi0 += 2.0 * M_PI;
     }

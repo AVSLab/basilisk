@@ -17,91 +17,98 @@
 
  */
 
-
 #ifndef SPHERICAL_PENDULUM_H
 #define SPHERICAL_PENDULUM_H
 
-#include <cstdint>
-#include <string>
-#include <Eigen/Dense>
-#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
-#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
 #include "architecture/utilities/avsEigenMRP.h"
-#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
+#include "simulation/dynamics/_GeneralModuleFiles/fuelSlosh.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateData.h"
+#include "simulation/dynamics/_GeneralModuleFiles/stateEffector.h"
+#include <Eigen/Dense>
+#include <cstdint>
+#include <string>
 
 /*! @brief spherical pendulum state effector model */
-class SphericalPendulum final :
-	public StateEffector, public SysModel, public FuelSlosh
+class SphericalPendulum final
+  : public StateEffector
+  , public SysModel
+  , public FuelSlosh
 {
-public:
-	double pendulumRadius;             //!< [m] distance between the center of the tank and the spherical pendulum mass
-    Eigen::Matrix3d D;                    //!< [N*s/m] symmetric positive-semidefinite damping matrix in P0 components
-    double phiDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
+  public:
+    double pendulumRadius;           //!< [m] distance between the center of the tank and the spherical pendulum mass
+    Eigen::Matrix3d D;               //!< [N*s/m] symmetric positive-semidefinite damping matrix in P0 components
+    double phiDotInit;               //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
     double thetaDotInit;             //!< [rad/s] Initial value for spherical pendulum pendulum offset derivative
-    double massInit;               //!< [kg] Initial value for spherical pendulum mass
-    std::string nameOfPhiState;    //!< [-] Identifier for the phi state data container
+    double massInit;                 //!< [kg] Initial value for spherical pendulum mass
+    std::string nameOfPhiState;      //!< [-] Identifier for the phi state data container
     std::string nameOfThetaState;    //!< [-] Identifier for the theta state data container
-    std::string nameOfPhiDotState; //!< [-] Identifier for the phiDot state data container
+    std::string nameOfPhiDotState;   //!< [-] Identifier for the phiDot state data container
     std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
-	std::string nameOfMassState;   //!< [-] Identifier for the mass state data container
-	Eigen::Vector3d d;        //!< [m] position vector from B point to tank center , T, in body frame
-	StateData *massState = nullptr;		   //!< state data for the pendulums mass
-    Eigen::Vector3d pHat_01;      //!< first vector of the P0 frame in B frame components
-    Eigen::Vector3d pHat_02;       //!< second vector of the P0 frame in  B frame components
-    Eigen::Vector3d pHat_03;        //!< third vector of the P0 frame in B frame components
-		BSKLogger bskLogger;                      //!< BSK Logging
+    std::string nameOfMassState;     //!< [-] Identifier for the mass state data container
+    Eigen::Vector3d d;               //!< [m] position vector from B point to tank center , T, in body frame
+    StateData* massState = nullptr;  //!< state data for the pendulums mass
+    Eigen::Vector3d pHat_01;         //!< first vector of the P0 frame in B frame components
+    Eigen::Vector3d pHat_02;         //!< second vector of the P0 frame in  B frame components
+    Eigen::Vector3d pHat_03;         //!< third vector of the P0 frame in B frame components
+    BSKLogger bskLogger;             //!< BSK Logging
 
-private:
-    void validateConfiguration(); //!< Validate initial mass and damping without changing the current states
-    double phiInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
-    double thetaInit;                //!< [rad] Initial value for spherical pendulum pendulum offset
-    double phi;					//!< [rad] spherical pendulum displacement in P0 frame
-    double theta;                    //!< [rad] spherical pendulum displacement in P0 frame
-    double phiDot;					 //!< [rad/s] time derivative of displacement in P0 frame
-    double thetaDot;                //!< [rad/s] time derivative of displacement in P0 frame
-	double massFSP;                //!< [kg] mass of spherical pendulum pendulum
-    Eigen::Vector3d r_PcB_B;       //!< [m] position vector form B to center of mass location of pendulum
-    Eigen::Matrix3d rTilde_PcB_B;  //!< [m] tilde matrix of r_Pc_B
-	Eigen::Vector3d rPrime_PcB_B;  //!< [m/s] Body time derivative of r_Pc_B
-	Eigen::Matrix3d rPrimeTilde_PcB_B;  //!< [m/s] Tilde matrix of rPrime_PcB_B
+  private:
+    void validateConfiguration();      //!< Validate initial mass and damping without changing the current states
+    double phiInit;                    //!< [rad] Initial value for spherical pendulum pendulum offset
+    double thetaInit;                  //!< [rad] Initial value for spherical pendulum pendulum offset
+    double phi;                        //!< [rad] spherical pendulum displacement in P0 frame
+    double theta;                      //!< [rad] spherical pendulum displacement in P0 frame
+    double phiDot;                     //!< [rad/s] time derivative of displacement in P0 frame
+    double thetaDot;                   //!< [rad/s] time derivative of displacement in P0 frame
+    double massFSP;                    //!< [kg] mass of spherical pendulum pendulum
+    Eigen::Vector3d r_PcB_B;           //!< [m] position vector form B to center of mass location of pendulum
+    Eigen::Matrix3d rTilde_PcB_B;      //!< [m] tilde matrix of r_Pc_B
+    Eigen::Vector3d rPrime_PcB_B;      //!< [m/s] Body time derivative of r_Pc_B
+    Eigen::Matrix3d rPrimeTilde_PcB_B; //!< [m/s] Tilde matrix of rPrime_PcB_B
 
-    Eigen::Vector3d aPhi;          //!< Term needed for back-sub method
-    Eigen::Vector3d bPhi;          //!< Term needed for back-sub method
-    Eigen::Vector3d aTheta;          //!< Term needed for back-sub method
-    Eigen::Vector3d bTheta;          //!< Term needed for back-sub method
-    double cPhi;                   //!< Term needed for back-sub method
-    double cTheta;                   //!< Term needed for back-sub method
+    Eigen::Vector3d aPhi;   //!< Term needed for back-sub method
+    Eigen::Vector3d bPhi;   //!< Term needed for back-sub method
+    Eigen::Vector3d aTheta; //!< Term needed for back-sub method
+    Eigen::Vector3d bTheta; //!< Term needed for back-sub method
+    double cPhi;            //!< Term needed for back-sub method
+    double cTheta;          //!< Term needed for back-sub method
 
-    Eigen::MatrixXd *g_N;      //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::Vector3d l_B;         //!< [m] vector from the center of the tank to the spherical pendulum pendulum in B frame
-	Eigen::Vector3d lPrime_B;    //!< [m/s] derivative of l respect to B frame
-    Eigen::Vector3d lPrime_P0;  //!< [m/s] derivative of l in P0 frame
-	StateData *phiState;	   //!< state data for spherical pendulum displacement
-	StateData *thetaState;	   //!< state data for spherical pendulum displacement
-	StateData *phiDotState;     //!< state data for time derivative of phi;
-	StateData *thetaDotState;		   //!< state data for time derivative of theta;
-    Eigen::Matrix3d dcm_B_P0;      // Rotation matrix from P0 to B frame
-    static uint64_t effectorID;        //!< [] ID number of this panel
+    Eigen::MatrixXd* g_N;      //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::Vector3d l_B;       //!< [m] vector from the center of the tank to the spherical pendulum pendulum in B frame
+    Eigen::Vector3d lPrime_B;  //!< [m/s] derivative of l respect to B frame
+    Eigen::Vector3d lPrime_P0; //!< [m/s] derivative of l in P0 frame
+    StateData* phiState;       //!< state data for spherical pendulum displacement
+    StateData* thetaState;     //!< state data for spherical pendulum displacement
+    StateData* phiDotState;    //!< state data for time derivative of phi;
+    StateData* thetaDotState;  //!< state data for time derivative of theta;
+    Eigen::Matrix3d dcm_B_P0;  // Rotation matrix from P0 to B frame
+    static uint64_t effectorID; //!< [] ID number of this panel
 
-
-
-public:
-	SphericalPendulum();           //!< Constructor
-	~SphericalPendulum();          //!< Destructor
+  public:
+    SphericalPendulum();  //!< Constructor
+    ~SphericalPendulum(); //!< Destructor
     void Reset(uint64_t CurrentSimNanos) override;
-	void registerStates(DynParamManager& states) override;  //!< Method for FSP to register its states
-	void linkInStates(DynParamManager& states) override;  //!< Method for FSP to get access of other states
-	void updateEffectorMassProps(double integTime) override;  //!< Method for FSP to add its contributions to mass props
-    void modifyStates(double integTime) override; //!< Method to force states modification during integration
+    void registerStates(DynParamManager& states) override;   //!< Method for FSP to register its states
+    void linkInStates(DynParamManager& states) override;     //!< Method for FSP to get access of other states
+    void updateEffectorMassProps(double integTime) override; //!< Method for FSP to add its contributions to mass props
+    void modifyStates(double integTime) override;            //!< Method to force states modification during integration
     void retrieveMassValue(double integTime) override;
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N) override;  //!< Back-sub contributions
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B) override;  //!< Energy and momentum calculations
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN) override;  //!< Method for each stateEffector to calculate derivatives
+    void updateContributions(double integTime,
+                             BackSubMatrices& backSubContr,
+                             Eigen::MRPd sigma_BN,
+                             Eigen::Vector3d omega_BN_B,
+                             Eigen::Vector3d g_N) override; //!< Back-sub contributions
+    void updateEnergyMomContributions(double integTime,
+                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                      double& rotEnergyContr,
+                                      Eigen::Vector3d omega_BN_B) override; //!< Energy and momentum calculations
+    void computeDerivatives(double integTime,
+                            Eigen::Vector3d rDDot_BN_N,
+                            Eigen::Vector3d omegaDot_BN_B,
+                            Eigen::MRPd sigma_BN) override; //!< Method for each stateEffector to calculate derivatives
 };
-
 
 #endif /* SPHERICAL_PENDULUM_H */

@@ -19,13 +19,13 @@
 #ifndef LINEAR_TIME_INVARIANT_SYSTEM_H
 #define LINEAR_TIME_INVARIANT_SYSTEM_H
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
 #include <Eigen/Dense>
 
-#include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
 #include "architecture/utilities/bskLogging.h"
+#include "simulation/mujocoDynamics/_GeneralModuleFiles/StatefulSysModel.h"
 
 /**
  * @brief Linear time invariant system of the form
@@ -38,11 +38,11 @@
  *
  * Subclasses must implement the input and output mapping methods.
  */
-class LinearTimeInvariantSystem : public StatefulSysModel {
-public:
+class LinearTimeInvariantSystem : public StatefulSysModel
+{
+  public:
     /** @brief Default constructor. */
     LinearTimeInvariantSystem() = default;
-
 
     /**
      * @brief Register the state vector with the dynamics framework.
@@ -78,7 +78,6 @@ public:
      */
     virtual void Reset(uint64_t CurrentSimNanos) override;
 
-
     /** @name Parameter getters and setters
      *  Accessors for the system matrices A, B, C, and D.
      *  @{ */
@@ -88,7 +87,7 @@ public:
      *
      * @return Constant reference to the A matrix.
      */
-    const Eigen::MatrixXd &getA() const;
+    const Eigen::MatrixXd& getA() const;
 
     /**
      * @brief Set the state matrix A.
@@ -100,14 +99,14 @@ public:
      *
      * @param Ain New A matrix.
      */
-    void setA(const Eigen::MatrixXd &Ain);
+    void setA(const Eigen::MatrixXd& Ain);
 
     /**
      * @brief Get the input matrix B.
      *
      * @return Constant reference to the B matrix.
      */
-    const Eigen::MatrixXd &getB() const;
+    const Eigen::MatrixXd& getB() const;
 
     /**
      * @brief Set the input matrix B.
@@ -120,14 +119,14 @@ public:
      *
      * @param Bin New B matrix.
      */
-    void setB(const Eigen::MatrixXd &Bin);
+    void setB(const Eigen::MatrixXd& Bin);
 
     /**
      * @brief Get the output matrix C.
      *
      * @return Constant reference to the C matrix.
      */
-    const Eigen::MatrixXd &getC() const;
+    const Eigen::MatrixXd& getC() const;
 
     /**
      * @brief Set the output matrix C.
@@ -139,14 +138,14 @@ public:
      *
      * @param Cin New C matrix.
      */
-    void setC(const Eigen::MatrixXd &Cin);
+    void setC(const Eigen::MatrixXd& Cin);
 
     /**
      * @brief Get the feedthrough matrix D.
      *
      * @return Constant reference to the D matrix.
      */
-    const Eigen::MatrixXd &getD() const;
+    const Eigen::MatrixXd& getD() const;
 
     /**
      * @brief Set the feedthrough matrix D.
@@ -158,7 +157,7 @@ public:
      *
      * @param Din New D matrix.
      */
-    void setD(const Eigen::MatrixXd &Din);
+    void setD(const Eigen::MatrixXd& Din);
 
     /**
      * @brief Configure the A, B, C, D matrices as a standard SISO second order model.
@@ -204,10 +203,7 @@ public:
      * @param zeta Vector of damping ratios (dimensionless). Each zeta(i) must be non negative.
      * @param k    Vector of static gains. Must have the same length as wn and zeta.
      */
-    void configureSecondOrder(const Eigen::VectorXd &wn,
-                              const Eigen::VectorXd &zeta,
-                              const Eigen::VectorXd &k);
-
+    void configureSecondOrder(const Eigen::VectorXd& wn, const Eigen::VectorXd& zeta, const Eigen::VectorXd& k);
 
     /** @name State access
      *  Accessors for the internal state vector.
@@ -232,8 +228,7 @@ public:
      *
      * @param xin New state vector.
      */
-    void setX(const Eigen::VectorXd &xin);
-
+    void setX(const Eigen::VectorXd& xin);
 
     /**
      * @brief Get the dimension of the input vector u.
@@ -267,7 +262,7 @@ public:
      */
     BSKLogger bskLogger;
 
-protected:
+  protected:
     /**
      * @brief Read the current input vector u from the simulation.
      *
@@ -291,17 +286,16 @@ protected:
      * @param CurrentSimNanos Current simulation time in nanoseconds.
      * @param y Output vector to write.
      */
-    virtual void writeOutput(uint64_t CurrentSimNanos,
-                             const Eigen::VectorXd &y) = 0;
+    virtual void writeOutput(uint64_t CurrentSimNanos, const Eigen::VectorXd& y) = 0;
 
-private:
+  private:
     /**
      * @brief Pointer to the registered state data for the state vector x.
      *
      * This pointer is set during registerStates and is used to read and
      * update the state and its derivative.
      */
-    StateData *xState = nullptr;
+    StateData* xState = nullptr;
 
     /**
      * @brief State matrix A.

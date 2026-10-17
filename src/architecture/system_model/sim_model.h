@@ -19,9 +19,9 @@
 #ifndef _SimModel_HH_
 #define _SimModel_HH_
 
+#include "architecture/system_model/sys_process.h"
 #include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/bskSemaphore.h"
-#include "architecture/system_model/sys_process.h"
 #include <atomic>
 #include <condition_variable>
 #include <cstddef>
@@ -33,26 +33,37 @@
 #include <thread>
 #include <vector>
 
-//! This class handles the management of a given "thread" of execution and provides the main mechanism for running concurrent jobs inside BSK
+//! This class handles the management of a given "thread" of execution and provides the main mechanism for running
+//! concurrent jobs inside BSK
 class SimThreadExecution
 {
-public:
-    SimThreadExecution()=default;
-    explicit SimThreadExecution(uint64_t threadIdent, uint64_t currentSimNanos=0);    //!< Constructor for a given sim thread
+  public:
+    SimThreadExecution() = default;
+    explicit SimThreadExecution(uint64_t threadIdent,
+                                uint64_t currentSimNanos = 0); //!< Constructor for a given sim thread
     /** @brief Request shutdown and join the worker before destroying its state. */
     ~SimThreadExecution();
-    void updateNewStopTime(uint64_t newStopNanos) {stopThreadNanos = newStopNanos;}  //!< Method to update a new simulation stop time
-    void clearProcessList() {processList.clear();}  //!< clear the process list
+    void updateNewStopTime(uint64_t newStopNanos)
+    {
+        stopThreadNanos = newStopNanos;
+    } //!< Method to update a new simulation stop time
+    void clearProcessList() { processList.clear(); } //!< clear the process list
     void selfInitProcesses() const;
     void crossInitProcesses() const;
     void resetProcesses();
     void addNewProcess(SysProcess* newProc);
-    uint64_t procCount() const {return processList.size();} //!< Gets the current "thread-count" in the system
-    bool threadActive() const {return this->threadRunning;} //!< Tells the caller if the thread is currently allocated processes and is in execution
-    void threadReady() {this->threadRunning=true;} //!< Allows the system to put the thread into a running state
+    uint64_t procCount() const { return processList.size(); } //!< Gets the current "thread-count" in the system
+    bool threadActive() const
+    {
+        return this->threadRunning;
+    } //!< Tells the caller if the thread is currently allocated processes and is in execution
+    void threadReady() { this->threadRunning = true; } //!< Allows the system to put the thread into a running state
     void waitOnInit();
     void postInit();
-    bool threadValid() const {return !this->terminateThread;} //!< Determines if the thread is currently usable or if it has been requested to shutdown
+    bool threadValid() const
+    {
+        return !this->terminateThread;
+    } //!< Determines if the thread is currently usable or if it has been requested to shutdown
     /** @brief Request shutdown and wake the worker without waiting for it to finish.
      * @note Only the first stop request releases the worker semaphore. Repeated
      * calls, including through killThread(), are harmless. The owner must keep
@@ -60,56 +71,56 @@ public:
      */
     void requestStop();
     /** @brief Compatibility alias for requestStop(), including waking an idle worker. */
-    void killThread() {this->requestStop();}
+    void killThread() { this->requestStop(); }
     void lockThread();
     void unlockThread();
     void lockParent();
     void unlockParent();
-    void StepUntilStop();  //!< Step simulation until stop time uint64_t reached
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
+    void StepUntilStop();                           //!< Step simulation until stop time uint64_t reached
+    void SingleStepProcesses(int64_t stopPri = -1); //!< Step only the next Task in the simulation
     void moveProcessMessages() const;
 
-    uint64_t CurrentNanos=0;  //!< [ns] Current sim time
-    uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
-    uint64_t currentThreadNanos=0;  //!< Current simulation time available at thread
-    uint64_t stopThreadNanos=0;   //!< Current stop conditions for the thread
-    int64_t stopThreadPriority=-1; //!< Current stop priority for thread
-    uint64_t threadID=0;          //!< Identifier for thread
-    std::thread threadContext; //!< Owned worker, joined before this execution record is destroyed
-    int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
-    bool selfInitNow{};              //!< Flag requesting self init
-    bool crossInitNow{};             //!< Flag requesting cross-init
-    bool resetNow{};                 //!< Flag requesting that the thread execute reset
-    std::exception_ptr threadException = nullptr;  //!< Exception pointer for thread errors
-    //!
-private:
-    bool threadRunning{};            //!< Flag that will allow for easy concurrent locking
-    std::atomic<bool> terminateThread{false}; //!< Shutdown request shared by the parent and worker
-    BSKSemaphore parentThreadLock;   //!< Lock that ensures parent thread won't proceed
-    BSKSemaphore selfThreadLock;     //!< Lock that ensures this thread only reaches allowed time
-    std::vector<SysProcess*> processList;  //!< List of processes associated with thread
-    std::mutex initReadyLock;      //!< Lock function to ensure runtime locks are configured
-    std::condition_variable initHoldVar; //!< Conditional variable used to prevent race conditions
+    uint64_t CurrentNanos = 0;                    //!< [ns] Current sim time
+    uint64_t NextTaskTime = 0;                    //!< [ns] time for the next Task
+    uint64_t currentThreadNanos = 0;              //!< Current simulation time available at thread
+    uint64_t stopThreadNanos = 0;                 //!< Current stop conditions for the thread
+    int64_t stopThreadPriority = -1;              //!< Current stop priority for thread
+    uint64_t threadID = 0;                        //!< Identifier for thread
+    std::thread threadContext;                    //!< Owned worker, joined before this execution record is destroyed
+    int64_t nextProcPriority = -1;                //!< [-] Priority level for the next process
+    bool selfInitNow{};                           //!< Flag requesting self init
+    bool crossInitNow{};                          //!< Flag requesting cross-init
+    bool resetNow{};                              //!< Flag requesting that the thread execute reset
+    std::exception_ptr threadException = nullptr; //!< Exception pointer for thread errors
+                                                  //!
+  private:
+    bool threadRunning{};                       //!< Flag that will allow for easy concurrent locking
+    std::atomic<bool> terminateThread{ false }; //!< Shutdown request shared by the parent and worker
+    BSKSemaphore parentThreadLock;              //!< Lock that ensures parent thread won't proceed
+    BSKSemaphore selfThreadLock;                //!< Lock that ensures this thread only reaches allowed time
+    std::vector<SysProcess*> processList;       //!< List of processes associated with thread
+    std::mutex initReadyLock;                   //!< Lock function to ensure runtime locks are configured
+    std::condition_variable initHoldVar;        //!< Conditional variable used to prevent race conditions
 };
 
 //! The top-level container for an entire simulation
 class SimModel
 {
-public:
-    SimModel();  //!< The SimModel constructor
+  public:
+    SimModel(); //!< The SimModel constructor
     SimModel(const SimModel&) = delete;
     SimModel& operator=(const SimModel&) = delete;
     SimModel(SimModel&&) = delete;
     SimModel& operator=(SimModel&&) = delete;
-    ~SimModel();  //!< Stop and join all owned workers
+    ~SimModel(); //!< Stop and join all owned workers
 
-    void selfInitSimulation();  //!< Method to initialize all added Tasks
-    void resetInitSimulation() const;  //!< Method to reset all added tasks
-    void StepUntilStop(uint64_t SimStopTime, int64_t stopPri);  //!< Step simulation until stop time uint64_t reached
-    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
-    void addNewProcess(SysProcess *newProc);
-    void addProcessToThread(SysProcess *newProc, size_t threadSel);
-    void ResetSimulation();  //!< Reset simulation back to zero
+    void selfInitSimulation();                                 //!< Method to initialize all added Tasks
+    void resetInitSimulation() const;                          //!< Method to reset all added tasks
+    void StepUntilStop(uint64_t SimStopTime, int64_t stopPri); //!< Step simulation until stop time uint64_t reached
+    void SingleStepProcesses(int64_t stopPri = -1);            //!< Step only the next Task in the simulation
+    void addNewProcess(SysProcess* newProc);
+    void addProcessToThread(SysProcess* newProc, size_t threadSel);
+    void ResetSimulation(); //!< Reset simulation back to zero
     void clearProcsFromThreads() const;
     /** @brief Stop and join existing workers, then replace the thread pool.
      * @param threadCount Number of worker records to allocate; must be positive.
@@ -122,16 +133,16 @@ public:
      */
     void deleteThreads();
     void assignRemainingProcs();
-    uint64_t getThreadCount() const {return threadList.size();} //!< returns the number of threads used
+    uint64_t getThreadCount() const { return threadList.size(); } //!< returns the number of threads used
 
-    BSKLogger bskLogger;                      //!< -- BSK Logging
+    BSKLogger bskLogger; //!< -- BSK Logging
 
-    std::vector<SysProcess *> processList;  //!< -- List of processes we've created
+    std::vector<SysProcess*> processList;                        //!< -- List of processes we've created
     std::vector<std::unique_ptr<SimThreadExecution>> threadList; //!< Owned worker execution records
-    std::string SimulationName;  //!< -- Identifier for Sim
-    uint64_t CurrentNanos=0;  //!< [ns] Current sim time
-    uint64_t NextTaskTime=0;  //!< [ns] time for the next Task
-    int64_t nextProcPriority=-1;  //!< [-] Priority level for the next process
+    std::string SimulationName;                                  //!< -- Identifier for Sim
+    uint64_t CurrentNanos = 0;                                   //!< [ns] Current sim time
+    uint64_t NextTaskTime = 0;                                   //!< [ns] time for the next Task
+    int64_t nextProcPriority = -1;                               //!< [-] Priority level for the next process
 };
 
 #endif /* _SimModel_H_ */

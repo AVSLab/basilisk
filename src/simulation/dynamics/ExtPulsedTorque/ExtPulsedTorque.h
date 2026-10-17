@@ -20,17 +20,19 @@
 #ifndef EXT_PULSED_TORQUE_H
 #define EXT_PULSED_TORQUE_H
 
-#include <cstdint>
-#include <Eigen/Dense>
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/utilities/bskLogging.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynParamManager.h"
 #include "simulation/dynamics/_GeneralModuleFiles/dynamicEffector.h"
-#include "architecture/utilities/bskLogging.h"
-
+#include <Eigen/Dense>
+#include <cstdint>
 
 /*! @brief external pulsed torque module class */
-class ExtPulsedTorque final: public SysModel, public DynamicEffector{
-public:
+class ExtPulsedTorque final
+  : public SysModel
+  , public DynamicEffector
+{
+  public:
     ExtPulsedTorque();
     ~ExtPulsedTorque() override;
 
@@ -41,17 +43,16 @@ public:
     void readInputMessages();
     void computeForceTorque(double integTime, double timeStep) override;
 
-private:
+  private:
     void validateConfiguration(); //!< Validate the torque, pulse counts, and interval duration
 
-public:
-    Eigen::Vector3d pulsedTorqueExternalPntB_B = Eigen::Vector3d::Zero(); //!< [N*m] pulsed torque about B in B components
+  public:
+    Eigen::Vector3d pulsedTorqueExternalPntB_B =
+      Eigen::Vector3d::Zero(); //!< [N*m] pulsed torque about B in B components
     int countOnPulse = 0; //!< Number of pulse intervals for each positive and negative pulse; zero disables the torque
-    int countOff = 0; //!< Number of pulse intervals with no torque between pulse pairs
+    int countOff = 0;     //!< Number of pulse intervals with no torque between pulse pairs
     double pulseInterval = 1.0; //!< [s] Duration of one pulse-count interval, independent of the integrator step
-    BSKLogger bskLogger;                      //!< BSK Logging
-
+    BSKLogger bskLogger;        //!< BSK Logging
 };
-
 
 #endif

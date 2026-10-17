@@ -34,11 +34,12 @@
  *     Stochastic Differential Equations", SIAM J. Numer. Anal., 48 (3), pp. 922-952.
  *     https://doi.org/10.1137/09076636X
  */
-class svStochasticIntegratorSOSRA : public svIntegratorStrongStochasticRungeKuttaSRA<3> {
-public:
+class svStochasticIntegratorSOSRA : public svIntegratorStrongStochasticRungeKuttaSRA<3>
+{
+  public:
     svStochasticIntegratorSOSRA(DynamicObject* dyn); //!< Constructor
 
-private:
+  private:
     static SRACoefficients<3> getCoefficients();
 };
 

@@ -27,10 +27,9 @@
 #include <algorithm>
 #include <memory>
 
-namespace
-{
-mjsEquality* createConstrainedEquality(const std::string& jointName,
-                                                   mjSpec* spec)
+namespace {
+mjsEquality*
+createConstrainedEquality(const std::string& jointName, mjSpec* spec)
 {
     auto mjsequality = mjs_addEquality(spec, 0);
 
@@ -40,8 +39,7 @@ mjsEquality* createConstrainedEquality(const std::string& jointName,
     mjs_setString(mjsequality->name1, jointName.c_str());
     mjsequality->type = mjEQ_JOINT;
     mjsequality->active = false;
-    for (auto i = 0; i < mjNEQDATA; i++)
-    {
+    for (auto i = 0; i < mjNEQDATA; i++) {
         mjsequality->data[i] = 0;
     }
 
@@ -113,10 +111,12 @@ MJJoint::configure(const mjModel* model)
     this->qvelAdr = model->jnt_dofadr[this->getId()];
 }
 
-void MJJoint::checkInitialized() const
+void
+MJJoint::checkInitialized() const
 {
     if (!this->qposAdr.has_value() || !this->statesRegistered) {
-        body.getSpec().getScene().bskLogger.bskError("Tried to manipulate joint state before the joint was configured.");
+        body.getSpec().getScene().bskLogger.bskError(
+          "Tried to manipulate joint state before the joint was configured.");
     }
 }
 
@@ -125,23 +125,22 @@ void MJJoint::checkInitialized() const
 // ---------------------------------------------------------------------------
 
 MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
-    : MJJoint(joint, body),
-      constrainedEquality(
-        createConstrainedEquality(name, body.getSpec().getMujocoSpec()),
-        body.getSpec()
-    )
+  : MJJoint(joint, body)
+  , constrainedEquality(createConstrainedEquality(name, body.getSpec().getMujocoSpec()), body.getSpec())
 {
     body.getSpec().markAsNeedingToRecompileModel();
 }
 
-Eigen::Vector3d MJScalarJoint::getAxis() const
+Eigen::Vector3d
+MJScalarJoint::getAxis() const
 {
     checkInitialized();
     const auto m = this->body.getSpec().getMujocoModel();
     return Eigen::Vector3d(m->jnt_axis + (this->getId() * 3));
 }
 
-bool MJScalarJoint::isHinge() const
+bool
+MJScalarJoint::isHinge() const
 {
     return this->mjsObject->type == mjJNT_HINGE;
 }
@@ -153,7 +152,8 @@ MJScalarJoint::configure(const mjModel* model)
     this->constrainedEquality.configure(model);
 }
 
-void MJScalarJoint::updateConstrainedEquality()
+void
+MJScalarJoint::updateConstrainedEquality()
 {
     bool useConstraint = this->constrainedStateInMsg.isLinked();
     this->constrainedEquality.setActive(useConstraint);
@@ -162,7 +162,8 @@ void MJScalarJoint::updateConstrainedEquality()
     }
 }
 
-void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
+void
+MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 {
     checkInitialized();
 
@@ -207,14 +208,16 @@ MJScalarJoint::validateStateLayout(const double* qposBase, const double* qvelBas
     }
 }
 
-void MJScalarJoint::setPosition(double value)
+void
+MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
     this->qposState->stateView()(0) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJScalarJoint::setVelocity(double value)
+void
+MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
     this->qvelState->stateView()(0) = value;
@@ -304,24 +307,27 @@ MJFreeJoint::validateStateLayout(const double* qposBase, const double* qvelBase)
     }
 }
 
-void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
+void
+MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
     this->qposTranslationState->stateView() = position;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
+void
+MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
     this->qvelTranslationState->stateView() = velocity;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
+void
+MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
 {
     checkInitialized();
-    auto mat  = attitude.toRotationMatrix();
+    auto mat = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
     auto qpos = this->qposAttitudeState->stateView();
     qpos(0) = quat.w();
@@ -331,41 +337,46 @@ void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
+void
+MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
     this->qvelAttitudeState->stateView() = attitudeRate;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-Eigen::Vector3d MJFreeJoint::getTranslationalVelocityFromData(const mjData* data) const
+Eigen::Vector3d
+MJFreeJoint::getTranslationalVelocityFromData(const mjData* data) const
 {
     checkInitialized();
     auto i = this->qvelAdr.value();
-    return {data->qvel[i], data->qvel[i + 1], data->qvel[i + 2]};
+    return { data->qvel[i], data->qvel[i + 1], data->qvel[i + 2] };
 }
 
-Eigen::Vector3d MJFreeJoint::getTranslationalPositionFromData(const mjData* data) const
+Eigen::Vector3d
+MJFreeJoint::getTranslationalPositionFromData(const mjData* data) const
 {
     checkInitialized();
     auto i = this->qposAdr.value();
-    return {data->qpos[i], data->qpos[i + 1], data->qpos[i + 2]};
+    return { data->qpos[i], data->qpos[i + 1], data->qpos[i + 2] };
 }
 
-void MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel)
+void
+MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel)
 {
     checkInitialized();
     auto i = this->qvelAdr.value();
-    data->qvel[i]     = vel[0];
+    data->qvel[i] = vel[0];
     data->qvel[i + 1] = vel[1];
     data->qvel[i + 2] = vel[2];
 }
 
-void MJFreeJoint::setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos)
+void
+MJFreeJoint::setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos)
 {
     checkInitialized();
     auto i = this->qposAdr.value();
-    data->qpos[i]     = pos[0];
+    data->qpos[i] = pos[0];
     data->qpos[i + 1] = pos[1];
     data->qpos[i + 2] = pos[2];
 }

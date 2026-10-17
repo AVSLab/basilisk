@@ -20,8 +20,8 @@
 #ifndef POLY_GRAVITY_MODEL_H
 #define POLY_GRAVITY_MODEL_H
 
-#include <vector>
 #include "simulation/dynamics/_GeneralModuleFiles/gravityModel.h"
+#include <vector>
 
 /** The Polyhedral gravity model.
  *
@@ -30,7 +30,8 @@
  * each vertex is defined by its position relative to the center of
  * mass of the body.
  */
-class PolyhedralGravityModel : public GravityModel {
+class PolyhedralGravityModel : public GravityModel
+{
   public:
     /** Initialize all parameters necessary for the computation of gravity.
      *
@@ -80,7 +81,7 @@ class PolyhedralGravityModel : public GravityModel {
     bool addEdge(Eigen::Vector2i edge, Eigen::Index idx_edge, int idx_facet);
 
   public:
-    double muBody = 0;  /**< [m^3/s^2] Gravitation parameter for the planet */
+    double muBody = 0; /**< [m^3/s^2] Gravitation parameter for the planet */
 
     /**
      * This matrix contains the position of every vertex of this
@@ -101,7 +102,7 @@ class PolyhedralGravityModel : public GravityModel {
     Eigen::MatrixX3i orderFacet;
 
   private:
-    double volPoly = 0;  /**< [m^3] Volume of the polyhedral */
+    double volPoly = 0; /**< [m^3] Volume of the polyhedral */
 
     /**
      * This matrix contains the outward normal of each facet [-].

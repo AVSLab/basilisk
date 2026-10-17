@@ -23,7 +23,7 @@
 /** @brief Method workspace allocated after state binding. */
 struct svStochasticIntegratorEulerHeun::FlatStorage
 {
-    Eigen::VectorXd firstDrift; ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd firstDrift;      ///< Drift evaluated at the step-entry state.
     Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
 };
 

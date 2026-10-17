@@ -21,7 +21,8 @@
 #include <gtest/gtest.h>
 
 namespace {
-int callBskErrorFromNonVoid(BSKLogger& bskLogger)
+int
+callBskErrorFromNonVoid(BSKLogger& bskLogger)
 {
     bskLogger.bskError("fatal value %d", 7);
 }
@@ -30,7 +31,8 @@ int callBskErrorFromNonVoid(BSKLogger& bskLogger)
 // MSVC /EHc assumes extern "C" calls do not throw, so catch through a C++ helper.
 __declspec(noinline)
 #endif
-void callCBskError(BSKLogger& bskLogger, const char* info)
+void
+callCBskError(BSKLogger& bskLogger, const char* info)
 {
     _bskError(&bskLogger, info);
 }
@@ -89,9 +91,7 @@ TEST(BSKLogging, noThrowAdapterReportsFatalLogWithoutUnwinding)
 {
     BSKLogger bskLogger;
 
-    EXPECT_NO_THROW({
-        EXPECT_NE(0, _bskLogNoThrow(&bskLogger, BSK_ERROR, "contained error"));
-    });
+    EXPECT_NO_THROW({ EXPECT_NE(0, _bskLogNoThrow(&bskLogger, BSK_ERROR, "contained error")); });
 }
 
 TEST(BSKLogging, noThrowAdapterAcceptsNonfatalAndNullLoggerCalls)

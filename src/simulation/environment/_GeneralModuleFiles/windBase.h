@@ -20,20 +20,20 @@
 #ifndef WIND_BASE_H
 #define WIND_BASE_H
 
-#include <cstdint>
-#include <vector>
-#include <memory>
 #include <Eigen/Dense>
+#include <cstdint>
+#include <memory>
 #include <time.h>
+#include <vector>
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
-#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
-#include "architecture/msgPayloadDefC/WindMsgPayload.h"
-#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
 #include "architecture/messaging/messaging.h"
-#include "architecture/utilities/bskLogging.h"
+#include "architecture/msgPayloadDefC/EpochMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
+#include "architecture/msgPayloadDefC/SpicePlanetStateMsgPayload.h"
+#include "architecture/msgPayloadDefC/WindMsgPayload.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/bskLogging.h"
 #include "architecture/utilities/stateExtrapolation.h"
 
 /*! @brief Abstract base class for atmospheric wind models.
@@ -43,8 +43,9 @@
  * the WindMsgPayload for each tracked spacecraft. The module supports multiple
  * spacecraft through the addSpacecraftToModel() method.
  */
-class WindBase : public SysModel {
-public:
+class WindBase : public SysModel
+{
+  public:
     /*! This method initializes some basic parameters for the module.
 
     */
@@ -67,9 +68,9 @@ public:
     /*! Adds a spacecraft to the model by subscribing to its state message and creating an output message.
      *  @param tmpScMsg  Spacecraft state message to subscribe to.
      */
-    void addSpacecraftToModel(Message<SCStatesMsgPayload> *tmpScMsg);
+    void addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg);
 
-protected:
+  protected:
     /*! Writes the wind output messages for each spacecraft.
      *  @param CurrentClock  Current simulation time (ns).
      */
@@ -90,7 +91,7 @@ protected:
      *  @return Spacecraft position relative to planet in inertial frame [m].
      */
     Eigen::Vector3d computeRelativePos(const SpicePlanetStateMsgPayload& planetState,
-                                      const SCStatesMsgPayload& scState) const;
+                                       const SCStatesMsgPayload& scState) const;
 
     /*! Computes `r_BP_N`, then calls evaluateWindModel() for each spacecraft.
      *  @param currentTime  Current simulation time (s).
@@ -103,8 +104,10 @@ protected:
      *  @param v_corotatingAir_N  Co-rotating atmosphere velocity [m/s] in N frame.
      *  @param currentTime         Current simulation time (s).
      */
-    virtual void evaluateWindModel(WindMsgPayload *msg, const Eigen::Vector3d& r_BP_N,
-                                  const Eigen::Vector3d& v_corotatingAir_N, double currentTime) = 0;
+    virtual void evaluateWindModel(WindMsgPayload* msg,
+                                   const Eigen::Vector3d& r_BP_N,
+                                   const Eigen::Vector3d& v_corotatingAir_N,
+                                   double currentTime) = 0;
 
     /*! Optional subclass reset hook.
      *  @param CurrentClock  Current simulation time (ns).
@@ -126,12 +129,12 @@ protected:
      */
     virtual void customSetEpochFromVariable();
 
-public:
-    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs{};  //!< Spacecraft state input messages
-    std::vector<Message<WindMsgPayload>*> envOutMsgs{};            //!< Wind velocity output messages
-    ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg{};      //!< Planet SPICE state input message
-    ReadFunctor<EpochMsgPayload> epochInMsg{};                     //!< (optional) epoch date/time input message
-    BSKLogger bskLogger{};                                         //!< -- BSK Logging
+  public:
+    std::vector<ReadFunctor<SCStatesMsgPayload>> scStateInMsgs{}; //!< Spacecraft state input messages
+    std::vector<Message<WindMsgPayload>*> envOutMsgs{};           //!< Wind velocity output messages
+    ReadFunctor<SpicePlanetStateMsgPayload> planetPosInMsg{};     //!< Planet SPICE state input message
+    ReadFunctor<EpochMsgPayload> epochInMsg{};                    //!< (optional) epoch date/time input message
+    BSKLogger bskLogger{};                                        //!< -- BSK Logging
 
     /*! Returns the planet angular velocity vector in the inertial frame.
      *  @return  Planet angular velocity [rad/s] in N frame.
@@ -146,7 +149,7 @@ public:
      * @param omega  Planet angular velocity [rad/s] in N frame.
      * @throws BSK_ERROR if input contains NaN or infinite values.
      */
-    void setPlanetOmega_N(const Eigen::Vector3d &omega);
+    void setPlanetOmega_N(const Eigen::Vector3d& omega);
 
     /*! Gets the current useSpiceOmega flag.
      *
@@ -177,12 +180,12 @@ public:
      */
     bool getExtrapolateScStateToStepMidpoint() const;
 
-protected:
+  protected:
     struct tm epochDateTime{};                   //!< Epoch date/time (Gregorian) for time-dependent models
     std::vector<WindMsgPayload> envOutBuffer{};  //!< Message write buffer for each spacecraft
     std::vector<SCStatesMsgPayload> scStates{};  //!< Cached spacecraft state messages
-    uint64_t previousUpdateNanos = 0; //!< [ns] Time of the previous module update, used to detect
-                                      //!< stale spacecraft messages
+    uint64_t previousUpdateNanos = 0;            //!< [ns] Time of the previous module update, used to detect
+                                                 //!< stale spacecraft messages
     ScStateExtrapolation scStateExtrapolation{}; //!< Opt-in extrapolation of the spacecraft state to the step midpoint
     SpicePlanetStateMsgPayload planetState{};    //!< Cached planet state message
 
@@ -203,10 +206,16 @@ protected:
      */
     Eigen::Vector3d getSelectedOmega();
 
-private:
-    bool useSpiceOmega = true;                                //!< [bool] If true, use SPICE-derived omega; if false, use manually set value
-    Eigen::Vector3d planetOmega_N = {0.0, 0.0, OMEGA_EARTH};  //!< [rad/s] Planet angular velocity in inertial frame (default: Earth rotation rate)
-    Eigen::Vector3d spiceOmega_N = {0.0, 0.0, 0.0};           //!< [rad/s] Planet angular velocity derived from SPICE DCM derivatives
+  private:
+    bool useSpiceOmega = true; //!< [bool] If true, use SPICE-derived omega; if false, use manually set value
+    Eigen::Vector3d planetOmega_N = {
+        0.0,
+        0.0,
+        OMEGA_EARTH
+    }; //!< [rad/s] Planet angular velocity in inertial frame (default: Earth rotation rate)
+    Eigen::Vector3d spiceOmega_N = { 0.0,
+                                     0.0,
+                                     0.0 }; //!< [rad/s] Planet angular velocity derived from SPICE DCM derivatives
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<WindMsgPayload>>> ownedEnvOutMsgs; //!< Storage for envOutMsgs.

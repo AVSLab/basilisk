@@ -18,8 +18,8 @@
  */
 #include "cannonballDrag.h"
 
-#include <Eigen/Dense>
 #include "architecture/utilities/avsEigenMRP.h"
+#include <Eigen/Dense>
 
 void
 CannonballDrag::SelfInit()
@@ -72,21 +72,21 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
     TorqueAtSiteMsg_C_write(&torquePayload, &this->torqueOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
-
-void CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
+void
+CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskError("CannonballDrag: atmoDensInMsg is not linked. "
-            "Call atmoDensInMsg.subscribeTo(<AtmoPropsMsg>) before simulation.");
+                           "Call atmoDensInMsg.subscribeTo(<AtmoPropsMsg>) before simulation.");
     }
 
     if (!this->dragGeometryInMsg.isLinked()) {
         bskLogger.bskError("CannonballDrag: dragGeometryInMsg is not linked. "
-            "Call dragGeometryInMsg.subscribeTo(<DragGeometryMsg>) before simulation.");
+                           "Call dragGeometryInMsg.subscribeTo(<DragGeometryMsg>) before simulation.");
     }
 
     if (!this->referenceFrameStateInMsg.isLinked()) {
         bskLogger.bskError("CannonballDrag: referenceFrameStateInMsg is not linked. "
-            "Call referenceFrameStateInMsg.subscribeTo(<SiteStateMsg>) before simulation.");
+                           "Call referenceFrameStateInMsg.subscribeTo(<SiteStateMsg>) before simulation.");
     }
 }

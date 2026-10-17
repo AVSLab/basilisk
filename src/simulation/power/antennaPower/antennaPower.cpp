@@ -20,17 +20,18 @@
 #include "antennaPower.h"
 
 /*! Constructor
-*/
-AntennaPower::AntennaPower(){
-    this->basePowerNeed        = 0.0; //!< [W] base electrical power required to operate an antenna
+ */
+AntennaPower::AntennaPower()
+{
+    this->basePowerNeed = 0.0; //!< [W] base electrical power required to operate an antenna
 }
 
-AntennaPower::~AntennaPower(){
-}
+AntennaPower::~AntennaPower() {}
 
 /*! This method is used to reset the module. Here variables are checked for correct values.
  */
-void AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // Check that basePowerNeed is non-negative
     if (this->basePowerNeed < 0.0) {
@@ -40,31 +41,34 @@ void AntennaPower::customReset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This method is used to read incoming antenna state message.
  */
-bool AntennaPower::customReadMessages()
+bool
+AntennaPower::customReadMessages()
 {
     //! - read in the power node use/supply messages
-    bool antennaRead    = true;
+    bool antennaRead = true;
     bool tempStatusRead = false;
-    if(this->antennaSetStateInMsg.isLinked())
-    {
+    if (this->antennaSetStateInMsg.isLinked()) {
         this->antennaStatusMsgBuffer = this->antennaSetStateInMsg();
-        tempStatusRead               = this->antennaSetStateInMsg.isWritten();
-        antennaRead                  = antennaRead && tempStatusRead;
+        tempStatusRead = this->antennaSetStateInMsg.isWritten();
+        antennaRead = antennaRead && tempStatusRead;
     }
 
-    if (!antennaRead){
+    if (!antennaRead) {
         bskLogger.bskLog(BSK_WARNING, "PowerAntenna unable to read antenna status message.");
     }
 
-    return(antennaRead);
+    return (antennaRead);
 }
 
 /*! Computes the antenna power load. Determines the netPower attribute in powerUsageSimMessage.
-*/
-void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsage){
+ */
+void
+AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload* powerUsage)
+{
     // Read the input message to get the current antenna state
     if (!this->customReadMessages()) {
-        bskLogger.bskLog(BSK_WARNING, "AntennaPower: Failed to read antenna state message. Setting power usage to base power need.");
+        bskLogger.bskLog(BSK_WARNING,
+                         "AntennaPower: Failed to read antenna state message. Setting power usage to base power need.");
         powerUsage->netPower = -this->basePowerNeed;
         return;
     }
@@ -79,7 +83,8 @@ void AntennaPower::evaluatePowerModel(PowerNodeUsageMsgPayload *powerUsage){
             powerUsage->netPower = -this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
             break;
         case AntennaTypes::AntennaStateEnum::ANTENNA_RXTX:
-            powerUsage->netPower = -this->antennaStatusMsgBuffer.P_Rx - this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
+            powerUsage->netPower =
+              -this->antennaStatusMsgBuffer.P_Rx - this->antennaStatusMsgBuffer.P_Tx - this->basePowerNeed;
             break;
         default:
             bskLogger.bskError("AntennaPower: Invalid antenna state.");

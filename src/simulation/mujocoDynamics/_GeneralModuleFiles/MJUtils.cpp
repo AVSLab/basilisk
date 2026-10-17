@@ -21,8 +21,7 @@
 
 using namespace std::string_literals;
 
-namespace MJBasilisk::detail
-{
+namespace MJBasilisk::detail {
 void
 logMujocoError(const char* err)
 {

@@ -17,25 +17,24 @@
 
 */
 
-
 #include "fswAlgorithms/effectorInterfaces/dipoleMapping/dipoleMapping.h"
-#include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "string.h"
 
 /*!
     This method initializes the output messages for this module.
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_dipoleMapping(dipoleMappingConfig  *configData, int64_t moduleID)
+void
+SelfInit_dipoleMapping(dipoleMappingConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     /*
      * Initialize the output message.
      */
     MTBCmdMsg_C_init(&configData->dipoleRequestMtbOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -45,15 +44,16 @@ void SelfInit_dipoleMapping(dipoleMappingConfig  *configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_dipoleMapping(dipoleMappingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Check if the required input messages are connected.
      */
-    if (!DipoleRequestBodyMsg_C_isLinked(&configData->dipoleRequestBodyInMsg)){
+    if (!DipoleRequestBodyMsg_C_isLinked(&configData->dipoleRequestBodyInMsg)) {
         _bskError(configData->bskLogger, "Error: dipoleMapping.dipoleRequestBodyInMsg is not connected.");
     }
-    if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
+    if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbMomentumManagement.mtbArrayConfigParamsInMsg is not connected.");
     }
 
@@ -66,7 +66,6 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
     MTBCmdMsg_C_write(&dipoleRequestMtbOutMsgBuffer, &configData->dipoleRequestMtbOutMsg, moduleID, callTime);
 }
 
-
 /*! This method computes takes a requested Body frame dipole into individual torque rod dipole commands using a
     psuedoinverse taking into account saturation limits of the torque rods.
 
@@ -74,29 +73,30 @@ void Reset_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_dipoleMapping(dipoleMappingConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_dipoleMapping(dipoleMappingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Initialize local variables.
      */
-    int j = 0;  // counter used in loop over magnetic torque rods
+    int j = 0; // counter used in loop over magnetic torque rods
 
     /*
      * Read the input messages and initialize output message.
      */
-    DipoleRequestBodyMsgPayload dipoleRequestBodyInMsgBuffer = DipoleRequestBodyMsg_C_read(&configData->dipoleRequestBodyInMsg);
+    DipoleRequestBodyMsgPayload dipoleRequestBodyInMsgBuffer =
+      DipoleRequestBodyMsg_C_read(&configData->dipoleRequestBodyInMsg);
     MTBCmdMsgPayload dipoleRequestMtbOutMsgBuffer = MTBCmdMsg_C_zeroMsgPayload();
 
     /*! - Map the requested Body frame dipole request to individual torque rod dipoles.*/
     mMultV(configData->steeringMatrix,
-           (size_t) configData->mtbArrayConfigParams.numMTB,
+           (size_t)configData->mtbArrayConfigParams.numMTB,
            3,
            dipoleRequestBodyInMsgBuffer.dipole_B,
            dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds);
 
     /*! - Saturate the dipole commands if necesarry.*/
-    for (j = 0; j < configData->mtbArrayConfigParams.numMTB; j++)
-    {
+    for (j = 0; j < configData->mtbArrayConfigParams.numMTB; j++) {
         if (dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] > configData->mtbArrayConfigParams.maxMtbDipoles[j])
             dipoleRequestMtbOutMsgBuffer.mtbDipoleCmds[j] = configData->mtbArrayConfigParams.maxMtbDipoles[j];
 

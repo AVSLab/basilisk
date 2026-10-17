@@ -116,8 +116,23 @@ the file you are running `pre-commit` on.
 ### ClangFormat
 
 This repository uses a modified version of Mozilla's ```.clang-format``` file.
-Please be sure to reformat any C/C++ file with clang-format before committing.
-This can be done through the command line or with clion.
+The pre-commit hook automatically formats staged C/C++ files with clang-format 22.1.5.
+The hook installs its own formatter at the version pinned in `.pre-commit-config.yaml`.
+Version 22.1.5 is within the range specified in `requirements_dev.txt`.
+If the hook changes a file, stage the changes and commit again.
+
+Use pre-commit as the recommended command to format specific files.
+Pre-commit manages the formatter version without a separate clang-format installation:
+
+```sh
+pre-commit run clang-format --files path/to/file.cpp path/to/file.h
+```
+
+To format all tracked C/C++ files, run:
+
+```sh
+pre-commit run clang-format --all-files
+```
 
 To prevent a section from getting reformatted, wrap it with ```// clang-format off``` and ```// clang-format on```.
 
@@ -130,9 +145,12 @@ For more information is available on the [clang-format](https://clang.llvm.org/d
 * To reformat code you have written, select that portion or the whole file
      and call <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>L</kbd>.
 
-#### Command Line
+#### Optional Standalone Command
 
-* You must ```pip install clang-format``` to use ClangFormat through the command line.
+Standalone clang-format is optional. Install with `pip install clang-format` if needed.
+Other versions may produce different results from the pinned hook.
+Use pre-commit for the final format check before you commit.
+
 * Use the command
   ```
   clang-format -i {file name(s)} -style=file

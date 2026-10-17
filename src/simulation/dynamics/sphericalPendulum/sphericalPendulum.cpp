@@ -19,64 +19,67 @@
 
 #include "sphericalPendulum.h"
 #include "architecture/utilities/avsEigenSupport.h"
-#include <math.h>
 #include <cmath>
 #include <iostream>
+#include <math.h>
 
 /*! This is the constructor, setting variables to default values */
 SphericalPendulum::SphericalPendulum()
 {
-	// - zero the contributions for mass props and mass rates
-	this->effProps.mEff = 0.0;
-	this->effProps.IEffPntB_B.setZero();
-	this->effProps.rEff_CB_B.setZero();
-	this->effProps.rEffPrime_CB_B.setZero();
-	this->effProps.IEffPrimePntB_B.setZero();
+    // - zero the contributions for mass props and mass rates
+    this->effProps.mEff = 0.0;
+    this->effProps.IEffPntB_B.setZero();
+    this->effProps.rEff_CB_B.setZero();
+    this->effProps.rEffPrime_CB_B.setZero();
+    this->effProps.IEffPrimePntB_B.setZero();
 
-	// - Initialize the variables to working values
-	this->massFSP = 0.0;
-	this->d.setZero();
-	this->D.setZero();
+    // - Initialize the variables to working values
+    this->massFSP = 0.0;
+    this->d.setZero();
+    this->D.setZero();
 
-    this->pHat_01 << 1,0,0;
-    this->pHat_02 << 0,1,0;
-    this->pHat_03 << 0,0,1;
-    this->phiInit=0.0;
+    this->pHat_01 << 1, 0, 0;
+    this->pHat_02 << 0, 1, 0;
+    this->pHat_03 << 0, 0, 1;
+    this->phiInit = 0.0;
     this->l_B.setZero();
     this->lPrime_B.setZero();
     this->lPrime_P0.setZero();
-    this->phiDotInit=0.0;
-    this->thetaInit=0.0;
-    this->thetaDotInit=0.0;
+    this->phiDotInit = 0.0;
+    this->thetaInit = 0.0;
+    this->thetaDotInit = 0.0;
     this->massInit = 1.0;
-	this->nameOfPhiState = "sphericalPendulumPhi" + std::to_string(this->effectorID);
-	this->nameOfPhiDotState = "sphericalPendulumPhiDot" + std::to_string(this->effectorID);
-	this->nameOfThetaState = "sphericalPendulumTheta" + std::to_string(this->effectorID);
-	this->nameOfThetaDotState = "sphericalPendulumThetaDot" + std::to_string(this->effectorID);
-	this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->effectorID);
+    this->nameOfPhiState = "sphericalPendulumPhi" + std::to_string(this->effectorID);
+    this->nameOfPhiDotState = "sphericalPendulumPhiDot" + std::to_string(this->effectorID);
+    this->nameOfThetaState = "sphericalPendulumTheta" + std::to_string(this->effectorID);
+    this->nameOfThetaDotState = "sphericalPendulumThetaDot" + std::to_string(this->effectorID);
+    this->nameOfMassState = "sphericalPendulumMass" + std::to_string(this->effectorID);
     this->effectorID++;
 
-	return;
+    return;
 }
 
 uint64_t SphericalPendulum::effectorID = 1;
 
 /*! @brief Validate initial mass and damping, retaining zero mass and semidefinite damping. */
-void SphericalPendulum::validateConfiguration()
+void
+SphericalPendulum::validateConfiguration()
 {
     if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
         this->bskLogger.bskError("SphericalPendulum: massInit must be finite and non-negative.");
     }
     if (!eigenIsPositiveSemidefiniteMatrix(this->D)) {
-        this->bskLogger.bskError("sphericalPendulum: D must be symmetric positive semidefinite. It may not have been set "
-                                "properly by the user.");
+        this->bskLogger.bskError(
+          "sphericalPendulum: D must be symmetric positive semidefinite. It may not have been set "
+          "properly by the user.");
     }
 }
 
 /*! @brief Validate configuration without restoring depleted mass or changing integrated states.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -84,14 +87,15 @@ void SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This is the destructor, nothing to report here */
 SphericalPendulum::~SphericalPendulum()
 {
-	return;
+    return;
 }
 
 /*! Method for spherical pendulum to access the states that it needs. It needs gravity and the hub states
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void SphericalPendulum::linkInStates(DynParamManager& states)
+void
+SphericalPendulum::linkInStates(DynParamManager& states)
 {
     // - Grab access to gravity
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -103,46 +107,48 @@ void SphericalPendulum::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void SphericalPendulum::registerStates(DynParamManager& states)
+void
+SphericalPendulum::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
-	    // - Register phi, theta, phiDot and thetaDot
-	this->phiState = states.registerState(1, 1, nameOfPhiState);
-    Eigen::MatrixXd phiInitMatrix(1,1);
-    phiInitMatrix(0,0) = this->phiInit;
+    // - Register phi, theta, phiDot and thetaDot
+    this->phiState = states.registerState(1, 1, nameOfPhiState);
+    Eigen::MatrixXd phiInitMatrix(1, 1);
+    phiInitMatrix(0, 0) = this->phiInit;
     this->phiState->setState(phiInitMatrix);
 
     this->thetaState = states.registerState(1, 1, nameOfThetaState);
-    Eigen::MatrixXd thetaInitMatrix(1,1);
-    thetaInitMatrix(0,0) = this->thetaInit;
+    Eigen::MatrixXd thetaInitMatrix(1, 1);
+    thetaInitMatrix(0, 0) = this->thetaInit;
     this->thetaState->setState(thetaInitMatrix);
 
-	this->phiDotState = states.registerState(1, 1, nameOfPhiDotState);
-    Eigen::MatrixXd phiDotInitMatrix(1,1);
-    phiDotInitMatrix(0,0) = this->phiDotInit;
+    this->phiDotState = states.registerState(1, 1, nameOfPhiDotState);
+    Eigen::MatrixXd phiDotInitMatrix(1, 1);
+    phiDotInitMatrix(0, 0) = this->phiDotInit;
     this->phiDotState->setState(phiDotInitMatrix);
 
-	this->thetaDotState = states.registerState(1, 1, nameOfThetaDotState);
-    Eigen::MatrixXd thetaDotInitMatrix(1,1);
-    thetaDotInitMatrix(0,0) = this->thetaDotInit;
+    this->thetaDotState = states.registerState(1, 1, nameOfThetaDotState);
+    Eigen::MatrixXd thetaDotInitMatrix(1, 1);
+    thetaDotInitMatrix(0, 0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
-	// - Register m
-	this->massState = states.registerState(1, 1, nameOfMassState);
-    Eigen::MatrixXd massInitMatrix(1,1);
-    massInitMatrix(0,0) = this->massInit;
+    // - Register m
+    this->massState = states.registerState(1, 1, nameOfMassState);
+    Eigen::MatrixXd massInitMatrix(1, 1);
+    massInitMatrix(0, 0) = this->massInit;
     this->massState->setState(massInitMatrix);
     this->hasRegisteredStates = true;
 
-	return;
+    return;
 }
 
 /*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle
  *
  * @param[in] integTime [s] Current integration time.
  */
-void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
+void
+SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
 
     // - Grab phi and theta from state manager and define r_PcB_B
@@ -150,82 +156,79 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
     this->theta = this->thetaState->stateView()(0, 0);
 
     // maintain phi and theta between 0 and 2pi
-	if (this->phi>2*M_PI) {
-		this->phi=this->phi-2*M_PI;
-		Eigen::MatrixXd phiInitMatrix(1,1);
-    	phiInitMatrix(0,0) = this->phi;
-    	this->phiState->setState(phiInitMatrix);
-	}
-	if (this->phi<-2*M_PI) {
-		this->phi=this->phi+2*M_PI;
-		Eigen::MatrixXd phiInitMatrix(1,1);
-    	phiInitMatrix(0,0) = this->phi;
-    	this->phiState->setState(phiInitMatrix);
-	}
+    if (this->phi > 2 * M_PI) {
+        this->phi = this->phi - 2 * M_PI;
+        Eigen::MatrixXd phiInitMatrix(1, 1);
+        phiInitMatrix(0, 0) = this->phi;
+        this->phiState->setState(phiInitMatrix);
+    }
+    if (this->phi < -2 * M_PI) {
+        this->phi = this->phi + 2 * M_PI;
+        Eigen::MatrixXd phiInitMatrix(1, 1);
+        phiInitMatrix(0, 0) = this->phi;
+        this->phiState->setState(phiInitMatrix);
+    }
 
-	if (this->theta>2*M_PI) {
-		this->theta=this->theta-2*M_PI;
-		Eigen::MatrixXd thetaInitMatrix(1,1);
-    	thetaInitMatrix(0,0) = this->theta;
-    	this->thetaState->setState(thetaInitMatrix);
-	}
-	if (this->theta<-2*M_PI) {
-		this->theta=this->theta+2*M_PI;
-		Eigen::MatrixXd thetaInitMatrix(1,1);
-    	thetaInitMatrix(0,0) = this->theta;
-    	this->thetaState->setState(thetaInitMatrix);
-	}
-	// define l in P0 frame
-	Eigen::Vector3d l_P0;
-	l_P0 << this->pendulumRadius*cos(this->phi)*cos(this->theta), this->pendulumRadius*sin(this->phi)*cos(this->theta),
-	 -this->pendulumRadius*sin(this->theta);
+    if (this->theta > 2 * M_PI) {
+        this->theta = this->theta - 2 * M_PI;
+        Eigen::MatrixXd thetaInitMatrix(1, 1);
+        thetaInitMatrix(0, 0) = this->theta;
+        this->thetaState->setState(thetaInitMatrix);
+    }
+    if (this->theta < -2 * M_PI) {
+        this->theta = this->theta + 2 * M_PI;
+        Eigen::MatrixXd thetaInitMatrix(1, 1);
+        thetaInitMatrix(0, 0) = this->theta;
+        this->thetaState->setState(thetaInitMatrix);
+    }
+    // define l in P0 frame
+    Eigen::Vector3d l_P0;
+    l_P0 << this->pendulumRadius * cos(this->phi) * cos(this->theta),
+      this->pendulumRadius * sin(this->phi) * cos(this->theta), -this->pendulumRadius * sin(this->theta);
 
-	// define the rotation matrix from P0 to B frame
-	dcm_B_P0 << pHat_01(0,0), pHat_02(0,0), pHat_03(0,0),
-				pHat_01(1,0), pHat_02(1,0), pHat_03(1,0),
-				pHat_01(2,0), pHat_02(2,0), pHat_03(2,0);
-	this->l_B=dcm_B_P0*l_P0;
+    // define the rotation matrix from P0 to B frame
+    dcm_B_P0 << pHat_01(0, 0), pHat_02(0, 0), pHat_03(0, 0), pHat_01(1, 0), pHat_02(1, 0), pHat_03(1, 0), pHat_01(2, 0),
+      pHat_02(2, 0), pHat_03(2, 0);
+    this->l_B = dcm_B_P0 * l_P0;
 
-	this->r_PcB_B = this->d + this->l_B;
+    this->r_PcB_B = this->d + this->l_B;
     this->massFSP = this->massState->stateView()(0, 0);
 
     // - Update the effectors mass
-	this->effProps.mEff = this->massFSP;
-	this->effProps.mEffDot = this->fuelMassDot;
-	this->effProps.mEffDotDynamics =
-        this->omitMassRateDynamics ? 0.0 : this->fuelMassDot;
-	// - Update the position of CoM
-	this->effProps.rEff_CB_B = this->r_PcB_B;
-	// - Update the inertia about B
-	this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
-	this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
+    this->effProps.mEff = this->massFSP;
+    this->effProps.mEffDot = this->fuelMassDot;
+    this->effProps.mEffDotDynamics = this->omitMassRateDynamics ? 0.0 : this->fuelMassDot;
+    // - Update the position of CoM
+    this->effProps.rEff_CB_B = this->r_PcB_B;
+    // - Update the inertia about B
+    this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
+    this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
-	// - Grab phiDot and thetaDot from the stateManager and define rPrime_PcB_B
+    // - Grab phiDot and thetaDot from the stateManager and define rPrime_PcB_B
     this->phiDot = this->phiDotState->stateView()(0, 0);
     this->thetaDot = this->thetaDotState->stateView()(0, 0);
 
     // define the derivative of l in P0 frame
-	this->lPrime_P0 << this->pendulumRadius*(-this->phiDot*sin(this->phi)*cos(this->theta)-this->thetaDot*cos(this->phi)*sin(this->theta)),
-    		this->pendulumRadius*(this->phiDot*cos(this->phi)*cos(this->theta)-this->thetaDot*sin(this->phi)*sin(this->theta)),
-    		-this->pendulumRadius*(this->thetaDot*cos(this->theta));
+    this->lPrime_P0 << this->pendulumRadius * (-this->phiDot * sin(this->phi) * cos(this->theta) -
+                                               this->thetaDot * cos(this->phi) * sin(this->theta)),
+      this->pendulumRadius *
+        (this->phiDot * cos(this->phi) * cos(this->theta) - this->thetaDot * sin(this->phi) * sin(this->theta)),
+      -this->pendulumRadius * (this->thetaDot * cos(this->theta));
     // rotate l derivative in B frame
-    this->lPrime_B = dcm_B_P0*this->lPrime_P0;
+    this->lPrime_B = dcm_B_P0 * this->lPrime_P0;
 
-	this->rPrime_PcB_B = this->lPrime_B;
-	this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
+    this->rPrime_PcB_B = this->lPrime_B;
+    this->effProps.rEffPrime_CB_B = this->rPrime_PcB_B;
     this->effProps.rEffPrime_CB_BDynamics = this->rPrime_PcB_B;
 
-	// - Update the body time derivative of inertia about B
-	this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-	const Eigen::Matrix3d inertiaRateFromMotion =
-        -this->massFSP*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
-                       + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
+    // - Update the body time derivative of inertia about B
+    this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
+    const Eigen::Matrix3d inertiaRateFromMotion =
+      -this->massFSP * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B);
     this->effProps.IEffPrimePntB_B =
-        -this->fuelMassDot*this->rTilde_PcB_B*this->rTilde_PcB_B
-        + inertiaRateFromMotion;
+      -this->fuelMassDot * this->rTilde_PcB_B * this->rTilde_PcB_B + inertiaRateFromMotion;
     this->effProps.IEffPrimePntB_BDynamics = inertiaRateFromMotion;
-    this->effProps.hasMassPropertyRateDynamics =
-        this->fuelMassDot != 0.0;
+    this->effProps.hasMassPropertyRateDynamics = this->fuelMassDot != 0.0;
 
     return;
 }
@@ -234,18 +237,19 @@ void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]
  *
  * @param[in] integTime [s] Current integration time.
  */
-void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
+void
+SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
 {
     if (this->massState == nullptr) {
         this->bskLogger.bskLog(
-            BSK_ERROR,
-            "SphericalPendulum was attached to a FuelTank but never added to Spacecraft. Every particle "
-            "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
+          BSK_ERROR,
+          "SphericalPendulum was attached to a FuelTank but never added to Spacecraft. Every particle "
+          "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
     }
     // Read the current RK-stage state before the tank allocates propellant flow.
     this->fuelMass = this->massState->stateView()(0, 0);
     if (this->fuelMass < 0.0) {
-        this->fuelMass = 0.0;  // [kg]
+        this->fuelMass = 0.0; // [kg]
         Eigen::MatrixXd massMatrix(1, 1);
         massMatrix(0, 0) = this->fuelMass;
         this->massState->setState(massMatrix);
@@ -262,15 +266,20 @@ void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N [[maybe_unused]])
+void
+SphericalPendulum::updateContributions(double integTime [[maybe_unused]],
+                                       BackSubMatrices& backSubContr,
+                                       Eigen::MRPd sigma_BN,
+                                       Eigen::Vector3d omega_BN_B,
+                                       Eigen::Vector3d g_N [[maybe_unused]])
 {
     if (this->massFSP <= 0.0) {
         this->aPhi.setZero();
         this->bPhi.setZero();
         this->aTheta.setZero();
         this->bTheta.setZero();
-        this->cPhi = 0.0;  // [rad/s^2]
-        this->cTheta = 0.0;  // [rad/s^2]
+        this->cPhi = 0.0;   // [rad/s^2]
+        this->cTheta = 0.0; // [rad/s^2]
         backSubContr.matrixA.setZero();
         backSubContr.matrixB.setZero();
         backSubContr.matrixC.setZero();
@@ -288,81 +297,88 @@ void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], B
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
-    double radiusSquared = this->pendulumRadius*this->pendulumRadius;
+    double radiusSquared = this->pendulumRadius * this->pendulumRadius;
     double cosTheta = cos(this->theta);
     Eigen::Vector3d pHat03CrossL_B = this->pHat_03.cross(this->l_B);
 
-	// - Define aPhi.transpose()
-    this->aPhi = -pHat03CrossL_B/(radiusSquared*cosTheta*cosTheta);
+    // - Define aPhi.transpose()
+    this->aPhi = -pHat03CrossL_B / (radiusSquared * cosTheta * cosTheta);
     // - Define bPhi.transpose()
-    this->bPhi = pHat03CrossL_B.cross(this->l_B + this->d) /
-                 (radiusSquared*cosTheta*cosTheta);
+    this->bPhi = pHat03CrossL_B.cross(this->l_B + this->d) / (radiusSquared * cosTheta * cosTheta);
 
-
-      // - Map gravity to body frame
+    // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d g_B;
     gLocal_N = *this->g_N;
-    g_B = dcm_BN*gLocal_N;
+    g_B = dcm_BN * gLocal_N;
     Eigen::Vector3d L_T;
     L_T = this->l_B.cross(this->massFSP * g_B - dcm_B_P0 * this->D * this->lPrime_P0);
 
     // - Define cPhi
     Eigen::Vector3d omega_BN_B_local = omega_BN_B;
-	this->cPhi = 1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius*cos(this->theta)*cos(this->theta))*
-			(-this->massFSP*this->pHat_03.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d))))
-			+this->pHat_03.transpose()*(L_T) +
-			2*this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->thetaDot*cos(this->theta)*sin(this->theta)
-			-this->massFSP*this->pHat_03.dot(this->l_B.cross(2*omega_BN_B_local.cross(this->lPrime_B)
-            + omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
+    this->cPhi =
+      1.0 / (this->massFSP * this->pendulumRadius * this->pendulumRadius * cos(this->theta) * cos(this->theta)) *
+      (-this->massFSP * this->pHat_03.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d)))) +
+       this->pHat_03.transpose() * (L_T) +
+       2 * this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->thetaDot *
+         cos(this->theta) * sin(this->theta) -
+       this->massFSP * this->pHat_03.dot(this->l_B.cross(2 * omega_BN_B_local.cross(this->lPrime_B) +
+                                                         omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
 
-	// Define pHat_02_Prime axes of rotation of theta in P0 frame
-	Eigen::Vector3d pHat_02_Prime_P0;
-	pHat_02_Prime_P0 << -sin(this->phi),cos(this->phi),0;
-	// Rotate pHat_02_Prime axes in B frame components
-	Eigen::Vector3d pHat_02_Prime;
-	pHat_02_Prime = dcm_B_P0*pHat_02_Prime_P0;
+    // Define pHat_02_Prime axes of rotation of theta in P0 frame
+    Eigen::Vector3d pHat_02_Prime_P0;
+    pHat_02_Prime_P0 << -sin(this->phi), cos(this->phi), 0;
+    // Rotate pHat_02_Prime axes in B frame components
+    Eigen::Vector3d pHat_02_Prime;
+    pHat_02_Prime = dcm_B_P0 * pHat_02_Prime_P0;
     Eigen::Vector3d pHat02PrimeCrossL_B = pHat_02_Prime.cross(this->l_B);
 
-	// Define aTheta.transpose()
-	this->aTheta = -pHat02PrimeCrossL_B/radiusSquared;
-	// Define bTheta.transpose()
-	this->bTheta = pHat02PrimeCrossL_B.cross(this->l_B + this->d)/radiusSquared;
-	// Define cTheta
-	this->cTheta =  1.0/(this->massFSP*this->pendulumRadius*this->pendulumRadius)*
-			(-this->massFSP*pHat_02_Prime.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d))))
-			+pHat_02_Prime.transpose()*(L_T)
-			-this->massFSP*this->pendulumRadius*this->pendulumRadius*this->phiDot*this->phiDot*cos(this->theta)*sin(this->theta)
-			-this->massFSP*pHat_02_Prime.dot(this->l_B.cross(2*omega_BN_B_local.cross(this->lPrime_B)
-            + omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
+    // Define aTheta.transpose()
+    this->aTheta = -pHat02PrimeCrossL_B / radiusSquared;
+    // Define bTheta.transpose()
+    this->bTheta = pHat02PrimeCrossL_B.cross(this->l_B + this->d) / radiusSquared;
+    // Define cTheta
+    this->cTheta =
+      1.0 / (this->massFSP * this->pendulumRadius * this->pendulumRadius) *
+      (-this->massFSP * pHat_02_Prime.dot(this->l_B.cross(omega_BN_B_local.cross(omega_BN_B_local.cross(this->d)))) +
+       pHat_02_Prime.transpose() * (L_T) -
+       this->massFSP * this->pendulumRadius * this->pendulumRadius * this->phiDot * this->phiDot * cos(this->theta) *
+         sin(this->theta) -
+       this->massFSP * pHat_02_Prime.dot(this->l_B.cross(2 * omega_BN_B_local.cross(this->lPrime_B) +
+                                                         omega_BN_B_local.cross(omega_BN_B_local.cross(this->l_B)))));
 
-	// - Compute matrix/vector contributions
-    Eigen::Vector3d phiBasis_B = sin(this->phi)*cos(this->theta)*this->pHat_01
-	 - cos(this->phi)*cos(this->theta)*this->pHat_02;
-    Eigen::Vector3d thetaBasis_B = cos(this->phi)*sin(this->theta)*this->pHat_01
-	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03;
-	backSubContr.matrixA = -this->massFSP*this->pendulumRadius*(phiBasis_B*this->aPhi.transpose()
-        + thetaBasis_B*this->aTheta.transpose());
+    // - Compute matrix/vector contributions
+    Eigen::Vector3d phiBasis_B =
+      sin(this->phi) * cos(this->theta) * this->pHat_01 - cos(this->phi) * cos(this->theta) * this->pHat_02;
+    Eigen::Vector3d thetaBasis_B = cos(this->phi) * sin(this->theta) * this->pHat_01 +
+                                   sin(this->phi) * sin(this->theta) * this->pHat_02 + cos(this->theta) * this->pHat_03;
+    backSubContr.matrixA = -this->massFSP * this->pendulumRadius *
+                           (phiBasis_B * this->aPhi.transpose() + thetaBasis_B * this->aTheta.transpose());
 
-    backSubContr.matrixB = -this->massFSP*this->pendulumRadius*(phiBasis_B*this->bPhi.transpose()
-        + thetaBasis_B*this->bTheta.transpose());
+    backSubContr.matrixB = -this->massFSP * this->pendulumRadius *
+                           (phiBasis_B * this->bPhi.transpose() + thetaBasis_B * this->bTheta.transpose());
 
-    backSubContr.matrixC = -this->massFSP*this->pendulumRadius*(this->r_PcB_B.cross(phiBasis_B)*this->aPhi.transpose()
-        + this->r_PcB_B.cross(thetaBasis_B)*this->aTheta.transpose());
+    backSubContr.matrixC = -this->massFSP * this->pendulumRadius *
+                           (this->r_PcB_B.cross(phiBasis_B) * this->aPhi.transpose() +
+                            this->r_PcB_B.cross(thetaBasis_B) * this->aTheta.transpose());
 
-	backSubContr.matrixD = -this->massFSP*this->pendulumRadius*(this->r_PcB_B.cross(phiBasis_B)*this->bPhi.transpose()
-        + this->r_PcB_B.cross(thetaBasis_B)*this->bTheta.transpose());
+    backSubContr.matrixD = -this->massFSP * this->pendulumRadius *
+                           (this->r_PcB_B.cross(phiBasis_B) * this->bPhi.transpose() +
+                            this->r_PcB_B.cross(thetaBasis_B) * this->bTheta.transpose());
 
-    Eigen::Vector3d pendulumAccelerationTerm_B = (-cos(this->phi)*cos(this->theta)*this->pHat_01
-	-sin(this->phi)*cos(this->theta)*this->pHat_02)*this->phiDot*this->phiDot
-	+(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02+sin(this->theta)*this->pHat_03)*this->thetaDot*this->thetaDot
-	+(2*sin(this->phi)*sin(this->theta)*this->pHat_01-2*cos(this->phi)*sin(this->theta)*this->pHat_02)*this->phiDot*this->thetaDot
-	-phiBasis_B*this->cPhi
-	-thetaBasis_B*this->cTheta;
-	backSubContr.vecTrans = -this->massFSP*this->pendulumRadius*pendulumAccelerationTerm_B;
+    Eigen::Vector3d pendulumAccelerationTerm_B =
+      (-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02) *
+        this->phiDot * this->phiDot +
+      (-cos(this->phi) * cos(this->theta) * this->pHat_01 - sin(this->phi) * cos(this->theta) * this->pHat_02 +
+       sin(this->theta) * this->pHat_03) *
+        this->thetaDot * this->thetaDot +
+      (2 * sin(this->phi) * sin(this->theta) * this->pHat_01 - 2 * cos(this->phi) * sin(this->theta) * this->pHat_02) *
+        this->phiDot * this->thetaDot -
+      phiBasis_B * this->cPhi - thetaBasis_B * this->cTheta;
+    backSubContr.vecTrans = -this->massFSP * this->pendulumRadius * pendulumAccelerationTerm_B;
 
-	backSubContr.vecRot = -this->massFSP*(omega_BN_B_local.cross(this->r_PcB_B.cross(this->rPrime_PcB_B))
-		+ this->pendulumRadius*this->r_PcB_B.cross(pendulumAccelerationTerm_B));
+    backSubContr.vecRot = -this->massFSP * (omega_BN_B_local.cross(this->r_PcB_B.cross(this->rPrime_PcB_B)) +
+                                            this->pendulumRadius * this->r_PcB_B.cross(pendulumAccelerationTerm_B));
 
     return;
 }
@@ -375,33 +391,37 @@ void SphericalPendulum::updateContributions(double integTime [[maybe_unused]], B
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]], Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void
+SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]],
+                                      Eigen::Vector3d rDDot_BN_N,
+                                      Eigen::Vector3d omegaDot_BN_B,
+                                      Eigen::MRPd sigma_BN)
 {
 
-	// - Find DCM
-	Eigen::MRPd sigmaLocal_BN;
-	Eigen::Matrix3d dcm_BN;
-	sigmaLocal_BN = sigma_BN;
-	dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
+    // - Find DCM
+    Eigen::MRPd sigmaLocal_BN;
+    Eigen::Matrix3d dcm_BN;
+    sigmaLocal_BN = sigma_BN;
+    dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
 
-	// - Set the derivative of l to lDot
+    // - Set the derivative of l to lDot
     this->phiState->setDerivative(this->phiDotState->stateView());
     this->thetaState->setDerivative(this->thetaDotState->stateView());
 
     // - Compute lDDot
-	Eigen::MatrixXd phi_conv(1,1);
-	Eigen::MatrixXd theta_conv(1,1);
+    Eigen::MatrixXd phi_conv(1, 1);
+    Eigen::MatrixXd theta_conv(1, 1);
     Eigen::Vector3d omegaDot_BN_B_local = omegaDot_BN_B;
     Eigen::Vector3d rDDot_BN_N_local = rDDot_BN_N;
-	Eigen::Vector3d rDDot_BN_B_local = dcm_BN*rDDot_BN_N_local;
+    Eigen::Vector3d rDDot_BN_B_local = dcm_BN * rDDot_BN_N_local;
     phi_conv(0, 0) = this->aPhi.dot(rDDot_BN_B_local) + this->bPhi.dot(omegaDot_BN_B_local) + this->cPhi;
-	this->phiDotState->setDerivative(phi_conv);
-	theta_conv(0, 0) = this->aTheta.dot(rDDot_BN_B_local) + this->bTheta.dot(omegaDot_BN_B_local) + this->cTheta;
-	this->thetaDotState->setDerivative(theta_conv);
+    this->phiDotState->setDerivative(phi_conv);
+    theta_conv(0, 0) = this->aTheta.dot(rDDot_BN_B_local) + this->bTheta.dot(omegaDot_BN_B_local) + this->cTheta;
+    this->thetaDotState->setDerivative(theta_conv);
 
     // - Set the massDot already computed from fuelTank to the stateDerivative of mass
-    Eigen::MatrixXd conv(1,1);
-    conv(0,0) = this->fuelMassDot;
+    Eigen::MatrixXd conv(1, 1);
+    conv(0, 0) = this->fuelMassDot;
     this->massState->setDerivative(conv);
 
     return;
@@ -414,8 +434,11 @@ void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]], Ei
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]], Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                     double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
+void
+SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                double& rotEnergyContr,
+                                                Eigen::Vector3d omega_BN_B)
 {
 
     //  - Get variables needed for energy momentum calcs
@@ -425,68 +448,67 @@ void SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_un
 
     // - Find rotational angular momentum contribution from hub
     rDotPcB_B = this->rPrime_PcB_B + omegaLocal_BN_B.cross(this->r_PcB_B);
-    rotAngMomPntCContr_B = this->massFSP*this->r_PcB_B.cross(rDotPcB_B);
+    rotAngMomPntCContr_B = this->massFSP * this->r_PcB_B.cross(rDotPcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*this->massFSP*rDotPcB_B.dot(rDotPcB_B);
-
+    rotEnergyContr = 1.0 / 2.0 * this->massFSP * rDotPcB_B.dot(rDotPcB_B);
 
     return;
-
 }
 
 /*! @brief Apply post-integration state modifications.
  *
  * @param[in] integTime [s] Current integration time.
  */
-void SphericalPendulum::modifyStates(double integTime [[maybe_unused]]){
-	// when theta>45° change reference system in order to avoid singularities on aPhi, bPhi, cPhi
-	if (fabs(cos(this->theta))<sqrt(2)/2){
-		// define the rotation matrix from P0 to P0new
-    	Eigen::Matrix3d dcm_P0_P0new;
-    	dcm_P0_P0new << cos(this->phi)*cos(this->theta), -sin(this->phi), cos(this->phi)*sin(this->theta),
-    					sin(this->phi)*cos(this->theta), cos(this->phi), sin(this->phi)*sin(this->theta),
-    					-sin(this->theta), 0, cos(this->theta);
-    	// define the P0new vectors in P0new components
-    	this->pHat_01 << 1,0,0;
-    	this->pHat_02 << 0,1,0;
-    	this->pHat_03 << 0,0,1;
+void
+SphericalPendulum::modifyStates(double integTime [[maybe_unused]])
+{
+    // when theta>45° change reference system in order to avoid singularities on aPhi, bPhi, cPhi
+    if (fabs(cos(this->theta)) < sqrt(2) / 2) {
+        // define the rotation matrix from P0 to P0new
+        Eigen::Matrix3d dcm_P0_P0new;
+        dcm_P0_P0new << cos(this->phi) * cos(this->theta), -sin(this->phi), cos(this->phi) * sin(this->theta),
+          sin(this->phi) * cos(this->theta), cos(this->phi), sin(this->phi) * sin(this->theta), -sin(this->theta), 0,
+          cos(this->theta);
+        // define the P0new vectors in P0new components
+        this->pHat_01 << 1, 0, 0;
+        this->pHat_02 << 0, 1, 0;
+        this->pHat_03 << 0, 0, 1;
 
-    	// rotate these vectors before in P0 frame and then in B frame
-    	this->pHat_01=dcm_B_P0*dcm_P0_P0new*this->pHat_01;
-    	this->pHat_02=dcm_B_P0*dcm_P0_P0new*this->pHat_02;
-    	this->pHat_03=dcm_B_P0*dcm_P0_P0new*this->pHat_03;
+        // rotate these vectors before in P0 frame and then in B frame
+        this->pHat_01 = dcm_B_P0 * dcm_P0_P0new * this->pHat_01;
+        this->pHat_02 = dcm_B_P0 * dcm_P0_P0new * this->pHat_02;
+        this->pHat_03 = dcm_B_P0 * dcm_P0_P0new * this->pHat_03;
 
-    	// define the new rotation matrix from P0 to B
-		dcm_B_P0 << pHat_01(0,0), pHat_02(0,0), pHat_03(0,0),
-					pHat_01(1,0), pHat_02(1,0), pHat_03(1,0),
-					pHat_01(2,0), pHat_02(2,0), pHat_03(2,0);		// compute lPrime in P0new components
-		Eigen::Vector3d lPrime_P0new;
-       	lPrime_P0new=dcm_B_P0.transpose()*this->lPrime_B;
-       	// define the new values for phiDot and thetaDot inverting the lPrime definition
-       	this->thetaDot=-lPrime_P0new(2,0)/this->pendulumRadius;
-       	this->phiDot=lPrime_P0new(1,0)/this->pendulumRadius;
-		// set the new values of theta and phi
-    	this->theta=0;
-    	this->phi=0;
+        // define the new rotation matrix from P0 to B
+        dcm_B_P0 << pHat_01(0, 0), pHat_02(0, 0), pHat_03(0, 0), pHat_01(1, 0), pHat_02(1, 0), pHat_03(1, 0),
+          pHat_01(2, 0), pHat_02(2, 0), pHat_03(2, 0); // compute lPrime in P0new components
+        Eigen::Vector3d lPrime_P0new;
+        lPrime_P0new = dcm_B_P0.transpose() * this->lPrime_B;
+        // define the new values for phiDot and thetaDot inverting the lPrime definition
+        this->thetaDot = -lPrime_P0new(2, 0) / this->pendulumRadius;
+        this->phiDot = lPrime_P0new(1, 0) / this->pendulumRadius;
+        // set the new values of theta and phi
+        this->theta = 0;
+        this->phi = 0;
 
-    	// set the new state of phi,theta, phiDot, thetaDot
-		Eigen::MatrixXd phiMatrix(1,1);
-    	phiMatrix(0,0) = this->phi;
-    	this->phiState->setState(phiMatrix);
+        // set the new state of phi,theta, phiDot, thetaDot
+        Eigen::MatrixXd phiMatrix(1, 1);
+        phiMatrix(0, 0) = this->phi;
+        this->phiState->setState(phiMatrix);
 
-		Eigen::MatrixXd thetaMatrix(1,1);
-   		thetaMatrix(0,0) = this->theta;
-    	this->thetaState->setState(thetaMatrix);
+        Eigen::MatrixXd thetaMatrix(1, 1);
+        thetaMatrix(0, 0) = this->theta;
+        this->thetaState->setState(thetaMatrix);
 
-		Eigen::MatrixXd phiDotMatrix(1,1);
-    	phiDotMatrix(0,0) = this->phiDot;
-    	this->phiDotState->setState(phiDotMatrix);
+        Eigen::MatrixXd phiDotMatrix(1, 1);
+        phiDotMatrix(0, 0) = this->phiDot;
+        this->phiDotState->setState(phiDotMatrix);
 
-        Eigen::MatrixXd thetaDotMatrix(1,1);
-    	thetaDotMatrix(0,0) = this->thetaDot;
-    	this->thetaDotState->setState(thetaDotMatrix);
+        Eigen::MatrixXd thetaDotMatrix(1, 1);
+        thetaDotMatrix(0, 0) = this->thetaDot;
+        this->thetaDotState->setState(thetaDotMatrix);
     }
 
-    	return;
-    }
+    return;
+}

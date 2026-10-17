@@ -17,10 +17,9 @@
 
 */
 
-
 #include "fswAlgorithms/attControl/mtbFeedforward/mtbFeedforward.h"
-#include "string.h"
 #include "architecture/utilities/linearAlgebra.h"
+#include "string.h"
 
 /*!
     This method initializes the output messages for this module.
@@ -28,15 +27,15 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void SelfInit_mtbFeedforward(mtbFeedforwardConfig  *configData, int64_t moduleID)
+void
+SelfInit_mtbFeedforward(mtbFeedforwardConfig* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     /*
      * Initialize the output message.
      */
     CmdTorqueBodyMsg_C_init(&configData->vehControlOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
     time varying states between function calls are reset to their default values.
@@ -46,23 +45,24 @@ void SelfInit_mtbFeedforward(mtbFeedforwardConfig  *configData, int64_t moduleID
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     /*
      * Check if the required input messages are connected.
      */
-    if (!MTBCmdMsg_C_isLinked(&configData->dipoleRequestMtbInMsg)){
+    if (!MTBCmdMsg_C_isLinked(&configData->dipoleRequestMtbInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbFeedForward.dipoleRequestMtbInMsg is not connected.");
     }
-    if (!CmdTorqueBodyMsg_C_isLinked(&configData->vehControlInMsg)){
+    if (!CmdTorqueBodyMsg_C_isLinked(&configData->vehControlInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbFeedForward.vehControlInMsg is not connected.");
     }
-    if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)){
+    if (!TAMSensorBodyMsg_C_isLinked(&configData->tamSensorBodyInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbFeedForward.tamSensorBodyInMsg is not connected.");
     }
-    if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)){
+    if (!MTBArrayConfigMsg_C_isLinked(&configData->mtbArrayConfigParamsInMsg)) {
         _bskError(configData->bskLogger, "Error: mtbFeedForward.mtbArrayConfigParamsInMsg is not connected.");
     }
 
@@ -71,21 +71,21 @@ void Reset_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, i
     configData->mtbArrayConfigParams = MTBArrayConfigMsg_C_read(&configData->mtbArrayConfigParamsInMsg);
 }
 
-
 /*! Computes the feedforward torque rod torque.
 
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_mtbFeedforward(mtbFeedforwardConfig* configData, uint64_t callTime, int64_t moduleID)
 {
 
     /*
      * Initialize local variables.
      */
-    double mtbDipoleCmd_B[3] = {0.0, 0.0, 0.0};     // the commanded dipole in the Body frame
-    double tauMtbFF_B[3] = {0.0, 0.0, 0.0};         // the torque rod feedforward term in the Body frame
+    double mtbDipoleCmd_B[3] = { 0.0, 0.0, 0.0 }; // the commanded dipole in the Body frame
+    double tauMtbFF_B[3] = { 0.0, 0.0, 0.0 };     // the torque rod feedforward term in the Body frame
 
     /*
      * Read the input messages and initialize output message.
@@ -97,7 +97,7 @@ void Update_mtbFeedforward(mtbFeedforwardConfig *configData, uint64_t callTime, 
     /*! -  Compute net torque produced on the vehicle from the torque bars.*/
     mMultV(configData->mtbArrayConfigParams.GtMatrix_B,
            3,
-           (size_t) configData->mtbArrayConfigParams.numMTB,
+           (size_t)configData->mtbArrayConfigParams.numMTB,
            dipoleRequestMtbInMsgBuffer.mtbDipoleCmds,
            mtbDipoleCmd_B);
     v3Cross(mtbDipoleCmd_B, tamSensorBodyInMsgBuffer.tam_B, tauMtbFF_B);

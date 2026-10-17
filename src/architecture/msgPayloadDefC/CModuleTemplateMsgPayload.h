@@ -20,12 +20,11 @@
 #ifndef _FSW_MODULE_TEMPLATE_OUT_H_
 #define _FSW_MODULE_TEMPLATE_OUT_H_
 
-
 /*! @brief Structure used to define the output of the sub-module.  This is the same
     output message that is used by all sub-modules in the module folder. */
-typedef struct {
-    double dataVector[3];     //!< [units] sample message vector
-}CModuleTemplateMsgPayload;
-
+typedef struct
+{
+    double dataVector[3]; //!< [units] sample message vector
+} CModuleTemplateMsgPayload;
 
 #endif

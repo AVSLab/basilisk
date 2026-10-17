@@ -18,24 +18,28 @@
 */
 
 #include "facetedSRPEffector.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/astroConstants.h"
+#include "architecture/utilities/avsEigenSupport.h"
 
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
 
  @param currentSimNanos [ns] Time the method is called
 */
-void FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]]) {
+void
+FacetedSRPEffector::Reset(uint64_t currentSimNanos [[maybe_unused]])
+{
     this->validateConfiguration();
     this->initializeFacetData();
 }
 
 /*! Validate the facet vector dimensions and required input-message connections. */
-void FacetedSRPEffector::validateConfiguration() {
-    if (this->facetElementBodyInMsgs.size() != this->numFacets
-        || this->facetProjectedAreaInMsgs.size() != this->numFacets) {
+void
+FacetedSRPEffector::validateConfiguration()
+{
+    if (this->facetElementBodyInMsgs.size() != this->numFacets ||
+        this->facetProjectedAreaInMsgs.size() != this->numFacets) {
         this->bskLogger.bskError("FacetedSRPEffector: facetElementBodyInMsgs and facetProjectedAreaInMsgs "
-                                "must each contain numFacets entries.");
+                                 "must each contain numFacets entries.");
     }
     // Check Sun state input message is linked
     if (!this->sunStateInMsg.isLinked()) {
@@ -48,14 +52,16 @@ void FacetedSRPEffector::validateConfiguration() {
             this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetElementBodyInMsgs is not linked.");
         }
         if (!this->facetProjectedAreaInMsgs[idx].isLinked()) {
-            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
+            this->bskLogger.bskError(
+              "FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
         }
     }
-
 }
 
 /*! Size and initialize the cached facet data used during force evaluation. */
-void FacetedSRPEffector::initializeFacetData() {
+void
+FacetedSRPEffector::initializeFacetData()
+{
     // Clear, allocate and initialize data lists
     this->facetAreaList.clear();
     this->facetProjectedAreaList.clear();
@@ -83,7 +89,9 @@ void FacetedSRPEffector::initializeFacetData() {
 
  @param states Dynamic parameter states
 */
-void FacetedSRPEffector::linkInStates(DynParamManager& states) {
+void
+FacetedSRPEffector::linkInStates(DynParamManager& states)
+{
     this->validateConfiguration();
     this->initializeFacetData();
 
@@ -96,7 +104,9 @@ void FacetedSRPEffector::linkInStates(DynParamManager& states) {
  @param callTime [s] Time the method is called
  @param timeStep [s] Simulation time step
 */
-void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]]) {
+void
+FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], double timeStep [[maybe_unused]])
+{
     this->validateConfiguration();
 
     this->forceExternal_B.setZero();
@@ -153,13 +163,14 @@ void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], do
             facetProjectedAreaIn = this->facetProjectedAreaInMsgs[idx]();
             this->facetProjectedAreaList[idx] = facetProjectedAreaIn.area;
         } else {
-            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetElementBodyInMsgs or facetProjectedAreaInMsgs was not written.");
+            this->bskLogger.bskError("FacetedSRPEffector: Input message error. facetElementBodyInMsgs or "
+                                     "facetProjectedAreaInMsgs was not written.");
         }
     }
 
     // Calculate the SRP pressure acting at the current spacecraft location
     double numAU = AU * 1000 / r_SB_B.norm();
-    double SRPPressure = (SOLAR_FLUX_EARTH / SPEED_LIGHT) * numAU * numAU;  // [Pa]
+    double SRPPressure = (SOLAR_FLUX_EARTH / SPEED_LIGHT) * numAU * numAU; // [Pa]
 
     // Compute the per-facet and total SRP force and torque
     Eigen::Vector3d facetSRPForcePntB_B = Eigen::Vector3d::Zero();
@@ -171,12 +182,12 @@ void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], do
         if (this->facetProjectedAreaList[idx] > 0.0) {
             double cosTheta = facetProjectedAreaList[idx] / facetAreaList[idx];
 
-            facetSRPForcePntB_B = -SRPPressure * this->facetProjectedAreaList[idx]
-                                  * ((1 - this->facetSpecularCoeffList[idx])
-                                  * sunDirHat_B + 2 * ((this->facetDiffuseCoeffList[idx] / 3)
-                                  + this->facetSpecularCoeffList[idx] * cosTheta)
-                                  * this->facetNHat_BList[idx]);  // [N]
-            facetSRPTorquePntB_B = this->facetR_CopB_BList[idx].cross(facetSRPForcePntB_B);  // [Nm]
+            facetSRPForcePntB_B =
+              -SRPPressure * this->facetProjectedAreaList[idx] *
+              ((1 - this->facetSpecularCoeffList[idx]) * sunDirHat_B +
+               2 * ((this->facetDiffuseCoeffList[idx] / 3) + this->facetSpecularCoeffList[idx] * cosTheta) *
+                 this->facetNHat_BList[idx]);                                               // [N]
+            facetSRPTorquePntB_B = this->facetR_CopB_BList[idx].cross(facetSRPForcePntB_B); // [Nm]
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft
             totalSRPForcePntB_B += facetSRPForcePntB_B;
@@ -192,7 +203,9 @@ void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], do
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void FacetedSRPEffector::setNumFacets(const uint64_t numFacets) {
+void
+FacetedSRPEffector::setNumFacets(const uint64_t numFacets)
+{
     this->numFacets = numFacets;
 
     this->facetElementBodyInMsgs.clear();
@@ -210,4 +223,8 @@ void FacetedSRPEffector::setNumFacets(const uint64_t numFacets) {
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t FacetedSRPEffector::getNumFacets() const { return this->numFacets; }
+uint64_t
+FacetedSRPEffector::getNumFacets() const
+{
+    return this->numFacets;
+}

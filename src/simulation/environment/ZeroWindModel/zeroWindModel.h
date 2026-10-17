@@ -33,12 +33,13 @@
  * The module is a sub-class of `windBase`.  See that class for the nominal
  * messages used and setup instructions.
  */
-class ZeroWindModel : public WindBase {
-public:
+class ZeroWindModel : public WindBase
+{
+  public:
     ZeroWindModel();
     ~ZeroWindModel() = default;
 
-private:
+  private:
     /*! Evaluates the wind velocity at the spacecraft position.
      *
      *  This sets `v_wind_N` to zero since there are no wind perturbations.
@@ -49,9 +50,10 @@ private:
      *  @param v_corotatingAir_N  Co-rotating atmosphere velocity [m/s] in N frame.
      *  @param currentTime  Current simulation time (s) - unused in this model.
      */
-    void evaluateWindModel(WindMsgPayload *msg, const Eigen::Vector3d& r_BP_N,
-                          const Eigen::Vector3d& v_corotatingAir_N, double currentTime) override;
-
+    void evaluateWindModel(WindMsgPayload* msg,
+                           const Eigen::Vector3d& r_BP_N,
+                           const Eigen::Vector3d& v_corotatingAir_N,
+                           double currentTime) override;
 };
 
 #endif /* ZERO_WIND_MODEL_H */

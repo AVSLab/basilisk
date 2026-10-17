@@ -27,36 +27,38 @@ Saturate::Saturate()
     this->numStates = 0;
 }
 
-Saturate::Saturate(int64_t size) : Saturate() {
+Saturate::Saturate(int64_t size)
+  : Saturate()
+{
     this->numStates = size;
     this->stateBounds.resize(numStates, 2);
 }
 /*! The destructor is a placeholder for one that might do something*/
-Saturate::~Saturate()
-{
-}
+Saturate::~Saturate() {}
 
 /*! Saturate an output vector using the configured bounds.
 
     @param unsaturatedStates Vector of unsaturated states.
     @return Vector of saturated states.
 */
-Eigen::VectorXd Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
+Eigen::VectorXd
+Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
 {
     Eigen::VectorXd workingStates;
     workingStates.resize(this->numStates);
-    for (int64_t i = 0; i < this->numStates; i++){
-        workingStates[(int) i] = std::min(unsaturatedStates[i], this->stateBounds(i, 1));
-        workingStates[(int) i] = std::max(workingStates[i], this->stateBounds(i, 0));
+    for (int64_t i = 0; i < this->numStates; i++) {
+        workingStates[(int)i] = std::min(unsaturatedStates[i], this->stateBounds(i, 1));
+        workingStates[(int)i] = std::max(workingStates[i], this->stateBounds(i, 0));
     }
     return workingStates;
-
 }
 
 /*! Set the lower and upper bounds for each state.
 
     @param bounds One row per state, with lower and upper bounds in the two columns.
 */
-void Saturate::setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds) {
+void
+Saturate::setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds)
+{
     this->stateBounds = bounds;
 }

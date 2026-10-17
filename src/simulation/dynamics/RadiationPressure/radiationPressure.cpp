@@ -19,17 +19,17 @@
 
 #include "simulation/dynamics/RadiationPressure/radiationPressure.h"
 #include "architecture/utilities/astroConstants.h"
-#include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/avsEigenMRP.h"
+#include "architecture/utilities/avsEigenSupport.h"
 #include <inttypes.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overridden by the user.*/
 RadiationPressure::RadiationPressure()
-    :area(0.0)  // [m^2]
-    ,coefficientReflection(1.2)
-    ,srpModel(SRP_CANNONBALL_MODEL)
-    ,stateRead(false)
+  : area(0.0) // [m^2]
+  , coefficientReflection(1.2)
+  , srpModel(SRP_CANNONBALL_MODEL)
+  , stateRead(false)
 {
     this->sunVisibilityFactor.illuminationFactor = 1.0;
     this->forceExternal_N.setZero();
@@ -46,22 +46,21 @@ RadiationPressure::~RadiationPressure()
     return;
 }
 
-
-
 /*! Validate the module configuration when the scheduler resets the model.
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
  */
-void RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+RadiationPressure::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! Validate the required Sun input and dimensions of the selected lookup model. */
-void RadiationPressure::validateConfiguration()
+void
+RadiationPressure::validateConfiguration()
 {
-    if(!this->sunEphmInMsg.isLinked())
-    {
+    if (!this->sunEphmInMsg.isLinked()) {
         bskLogger.bskError("Did not find a valid sun ephemeris message connection.");
     }
     if (this->srpModel == SRP_FACETED_CPU_MODEL) {
@@ -70,13 +69,13 @@ void RadiationPressure::validateConfiguration()
 }
 
 /*! @brief Validate lookup dimensions before selecting or indexing a table entry. */
-void RadiationPressure::validateLookupDimensions()
+void
+RadiationPressure::validateLookupDimensions()
 {
-    if (this->lookupSHat_B.empty()
-        || this->lookupForce_B.size() != this->lookupSHat_B.size()
-        || this->lookupTorque_B.size() != this->lookupSHat_B.size()) {
+    if (this->lookupSHat_B.empty() || this->lookupForce_B.size() != this->lookupSHat_B.size() ||
+        this->lookupTorque_B.size() != this->lookupSHat_B.size()) {
         this->bskLogger.bskError("RadiationPressure: lookupSHat_B, lookupForce_B, and lookupTorque_B "
-                                "must have the same nonzero number of entries for the faceted CPU model.");
+                                 "must have the same nonzero number of entries for the faceted CPU model.");
     }
 }
 
@@ -85,7 +84,8 @@ void RadiationPressure::validateLookupDimensions()
 
  @param[in] statesIn Dynamic parameter manager containing the required states.
  */
-void RadiationPressure::linkInStates(DynParamManager& statesIn)
+void
+RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
@@ -98,7 +98,8 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
  buffer structure.
 
  */
-void RadiationPressure::readInputMessages()
+void
+RadiationPressure::readInputMessages()
 {
     /* read in sun state message */
     this->sunEphmInBuffer = this->sunEphmInMsg();
@@ -117,7 +118,8 @@ void RadiationPressure::readInputMessages()
  @param integTime Current simulation integration time
  @param timeStep Current integration time step used
  */
-void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void
+RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
@@ -130,8 +132,7 @@ void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], do
     if (this->srpModel == SRP_CANNONBALL_MODEL) {
         this->computeCannonballModel(rSunB_N);
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.illuminationFactor;
-    }
-    else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
+    } else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_NB(this->hubSigma->stateView().data());
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_NB.toRotationMatrix().transpose();
         Eigen::Vector3d rSunB_B = dcmLocal_BN * rSunB_N;
@@ -147,7 +148,8 @@ void RadiationPressure::computeForceTorque(double integTime [[maybe_unused]], do
 
  @param CurrentSimNanos current simulation time in nanoseconds
  */
-void RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->readInputMessages();
 }
@@ -155,7 +157,8 @@ void RadiationPressure::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! Sets the model to the cannonball model in computing the solar radiation force
 
  */
-void RadiationPressure::setUseCannonballModel()
+void
+RadiationPressure::setUseCannonballModel()
 {
     this->srpModel = SRP_CANNONBALL_MODEL;
 }
@@ -163,11 +166,11 @@ void RadiationPressure::setUseCannonballModel()
 /*! Sets the model to the faceted table-lookup model, evaluated on the CPU, in computing the solar radiation force
 
  */
-void RadiationPressure::setUseFacetedCPUModel()
+void
+RadiationPressure::setUseFacetedCPUModel()
 {
     this->srpModel = SRP_FACETED_CPU_MODEL;
 }
-
 
 /*! Computes the solar radiation force vector
  *   based on cross-sectional Area and mass of the spacecraft
@@ -180,14 +183,16 @@ void RadiationPressure::setUseFacetedCPUModel()
 
  @param[in] rSunB_N [m] Spacecraft-to-Sun position vector expressed in inertial-frame components.
  */
-void RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
+void
+RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
 {
     /* Magnitude of the spacecraft-to-Sun vector */
     double sunDist = rSunB_N.norm();
     /* Computing the force vector [N]*/
-    double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU*1000.,2)) / (SPEED_LIGHT * pow(sunDist, 3));
+    double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU * 1000., 2)) /
+                         (SPEED_LIGHT * pow(sunDist, 3));
     if (stateRead)
-        this->forceExternal_N = scaleFactor*(rSunB_N);
+        this->forceExternal_N = scaleFactor * (rSunB_N);
     else
         this->forceExternal_N.setZero();
 }
@@ -201,15 +206,16 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d rSunB_N)
 
  @param[in] rSunB_B [m] Spacecraft-to-Sun position vector expressed in body-frame components.
  */
-void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
+void
+RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 {
     this->validateLookupDimensions();
     double tmpDotProduct = 0;
     double currentDotProduct = 0;
     size_t currentIdx = 0;
     double sunDist = rSunB_B.norm();
-    Eigen::Vector3d sHat_B = rSunB_B/sunDist;
-    Eigen::Vector3d tmpLookupSHat_B(0,0,0);
+    Eigen::Vector3d sHat_B = rSunB_B / sunDist;
+    Eigen::Vector3d tmpLookupSHat_B(0, 0, 0);
 
     if (!this->stateRead) {
         this->forceExternal_B.setZero();
@@ -223,18 +229,17 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use and generate lookup table as azimuth and elevation
     // because then we can use a simple gradient descent search to find the nearest next attitude
-    for(size_t i = 0; i < this->lookupSHat_B.size(); i++) {
+    for (size_t i = 0; i < this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
-        if (tmpDotProduct > currentDotProduct)
-        {
+        if (tmpDotProduct > currentDotProduct) {
             currentIdx = i;
             currentDotProduct = tmpDotProduct;
         }
     }
 
-    this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
-    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
+    this->forceExternal_B = this->lookupForce_B[currentIdx] * pow(AU * 1000 / sunDist, 2);
+    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx] * pow(AU * 1000 / sunDist, 2);
 }
 
 /*! Add force vector in the body frame to lookup table.
@@ -242,7 +247,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d rSunB_B)
 
  @param vec (N) Force vector for particular attitude in lookup table
  */
-void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
+void
+RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupForce_B.push_back(vec);
 }
@@ -252,7 +258,8 @@ void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 
  @param vec (Nm) Torque vector for particular attitude in lookup table
  */
-void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
+void
+RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupTorque_B.push_back(vec);
 }
@@ -262,7 +269,8 @@ void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 
  @param vec sun unit direction vector in body frame
  */
-void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)
+void
+RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupSHat_B.push_back(vec);
 }

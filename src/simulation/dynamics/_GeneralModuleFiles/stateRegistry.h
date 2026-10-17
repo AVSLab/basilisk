@@ -91,10 +91,10 @@ enum class StateBufferKind
  */
 struct StateBufferSegment
 {
-    const StateRegistry* registry = nullptr; ///< Owner of the referenced storage.
+    const StateRegistry* registry = nullptr;             ///< Owner of the referenced storage.
     StateBufferKind bufferKind = StateBufferKind::State; ///< Buffer containing the scalar range.
-    size_t offset = 0; ///< First scalar in the buffer.
-    size_t count = 0; ///< Number of consecutive scalars.
+    size_t offset = 0;                                   ///< First scalar in the buffer.
+    size_t count = 0;                                    ///< Number of consecutive scalars.
 };
 
 /**
@@ -291,14 +291,14 @@ class StateRegistry
     /** @brief Reject buffer access before storage has been allocated. */
     void requireRawAccess(const char* field) const;
 
-    bool finalized = false; ///< True after the one-time layout and buffer allocation.
+    bool finalized = false;                                  ///< True after the one-time layout and buffer allocation.
     std::unordered_map<std::string, size_t> stateSlotByName; ///< Name to stable registration slot.
-    std::vector<StateRecord> stateRecords; ///< Owned handles, declarations, initial matrices, and policies.
+    std::vector<StateRecord> stateRecords;         ///< Owned handles, declarations, initial matrices, and policies.
     std::vector<StateData*> registrationOrderView; ///< Handles in first-declaration order.
-    std::vector<StateLayout> stateLayoutView; ///< Fixed shapes and scalar offsets.
-    StateBuffers liveBuffers; ///< Values used by modules and integrators; never resized after finalization.
+    std::vector<StateLayout> stateLayoutView;      ///< Fixed shapes and scalar offsets.
+    StateBuffers liveBuffers;             ///< Values used by modules and integrators; never resized after finalization.
     NoiseTopology finalizedNoiseTopology; ///< Canonical shared-noise groups fixed at finalization.
-    NoiseTopology pendingNoiseGroups; ///< Shared-noise declarations collected before finalization.
+    NoiseTopology pendingNoiseGroups;     ///< Shared-noise declarations collected before finalization.
 };
 
 #endif /* STATE_REGISTRY_H */

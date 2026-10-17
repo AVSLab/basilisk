@@ -22,16 +22,13 @@
 
 #include <Eigen/Dense>
 
-
 /*! @brief Structure used to define the MSM spacecraft sphere charge value message */
 typedef struct
-//@cond DOXYGEN_IGNORE
-ChargeMsmMsgPayload
+  //@cond DOXYGEN_IGNORE
+  ChargeMsmMsgPayload
 //@endcond
 {
-    Eigen::VectorXd q;      //!< [C], charge of each MSM sphere
-}ChargeMsmMsgPayload;
-
-
+    Eigen::VectorXd q; //!< [C], charge of each MSM sphere
+} ChargeMsmMsgPayload;
 
 #endif

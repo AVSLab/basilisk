@@ -21,9 +21,9 @@
 #define BASILISK_SWDATASIMMSG_H
 
 /*! SW data message definition */
-typedef struct {
-  double dataValue;                      //!< kg/m^3 Local neutral particle density
-}SwDataMsgPayload;
+typedef struct
+{
+    double dataValue; //!< kg/m^3 Local neutral particle density
+} SwDataMsgPayload;
 
-
-#endif //BASILISK_SWDATASIMMSG_H
+#endif // BASILISK_SWDATASIMMSG_H

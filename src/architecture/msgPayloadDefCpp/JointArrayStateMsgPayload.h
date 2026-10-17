@@ -22,16 +22,17 @@
 
 #include <vector>
 
-/*! @brief Structure used by the messaging system to communicate details about the array of joint states in the system.*/
+/*! @brief Structure used by the messaging system to communicate details about the array of joint states in the
+ * system.*/
 typedef struct
-//@cond DOXYGEN_IGNORE
-JointArrayStateMsgPayload
+  //@cond DOXYGEN_IGNORE
+  JointArrayStateMsgPayload
 //@endcond
 
 {
-    std::vector<double> states;                    //!< [-] list of joint states
-    std::vector<double> stateDots;              //!< [-] list of joint state derivatives
-    std::vector<double> stateDDots;             //!< [-] list of joint state second derivatives
+    std::vector<double> states;     //!< [-] list of joint states
+    std::vector<double> stateDots;  //!< [-] list of joint state derivatives
+    std::vector<double> stateDDots; //!< [-] list of joint state second derivatives
 } JointArrayStateMsgPayload;
 
 #endif

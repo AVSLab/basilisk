@@ -20,15 +20,14 @@
 #ifndef _RW_AVAILABILITY_FSW_MSG_H
 #define _RW_AVAILABILITY_FSW_MSG_H
 
-#include <stdint.h>
-#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
 #include "architecture/utilities/macroDefinitions.h"
-
+#include "fswAlgorithms/fswUtilities/fswDefinitions.h"
+#include <stdint.h>
 
 /*! @brief Array with availability of RW */
-typedef struct {
-    FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];  //!< The current state of the wheel
-}RWAvailabilityMsgPayload;
-
+typedef struct
+{
+    FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT]; //!< The current state of the wheel
+} RWAvailabilityMsgPayload;
 
 #endif

@@ -19,18 +19,18 @@
 
 #include "rigidBodyKinematics.h"
 
+#include "architecture/utilities/bsk_Print.h"
 #include "linearAlgebra.h"
 #include "math.h"
-#include "architecture/utilities/bsk_Print.h"
 #include <string.h>
-
 
 /*
  * Q = addEP(B1,B2) provides the Euler parameter vector
  * which corresponds to performing to successive
  * rotations B1 and B2.
  */
-void addEP(double *b1, double *b2, double *result)
+void
+addEP(double* b1, double* b2, double* result)
 {
     result[0] = b2[0] * b1[0] - b2[1] * b1[1] - b2[2] * b1[2] - b2[3] * b1[3];
     result[1] = b2[1] * b1[0] + b2[0] * b1[1] + b2[3] * b1[2] - b2[2] * b1[3];
@@ -45,7 +45,8 @@ void addEP(double *b1, double *b2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler121(double *e1, double *e2, double *result)
+void
+addEuler121(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -64,7 +65,8 @@ void addEuler121(double *e1, double *e2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler131(double *e1, double *e2, double *result)
+void
+addEuler131(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -81,7 +83,8 @@ void addEuler131(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (1-2-3) rotations E1 and E2.
  */
-void addEuler123(double *e1, double *e2, double *result)
+void
+addEuler123(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -98,7 +101,8 @@ void addEuler123(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (1-3-2) rotations E1 and E2.
  */
-void addEuler132(double *e1, double *e2, double *result)
+void
+addEuler132(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -117,7 +121,8 @@ void addEuler132(double *e1, double *e2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler212(double *e1, double *e2, double *result)
+void
+addEuler212(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -134,7 +139,8 @@ void addEuler212(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (2-1-3) rotations E1 and E2.
  */
-void addEuler213(double *e1, double *e2, double *result)
+void
+addEuler213(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -151,7 +157,8 @@ void addEuler213(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (2-3-1) rotations E1 and E2.
  */
-void addEuler231(double *e1, double *e2, double *result)
+void
+addEuler231(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -170,7 +177,8 @@ void addEuler231(double *e1, double *e2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler232(double *e1, double *e2, double *result)
+void
+addEuler232(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -187,7 +195,8 @@ void addEuler232(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (3-1-2) rotations E1 and E2.
  */
-void addEuler312(double *e1, double *e2, double *result)
+void
+addEuler312(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -206,7 +215,8 @@ void addEuler312(double *e1, double *e2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler313(double *e1, double *e2, double *result)
+void
+addEuler313(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -223,7 +233,8 @@ void addEuler313(double *e1, double *e2, double *result)
  * angle vector corresponding to two successive
  * (3-2-1) rotations E1 and E2.
  */
-void addEuler321(double *e1, double *e2, double *result)
+void
+addEuler321(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -242,7 +253,8 @@ void addEuler321(double *e1, double *e2, double *result)
  * @param result Output Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void addEuler323(double *e1, double *e2, double *result)
+void
+addEuler323(double* e1, double* e2, double* result)
 {
     double C1[3][3];
     double C2[3][3];
@@ -260,7 +272,8 @@ void addEuler323(double *e1, double *e2, double *result)
  * @param q2 Second Gibbs vector [-].
  * @param result Output composed Gibbs vector [-].
  */
-void addGibbs(double *q1, double *q2, double *result)
+void
+addGibbs(double* q1, double* q2, double* result)
 {
     double v1[3];
     double v2[3];
@@ -272,7 +285,8 @@ void addGibbs(double *q1, double *q2, double *result)
 }
 
 /** @brief Compose MRPs through quaternions, returning the bounded MRP set. */
-static void composeMRP(double *q1, double *q2, double sign, double *result)
+static void
+composeMRP(double* q1, double* q2, double sign, double* result)
 {
     double first[4];
     double second[4];
@@ -288,8 +302,7 @@ static void composeMRP(double *q1, double *q2, double sign, double *result)
     composed[0] = first[0] * second[0] - sign * v3Dot(first + 1, second + 1);
     // Cancel the linear terms before adding the smaller cross product.
     for (int index = 0; index < 3; ++index) {
-        composed[index + 1] = (second[0] * first[index + 1] + sign * first[0] * second[index + 1])
-                              + cross[index];
+        composed[index + 1] = (second[0] * first[index + 1] + sign * first[0] * second[index + 1]) + cross[index];
     }
     EP2MRP(composed, result);
 }
@@ -300,7 +313,8 @@ static void composeMRP(double *q1, double *q2, double sign, double *result)
  * @param q2 Second MRP vector [-].
  * @param result Output MRP vector with norm at most one [-].
  */
-void addMRP(double *q1, double *q2, double *result)
+void
+addMRP(double* q1, double* q2, double* result)
 {
     composeMRP(q1, q2, 1.0, result);
 }
@@ -313,7 +327,8 @@ void addMRP(double *q1, double *q2, double *result)
  * @note Opposite input vectors return zero; other results retain the composed
  * quaternion's angle branch.
  */
-void addPRV(double *qq1, double *qq2, double *result)
+void
+addPRV(double* qq1, double* qq2, double* result)
 {
     double first[4];
     double second[4];
@@ -335,7 +350,8 @@ void addPRV(double *qq1, double *qq2, double *result)
  * body angular velocity vector w.
  * w = 2 [B(Q)]^(-1) dQ/dt
  */
-void BinvEP(double *q, double B[3][4])
+void
+BinvEP(double* q, double B[3][4])
 {
     B[0][0] = -q[1];
     B[0][1] = q[0];
@@ -358,7 +374,8 @@ void BinvEP(double *q, double B[3][4])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler121(double *q, double B[3][3])
+void
+BinvEuler121(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -388,7 +405,8 @@ void BinvEuler121(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler123(double *q, double B[3][3])
+void
+BinvEuler123(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -418,7 +436,8 @@ void BinvEuler123(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler131(double *q, double B[3][3])
+void
+BinvEuler131(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -448,7 +467,8 @@ void BinvEuler131(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler132(double *q, double B[3][3])
+void
+BinvEuler132(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -478,7 +498,8 @@ void BinvEuler132(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler212(double *q, double B[3][3])
+void
+BinvEuler212(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -508,7 +529,8 @@ void BinvEuler212(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler213(double *q, double B[3][3])
+void
+BinvEuler213(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -538,7 +560,8 @@ void BinvEuler213(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler231(double *q, double B[3][3])
+void
+BinvEuler231(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -568,7 +591,8 @@ void BinvEuler231(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler232(double *q, double B[3][3])
+void
+BinvEuler232(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -598,7 +622,8 @@ void BinvEuler232(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler323(double *q, double B[3][3])
+void
+BinvEuler323(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -628,7 +653,8 @@ void BinvEuler323(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler313(double *q, double B[3][3])
+void
+BinvEuler313(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -658,7 +684,8 @@ void BinvEuler313(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler321(double *q, double B[3][3])
+void
+BinvEuler321(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -688,7 +715,8 @@ void BinvEuler321(double *q, double B[3][3])
  *
  * w = [B(Q)]^(-1) dQ/dt
  */
-void BinvEuler312(double *q, double B[3][3])
+void
+BinvEuler312(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -716,7 +744,8 @@ void BinvEuler312(double *q, double B[3][3])
  * @param q Gibbs vector [-].
  * @param B Output 3-by-3 inverse rate matrix [-].
  */
-void BinvGibbs(double *q, double B[3][3])
+void
+BinvGibbs(double* q, double B[3][3])
 {
     B[0][0] = 1;
     B[0][1] = q[2];
@@ -735,7 +764,8 @@ void BinvGibbs(double *q, double B[3][3])
  * @param q Modified Rodrigues parameters [-].
  * @param B Output 3-by-3 inverse rate matrix [-].
  */
-void BinvMRP(double *q, double B[3][3])
+void
+BinvMRP(double* q, double B[3][3])
 {
     double s2;
 
@@ -758,14 +788,15 @@ void BinvMRP(double *q, double B[3][3])
  * @param B Output 3-by-3 kinematic matrix.
  * @note The zero-attitude limit is identity; small angles use series expansions.
  */
-void BinvPRV(double *q, double B[3][3])
+void
+BinvPRV(double* q, double B[3][3])
 {
     double p;
     double c1;
     double c2;
 
     p = sqrt(v3Dot(q, q));
-    if (p < 1e-2) {  // [rad]
+    if (p < 1e-2) { // [rad]
         double p2 = p * p;
         c1 = 0.5 - p2 / 24.0 + p2 * p2 / 720.0 - p2 * p2 * p2 / 40320.0;
         c2 = 1.0 / 6.0 - p2 / 120.0 + p2 * p2 / 5040.0 - p2 * p2 * p2 / 362880.0;
@@ -793,7 +824,8 @@ void BinvPRV(double *q, double B[3][3])
  *
  * dQ/dt = 1/2 [B(Q)] w
  */
-void BmatEP(double *q, double B[4][3])
+void
+BmatEP(double* q, double B[4][3])
 {
     B[0][0] = -q[1];
     B[0][1] = -q[2];
@@ -816,7 +848,8 @@ void BmatEP(double *q, double B[4][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler121(double *q, double B[3][3])
+void
+BmatEuler121(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -847,7 +880,8 @@ void BmatEuler121(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler131(double *q, double B[3][3])
+void
+BmatEuler131(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -878,7 +912,8 @@ void BmatEuler131(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler123(double *q, double B[3][3])
+void
+BmatEuler123(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -909,7 +944,8 @@ void BmatEuler123(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler132(double *q, double B[3][3])
+void
+BmatEuler132(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -940,7 +976,8 @@ void BmatEuler132(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler212(double *q, double B[3][3])
+void
+BmatEuler212(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -971,7 +1008,8 @@ void BmatEuler212(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler213(double *q, double B[3][3])
+void
+BmatEuler213(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1002,7 +1040,8 @@ void BmatEuler213(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler231(double *q, double B[3][3])
+void
+BmatEuler231(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1033,7 +1072,8 @@ void BmatEuler231(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler232(double *q, double B[3][3])
+void
+BmatEuler232(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1064,7 +1104,8 @@ void BmatEuler232(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler312(double *q, double B[3][3])
+void
+BmatEuler312(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1095,7 +1136,8 @@ void BmatEuler312(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler313(double *q, double B[3][3])
+void
+BmatEuler313(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1126,7 +1168,8 @@ void BmatEuler313(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler321(double *q, double B[3][3])
+void
+BmatEuler321(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1157,7 +1200,8 @@ void BmatEuler321(double *q, double B[3][3])
  *
  * dQ/dt = [B(Q)] w
  */
-void BmatEuler323(double *q, double B[3][3])
+void
+BmatEuler323(double* q, double B[3][3])
 {
     double s2;
     double c2;
@@ -1188,7 +1232,8 @@ void BmatEuler323(double *q, double B[3][3])
  *
  * dQ/dt = 1/2 [B(Q)] w
  */
-void BmatGibbs(double *q, double B[3][3])
+void
+BmatGibbs(double* q, double B[3][3])
 {
     B[0][0] = 1 + q[0] * q[0];
     B[0][1] = q[0] * q[1] - q[2];
@@ -1206,7 +1251,8 @@ void BmatGibbs(double *q, double B[3][3])
  * @param q Input MRP vector [-].
  * @param B Output rate matrix [-].
  */
-void BmatMRP(double *q, double B[3][3])
+void
+BmatMRP(double* q, double B[3][3])
 {
     double s2;
 
@@ -1228,20 +1274,21 @@ void BmatMRP(double *q, double B[3][3])
  * @param dq Input MRP time derivative [1/s].
  * @param B Output matrix time derivative [1/s].
  */
-void BdotmatMRP(double *q, double *dq, double B[3][3])
+void
+BdotmatMRP(double* q, double* dq, double B[3][3])
 {
     double s;
 
     s = -2 * v3Dot(q, dq);
-    B[0][0] = s + 4 * ( q[0] * dq[0] );
-    B[0][1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1] );
-    B[0][2] = 2 * ( dq[1] + q[0] * dq[2] + dq[0] * q[2] );
-    B[1][0] = 2 * ( dq[2] + q[0] * dq[1] + dq[0] * q[1] );
-    B[1][1] = s + 4 * ( q[1] * dq[1] );
-    B[1][2] = 2 * (-dq[0] + q[1] * dq[2] + dq[1] * q[2] );
-    B[2][0] = 2 * (-dq[1] + q[0] * dq[2] + dq[0] * q[2] );
-    B[2][1] = 2 * ( dq[0] + q[1] * dq[2] + dq[1] * q[2] );
-    B[2][2] = s + 4 * ( q[2] * dq[2] );
+    B[0][0] = s + 4 * (q[0] * dq[0]);
+    B[0][1] = 2 * (-dq[2] + q[0] * dq[1] + dq[0] * q[1]);
+    B[0][2] = 2 * (dq[1] + q[0] * dq[2] + dq[0] * q[2]);
+    B[1][0] = 2 * (dq[2] + q[0] * dq[1] + dq[0] * q[1]);
+    B[1][1] = s + 4 * (q[1] * dq[1]);
+    B[1][2] = 2 * (-dq[0] + q[1] * dq[2] + dq[1] * q[2]);
+    B[2][0] = 2 * (-dq[1] + q[0] * dq[2] + dq[0] * q[2]);
+    B[2][1] = 2 * (dq[0] + q[1] * dq[2] + dq[1] * q[2]);
+    B[2][2] = s + 4 * (q[2] * dq[2]);
 }
 
 /**
@@ -1250,12 +1297,13 @@ void BdotmatMRP(double *q, double *dq, double B[3][3])
  * @param B Output 3-by-3 kinematic matrix.
  * @note The zero-attitude limit is identity; small angles use series expansions.
  */
-void BmatPRV(double *q, double B[3][3])
+void
+BmatPRV(double* q, double B[3][3])
 {
     double p;
     double c;
     p = v3Norm(q);
-    if (p < 1e-2) {  // [rad]
+    if (p < 1e-2) { // [rad]
         double p2 = p * p;
         c = 1.0 / 12.0 + p2 / 720.0 + p2 * p2 / 30240.0 + p2 * p2 * p2 / 1209600.0;
     } else {
@@ -1280,7 +1328,8 @@ void BmatPRV(double *q, double B[3][3])
  * using the Stanley method.
  *
  */
-void C2EP(double C[3][3], double b[4])
+void
+C2EP(double C[3][3], double b[4])
 {
     double tr;
     double b2[4];
@@ -1296,14 +1345,14 @@ void C2EP(double C[3][3], double b[4])
 
     i = 0;
     max = b2[0];
-    for(j = 1; j < 4; j++) {
-        if(b2[j] > max) {
+    for (j = 1; j < 4; j++) {
+        if (b2[j] > max) {
             i = j;
             max = b2[j];
         }
     }
 
-    switch(i) {
+    switch (i) {
         case 0:
             b[0] = sqrt(b2[0]);
             b[1] = (C[1][2] - C[2][1]) / 4 / b[0];
@@ -1313,7 +1362,7 @@ void C2EP(double C[3][3], double b[4])
         case 1:
             b[1] = sqrt(b2[1]);
             b[0] = (C[1][2] - C[2][1]) / 4 / b[1];
-            if(b[0] < 0) {
+            if (b[0] < 0) {
                 b[1] = -b[1];
                 b[0] = -b[0];
             }
@@ -1323,7 +1372,7 @@ void C2EP(double C[3][3], double b[4])
         case 2:
             b[2] = sqrt(b2[2]);
             b[0] = (C[2][0] - C[0][2]) / 4 / b[2];
-            if(b[0] < 0) {
+            if (b[0] < 0) {
                 b[2] = -b[2];
                 b[0] = -b[0];
             }
@@ -1333,7 +1382,7 @@ void C2EP(double C[3][3], double b[4])
         case 3:
             b[3] = sqrt(b2[3]);
             b[0] = (C[0][1] - C[1][0]) / 4 / b[3];
-            if(b[0] < 0) {
+            if (b[0] < 0) {
                 b[3] = -b[3];
                 b[0] = -b[0];
             }
@@ -1354,11 +1403,12 @@ void C2EP(double C[3][3], double b[4])
  * second-axis row, which is unaffected by the middle rotation. This avoids
  * independently extracting two ill-conditioned outer angles near a singularity.
  */
-static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis, int repeated, double q[3])
+static void
+C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis, int repeated, double q[3])
 {
     int remainingAxis = 3 - firstAxis - secondAxis;
     double parity = secondAxis == (firstAxis + 1) % 3 ? 1.0 : -1.0;
-    const double singularityTolerance = 1e-14;  // [-] sine or cosine of the middle angle
+    const double singularityTolerance = 1e-14; // [-] sine or cosine of the middle angle
     double magnitude;
     double sine;
     double cosine;
@@ -1368,8 +1418,8 @@ static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis,
     if (repeated) {
         magnitude = hypot(C[firstAxis][secondAxis], C[firstAxis][remainingAxis]);
         q[1] = atan2(magnitude, C[firstAxis][firstAxis]);
-        q[2] = magnitude > singularityTolerance
-            ? atan2(C[secondAxis][firstAxis], parity * C[remainingAxis][firstAxis]) : 0.0;  // [rad]
+        q[2] = magnitude > singularityTolerance ? atan2(C[secondAxis][firstAxis], parity * C[remainingAxis][firstAxis])
+                                                : 0.0; // [rad]
         sineLast = sin(q[2]);
         cosineLast = cos(q[2]);
         sine = parity * cosineLast * C[secondAxis][remainingAxis] - sineLast * C[remainingAxis][remainingAxis];
@@ -1377,8 +1427,8 @@ static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis,
     } else {
         magnitude = hypot(C[secondAxis][firstAxis], C[firstAxis][firstAxis]);
         q[1] = atan2(parity * C[remainingAxis][firstAxis], magnitude);
-        q[2] = magnitude > singularityTolerance
-            ? atan2(-parity * C[secondAxis][firstAxis], C[firstAxis][firstAxis]) : 0.0;  // [rad]
+        q[2] = magnitude > singularityTolerance ? atan2(-parity * C[secondAxis][firstAxis], C[firstAxis][firstAxis])
+                                                : 0.0; // [rad]
         sineLast = sin(q[2]);
         cosineLast = cos(q[2]);
         sine = parity * cosineLast * C[secondAxis][remainingAxis] + sineLast * C[firstAxis][remainingAxis];
@@ -1394,7 +1444,8 @@ static void C2EulerSequence(const double C[3][3], int firstAxis, int secondAxis,
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler121(double C[3][3], double *q)
+void
+C2Euler121(double C[3][3], double* q)
 {
     C2EulerSequence(C, 0, 1, 1, q);
 }
@@ -1406,7 +1457,8 @@ void C2Euler121(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler123(double C[3][3], double *q)
+void
+C2Euler123(double C[3][3], double* q)
 {
     C2EulerSequence(C, 0, 1, 0, q);
 }
@@ -1418,7 +1470,8 @@ void C2Euler123(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler131(double C[3][3], double *q)
+void
+C2Euler131(double C[3][3], double* q)
 {
     C2EulerSequence(C, 0, 2, 1, q);
 }
@@ -1430,7 +1483,8 @@ void C2Euler131(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler132(double C[3][3], double *q)
+void
+C2Euler132(double C[3][3], double* q)
 {
     C2EulerSequence(C, 0, 2, 0, q);
 }
@@ -1442,7 +1496,8 @@ void C2Euler132(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler212(double C[3][3], double *q)
+void
+C2Euler212(double C[3][3], double* q)
 {
     C2EulerSequence(C, 1, 0, 1, q);
 }
@@ -1454,7 +1509,8 @@ void C2Euler212(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler213(double C[3][3], double *q)
+void
+C2Euler213(double C[3][3], double* q)
 {
     C2EulerSequence(C, 1, 0, 0, q);
 }
@@ -1466,7 +1522,8 @@ void C2Euler213(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler231(double C[3][3], double *q)
+void
+C2Euler231(double C[3][3], double* q)
 {
     C2EulerSequence(C, 1, 2, 0, q);
 }
@@ -1478,7 +1535,8 @@ void C2Euler231(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler232(double C[3][3], double *q)
+void
+C2Euler232(double C[3][3], double* q)
 {
     C2EulerSequence(C, 1, 2, 1, q);
 }
@@ -1490,7 +1548,8 @@ void C2Euler232(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler312(double C[3][3], double *q)
+void
+C2Euler312(double C[3][3], double* q)
 {
     C2EulerSequence(C, 2, 0, 0, q);
 }
@@ -1502,7 +1561,8 @@ void C2Euler312(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler313(double C[3][3], double *q)
+void
+C2Euler313(double C[3][3], double* q)
 {
     C2EulerSequence(C, 2, 0, 1, q);
 }
@@ -1514,7 +1574,8 @@ void C2Euler313(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler321(double C[3][3], double *q)
+void
+C2Euler321(double C[3][3], double* q)
 {
     C2EulerSequence(C, 2, 1, 0, q);
 }
@@ -1526,7 +1587,8 @@ void C2Euler321(double C[3][3], double *q)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void C2Euler323(double C[3][3], double *q)
+void
+C2Euler323(double C[3][3], double* q)
 {
     C2EulerSequence(C, 2, 1, 1, q);
 }
@@ -1535,7 +1597,8 @@ void C2Euler323(double C[3][3], double *q)
  * C2Gibbs(C,Q) translates the 3x3 direction cosine matrix
  * C into the corresponding 3x1 Gibbs vector Q.
  */
-void C2Gibbs(double C[3][3], double *q)
+void
+C2Gibbs(double C[3][3], double* q)
 {
     double b[4];
 
@@ -1551,7 +1614,8 @@ void C2Gibbs(double C[3][3], double *q)
  * C into the corresponding 3x1 MRP vector Q where the
  * MRP vector is chosen such that |Q| <= 1.
  */
-void C2MRP(double C[3][3], double *q)
+void
+C2MRP(double C[3][3], double* q)
 {
     double b[4];
 
@@ -1569,12 +1633,13 @@ void C2MRP(double C[3][3], double *q)
  * @param C Input 3-by-3 direction cosine matrix.
  * @param q Output rotation vector [rad], with magnitude in [0, pi].
  */
-void C2PRV(double C[3][3], double *q)
+void
+C2PRV(double C[3][3], double* q)
 {
     double beta[4];
 
-    C2EP(C,beta);
-    EP2PRV(beta,q);
+    C2EP(C, beta);
+    EP2PRV(beta, q);
 }
 
 /*
@@ -1584,7 +1649,8 @@ void C2PRV(double C[3][3], double *q)
  *
  * dQ/dt = 1/2 [B(Q)] w
  */
-void dEP(double *q, double *w, double *dq)
+void
+dEP(double* q, double* w, double* dq)
 {
     double B[4][3];
     int i;
@@ -1592,9 +1658,9 @@ void dEP(double *q, double *w, double *dq)
 
     BmatEP(q, B);
     m33MultV3(B, w, dq);
-    for(i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         dq[i] = 0.;
-        for(j = 0; j < 3; j++) {
+        for (j = 0; j < 3; j++) {
             dq[i] += B[i][j] * w[j];
         }
     }
@@ -1609,7 +1675,8 @@ void dEP(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler121(double *q, double *w, double *dq)
+void
+dEuler121(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1624,7 +1691,8 @@ void dEuler121(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler123(double *q, double *w, double *dq)
+void
+dEuler123(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1639,7 +1707,8 @@ void dEuler123(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler131(double *q, double *w, double *dq)
+void
+dEuler131(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1654,7 +1723,8 @@ void dEuler131(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler132(double *q, double *w, double *dq)
+void
+dEuler132(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1669,7 +1739,8 @@ void dEuler132(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler212(double *q, double *w, double *dq)
+void
+dEuler212(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1684,7 +1755,8 @@ void dEuler212(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler213(double *q, double *w, double *dq)
+void
+dEuler213(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1699,7 +1771,8 @@ void dEuler213(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler231(double *q, double *w, double *dq)
+void
+dEuler231(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1714,7 +1787,8 @@ void dEuler231(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler232(double *q, double *w, double *dq)
+void
+dEuler232(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1729,7 +1803,8 @@ void dEuler232(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler312(double *q, double *w, double *dq)
+void
+dEuler312(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1744,7 +1819,8 @@ void dEuler312(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler313(double *q, double *w, double *dq)
+void
+dEuler313(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1759,7 +1835,8 @@ void dEuler313(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler321(double *q, double *w, double *dq)
+void
+dEuler321(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1774,7 +1851,8 @@ void dEuler321(double *q, double *w, double *dq)
  *
  * dQ/dt =  [B(Q)] w
  */
-void dEuler323(double *q, double *w, double *dq)
+void
+dEuler323(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1788,7 +1866,8 @@ void dEuler323(double *q, double *w, double *dq)
  * @param w Body angular velocity in radians per second.
  * @param dq Gibbs time derivative in inverse seconds.
  */
-void dGibbs(double *q, double *w, double *dq)
+void
+dGibbs(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1803,7 +1882,8 @@ void dGibbs(double *q, double *w, double *dq)
  * @param w Body angular velocity in radians per second.
  * @param dq MRP time derivative in inverse seconds.
  */
-void dMRP(double *q, double *w, double *dq)
+void
+dMRP(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1818,7 +1898,8 @@ void dMRP(double *q, double *w, double *dq)
  * @param dq MRP time derivative in inverse seconds.
  * @param w Body angular velocity in radians per second.
  */
-void dMRP2Omega(double *q, double *dq, double *w)
+void
+dMRP2Omega(double* q, double* dq, double* w)
 {
     double B[3][3];
 
@@ -1835,7 +1916,8 @@ void dMRP2Omega(double *q, double *dq, double *w)
  * @param dw Body angular acceleration in radians per second squared.
  * @param ddq MRP second derivative in inverse seconds squared.
  */
-void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
+void
+ddMRP(double* q, double* dq, double* w, double* dw, double* ddq)
 {
     double B[3][3], Bdot[3][3];
     double s1[3], s2[3];
@@ -1845,8 +1927,8 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dw, s1);
     m33MultV3(Bdot, w, s2);
-    for(i = 0; i < 3; i++) {
-        ddq[i] = 0.25 * ( s1[i] + s2[i] );
+    for (i = 0; i < 3; i++) {
+        ddq[i] = 0.25 * (s1[i] + s2[i]);
     }
 }
 
@@ -1857,7 +1939,8 @@ void ddMRP(double *q, double *dq, double *w, double *dw, double *ddq)
  * @param ddq MRP second derivative in inverse seconds squared.
  * @param dw Body angular acceleration in radians per second squared.
  */
-void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
+void
+ddMRP2dOmega(double* q, double* dq, double* ddq, double* dw)
 {
     double B[3][3], Bdot[3][3];
     double s1[3], s2[3], s3[3];
@@ -1867,7 +1950,7 @@ void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
     BdotmatMRP(q, dq, Bdot);
     m33MultV3(B, dq, s1);
     m33MultV3(Bdot, s1, s2);
-    for(i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++) {
         s3[i] = ddq[i] - s2[i];
     }
     m33MultV3(B, s3, dw);
@@ -1880,7 +1963,8 @@ void ddMRP2dOmega(double *q, double *dq, double *ddq, double *dw)
  * @param w Body angular velocity [rad/s].
  * @param dq Output rotation vector derivative [rad/s].
  */
-void dPRV(double *q, double *w, double *dq)
+void
+dPRV(double* q, double* w, double* dq)
 {
     double B[3][3];
 
@@ -1893,7 +1977,8 @@ void dPRV(double *q, double *w, double *dq)
  * element set R into the corresponding principal
  * rotation vector Q.
  */
-void elem2PRV(double *r, double *q)
+void
+elem2PRV(double* r, double* q)
 {
     q[0] = r[1] * r[0];
     q[1] = r[2] * r[0];
@@ -1907,7 +1992,8 @@ void elem2PRV(double *r, double *q)
  * parameter, while the remain three elements form
  * the Eulerparameter vector.
  */
-void EP2C(double *q, double C[3][3])
+void
+EP2C(double* q, double C[3][3])
 {
     double q0;
     double q1;
@@ -1937,13 +2023,14 @@ void EP2C(double *q, double C[3][3])
  * @param secondAxis Zero-based second rotation axis.
  * @param e Output Euler angles [rad]. The third angle is zero at a singularity.
  */
-static void EP2EulerRepeated(double *q, int firstAxis, int secondAxis, double e[3])
+static void
+EP2EulerRepeated(double* q, int firstAxis, int secondAxis, double e[3])
 {
     int remainingAxis = 3 - firstAxis - secondAxis;
     double parity = secondAxis == (firstAxis + 1) % 3 ? 1.0 : -1.0;
     double sineHalf = hypot(q[secondAxis + 1], q[remainingAxis + 1]);
     double cosineHalf = hypot(q[0], q[firstAxis + 1]);
-    const double singularityTolerance = 1e-14;  // [-] sine of the middle angle near either endpoint
+    const double singularityTolerance = 1e-14; // [-] sine of the middle angle near either endpoint
     double difference;
     double total;
     double C[3][3];
@@ -1967,7 +2054,8 @@ static void EP2EulerRepeated(double *q, int firstAxis, int secondAxis, double e[
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler121(double *q, double *e)
+void
+EP2Euler121(double* q, double* e)
 {
     EP2EulerRepeated(q, 0, 1, e);
 }
@@ -1979,7 +2067,8 @@ void EP2Euler121(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler123(double *q, double *e)
+void
+EP2Euler123(double* q, double* e)
 {
     double C[3][3];
 
@@ -1994,7 +2083,8 @@ void EP2Euler123(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler131(double *q, double *e)
+void
+EP2Euler131(double* q, double* e)
 {
     EP2EulerRepeated(q, 0, 2, e);
 }
@@ -2006,7 +2096,8 @@ void EP2Euler131(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler132(double *q, double *e)
+void
+EP2Euler132(double* q, double* e)
 {
     double C[3][3];
 
@@ -2021,7 +2112,8 @@ void EP2Euler132(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler212(double *q, double *e)
+void
+EP2Euler212(double* q, double* e)
 {
     EP2EulerRepeated(q, 1, 0, e);
 }
@@ -2033,7 +2125,8 @@ void EP2Euler212(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler213(double *q, double *e)
+void
+EP2Euler213(double* q, double* e)
 {
     double C[3][3];
 
@@ -2048,7 +2141,8 @@ void EP2Euler213(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler231(double *q, double *e)
+void
+EP2Euler231(double* q, double* e)
 {
     double C[3][3];
 
@@ -2063,7 +2157,8 @@ void EP2Euler231(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler232(double *q, double *e)
+void
+EP2Euler232(double* q, double* e)
 {
     EP2EulerRepeated(q, 1, 2, e);
 }
@@ -2075,7 +2170,8 @@ void EP2Euler232(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler312(double *q, double *e)
+void
+EP2Euler312(double* q, double* e)
 {
     double C[3][3];
 
@@ -2090,7 +2186,8 @@ void EP2Euler312(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler313(double *q, double *e)
+void
+EP2Euler313(double* q, double* e)
 {
     EP2EulerRepeated(q, 2, 0, e);
 }
@@ -2102,7 +2199,8 @@ void EP2Euler313(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler321(double *q, double *e)
+void
+EP2Euler321(double* q, double* e)
 {
     double C[3][3];
 
@@ -2117,7 +2215,8 @@ void EP2Euler321(double *q, double *e)
  * @note At a singularity, the third angle is zero and the first angle carries
  * the observable combined rotation.
  */
-void EP2Euler323(double *q, double *e)
+void
+EP2Euler323(double* q, double* e)
 {
     EP2EulerRepeated(q, 2, 1, e);
 }
@@ -2126,7 +2225,8 @@ void EP2Euler323(double *q, double *e)
  * EP2Gibbs(Q1,Q) translates the Euler parameter vector Q1
  * into the Gibbs vector Q.
  */
-void EP2Gibbs(double *q1, double *q)
+void
+EP2Gibbs(double* q1, double* q)
 {
     q[0] = q1[1] / q1[0];
     q[1] = q1[2] / q1[0];
@@ -2137,9 +2237,10 @@ void EP2Gibbs(double *q1, double *q)
  * EP2MRP(Q1,Q) translates the Euler parameter vector Q1
  * into the MRP vector Q.
  */
-void EP2MRP(double *q1, double *q)
+void
+EP2MRP(double* q1, double* q)
 {
-    if (q1[0] >= 0){
+    if (q1[0] >= 0) {
         q[0] = q1[1] / (1 + q1[0]);
         q[1] = q1[2] / (1 + q1[0]);
         q[2] = q1[3] / (1 + q1[0]);
@@ -2157,7 +2258,8 @@ void EP2MRP(double *q1, double *q)
  * @note Both identity quaternions return zero. A negative scalar component
  * retains the rotation branch with angle greater than pi.
  */
-void EP2PRV(double *q1, double *q)
+void
+EP2PRV(double* q1, double* q)
 {
     double p;
     double sp;
@@ -2180,7 +2282,8 @@ void EP2PRV(double *q1, double *q)
  * Returns the elementary rotation matrix about the
  * first body axis.
  */
-void Euler1(double x, double m[3][3])
+void
+Euler1(double x, double m[3][3])
 {
     m33SetIdentity(m);
     m[1][1] = cos(x);
@@ -2194,7 +2297,8 @@ void Euler1(double x, double m[3][3])
  * Returns the elementary rotation matrix about the
  * second body axis.
  */
-void Euler2(double x, double m[3][3])
+void
+Euler2(double x, double m[3][3])
 {
     m33SetIdentity(m);
     m[0][0] = cos(x);
@@ -2208,7 +2312,8 @@ void Euler2(double x, double m[3][3])
  * Returns the elementary rotation matrix about the
  * third body axis.
  */
-void Euler3(double x, double m[3][3])
+void
+Euler3(double x, double m[3][3])
 {
     m33SetIdentity(m);
     m[0][0] = cos(x);
@@ -2222,7 +2327,8 @@ void Euler3(double x, double m[3][3])
  * matrix in terms of the 1-2-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler1212C(double *q, double C[3][3])
+void
+Euler1212C(double* q, double C[3][3])
 {
     double st1;
     double ct1;
@@ -2253,7 +2359,8 @@ void Euler1212C(double *q, double C[3][3])
  * Euler1212EP(E,Q) translates the 121 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler1212EP(double *e, double *q)
+void
+Euler1212EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -2273,7 +2380,8 @@ void Euler1212EP(double *e, double *q)
  * Euler1212Gibbs(E,Q) translates the (1-2-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler1212Gibbs(double *e, double *q)
+void
+Euler1212Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2285,7 +2393,8 @@ void Euler1212Gibbs(double *e, double *q)
  * Euler1212MRP(E,Q) translates the (1-2-1) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler1212MRP(double *e, double *q)
+void
+Euler1212MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2297,7 +2406,8 @@ void Euler1212MRP(double *e, double *q)
  * Euler1212PRV(E,Q) translates the (1-2-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler1212PRV(double *e, double *q)
+void
+Euler1212PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2310,7 +2420,8 @@ void Euler1212PRV(double *e, double *q)
  * matrix in terms of the 1-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler1232C(double *q, double C[3][3])
+void
+Euler1232C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2341,7 +2452,8 @@ void Euler1232C(double *q, double C[3][3])
  * Euler1232EP(E,Q) translates the 123 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler1232EP(double *e, double *q)
+void
+Euler1232EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -2367,7 +2479,8 @@ void Euler1232EP(double *e, double *q)
  * Euler1232Gibbs(E,Q) translates the (1-2-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler1232Gibbs(double *e, double *q)
+void
+Euler1232Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2379,7 +2492,8 @@ void Euler1232Gibbs(double *e, double *q)
  * Euler1232MRP(E,Q) translates the (1-2-3) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler1232MRP(double *e, double *q)
+void
+Euler1232MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2391,7 +2505,8 @@ void Euler1232MRP(double *e, double *q)
  * Euler1232PRV(E,Q) translates the (1-2-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler1232PRV(double *e, double *q)
+void
+Euler1232PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2404,7 +2519,8 @@ void Euler1232PRV(double *e, double *q)
  * matrix in terms of the 1-3-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler1312C(double *q, double C[3][3])
+void
+Euler1312C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2435,7 +2551,8 @@ void Euler1312C(double *q, double C[3][3])
  * Euler1312EP(E,Q) translates the 131 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler1312EP(double *e, double *q)
+void
+Euler1312EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -2455,7 +2572,8 @@ void Euler1312EP(double *e, double *q)
  * Euler1312Gibbs(E,Q) translates the (1-3-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler1312Gibbs(double *e, double *q)
+void
+Euler1312Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2467,7 +2585,8 @@ void Euler1312Gibbs(double *e, double *q)
  * Euler1312MRP(E,Q) translates the (1-3-1) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler1312MRP(double *e, double *q)
+void
+Euler1312MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2479,7 +2598,8 @@ void Euler1312MRP(double *e, double *q)
  * Euler1312PRV(E,Q) translates the (1-3-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler1312PRV(double *e, double *q)
+void
+Euler1312PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2492,7 +2612,8 @@ void Euler1312PRV(double *e, double *q)
  * matrix in terms of the 1-3-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler1322C(double *q, double C[3][3])
+void
+Euler1322C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2523,7 +2644,8 @@ void Euler1322C(double *q, double C[3][3])
  * Euler1322EP(E,Q) translates the 132 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler1322EP(double *e, double *q)
+void
+Euler1322EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -2549,7 +2671,8 @@ void Euler1322EP(double *e, double *q)
  * Euler1322Gibbs(E,Q) translates the (1-3-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler1322Gibbs(double *e, double *q)
+void
+Euler1322Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2561,7 +2684,8 @@ void Euler1322Gibbs(double *e, double *q)
  * Euler1322MRP(E,Q) translates the (1-3-2) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler1322MRP(double *e, double *q)
+void
+Euler1322MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2573,7 +2697,8 @@ void Euler1322MRP(double *e, double *q)
  * Euler1322PRV(E,Q) translates the (1-3-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler1322PRV(double *e, double *q)
+void
+Euler1322PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2586,7 +2711,8 @@ void Euler1322PRV(double *e, double *q)
  * matrix in terms of the 2-1-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler2122C(double *q, double C[3][3])
+void
+Euler2122C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2617,7 +2743,8 @@ void Euler2122C(double *q, double C[3][3])
  * Euler2122EP(E,Q) translates the 212 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler2122EP(double *e, double *q)
+void
+Euler2122EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -2637,7 +2764,8 @@ void Euler2122EP(double *e, double *q)
  * Euler2122Gibbs(E,Q) translates the (2-1-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler2122Gibbs(double *e, double *q)
+void
+Euler2122Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2649,7 +2777,8 @@ void Euler2122Gibbs(double *e, double *q)
  * Euler2122MRP(E,Q) translates the (2-1-2) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler2122MRP(double *e, double *q)
+void
+Euler2122MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2661,7 +2790,8 @@ void Euler2122MRP(double *e, double *q)
  * Euler2122PRV(E,Q) translates the (2-1-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler2122PRV(double *e, double *q)
+void
+Euler2122PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2674,7 +2804,8 @@ void Euler2122PRV(double *e, double *q)
  * matrix in terms of the 2-1-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler2132C(double *q, double C[3][3])
+void
+Euler2132C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2705,7 +2836,8 @@ void Euler2132C(double *q, double C[3][3])
  * Euler2132EP(E,Q) translates the 213 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler2132EP(double *e, double *q)
+void
+Euler2132EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -2731,7 +2863,8 @@ void Euler2132EP(double *e, double *q)
  * Euler2132Gibbs(E,Q) translates the (2-1-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler2132Gibbs(double *e, double *q)
+void
+Euler2132Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2743,7 +2876,8 @@ void Euler2132Gibbs(double *e, double *q)
  * Euler2132MRP(E,Q) translates the (2-1-3) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler2132MRP(double *e, double *q)
+void
+Euler2132MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2755,7 +2889,8 @@ void Euler2132MRP(double *e, double *q)
  * Euler2132PRV(E,Q) translates the (2-1-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler2132PRV(double *e, double *q)
+void
+Euler2132PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2768,7 +2903,8 @@ void Euler2132PRV(double *e, double *q)
  * matrix in terms of the 2-3-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler2312C(double *q, double C[3][3])
+void
+Euler2312C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2799,7 +2935,8 @@ void Euler2312C(double *q, double C[3][3])
  * Euler2312EP(E,Q) translates the 231 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler2312EP(double *e, double *q)
+void
+Euler2312EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -2825,7 +2962,8 @@ void Euler2312EP(double *e, double *q)
  * Euler2312Gibbs(E,Q) translates the (2-3-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler2312Gibbs(double *e, double *q)
+void
+Euler2312Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2837,7 +2975,8 @@ void Euler2312Gibbs(double *e, double *q)
  * Euler2312MRP(E,Q) translates the (2-3-1) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler2312MRP(double *e, double *q)
+void
+Euler2312MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2849,7 +2988,8 @@ void Euler2312MRP(double *e, double *q)
  * Euler2312PRV(E,Q) translates the (2-3-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler2312PRV(double *e, double *q)
+void
+Euler2312PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2862,7 +3002,8 @@ void Euler2312PRV(double *e, double *q)
  * matrix in terms of the 2-3-2 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler2322C(double *q, double C[3][3])
+void
+Euler2322C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2890,10 +3031,11 @@ void Euler2322C(double *q, double C[3][3])
 }
 
 /*
-* Euler2322EP(E,Q) translates the 232 Euler angle
-* vector E into the Euler parameter vector Q.
-*/
-void Euler2322EP(double *e, double *q)
+ * Euler2322EP(E,Q) translates the 232 Euler angle
+ * vector E into the Euler parameter vector Q.
+ */
+void
+Euler2322EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -2913,7 +3055,8 @@ void Euler2322EP(double *e, double *q)
  * Euler2322Gibbs(E) translates the (2-3-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler2322Gibbs(double *e, double *q)
+void
+Euler2322Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -2925,7 +3068,8 @@ void Euler2322Gibbs(double *e, double *q)
  * Euler2322MRP(E,Q) translates the (2-3-2) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler2322MRP(double *e, double *q)
+void
+Euler2322MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -2937,7 +3081,8 @@ void Euler2322MRP(double *e, double *q)
  * Euler2322PRV(E,Q) translates the (2-3-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler2322PRV(double *e, double *q)
+void
+Euler2322PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -2950,7 +3095,8 @@ void Euler2322PRV(double *e, double *q)
  * matrix in terms of the 1-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler3122C(double *q, double C[3][3])
+void
+Euler3122C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -2981,7 +3127,8 @@ void Euler3122C(double *q, double C[3][3])
  * Euler3122EP(E,Q) translates the 312 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler3122EP(double *e, double *q)
+void
+Euler3122EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -3007,7 +3154,8 @@ void Euler3122EP(double *e, double *q)
  * Euler3122Gibbs(E,Q) translates the (3-1-2) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler3122Gibbs(double *e, double *q)
+void
+Euler3122Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -3019,7 +3167,8 @@ void Euler3122Gibbs(double *e, double *q)
  * Euler3122MRP(E,Q) translates the (3-1-2) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler3122MRP(double *e, double *q)
+void
+Euler3122MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -3031,7 +3180,8 @@ void Euler3122MRP(double *e, double *q)
  * Euler3122PRV(E,Q) translates the (3-1-2) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler3122PRV(double *e, double *q)
+void
+Euler3122PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -3044,7 +3194,8 @@ void Euler3122PRV(double *e, double *q)
  * matrix in terms of the 3-1-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler3132C(double *q, double C[3][3])
+void
+Euler3132C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -3075,7 +3226,8 @@ void Euler3132C(double *q, double C[3][3])
  * Euler3132EP(E,Q) translates the 313 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler3132EP(double *e, double *q)
+void
+Euler3132EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -3095,7 +3247,8 @@ void Euler3132EP(double *e, double *q)
  * Euler3132Gibbs(E,Q) translates the (3-1-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler3132Gibbs(double *e, double *q)
+void
+Euler3132Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -3107,7 +3260,8 @@ void Euler3132Gibbs(double *e, double *q)
  * Euler3132MRP(E,Q) translates the (3-1-3) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler3132MRP(double *e, double *q)
+void
+Euler3132MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -3119,7 +3273,8 @@ void Euler3132MRP(double *e, double *q)
  * Euler3132PRV(E,Q) translates the (3-1-3) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler3132PRV(double *e, double *q)
+void
+Euler3132PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -3132,7 +3287,8 @@ void Euler3132PRV(double *e, double *q)
  * matrix in terms of the 3-2-1 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler3212C(double *q, double C[3][3])
+void
+Euler3212C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -3163,7 +3319,8 @@ void Euler3212C(double *q, double C[3][3])
  * Euler3212EPE,Q) translates the 321 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler3212EP(double *e, double *q)
+void
+Euler3212EP(double* e, double* q)
 {
     double c1;
     double c2;
@@ -3189,7 +3346,8 @@ void Euler3212EP(double *e, double *q)
  * Euler3212Gibbs(E,Q) translates the (3-2-1) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler3212Gibbs(double *e, double *q)
+void
+Euler3212Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -3201,7 +3359,8 @@ void Euler3212Gibbs(double *e, double *q)
  * Euler3212MRP(E,Q) translates the (3-2-1) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler3212MRP(double *e, double *q)
+void
+Euler3212MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -3213,7 +3372,8 @@ void Euler3212MRP(double *e, double *q)
  * Euler3212PRV(E,Q) translates the (3-2-1) Euler
  * angle vector E into the principal rotation vector Q.
  */
-void Euler3212PRV(double *e, double *q)
+void
+Euler3212PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -3226,7 +3386,8 @@ void Euler3212PRV(double *e, double *q)
  * matrix in terms of the 3-2-3 Euler angles.
  * Input Q must be a 3x1 vector of Euler angles.
  */
-void Euler3232C(double *q, double C[3][3])
+void
+Euler3232C(double* q, double C[3][3])
 {
     double st1;
     double st2;
@@ -3257,7 +3418,8 @@ void Euler3232C(double *q, double C[3][3])
  * Euler3232EP(E,Q) translates the 323 Euler angle
  * vector E into the Euler parameter vector Q.
  */
-void Euler3232EP(double *e, double *q)
+void
+Euler3232EP(double* e, double* q)
 {
     double e1;
     double e2;
@@ -3277,7 +3439,8 @@ void Euler3232EP(double *e, double *q)
  * Euler3232Gibbs(E,Q) translates the (3-2-3) Euler
  * angle vector E into the Gibbs vector Q.
  */
-void Euler3232Gibbs(double *e, double *q)
+void
+Euler3232Gibbs(double* e, double* q)
 {
     double ep[4];
 
@@ -3289,7 +3452,8 @@ void Euler3232Gibbs(double *e, double *q)
  * Euler3232MRP(E,Q) translates the (3-2-3) Euler
  * angle vector E into the MRP vector Q.
  */
-void Euler3232MRP(double *e, double *q)
+void
+Euler3232MRP(double* e, double* q)
 {
     double ep[4];
 
@@ -3301,7 +3465,8 @@ void Euler3232MRP(double *e, double *q)
  * Euler3232PRV(E,Q) translates the (3-2-3) Euler
  * angle vector Q1 into the principal rotation vector Q.
  */
-void Euler3232PRV(double *e, double *q)
+void
+Euler3232PRV(double* e, double* q)
 {
     double ep[4];
 
@@ -3314,7 +3479,8 @@ void Euler3232PRV(double *e, double *q)
  * @param q Input three-component Gibbs vector [-].
  * @param C Output 3-by-3 direction cosine matrix [-].
  */
-void Gibbs2C(double *q, double C[3][3])
+void
+Gibbs2C(double* q, double C[3][3])
 {
     double q1;
     double q2;
@@ -3344,7 +3510,8 @@ void Gibbs2C(double *q, double C[3][3])
  * @param q Output scalar-first unit quaternion with a positive scalar component [-].
  * @note Input and output may share storage if the buffer holds four doubles.
  */
-void Gibbs2EP(double *q1, double *q)
+void
+Gibbs2EP(double* q1, double* q)
 {
     double first = q1[0];
     double second = q1[1];
@@ -3360,7 +3527,8 @@ void Gibbs2EP(double *q1, double *q)
  * Gibbs2Euler121(Q,E) translates the Gibbs
  * vector Q into the (1-2-1) Euler angle vector E.
  */
-void Gibbs2Euler121(double *q, double *e)
+void
+Gibbs2Euler121(double* q, double* e)
 {
     double ep[4];
 
@@ -3372,7 +3540,8 @@ void Gibbs2Euler121(double *q, double *e)
  * Gibbs2Euler123(Q,E) translates the Gibbs
  * vector Q into the (1-2-3) Euler angle vector E.
  */
-void Gibbs2Euler123(double *q, double *e)
+void
+Gibbs2Euler123(double* q, double* e)
 {
     double ep[4];
 
@@ -3384,7 +3553,8 @@ void Gibbs2Euler123(double *q, double *e)
  * Gibbs2Euler131(Q,E) translates the Gibbs
  * vector Q into the (1-3-1) Euler angle vector E.
  */
-void Gibbs2Euler131(double *q, double *e)
+void
+Gibbs2Euler131(double* q, double* e)
 {
     double ep[4];
 
@@ -3396,7 +3566,8 @@ void Gibbs2Euler131(double *q, double *e)
  * Gibbs2Euler132(Q,E) translates the Gibbs
  * vector Q into the (1-3-2) Euler angle vector E.
  */
-void Gibbs2Euler132(double *q, double *e)
+void
+Gibbs2Euler132(double* q, double* e)
 {
     double ep[4];
 
@@ -3408,7 +3579,8 @@ void Gibbs2Euler132(double *q, double *e)
  * Gibbs2Euler212(Q,E) translates the Gibbs
  * vector Q into the (2-1-2) Euler angle vector E.
  */
-void Gibbs2Euler212(double *q, double *e)
+void
+Gibbs2Euler212(double* q, double* e)
 {
     double ep[4];
 
@@ -3420,7 +3592,8 @@ void Gibbs2Euler212(double *q, double *e)
  * Gibbs2Euler213(Q,E) translates the Gibbs
  * vector Q into the (2-1-3) Euler angle vector E.
  */
-void Gibbs2Euler213(double *q, double *e)
+void
+Gibbs2Euler213(double* q, double* e)
 {
     double ep[4];
 
@@ -3432,7 +3605,8 @@ void Gibbs2Euler213(double *q, double *e)
  * Gibbs2Euler231(Q,E) translates the Gibbs
  * vector Q into the (2-3-1) Euler angle vector E.
  */
-void Gibbs2Euler231(double *q, double *e)
+void
+Gibbs2Euler231(double* q, double* e)
 {
     double ep[4];
 
@@ -3444,7 +3618,8 @@ void Gibbs2Euler231(double *q, double *e)
  * Gibbs2Euler232(Q,E) translates the Gibbs
  * vector Q into the (2-3-2) Euler angle vector E.
  */
-void Gibbs2Euler232(double *q, double *e)
+void
+Gibbs2Euler232(double* q, double* e)
 {
     double ep[4];
 
@@ -3456,7 +3631,8 @@ void Gibbs2Euler232(double *q, double *e)
  * Gibbs2Euler312(Q,E) translates the Gibbs
  * vector Q into the (3-1-2) Euler angle vector E.
  */
-void Gibbs2Euler312(double *q, double *e)
+void
+Gibbs2Euler312(double* q, double* e)
 {
     double ep[4];
 
@@ -3468,7 +3644,8 @@ void Gibbs2Euler312(double *q, double *e)
  * Gibbs2Euler313(Q,E) translates the Gibbs
  * vector Q into the (3-1-3) Euler angle vector E.
  */
-void Gibbs2Euler313(double *q, double *e)
+void
+Gibbs2Euler313(double* q, double* e)
 {
     double ep[4];
 
@@ -3480,7 +3657,8 @@ void Gibbs2Euler313(double *q, double *e)
  * Gibbs2Euler321(Q,E) translates the Gibbs
  * vector Q into the (3-2-1) Euler angle vector E.
  */
-void Gibbs2Euler321(double *q, double *e)
+void
+Gibbs2Euler321(double* q, double* e)
 {
     double ep[4];
 
@@ -3492,7 +3670,8 @@ void Gibbs2Euler321(double *q, double *e)
  * Gibbs2Euler323(Q,E) translates the Gibbs
  * vector Q into the (3-2-3) Euler angle vector E.
  */
-void Gibbs2Euler323(double *q, double *e)
+void
+Gibbs2Euler323(double* q, double* e)
 {
     double ep[4];
 
@@ -3505,7 +3684,8 @@ void Gibbs2Euler323(double *q, double *e)
  * @param q1 Input three-component Gibbs vector [-].
  * @param q Output three-component MRP vector with norm at most one [-].
  */
-void Gibbs2MRP(double *q1, double *q)
+void
+Gibbs2MRP(double* q1, double* q)
 {
     v3Scale(1.0 / (1 + sqrt(1 + v3Dot(q1, q1))), q1, q);
 }
@@ -3515,7 +3695,8 @@ void Gibbs2MRP(double *q1, double *q)
  * @param q1 Input Gibbs vector.
  * @param q Output rotation vector [rad]. Small nonzero rotations are retained.
  */
-void Gibbs2PRV(double *q1, double *q)
+void
+Gibbs2PRV(double* q1, double* q)
 {
     double tp;
     double p;
@@ -3538,7 +3719,8 @@ void Gibbs2PRV(double *q1, double *q)
  * @param q Input three-component MRP vector [-].
  * @param C Output 3-by-3 direction cosine matrix [-].
  */
-void MRP2C(double *q, double C[3][3])
+void
+MRP2C(double* q, double C[3][3])
 {
     double q1;
     double q2;
@@ -3572,7 +3754,8 @@ void MRP2C(double *q, double C[3][3])
  * @param q Output scalar-first unit quaternion [-].
  * @note Input and output may share storage if the buffer holds four doubles.
  */
-void MRP2EP(double *q1, double *q)
+void
+MRP2EP(double* q1, double* q)
 {
     double first = q1[0];
     double second = q1[1];
@@ -3590,7 +3773,8 @@ void MRP2EP(double *q1, double *q)
  * MRP2Euler121(Q,E) translates the MRP
  * vector Q into the (1-2-1) Euler angle vector E.
  */
-void MRP2Euler121(double *q, double *e)
+void
+MRP2Euler121(double* q, double* e)
 {
     double ep[4];
 
@@ -3602,7 +3786,8 @@ void MRP2Euler121(double *q, double *e)
  * MRP2Euler123(Q,E) translates the MRP
  * vector Q into the (1-2-3) Euler angle vector E.
  */
-void MRP2Euler123(double *q, double *e)
+void
+MRP2Euler123(double* q, double* e)
 {
     double ep[4];
 
@@ -3614,7 +3799,8 @@ void MRP2Euler123(double *q, double *e)
  * MRP2Euler131(Q,E) translates the MRP
  * vector Q into the (1-3-1) Euler angle vector E.
  */
-void MRP2Euler131(double *q, double *e)
+void
+MRP2Euler131(double* q, double* e)
 {
     double ep[4];
 
@@ -3626,7 +3812,8 @@ void MRP2Euler131(double *q, double *e)
  * MRP2Euler132(Q,E) translates the MRP
  * vector Q into the (1-3-2) Euler angle vector E.
  */
-void MRP2Euler132(double *q, double *e)
+void
+MRP2Euler132(double* q, double* e)
 {
     double ep[4];
 
@@ -3638,7 +3825,8 @@ void MRP2Euler132(double *q, double *e)
  * E = MRP2Euler212(Q) translates the MRP
  * vector Q into the (2-1-2) Euler angle vector E.
  */
-void MRP2Euler212(double *q, double *e)
+void
+MRP2Euler212(double* q, double* e)
 {
     double ep[4];
 
@@ -3650,7 +3838,8 @@ void MRP2Euler212(double *q, double *e)
  * MRP2Euler213(Q,E) translates the MRP
  * vector Q into the (2-1-3) Euler angle vector E.
  */
-void MRP2Euler213(double *q, double *e)
+void
+MRP2Euler213(double* q, double* e)
 {
     double ep[4];
 
@@ -3662,7 +3851,8 @@ void MRP2Euler213(double *q, double *e)
  * MRP2Euler231(Q,E) translates the MRP
  * vector Q into the (2-3-1) Euler angle vector E.
  */
-void MRP2Euler231(double *q, double *e)
+void
+MRP2Euler231(double* q, double* e)
 {
     double ep[4];
 
@@ -3674,7 +3864,8 @@ void MRP2Euler231(double *q, double *e)
  * MRP2Euler232(Q,E) translates the MRP
  * vector Q into the (2-3-2) Euler angle vector E.
  */
-void MRP2Euler232(double *q, double *e)
+void
+MRP2Euler232(double* q, double* e)
 {
     double ep[4];
 
@@ -3686,7 +3877,8 @@ void MRP2Euler232(double *q, double *e)
  * MRP2Euler312(Q,E) translates the MRP
  * vector Q into the (3-1-2) Euler angle vector E.
  */
-void MRP2Euler312(double *q, double *e)
+void
+MRP2Euler312(double* q, double* e)
 {
     double ep[4];
 
@@ -3698,7 +3890,8 @@ void MRP2Euler312(double *q, double *e)
  * MRP2Euler313(Q,E) translates the MRP
  * vector Q into the (3-1-3) Euler angle vector E.
  */
-void MRP2Euler313(double *q, double *e)
+void
+MRP2Euler313(double* q, double* e)
 {
     double ep[4];
 
@@ -3710,7 +3903,8 @@ void MRP2Euler313(double *q, double *e)
  * MRP2Euler321(Q,E) translates the MRP
  * vector Q into the (3-2-1) Euler angle vector E.
  */
-void MRP2Euler321(double *q, double *e)
+void
+MRP2Euler321(double* q, double* e)
 {
     double ep[4];
 
@@ -3722,7 +3916,8 @@ void MRP2Euler321(double *q, double *e)
  * MRP2Euler323(Q,E) translates the MRP
  * vector Q into the (3-2-3) Euler angle vector E.
  */
-void MRP2Euler323(double *q, double *e)
+void
+MRP2Euler323(double* q, double* e)
 {
     double ep[4];
 
@@ -3735,7 +3930,8 @@ void MRP2Euler323(double *q, double *e)
  * @param q1 Input MRP vector [-].
  * @param q Output Gibbs vector [-].
  */
-void MRP2Gibbs(double *q1, double *q)
+void
+MRP2Gibbs(double* q1, double* q)
 {
     v3Scale(2. / (1. - v3Dot(q1, q1)), q1, q);
 }
@@ -3745,7 +3941,8 @@ void MRP2Gibbs(double *q1, double *q)
  * @param q1 Input modified Rodrigues parameters.
  * @param q Output rotation vector [rad]. Small nonzero rotations are retained.
  */
-void MRP2PRV(double *q1, double *q)
+void
+MRP2PRV(double* q1, double* q)
 {
     double tp;
     double p;
@@ -3767,12 +3964,13 @@ void MRP2PRV(double *q1, double *q)
  * @param s2 MRP norm threshold, interpreted by magnitude [-].
  * @param s Output MRP vector, unchanged at or below the threshold [-].
  */
-void MRPswitch(double *q, double s2, double *s)
+void
+MRPswitch(double* q, double s2, double* s)
 {
     double q2;
 
     q2 = v3Dot(q, q);
-    if(q2 > s2 * s2) {
+    if (q2 > s2 * s2) {
         v3Scale(-1. / q2, q, s);
     } else {
         v3Copy(q, s);
@@ -3784,7 +3982,8 @@ void MRPswitch(double *q, double s2, double *s)
  * @param qIn Input MRP vector [-].
  * @param qOut Output shadow MRP vector [-]. May alias qIn.
  */
-void MRPshadow(double *qIn, double *qOut)
+void
+MRPshadow(double* qIn, double* qOut)
 {
     double q2;
 
@@ -3799,12 +3998,13 @@ void MRPshadow(double *qIn, double *qOut)
  * @return Equivalent angle [rad], or NaN for non-finite inputs.
  * @note Exact half-turn remainders and zero retain the input sign.
  */
-double wrapToPi(double x)
+double
+wrapToPi(double x)
 {
     if (!isfinite(x)) {
         return nan("");
     }
-    const double twoPi = 2.0 * M_PI;  // [rad]
+    const double twoPi = 2.0 * M_PI; // [rad]
     double wrapped = fmod(x, twoPi);
     if (wrapped > M_PI) {
         return wrapped - twoPi;
@@ -3820,7 +4020,8 @@ double wrapToPi(double x)
  * @param q Input rotation vector [rad].
  * @param C Output 3-by-3 direction cosine matrix.
  */
-void PRV2C(double *q, double C[3][3])
+void
+PRV2C(double* q, double C[3][3])
 {
     double q0;
     double q1;
@@ -3860,7 +4061,8 @@ void PRV2C(double *q, double C[3][3])
  * @param q Output angle [rad] followed by the unit axis.
  * @note Only an exactly zero vector returns an all-zero element set.
  */
-void PRV2elem(double *r, double *q)
+void
+PRV2elem(double* r, double* q)
 {
     q[0] = hypot(r[0], hypot(r[1], r[2]));
     if (q[0] == 0.0) {
@@ -3876,7 +4078,8 @@ void PRV2elem(double *r, double *q)
  * PRV2EP(Q0,Q) translates the principal rotation vector Q1
  * into the Euler parameter vector Q.
  */
-void PRV2EP(double *q0, double *q)
+void
+PRV2EP(double* q0, double* q)
 {
     double q1[4];
     double sp;
@@ -3893,7 +4096,8 @@ void PRV2EP(double *q0, double *q)
  * PRV2Euler121(Q,E) translates the principal rotation
  * vector Q into the (1-2-1) Euler angle vector E.
  */
-void PRV2Euler121(double *q, double *e)
+void
+PRV2Euler121(double* q, double* e)
 {
     double ep[4];
 
@@ -3905,7 +4109,8 @@ void PRV2Euler121(double *q, double *e)
  * PRV2Euler123(Q,E) translates the principal rotation
  * vector Q into the (1-2-3) Euler angle vector E.
  */
-void PRV2Euler123(double *q, double *e)
+void
+PRV2Euler123(double* q, double* e)
 {
     double ep[4];
 
@@ -3917,7 +4122,8 @@ void PRV2Euler123(double *q, double *e)
  * PRV2Euler131(Q,E) translates the principal rotation
  * vector Q into the (1-3-1) Euler angle vector E.
  */
-void PRV2Euler131(double *q, double *e)
+void
+PRV2Euler131(double* q, double* e)
 {
     double ep[4];
 
@@ -3929,7 +4135,8 @@ void PRV2Euler131(double *q, double *e)
  * PRV2Euler132(Q,E) translates the principal rotation
  * vector Q into the (1-3-2) Euler angle vector E.
  */
-void PRV2Euler132(double *q, double *e)
+void
+PRV2Euler132(double* q, double* e)
 {
     double ep[4];
 
@@ -3941,7 +4148,8 @@ void PRV2Euler132(double *q, double *e)
  * PRV2Euler212(Q,E) translates the principal rotation
  * vector Q into the (2-1-2) Euler angle vector E.
  */
-void PRV2Euler212(double *q, double *e)
+void
+PRV2Euler212(double* q, double* e)
 {
     double ep[4];
 
@@ -3953,7 +4161,8 @@ void PRV2Euler212(double *q, double *e)
  * PRV2Euler213(Q,E) translates the principal rotation
  * vector Q into the (2-1-3) Euler angle vector E.
  */
-void PRV2Euler213(double *q, double *e)
+void
+PRV2Euler213(double* q, double* e)
 {
     double ep[4];
 
@@ -3965,7 +4174,8 @@ void PRV2Euler213(double *q, double *e)
  * PRV2Euler231(Q) translates the principal rotation
  * vector Q into the (2-3-1) Euler angle vector E.
  */
-void PRV2Euler231(double *q, double *e)
+void
+PRV2Euler231(double* q, double* e)
 {
     double ep[4];
 
@@ -3977,7 +4187,8 @@ void PRV2Euler231(double *q, double *e)
  * PRV2Euler232(Q,E) translates the principal rotation
  * vector Q into the (2-3-2) Euler angle vector E.
  */
-void PRV2Euler232(double *q, double *e)
+void
+PRV2Euler232(double* q, double* e)
 {
     double ep[4];
 
@@ -3989,7 +4200,8 @@ void PRV2Euler232(double *q, double *e)
  * PRV2Euler312(Q,E) translates the principal rotation
  * vector Q into the (3-1-2) Euler angle vector E.
  */
-void PRV2Euler312(double *q, double *e)
+void
+PRV2Euler312(double* q, double* e)
 {
     double ep[4];
 
@@ -4001,7 +4213,8 @@ void PRV2Euler312(double *q, double *e)
  * PRV2Euler313(Q,E) translates the principal rotation
  * vector Q into the (3-1-3) Euler angle vector E.
  */
-void PRV2Euler313(double *q, double *e)
+void
+PRV2Euler313(double* q, double* e)
 {
     double ep[4];
 
@@ -4013,7 +4226,8 @@ void PRV2Euler313(double *q, double *e)
  * PRV2Euler321(Q,E) translates the principal rotation
  * vector Q into the (3-2-1) Euler angle vector E.
  */
-void PRV2Euler321(double *q, double *e)
+void
+PRV2Euler321(double* q, double* e)
 {
     double ep[4];
 
@@ -4025,7 +4239,8 @@ void PRV2Euler321(double *q, double *e)
  * PRV2Euler323(Q,E) translates the principal rotation
  * vector Q into the (3-2-3) Euler angle vector E.
  */
-void PRV2Euler323(double *q, double *e)
+void
+PRV2Euler323(double* q, double* e)
 {
     double ep[4];
 
@@ -4037,7 +4252,8 @@ void PRV2Euler323(double *q, double *e)
  * PRV2Gibbs(Q0,Q) translates the principal rotation vector Q1
  * into the Gibbs vector Q.
  */
-void PRV2Gibbs(double *q0, double *q)
+void
+PRV2Gibbs(double* q0, double* q)
 {
     double q1[4];
     double tp;
@@ -4053,7 +4269,8 @@ void PRV2Gibbs(double *q0, double *q)
  * PRV2MRP(Q0,Q) translates the principal rotation vector Q1
  * into the MRP vector Q.
  */
-void PRV2MRP(double *q0, double *q)
+void
+PRV2MRP(double* q0, double* q)
 {
     double q1[4];
     double tp;
@@ -4070,7 +4287,8 @@ void PRV2MRP(double *q0, double *q)
  * which corresponds to relative rotation from B2
  * to B1.
  */
-void subEP(double *b1, double *b2, double *q)
+void
+subEP(double* b1, double* b2, double* q)
 {
     q[0] = b2[0] * b1[0] + b2[1] * b1[1] + b2[2] * b1[2] + b2[3] * b1[3];
     q[1] = -b2[1] * b1[0] + b2[0] * b1[1] + b2[3] * b1[2] - b2[2] * b1[3];
@@ -4085,7 +4303,8 @@ void subEP(double *b1, double *b2, double *q)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler121(double *e, double *e1, double *e2)
+void
+subEuler121(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4101,7 +4320,8 @@ void subEuler121(double *e, double *e1, double *e2)
  * subEuler123(E,E1,E2) computes the relative
  * (1-2-3) Euler angle vector from E1 to E.
  */
-void subEuler123(double *e, double *e1, double *e2)
+void
+subEuler123(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4120,7 +4340,8 @@ void subEuler123(double *e, double *e1, double *e2)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler131(double *e, double *e1, double *e2)
+void
+subEuler131(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4136,7 +4357,8 @@ void subEuler131(double *e, double *e1, double *e2)
  * subEuler132(E,E1,E2) computes the relative
  * (1-3-2) Euler angle vector from E1 to E.
  */
-void subEuler132(double *e, double *e1, double *e2)
+void
+subEuler132(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4155,7 +4377,8 @@ void subEuler132(double *e, double *e1, double *e2)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler212(double *e, double *e1, double *e2)
+void
+subEuler212(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4171,7 +4394,8 @@ void subEuler212(double *e, double *e1, double *e2)
  * subEuler213(E,E1,E2) computes the relative
  * (2-1-3) Euler angle vector from E1 to E.
  */
-void subEuler213(double *e, double *e1, double *e2)
+void
+subEuler213(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4187,7 +4411,8 @@ void subEuler213(double *e, double *e1, double *e2)
  * subEuler231(E,E1,E2) computes the relative
  * (2-3-1) Euler angle vector from E1 to E.
  */
-void subEuler231(double *e, double *e1, double *e2)
+void
+subEuler231(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4206,7 +4431,8 @@ void subEuler231(double *e, double *e1, double *e2)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler232(double *e, double *e1, double *e2)
+void
+subEuler232(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4222,7 +4448,8 @@ void subEuler232(double *e, double *e1, double *e2)
  * subEuler312(E,E1,E2) computes the relative
  * (3-1-2) Euler angle vector from E1 to E.
  */
-void subEuler312(double *e, double *e1, double *e2)
+void
+subEuler312(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4241,7 +4468,8 @@ void subEuler312(double *e, double *e1, double *e2)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler313(double *e, double *e1, double *e2)
+void
+subEuler313(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4257,7 +4485,8 @@ void subEuler313(double *e, double *e1, double *e2)
  * subEuler321(E,E1,E2) computes the relative
  * (3-2-1) Euler angle vector from E1 to E.
  */
-void subEuler321(double *e, double *e1, double *e2)
+void
+subEuler321(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4276,7 +4505,8 @@ void subEuler321(double *e, double *e1, double *e2)
  * @param e2 Output relative Euler angle vector [rad].
  * @note At a singularity, the third angle is zero.
  */
-void subEuler323(double *e, double *e1, double *e2)
+void
+subEuler323(double* e, double* e1, double* e2)
 {
     double C[3][3];
     double C1[3][3];
@@ -4294,7 +4524,8 @@ void subEuler323(double *e, double *e1, double *e2)
  * @param q2 Reference Gibbs vector [-].
  * @param q Output relative Gibbs vector [-].
  */
-void subGibbs(double *q1, double *q2, double *q)
+void
+subGibbs(double* q1, double* q2, double* q)
 {
     double d1[3];
     double difference[3];
@@ -4311,7 +4542,8 @@ void subGibbs(double *q1, double *q2, double *q)
  * @param q2 Reference MRP vector [-].
  * @param q Output relative MRP vector with norm at most one [-].
  */
-void subMRP(double *q1, double *q2, double *q)
+void
+subMRP(double* q1, double* q2, double* q)
 {
     composeMRP(q1, q2, -1.0, q);
 }
@@ -4324,7 +4556,8 @@ void subMRP(double *q1, double *q2, double *q)
  * @note Equal input vectors return zero; other results retain the relative
  * quaternion's angle branch.
  */
-void subPRV(double *q10, double *q20, double *q)
+void
+subPRV(double* q10, double* q20, double* q)
 {
     double first[4];
     double second[4];
@@ -4344,7 +4577,8 @@ void subPRV(double *q10, double *q20, double *q)
  * Mi(theta, a, C) returns the rotation matrix corresponding
  * to a single axis rotation about axis a by the angle theta
  */
-void Mi(double theta, int a, double C[3][3])
+void
+Mi(double theta, int a, double C[3][3])
 {
     double c;
     double s;
@@ -4352,37 +4586,37 @@ void Mi(double theta, int a, double C[3][3])
     c = cos(theta);
     s = sin(theta);
 
-    switch(a) {
+    switch (a) {
         case 1:
             C[0][0] = 1.;
             C[0][1] = 0.;
             C[0][2] = 0.;
             C[1][0] = 0.;
-            C[1][1] =  c;
-            C[1][2] =  s;
+            C[1][1] = c;
+            C[1][2] = s;
             C[2][0] = 0.;
             C[2][1] = -s;
-            C[2][2] =  c;
+            C[2][2] = c;
             break;
 
         case 2:
-            C[0][0] =  c;
+            C[0][0] = c;
             C[0][1] = 0.;
             C[0][2] = -s;
             C[1][0] = 0.;
             C[1][1] = 1.;
             C[1][2] = 0.;
-            C[2][0] =  s;
+            C[2][0] = s;
             C[2][1] = 0.;
-            C[2][2] =  c;
+            C[2][2] = c;
             break;
 
         case 3:
-            C[0][0] =  c;
-            C[0][1] =  s;
+            C[0][0] = c;
+            C[0][1] = s;
             C[0][2] = 0.;
             C[1][0] = -s;
-            C[1][1] =  c;
+            C[1][1] = c;
             C[1][2] = 0.;
             C[2][0] = 0.;
             C[2][1] = 0.;
@@ -4397,7 +4631,8 @@ void Mi(double theta, int a, double C[3][3])
 /*
  * tilde(theta, mat) returns the the 3x3 cross product matrix
  */
-void   tilde(double *v, double mat[3][3])
+void
+tilde(double* v, double mat[3][3])
 {
     m33SetZero(mat);
     mat[0][1] = -v[2];

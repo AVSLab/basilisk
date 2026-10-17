@@ -64,7 +64,7 @@ DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>*
 
 bool
 DownlinkHandling::addStorageUnitToDownlink(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg,
-                                          ReadFunctor<DataStorageStatusMsgPayload> reader)
+                                           ReadFunctor<DataStorageStatusMsgPayload> reader)
 {
     if (tmpStorageUnitMsg == nullptr || !reader.isSubscribedTo(tmpStorageUnitMsg)) {
         bskLogger.bskError("DownlinkHandling.addStorageUnitToDownlink: reader must subscribe to the source message.");
@@ -143,7 +143,8 @@ DownlinkHandling::setRemovalPolicy(int64_t removalPolicy)
         return true;
     }
 
-    bskLogger.bskError("DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
+    bskLogger.bskError(
+      "DownlinkHandling.setRemovalPolicy: value must be 0 (REMOVE_ATTEMPTED) or 1 (REMOVE_DELIVERED_ONLY).");
 }
 
 /*! Set packet-gating behavior flag */
@@ -253,10 +254,7 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
     const bool selectedDataNameValid =
       this->setDataNameFromStorageSelection(selection, this->nodeDataName, sizeof(this->nodeDataName));
 
-    std::snprintf(this->downlinkOutBuffer.dataName,
-                  sizeof(this->downlinkOutBuffer.dataName),
-                  "%s",
-                  this->nodeDataName);
+    std::snprintf(this->downlinkOutBuffer.dataName, sizeof(this->downlinkOutBuffer.dataName), "%s", this->nodeDataName);
     this->downlinkOutBuffer.availableDataBits = this->availableDataBits;
     const bool safeStorageRemovalRoute = selectedDataNameValid && this->isStorageRemovalRouteSafe(selection);
     if (!safeStorageRemovalRoute && selection.storageUnitIndex >= 0) {
@@ -301,7 +299,7 @@ DownlinkHandling::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageMsg, doubl
     auto copyAntennaName = [this](char* destination, size_t destinationSize, const char* source, size_t sourceSize) {
         if (std::memchr(source, '\0', sourceSize) == nullptr) {
             bskLogger.bskError("DownlinkHandling: antenna name is not null-terminated within %zu characters.",
-                             sourceSize);
+                               sourceSize);
         }
         std::snprintf(destination, destinationSize, "%s", source);
     };
@@ -526,8 +524,9 @@ DownlinkHandling::setDataNameFromStorageSelection(const StorageSelection& select
         if (!name.empty()) {
             if (name.size() >= bufferSize) {
                 bskLogger.bskError("DownlinkHandling: selected storage partition name is %zu characters, but "
-                                 "the destination buffer supports at most %zu characters.",
-                                 name.size(), bufferSize - 1);
+                                   "the destination buffer supports at most %zu characters.",
+                                   name.size(),
+                                   bufferSize - 1);
             }
             std::snprintf(buffer, bufferSize, "%s", name.c_str());
             return true;

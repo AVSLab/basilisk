@@ -17,12 +17,12 @@
 
  */
 #include "simulation/navigation/simpleNav/simpleNav.h"
-#include "architecture/utilities/linearAlgebra.h"
-#include "architecture/utilities/rigidBodyKinematics.h"
-#include <iostream>
-#include <cstring>
 #include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/linearAlgebra.h"
 #include "architecture/utilities/macroDefinitions.h"
+#include "architecture/utilities/rigidBodyKinematics.h"
+#include <cstring>
+#include <iostream>
 
 /*! This is the constructor for the simple nav model.  It sets default variable
     values and initializes the various parts of the model */
@@ -39,7 +39,7 @@ SimpleNav::SimpleNav()
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(this->numStates);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(this->numStates, this->RNGSeed);
+    this->errorModel = GaussMarkov(this->numStates, this->RNGSeed);
 }
 
 /*! Destructor.  Nothing here. */
@@ -47,7 +47,6 @@ SimpleNav::~SimpleNav()
 {
     return;
 }
-
 
 /*! This method is used to reset the module. It
  initializes the various containers used in the model as well as creates the
@@ -61,7 +60,8 @@ SimpleNav::~SimpleNav()
      - Accumulated DV errors [15-17]
 
  */
-void SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -70,12 +70,13 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
     //! - Initialize the propagation matrix to default values for use in update
     this->AMatrix.setIdentity();
-    this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
-    this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
+    this->AMatrix(0, 3) = this->AMatrix(1, 4) = this->AMatrix(2, 5) = this->crossTrans ? 1.0 : 0.0;
+    this->AMatrix(6, 9) = this->AMatrix(7, 10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
 
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
-    if (this->PMatrix.size() != this->numStates*this->numStates) {
-        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
+    if (this->PMatrix.size() != this->numStates * this->numStates) {
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting",
+                           this->PMatrix.size());
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
@@ -86,17 +87,16 @@ void SimpleNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->errorModel.setUpperBounds(this->walkBounds);
 }
 
-
 /*! This method reads the input messages associated with the vehicle state and
  the sun state
  */
-void SimpleNav::readInputMessages()
+void
+SimpleNav::readInputMessages()
 {
     this->inertialState = this->scStateInMsg();
 
     this->sunState = this->sunStateInMsg.zeroMsgPayload;
-    if(this->sunStateInMsg.isLinked())
-    {
+    if (this->sunStateInMsg.isLinked()) {
         this->sunState = this->sunStateInMsg();
     }
 }
@@ -105,17 +105,19 @@ void SimpleNav::readInputMessages()
 
  @param Clock The clock time associated with the model call
  */
-void SimpleNav::writeOutputMessages(uint64_t Clock)
+void
+SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     /* time tage the output message */
-    this->estAttState.timeTag = (double) Clock * NANO2SEC;
-    this->estTransState.timeTag = (double) Clock * NANO2SEC;
+    this->estAttState.timeTag = (double)Clock * NANO2SEC;
+    this->estTransState.timeTag = (double)Clock * NANO2SEC;
 
     this->attOutMsg.write(&this->estAttState, this->moduleID, Clock);
     this->transOutMsg.write(&this->estTransState, this->moduleID, Clock);
 }
 
-void SimpleNav::applyErrors()
+void
+SimpleNav::applyErrors()
 {
     //! - Add errors to the simple cases (everything except sun-pointing)
     v3Add(this->trueTransState.r_BN_N, &(this->navErrors.data()[0]), this->estTransState.r_BN_N);
@@ -124,8 +126,8 @@ void SimpleNav::applyErrors()
     v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
     v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
-    if(this->sunStateInMsg.isLinked()){
-        double dcm_OT[3][3];       /* dcm, body T to body O */
+    if (this->sunStateInMsg.isLinked()) {
+        double dcm_OT[3][3]; /* dcm, body T to body O */
         MRP2C(&(this->navErrors.data()[12]), dcm_OT);
         m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
     } else {
@@ -133,13 +135,13 @@ void SimpleNav::applyErrors()
     }
 }
 
-
 /*! This method uses the input messages as well as the calculated model errors to
  compute what the output navigation state should be.
 
     @param Clock The clock time associated with the model's update call
 */
-void SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
+void
+SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
 {
     //! - Set output state to truth data
     v3Copy(this->inertialState.r_BN_N, this->trueTransState.r_BN_N);
@@ -149,9 +151,9 @@ void SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
     v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    if(this->sunStateInMsg.isLinked()){
+    if (this->sunStateInMsg.isLinked()) {
         double sc2SunInrtl[3];
-        double dcm_BN[3][3];        /* dcm, inertial to body */
+        double dcm_BN[3][3]; /* dcm, inertial to body */
         v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
         MRP2C(this->inertialState.sigma_BN, dcm_BN);
@@ -166,23 +168,25 @@ void SimpleNav::computeTrueOutput(uint64_t Clock [[maybe_unused]])
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
+void
+SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
     StateMatrix localProp = this->AMatrix;
     //! - Compute timestep since the last call
     timeStep = diffNanoToSec(CurrentSimNanos, this->prevTime);
 
-    localProp(0, 3) *= timeStep; // position/velocity cross correlation terms
-    localProp(1, 4) *= timeStep; // position/velocity cross correlation terms
-    localProp(2, 5) *= timeStep; // position/velocity cross correlation terms
-    localProp(6, 9) *= timeStep; // attitude/attitude rate cross correlation terms
+    localProp(0, 3) *= timeStep;  // position/velocity cross correlation terms
+    localProp(1, 4) *= timeStep;  // position/velocity cross correlation terms
+    localProp(2, 5) *= timeStep;  // position/velocity cross correlation terms
+    localProp(6, 9) *= timeStep;  // attitude/attitude rate cross correlation terms
     localProp(7, 10) *= timeStep; // attitude/attitude rate cross correlation terms
     localProp(8, 11) *= timeStep; // attitude/attitude rate cross correlation terms
 
     //! - Set the GaussMarkov propagation matrix and compute errors
-    if (this->PMatrix.size() != this->numStates*this->numStates) {
-        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation", this->PMatrix.size());
+    if (this->PMatrix.size() != this->numStates * this->numStates) {
+        bskLogger.bskError("Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting during Simulation",
+                           this->PMatrix.size());
     }
     this->errorModel.setNoiseMatrix(this->PMatrix);
     if (this->walkBounds.size() != this->numStates) {
@@ -198,7 +202,8 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
+void
+SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeTrueOutput(CurrentSimNanos);

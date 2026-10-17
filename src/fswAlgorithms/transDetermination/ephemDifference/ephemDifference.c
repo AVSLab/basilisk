@@ -25,17 +25,15 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
+void
+SelfInit_ephemDifference(EphemDifferenceData* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     uint32_t i;
-    for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
-    {
+    for (i = 0; i < MAX_NUM_CHANGE_BODIES; i++) {
         EphemerisMsg_C_init(&configData->changeBodies[i].ephOutMsg);
     }
-
 }
-
 
 /*! @brief This method resets the module.
 
@@ -43,19 +41,18 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
-                         int64_t moduleID)
+void
+Reset_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!EphemerisMsg_C_isLinked(&configData->ephBaseInMsg)) {
         _bskError(configData->bskLogger, "Error: ephemDifference.ephBaseInMsg wasn't connected.");
     }
 
     configData->ephBdyCount = 0;
-    for(int i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
-    {
+    for (int i = 0; i < MAX_NUM_CHANGE_BODIES; i++) {
         if (EphemerisMsg_C_isLinked(&configData->changeBodies[i].ephInMsg)) {
             configData->ephBdyCount++;
         } else {
@@ -64,7 +61,9 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
     }
 
     if (configData->ephBdyCount == 0) {
-        _bskLog(configData->bskLogger, BSK_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
+        _bskLog(configData->bskLogger,
+                BSK_WARNING,
+                "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
     }
 }
 
@@ -76,7 +75,8 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_ephemDifference(EphemDifferenceData* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i;
     EphemerisMsgPayload tmpBaseEphem;
@@ -85,16 +85,11 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     // read input msg
     tmpBaseEphem = EphemerisMsg_C_read(&configData->ephBaseInMsg);
 
-    for(i = 0; i < configData->ephBdyCount; i++)
-    {
+    for (i = 0; i < configData->ephBdyCount; i++) {
         tmpEphStore = EphemerisMsg_C_read(&configData->changeBodies[i].ephInMsg);
 
-        v3Subtract(tmpEphStore.r_BdyZero_N,
-                   tmpBaseEphem.r_BdyZero_N,
-                   tmpEphStore.r_BdyZero_N);
-        v3Subtract(tmpEphStore.v_BdyZero_N,
-                   tmpBaseEphem.v_BdyZero_N,
-                   tmpEphStore.v_BdyZero_N);
+        v3Subtract(tmpEphStore.r_BdyZero_N, tmpBaseEphem.r_BdyZero_N, tmpEphStore.r_BdyZero_N);
+        v3Subtract(tmpEphStore.v_BdyZero_N, tmpBaseEphem.v_BdyZero_N, tmpEphStore.v_BdyZero_N);
 
         EphemerisMsg_C_write(&tmpEphStore, &configData->changeBodies[i].ephOutMsg, moduleID, callTime);
     }

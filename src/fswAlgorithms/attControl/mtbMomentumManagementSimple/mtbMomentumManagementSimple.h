@@ -17,42 +17,47 @@
 
 */
 
-
 #ifndef MTBMOMENTUMMANAGEMENTSIMPLE_H
 #define MTBMOMENTUMMANAGEMENTSIMPLE_H
 
-#include "cMsgCInterface/RWSpeedMsg_C.h"
-#include "cMsgCInterface/RWArrayConfigMsg_C.h"
-#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
 #include "architecture/utilities/bskLogging.h"
-#include <stdio.h>
 #include "architecture/utilities/macroDefinitions.h"
+#include "cMsgCInterface/CmdTorqueBodyMsg_C.h"
+#include "cMsgCInterface/RWArrayConfigMsg_C.h"
+#include "cMsgCInterface/RWSpeedMsg_C.h"
 #include <stdint.h>
+#include <stdio.h>
 
 /*! @brief Top level structure for the sub-module routines. */
-typedef struct {
+typedef struct
+{
     /* Configs.*/
-    double Kp;                                  //!<[1/s]  momentum feedback gain
-    
+    double Kp; //!<[1/s]  momentum feedback gain
+
     /* Inputs.*/
-    RWArrayConfigMsg_C rwParamsInMsg;           //!< input message containing RW parameters
-    RWSpeedMsg_C rwSpeedsInMsg;                 //!< input message containingRW speeds
-    
+    RWArrayConfigMsg_C rwParamsInMsg; //!< input message containing RW parameters
+    RWSpeedMsg_C rwSpeedsInMsg;       //!< input message containingRW speeds
+
     /* Outputs.*/
-    CmdTorqueBodyMsg_C tauMtbRequestOutMsg;     //!< output message containing control torque in the Body frame
-    
+    CmdTorqueBodyMsg_C tauMtbRequestOutMsg; //!< output message containing control torque in the Body frame
+
     /* Other. */
-    RWArrayConfigMsgPayload rwConfigParams;     //!< configuration for RW's
-    double Gs[3 * MAX_EFF_CNT];                 //!< transformation from the wheelspace to the Body frame
-    BSKLogger *bskLogger;                       //!< BSK Logging
-}mtbMomentumManagementSimpleConfig;
+    RWArrayConfigMsgPayload rwConfigParams; //!< configuration for RW's
+    double Gs[3 * MAX_EFF_CNT];             //!< transformation from the wheelspace to the Body frame
+    BSKLogger* bskLogger;                   //!< BSK Logging
+} mtbMomentumManagementSimpleConfig;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-    void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, int64_t moduleID);
-    void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, uint64_t callTime, int64_t moduleID);
-    void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig *configData, uint64_t callTime, int64_t moduleID);
+    void SelfInit_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData, int64_t moduleID);
+    void Update_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData,
+                                            uint64_t callTime,
+                                            int64_t moduleID);
+    void Reset_mtbMomentumManagementSimple(mtbMomentumManagementSimpleConfig* configData,
+                                           uint64_t callTime,
+                                           int64_t moduleID);
 
 #ifdef __cplusplus
 }

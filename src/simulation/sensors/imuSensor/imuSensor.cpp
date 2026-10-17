@@ -17,13 +17,12 @@
 
  */
 #include "simulation/sensors/imuSensor/imuSensor.h"
+#include "architecture/utilities/avsEigenSupport.h"
+#include "architecture/utilities/gauss_markov.h"
+#include "architecture/utilities/macroDefinitions.h"
 #include "architecture/utilities/rigidBodyKinematics.h"
 #include <cstring>
-#include "architecture/utilities/gauss_markov.h"
-#include "architecture/utilities/avsEigenSupport.h"
-#include "architecture/utilities/macroDefinitions.h"
 #include <inttypes.h>
-
 
 ImuSensor::ImuSensor()
 {
@@ -37,8 +36,8 @@ ImuSensor::ImuSensor()
     this->errorModelGyro = GaussMarkov(static_cast<uint64_t>(this->numStates), gyroSeed);
     this->errorModelAccel = GaussMarkov(static_cast<uint64_t>(this->numStates), this->RNGSeed);
 
-    this->aDisc = Discretize((uint8_t) this->numStates);
-    this->oDisc = Discretize((uint8_t) this->numStates);
+    this->aDisc = Discretize((uint8_t)this->numStates);
+    this->oDisc = Discretize((uint8_t)this->numStates);
 
     this->aSat = Saturate(this->numStates);
     this->oSat = Saturate(this->numStates);
@@ -80,9 +79,10 @@ ImuSensor::ImuSensor()
 /*!
     set body orientation DCM relative to platform
  */
-void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
+void
+ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
-    this->dcm_PB = eigenM1(roll)*eigenM2(pitch)*eigenM3(yaw);
+    this->dcm_PB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
 
     return;
 }
@@ -92,12 +92,12 @@ ImuSensor::~ImuSensor()
     return;
 }
 
-
 /*! Reset the module
 
  @param CurrentSimNanos current time (ns)
  */
-void ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -105,49 +105,46 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
-    {
+    if (this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrixAccel) is not 3*3. Quitting.");
     }
     this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
     this->errorModelAccel.setRNGSeed(this->RNGSeed);
 
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
-    {
+    if (this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates) {
         bskLogger.bskError("Your process noise matrix (PMatrixGyro) is not 3*3. Quitting.");
     }
     this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
     this->errorModelGyro.setRNGSeed(GaussMarkov::deriveSecondarySeed(this->RNGSeed));
 
     Eigen::Matrix<double, 3, 2> oSatBounds;
-    oSatBounds(0,0) = -this->senRotMax;
-    oSatBounds(0,1) = this->senRotMax;
-    oSatBounds(1,0) = -this->senRotMax;
-    oSatBounds(1,1) = this->senRotMax;
-    oSatBounds(2,0) = -this->senRotMax;
-    oSatBounds(2,1) = this->senRotMax;
+    oSatBounds(0, 0) = -this->senRotMax;
+    oSatBounds(0, 1) = this->senRotMax;
+    oSatBounds(1, 0) = -this->senRotMax;
+    oSatBounds(1, 1) = this->senRotMax;
+    oSatBounds(2, 0) = -this->senRotMax;
+    oSatBounds(2, 1) = this->senRotMax;
     this->oSat.setBounds(oSatBounds);
 
     Eigen::Matrix<double, 3, 2> aSatBounds;
-    aSatBounds(0,0) = -this->senTransMax;
-    aSatBounds(0,1) = this->senTransMax;
-    aSatBounds(1,0) = -this->senTransMax;
-    aSatBounds(1,1) = this->senTransMax;
-    aSatBounds(2,0) = -this->senTransMax;
-    aSatBounds(2,1) = this->senTransMax;
+    aSatBounds(0, 0) = -this->senTransMax;
+    aSatBounds(0, 1) = this->senTransMax;
+    aSatBounds(1, 0) = -this->senTransMax;
+    aSatBounds(1, 1) = this->senTransMax;
+    aSatBounds(2, 0) = -this->senTransMax;
+    aSatBounds(2, 1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
 }
-
 
 /*!
     read input messages
  */
-void ImuSensor::readInputMessages()
+void
+ImuSensor::readInputMessages()
 {
     this->StateCurrent = this->scStateInMsg.zeroMsgPayload;
-    if(this->scStateInMsg.isLinked())
-    {
+    if (this->scStateInMsg.isLinked()) {
         this->StateCurrent = this->scStateInMsg();
     }
     this->current_sigma_BN = cArray2EigenMRPd(this->StateCurrent.sigma_BN);
@@ -162,7 +159,8 @@ void ImuSensor::readInputMessages()
 /*!
     write output messages
  */
-void ImuSensor::writeOutputMessages(uint64_t Clock)
+void
+ImuSensor::writeOutputMessages(uint64_t Clock)
 {
     IMUSensorMsgPayload localOutput;
 
@@ -179,18 +177,19 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
 /*!
     set LSB values
  */
-void ImuSensor::setLSBs(double LSBa, double LSBo)
+void
+ImuSensor::setLSBs(double LSBa, double LSBo)
 {
     this->aDisc.setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
     this->oDisc.setLSB(Eigen::Vector3d(LSBo, LSBo, LSBo));
     return;
-
 }
 
 /*!
     set Carry error value
  */
-void ImuSensor::setCarryError(bool aCarry, bool oCarry)
+void
+ImuSensor::setCarryError(bool aCarry, bool oCarry)
 {
     this->aDisc.setCarryError(aCarry);
     this->oDisc.setCarryError(oCarry);
@@ -200,7 +199,9 @@ void ImuSensor::setCarryError(bool aCarry, bool oCarry)
 /*!
     set round direction value
  */
-void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound){
+void
+ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound)
+{
 
     this->aDisc.setRoundDirection(aRound);
     this->oDisc.setRoundDirection(oRound);
@@ -212,18 +213,19 @@ void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRou
     apply sensor direction
     @param CurrentTime
  */
-void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
+void
+ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
 
     double dt = diffNanoToSec(CurrentTime, this->PreviousTime);
 
-    if(this->aDisc.LSB.any()) //If aLSB has been set.
+    if (this->aDisc.LSB.any()) // If aLSB has been set.
     {
         this->accel_SN_P_out = this->aDisc.discretize(this->accel_SN_P_out);
         this->DV_SN_P_out -= this->aDisc.getDiscretizationErrors() * dt;
     }
 
-    if(this->oDisc.LSB.any()) // If oLSB has been set.
+    if (this->oDisc.LSB.any()) // If oLSB has been set.
     {
         this->omega_PN_P_out = this->oDisc.discretize(this->omega_PN_P_out);
         this->prv_PN_out -= this->oDisc.getDiscretizationErrors() * dt;
@@ -236,7 +238,9 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     set o saturation bounds
     @param oSatBounds
  */
-void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds){
+void
+ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds)
+{
     this->oSat.setBounds(oSatBounds);
 }
 
@@ -244,14 +248,17 @@ void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds){
     set a saturation bounds
     @param aSatBounds
  */
-void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds){
+void
+ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds)
+{
     this->aSat.setBounds(aSatBounds);
 }
 
 /*!
     scale truth method
  */
-void ImuSensor::scaleTruth()
+void
+ImuSensor::scaleTruth()
 {
     this->omega_PN_P_out = this->omega_PN_P_out.cwiseProduct(this->gyroScale);
     this->prv_PN_out = this->prv_PN_out.cwiseProduct(this->gyroScale);
@@ -263,11 +270,12 @@ void ImuSensor::scaleTruth()
 /*!
     apply sensor errors
  */
-void ImuSensor::applySensorErrors(uint64_t CurrentTime)
+void
+ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
-    Eigen::Vector3d OmegaErrors; //angular noise plus bias
-    Eigen::Vector3d AccelErrors; //linear noise plus bias
-    double dt; // [s] time step
+    Eigen::Vector3d OmegaErrors; // angular noise plus bias
+    Eigen::Vector3d AccelErrors; // linear noise plus bias
+    double dt;                   // [s] time step
 
     dt = diffNanoToSec(CurrentTime, this->PreviousTime);
 
@@ -285,14 +293,15 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 /*!
  compute sensor errors
  */
-void ImuSensor::computeSensorErrors()
+void
+ImuSensor::computeSensorErrors()
 {
-	this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
-	this->errorModelAccel.computeNextState();
-	this->navErrorsAccel = this->errorModelAccel.getCurrentState();
-	this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
-	this->errorModelGyro.computeNextState();
-	this->navErrorsGyro = this->errorModelGyro.getCurrentState();
+    this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
+    this->errorModelAccel.computeNextState();
+    this->navErrorsAccel = this->errorModelAccel.getCurrentState();
+    this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
+    this->errorModelGyro.computeNextState();
+    this->navErrorsGyro = this->errorModelGyro.getCurrentState();
 
     return;
 }
@@ -300,22 +309,23 @@ void ImuSensor::computeSensorErrors()
 /*!
     apply sensor saturation
  */
-void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
+void
+ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
-	double  dt = diffNanoToSec(CurrentTime, PreviousTime);
+    double dt = diffNanoToSec(CurrentTime, PreviousTime);
 
     Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
     this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
-    for (int64_t i = 0; i < this->numStates; i++){
-        if (this->omega_PN_P_out(i) != omega_PN_P_in(i)){
+    for (int64_t i = 0; i < this->numStates; i++) {
+        if (this->omega_PN_P_out(i) != omega_PN_P_in(i)) {
             this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt;
         }
     }
 
     Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
     this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
-    for (int64_t i = 0; i < this->numStates; i++){
-        if (this->accel_SN_P_out(i) != accel_SN_P_in(i)){
+    for (int64_t i = 0; i < this->numStates; i++) {
+        if (this->accel_SN_P_out(i) != accel_SN_P_in(i)) {
             this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt;
         }
     }
@@ -328,19 +338,21 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
     to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
     spacecraft output message and passed through to theother IMU functions which add noise, etc.
  */
-void ImuSensor::computePlatformDR()
+void
+ImuSensor::computePlatformDR()
 {
-    double dcm_P2P1_cArray[9]; //dcm_P2P1 as cArray for C2PRV conversion
-    double prv_PN_cArray[3]; //cArray of PRV
+    double dcm_P2P1_cArray[9]; // dcm_P2P1 as cArray for C2PRV conversion
+    double prv_PN_cArray[3];   // cArray of PRV
 
-    //Calculated time averaged cumulative rotation
-    Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
-    dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() * (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
-    eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray); //makes a 9x1
-    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray); //makes it back into a 3x3
-    this->prv_PN_out = cArray2EigenVector3d(prv_PN_cArray);//writes it back to the variable to be passed along.
+    // Calculated time averaged cumulative rotation
+    Eigen::Matrix3d dcm_P2P1; // direction cosine matrix from P at time 1 to P at time 2
+    dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() *
+               (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
+    eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray);        // makes a 9x1
+    C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray);        // makes it back into a 3x3
+    this->prv_PN_out = cArray2EigenVector3d(prv_PN_cArray); // writes it back to the variable to be passed along.
 
-    //calculate "instantaneous" angular rate
+    // calculate "instantaneous" angular rate
     this->omega_PN_P_out = this->dcm_PB * this->current_omega_BN_B;
 
     return;
@@ -354,20 +366,26 @@ void ImuSensor::computePlatformDR()
     to account for CoM offset of the platform frame.
     @param CurrentTime
  */
-void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
+void
+ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
 {
-    //Calculate "instantaneous" linear acceleration
-    Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
-    rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
+    // Calculate "instantaneous" linear acceleration
+    Eigen::Vector3d
+      rDotDot_SN_B; // sensor non conservative acceleration relative to inertial frame in body frame coordinates
+    rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) +
+                   this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;
 
-    //Calculate time-average cumulative delta v
-    Eigen::Matrix3d dcm_NB_1;      // direction cosine matrix from N to B at time 1
+    // Calculate time-average cumulative delta v
+    Eigen::Matrix3d dcm_NB_1; // direction cosine matrix from N to B at time 1
     dcm_NB_1 = this->previous_sigma_BN.toRotationMatrix();
-    Eigen::Matrix3d dcm_NB_2;      // direction cosine matrix from N to B at time 2
+    Eigen::Matrix3d dcm_NB_2; // direction cosine matrix from N to B at time 2
     dcm_NB_2 = this->current_sigma_BN.toRotationMatrix();
 
-    this->DV_SN_P_out =this->dcm_PB * dcm_NB_2.transpose() * ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) + ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) - (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
+    this->DV_SN_P_out = this->dcm_PB * dcm_NB_2.transpose() *
+                        ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) +
+                         ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) -
+                          (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
 
     return;
 }
@@ -376,21 +394,21 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
     update module states
     @param CurrentSimNanos current time (ns)
  */
-void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
+void
+ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
 
-    if(this->NominalReady)
-    {
+    if (this->NominalReady) {
         /* Compute true data */
         this->computePlatformDR();
         this->computePlatformDV(CurrentSimNanos);
         /* Compute sensed data */
-		this->computeSensorErrors();
+        this->computeSensorErrors();
         this->applySensorErrors(CurrentSimNanos);
         this->scaleTruth();
         this->applySensorDiscretization(CurrentSimNanos);
-		this->applySensorSaturation(CurrentSimNanos);
+        this->applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
         this->writeOutputMessages(CurrentSimNanos);
     } else {
@@ -399,7 +417,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         this->sensorOutMsg.write(&localOutput, this->moduleID, CurrentSimNanos);
     }
 
-    //record data from the current spacecraft message which is needed for the next IMU call
+    // record data from the current spacecraft message which is needed for the next IMU call
     this->previous_sigma_BN = this->current_sigma_BN;
     this->previous_omega_BN_B = this->current_omega_BN_B;
     this->previous_TotalAccumDV_BN_B = this->current_TotalAccumDV_BN_B;
@@ -414,7 +432,8 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
     Setter for `AMatrixAccel`
     @param propMatrix Matrix to set
 */
-void ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
+void
+ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
 {
     this->AMatrixAccel = propMatrix;
     this->errorModelAccel.setPropMatrix(propMatrix);
@@ -424,7 +443,8 @@ void ImuSensor::setAMatrixAccel(const Eigen::MatrixXd& propMatrix)
     Setter for `AMatrixGyro`
     @param propMatrix Matrix to set
 */
-void ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
+void
+ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
 {
     this->AMatrixGyro = propMatrix;
     this->errorModelGyro.setPropMatrix(propMatrix);
@@ -434,7 +454,8 @@ void ImuSensor::setAMatrixGyro(const Eigen::MatrixXd& propMatrix)
     Getter for `AMatrixAccel`
     @return Current matrix
 */
-Eigen::MatrixXd ImuSensor::getAMatrixAccel() const
+Eigen::MatrixXd
+ImuSensor::getAMatrixAccel() const
 {
     return this->AMatrixAccel;
 }
@@ -443,7 +464,8 @@ Eigen::MatrixXd ImuSensor::getAMatrixAccel() const
     Getter for `AMatrixGyro`
     @return Current matrix
 */
-Eigen::MatrixXd ImuSensor::getAMatrixGyro() const
+Eigen::MatrixXd
+ImuSensor::getAMatrixGyro() const
 {
     return this->AMatrixGyro;
 }
@@ -452,7 +474,8 @@ Eigen::MatrixXd ImuSensor::getAMatrixGyro() const
     Setter for `walkBoundsAccel`
     @param bounds Bounds vector to set
 */
-void ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
+void
+ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
 {
     this->walkBoundsAccel = bounds;
     this->errorModelAccel.setUpperBounds(bounds);
@@ -462,7 +485,8 @@ void ImuSensor::setWalkBoundsAccel(const Eigen::Vector3d& bounds)
     Setter for `walkBoundsGyro`
     @param bounds Bounds vector to set
 */
-void ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
+void
+ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
 {
     this->walkBoundsGyro = bounds;
     this->errorModelGyro.setUpperBounds(bounds);
@@ -472,7 +496,8 @@ void ImuSensor::setWalkBoundsGyro(const Eigen::Vector3d& bounds)
     Getter for `walkBoundsAccel`
     @return Current bounds
 */
-Eigen::Vector3d ImuSensor::getWalkBoundsAccel() const
+Eigen::Vector3d
+ImuSensor::getWalkBoundsAccel() const
 {
     return this->walkBoundsAccel;
 }
@@ -481,7 +506,8 @@ Eigen::Vector3d ImuSensor::getWalkBoundsAccel() const
     Getter for `walkBoundsGyro`
     @return Current bounds
 */
-Eigen::Vector3d ImuSensor::getWalkBoundsGyro() const
+Eigen::Vector3d
+ImuSensor::getWalkBoundsGyro() const
 {
     return this->walkBoundsGyro;
 }
@@ -490,7 +516,8 @@ Eigen::Vector3d ImuSensor::getWalkBoundsGyro() const
     Setter for `errorBoundsAccel`
     @param bounds Bounds vector to set
 */
-void ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
+void
+ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
 {
     this->errorBoundsAccel = bounds;
     this->errorModelAccel.setUpperBounds(bounds);
@@ -500,7 +527,8 @@ void ImuSensor::setErrorBoundsAccel(const Eigen::Vector3d& bounds)
     Setter for `errorBoundsGyro`
     @param bounds Bounds vector to set
 */
-void ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
+void
+ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
 {
     this->errorBoundsGyro = bounds;
     this->errorModelGyro.setUpperBounds(bounds);
@@ -510,7 +538,8 @@ void ImuSensor::setErrorBoundsGyro(const Eigen::Vector3d& bounds)
     Getter for `errorBoundsAccel`
     @return Current bounds
 */
-Eigen::Vector3d ImuSensor::getErrorBoundsAccel() const
+Eigen::Vector3d
+ImuSensor::getErrorBoundsAccel() const
 {
     return this->errorBoundsAccel;
 }
@@ -519,7 +548,8 @@ Eigen::Vector3d ImuSensor::getErrorBoundsAccel() const
     Getter for `errorBoundsGyro`
     @return Current bounds
 */
-Eigen::Vector3d ImuSensor::getErrorBoundsGyro() const
+Eigen::Vector3d
+ImuSensor::getErrorBoundsGyro() const
 {
     return this->errorBoundsGyro;
 }

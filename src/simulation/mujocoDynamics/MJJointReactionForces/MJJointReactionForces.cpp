@@ -17,30 +17,28 @@
 
 */
 
-
 #include "simulation/mujocoDynamics/MJJointReactionForces/MJJointReactionForces.h"
-#include <iostream>
 #include <cstring>
-#include <mujoco/mujoco.h>
 #include <iomanip>
+#include <iostream>
+#include <mujoco/mujoco.h>
 
 namespace {
-void fillForcePayload(std::vector<double>& forces,
-                             const mjtNum* forceData,
-                             std::size_t nDOF)
+void
+fillForcePayload(std::vector<double>& forces, const mjtNum* forceData, std::size_t nDOF)
 {
     forces.resize(nDOF);
     if constexpr (std::is_same_v<mjtNum, double>) {
         forces.assign(forceData, forceData + nDOF);
     } else {
         forces.resize(nDOF);
-        std::transform(forceData, forceData + nDOF, forces.begin(),
-                       [](mjtNum x) { return static_cast<double>(x); });
+        std::transform(forceData, forceData + nDOF, forces.begin(), [](mjtNum x) { return static_cast<double>(x); });
     }
 }
 }
 
-void MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void
+MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!scene) {
         bskLogger.bskError("MJJointReactionForces: scene pointer not set!");
@@ -79,7 +77,7 @@ void MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         int parentBody = model->jnt_bodyid[j];
         this->jointParentBodyIdx.push_back(parentBody);
 
-        int treeIdx = (parentBody>= 0) ? bodyTreeIdx[static_cast<size_t>(parentBody)] : -1;
+        int treeIdx = (parentBody >= 0) ? bodyTreeIdx[static_cast<size_t>(parentBody)] : -1;
         this->jointTreeIdx.push_back(treeIdx);
 
         int jt = model->jnt_type[j];
@@ -98,14 +96,17 @@ void MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
             const bool jointIsFirstOnBody = (j == model->body_jntadr[b]);
 
             if (!bodyIsTreeRoot || !jointIsFirstOnBody) {
-                bskLogger.bskError("MJJointReactionForces: Free joint j=%d on body b=%d must be the first joint on a tree root body.", j, b);
+                bskLogger.bskError(
+                  "MJJointReactionForces: Free joint j=%d on body b=%d must be the first joint on a tree root body.",
+                  j,
+                  b);
             }
         }
     }
-
 }
 
-void MJJointReactionForces::UpdateState(uint64_t CurrentSimNanos)
+void
+MJJointReactionForces::UpdateState(uint64_t CurrentSimNanos)
 {
     const mjData* data = scene->getMujocoData();
 

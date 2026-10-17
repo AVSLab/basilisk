@@ -19,14 +19,14 @@
 #ifndef CMD_FORCE_INERTIAL_TO_FORCE_AT_SITE_H
 #define CMD_FORCE_INERTIAL_TO_FORCE_AT_SITE_H
 
-#include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
+#include "architecture/utilities/bskLogging.h"
 
 #include "architecture/msgPayloadDefC/CmdForceInertialMsgPayload.h"
 #include "architecture/msgPayloadDefC/ForceAtSiteMsgPayload.h"
-#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 #include "architecture/msgPayloadDefC/NavAttMsgPayload.h"
+#include "architecture/msgPayloadDefC/SCStatesMsgPayload.h"
 
 /**
  * @brief Convert a commanded force in the inertial frame into a force at a site frame.
@@ -37,8 +37,7 @@
  */
 class CmdForceInertialToForceAtSite : public SysModel
 {
-public:
-
+  public:
     /**
      * @brief Advance the model and publish outputs.
      * Reads forceRequestInertial in N, builds C_SN from sigma_BN, computes F_S, and writes forceOutMsg.
@@ -53,9 +52,7 @@ public:
      */
     void Reset(uint64_t CurrentSimNanos) override;
 
-
-public:
-
+  public:
     /// Commanded force in N
     ReadFunctor<CmdForceInertialMsgPayload> cmdForceInertialInMsg;
 
@@ -67,7 +64,6 @@ public:
 
     /// Output force expressed in S
     Message<ForceAtSiteMsgPayload> forceOutMsg;
-
 
     /// Logger
     BSKLogger bskLogger;

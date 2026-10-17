@@ -33,12 +33,12 @@ constexpr double beta11 = 1.0;
 /** @brief Method workspace allocated after state binding. */
 struct svStochasticIntegratorRDI1WM::FlatStorage
 {
-    Eigen::VectorXd firstDrift; ///< Drift evaluated at the step-entry state.
-    Eigen::VectorXd secondDrift; ///< Drift evaluated at the method's second stage.
-    Eigen::VectorXd firstDiffusions; ///< Packed diffusions evaluated at the step-entry state.
-    Eigen::VectorXd combinedDrift; ///< Weighted combination of the method's drift stages.
-    Eigen::VectorXd scaledDrift; ///< Scratch for a scaled drift contribution.
-    Eigen::VectorXd scaledDiffusions; ///< Packed scratch for scaled diffusion contributions.
+    Eigen::VectorXd firstDrift;           ///< Drift evaluated at the step-entry state.
+    Eigen::VectorXd secondDrift;          ///< Drift evaluated at the method's second stage.
+    Eigen::VectorXd firstDiffusions;      ///< Packed diffusions evaluated at the step-entry state.
+    Eigen::VectorXd combinedDrift;        ///< Weighted combination of the method's drift stages.
+    Eigen::VectorXd scaledDrift;          ///< Scratch for a scaled drift contribution.
+    Eigen::VectorXd scaledDiffusions;     ///< Packed scratch for scaled diffusion contributions.
     Eigen::VectorXd threePointIncrements; ///< Discrete weak increments derived from Gaussian Wiener samples.
 };
 

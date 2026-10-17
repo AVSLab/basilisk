@@ -21,16 +21,17 @@
 #define CPP_MODULE_TEMPLATE_H
 
 #include "architecture/_GeneralModuleFiles/sys_model.h"
+#include "architecture/messaging/messaging.h"
 #include "architecture/msgPayloadDefC/CModuleTemplateMsgPayload.h"
 #include "architecture/utilities/bskLogging.h"
-#include "architecture/messaging/messaging.h"
 
 #include <array>
 #include <stdint.h>
 
 /*! @brief basic Basilisk C++ module class */
-class CppModuleTemplate: public SysModel {
-public:
+class CppModuleTemplate : public SysModel
+{
+  public:
     CppModuleTemplate();
     ~CppModuleTemplate() override;
 
@@ -44,10 +45,10 @@ public:
      */
     void UpdateState(uint64_t CurrentSimNanos) override;
 
-    Message<CModuleTemplateMsgPayload> dataOutMsg;     //!< attitude navigation output msg
-    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg;  //!< translation navigation output msg
+    Message<CModuleTemplateMsgPayload> dataOutMsg;    //!< attitude navigation output msg
+    ReadFunctor<CModuleTemplateMsgPayload> dataInMsg; //!< translation navigation output msg
 
-    BSKLogger bskLogger;                               //!< BSK Logging
+    BSKLogger bskLogger; //!< BSK Logging
 
     /*! @brief Demonstrate scalar assignment and validation using the runtime counter.
      *  @param value [-] Positive counter value.
@@ -57,7 +58,7 @@ public:
     /*! @brief Read the runtime counter, for example for variable logging.
      *  @return [-] Current counter value.
      */
-    double getUpdateCounter() const {return this->updateCounter;}
+    double getUpdateCounter() const { return this->updateCounter; }
     /*! @brief Set the sample configuration vector used for variable logging.
      *  @param value [-] Sample vector with positive components.
      *  @note Reset() preserves this vector. The vector is unused by the output calculation.
@@ -66,14 +67,12 @@ public:
     /*! @brief Read the sample configuration vector.
      *  @return [-] Current sample vector.
      */
-    std::array<double, 3> getSampleConfigVector() const {return this->sampleConfigVector;}
+    std::array<double, 3> getSampleConfigVector() const { return this->sampleConfigVector; }
 
-private:
-
-    double updateCounter = {};                       //!< [-] Runtime counter; Reset clears it and UpdateState increments it.
-    std::array<double, 3> sampleConfigVector = {};     //!< [-] Sample configuration for logging; retained by Reset and unused by UpdateState.
-
+  private:
+    double updateCounter = {}; //!< [-] Runtime counter; Reset clears it and UpdateState increments it.
+    std::array<double, 3>
+      sampleConfigVector = {}; //!< [-] Sample configuration for logging; retained by Reset and unused by UpdateState.
 };
-
 
 #endif

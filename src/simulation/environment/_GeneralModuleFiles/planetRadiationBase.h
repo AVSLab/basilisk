@@ -28,12 +28,13 @@
 #include "architecture/utilities/bskLogging.h"
 
 /*! @brief Per-patch flux and geometry returned by PlanetGrid::computePatches(). */
-struct PatchResult {
-    double albedoFlux;     //!< [W/m^2] albedo flux from this patch; 0 if not illuminated
-    double irFlux;         //!< [W/m^2] IR flux from this patch; > 0 for all visible patches
-    double rHat_IdA_N[3];  //!< [-] unit vector patch centroid -> satellite, inertial N
-    double solidAngle;     //!< [sr] solid angle of patch as seen from satellite
-    double r_dAP_N[3];     //!< [m] patch centroid position relative to planet centre, N frame
+struct PatchResult
+{
+    double albedoFlux;    //!< [W/m^2] albedo flux from this patch; 0 if not illuminated
+    double irFlux;        //!< [W/m^2] IR flux from this patch; > 0 for all visible patches
+    double rHat_IdA_N[3]; //!< [-] unit vector patch centroid -> satellite, inertial N
+    double solidAngle;    //!< [sr] solid angle of patch as seen from satellite
+    double r_dAP_N[3];    //!< [m] patch centroid position relative to planet centre, N frame
 };
 
 /*! @brief Initialised patch grid for one planet.
@@ -41,16 +42,17 @@ struct PatchResult {
  * Configure all public members, then call initialize().
  * After that, call computePatches() every timestep.
  */
-struct PlanetGrid {
-    int    nLat         = 180;    //!< [-] latitude zones
-    int    nLon         = 360;    //!< [-] longitude zones per band
-    double irFluxMean   = 237.0;  //!< [W/m^2] mean
-    double albedoAvg    = 0.30;   //!< [-] Bond albedo (albedoDataPath="")
-    bool useAlbedoData  = false;  //!< true = load CSV albedo data
-    std::string albedoDataPath = "";  //!< path to supportData/AlbedoData/
-    std::string albedoDataFile = "";  //!< CSV filename
-    double REQ_m = -1.0;  //!< [m] equatorial radius; -1 = must be set before initialize()
-    double RP_m  = -1.0;  //!< [m] polar radius; -1 = spherical (REQ used)
+struct PlanetGrid
+{
+    int nLat = 180;                  //!< [-] latitude zones
+    int nLon = 360;                  //!< [-] longitude zones per band
+    double irFluxMean = 237.0;       //!< [W/m^2] mean
+    double albedoAvg = 0.30;         //!< [-] Bond albedo (albedoDataPath="")
+    bool useAlbedoData = false;      //!< true = load CSV albedo data
+    std::string albedoDataPath = ""; //!< path to supportData/AlbedoData/
+    std::string albedoDataFile = ""; //!< CSV filename
+    double REQ_m = -1.0;             //!< [m] equatorial radius; -1 = must be set before initialize()
+    double RP_m = -1.0;              //!< [m] polar radius; -1 = spherical (REQ used)
 
     /*! Builds the patch grid and loads optional CSV albedo data.
      *  Call once after setting all configuration members.
@@ -69,32 +71,32 @@ struct PlanetGrid {
      *  @param R_planet   [m] authalic planet radius
      *  @param S_sun      [W/m^2] solar flux at planet, distance-corrected
      */
-    std::vector<PatchResult> computePatches(
-        const double r_sat_N[3],
-        const double r_sun_N[3],
-        const double r_planet_N[3],
-        double       J20002Pfix[3][3],
-        double       R_planet,
-        const double S_sun) const;
+    std::vector<PatchResult> computePatches(const double r_sat_N[3],
+                                            const double r_sun_N[3],
+                                            const double r_planet_N[3],
+                                            double J20002Pfix[3][3],
+                                            double R_planet,
+                                            const double S_sun) const;
 
-private:
+  private:
     std::vector<std::vector<double>> loadAlbedoGridFromCsv(BSKLogger bskLogger) const;
 
-    std::vector<std::array<double, 3>> patchDirs_P;  //!< [-] patch centroid directions in planet frame
-    std::vector<double> normAreas;   //!< [sr] normalised patch areas
-    std::vector<double> patchAlbedo; //!< [-] per-patch albedo values
-    double t_aut[3]    = {0.0, 0.0, 0.0}; //!< authalic latitude correction coefficients
-    bool   hasAuthalic  = false; //!< true when oblate spheroid correction is active
-    double latDiff      = 0.0;   //!< [rad] latitude spacing between grid points
-    double lonDiff      = 0.0;   //!< [rad] longitude spacing between grid points
-    bool initialized    = false; //!< true after initialize() completes successfully
+    std::vector<std::array<double, 3>> patchDirs_P; //!< [-] patch centroid directions in planet frame
+    std::vector<double> normAreas;                  //!< [sr] normalised patch areas
+    std::vector<double> patchAlbedo;                //!< [-] per-patch albedo values
+    double t_aut[3] = { 0.0, 0.0, 0.0 };            //!< authalic latitude correction coefficients
+    bool hasAuthalic = false;                       //!< true when oblate spheroid correction is active
+    double latDiff = 0.0;                           //!< [rad] latitude spacing between grid points
+    double lonDiff = 0.0;                           //!< [rad] longitude spacing between grid points
+    bool initialized = false;                       //!< true after initialize() completes successfully
 };
 
 /*! @brief One registered planet: message functor, initialised grid, authalic radius. */
-struct PlanetEntry {
-    ReadFunctor<SpicePlanetStateMsgPayload> planetMsg;      //!< per-planet input message
-    PlanetGrid                              grid;           //!< initialised patch grid
-    double                                  R_planet = 0.0; //!< [m] authalic radius, set in Reset()
+struct PlanetEntry
+{
+    ReadFunctor<SpicePlanetStateMsgPayload> planetMsg; //!< per-planet input message
+    PlanetGrid grid;                                   //!< initialised patch grid
+    double R_planet = 0.0;                             //!< [m] authalic radius, set in Reset()
 };
 
 /*! @brief Abstract base class for Basilisk planetary-radiation environment modules.
@@ -104,8 +106,9 @@ struct PlanetEntry {
  * via evaluatePlanet().  Concrete subclasses implement evaluatePlanet() and
  * optionally override the other virtual hooks.
  */
-class PlanetRadiationBase : public SysModel {
-public:
+class PlanetRadiationBase : public SysModel
+{
+  public:
     PlanetRadiationBase() = default;
     ~PlanetRadiationBase() override = default;
 
@@ -127,34 +130,34 @@ public:
      *  @param msg        Planet state message functor.
      *  @param gridConfig Partially-configured patch grid.
      */
-    void addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg,
-                        const PlanetGrid&                       gridConfig);
+    void addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg, const PlanetGrid& gridConfig);
 
-    bool getEclipseCase();  //!< @brief getter for the eclipseCase flag
-    void setEclipseCase(bool value);  //!< @brief setter for the eclipseCase flag
+    bool getEclipseCase();           //!< @brief getter for the eclipseCase flag
+    void setEclipseCase(bool value); //!< @brief setter for the eclipseCase flag
 
-    int    defaultNumLat = 180;   //!< [-] default number of latitude grid points
-    int    defaultNumLon = 360;   //!< [-] default number of longitude grid points
-    double irFluxMean    = 237.0; //!< [W/m^2] mean outgoing IR radiation
-    double albedoAvg     = 0.30;  //!< [-] Bond albedo, used when albedoDataPath is left empty
+    int defaultNumLat = 180;   //!< [-] default number of latitude grid points
+    int defaultNumLon = 360;   //!< [-] default number of longitude grid points
+    double irFluxMean = 237.0; //!< [W/m^2] mean outgoing IR radiation
+    double albedoAvg = 0.30;   //!< [-] Bond albedo, used when albedoDataPath is left empty
 
-    std::string albedoDataPath = "";  //!< path to supportData/AlbedoData/
-    std::string albedoDataFile = "";  //!< CSV filename
+    std::string albedoDataPath = ""; //!< path to supportData/AlbedoData/
+    std::string albedoDataFile = ""; //!< CSV filename
 
-    double REQ_m = -1.0;  //!< [m] equatorial radius; -1 (default) = use WGS-84 Earth value
-    double RP_m  = -1.0;  //!< [m] polar radius; -1 (default) = use WGS-84 Earth value
+    double REQ_m = -1.0; //!< [m] equatorial radius; -1 (default) = use WGS-84 Earth value
+    double RP_m = -1.0;  //!< [m] polar radius; -1 (default) = use WGS-84 Earth value
 
-    ReadFunctor<SCStatesMsgPayload>         spacecraftStateInMsg; //!< spacecraft position input message
-    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;          //!< single-planet convenience (ERM path)
-    ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg;     //!< Sun position input message
+    ReadFunctor<SCStatesMsgPayload> spacecraftStateInMsg;     //!< spacecraft position input message
+    ReadFunctor<SpicePlanetStateMsgPayload> planetInMsg;      //!< single-planet convenience (ERM path)
+    ReadFunctor<SpicePlanetStateMsgPayload> sunPositionInMsg; //!< Sun position input message
 
     BSKLogger bskLogger; //!< BSK logging
 
-    bool eclipseCase = false;  //!< true = compute eclipse shadowing at each patch. Deprecated, will be removed after May 1st 2027.
+    bool eclipseCase =
+      false; //!< true = compute eclipse shadowing at each patch. Deprecated, will be removed after May 1st 2027.
 
     std::vector<PlanetEntry> planets; //!< registered planets, built in Reset() or addPlanetEntry()
 
-protected:
+  protected:
     /*! Called once per planet per timestep.  PURE VIRTUAL.
      *
      *  @param scMsg      spacecraft state
@@ -164,12 +167,12 @@ protected:
      *  @param S_sun      [W/m^2] distance-corrected solar flux at planet
      *  @param nanos      simulation time
      */
-    virtual void evaluatePlanet(const SCStatesMsgPayload&         scMsg,
+    virtual void evaluatePlanet(const SCStatesMsgPayload& scMsg,
                                 const SpicePlanetStateMsgPayload& sunMsg,
-                                SpicePlanetStateMsgPayload        planetMsg,
-                                PlanetEntry&                      entry,
-                                const double                      S_sun,
-                                uint64_t                          nanos) = 0;
+                                SpicePlanetStateMsgPayload planetMsg,
+                                PlanetEntry& entry,
+                                const double S_sun,
+                                uint64_t nanos) = 0;
 
     /*! Called in Reset() for each entry after reading the planet message.
      *
@@ -183,8 +186,9 @@ protected:
      */
     virtual void resolvePlanetEntry(const SpicePlanetStateMsgPayload& planetMsg [[maybe_unused]],
                                     PlanetGrid& grid [[maybe_unused]],
-                                    int         idx [[maybe_unused]]) {
-                                    }
+                                    int idx [[maybe_unused]])
+    {
+    }
 
     /*! Called at the start of UpdateState(), before the planet loop.
      *  Override to clear per-timestep accumulators or cache the spacecraft attitude.
@@ -194,10 +198,11 @@ protected:
      *  @param sunMsg  Sun state message.
      *  @param nanos   Current simulation time (ns).
      */
-    virtual void onUpdateBegin(const SCStatesMsgPayload&         scMsg [[maybe_unused]],
+    virtual void onUpdateBegin(const SCStatesMsgPayload& scMsg [[maybe_unused]],
                                const SpicePlanetStateMsgPayload& sunMsg [[maybe_unused]],
-                               uint64_t                          nanos [[maybe_unused]]) {
-                               }
+                               uint64_t nanos [[maybe_unused]])
+    {
+    }
 
     /*! Called after the planet loop in UpdateState().
      *  Override to write output messages.
@@ -205,8 +210,7 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void onUpdateEnd(uint64_t nanos [[maybe_unused]]) {
-    }
+    virtual void onUpdateEnd(uint64_t nanos [[maybe_unused]]) {}
 
     /*! Called at the end of Reset().
      *  Override for additional validation (e.g. instrument configuration).
@@ -214,8 +218,7 @@ protected:
      *
      *  @param nanos  Current simulation time (ns).
      */
-    virtual void customReset(uint64_t nanos [[maybe_unused]]) {
-    }
+    virtual void customReset(uint64_t nanos [[maybe_unused]]) {}
 
     /*! Return true to enable the single-planet backward-compat fallback in Reset():
      *  when planets is empty and planetInMsg is linked, a default PlanetGrid
@@ -231,8 +234,8 @@ protected:
      *  @param scMsg  Spacecraft state message.
      *  @param sunMsg Sun state message.
      */
-    virtual bool isPatchEclipsed(const PatchResult&                patch,
-                                 const SCStatesMsgPayload&         scMsg,
+    virtual bool isPatchEclipsed(const PatchResult& patch,
+                                 const SCStatesMsgPayload& scMsg,
                                  const SpicePlanetStateMsgPayload& sunMsg);
 
     /*! Computes the umbra/penumbra illumination factor [0, 1] for a surface
@@ -243,9 +246,7 @@ protected:
      *  @param r_dAP_N   [m] patch position relative to planet centre
      *  @param r_SP_N    [m] Sun position relative to planet centre
      */
-    static double computeIlluminationAtdA(double          Rplanet,
-                                          Eigen::Vector3d r_dAP_N,
-                                          Eigen::Vector3d r_SP_N);
+    static double computeIlluminationAtdA(double Rplanet, Eigen::Vector3d r_dAP_N, Eigen::Vector3d r_SP_N);
 
     Eigen::Vector3d currentR_SP_N = Eigen::Vector3d::Zero(); //!< [m] Sun position relative to current planet centre
     double currentPlanetRadius = 0.0;                        //!< [m] current planet authalic radius

@@ -19,9 +19,9 @@
 #ifndef BSK_RUST_MODULE_H
 #define BSK_RUST_MODULE_H
 
+#include "architecture/utilities/bskLogging.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "architecture/utilities/bskLogging.h"
 
 /*! Version of the generated Rust-module C ABI used by bsk-build and bsk-sdk. */
 #define BSK_RUST_MODULE_ABI_VERSION 1
@@ -220,11 +220,13 @@
  */
 
 #ifdef __cplusplus
-#   define BSK_RUST_EXTERN_C_BEGIN  extern "C" {
-#   define BSK_RUST_EXTERN_C_END    }
+#define BSK_RUST_EXTERN_C_BEGIN                                                                                        \
+    extern "C"                                                                                                         \
+    {
+#define BSK_RUST_EXTERN_C_END }
 #else
-#   define BSK_RUST_EXTERN_C_BEGIN
-#   define BSK_RUST_EXTERN_C_END
+#define BSK_RUST_EXTERN_C_BEGIN
+#define BSK_RUST_EXTERN_C_END
 #endif
 
 /*! @brief Snapshot of the ``SysModel`` runtime fields a Rust module may need.
@@ -233,11 +235,12 @@
  *  that call. Do not retain it afterward; ``modelTag`` in particular is a
  *  borrowed pointer.
  */
-typedef struct BskRustModuleRuntime {
-    int64_t moduleID;         /*!< [-] unique ID assigned by ModuleIdGenerator */
-    const char *modelTag;     /*!< [-] SysModel::ModelTag, borrowed for this call only */
-    uint64_t callCounts;      /*!< [-] SysModel::CallCounts step counter */
-    uint32_t rngSeed;         /*!< [-] SysModel::RNGSeed */
+typedef struct BskRustModuleRuntime
+{
+    int64_t moduleID;     /*!< [-] unique ID assigned by ModuleIdGenerator */
+    const char* modelTag; /*!< [-] SysModel::ModelTag, borrowed for this call only */
+    uint64_t callCounts;  /*!< [-] SysModel::CallCounts step counter */
+    uint32_t rngSeed;     /*!< [-] SysModel::RNGSeed */
 } BskRustModuleRuntime;
 
 /*! @brief Borrowed framework services supplied to a Rust lifecycle call.
@@ -250,9 +253,10 @@ typedef struct BskRustModuleRuntime {
  *  The shared C++ wrapper constructs this value immediately before each
  *  opaque-handle lifecycle call.
  */
-typedef struct BskRustModuleContext {
+typedef struct BskRustModuleContext
+{
     BskRustModuleRuntime runtime; /*!< [-] borrowed SysModel runtime snapshot */
-    BSKLogger *bskLogger;         /*!< [-] borrowed Basilisk logger */
+    BSKLogger* bskLogger;         /*!< [-] borrowed Basilisk logger */
 } BskRustModuleContext;
 
 /*! Classification for an error returned by a Rust module ABI function.
@@ -263,7 +267,8 @@ typedef struct BskRustModuleContext {
  */
 typedef uint32_t BskRustErrorKind;
 
-enum {
+enum
+{
     BSK_RUST_ERROR_EXPECTED = 1U,        /*!< module returned an expected error */
     BSK_RUST_ERROR_PANIC = 2U,           /*!< caught panic or call on poisoned instance */
     BSK_RUST_ERROR_INVALID_ARGUMENT = 3U /*!< lifecycle ABI contract was violated */
@@ -277,9 +282,12 @@ enum {
 typedef struct BskRustError BskRustError;
 
 BSK_RUST_EXTERN_C_BEGIN
-BskRustErrorKind BskRustError_kind(const BskRustError *error);
-const char *BskRustError_message(const BskRustError *error);
-void Destroy_BskRustError(BskRustError *error);
+BskRustErrorKind
+BskRustError_kind(const BskRustError* error);
+const char*
+BskRustError_message(const BskRustError* error);
+void
+Destroy_BskRustError(BskRustError* error);
 BSK_RUST_EXTERN_C_END
 
 /*! Emit ``extern "C"`` allocation and lifecycle function declarations for a
@@ -354,21 +362,22 @@ BSK_RUST_EXTERN_C_END
  *  whatever struct name the crate's ``impl BskModule`` block actually uses,
  *  which need not match ``name##Config``.
  */
-#define BSK_RUST_DECL(name, configType, handleType) \
-    typedef struct handleType handleType; \
-    BSK_RUST_EXTERN_C_BEGIN \
-    BskRustError *Create_##name(handleType **outputHandle); \
-    configType *Config_##name(handleType *handle); \
-    BskRustError *GetConfigField_##name(handleType *handle, size_t fieldIndex, void *outputValue, size_t valueSize); \
-    BskRustError *SetConfigField_##name(handleType *handle, size_t fieldIndex, const void *inputValue, size_t valueSize); \
-    const char *ConfigFieldDeprecationDate_##name(size_t fieldIndex); \
-    const char *ConfigFieldDeprecationMessage_##name(size_t fieldIndex); \
-    const char *ModuleDeprecationDate_##name(void); \
-    const char *ModuleDeprecationMessage_##name(void); \
-    BskRustError *Destroy_##name(handleType *handle); \
-    BskRustError *SelfInit_##name(handleType *handle, const BskRustModuleContext *context); \
-    BskRustError *Reset_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
-    BskRustError *Update_##name(handleType *handle, uint64_t currentSimNanos, const BskRustModuleContext *context); \
+#define BSK_RUST_DECL(name, configType, handleType)                                                                    \
+    typedef struct handleType handleType;                                                                              \
+    BSK_RUST_EXTERN_C_BEGIN                                                                                            \
+    BskRustError* Create_##name(handleType** outputHandle);                                                            \
+    configType* Config_##name(handleType* handle);                                                                     \
+    BskRustError* GetConfigField_##name(handleType* handle, size_t fieldIndex, void* outputValue, size_t valueSize);   \
+    BskRustError* SetConfigField_##name(                                                                               \
+      handleType* handle, size_t fieldIndex, const void* inputValue, size_t valueSize);                                \
+    const char* ConfigFieldDeprecationDate_##name(size_t fieldIndex);                                                  \
+    const char* ConfigFieldDeprecationMessage_##name(size_t fieldIndex);                                               \
+    const char* ModuleDeprecationDate_##name(void);                                                                    \
+    const char* ModuleDeprecationMessage_##name(void);                                                                 \
+    BskRustError* Destroy_##name(handleType* handle);                                                                  \
+    BskRustError* SelfInit_##name(handleType* handle, const BskRustModuleContext* context);                            \
+    BskRustError* Reset_##name(handleType* handle, uint64_t currentSimNanos, const BskRustModuleContext* context);     \
+    BskRustError* Update_##name(handleType* handle, uint64_t currentSimNanos, const BskRustModuleContext* context);    \
     BSK_RUST_EXTERN_C_END
 
 #endif /* BSK_RUST_MODULE_H */

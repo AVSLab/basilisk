@@ -20,8 +20,8 @@
 #include "prescribedMotionStateEffector.h"
 #include "architecture/utilities/avsEigenSupport.h"
 #include "architecture/utilities/macroDefinitions.h"
-#include <string>
 #include <cmath>
+#include <string>
 
 /*! This is the constructor, setting variables to default values. */
 PrescribedMotionStateEffector::PrescribedMotionStateEffector()
@@ -57,16 +57,26 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
     this->nameOfsigma_PMState = "prescribedObjectsigma_PM" + std::to_string(this->effectorID);
 
     // Set the property names
-    this->nameOfInertialPositionProperty = "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfInertialVelocityProperty = "prescribedObjectInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfInertialAttitudeProperty = "prescribedObjectInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfInertialAngVelocityProperty = "prescribedObjectInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedPositionProperty = "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedVelocityProperty = "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedAccelerationProperty = "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedAttitudeProperty = "prescribedObjectAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedAngVelocityProperty = "prescribedObjectAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
-    this->nameOfPrescribedAngAccelerationProperty = "prescribedObjectAngAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialPositionProperty =
+      "prescribedObjectInertialPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialVelocityProperty =
+      "prescribedObjectInertialVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAttitudeProperty =
+      "prescribedObjectInertialAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfInertialAngVelocityProperty =
+      "prescribedObjectInertialAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedPositionProperty =
+      "prescribedObjectPosition" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedVelocityProperty =
+      "prescribedObjectVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAccelerationProperty =
+      "prescribedObjectAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAttitudeProperty =
+      "prescribedObjectAttitude" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAngVelocityProperty =
+      "prescribedObjectAngVelocity" + std::to_string(PrescribedMotionStateEffector::effectorID);
+    this->nameOfPrescribedAngAccelerationProperty =
+      "prescribedObjectAngAcceleration" + std::to_string(PrescribedMotionStateEffector::effectorID);
 
     PrescribedMotionStateEffector::effectorID++;
 }
@@ -74,14 +84,13 @@ PrescribedMotionStateEffector::PrescribedMotionStateEffector()
 uint64_t PrescribedMotionStateEffector::effectorID = 1;
 
 /*! This is the destructor. */
-PrescribedMotionStateEffector::~PrescribedMotionStateEffector()
-{
-}
+PrescribedMotionStateEffector::~PrescribedMotionStateEffector() {}
 
 /*! @brief Validate mass without changing prescribed motion or integrated states.
  * @param currentClock [ns] Current simulation time.
  */
-void PrescribedMotionStateEffector::Reset(uint64_t currentClock [[maybe_unused]])
+void
+PrescribedMotionStateEffector::Reset(uint64_t currentClock [[maybe_unused]])
 {
     this->validateMass(this->mass);
 }
@@ -89,7 +98,8 @@ void PrescribedMotionStateEffector::Reset(uint64_t currentClock [[maybe_unused]]
 /*! @brief Validate mass, retaining support for a massless prescribed frame.
  * @param candidateMass [kg] Mass value to validate before assignment or initialization.
  */
-void PrescribedMotionStateEffector::validateMass(double candidateMass)
+void
+PrescribedMotionStateEffector::validateMass(double candidateMass)
 {
     if (!std::isfinite(candidateMass) || candidateMass < 0.0) {
         this->bskLogger.bskError("PrescribedMotionStateEffector: mass must be finite and non-negative.");
@@ -100,12 +110,12 @@ void PrescribedMotionStateEffector::validateMass(double candidateMass)
 
  @param currentClock [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
+void
+PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClock)
 {
 
     // Write the prescribed translational motion output message if it is linked
-    if (this->prescribedTranslationOutMsg.isLinked())
-    {
+    if (this->prescribedTranslationOutMsg.isLinked()) {
         PrescribedTranslationMsgPayload prescribedTranslationBuffer = this->prescribedTranslationOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->r_PM_M, prescribedTranslationBuffer.r_PM_M);
         eigenVector3d2CArray(this->rPrime_PM_M, prescribedTranslationBuffer.rPrime_PM_M);
@@ -114,8 +124,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
     }
 
     // Write the prescribed rotational motion output message if it is linked
-    if (this->prescribedRotationOutMsg.isLinked())
-    {
+    if (this->prescribedRotationOutMsg.isLinked()) {
         PrescribedRotationMsgPayload prescribedRotationBuffer = this->prescribedRotationOutMsg.zeroMsgPayload;
         eigenVector3d2CArray(this->omega_PM_P, prescribedRotationBuffer.omega_PM_P);
         eigenVector3d2CArray(this->omegaPrime_PM_P, prescribedRotationBuffer.omegaPrime_PM_P);
@@ -124,8 +133,7 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
     }
 
     // Write the config log message if it is linked
-    if (this->prescribedMotionConfigLogOutMsg.isLinked())
-    {
+    if (this->prescribedMotionConfigLogOutMsg.isLinked()) {
         SCStatesMsgPayload configLogMsg = this->prescribedMotionConfigLogOutMsg.zeroMsgPayload;
 
         // Note that the configLogMsg B frame represents the effector body frame (frame P)
@@ -141,7 +149,8 @@ void PrescribedMotionStateEffector::writeOutputStateMessages(uint64_t currentClo
 
  @param[in] states Dynamic parameter manager containing the required hub states.
 */
-void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
+void
+PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 {
     // Get access to the hub states needed for dynamic coupling
     this->inertialPositionProperty = states.getPropertyReference(this->propName_inertialPosition);
@@ -149,8 +158,7 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 
     // Loop through attached stateEffectors to link in their states
     std::vector<StateEffector*>::iterator stateIt;
-    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
-    {
+    for (stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++) {
         (*stateIt)->linkInPrescribedMotionProperties(states);
         (*stateIt)->linkInStates(states);
     }
@@ -160,7 +168,8 @@ void PrescribedMotionStateEffector::linkInStates(DynParamManager& states)
 
  @param[in,out] statesIn Dynamic parameter manager used to register the effector states.
 */
-void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
+void
+PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateMass(this->mass);
     this->sigma_PMState = statesIn.registerState(3, 1, this->nameOfsigma_PMState);
@@ -171,8 +180,7 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 
     // Loop through attached stateEffectors to register their states
     std::vector<StateEffector*>::iterator stateIt;
-    for(stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++)
-    {
+    for (stateIt = this->stateEffectors.begin(); stateIt != this->stateEffectors.end(); stateIt++) {
         (*stateIt)->registerStates(statesIn);
     }
 }
@@ -181,7 +189,8 @@ void PrescribedMotionStateEffector::registerStates(DynParamManager& statesIn)
 
  @param states Pointer to give the state effector access the hub states
 */
-void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
+void
+PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
     this->r_PN_N = states.createProperty(this->nameOfInertialPositionProperty, stateInit);
@@ -202,7 +211,8 @@ void PrescribedMotionStateEffector::registerProperties(DynParamManager& states)
 
  @param integTime [s] Time the method is called
 */
-void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
+void
+PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 {
     this->effProps.mEffDot = 0.0;
     this->effProps.mEffDotDynamics = 0.0;
@@ -271,22 +281,18 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
 
     // Find the B frame time derivative of IPntPc_B
     Eigen::Matrix3d rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-    this->effProps.IEffPrimePntB_B = this->omegaTilde_PB_B * this->IPntPc_B
-                                     - this->IPntPc_B * this->omegaTilde_PB_B
-                                     + this->mass * (rPrimeTilde_PcB_B * this->rTilde_PcB_B.transpose()
-                                     + this->rTilde_PcB_B * rPrimeTilde_PcB_B.transpose());
-
+    this->effProps.IEffPrimePntB_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B +
+                                     this->mass * (rPrimeTilde_PcB_B * this->rTilde_PcB_B.transpose() +
+                                                   this->rTilde_PcB_B * rPrimeTilde_PcB_B.transpose());
 
     // Loop through attached state effectors and compute their contributions
     std::vector<StateEffector*>::iterator it;
-    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+    for (it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
         (*it)->effProps.hasMassPropertyRateDynamics = false;
         (*it)->updateEffectorMassProps(integTime);
-        if ((*it)->effProps.hasMassPropertyRateDynamics
-            || (*it)->effProps.mEffDot != 0.0) {
+        if ((*it)->effProps.hasMassPropertyRateDynamics || (*it)->effProps.mEffDot != 0.0) {
             this->bskLogger.bskLog(
-                BSK_ERROR,
-                "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
+              BSK_ERROR, "PrescribedMotionStateEffector does not support nested variable-mass state effectors.");
         }
 
         this->effProps.mEff += (*it)->effProps.mEff;
@@ -307,19 +313,20 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
         Eigen::Matrix3d IEffPntP_B = this->dcm_BP * IEffPntP_P * this->dcm_BP.transpose();
         Eigen::Matrix3d rTilde_EcB_B = eigenTilde(r_EcB_B);
         Eigen::Matrix3d rTilde_EcP_B = eigenTilde(r_EcP_B);
-        this->effProps.IEffPntB_B += IEffPntP_B + (*it)->effProps.mEff * (rTilde_EcP_B * rTilde_EcP_B
-                                                                          - rTilde_EcB_B * rTilde_EcB_B);
+        this->effProps.IEffPntB_B +=
+          IEffPntP_B + (*it)->effProps.mEff * (rTilde_EcP_B * rTilde_EcP_B - rTilde_EcB_B * rTilde_EcB_B);
 
         Eigen::Matrix3d rPrimeTilde_EcB_B = eigenTilde(rPrime_EcB_B);
         Eigen::Matrix3d rPrimeTilde_EcP_B = eigenTilde(rPrime_EcP_B);
         Eigen::Matrix3d IEffPPrimePntP_P = (*it)->effProps.IEffPrimePntB_B;
         Eigen::Matrix3d IEffPPrimePntP_B = this->dcm_BP * IEffPPrimePntP_P * this->dcm_BP.transpose();
-        Eigen::Matrix3d IEffPrimePntP_B = IEffPPrimePntP_B + this->omegaTilde_PB_B * IEffPntP_B
-                                           + IEffPntP_B * this->omegaTilde_PB_B.transpose();
-        this->effProps.IEffPrimePntB_B += IEffPrimePntP_B - (*it)->effProps.mEff * rPrimeTilde_EcP_B * rTilde_EcP_B.transpose()
-                                          - (*it)->effProps.mEff * rTilde_EcP_B * rPrimeTilde_EcP_B.transpose()
-                                          + (*it)->effProps.mEff * rPrimeTilde_EcB_B * rTilde_EcB_B.transpose()
-                                          + (*it)->effProps.mEff * rTilde_EcB_B * rPrimeTilde_EcB_B.transpose();
+        Eigen::Matrix3d IEffPrimePntP_B =
+          IEffPPrimePntP_B + this->omegaTilde_PB_B * IEffPntP_B + IEffPntP_B * this->omegaTilde_PB_B.transpose();
+        this->effProps.IEffPrimePntB_B += IEffPrimePntP_B -
+                                          (*it)->effProps.mEff * rPrimeTilde_EcP_B * rTilde_EcP_B.transpose() -
+                                          (*it)->effProps.mEff * rTilde_EcP_B * rPrimeTilde_EcP_B.transpose() +
+                                          (*it)->effProps.mEff * rPrimeTilde_EcB_B * rTilde_EcB_B.transpose() +
+                                          (*it)->effProps.mEff * rTilde_EcB_B * rPrimeTilde_EcB_B.transpose();
     }
 
     // Divide by the total mass of the prescribed component plus attached effectors to finalize mass props
@@ -339,11 +346,12 @@ void PrescribedMotionStateEffector::updateEffectorMassProps(double integTime)
  components
  @param g_N [m/s^2] Gravitational acceleration in N frame components
 */
-void PrescribedMotionStateEffector::updateContributions(double integTime,
-                                                        BackSubMatrices & backSubContr,
-                                                        Eigen::MRPd sigma_BN,
-                                                        Eigen::Vector3d omega_BN_B,
-                                                        Eigen::Vector3d g_N)
+void
+PrescribedMotionStateEffector::updateContributions(double integTime,
+                                                   BackSubMatrices& backSubContr,
+                                                   Eigen::MRPd sigma_BN,
+                                                   Eigen::Vector3d omega_BN_B,
+                                                   Eigen::Vector3d g_N)
 {
     // Update sigma_BN and dcm_BN
     this->sigma_BN = sigma_BN;
@@ -376,8 +384,7 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
 
     // Loop through attached state effectors and compute their contributions
     std::vector<StateEffector*>::iterator it;
-    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++)
-    {
+    for (it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
         backSubContr.matrixA.setZero();
         backSubContr.matrixB.setZero();
         backSubContr.matrixC.setZero();
@@ -404,19 +411,17 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
     backSubContr.vecRot = totVecRot;
 
     // Prescribed motion translation contributions
-    this->rPrimePrime_PcB_B = this->omegaPrime_PB_B.cross(this->r_PcP_B)
-                              + this->omega_PB_B.cross(this->omega_PB_B.cross(this->r_PcP_B))
-                              + this->rPrimePrime_PM_B;
+    this->rPrimePrime_PcB_B = this->omegaPrime_PB_B.cross(this->r_PcP_B) +
+                              this->omega_PB_B.cross(this->omega_PB_B.cross(this->r_PcP_B)) + this->rPrimePrime_PM_B;
     backSubContr.vecTrans += -this->mass * this->rPrimePrime_PcB_B;
 
     // Prescribed motion rotation contributions
     Eigen::Matrix3d IPrimePntPc_B;
     IPrimePntPc_B = this->omegaTilde_PB_B * this->IPntPc_B - this->IPntPc_B * this->omegaTilde_PB_B;
-    backSubContr.vecRot += -(this->mass * this->r_PcB_B.cross(this->rPrimePrime_PcB_B))
-                          - IPrimePntPc_B * this->omega_PB_B
-                          - this->omega_BN_B.cross(this->IPntPc_B * this->omega_PB_B)
-                          - this->IPntPc_B * this->omegaPrime_PB_B
-                          - this->mass * this->omega_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B));
+    backSubContr.vecRot +=
+      -(this->mass * this->r_PcB_B.cross(this->rPrimePrime_PcB_B)) - IPrimePntPc_B * this->omega_PB_B -
+      this->omega_BN_B.cross(this->IPntPc_B * this->omega_PB_B) - this->IPntPc_B * this->omegaPrime_PB_B -
+      this->mass * this->omega_BN_B.cross(this->r_PcB_B.cross(this->rPrime_PcB_B));
 }
 
 /*! This method is for defining the state effector's MRP state derivative
@@ -428,13 +433,14 @@ void PrescribedMotionStateEffector::updateContributions(double integTime,
  inertial frame, expressed in B frame components
  @param sigma_BN Current B frame attitude with respect to the inertial frame
 */
-void PrescribedMotionStateEffector::computeDerivatives(double integTime,
-                                                       Eigen::Vector3d rDDot_BN_N,
-                                                       Eigen::Vector3d omegaDot_BN_B,
-                                                       Eigen::MRPd sigma_BN)
+void
+PrescribedMotionStateEffector::computeDerivatives(double integTime,
+                                                  Eigen::Vector3d rDDot_BN_N,
+                                                  Eigen::Vector3d omegaDot_BN_B,
+                                                  Eigen::MRPd sigma_BN)
 {
     Eigen::MRPd sigma_PM_loc(this->sigma_PMState->stateView().data());
-    this->sigma_PMState->setDerivative(0.25*sigma_PM_loc.Bmat()*this->omega_PM_P);
+    this->sigma_PMState->setDerivative(0.25 * sigma_PM_loc.Bmat() * this->omega_PM_P);
 
     // Loop through attached state effectors for compute derivatives
     if (!this->stateEffectors.empty()) {
@@ -448,18 +454,19 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
         *this->sigma_PN = sigmaPNLoc.coeffs();
 
         // Compute omegaDot_PN_P
-        Eigen::Vector3d omegaDot_PN_B = this->omegaPrime_PM_B + this->omega_BN_B.cross(this->omega_PM_B) + omegaDot_BN_B;
+        Eigen::Vector3d omegaDot_PN_B =
+          this->omegaPrime_PM_B + this->omega_BN_B.cross(this->omega_PM_B) + omegaDot_BN_B;
         Eigen::Vector3d omegaDot_PN_P = this->dcm_BP.transpose() * omegaDot_PN_B;
 
         // Compute rDDot_PN_N
         Eigen::Vector3d r_PB_B = *this->r_PB_B;
-        Eigen::Vector3d rDDot_PB_B = this->rPrimePrime_PM_B + 2 * this->omega_BN_B.cross(this->rPrime_PM_B)
-                                     + omegaDot_BN_B.cross(r_PB_B)
-                                     + this->omega_BN_B.cross(this->omega_BN_B.cross(r_PB_B));
+        Eigen::Vector3d rDDot_PB_B = this->rPrimePrime_PM_B + 2 * this->omega_BN_B.cross(this->rPrime_PM_B) +
+                                     omegaDot_BN_B.cross(r_PB_B) +
+                                     this->omega_BN_B.cross(this->omega_BN_B.cross(r_PB_B));
         Eigen::Vector3d rDDot_PN_N = this->dcm_BN.transpose() * rDDot_PB_B + rDDot_BN_N;
 
         std::vector<StateEffector*>::iterator it;
-        for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+        for (it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
             (*it)->computeDerivatives(integTime, rDDot_PN_N, omegaDot_PN_P, sigmaPNLoc);
         }
     }
@@ -473,10 +480,11 @@ void PrescribedMotionStateEffector::computeDerivatives(double integTime,
  @param omega_BN_B [rad/s] Angular velocity of the B frame with respect to the inertial frame, expressed in B frame
  components
 */
-void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
-                                                                 Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                                 double & rotEnergyContr,
-                                                                 Eigen::Vector3d omega_BN_B)
+void
+PrescribedMotionStateEffector::updateEnergyMomContributions(double integTime,
+                                                            Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                            double& rotEnergyContr,
+                                                            Eigen::Vector3d omega_BN_B)
 {
     // Update omega_BN_B, omega_PN_B, and omega_PN_P
     this->omega_BN_B = omega_BN_B;
@@ -490,7 +498,7 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
 
     // Loop through attached state effectors for contributions
     std::vector<StateEffector*>::iterator it;
-    for(it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
+    for (it = this->stateEffectors.begin(); it != this->stateEffectors.end(); it++) {
         rotAngMomPntCContr_B.setZero();
         rotEnergyContr = 0.0;
 
@@ -499,17 +507,15 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
         // Additional terms for rotational angular momentum
         Eigen::Vector3d r_EcP_B = this->dcm_BP * (*it)->effProps.rEff_CB_B;
         Eigen::Vector3d r_PB_B = *this->r_PB_B;
-        Eigen::Vector3d rDot_PB_B = (Eigen::Vector3d)*this->rPrime_PB_B + this->omega_BN_B.cross(r_PB_B);
+        Eigen::Vector3d rDot_PB_B = (Eigen::Vector3d) * this->rPrime_PB_B + this->omega_BN_B.cross(r_PB_B);
         Eigen::Vector3d rDot_EcP_B = this->dcm_BP * (*it)->effProps.rEffPrime_CB_B + this->omega_PN_B.cross(r_EcP_B);
-        totRotAngMomPntC_B += this->dcm_BP * rotAngMomPntCContr_B
-                                + (*it)->effProps.mEff * r_EcP_B.cross(rDot_PB_B)
-                                + (*it)->effProps.mEff * r_PB_B.cross(rDot_EcP_B)
-                                + (*it)->effProps.mEff * r_PB_B.cross(rDot_PB_B);
+        totRotAngMomPntC_B += this->dcm_BP * rotAngMomPntCContr_B + (*it)->effProps.mEff * r_EcP_B.cross(rDot_PB_B) +
+                              (*it)->effProps.mEff * r_PB_B.cross(rDot_EcP_B) +
+                              (*it)->effProps.mEff * r_PB_B.cross(rDot_PB_B);
 
         // Additional terms for rotational energy
-        totRotEnergy += rotEnergyContr
-                        + (*it)->effProps.mEff * rDot_EcP_B.dot(rDot_PB_B )
-                        + 0.5 * (*it)->effProps.mEff * rDot_PB_B.dot(rDot_PB_B);
+        totRotEnergy += rotEnergyContr + (*it)->effProps.mEff * rDot_EcP_B.dot(rDot_PB_B) +
+                        0.5 * (*it)->effProps.mEff * rDot_PB_B.dot(rDot_PB_B);
     }
 
     rotAngMomPntCContr_B = totRotAngMomPntC_B;
@@ -520,14 +526,15 @@ void PrescribedMotionStateEffector::updateEnergyMomContributions(double integTim
     rotAngMomPntCContr_B += this->IPntPc_B * this->omega_PN_B + this->mass * this->r_PcB_B.cross(this->rDot_PcB_B);
 
     // Prescribed motion rotational energy contribution
-    rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B)
-                     + 0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
+    rotEnergyContr += 0.5 * this->omega_PN_B.dot(this->IPntPc_B * this->omega_PN_B) +
+                      0.5 * this->mass * this->rDot_PcB_B.dot(this->rDot_PcB_B);
 }
 
 /*! This method computes the effector states relative to the inertial frame.
 
 */
-void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
+void
+PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
 {
     // Compute the effector's attitude with respect to the inertial frame
     Eigen::Matrix3d dcm_PN = (this->dcm_BP).transpose() * this->dcm_BN;
@@ -542,23 +549,24 @@ void PrescribedMotionStateEffector::computePrescribedMotionInertialStates()
     *this->r_PN_N = (Eigen::Vector3d)(*this->inertialPositionProperty) + this->dcm_BN.transpose() * *this->r_PB_B;
 
     // Compute the effector's inertial velocity vectors
-    this->v_PcN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
-    *this->v_PN_N = (Eigen::Vector3d)*this->inertialVelocityProperty + this->dcm_BN.transpose() * (
-            (Eigen::Vector3d)*this->rPrime_PB_B + this->omega_BN_B.cross((Eigen::Vector3d)*this->r_PB_B));
+    this->v_PcN_N = (Eigen::Vector3d) * this->inertialVelocityProperty + this->dcm_BN.transpose() * this->rDot_PcB_B;
+    *this->v_PN_N = (Eigen::Vector3d) * this->inertialVelocityProperty +
+                    this->dcm_BN.transpose() * ((Eigen::Vector3d) * this->rPrime_PB_B +
+                                                this->omega_BN_B.cross((Eigen::Vector3d) * this->r_PB_B));
 }
 
 /*! This method updates the effector state at the dynamics frequency.
 
  @param currentSimNanos [ns] Time the method is called
 */
-void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
+void
+PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
 {
     // Store the current simulation time
     this->currentSimTimeSec = static_cast<double>(currentSimNanos) * NANO2SEC;
 
     // Read the translational input message if it is linked and written
-    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten())
-    {
+    if (this->prescribedTranslationInMsg.isLinked() && this->prescribedTranslationInMsg.isWritten()) {
         PrescribedTranslationMsgPayload incomingPrescribedTransStates = this->prescribedTranslationInMsg();
         this->r_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.r_PM_M);
         this->rPrime_PM_M = cArray2EigenVector3d(incomingPrescribedTransStates.rPrime_PM_M);
@@ -570,8 +578,7 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
     }
 
     // Read the rotational input message if it is linked and written
-    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten())
-    {
+    if (this->prescribedRotationInMsg.isLinked() && this->prescribedRotationInMsg.isWritten()) {
         PrescribedRotationMsgPayload incomingPrescribedRotStates = this->prescribedRotationInMsg();
         this->omega_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omega_PM_P);
         this->omegaPrime_PM_P = cArray2EigenVector3d(incomingPrescribedRotStates.omegaPrime_PM_P);
@@ -593,10 +600,11 @@ void PrescribedMotionStateEffector::UpdateState(uint64_t currentSimNanos)
  *
  * @param[in] newStateEffector State effector to attach.
  */
-void PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
+void
+PrescribedMotionStateEffector::addStateEffector(StateEffector* newStateEffector)
 {
     this->requireMutableTopology("PrescribedMotionStateEffector::addStateEffector");
-    this->assignStateParamNames<StateEffector *>(newStateEffector);
+    this->assignStateParamNames<StateEffector*>(newStateEffector);
 
     this->stateEffectors.push_back(newStateEffector);
 }
@@ -613,7 +621,8 @@ PrescribedMotionStateEffector::freezeTopology() noexcept
 /*! @brief Set the effector mass after validating it, preserving the previous value on failure.
  @param mass [kg] Finite, non-negative effector mass; zero is supported.
 */
-void PrescribedMotionStateEffector::setMass(const double mass)
+void
+PrescribedMotionStateEffector::setMass(const double mass)
 {
     this->validateMass(mass);
     this->mass = mass;
@@ -622,31 +631,47 @@ void PrescribedMotionStateEffector::setMass(const double mass)
 /*! Setter method for IPntPc_P.
  @param IPntPc_P [kg-m^2] Effector's inertia matrix about its center of mass point Pc expressed in P frame components
 */
-void PrescribedMotionStateEffector::setIPntPc_P(const Eigen::Matrix3d IPntPc_P) { this->IPntPc_P = IPntPc_P; }
+void
+PrescribedMotionStateEffector::setIPntPc_P(const Eigen::Matrix3d IPntPc_P)
+{
+    this->IPntPc_P = IPntPc_P;
+}
 
 /*! Setter method for r_PcP_P.
  @param r_PcP_P [m] Position vector of the effector's center of mass point Pc relative to the effector's body frame
  origin point P expressed in P frame components
 */
-void PrescribedMotionStateEffector::setR_PcP_P(const Eigen::Vector3d r_PcP_P) { this->r_PcP_P = r_PcP_P; }
+void
+PrescribedMotionStateEffector::setR_PcP_P(const Eigen::Vector3d r_PcP_P)
+{
+    this->r_PcP_P = r_PcP_P;
+}
 
 /*! Setter method for r_PM_M.
  @param r_PM_M [m] Position vector of the effector's body frame origin point P relative to the hub-fixed mount frame
  origin point M expressed in M frame components
 */
-void PrescribedMotionStateEffector::setR_PM_M(const Eigen::Vector3d r_PM_M) { this->r_PM_M = r_PM_M; }
+void
+PrescribedMotionStateEffector::setR_PM_M(const Eigen::Vector3d r_PM_M)
+{
+    this->r_PM_M = r_PM_M;
+}
 
 /*! Setter method for rPrime_PM_M.
  @param rPrime_PM_M [m/s] B frame time derivative of r_PM_M expressed in M frame components
 */
-void PrescribedMotionStateEffector::setRPrime_PM_M(const Eigen::Vector3d rPrime_PM_M) {
+void
+PrescribedMotionStateEffector::setRPrime_PM_M(const Eigen::Vector3d rPrime_PM_M)
+{
     this->rPrime_PM_M = rPrime_PM_M;
 }
 
 /*! Setter method for rPrimePrime_PM_M.
  @param rPrimePrime_PM_M [m/s^2] B frame time derivative of rPrime_PM_M expressed in M frame components
 */
-void PrescribedMotionStateEffector::setRPrimePrime_PM_M(const Eigen::Vector3d rPrimePrime_PM_M) {
+void
+PrescribedMotionStateEffector::setRPrimePrime_PM_M(const Eigen::Vector3d rPrimePrime_PM_M)
+{
     this->rPrimePrime_PM_M = rPrimePrime_PM_M;
 }
 
@@ -654,83 +679,145 @@ void PrescribedMotionStateEffector::setRPrimePrime_PM_M(const Eigen::Vector3d rP
  @param omega_PM_P [rad/s] Angular velocity of the effector body frame P relative to the hub-fixed mount frame M
  expressed in P frame components
 */
-void PrescribedMotionStateEffector::setOmega_PM_P(const Eigen::Vector3d omega_PM_P) { this->omega_PM_P = omega_PM_P; }
+void
+PrescribedMotionStateEffector::setOmega_PM_P(const Eigen::Vector3d omega_PM_P)
+{
+    this->omega_PM_P = omega_PM_P;
+}
 
 /*! Setter method for omegaPrime_PM_P.
  @param omegaPrime_PM_P [rad/s^2] Angular acceleration of the effector body frame P relative to the hub-fixed mount
  frame M expressed in P frame components
 */
-void PrescribedMotionStateEffector::setOmegaPrime_PM_P(const Eigen::Vector3d omegaPrime_PM_P) {
+void
+PrescribedMotionStateEffector::setOmegaPrime_PM_P(const Eigen::Vector3d omegaPrime_PM_P)
+{
     this->omegaPrime_PM_P = omegaPrime_PM_P;
 }
 
 /*! Setter method for sigma_PM.
  @param sigma_PM MRP attitude of the effector's body frame P relative to the hub-fixed mount frame M
 */
-void PrescribedMotionStateEffector::setSigma_PM(const Eigen::MRPd sigma_PM) { this->sigma_PM = sigma_PM; }
+void
+PrescribedMotionStateEffector::setSigma_PM(const Eigen::MRPd sigma_PM)
+{
+    this->sigma_PM = sigma_PM;
+}
 
 /*! Setter method for r_MB_B.
  @param r_MB_B [m] Position vector describing the hub-fixed mount frame origin point M location relative to the hub
  frame origin point B expressed in B frame components
 */
-void PrescribedMotionStateEffector::setR_MB_B(const Eigen::Vector3d r_MB_B) { this->r_MB_B = r_MB_B; }
+void
+PrescribedMotionStateEffector::setR_MB_B(const Eigen::Vector3d r_MB_B)
+{
+    this->r_MB_B = r_MB_B;
+}
 
 /*! Setter method for sigma_MB.
  @param sigma_MB MRP attitude of the hub-fixed frame M relative to the hub body frame B
 */
-void PrescribedMotionStateEffector::setSigma_MB(const Eigen::MRPd sigma_MB) { this->sigma_MB = sigma_MB; }
+void
+PrescribedMotionStateEffector::setSigma_MB(const Eigen::MRPd sigma_MB)
+{
+    this->sigma_MB = sigma_MB;
+}
 
 /*! Getter method for the effector mass.
  @return double
 */
-double PrescribedMotionStateEffector::getMass() const { return this->mass; }
+double
+PrescribedMotionStateEffector::getMass() const
+{
+    return this->mass;
+}
 
 /*! Getter method for IPntPc_P.
  @return const Eigen::Matrix3d
 */
-const Eigen::Matrix3d PrescribedMotionStateEffector::getIPntPc_P() const { return this->IPntPc_P; }
+const Eigen::Matrix3d
+PrescribedMotionStateEffector::getIPntPc_P() const
+{
+    return this->IPntPc_P;
+}
 
 /*! Getter method for r_PcP_P.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getR_PcP_P() const { return this->r_PcP_P; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getR_PcP_P() const
+{
+    return this->r_PcP_P;
+}
 
 /*! Getter method for r_PM_M.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getR_PM_M() const { return this->r_PM_M; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getR_PM_M() const
+{
+    return this->r_PM_M;
+}
 
 /*! Getter method for rPrime_PM_M.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getRPrime_PM_M() const { return this->rPrime_PM_M; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getRPrime_PM_M() const
+{
+    return this->rPrime_PM_M;
+}
 
 /*! Getter method for rPrimePrime_PM_M.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getRPrimePrime_PM_M() const { return this->rPrimePrime_PM_M; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getRPrimePrime_PM_M() const
+{
+    return this->rPrimePrime_PM_M;
+}
 
 /*! Getter method for omega_PM_P.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getOmega_PM_P() const { return this->omega_PM_P; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getOmega_PM_P() const
+{
+    return this->omega_PM_P;
+}
 
 /*! Getter method for omegaPrime_PM_P.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getOmegaPrime_PM_P() const { return this->omegaPrime_PM_P; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getOmegaPrime_PM_P() const
+{
+    return this->omegaPrime_PM_P;
+}
 
 /*! Getter method for sigma_PM.
  @return const Eigen::MRPd
 */
-const Eigen::MRPd PrescribedMotionStateEffector::getSigma_PM() const { return this->sigma_PM; }
+const Eigen::MRPd
+PrescribedMotionStateEffector::getSigma_PM() const
+{
+    return this->sigma_PM;
+}
 
 /*! Getter method for r_MB_B.
  @return const Eigen::Vector3d
 */
-const Eigen::Vector3d PrescribedMotionStateEffector::getR_MB_B() const { return this->r_MB_B; }
+const Eigen::Vector3d
+PrescribedMotionStateEffector::getR_MB_B() const
+{
+    return this->r_MB_B;
+}
 
 /*! Getter method for sigma_MB.
  @return const Eigen::MRPd
 */
-const Eigen::MRPd PrescribedMotionStateEffector::getSigma_MB() const { return this->sigma_MB; }
+const Eigen::MRPd
+PrescribedMotionStateEffector::getSigma_MB() const
+{
+    return this->sigma_MB;
+}

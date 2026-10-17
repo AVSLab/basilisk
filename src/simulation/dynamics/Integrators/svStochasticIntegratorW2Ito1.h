@@ -39,10 +39,11 @@
  * @note Verified against a reference implementation for scalar, diagonal m>1, and
  * non-diagonal noise (see test_stochasticIntegratorsJulia.py).
  */
-class svStochasticIntegratorW2Ito1 : public svStochasticIntegratorW2Ito {
-public:
+class svStochasticIntegratorW2Ito1 : public svStochasticIntegratorW2Ito
+{
+  public:
     svStochasticIntegratorW2Ito1(DynamicObject* dyn); //!< Constructor
-private:
+  private:
     static W2ItoCoefficients getCoefficients();
 };
 

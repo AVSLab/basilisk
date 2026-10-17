@@ -43,7 +43,8 @@ DynamicObject::~DynamicObject()
     this->integrator.reset();
 }
 
-void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
+void
+DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
 {
     if (newIntegrator && newIntegrator == this->integrator.get()) {
         return;
@@ -52,7 +53,8 @@ void DynamicObject::setIntegrator(StateVecIntegrator* newIntegrator)
     this->setIntegrator(std::unique_ptr<StateVecIntegrator>(newIntegrator));
 }
 
-void DynamicObject::setIntegrator(std::unique_ptr<StateVecIntegrator> newIntegrator)
+void
+DynamicObject::setIntegrator(std::unique_ptr<StateVecIntegrator> newIntegrator)
 {
     if (this->integrationOwner != nullptr) {
         bskLogger.bskLog(BSK_WARNING,
@@ -72,7 +74,8 @@ void DynamicObject::setIntegrator(std::unique_ptr<StateVecIntegrator> newIntegra
     this->integrator = std::move(newIntegrator);
 }
 
-void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
+void
+DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
 {
     if (dynPtr == nullptr || dynPtr == this || this->integrationOwner != nullptr || !this->integrator) {
         bskLogger.bskError("Synchronization requires two independent DynamicObjects with integrators");
@@ -90,7 +93,8 @@ void DynamicObject::syncDynamicsIntegration(DynamicObject* dynPtr)
     dynPtr->integrationOwner = this;
 }
 
-void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
+void
+DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
 {
     if (this->integrationOwner != nullptr) {
         return;
@@ -104,17 +108,20 @@ void DynamicObject::integrateState(uint64_t integrateToThisTimeNanos)
     }
 }
 
-DynamicObject* DynamicObject::getIntegrationOwner() const noexcept
+DynamicObject*
+DynamicObject::getIntegrationOwner() const noexcept
 {
     return this->integrationOwner;
 }
 
-StateVecIntegrator* DynamicObject::getIntegrator() const noexcept
+StateVecIntegrator*
+DynamicObject::getIntegrator() const noexcept
 {
     return this->integrator.get();
 }
 
-void DynamicObject::requireMutableTopology(const char* operation) const
+void
+DynamicObject::requireMutableTopology(const char* operation) const
 {
     if (this->dynManager.statesAreFinalized()) {
         throw std::logic_error(std::string(operation) + " cannot change finalized state topology");

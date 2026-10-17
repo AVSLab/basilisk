@@ -30,9 +30,10 @@
  *
  *   `v_air_N = (omega_planet_N x r_N) + v_wind_N`
  */
-typedef struct {
-    double v_air_N[3];   //!< [m/s] Full local air velocity in frame N.
-    double v_wind_N[3];  //!< [m/s] Wind perturbation in frame N, not including atmospheric co-rotation.
+typedef struct
+{
+    double v_air_N[3];  //!< [m/s] Full local air velocity in frame N.
+    double v_wind_N[3]; //!< [m/s] Wind perturbation in frame N, not including atmospheric co-rotation.
 } WindMsgPayload;
 
 #endif

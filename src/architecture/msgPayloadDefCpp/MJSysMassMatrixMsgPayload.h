@@ -22,13 +22,14 @@
 
 #include <vector>
 
-/*! @brief Structure used by the messaging system to communicate details about the spacecraft system including its mass matrix.*/
+/*! @brief Structure used by the messaging system to communicate details about the spacecraft system including its mass
+ * matrix.*/
 typedef struct
-//@cond DOXYGEN_IGNORE
-MJSysMassMatrixMsgPayload
+  //@cond DOXYGEN_IGNORE
+  MJSysMassMatrixMsgPayload
 //@endcond
 {
-    int nSC;                //!< [-] number of spacecraft in the system
+    int nSC;                        //!< [-] number of spacecraft in the system
     std::vector<int> scStartIdx;    //!< [-] list of the first joint index for each spacecraft
     std::vector<int> jointTypes;    //!< [-] list of the joint types (0:free,1:ball,2:slide,3:hinge) in the system
     std::vector<double> massMatrix; //!< [-] mass matrix of the system in row-major order

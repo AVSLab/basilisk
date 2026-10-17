@@ -29,12 +29,12 @@
  @param configData The configuration data associated with the TAM sensor interface
  @param moduleID The ID associated with the configData
  */
-void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
+void
+SelfInit_tamProcessTelem(tamConfigData* configData, int64_t moduleID)
 {
-    (void) moduleID;
+    (void)moduleID;
     TAMSensorBodyMsg_C_init(&configData->tamOutMsg);
 }
-
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
@@ -43,10 +43,11 @@ void SelfInit_tamProcessTelem(tamConfigData *configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
+void
+Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
-    (void) callTime;
-    (void) moduleID;
+    (void)callTime;
+    (void)moduleID;
     // check if the required message has not been connected
     if (!TAMSensorMsg_C_isLinked(&configData->tamInMsg)) {
         _bskError(configData->bskLogger, "Error: tamComm.tamInMsg wasn't connected.");
@@ -66,15 +67,15 @@ void Reset_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void Update_tamProcessTelem(tamConfigData *configData, uint64_t callTime, int64_t moduleID)
+void
+Update_tamProcessTelem(tamConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     TAMSensorMsgPayload localInput;
 
     // read input msg
     localInput = TAMSensorMsg_C_read(&configData->tamInMsg);
 
-    m33MultV3(RECAST3X3 configData->dcm_BS, localInput.tam_S,
-              configData->tamLocalOutput.tam_B);
+    m33MultV3(RECAST3X3 configData->dcm_BS, localInput.tam_S, configData->tamLocalOutput.tam_B);
 
     /*! - Write aggregate output into output message */
     TAMSensorBodyMsg_C_write(&configData->tamLocalOutput, &configData->tamOutMsg, moduleID, callTime);

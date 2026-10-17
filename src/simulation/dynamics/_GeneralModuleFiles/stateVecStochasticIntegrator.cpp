@@ -10,8 +10,8 @@
 #include "dynParamManager.h"
 #include "dynamicObject.h"
 #include "stateData.h"
-#include "stateVecStochasticIntegrator.h"
 #include "stateRegistry.h"
+#include "stateVecStochasticIntegrator.h"
 
 namespace {
 struct PendingNoiseBinding
@@ -347,8 +347,7 @@ StateVecStochasticIntegrator::writeStochasticCandidate(const Eigen::VectorXd& ba
         slotEnd > this->noiseSlots.size()) {
         throw std::invalid_argument("Packed stochastic candidate does not match the bound topology.");
     }
-    this->flatBinding.writeDriftCandidate(
-      base, drift, timeStep, this->candidateState);
+    this->flatBinding.writeDriftCandidate(base, drift, timeStep, this->candidateState);
 
     for (const auto& descriptor : this->flatBinding.states()) {
         this->applyStochasticNoiseInLocalOrder(
@@ -364,8 +363,7 @@ StateVecStochasticIntegrator::beginStochasticSparseCandidates(const Eigen::Vecto
     if (base.size() != this->sparseBaselineState.size() || drift.size() != this->packedDerivatives.size()) {
         throw std::invalid_argument("Sparse stochastic baseline does not match the bound topology.");
     }
-    this->flatBinding.writeDriftCandidate(
-      base, drift, timeStep, this->sparseBaselineState);
+    this->flatBinding.writeDriftCandidate(base, drift, timeStep, this->sparseBaselineState);
     this->candidateState = this->sparseBaselineState;
     this->scatterStochasticStates(this->sparseBaselineState);
     this->activeSparseSlot = static_cast<size_t>(-1);

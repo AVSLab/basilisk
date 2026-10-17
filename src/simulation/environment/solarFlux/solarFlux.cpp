@@ -24,7 +24,8 @@
 /*! This method is used to reset the module. Currently no tasks are required.
 
  */
-void SolarFlux::Reset(uint64_t CurrentSimNanos)
+void
+SolarFlux::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -43,7 +44,8 @@ void SolarFlux::Reset(uint64_t CurrentSimNanos)
 /*! Read Messages and scale the solar flux then write it out
 
  */
-void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
+void
+SolarFlux::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages(CurrentSimNanos);
 
@@ -51,7 +53,7 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
     auto r_SSc_N = this->r_SN_N - this->r_ScN_N;
 
     /*! - compute the scalar distance to the sun.  The following math requires this to be in km. */
-    double dist_SSc_N = r_SSc_N.norm() / 1000;  // to km
+    double dist_SSc_N = r_SSc_N.norm() / 1000; // to km
 
     /*! - compute the local solar flux value */
     this->fluxAtSpacecraft = SOLAR_FLUX_EARTH * pow(AU, 2) / pow(dist_SSc_N, 2) * this->eclipseFactor;
@@ -68,7 +70,8 @@ void SolarFlux::UpdateState(uint64_t CurrentSimNanos)
  that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
-void SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
+void
+SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
@@ -76,7 +79,8 @@ void SolarFlux::setExtrapolateScStateToStepMidpoint(bool enable)
 /*! Returns whether the spacecraft state extrapolation is enabled.
  @return [-] true if the spacecraft state is extrapolated
  */
-bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
+bool
+SolarFlux::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
@@ -87,20 +91,21 @@ bool SolarFlux::getExtrapolateScStateToStepMidpoint() const
  @param CurrentSimNanos [ns] current simulation time
 
  */
-void SolarFlux::readMessages(uint64_t CurrentSimNanos)
+void
+SolarFlux::readMessages(uint64_t CurrentSimNanos)
 {
     /*! - read in spacecraft state message (required) */
     SCStatesMsgPayload scStatesMsgData;
     this->scStateExtrapolation.prepareFromMessage(
       CurrentSimNanos, this->previousUpdateNanos, this->spacecraftStateInMsg, this->bskLogger);
-    scStatesMsgData = this->scStateExtrapolation.applyMessage(
-        this->spacecraftStateInMsg, CurrentSimNanos, this->previousUpdateNanos);
+    scStatesMsgData =
+      this->scStateExtrapolation.applyMessage(this->spacecraftStateInMsg, CurrentSimNanos, this->previousUpdateNanos);
     this->r_ScN_N = Eigen::Vector3d(scStatesMsgData.r_BN_N);
 
     /*! - read in planet state message (required), evaluated at the same epoch as the spacecraft state */
     SpicePlanetStateMsgPayload sunPositionMsgData;
-    sunPositionMsgData = this->scStateExtrapolation.applyPlanetMessage(
-        this->sunPositionInMsg, CurrentSimNanos, this->previousUpdateNanos);
+    sunPositionMsgData =
+      this->scStateExtrapolation.applyPlanetMessage(this->sunPositionInMsg, CurrentSimNanos, this->previousUpdateNanos);
     this->r_SN_N = Eigen::Vector3d(sunPositionMsgData.PositionVector);
 
     /*! - read in eclipse message (optional) */
@@ -109,13 +114,14 @@ void SolarFlux::readMessages(uint64_t CurrentSimNanos)
         eclipseInMsgData = this->eclipseInMsg();
         this->eclipseFactor = eclipseInMsgData.illuminationFactor;
     }
-
 }
 
 /*! This method is used to write the output flux message
 
  */
-void SolarFlux::writeMessages(uint64_t CurrentSimNanos) {
-    SolarFluxMsgPayload fluxMsgOutData = {this->fluxAtSpacecraft};
+void
+SolarFlux::writeMessages(uint64_t CurrentSimNanos)
+{
+    SolarFluxMsgPayload fluxMsgOutData = { this->fluxAtSpacecraft };
     this->solarFluxOutMsg.write(&fluxMsgOutData, this->moduleID, CurrentSimNanos);
 }

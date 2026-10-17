@@ -28,15 +28,17 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() = default;
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
-void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]]) {
+void
+FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
+{
     if (this->numArticulatedFacets > this->numFacets) {
-        this->bskLogger->bskError("FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
+        this->bskLogger->bskError(
+          "FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
     }
-    if (this->facetElementInMsgs.size() != this->numFacets ||
-        this->facetElementBodyOutMsgs.size() != this->numFacets ||
+    if (this->facetElementInMsgs.size() != this->numFacets || this->facetElementBodyOutMsgs.size() != this->numFacets ||
         this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
-            this->bskLogger->bskError("FacetedSpacecraftModel: Message vector size mismatch during Reset.");
-        }
+        this->bskLogger->bskError("FacetedSpacecraftModel: Message vector size mismatch during Reset.");
+    }
 
     // Clear and allocate data lists
     this->facetAreaList.clear();
@@ -88,32 +90,27 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]]) {
 
     // Populate output data lists for fixed facets
     for (uint64_t idx = this->numArticulatedFacets; idx < this->numFacets; idx++) {
-        this->facetR_CopB_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetR_CopF_FList[idx]
-                                          + this->facetR_FB_BList[idx];
+        this->facetR_CopB_BList[idx] =
+          this->facetDcm_F0BList[idx].transpose() * this->facetR_CopF_FList[idx] + this->facetR_FB_BList[idx];
         this->facetNHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetNHat_FList[idx];
         this->facetRotHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetRotHat_FList[idx];
     }
 }
 
-
 /*! Module update method.
  @param callTime [s] Time the method is called
 */
-void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
+void
+FacetedSpacecraftModel::UpdateState(uint64_t callTime)
+{
     // Stop the simulation if Reset() failed to populate the facet lists
     if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets ||
-        this->facetElementBodyOutMsgs.size() != this->numFacets ||
-        this->facetAreaList.size() != this->numFacets ||
-        this->facetR_CopB_BList.size() != this->numFacets ||
-        this->facetNHat_BList.size() != this->numFacets ||
-        this->facetRotHat_BList.size() != this->numFacets ||
-        this->facetDiffuseCoeffList.size() != this->numFacets ||
-        this->facetSpecularCoeffList.size() != this->numFacets ||
-        this->facetR_CopF_FList.size() != this->numFacets ||
-        this->facetNHat_FList.size() != this->numFacets ||
-        this->facetRotHat_FList.size() != this->numFacets ||
-        this->facetDcm_F0BList.size() != this->numFacets ||
-        this->facetR_FB_BList.size() != this->numFacets) {
+        this->facetElementBodyOutMsgs.size() != this->numFacets || this->facetAreaList.size() != this->numFacets ||
+        this->facetR_CopB_BList.size() != this->numFacets || this->facetNHat_BList.size() != this->numFacets ||
+        this->facetRotHat_BList.size() != this->numFacets || this->facetDiffuseCoeffList.size() != this->numFacets ||
+        this->facetSpecularCoeffList.size() != this->numFacets || this->facetR_CopF_FList.size() != this->numFacets ||
+        this->facetNHat_FList.size() != this->numFacets || this->facetRotHat_FList.size() != this->numFacets ||
+        this->facetDcm_F0BList.size() != this->numFacets || this->facetR_FB_BList.size() != this->numFacets) {
         this->bskLogger->bskError("FacetedSpacecraftModel: UpdateState() called before successful Reset().");
     }
 
@@ -121,7 +118,8 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
     std::vector<double> articulatedFacetAngleList;
     for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
         if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
-            this->bskLogger->bskError("FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
         }
         articulatedFacetAngleList.push_back(this->articulatedFacetDataInMsgs[idx]().theta);
     }
@@ -134,9 +132,9 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
         double articulationAngle = articulatedFacetAngleList[idx];
 
         // Determine the current facet attitude relative to its initial orientation F0
-        double prv_FF0Array[3] = {articulationAngle * this->facetRotHat_FList[idx][0],
-                                  articulationAngle * this->facetRotHat_FList[idx][1],
-                                  articulationAngle * this->facetRotHat_FList[idx][2]};
+        double prv_FF0Array[3] = { articulationAngle * this->facetRotHat_FList[idx][0],
+                                   articulationAngle * this->facetRotHat_FList[idx][1],
+                                   articulationAngle * this->facetRotHat_FList[idx][2] };
         PRV2C(prv_FF0Array, dcm_FF0Array);
         dcm_FF0 = c2DArray2EigenMatrix3d(dcm_FF0Array);
 
@@ -144,8 +142,7 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
         dcm_FB = dcm_FF0 * this->facetDcm_F0BList[idx];
 
         // Compute the articulating facet output data in the hub B frame
-        this->facetR_CopB_BList[idx] = dcm_FB.transpose() * this->facetR_CopF_FList[idx]
-                                          + this->facetR_FB_BList[idx];
+        this->facetR_CopB_BList[idx] = dcm_FB.transpose() * this->facetR_CopF_FList[idx] + this->facetR_FB_BList[idx];
         this->facetNHat_BList[idx] = dcm_FB.transpose() * this->facetNHat_FList[idx];
         this->facetRotHat_BList[idx] = dcm_FB.transpose() * this->facetRotHat_FList[idx];
     }
@@ -154,11 +151,12 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime) {
     this->writeOutputMessages(callTime);
 }
 
-
 /*! Method to write module output messages.
  @param callTime [s] Time the method is called
 */
-void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
+void
+FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime)
+{
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {
         FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
         facetElementBodyOut.area = facetAreaList[idx];
@@ -175,13 +173,17 @@ void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime) {
 articulatedFacetDataInMsgs input messages.
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
-void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload> *tmpMsg) {
+void
+FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg)
+{
     // Safety check
     assert(tmpMsg != nullptr && "addArticulatedFacet() received null msg pointer");
     this->addArticulatedFacet(tmpMsg->addSubscriber());
 }
 
-void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader) {
+void
+FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader)
+{
     // Store the request regardless of adder/setter call order
     this->articulatedFacetRequestInMsgs.push_back(reader);
 
@@ -192,7 +194,8 @@ void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgP
         // Update number of articulated facets
         this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
         if (this->numArticulatedFacets > this->numFacets) {
-            this->bskLogger->bskError("FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
+            this->bskLogger->bskError(
+              "FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
         }
     }
 }
@@ -200,7 +203,9 @@ void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgP
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
+void
+FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets)
+{
     this->numFacets = numFacets;
 
     // Release old output messages if this setter is called multiple times
@@ -220,11 +225,16 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets) {
     this->articulatedFacetDataInMsgs = this->articulatedFacetRequestInMsgs;
     this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
     if (this->numArticulatedFacets > this->numFacets) {
-        this->bskLogger->bskError("FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
+        this->bskLogger->bskError(
+          "FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
     }
 }
 
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t FacetedSpacecraftModel::getNumTotalFacets() const { return this->numFacets; }
+uint64_t
+FacetedSpacecraftModel::getNumTotalFacets() const
+{
+    return this->numFacets;
+}

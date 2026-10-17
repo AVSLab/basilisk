@@ -21,7 +21,8 @@
 
 #include <algorithm>
 
-void SaturationSingleActuator::UpdateState(uint64_t currentSimNanos)
+void
+SaturationSingleActuator::UpdateState(uint64_t currentSimNanos)
 {
     SingleActuatorMsgPayload inPayload = this->actuatorInMsg();
     SingleActuatorMsgPayload outPayload = {};
@@ -31,22 +32,26 @@ void SaturationSingleActuator::UpdateState(uint64_t currentSimNanos)
     this->actuatorOutMsg.write(&outPayload, this->moduleID, currentSimNanos);
 }
 
-void SaturationSingleActuator::setSaturationEnabled(bool enabled)
+void
+SaturationSingleActuator::setSaturationEnabled(bool enabled)
 {
     this->saturationEnabled = enabled;
 }
 
-void SaturationSingleActuator::setMinInput(double minInput)
+void
+SaturationSingleActuator::setMinInput(double minInput)
 {
     this->minInput = minInput;
 }
 
-void SaturationSingleActuator::setMaxInput(double maxInput)
+void
+SaturationSingleActuator::setMaxInput(double maxInput)
 {
     this->maxInput = maxInput;
 }
 
-double SaturationSingleActuator::applySaturation(double inputValue) const
+double
+SaturationSingleActuator::applySaturation(double inputValue) const
 {
     if (!this->saturationEnabled) {
         return inputValue;

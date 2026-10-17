@@ -10,6 +10,12 @@ repos:
       -   id: check-case-conflict
       -   id: check-merge-conflict
       -   id: debug-statements
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v22.1.5
+    hooks:
+      -   id: clang-format
+          types_or: [c, c++]
+          args: [--style=file]
 -   repo: local
     hooks:
       -   id: rustfmt
