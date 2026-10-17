@@ -18,7 +18,7 @@ The angular rate of the sensor in platform frame coordinates is output as:
 Where $\cal{P}$ is the sensor platform frame, $\cal{B}$ is the vehicle body frame, and $\cal{N}$ is the inertial frame. [PB] is the direction cosine matrix from $\cal{B}$ to $\cal{P}$. This allows for an arbitrary angular offset between $\cal{B}$ and $\cal{P}$ and allows for that offset to be time-varying. $\leftexp{B}{\bm{\omega}_{B/N}}$ is provided by the spacecraft output message from the most recent dynamics integration.
 
 \subsubsection{Angular Displacement}
-The IMU also outputs the angular displacement accumulated between IMU calls. In order to avoid complexities having to do with the relative timestep between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU angular accumulation to be simulated. 
+The IMU also outputs the angular displacement accumulated between IMU calls. In order to avoid complexities having to do with the relative timestep between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU angular accumulation to be simulated.
 The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. Once the new MRP is received, both are converted to DCMs and the step-PRV is computed as follows The current MRP is always provided by the spacecraft message from the most recent dynamics integration.
 \begin{equation}
 	[PN]_2 = [PB][BN]_2
@@ -66,24 +66,22 @@ where $\bm{a}_\textrm{g}$ is the instantaneous acceleration due to gravity. Conv
 \subsubsection{Change In Velocity}
 The IMU also outputs the velocity accumulated between IMU calls. In order to avoid complexities having to do with the relative time step between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU velocity accumulation to be simulated.
 
-Differencing Eq. \ref{eq:rDot} with itself from time 1 to time 2 gives the equation:
+Differencing Eq. \ref{eq:rDot} with itself from time 1 to time 2 and removing the change of velocity due to gravity gives the change in velocity sensed by the IMU:
 \begin{equation}
-	\Delta_{2/1} 	\dot{\bm{r}}_{S/N} = \Delta_{2/1} \dot{\bm{r}}_{B/N} + \Delta_{2/1} (\bm{\omega}_{B/N} \times \bm{r}_{S/B})
+	\Delta_{2/1} \dot{\bm{r}}_{S/N, \textrm{sensed}} = \Delta_{2/1} \dot{\bm{r}}_{C/N, \textrm{sensed}} + \Delta_{2/1} (\dot{\bm{r}}_{B/N} - \dot{\bm{r}}_{C/N} + \bm{\omega}_{B/N} \times \bm{r}_{S/B})
 	\label{eq:DeltaVelocity}
 \end{equation}
-$\Delta_{2/1} \dot{\bm{r}}_{B/N}$ is calculated as the difference between the total change in velocity accumulated by the spacecraft body frame at time 2 minus the total change in velocity accumulated by the spacecraft body frame at time 1:
+The gravity of the spacecraft module is evaluated at the center of mass and acts uniformly on the spacecraft, so the sensed change in velocity of the sensor differs from the one of the center of mass only by the change of the velocity of the sensor relative to the center of mass, which is the second term above. $\Delta_{2/1} \dot{\bm{r}}_{C/N, \textrm{sensed}}$ is the difference between the total non-conservative change in velocity accumulated by the center of mass at time 2 and at time 1:
 \begin{equation}
-\Delta_{2/1} \dot{\bm{r}}_{B/N} = DV_{\textrm{body\_non-conservative},2} - DV_{\textrm{body\_non-conservative},1}
+\leftexp{N}{\Delta_{2/1} \dot{\bm{r}}_{C/N, \textrm{sensed}}} = \leftexp{N}{DV}_{C/N,2} - \leftexp{N}{DV}_{C/N,1}
 \end{equation}
-The above $DV$ values are given by the spacecraft module in body frame coordinates but used in inertial coordinates. They are computed by accumulating the velocity after each dynamics integration and subtracting out the time-averaged gravitational acceleration multiplied by the dynamics time step. Then,
+These $DV$ values are given by the spacecraft module as \verb|TotalAccumDV_CN_N| in inertial frame coordinates. The spacecraft computes them by accumulating, after each dynamics integration, the change of the velocity of the center of mass minus the change of velocity due to gravity over the same integration step. Because the accumulation is done in inertial coordinates, the difference above does not depend on how the spacecraft rotated between the IMU calls. The accumulated change in velocity of the body frame origin \verb|TotalAccumDV_BN_B| is not used: the spacecraft adds the change in velocity of each integration step in the body frame of that step, so this sum cannot be rotated into inertial coordinates with the attitude of a single time.
+
+The velocities $\dot{\bm{r}}_{B/N}$ and $\dot{\bm{r}}_{C/N}$, the attitude, and $\bm{\omega}_{B/N}$ are given by the spacecraft at each IMU call, so the second term of Eq. \ref{eq:DeltaVelocity} is computed in inertial coordinates with $\leftexp{N}{\bm{\omega}_{B/N} \times \bm{r}_{S/B}} = [NB] (\leftexp{B}{\bm{\omega}_{B/N}} \times \leftexp{B}{\bm{r}_{S/B}})$. The result is converted to the sensor platform frame with the attitude at time 2:
 \begin{equation}
-	\Delta_{2/1} (\bm{\omega}_{B/N} \times \bm{r}_{S/B}) = \bm{\omega}_{{B/N}_2} \times \bm{r}_{{S/B}_2} - \bm{\omega}_{{B/N}_1} \times \bm{r}_{{S/B}_1}
+\leftexp{P} {\Delta_{2/1}} 	\dot{\bm{r}}_{S/N, \textrm{sensed}} = [PB][BN]_2 \leftexp{N}{\Delta_{2/1} \dot{\bm{r}}_{S/N, \textrm{sensed}}}
 \end{equation}
-$\bm{\omega}_{{B/N}}$ output by the spacecraft is the angular rate from the most recent dynamics integration. Again, the above equation is calculated in the inertial frame and then converted to platform frame coordinates. this means that the values given by spacecraft plus are first converted into inertial frame coordinates, including the location of the sensor in the body frame. At this point, Eq. \ref{eq:DeltaVelocity} is evaluated in the body frame and converted to the sensor platform frame:
-\begin{equation}
-\leftexp{P} {\Delta_{2/1}} 	\dot{\bm{r}}_{S/N} = [PN] ^{\mathcal{N}} \Delta_{2/1} 	\dot{\bm{r}}_{S/N}
-\end{equation}
-This, the change in velocity sensed by the IMU between IMU calls in platform frame coordinates, is the change in velocity output from the model. To be clear, this is the sensed inertial velocity change in platform frame coordinates. This makes the assumption that the IMU is tracking its attitude and performing the calculations internally to return this value correctly. It is not simply the integral of the acceleration value above in the body frame coordinates.
+This, the change in velocity sensed by the IMU between IMU calls in platform frame coordinates, is the change in velocity output from the model. To be clear, this is the sensed inertial velocity change in platform frame coordinates. This makes the assumption that the IMU is tracking its attitude and performing the calculations internally to return this value correctly. It is not simply the integral of the acceleration value above in the body frame coordinates, because only accumulated values and the states at the IMU calls are used, the IMU may run at a slower rate than the dynamics.
 
 \subsubsection{Error Modeling}
 The state which the simulation records for the spacecraft prior to sending that state to the IMU module is considered to be "truth". So, to simulate the errors found in real instrumentation, errors are added to the "truth" values for acceleration and angular velocity:

@@ -75,7 +75,7 @@ void MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
 
 void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos)
 {
-    SCStatesMsgPayload payload;
+    SCStatesMsgPayload payload = this->stateOutMsg.zeroMsgPayload;
 
     std::copy_n(data->site_xpos + 3 * this->getId(), 3, payload.r_BN_N);
     Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> rot{data->site_xmat +

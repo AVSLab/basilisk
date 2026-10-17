@@ -41,6 +41,8 @@ Spacecraft::Spacecraft()
     this->dvAccum_CN_B.setZero();
     this->dvAccum_BN_B.setZero();
     this->dvAccum_CN_N.setZero();
+    this->nonConservativeAccelpntB_B.setZero();
+    this->omegaDot_BN_B.setZero();
 
     // - Set integrator as RK4 by default
     this->setIntegrator(new svIntegratorRK4(this));

@@ -157,12 +157,13 @@ private:
 
     Eigen::MRPd previous_sigma_BN;              //!< -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;               //!< -- sigma_BN from the most recent spacecraft message
-    Eigen::Vector3d previous_omega_BN_B;        //!< -- omega_BN_B from the previous spacecraft message
     Eigen::Vector3d current_omega_BN_B;         //!< -- omega_BN_B from the current spacecraft message
     Eigen::Vector3d current_nonConservativeAccelpntB_B; //!< -- nonConservativeAccelpntB_B from the current message
     Eigen::Vector3d current_omegaDot_BN_B;      //!< -- omegaDot_BN_B from the current spacecraft message
-    Eigen::Vector3d previous_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the previous spacecraft message
-    Eigen::Vector3d current_TotalAccumDV_BN_B; //!< -- TotalAccumDV_BN_B from the current spacecraft message
+    Eigen::Vector3d previous_TotalAccumDV_CN_N; //!< [m/s] TotalAccumDV_CN_N from the previous spacecraft message
+    Eigen::Vector3d current_TotalAccumDV_CN_N;  //!< [m/s] TotalAccumDV_CN_N from the current spacecraft message
+    Eigen::Vector3d previous_v_SC_N;            //!< [m/s] sensor velocity relative to the center of mass at the previous call, inertial components
+    Eigen::Vector3d current_v_SC_N;             //!< [m/s] sensor velocity relative to the center of mass at the current call, inertial components
 
     Eigen::Vector3d accel_SN_P_out;             //!< -- rDotDot_SN_P for either next method or output messages
     Eigen::Vector3d DV_SN_P_out;                //!< -- time step deltaV for either next method or output messages
