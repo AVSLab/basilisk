@@ -1,3 +1,4 @@
 - Fixed :ref:`imuSensor` ``DVFramePlatform``, which turned the delta v accumulated since the start of the simulation into a spurious delta v whenever the spacecraft attitude changed between IMU calls. The delta v is now computed from ``TotalAccumDV_CN_N`` and the change of the sensor velocity relative to the center of mass.
+- Fixed :ref:`imuSensor` ``Reset()``, which kept the state of the previous IMU call, so the first call after a reset in the middle of a simulation differenced the new state against the state from before the reset. This call now outputs a zero message.
 - Fixed :ref:`MJSite` ``stateOutMsg`` fields that a site does not provide, such as the center of mass states and the accumulated delta v, which were uninitialized and are now zero.
 - Fixed :ref:`spacecraft` ``nonConservativeAccelpntB_B`` and ``omegaDot_BN_B``, which were uninitialized before the first integration step and, with ``pointMassTranslationalOnly``, for the whole simulation.

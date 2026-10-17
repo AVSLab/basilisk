@@ -642,6 +642,48 @@ def test_imuDeltaVIgnoresRotationOfAccumulatedDeltaV():
                                rtol=0.0, atol=1e-12, err_msg="new delta v is wrong")
 
 
+def test_imuResetDiscardsPreviousState():
+    """
+    After a call to ``Reset()`` the IMU must not difference the new state against the state recorded before the
+    reset.
+
+    The IMU runs twice on a state with 100 m/s of accumulated delta v, a rotated attitude and a sensor velocity
+    relative to the center of mass. The state is then set back to zero, as after a restart of the simulation, and
+    the IMU is reset. The first call after the reset must output a zero message, and the next call must only see
+    the delta v accumulated after the reset.
+    """
+    imu = imuSensor.ImuSensor()
+    imu.sensorPos_B = [1.0, 0.0, 0.0]  # [m]
+
+    scState = messaging.SCStatesMsgPayload()
+    scState.TotalAccumDV_CN_N = [100.0, 0.0, 0.0]  # [m/s]
+    scState.sigma_BN = rbk.PRV2MRP([0.0, 0.0, np.radians(30.0)])
+    scState.omega_BN_B = [0.0, 0.0, 0.1]  # [rad/s]
+    scStateMsg = messaging.SCStatesMsg().write(scState, 0)
+    imu.scStateInMsg.subscribeTo(scStateMsg)
+    imu.Reset(0)
+    imu.UpdateState(0)
+    imu.UpdateState(macros.sec2nano(1.0))
+
+    # restart from a zero state
+    scState = messaging.SCStatesMsgPayload()
+    scStateMsg.write(scState, 0)
+    imu.Reset(0)
+    imu.UpdateState(0)
+    output = imu.sensorOutMsg.read()
+    np.testing.assert_array_equal(output.DVFramePlatform, [0.0, 0.0, 0.0],
+                                  err_msg="the first call after a reset used the state from before the reset")
+    np.testing.assert_array_equal(output.DRFramePlatform, [0.0, 0.0, 0.0],
+                                  err_msg="the first call after a reset used the state from before the reset")
+
+    # 2 m/s of new delta v along the inertial x axis
+    scState.TotalAccumDV_CN_N = [2.0, 0.0, 0.0]  # [m/s]
+    scStateMsg.write(scState, macros.sec2nano(1.0))
+    imu.UpdateState(macros.sec2nano(1.0))
+    np.testing.assert_allclose(imu.sensorOutMsg.read().DVFramePlatform, [2.0, 0.0, 0.0], rtol=0.0, atol=1e-12,
+                               err_msg="delta v after a reset is wrong")
+
+
 @pytest.mark.parametrize("r_BcB_B, sensorPos_B, accuracy", [
     ([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 1e-10),
     ([0.5, 0.0, 0.2], [1.0, 0.5, -0.3], 1e-5),
