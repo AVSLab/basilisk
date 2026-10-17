@@ -125,7 +125,7 @@ void LinearTranslationNDOFStateEffector::addTranslatingBody(const std::shared_pt
  */
 std::shared_ptr<TranslatingBody> LinearTranslationNDOFStateEffector::getTranslatingBody(uint64_t index)
 {
-    assert(("Index must be less than the number of translating body axes", index < static_cast<uint64_t>(this->N)));
+    assert(index < static_cast<uint64_t>(this->N) && "Index must be less than the number of translating body axes");
 
     return this->translatingBodyVec.at(index);
 }
