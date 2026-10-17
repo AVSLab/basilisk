@@ -259,6 +259,9 @@
 <h2>Version 2.13.0b0
 <a class="headerlink" href="#version-release" title="Link to this heading"></a></h2>
 <ul class="simple">
+<li><p>The error message of <code class="docutils literal notranslate"><span class="pre">atmosphericDrag()</span></code> in <code class="docutils literal notranslate"><span class="pre">orbitalMotion</span></code>, printed for a position with a non-positive
+altitude, showed the position components with an index shifted by one and read past the end of the position
+vector.</p></li>
 <li><p>GitHub issue 1615: The <a class="reference internal" href="../Documentation/simulation/environment/eclipse/eclipse.html#eclipse"><span class="std std-ref">C++ Module: eclipse</span></a> module returned the occulted fraction <span class="math notranslate nohighlight">\((b/a)^2\)</span> of the solar disk
 instead of the visible fraction <span class="math notranslate nohighlight">\(1 - (b/a)^2\)</span> when the disk of the occulting body lies entirely inside the
 solar disk, where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the apparent radii of the Sun and the body. The same formula in
