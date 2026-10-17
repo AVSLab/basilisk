@@ -219,11 +219,11 @@ void FuelTank::updateRetainedMassPropertyDerivatives(double mass, double massRat
     this->effProps.rEffPrime_CB_B = dcm_TBLocal.transpose() * this->fuelTankModel->rPrime_TcT_T;
     const Eigen::Vector3d rPrime_TcB_B = this->effProps.rEffPrime_CB_B;
     this->effProps.IEffPrimePntB_B =
-      dcm_TBLocal.transpose() * this->fuelTankModel->IPrimeTankPntT_T * dcm_TBLocal +
-      massRate *
-        (this->r_TcB_B.dot(this->r_TcB_B) * Eigen::Matrix3d::Identity() - this->r_TcB_B * this->r_TcB_B.transpose()) +
-      mass * (2.0 * this->r_TcB_B.dot(rPrime_TcB_B) * Eigen::Matrix3d::Identity() -
-              this->r_TcB_B * rPrime_TcB_B.transpose() - rPrime_TcB_B * this->r_TcB_B.transpose());
+        dcm_TBLocal.transpose() * this->fuelTankModel->IPrimeTankPntT_T * dcm_TBLocal +
+        massRate * (this->r_TcB_B.dot(this->r_TcB_B) * Eigen::Matrix3d::Identity() -
+                    this->r_TcB_B * this->r_TcB_B.transpose()) +
+        mass * (2.0 * this->r_TcB_B.dot(rPrime_TcB_B) * Eigen::Matrix3d::Identity() -
+                this->r_TcB_B * rPrime_TcB_B.transpose() - rPrime_TcB_B * this->r_TcB_B.transpose());
     this->effProps.rEffPrime_CB_BDynamics.setZero();
     this->effProps.IEffPrimePntB_BDynamics.setZero();
 }
@@ -249,7 +249,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
     this->effProps.mEff = massLocal;
     this->ITankPntT_B = dcm_TBLocal.transpose() * fuelTankModel->ITankPntT_T * dcm_TBLocal;
     this->effProps.IEffPntB_B =
-      ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity() - r_TcB_B * r_TcB_B.transpose());
+        ITankPntT_B + massLocal * (r_TcB_B.dot(r_TcB_B) * Eigen::Matrix3d::Identity() - r_TcB_B * r_TcB_B.transpose());
     this->effProps.rEff_CB_B = this->r_TcB_B;
 
     // Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
@@ -355,11 +355,11 @@ void FuelTank::updateContributions(double integTime [[maybe_unused]],
         Eigen::Vector3d rPPrime_TcB_B = dcm_TBLocal.transpose() * this->fuelTankModel->rPPrime_TcT_T;
         // Inertia derivative about point B: central term plus d/dt[m (r.r I - r r^T)], r = r_TcB_B
         Eigen::Matrix3d IPrimeTankPntB_BLocal =
-          dcm_TBLocal.transpose() * this->fuelTankModel->IPrimeTankPntT_T * dcm_TBLocal +
-          mDotTank * (this->r_TcB_B.dot(this->r_TcB_B) * Eigen::Matrix3d::Identity() -
-                      this->r_TcB_B * this->r_TcB_B.transpose()) +
-          massLocal * (2.0 * this->r_TcB_B.dot(rPrime_TcB_B) * Eigen::Matrix3d::Identity() -
-                       this->r_TcB_B * rPrime_TcB_B.transpose() - rPrime_TcB_B * this->r_TcB_B.transpose());
+            dcm_TBLocal.transpose() * this->fuelTankModel->IPrimeTankPntT_T * dcm_TBLocal +
+            mDotTank * (this->r_TcB_B.dot(this->r_TcB_B) * Eigen::Matrix3d::Identity() -
+                        this->r_TcB_B * this->r_TcB_B.transpose()) +
+            massLocal * (2.0 * this->r_TcB_B.dot(rPrime_TcB_B) * Eigen::Matrix3d::Identity() -
+                         this->r_TcB_B * rPrime_TcB_B.transpose() - rPrime_TcB_B * this->r_TcB_B.transpose());
         backSubContr.vecRot = -massLocal * this->r_TcB_B.cross(rPPrime_TcB_B) -
                               massLocal * omega_BN_BLocal.cross(this->r_TcB_B.cross(rPrime_TcB_B)) -
                               mDotTank * this->r_TcB_B.cross(rPrime_TcB_B);

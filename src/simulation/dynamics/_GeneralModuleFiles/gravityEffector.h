@@ -93,12 +93,12 @@ class GravBodyData
     double radEquator = 0;  /**< [m]      Equatorial radius for the body */
     double radiusRatio = 1; /**< []       ratio of polar over equatorial radius */
     std::string planetName =
-      ""; /**< Gravitational body name, this is used as the Spice name if spiceInterface is used */
+        ""; /**< Gravitational body name, this is used as the Spice name if spiceInterface is used */
     std::string displayName =
-      ""; /**< This is the name that is displayed in Vizard.  If not set, Vizard shows planetName */
+        ""; /**< This is the name that is displayed in Vizard.  If not set, Vizard shows planetName */
     std::string modelDictionaryKey =
-      ""; /**< "" will result in using the current default for the celestial body's given name, otherwise key will be
-             matched if possible to available model in internal model dictionary */
+        ""; /**< "" will result in using the current default for the celestial body's given name, otherwise key will be
+               matched if possible to available model in internal model dictionary */
 
     ReadFunctor<SpicePlanetStateMsgPayload> planetBodyInMsg; /**< planet spice ephemeris input message */
     SpicePlanetStateMsgPayload localPlanet; /**< [-]   Class storage of ephemeris info from scheduled portion */

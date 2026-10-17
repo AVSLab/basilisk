@@ -41,8 +41,8 @@
 
 /*! @brief dual hinged rigid body state effector */
 class DualHingedRigidBodyStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     DualHingedRigidBodyStateEffector();
@@ -107,9 +107,9 @@ class DualHingedRigidBodyStateEffector final
     BSKLogger bskLogger;                            //!< BSK Logging
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< (optional) motor torque input message
     std::vector<Message<HingedRigidBodyMsgPayload>*>
-      dualHingedRigidBodyOutMsgs; //!< state output message vector for all panels
+        dualHingedRigidBodyOutMsgs; //!< state output message vector for all panels
     std::vector<Message<SCStatesMsgPayload>*>
-      dualHingedRigidBodyConfigLogOutMsgs;      //!< panel state config log message vector for all panels
+        dualHingedRigidBodyConfigLogOutMsgs;    //!< panel state config log message vector for all panels
     std::vector<DynamicEffector*> dynEffectors; //!< Vector of dynamic effectors attached
     std::vector<int> dynEffectorSegments;       //!< Segment index for each attached dynamic effector
 
@@ -191,9 +191,9 @@ class DualHingedRigidBodyStateEffector final
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>>
-      ownedDualHingedRigidBodyOutMsgs; //!< Storage for dualHingedRigidBodyOutMsgs.
+        ownedDualHingedRigidBodyOutMsgs; //!< Storage for dualHingedRigidBodyOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>>
-      ownedDualHingedRigidBodyConfigLogOutMsgs; //!< Storage for dualHingedRigidBodyConfigLogOutMsgs.
+        ownedDualHingedRigidBodyConfigLogOutMsgs; //!< Storage for dualHingedRigidBodyConfigLogOutMsgs.
 };
 
 #endif /* DUAL_STATE_EFFECTOR_H */

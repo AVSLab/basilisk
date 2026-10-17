@@ -44,8 +44,8 @@ struct parentID
 
 /*! @brief constraint dynamic effector class */
 class ConstraintDynamicEffector final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     ConstraintDynamicEffector();
@@ -130,7 +130,7 @@ class ConstraintDynamicEffector final
     double getC_a() const { return this->c_a; };
 
     Message<ConstDynEffectorMsgPayload>
-      constraintElements; //!< output message with constraint force and torque on connected s/c
+        constraintElements; //!< output message with constraint force and torque on connected s/c
     ReadFunctor<DeviceStatusMsgPayload> effectorStatusInMsg; //!< input message to toggle effector on/off
     uint64_t effectorStatus = 1;                             //!< effector toggle on/off (1-active, 0-inactive)
 
@@ -147,9 +147,9 @@ class ConstraintDynamicEffector final
 
     // Constraint length and direction
     Eigen::Vector3d r_P1B1_B1 =
-      Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
+        Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 1 hub to its connection point P1
     Eigen::Vector3d r_P2B2_B2 =
-      Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
+        Eigen::Vector3d::Zero(); //!< [m] position vector from spacecraft 2 hub to its connection point P2
     Eigen::Vector3d r_P2P1_B1Init = Eigen::Vector3d::Zero(); //!< [m] prescribed position vector from spacecraft 1
                                                              //!< connection point to spacecraft 2 connection point
 
@@ -196,12 +196,12 @@ class ConstraintDynamicEffector final
 
     // Simulation variable pointers
     std::vector<std::string>
-      stateNameOfPosition; //!< state engine name of the parent rigid body inertial position vector
+        stateNameOfPosition; //!< state engine name of the parent rigid body inertial position vector
     std::vector<std::string>
-      stateNameOfVelocity;                     //!< state engine name of the parent rigid body inertial velocity vector
+        stateNameOfVelocity;                   //!< state engine name of the parent rigid body inertial velocity vector
     std::vector<std::string> stateNameOfSigma; //!< state engine name of the parent rigid body inertial attitude
     std::vector<std::string>
-      stateNameOfOmega; //!< state engine name of the parent rigid body inertial angular velocity vector
+        stateNameOfOmega; //!< state engine name of the parent rigid body inertial angular velocity vector
     std::vector<StateData*> hubPosition; //!< [m] parent inertial position vector
     std::vector<StateData*> hubVelocity; //!< [m/s] parent inertial velocity vector
     std::vector<StateData*> hubSigma;    //!< parent attitude Modified Rodrigues Parameters (MRPs)
@@ -216,15 +216,15 @@ class ConstraintDynamicEffector final
     std::vector<Eigen::MatrixXd*> inertialVelocityProperty; //!< [m/s] velocity relative to inertial frame
     std::vector<Eigen::MatrixXd*> inertialAttitudeProperty; //!< attitude relative to inertial frame
     std::vector<Eigen::MatrixXd*>
-      inertialAngVelocityProperty; //!< [rad/s] inertial angular velocity relative to inertial frame
+        inertialAngVelocityProperty; //!< [rad/s] inertial angular velocity relative to inertial frame
 
     // Constraint violations
     Eigen::Vector3d psi_N = Eigen::Vector3d::Zero(); //!< [m] direction constraint violation in inertial frame
     Eigen::Vector3d psiPrime_N =
-      Eigen::Vector3d::Zero();                 //!< [m/s] direction rate constraint violation in inertial frame
+        Eigen::Vector3d::Zero();               //!< [m/s] direction rate constraint violation in inertial frame
     Eigen::MRPd phi = Eigen::MRPd::Identity(); //!< attitude constraint violation
     Eigen::Vector3d omega_B2B1_B2 =
-      Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity constraint violation in spacecraft 2 body frame
+        Eigen::Vector3d::Zero(); //!< [rad/s] angular velocity constraint violation in spacecraft 2 body frame
 
     // Force and torque quantities stored to be assigned on the alternating call of computeForceTorque
     Eigen::Vector3d Fc_N = Eigen::Vector3d::Zero(); //!< [N] force applied on each spacecraft COM in the inertial frame

@@ -43,7 +43,7 @@ class HingedBodyLinearProfiler : public SysModel
     double endTheta;    //!<  [rad] ending hinged rigid body theta position
 
     Message<HingedRigidBodyMsgPayload>
-      hingedRigidBodyReferenceOutMsg; //!< -- output message for reference hinged rigid body state (theta, theta dot)
+        hingedRigidBodyReferenceOutMsg; //!< -- output message for reference hinged rigid body state (theta, theta dot)
 
     BSKLogger bskLogger; //!< -- BSK Logging
 

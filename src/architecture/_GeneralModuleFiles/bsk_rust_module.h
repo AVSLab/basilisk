@@ -366,7 +366,7 @@ BSK_RUST_EXTERN_C_END
     configType* Config_##name(handleType* handle);                                                                     \
     BskRustError* GetConfigField_##name(handleType* handle, size_t fieldIndex, void* outputValue, size_t valueSize);   \
     BskRustError* SetConfigField_##name(                                                                               \
-      handleType* handle, size_t fieldIndex, const void* inputValue, size_t valueSize);                                \
+        handleType* handle, size_t fieldIndex, const void* inputValue, size_t valueSize);                              \
     const char* ConfigFieldDeprecationDate_##name(size_t fieldIndex);                                                  \
     const char* ConfigFieldDeprecationMessage_##name(size_t fieldIndex);                                               \
     const char* ModuleDeprecationDate_##name(void);                                                                    \

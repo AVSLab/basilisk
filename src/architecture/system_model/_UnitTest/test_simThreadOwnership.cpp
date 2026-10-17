@@ -79,8 +79,8 @@ class CountingModel : public SysModel
 struct ProcessFixture
 {
     explicit ProcessFixture(const std::string& name)
-      : task(taskPeriod)
-      , process(name)
+        : task(taskPeriod)
+        , process(name)
     {
         task.AddNewObject(&model);
         process.addNewTask(&task);
@@ -233,8 +233,8 @@ TEST(SimThreadOwnership, ShutdownSignalsAllWorkersBeforeJoining)
             std::unique_lock<std::mutex> lock(mutex);
             ++stoppedCount;
             stoppedCondition.notify_all();
-            observedAllStops[index] =
-              stoppedCondition.wait_for(lock, shutdownTimeout, [&] { return stoppedCount == observedAllStops.size(); });
+            observedAllStops[index] = stoppedCondition.wait_for(
+                lock, shutdownTimeout, [&] { return stoppedCount == observedAllStops.size(); });
         });
         worker->waitOnInit();
     }
@@ -249,21 +249,21 @@ TEST(SimThreadOwnership, PartialStartupUnwinds)
 {
     std::array<bool, 2> stopped{};
     EXPECT_THROW(
-      {
-          SimModel simulation;
-          simulation.resetThreads(4);
-          for (std::size_t index = 0; index < stopped.size(); ++index) {
-              auto* worker = simulation.threadList[index].get();
-              worker->threadContext = std::thread([&, worker, index]() {
-                  worker->postInit();
-                  worker->lockThread();
-                  stopped[index] = !worker->threadValid();
-              });
-              worker->waitOnInit();
-          }
-          throw std::runtime_error("Simulate failure after starting some workers");
-      },
-      std::runtime_error);
+        {
+            SimModel simulation;
+            simulation.resetThreads(4);
+            for (std::size_t index = 0; index < stopped.size(); ++index) {
+                auto* worker = simulation.threadList[index].get();
+                worker->threadContext = std::thread([&, worker, index]() {
+                    worker->postInit();
+                    worker->lockThread();
+                    stopped[index] = !worker->threadValid();
+                });
+                worker->waitOnInit();
+            }
+            throw std::runtime_error("Simulate failure after starting some workers");
+        },
+        std::runtime_error);
     EXPECT_TRUE(stopped[0]);
     EXPECT_TRUE(stopped[1]);
 }
@@ -361,11 +361,11 @@ TEST(SimThreadOwnership, ShutdownAfterWorkerException)
         simulation.resetThreads(3);
         fixture.model.failure = failure;
         EXPECT_THROW(
-          {
-              initialize(simulation);
-              simulation.StepUntilStop(stopTime, -1);
-          },
-          std::runtime_error);
+            {
+                initialize(simulation);
+                simulation.StepUntilStop(stopTime, -1);
+            },
+            std::runtime_error);
         simulation.deleteThreads();
         EXPECT_EQ(simulation.getThreadCount(), 0);
         fixture.model.failure.clear();

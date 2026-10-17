@@ -25,10 +25,10 @@
     Don't allow random walk by default.
  */
 TempMeasurement::TempMeasurement()
-  : faultState{ TEMP_FAULT_NOMINAL }
-  , walkBounds{ -1.0 }
-  , spikeProbability{ 0.1 }
-  , spikeAmount{ 2.0 }
+    : faultState{ TEMP_FAULT_NOMINAL }
+    , walkBounds{ -1.0 }
+    , spikeProbability{ 0.1 }
+    , spikeAmount{ 2.0 }
 {
     this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->propagationMatrix.resize(1);

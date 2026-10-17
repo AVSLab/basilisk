@@ -323,7 +323,7 @@ class PrescribedGaussianNoiseGenerator : public GaussianNoiseGenerator
         dW = sample.dW;
         if (auxiliaryCount > 0) {
             dZ.head(static_cast<Eigen::Index>(auxiliaryCount)) =
-              sample.dZ.head(static_cast<Eigen::Index>(auxiliaryCount));
+                sample.dZ.head(static_cast<Eigen::Index>(auxiliaryCount));
         }
     }
 

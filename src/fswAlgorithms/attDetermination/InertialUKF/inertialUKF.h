@@ -110,7 +110,7 @@ typedef struct
     uint64_t ClockTimeST[MAX_ST_VEH_COUNT];       //!< [-] All of the ClockTimes for the STs
     int isFreshST[MAX_ST_VEH_COUNT];              //!< [-] isWritten flag for STs
     RWArrayConfigMsgPayload
-      rwConfigParams;              //!< [-] struct to store message containing RW config parameters in body B frame
+        rwConfigParams;            //!< [-] struct to store message containing RW config parameters in body B frame
     RWSpeedMsgPayload rwSpeeds;    //!< [-] Local reaction wheel speeds
     RWSpeedMsgPayload rwSpeedPrev; //!< [-] Local reaction wheel speeds
     double speedDt;                //!< [s] The time difference between speeds

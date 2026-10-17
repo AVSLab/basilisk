@@ -25,8 +25,8 @@
 /*! @brief Structure used by the messaging system to communicate details about the spacecraft system including its mass
  * matrix.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  MJSysMassMatrixMsgPayload
+    //@cond DOXYGEN_IGNORE
+    MJSysMassMatrixMsgPayload
 //@endcond
 {
     int nSC;                        //!< [-] number of spacecraft in the system

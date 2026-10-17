@@ -102,9 +102,9 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
 
     //!< apply discretization (rounds to nearest multiple of LSB)
     if (this->thetaLSB > 0.0) {
-        numLSB =
-          floor(abs(sensedTheta) /
-                this->thetaLSB); //! number of times the LSB goes into the absolute value of the sensed continuous theta
+        numLSB = floor(
+            abs(sensedTheta) /
+            this->thetaLSB); //! number of times the LSB goes into the absolute value of the sensed continuous theta
         workingTheta = numLSB * this->thetaLSB *
                        copysign(1.0, sensedTheta); //! multiply back the signed value of theta times the number of LSBs
         remainder = sensedTheta - workingTheta;
@@ -127,5 +127,5 @@ void HingedRigidBodyMotorSensor::UpdateState(uint64_t CurrentSimNanos)
     hingedRigidBodyMotorSensorOutMsgBuffer.theta = sensedTheta;
     hingedRigidBodyMotorSensorOutMsgBuffer.thetaDot = sensedThetaDot;
     this->hingedRigidBodyMotorSensorOutMsg.write(
-      &hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, CurrentSimNanos);
+        &hingedRigidBodyMotorSensorOutMsgBuffer, this->moduleID, CurrentSimNanos);
 }

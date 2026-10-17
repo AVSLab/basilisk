@@ -73,7 +73,7 @@ TEST(StateExtrapolation, scalesWithTheMessageAge)
     for (uint64_t ageSeconds : { 1ULL, 5ULL, 60ULL, 3600ULL }) {
         const uint64_t written = 100 * secondNanos;
         const SCStatesMsgPayload out =
-          extrapolateScStateToStepMidpoint(makeState(), written + ageSeconds * secondNanos, written, written);
+            extrapolateScStateToStepMidpoint(makeState(), written + ageSeconds * secondNanos, written, written);
 
         EXPECT_DOUBLE_EQ(out.r_BN_N[1], 7.5e3 * 0.5 * static_cast<double>(ageSeconds)) << "age [s] " << ageSeconds;
         EXPECT_DOUBLE_EQ(out.r_CN_N[1], 7.5e3 * 0.5 * static_cast<double>(ageSeconds)) << "age [s] " << ageSeconds;
@@ -308,11 +308,11 @@ TEST(ScStateExtrapolation, isNotExtrapolatedBeforeTwoWriteTimesAreKnown)
     const SCStatesMsgPayload in = makeState();
     // first observation of a message written at the previous update: the period is unknown
     const SCStatesMsgPayload first =
-      applySingle(extrapolation, in, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
+        applySingle(extrapolation, in, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
     EXPECT_DOUBLE_EQ(first.r_BN_N[1], in.r_BN_N[1]);
     // second write time observed with an interval equal to the module interval
     const SCStatesMsgPayload second =
-      applySingle(extrapolation, in, 30 * SECOND_NANOS, 20 * SECOND_NANOS, 20 * SECOND_NANOS, logger);
+        applySingle(extrapolation, in, 30 * SECOND_NANOS, 20 * SECOND_NANOS, 20 * SECOND_NANOS, logger);
     EXPECT_NE(second.r_BN_N[1], in.r_BN_N[1]);
 }
 
@@ -385,7 +385,7 @@ TEST(PlanetStateExtrapolation, planetIsNotMovedIfTheSpacecraftStateIsNotExtrapol
     // message written at 0 s but previous update at 10 s: stale, not extrapolated
     applySingle(extrapolation, makeState(), 20 * SECOND_NANOS, 0, 10 * SECOND_NANOS, logger);
     const SpicePlanetStateMsgPayload out =
-      extrapolation.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
+        extrapolation.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
 
     EXPECT_DOUBLE_EQ(out.PositionVector[0], planet.PositionVector[0]);
 }
@@ -447,7 +447,7 @@ TEST(PlanetStateExtrapolation, planetIsNotMovedIfTheExtrapolationIsDisabled)
     BSKLogger logger;
     applySingle(extrapolation, makeState(), 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS, logger);
     const SpicePlanetStateMsgPayload out =
-      extrapolation.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
+        extrapolation.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
 
     EXPECT_DOUBLE_EQ(out.PositionVector[0], planet.PositionVector[0]);
 }
@@ -614,7 +614,7 @@ TEST(ScStateExtrapolation, applyPlanetTreatsPositionOnlyOrientationAsIdentityOnE
     ScStateExtrapolation disabled;
     disabled.prepare(20 * SECOND_NANOS, 10 * SECOND_NANOS, { 10 * SECOND_NANOS }, logger);
     const SpicePlanetStateMsgPayload outDisabled =
-      disabled.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
+        disabled.applyPlanet(planet, 20 * SECOND_NANOS, 20 * SECOND_NANOS, 10 * SECOND_NANOS);
     EXPECT_DOUBLE_EQ(outDisabled.PositionVector[0], planet.PositionVector[0]);
 
     // enabled, dt == 0: the planet is written at the epoch the spacecraft states stay at
@@ -622,7 +622,7 @@ TEST(ScStateExtrapolation, applyPlanetTreatsPositionOnlyOrientationAsIdentityOnE
     startup.setEnabled(true);
     startup.prepare(20 * SECOND_NANOS, 10 * SECOND_NANOS, { 10 * SECOND_NANOS }, logger);
     const SpicePlanetStateMsgPayload outStartup =
-      startup.applyPlanet(planet, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS);
+        startup.applyPlanet(planet, 20 * SECOND_NANOS, 10 * SECOND_NANOS, 10 * SECOND_NANOS);
     EXPECT_DOUBLE_EQ(outStartup.PositionVector[0], planet.PositionVector[0]);
 
     for (const SpicePlanetStateMsgPayload& out : { outDisabled, outStartup }) {
@@ -775,7 +775,7 @@ TEST(ScStateExtrapolationMessages, applyPlanetMessageMovesThePlanetLikeApplyPlan
 
     const SpicePlanetStateMsgPayload out = extrapolation.applyPlanetMessage(planetMsg, 2 * step, step);
     const SpicePlanetStateMsgPayload expected =
-      extrapolation.applyPlanet(planetMsg.payload, 2 * step, planetMsg.written, step);
+        extrapolation.applyPlanet(planetMsg.payload, 2 * step, planetMsg.written, step);
     EXPECT_DOUBLE_EQ(out.PositionVector[0], expected.PositionVector[0]);
     EXPECT_DOUBLE_EQ(out.PositionVector[0], 1.0e7 - 3.0e4 * 5.0); // moved back to the step midpoint
 }

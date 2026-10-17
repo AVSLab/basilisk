@@ -25,8 +25,8 @@
 
 /*! @brief Structure used to define the individual RW configuration data */
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  RWConfigPayload
+    //@cond DOXYGEN_IGNORE
+    RWConfigPayload
 //@endcond
 {
     Eigen::Vector3d rWB_B;    //!< [m], position vector of the RW relative to the spacecraft body frame

@@ -49,11 +49,11 @@ class FacetedSpacecraftModel : public SysModel
     uint64_t getNumTotalFacets() const;               //!< Getter method for total number of spacecraft facets
 
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
-      articulatedFacetDataInMsgs; //!< Articulated facet angle data input message
+        articulatedFacetDataInMsgs; //!< Articulated facet angle data input message
     std::vector<ReadFunctor<FacetElementMsgPayload>>
-      facetElementInMsgs; //!< Facet geometry data input message (Expressed in facet frames)
+        facetElementInMsgs; //!< Facet geometry data input message (Expressed in facet frames)
     std::vector<Message<FacetElementBodyMsgPayload>*>
-      facetElementBodyOutMsgs; //!< Facet geometry data output message (Expressed in hub B frame)
+        facetElementBodyOutMsgs; //!< Facet geometry data output message (Expressed in hub B frame)
 
     BSKLogger* bskLogger = nullptr; //!< BSK logging
 
@@ -61,16 +61,16 @@ class FacetedSpacecraftModel : public SysModel
     uint64_t numFacets{};            //!< Total number of spacecraft facets
     uint64_t numArticulatedFacets{}; //!< Number of articulated facets
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>>
-      articulatedFacetRequestInMsgs; //!< Pending list of articulated facet input messages
+        articulatedFacetRequestInMsgs; //!< Pending list of articulated facet input messages
 
     /* Facet input message data */
     std::vector<double> facetAreaList; //!< [m^2] List of facet areas
     std::vector<Eigen::Vector3d>
-      facetR_CopF_FList; //!< [m] List of facet center of pressure locations wrt facet frame origin point F
+        facetR_CopF_FList; //!< [m] List of facet center of pressure locations wrt facet frame origin point F
     std::vector<Eigen::Vector3d>
-      facetNHat_FList; //!< [-] List of facet normal vectors expressed in facet frame F components
+        facetNHat_FList; //!< [-] List of facet normal vectors expressed in facet frame F components
     std::vector<Eigen::Vector3d>
-      facetRotHat_FList; //!< [-] List of facet rotation axes expressed in facet frame F components
+        facetRotHat_FList; //!< [-] List of facet rotation axes expressed in facet frame F components
     std::vector<Eigen::Matrix3d> facetDcm_F0BList; //!< [-] List of initial facet attitudes relative to hub B frame
     std::vector<Eigen::Vector3d> facetR_FB_BList;  //!< [m] List of facet locations relative to hub frame origin point B
     std::vector<double> facetDiffuseCoeffList;     //!< [-] List of facet diffuse reflection optical coefficient list
@@ -78,15 +78,15 @@ class FacetedSpacecraftModel : public SysModel
 
     /* Facet output message data */
     std::vector<Eigen::Vector3d>
-      facetR_CopB_BList; //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
+        facetR_CopB_BList; //!< [m] List of facet center of pressure locations wrt point B expressed in B frame components
     std::vector<Eigen::Vector3d>
-      facetNHat_BList; //!< [-] List of facet normal vectors expressed in hub B frame components
+        facetNHat_BList; //!< [-] List of facet normal vectors expressed in hub B frame components
     std::vector<Eigen::Vector3d>
-      facetRotHat_BList; //!< [-] List of facet rotation axes expressed in hub B frame components
+        facetRotHat_BList; //!< [-] List of facet rotation axes expressed in hub B frame components
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<FacetElementBodyMsgPayload>>>
-      ownedFacetElementBodyOutMsgs; //!< Storage for facetElementBodyOutMsgs.
+        ownedFacetElementBodyOutMsgs; //!< Storage for facetElementBodyOutMsgs.
 };
 
 #endif

@@ -293,7 +293,7 @@ void ConstraintDynamicEffector::setPropName_inertialAngVelocity(std::string valu
         this->propName_inertialAngVelocity.push_back(value);
     } else {
         bskLogger.bskError(
-          "ConstraintDynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
+            "ConstraintDynamicEffector: propName_inertialAngVelocity variable must be a non-empty string");
     }
 }
 
@@ -403,13 +403,13 @@ void ConstraintDynamicEffector::linkInProperties(DynParamManager& properties)
 
     const size_t propertyPosition = static_cast<size_t>(propIdx);
     this->inertialAttitudeProperty.push_back(
-      properties.getPropertyReference(this->propName_inertialAttitude[propertyPosition]));
+        properties.getPropertyReference(this->propName_inertialAttitude[propertyPosition]));
     this->inertialAngVelocityProperty.push_back(
-      properties.getPropertyReference(this->propName_inertialAngVelocity[propertyPosition]));
+        properties.getPropertyReference(this->propName_inertialAngVelocity[propertyPosition]));
     this->inertialPositionProperty.push_back(
-      properties.getPropertyReference(this->propName_inertialPosition[propertyPosition]));
+        properties.getPropertyReference(this->propName_inertialPosition[propertyPosition]));
     this->inertialVelocityProperty.push_back(
-      properties.getPropertyReference(this->propName_inertialVelocity[propertyPosition]));
+        properties.getPropertyReference(this->propName_inertialVelocity[propertyPosition]));
 
     this->scInitCounter++;
 }
@@ -498,8 +498,8 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
 
             if (this->effectorStatus == 1) {
                 // calculate the constraint force
-                this->Fc_N =
-                  this->k_d * this->psi_N + this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
+                this->Fc_N = this->k_d * this->psi_N +
+                             this->c_d * this->psiPrime_N; // store the constraint force for spacecraft 2
                 this->forceExternal_N = this->Fc_N;
 
                 // calculate the torque on each spacecraft from the direction constraint
@@ -511,7 +511,7 @@ void ConstraintDynamicEffector::computeForceTorque(double integTime [[maybe_unus
                 // calculate the constraint torque imparted on each spacecraft from the attitude constraint
                 Eigen::Matrix3d dcm_B1B2 = dcm_B1N * dcm_B2N.transpose();
                 Eigen::Vector3d L_B2_att =
-                  -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
+                    -this->k_a * this->phi.coeffs() - this->c_a * 0.25 * this->phi.Bmat() * omega_B2B1_B2;
                 Eigen::Vector3d L_B1_att = -dcm_B1B2 * L_B2_att;
                 this->T_B2 = L_B2_len + L_B2_att; // store the constraint torque for spacecraft 2
 

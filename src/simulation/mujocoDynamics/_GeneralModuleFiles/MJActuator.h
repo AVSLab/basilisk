@@ -99,8 +99,8 @@ class MJActuator
      * the individual actuator parts.
      */
     MJActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-      : name(std::move(name))
-      , subActuators(std::move(subActuators))
+        : name(std::move(name))
+        , subActuators(std::move(subActuators))
     {
     }
 
@@ -165,7 +165,7 @@ class MJSingleActuator : public MJActuator
   public:
     /** Constructs a single-input actuator. */
     MJSingleActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-      : MJActuator(std::move(name), std::move(subActuators))
+        : MJActuator(std::move(name), std::move(subActuators))
     {
         this->requireSubActuatorCount(1, "MJSingleActuator");
     }
@@ -190,7 +190,7 @@ class MJForceActuator : public MJActuator
   public:
     /** Constructs a three-axis force actuator. */
     MJForceActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-      : MJActuator(std::move(name), std::move(subActuators))
+        : MJActuator(std::move(name), std::move(subActuators))
     {
         this->requireSubActuatorCount(3, "MJForceActuator");
     }
@@ -215,7 +215,7 @@ class MJTorqueActuator : public MJActuator
   public:
     /** Constructs a three-axis torque actuator. */
     MJTorqueActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-      : MJActuator(std::move(name), std::move(subActuators))
+        : MJActuator(std::move(name), std::move(subActuators))
     {
         this->requireSubActuatorCount(3, "MJTorqueActuator");
     }
@@ -240,7 +240,7 @@ class MJForceTorqueActuator : public MJActuator
   public:
     /** Constructs a six-axis force/torque actuator. */
     MJForceTorqueActuator(std::string name, std::vector<MJActuatorObject>&& subActuators)
-      : MJActuator(std::move(name), std::move(subActuators))
+        : MJActuator(std::move(name), std::move(subActuators))
     {
         this->requireSubActuatorCount(6, "MJForceTorqueActuator");
     }

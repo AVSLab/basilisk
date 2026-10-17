@@ -38,7 +38,7 @@ void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
         this->bskLogger.bskError(
-          "MeanRevertingNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
+            "MeanRevertingNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
     }
     this->sigmaStationary = sigmaStationary;
 }
@@ -107,7 +107,7 @@ void MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[mayb
     diffusion(0, 0) = this->sigmaStationary * (std::sqrt(2.0) / std::sqrt(this->timeConstant));
     if (!derivative.allFinite() || !diffusion.allFinite()) {
         this->bskLogger.bskError(
-          "MeanRevertingNoiseStateEffector: state and parameters produce non-finite drift or diffusion.");
+            "MeanRevertingNoiseStateEffector: state and parameters produce non-finite drift or diffusion.");
     }
     this->state->setDerivative(derivative);
     this->state->setDiffusion(diffusion, 0);

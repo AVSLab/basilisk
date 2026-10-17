@@ -61,7 +61,7 @@ class SysModelTask
     uint64_t NextPickupTime = 0;                 //!< [ns] Next time read Task outputs
     uint64_t TaskPeriod = 100;                   //!< [ns] Cycle rate for Task
     uint64_t FirstTaskTime =
-      0; //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
+        0; //!< [ns] Time to start Task for first time.  After this time the normal periodic updates resume.
     bool taskActive = true; //!< -- Flag indicating whether the Task has been disabled
     BSKLogger bskLogger;    //!< -- BSK Logging
 };

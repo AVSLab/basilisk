@@ -100,7 +100,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
                               "Expected size [" + std::to_string(stateSize) + " x " + std::to_string(stateSize) +
                               "] based on getStateSize(), but received [" + std::to_string(A_rows) + " x " +
                               std::to_string(A_cols) + "].")
-                               .c_str());
+                                 .c_str());
         }
     }
 
@@ -118,7 +118,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
                               "Expected size [" + std::to_string(stateSize) + " x " + std::to_string(inputSize) +
                               "] based on getStateSize() and getInputSize(), but received [" + std::to_string(B_rows) +
                               " x " + std::to_string(B_cols) + "].")
-                               .c_str());
+                                 .c_str());
         }
     }
 
@@ -136,7 +136,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
                               "Expected size [" + std::to_string(outputSize) + " x " + std::to_string(stateSize) +
                               "] based on getOutputSize() and getStateSize(), but received [" + std::to_string(C_rows) +
                               " x " + std::to_string(C_cols) + "].")
-                               .c_str());
+                                 .c_str());
         }
     }
 
@@ -154,7 +154,7 @@ void LinearTimeInvariantSystem::Reset(uint64_t /*CurrentSimNanos*/)
                               "Expected size [" + std::to_string(outputSize) + " x " + std::to_string(inputSize) +
                               "] based on getOutputSize() and getInputSize(), but received [" + std::to_string(D_rows) +
                               " x " + std::to_string(D_cols) + "].")
-                               .c_str());
+                                 .c_str());
         }
     }
 }
@@ -248,7 +248,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
                           std::to_string(static_cast<long long>(wn.size())) +
                           ", zeta=" + std::to_string(static_cast<long long>(zeta.size())) +
                           ", k=" + std::to_string(static_cast<long long>(k.size())) + ".")
-                           .c_str());
+                             .c_str());
         return;
     }
 
@@ -263,7 +263,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
                              (std::string("LinearTimeInvariantSystem::configureSecondOrder(MIMO): wn(") +
                               std::to_string(static_cast<long long>(i)) + ") must be positive, but is " +
                               std::to_string(wn_i) + ".")
-                               .c_str());
+                                 .c_str());
             return;
         }
 
@@ -273,7 +273,7 @@ void LinearTimeInvariantSystem::configureSecondOrder(const Eigen::VectorXd& wn,
                              (std::string("LinearTimeInvariantSystem::configureSecondOrder(MIMO): zeta(") +
                               std::to_string(static_cast<long long>(i)) + ") must be non negative, but is " +
                               std::to_string(zeta_i) + ".")
-                               .c_str());
+                                 .c_str());
             return;
         }
     }

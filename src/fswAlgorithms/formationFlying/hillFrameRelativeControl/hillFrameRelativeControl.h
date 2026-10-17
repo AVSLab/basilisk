@@ -57,9 +57,9 @@ class HillFrameRelativeControl : public SysModel
 
     ReadFunctor<NavTransMsgPayload> chiefTransInMsg; //!< chief translational nav input message
     ReadFunctor<HillRelStateMsgPayload>
-      hillStateInMsg; //!< optional deputy-relative-to-chief Hill-frame state input message
+        hillStateInMsg; //!< optional deputy-relative-to-chief Hill-frame state input message
     ReadFunctor<NavTransMsgPayload>
-      deputyTransInMsg; //!< optional deputy translational nav input message (exclusive with hillStateInMsg)
+        deputyTransInMsg; //!< optional deputy translational nav input message (exclusive with hillStateInMsg)
     ReadFunctor<VehicleConfigMsgPayload> deputyVehicleConfigInMsg; //!< deputy mass configuration input message
     Message<CmdForceInertialMsgPayload> forceOutMsg;               //!< inertial force command output message
     CmdForceInertialMsg_C forceOutMsgC = {};                       //!< C-wrapped inertial force command output message

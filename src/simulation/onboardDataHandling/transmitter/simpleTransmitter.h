@@ -41,7 +41,7 @@ class SimpleTransmitter : public DataNodeBase
     int numBuffers;    //!< Number of buffers the transmitter can access
     int currentIndex;  //!< Current partition that the transmitter is downlinking a packet for
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
-      storageUnitInMsgs;                                      //!< Vector of data node input message names
+        storageUnitInMsgs;                                    //!< Vector of data node input message names
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgs; //!< local copies of input messages
     BSKLogger bskLogger;                                      //!< class variable
 

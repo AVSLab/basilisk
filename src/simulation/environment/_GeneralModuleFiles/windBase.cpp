@@ -103,18 +103,18 @@ bool WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
     bool scRead =
-      std::all_of(this->scStateInMsgs.begin(), this->scStateInMsgs.end(), [](auto& msg) { return msg.isWritten(); });
+        std::all_of(this->scStateInMsgs.begin(), this->scStateInMsgs.end(), [](auto& msg) { return msg.isWritten(); });
 
     bool planetRead = this->planetPosInMsg.isWritten();
     if (scRead && planetRead) {
         this->scStateExtrapolation.prepareFromMessages(
-          CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
+            CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
         for (auto& msg : this->scStateInMsgs) {
             this->scStates.push_back(
-              this->scStateExtrapolation.applyMessage(msg, CurrentSimNanos, this->previousUpdateNanos));
+                this->scStateExtrapolation.applyMessage(msg, CurrentSimNanos, this->previousUpdateNanos));
         }
         this->planetState = this->scStateExtrapolation.applyPlanetMessage(
-          this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
+            this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
     }
 
     // Update planetOmega_N from SPICE data only if SPICE mode is enabled and planetPosInMsg has ever been written to
@@ -223,7 +223,7 @@ void WindBase::UpdateState(uint64_t CurrentSimNanos)
     if (this->readMessages(CurrentSimNanos)) {
         // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
         const uint64_t epochNanos =
-          this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+            this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
         this->updateLocalWind(static_cast<double>(epochNanos) * NANO2SEC);
     } else {
         // Zero outputs when message reads fail to avoid stale data

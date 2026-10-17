@@ -58,7 +58,7 @@ class MappingInstrument : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<DataNodeUsageMsgPayload>>>
-      ownedDataNodeOutMsgs; //!< Storage for dataNodeOutMsgs.
+        ownedDataNodeOutMsgs; //!< Storage for dataNodeOutMsgs.
 };
 
 #endif // BASILISK_MAPPINGINSTRUMENT_H

@@ -161,7 +161,7 @@ void NHingedRigidBodyStateEffector::validateConfiguration()
     for (PanelIt = this->PanelVec.begin(); PanelIt != this->PanelVec.end(); PanelIt++) {
         if (!std::isfinite(PanelIt->mass) || PanelIt->mass <= 0.0) {
             this->bskLogger.bskError(
-              "NHingedRigidBodyStateEffector: every panel mass must be finite and greater than 0.");
+                "NHingedRigidBodyStateEffector: every panel mass must be finite and greater than 0.");
         }
         totalPanelMass += PanelIt->mass;
         if (!std::isfinite(PanelIt->d)) {
@@ -325,8 +325,8 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[m
 
         // - Find body time derivative of IPntS_B
         PanelIt->ISPrimePntS_B =
-          sum_ThetaDot * (PanelIt->IPntS_S(2, 2) - PanelIt->IPntS_S(0, 0)) *
-          (PanelIt->sHat1_B * PanelIt->sHat3_B.transpose() + PanelIt->sHat3_B * PanelIt->sHat1_B.transpose());
+            sum_ThetaDot * (PanelIt->IPntS_S(2, 2) - PanelIt->IPntS_S(0, 0)) *
+            (PanelIt->sHat1_B * PanelIt->sHat3_B.transpose() + PanelIt->sHat3_B * PanelIt->sHat1_B.transpose());
 
         // - Mass summation
         sum_mass += PanelIt->mass;
@@ -431,7 +431,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime,
             (*dynIt)->computeForceTorque(integTime, double(0.0));
             // a child's "_B" loads are already in this panel's S frame, so only "_N" is rotated
             PanelIt->extForce_B +=
-              PanelIt->dcm_SB.transpose() * (*dynIt)->forceExternal_B + dcm_BN * (*dynIt)->forceExternal_N;
+                PanelIt->dcm_SB.transpose() * (*dynIt)->forceExternal_B + dcm_BN * (*dynIt)->forceExternal_N;
             PanelIt->extTorquePntH_B += PanelIt->dcm_SB.transpose() * (*dynIt)->torqueExternalPntB_B;
         }
         attBodyForce_B += PanelIt->extForce_B;
@@ -457,7 +457,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime,
             }
             this->matrixADHRB(j - 1, i - 1) = PanelIt->IPntS_S(1, 1) * HeaviFunc(j - i) +
                                               PanelIt->mass * pow(PanelIt->d, 2) * PanelIt->sHat3_B.transpose() *
-                                                (sumTerm1 - HeaviFunc(j - i) * PanelIt->sHat3_B);
+                                                  (sumTerm1 - HeaviFunc(j - i) * PanelIt->sHat3_B);
             i += 1;
         }
         j += 1;
@@ -561,9 +561,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime,
         sumTerm1 = springTerm -
                    (PanelIt->IPntS_S(0, 0) - PanelIt->IPntS_S(2, 2)) * PanelIt->omega_BN_S(2) * PanelIt->omega_BN_S(0) -
                    PanelIt->mass * PanelIt->d *
-                     PanelIt->sHat3_B.dot(2 * this->omegaLoc_BN_B.cross(PanelIt->rPrime_SB_B) +
-                                          this->omegaLoc_BN_B.cross(this->omegaLoc_BN_B.cross(PanelIt->r_SB_B)) +
-                                          sumTerm2 + sumTerm3);
+                       PanelIt->sHat3_B.dot(2 * this->omegaLoc_BN_B.cross(PanelIt->rPrime_SB_B) +
+                                            this->omegaLoc_BN_B.cross(this->omegaLoc_BN_B.cross(PanelIt->r_SB_B)) +
+                                            sumTerm2 + sumTerm3);
         // Add gravity torque to this sumTerm
         Eigen::Vector3d gravTorqueCurPanel;
         gravTorqueCurPanel = -PanelIt->d * PanelIt->sHat1_B.cross(PanelIt->mass * g_B);
@@ -575,8 +575,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime,
         // j+1 balances, so only the moment arm of its force survives here
         Eigen::Vector3d extForceRestOfPanels = attBodyForce_B - extForceCurrentPanelAndBefore;
         this->vectorVDHRB(j - 1) =
-          sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel + PanelIt->extTorquePntH_B) +
-          2.0 * PanelIt->d * PanelIt->sHat3_B.dot(gravForceRestOfPanels + extForceRestOfPanels);
+            sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel + PanelIt->extTorquePntH_B) +
+            2.0 * PanelIt->d * PanelIt->sHat3_B.dot(gravForceRestOfPanels + extForceRestOfPanels);
         j += 1;
     }
 
@@ -648,9 +648,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime,
             }
         }
         sumTerm2 =
-          PanelIt->mass * this->omegaLoc_BN_B.cross(PanelIt->r_SB_B.cross(PanelIt->rPrime_SB_B)) +
-          pow(sumThetaDot, 2) * PanelIt->mass * PanelIt->d * (PanelIt->r_SB_B.cross(PanelIt->sHat1_B) + sumTerm3) +
-          PanelIt->IPntS_S(1, 1) * sumThetaDot * this->omegaLoc_BN_B.cross(PanelIt->sHat2_B);
+            PanelIt->mass * this->omegaLoc_BN_B.cross(PanelIt->r_SB_B.cross(PanelIt->rPrime_SB_B)) +
+            pow(sumThetaDot, 2) * PanelIt->mass * PanelIt->d * (PanelIt->r_SB_B.cross(PanelIt->sHat1_B) + sumTerm3) +
+            PanelIt->IPntS_S(1, 1) * sumThetaDot * this->omegaLoc_BN_B.cross(PanelIt->sHat2_B);
         const auto eRow = this->matrixEDHRB.row(j - 1);
         backSubContr.matrixC += sumTerm1 * (eRow * this->matrixFDHRB);
         backSubContr.matrixD += sumTerm1 * (eRow * this->matrixGDHRB);
@@ -736,8 +736,8 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
         rDot_SB_B = PanelIt->rPrime_SB_B + omegaLocal_BN_B.cross(PanelIt->r_SB_B);
         rotAngMomPntCContr_B_Sum += IPntS_B * omega_SN_B + PanelIt->mass * PanelIt->r_SB_B.cross(rDot_SB_B);
         rotEnergyContr_Sum +=
-          0.5 * omega_SN_B.dot(IPntS_B * omega_SN_B) + 1.0 / 2.0 * PanelIt->mass * rDot_SB_B.dot(rDot_SB_B) +
-          1.0 / 2.0 * PanelIt->k * (PanelIt->theta - PanelIt->theta_0) * (PanelIt->theta - PanelIt->theta_0);
+            0.5 * omega_SN_B.dot(IPntS_B * omega_SN_B) + 1.0 / 2.0 * PanelIt->mass * rDot_SB_B.dot(rDot_SB_B) +
+            1.0 / 2.0 * PanelIt->k * (PanelIt->theta - PanelIt->theta_0) * (PanelIt->theta - PanelIt->theta_0);
     }
 
     // - Find rotational angular momentum contribution from hub

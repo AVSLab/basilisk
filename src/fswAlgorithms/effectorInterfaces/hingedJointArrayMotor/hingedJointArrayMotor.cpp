@@ -105,7 +105,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
                 // subsequent joints must be hinges
                 if (jointType != 3) {
                     bskLogger.bskError(
-                      "HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
+                        "HingedJointArrayMotor: joint %zu in kinematic tree %d is not a hinged joint.", joint, tree);
                 }
                 info.hingeJointIdxs.push_back(static_cast<int>(joint));
                 info.hingeGlobalIdxs.push_back(nextHingeIdx);
@@ -219,7 +219,7 @@ void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
         Eigen::VectorXd theta_ddot_des(nHingeJoints);
         theta_ddot_des.setZero();
         Eigen::VectorXd theta(nHingeJoints), thetaDot(nHingeJoints), theta_des(nHingeJoints),
-          thetaDot_des(nHingeJoints), thetaDDot_des(nHingeJoints);
+            thetaDot_des(nHingeJoints), thetaDDot_des(nHingeJoints);
         theta.setZero();
         thetaDot.setZero();
         theta_des.setZero();

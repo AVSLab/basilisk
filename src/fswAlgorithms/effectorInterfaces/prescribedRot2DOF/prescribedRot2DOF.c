@@ -168,7 +168,7 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t call
 
         // Define temporal information
         double convTime =
-          sqrt(fabs(configData->phiRef) * 4 / configData->phiDDotMax); // Time for the individual attitude maneuver
+            sqrt(fabs(configData->phiRef) * 4 / configData->phiDDotMax); // Time for the individual attitude maneuver
         configData->maneuverEndTime = configData->maneuverStartTime + convTime;
         configData->maneuverSwitchTime = convTime / 2 + configData->maneuverStartTime;
 
@@ -194,19 +194,19 @@ void Update_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t call
     // Compute the prescribed states at the current time for the profiled trajectory
     if ((t < configData->maneuverSwitchTime || t == configData->maneuverSwitchTime) &&
         configData->maneuverEndTime !=
-          configData->maneuverStartTime) // Entered during the first half of the attitude maneuver
+            configData->maneuverStartTime) // Entered during the first half of the attitude maneuver
     {
         phiDDot = configData->phiDDotMax;
         phiDot = phiDDot * (t - configData->maneuverStartTime);
         configData->phi = configData->a * (t - configData->maneuverStartTime) * (t - configData->maneuverStartTime);
     } else if (t > configData->maneuverSwitchTime && t <= configData->maneuverEndTime &&
                configData->maneuverEndTime !=
-                 configData->maneuverStartTime) // Entered during the second half of the attitude maneuver
+                   configData->maneuverStartTime) // Entered during the second half of the attitude maneuver
     {
         phiDDot = -1 * configData->phiDDotMax;
         phiDot = phiDDot * (t - configData->maneuverEndTime);
         configData->phi =
-          configData->b * (t - configData->maneuverEndTime) * (t - configData->maneuverEndTime) + configData->phiRef;
+            configData->b * (t - configData->maneuverEndTime) * (t - configData->maneuverEndTime) + configData->phiRef;
     } else // Entered if the maneuver is complete
     {
         phiDDot = 0.0;

@@ -39,7 +39,7 @@ void EarthRadiationModel::evaluatePlanet(const SCStatesMsgPayload& scMsg,
                                          uint64_t /*nanos*/)
 {
     std::vector<PatchResult> patches = entry.grid.computePatches(
-      scMsg.r_BN_N, sunMsg.PositionVector, planetMsg.PositionVector, planetMsg.J20002Pfix, entry.R_planet, S_sun);
+        scMsg.r_BN_N, sunMsg.PositionVector, planetMsg.PositionVector, planetMsg.J20002Pfix, entry.R_planet, S_sun);
 
     for (const PatchResult& p : patches) {
         // Apply eclipse check: if patch is eclipsed, skip albedo contribution

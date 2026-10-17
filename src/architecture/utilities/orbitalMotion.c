@@ -628,7 +628,7 @@ double debyeLength(double alt)
         return debyedist;
     } else if (!isfinite(alt) || (alt < 200.0) || (alt > 35000.0)) {
         BSK_PRINT(
-          MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
+            MSG_ERROR, "debyeLength() received alt = %g\nThe value of alt should be in the range of [200 35000]", alt);
         debyedist = nan("");
         return debyedist;
     }
@@ -936,65 +936,66 @@ void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicEleme
     double a_r = (1.0 + e * cos(f)) / pow(eta, 2.0); // (F.6)
 
     double ap = a + a * gamma2 *
-                      ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0)) +
-                       3.0 * (1.0 - pow(cos(i), 2.0)) * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f)); // (F.7)
+                        ((3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r, 3.0) - 1.0 / pow(eta, 3.0)) +
+                         3.0 * (1.0 - pow(cos(i), 2.0)) * pow(a_r, 3.0) * cos(2.0 * omega + 2.0 * f)); // (F.7)
 
     double de1 = gamma2p / 8.0 * e * pow(eta, 2.0) *
                  (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
                  cos(2.0 * omega); // (F.8)
 
-    double de =
-      de1 +
-      pow(eta, 2.0) / 2.0 *
-        (gamma2 *
-           ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) *
-              (e * eta + e / (1.0 + eta) + 3.0 * cos(f) + 3.0 * e * pow(cos(f), 2.0) + pow(e, 2.0) * pow(cos(f), 3.0)) +
-            3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) *
-              (e + 3.0 * cos(f) + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) * cos(2 * omega + 2 * f)) -
-         gamma2p * (1.0 - pow(cos(i), 2.0)) * (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f))); // (F.9)
+    double de = de1 + pow(eta, 2.0) / 2.0 *
+                          (gamma2 * ((3.0 * pow(cos(i), 2.0) - 1.0) / pow(eta, 6.0) *
+                                         (e * eta + e / (1.0 + eta) + 3.0 * cos(f) + 3.0 * e * pow(cos(f), 2.0) +
+                                          pow(e, 2.0) * pow(cos(f), 3.0)) +
+                                     3.0 * (1.0 - pow(cos(i), 2.0)) / pow(eta, 6.0) *
+                                         (e + 3.0 * cos(f) + 3 * e * pow(cos(f), 2) + pow(e, 2) * pow(cos(f), 3)) *
+                                         cos(2 * omega + 2 * f)) -
+                           gamma2p * (1.0 - pow(cos(i), 2.0)) *
+                               (3.0 * cos(2.0 * omega + f) + cos(2.0 * omega + 3.0 * f))); // (F.9)
 
     double di =
-      -e * de1 / pow(eta, 2.0) / tan(i) +
-      gamma2p / 2.0 * cos(i) * sqrt(1.0 - pow(cos(i), 2.0)) *
-        (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f) + e * cos(2.0 * omega + 3.0 * f)); // (F.10)
+        -e * de1 / pow(eta, 2.0) / tan(i) + gamma2p / 2.0 * cos(i) * sqrt(1.0 - pow(cos(i), 2.0)) *
+                                                (3.0 * cos(2.0 * omega + 2.0 * f) + 3.0 * e * cos(2.0 * omega + f) +
+                                                 e * cos(2.0 * omega + 3.0 * f)); // (F.10)
 
     double MpopOp =
-      M + omega + Omega +
-      gamma2p / 8.0 * pow(eta, 3.0) *
-        (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) * sin(2.0 * omega) -
-      gamma2p / 16.0 *
-        (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0)) * pow(cos(i), 2.0) -
-         40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) -
-         400.0 * pow(e, 2.0) * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
-        sin(2.0 * omega) +
-      gamma2p / 4.0 *
-        (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0)) * (f - M + e * sin(f)) +
-         (3.0 - 5.0 * pow(cos(i), 2.0)) *
-           (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e * sin(2.0 * omega + 3.0 * f))) -
-      gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
-        (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
-         200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
-        sin(2.0 * omega) -
-      gamma2p / 2.0 * cos(i) *
-        (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
-         e * sin(2.0 * omega + 3.0 * f)); // (F.11)
+        M + omega + Omega +
+        gamma2p / 8.0 * pow(eta, 3.0) *
+            (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+            sin(2.0 * omega) -
+        gamma2p / 16.0 *
+            (2.0 + pow(e, 2.0) - 11.0 * (2.0 + 3.0 * pow(e, 2.0)) * pow(cos(i), 2.0) -
+             40.0 * (2.0 + 5.0 * pow(e, 2.0)) * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) -
+             400.0 * pow(e, 2.0) * pow(cos(i), 6.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) +
+        gamma2p / 4.0 *
+            (-6.0 * (1.0 - 5.0 * pow(cos(i), 2.0)) * (f - M + e * sin(f)) +
+             (3.0 - 5.0 * pow(cos(i), 2.0)) *
+                 (3.0 * sin(2.0 * omega + 2.0 * f) + 3.0 * e * sin(2.0 * omega + f) + e * sin(2.0 * omega + 3.0 * f))) -
+        gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
+            (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+             200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+            sin(2.0 * omega) -
+        gamma2p / 2.0 * cos(i) *
+            (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
+             e * sin(2.0 * omega + 3.0 * f)); // (F.11)
 
     double edM = gamma2p / 8.0 * e * pow(eta, 3.0) *
-                   (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
-                   sin(2.0 * omega) -
+                     (1.0 - 11.0 * pow(cos(i), 2.0) - 40.0 * pow(cos(i), 4.0) / (1.0 - 5.0 * pow(cos(i), 2.0))) *
+                     sin(2.0 * omega) -
                  gamma2p / 4.0 * pow(eta, 3.0) *
-                   (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
-                    3.0 * (1.0 - pow(cos(i), 2.0)) *
-                      ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
-                       (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
+                     (2.0 * (3.0 * pow(cos(i), 2.0) - 1.0) * (pow(a_r * eta, 2.0) + a_r + 1.0) * sin(f) +
+                      3.0 * (1.0 - pow(cos(i), 2.0)) *
+                          ((-pow(a_r * eta, 2.0) - a_r + 1.0) * sin(2.0 * omega + f) +
+                           (pow(a_r * eta, 2.0) + a_r + 1.0 / 3.0) * sin(2.0 * omega + 3.0 * f))); // (F.12)
 
     double dOmega = -gamma2p / 8.0 * pow(e, 2.0) * cos(i) *
-                      (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
-                       200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
-                      sin(2.0 * omega) -
+                        (11.0 + 80.0 * pow(cos(i), 2.0) / (1.0 - 5.0 * pow(cos(i), 2.0)) +
+                         200.0 * pow(cos(i), 4.0) / pow(1.0 - 5.0 * pow(cos(i), 2.0), 2.0)) *
+                        sin(2.0 * omega) -
                     gamma2p / 2.0 * cos(i) *
-                      (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) - 3.0 * e * sin(2.0 * omega + f) -
-                       e * sin(2.0 * omega + 3.0 * f)); // (F.13)
+                        (6.0 * (f - M + e * sin(f)) - 3.0 * sin(2.0 * omega + 2.0 * f) -
+                         3.0 * e * sin(2.0 * omega + f) - e * sin(2.0 * omega + 3.0 * f)); // (F.13)
 
     double d1 = (e + de) * sin(M) + edM * cos(M); // (F.14)
     double d2 = (e + de) * cos(M) - edM * sin(M); // (F.15)

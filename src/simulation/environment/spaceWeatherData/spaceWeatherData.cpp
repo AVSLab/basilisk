@@ -222,7 +222,7 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
     for (const auto& columnName : requiredColumns) {
         if (findHeaderIndex(headerColumns, columnName) < 0) {
             this->bskLogger.bskError(
-              "Space-weather file missing required column '%s': %s", columnName.c_str(), fileName.c_str());
+                "Space-weather file missing required column '%s': %s", columnName.c_str(), fileName.c_str());
         }
     }
 
@@ -239,7 +239,7 @@ void SpaceWeatherData::loadSpaceWeatherFile(const std::string& fileName)
         }
 
         this->bskLogger.bskLog(
-          BSK_WARNING, "Stopped reading space-weather table at first invalid row: %s", line.c_str());
+            BSK_WARNING, "Stopped reading space-weather table at first invalid row: %s", line.c_str());
         break;
     }
 
@@ -302,7 +302,7 @@ void SpaceWeatherData::getEpochState(double CurrentSimSeconds, int64_t& currentD
 
     const int64_t epochDay = civilToUnixDayNumber(year, static_cast<unsigned>(month), static_cast<unsigned>(day));
     const double epochSecondsOfDay =
-      static_cast<double>(hours) * 3600.0 + static_cast<double>(minutes) * 60.0 + seconds;       // [s]
+        static_cast<double>(hours) * 3600.0 + static_cast<double>(minutes) * 60.0 + seconds;     // [s]
     const double totalSecondsFromEpoch = epochSecondsOfDay + CurrentSimSeconds;                  // [s]
     const int64_t dayOffset = static_cast<int64_t>(std::floor(totalSecondsFromEpoch / 86400.0)); // [day]
     secondsOfDay = totalSecondsFromEpoch - static_cast<double>(dayOffset) * 86400.0;             // [s]
@@ -334,10 +334,10 @@ bool SpaceWeatherData::computeSwState(uint64_t CurrentSimNanos, std::array<doubl
 
     auto getDayEntry = [&](int64_t dayNumber, DailySpaceWeather& output) -> bool {
         const auto iterator =
-          std::lower_bound(this->weatherData.begin(),
-                           this->weatherData.end(),
-                           dayNumber,
-                           [](const DailySpaceWeather& candidate, int64_t key) { return candidate.dayNumber < key; });
+            std::lower_bound(this->weatherData.begin(),
+                             this->weatherData.end(),
+                             dayNumber,
+                             [](const DailySpaceWeather& candidate, int64_t key) { return candidate.dayNumber < key; });
         if (iterator == this->weatherData.end() || iterator->dayNumber != dayNumber) {
             return false;
         }

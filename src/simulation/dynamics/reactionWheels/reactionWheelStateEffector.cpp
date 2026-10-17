@@ -58,7 +58,7 @@ void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& r
 {
     const bool simplifiedModel = rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple;
     const bool contributesMass =
-      rw.RWModel == JitterFullyCoupled || (this->includeWheelMassProperties && simplifiedModel);
+        rw.RWModel == JitterFullyCoupled || (this->includeWheelMassProperties && simplifiedModel);
     const double relativeTolerance = 1.0e-12; // [-]
     if (!std::isfinite(rw.Js) || rw.Js <= 0.0) {
         this->bskLogger.bskError("ReactionWheelStateEffector: all wheel models require finite, positive Js.");
@@ -134,7 +134,7 @@ void ReactionWheelStateEffector::validateRegisteredLayout()
     }
     if (this->numRW != layout.size() || this->numRWJitter != jitterCount) {
         this->bskLogger.bskError(
-          "ReactionWheelStateEffector: numRW and numRWJitter must match the registered state layout.");
+            "ReactionWheelStateEffector: numRW and numRWJitter must match the registered state layout.");
     }
 }
 
@@ -337,14 +337,14 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
         // Friction model which uses static, stribeck, coulomb, and viscous friction models
         if (rw.frictionStribeck == 1) {
             frictionForce = sqrt(2.0 * exp(1.0)) * (rw.fStatic - rw.fCoulomb) *
-                              exp(-(rw.Omega / rw.betaStatic) * (rw.Omega / rw.betaStatic) / 2.0) * rw.Omega /
-                              (rw.betaStatic * sqrt(2.0)) +
+                                exp(-(rw.Omega / rw.betaStatic) * (rw.Omega / rw.betaStatic) / 2.0) * rw.Omega /
+                                (rw.betaStatic * sqrt(2.0)) +
                             rw.fCoulomb * tanh(rw.Omega * 10.0 / rw.betaStatic) + rw.cViscous * rw.Omega;
             frictionForceAtLimitCycle =
-              sqrt(2.0 * exp(1.0)) * (rw.fStatic - rw.fCoulomb) *
-                exp(-(rw.omegaLimitCycle / rw.betaStatic) * (rw.omegaLimitCycle / rw.betaStatic) / 2.0) *
-                rw.omegaLimitCycle / (rw.betaStatic * sqrt(2.0)) +
-              rw.fCoulomb * tanh(rw.omegaLimitCycle * 10.0 / rw.betaStatic) + rw.cViscous * rw.omegaLimitCycle;
+                sqrt(2.0 * exp(1.0)) * (rw.fStatic - rw.fCoulomb) *
+                    exp(-(rw.omegaLimitCycle / rw.betaStatic) * (rw.omegaLimitCycle / rw.betaStatic) / 2.0) *
+                    rw.omegaLimitCycle / (rw.betaStatic * sqrt(2.0)) +
+                rw.fCoulomb * tanh(rw.omegaLimitCycle * 10.0 / rw.betaStatic) + rw.cViscous * rw.omegaLimitCycle;
         } else {
             frictionForce = signOfOmega * rw.fCoulomb + rw.cViscous * rw.Omega;
             frictionForceAtLimitCycle = rw.fCoulomb + rw.cViscous * rw.omegaLimitCycle;
@@ -361,7 +361,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
         if (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple) {
             backSubContr.matrixD -= rw.Js * rw.gsHat_B * rw.gsHat_B.transpose();
             backSubContr.vecRot -=
-              rw.gsHat_B * (rw.u_current + rw.frictionTorque) + rw.Js * rw.Omega * omegaLoc_BN_B.cross(rw.gsHat_B);
+                rw.gsHat_B * (rw.u_current + rw.frictionTorque) + rw.Js * rw.Omega * omegaLoc_BN_B.cross(rw.gsHat_B);
 
             //! imbalance torque (simplified external)
             if (rw.RWModel == JitterSimple) {
@@ -396,14 +396,15 @@ void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_un
             backSubContr.matrixA += rw.mass * rw.d * rw.w3Hat_B * rw.aOmega.transpose();
             backSubContr.matrixB += rw.mass * rw.d * rw.w3Hat_B * rw.bOmega.transpose();
             backSubContr.matrixC +=
-              (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.aOmega.transpose();
+                (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.aOmega.transpose();
             backSubContr.matrixD +=
-              (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.bOmega.transpose();
+                (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.bOmega.transpose();
             backSubContr.vecTrans += rw.mass * rw.d * (OmegaSquared * rw.w2Hat_B - rw.cOmega * rw.w3Hat_B);
             backSubContr.vecRot +=
-              rw.mass * rw.d * OmegaSquared * rw.rWcB_B.cross(rw.w2Hat_B) - rw.IPrimeRWPntWc_B * rw.Omega * rw.gsHat_B -
-              omegaLoc_BN_B.cross(rw.IRWPntWc_B * rw.Omega * rw.gsHat_B + rw.mass * rw.rWcB_B.cross(rw.rPrimeWcB_B)) -
-              (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.cOmega;
+                rw.mass * rw.d * OmegaSquared * rw.rWcB_B.cross(rw.w2Hat_B) -
+                rw.IPrimeRWPntWc_B * rw.Omega * rw.gsHat_B -
+                omegaLoc_BN_B.cross(rw.IRWPntWc_B * rw.Omega * rw.gsHat_B + rw.mass * rw.rWcB_B.cross(rw.rPrimeWcB_B)) -
+                (rw.IRWPntWc_B * rw.gsHat_B + rw.mass * rw.d * rw.rWcB_B.cross(rw.w3Hat_B)) * rw.cOmega;
         }
     }
 }
@@ -450,7 +451,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unu
         }
         if (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple) {
             OmegasDot(wheelIndex, 0) =
-              (rw.u_current + rw.frictionTorque) / rw.Js - rw.gsHat_B.transpose() * omegaDotBNLoc_B;
+                (rw.u_current + rw.frictionTorque) / rw.Js - rw.gsHat_B.transpose() * omegaDotBNLoc_B;
 
             // Check for numerical instability due to excessive wheel acceleration
             if (std::abs(OmegasDot(wheelIndex, 0)) > this->maxWheelAcceleration) {
@@ -517,7 +518,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
         if (rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple) {
             rotAngMomPntCContr_B += rw.Js * rw.gsHat_B * rw.Omega;
             rotEnergyContr +=
-              1.0 / 2.0 * rw.Js * rw.Omega * rw.Omega + rw.Js * rw.Omega * rw.gsHat_B.dot(omegaLoc_BN_B);
+                1.0 / 2.0 * rw.Js * rw.Omega * rw.Omega + rw.Js * rw.Omega * rw.gsHat_B.dot(omegaLoc_BN_B);
             if (this->includeWheelMassProperties) {
                 const Eigen::Vector3d wheelVelocity_B = omegaLoc_BN_B.cross(rw.rWcB_B);
                 rotAngMomPntCContr_B += rw.IRWPntWc_B * omegaLoc_BN_B + rw.mass * rw.rWcB_B.cross(wheelVelocity_B);
@@ -530,7 +531,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [
             Eigen::Vector3d rDot_WcB_B = rw.d * rw.Omega * rw.w3Hat_B + omegaLoc_BN_B.cross(rw.rWcB_B);
 
             rotEnergyContr +=
-              0.5 * omega_WN_B.transpose() * rw.IRWPntWc_B * omega_WN_B + 0.5 * rw.mass * rDot_WcB_B.dot(rDot_WcB_B);
+                0.5 * omega_WN_B.transpose() * rw.IRWPntWc_B * omega_WN_B + 0.5 * rw.mass * rDot_WcB_B.dot(rDot_WcB_B);
             rotAngMomPntCContr_B += rw.IRWPntWc_B * omega_WN_B + rw.mass * r_WcB_B.cross(rDot_WcB_B);
         }
     }
@@ -700,9 +701,10 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_
             static bool warningIssued = false;
             if (!warningIssued && std::abs(cmd.u_cmd) > this->largeTorqueThreshold) { // Threshold for "large" torque
                 bskLogger.bskLog(
-                  BSK_WARNING,
-                  "Using unlimited reaction wheel torque (u_max <= 0). This can cause numerical instability with small "
-                  "spacecraft inertia. Consider setting useMaxTorque=True or increasing spacecraft inertia.");
+                    BSK_WARNING,
+                    "Using unlimited reaction wheel torque (u_max <= 0). This can cause numerical instability with "
+                    "small "
+                    "spacecraft inertia. Consider setting useMaxTorque=True or increasing spacecraft inertia.");
                 warningIssued = true;
             }
         }
@@ -716,7 +718,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_
         if (this->ReactionWheelData[i]->P_max > 0) {
             if (std::abs(cmd.u_cmd * this->ReactionWheelData[i]->Omega) >= this->ReactionWheelData[i]->P_max) {
                 cmd.u_cmd =
-                  std::copysign(this->ReactionWheelData[i]->P_max / this->ReactionWheelData[i]->Omega, cmd.u_cmd);
+                    std::copysign(this->ReactionWheelData[i]->P_max / this->ReactionWheelData[i]->Omega, cmd.u_cmd);
             }
         }
 
@@ -724,7 +726,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_
         if (std::abs(this->ReactionWheelData[i]->Omega) >= this->ReactionWheelData[i]->Omega_max &&
             this->ReactionWheelData[i]->Omega_max > 0.0 /* negative Omega_max turns of wheel saturation modeling */
             && this->ReactionWheelData[i]->Omega * cmd.u_cmd >=
-                 0.0 // check if torque would accelerate wheel speed beyond Omega_max
+                   0.0 // check if torque would accelerate wheel speed beyond Omega_max
         ) {
             cmd.u_cmd = 0.0;
         }

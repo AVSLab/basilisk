@@ -74,12 +74,12 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
 
     //! - Compute the number of nanoseconds that have elapsed in the simulation
     simTimeNano =
-      static_cast<int64_t>(static_cast<double>(currentSimNanos - this->startSimTimeNano) / this->accelFactor);
+        static_cast<int64_t>(static_cast<double>(currentSimNanos - this->startSimTimeNano) / this->accelFactor);
 
     //! - Compute the current time and get the actually elapsed nanoseconds since init time
     currentTime = std::chrono::high_resolution_clock::now();
     realTimeNano =
-      (int64_t)(std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
+        (int64_t)(std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
 
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
     initTimeDeltaNano = simTimeNano - realTimeNano;
@@ -99,7 +99,7 @@ void ClockSynch::UpdateState(uint64_t currentSimNanos)
     while (realTimeNano - simTimeNano < -this->accuracyNanos) {
         currentTime = std::chrono::high_resolution_clock::now();
         realTimeNano =
-          (int64_t)(std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
+            (int64_t)(std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - this->startTime)).count();
         sleepAmountNano = (simTimeNano - realTimeNano) / (2);
         std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmountNano));
     }

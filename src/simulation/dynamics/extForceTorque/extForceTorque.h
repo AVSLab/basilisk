@@ -35,8 +35,8 @@
 
 /*! @brief External force and torque dynamic effector. */
 class ExtForceTorque final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     ExtForceTorque();
@@ -52,7 +52,7 @@ class ExtForceTorque final
   private:
     CmdTorqueBodyMsgPayload incomingCmdTorqueBuffer{}; //!< Cached torque command; zero until input processing
     CmdForceInertialMsgPayload
-      incomingCmdForceInertialBuffer{};                  //!< Cached inertial force command; zero until input processing
+        incomingCmdForceInertialBuffer{};                //!< Cached inertial force command; zero until input processing
     CmdForceBodyMsgPayload incomingCmdForceBodyBuffer{}; //!< Cached body force command; zero until input processing
 
   public:

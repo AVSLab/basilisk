@@ -40,8 +40,12 @@ class svStochasticIntegratorSIESME : public svIntegratorWeakSIESME
      */
     void bindStochasticMethodStorage() override
     {
-        this->flatWorkspace.bind(
-          this->stochasticObjectDescriptors(), this->stochasticNoiseBindings(), this->stochasticNoiseSlots(), 2, 3, 3);
+        this->flatWorkspace.bind(this->stochasticObjectDescriptors(),
+                                 this->stochasticNoiseBindings(),
+                                 this->stochasticNoiseSlots(),
+                                 2,
+                                 3,
+                                 3);
     }
 
   private:

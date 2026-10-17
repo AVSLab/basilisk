@@ -54,8 +54,8 @@ bool areJoints3DTranslation(std::list<MJScalarJoint>& joints)
 }
 
 MJBody::MJBody(mjsBody* body, MJSpec& spec)
-  : MJObject(body)
-  , spec(spec)
+    : MJObject(body)
+    , spec(spec)
 {
 
     // SITES
@@ -130,7 +130,7 @@ MJSite& MJBody::getSite(const std::string& name)
 
     if (sitePtr == std::end(sites)) {
         this->getSpec().getScene().bskLogger.bskError(
-          "Unknown site '%s' in body '%s'", name.c_str(), this->name.c_str());
+            "Unknown site '%s' in body '%s'", name.c_str(), this->name.c_str());
     }
 
     return *sitePtr;
@@ -138,14 +138,14 @@ MJSite& MJBody::getSite(const std::string& name)
 
 MJScalarJoint& MJBody::getScalarJoint(const std::string& name)
 {
-    auto jointPtr =
-      std::find_if(std::begin(scalarJoints), std::end(scalarJoints), [&](auto&& obj) { return obj.getName() == name; });
+    auto jointPtr = std::find_if(
+        std::begin(scalarJoints), std::end(scalarJoints), [&](auto&& obj) { return obj.getName() == name; });
 
     if (jointPtr != std::end(scalarJoints))
         return *jointPtr;
 
     this->getSpec().getScene().bskLogger.bskError(
-      "Unknown scalar joint '%s' in body '%s'", name.c_str(), this->getName().c_str());
+        "Unknown scalar joint '%s' in body '%s'", name.c_str(), this->getName().c_str());
 }
 
 MJBallJoint& MJBody::getBallJoint()
@@ -180,7 +180,7 @@ void MJBody::setPosition(const Eigen::Vector3d& position)
         }
     } else {
         this->getSpec().getScene().bskLogger.bskError(
-          "Tried to set position in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
+            "Tried to set position in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
     }
 }
 
@@ -198,7 +198,7 @@ void MJBody::setVelocity(const Eigen::Vector3d& velocity)
         }
     } else {
         this->getSpec().getScene().bskLogger.bskError(
-          "Tried to set velocity in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
+            "Tried to set velocity in a body with no 'free' joint or no 3D translational joints: %s", name.c_str());
     }
 }
 
@@ -231,7 +231,7 @@ void MJBody::writeStateDependentOutputMessages(uint64_t CurrentSimNanos)
 
     massPropertiesOutMsgPayload.massSC = this->getMass();
     this->massPropertiesOutMsg.write(
-      &massPropertiesOutMsgPayload, this->getSpec().getScene().moduleID, CurrentSimNanos);
+        &massPropertiesOutMsgPayload, this->getSpec().getScene().moduleID, CurrentSimNanos);
 
     for (auto&& joint : this->scalarJoints) {
         joint.writeJointStateMessage(CurrentSimNanos);
@@ -303,7 +303,7 @@ void MJBody::updateMassPropsDerivative()
         auto deriv = this->derivativeMassPropertiesInMsg();
         // Write into this body's entry of the bulk mass state derivative.
         this->getSpec().getScene().getMassState()->derivativeView()(static_cast<Eigen::Index>(this->getId())) =
-          deriv.massSC;
+            deriv.massSC;
     }
 }
 
@@ -319,7 +319,7 @@ void MJBody::addSite(std::string name, const Eigen::Vector3d& position, const Ei
 
     if (this->hasSite(name)) {
         this->getSpec().getScene().bskLogger.bskError(
-          "Tried to create site '%s' twice for body '%s'", name.c_str(), this->name.c_str());
+            "Tried to create site '%s' twice for body '%s'", name.c_str(), this->name.c_str());
     }
 
     spec.markAsNeedingToRecompileModel();

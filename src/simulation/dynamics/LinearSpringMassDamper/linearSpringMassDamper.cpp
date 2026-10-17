@@ -145,9 +145,9 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_un
     // - Update the body time derivative of inertia about B
     this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
     const Eigen::Matrix3d inertiaRateFromMotion =
-      -this->massSMD * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B);
+        -this->massSMD * (this->rPrimeTilde_PcB_B * this->rTilde_PcB_B + this->rTilde_PcB_B * this->rPrimeTilde_PcB_B);
     this->effProps.IEffPrimePntB_B =
-      -this->fuelMassDot * this->rTilde_PcB_B * this->rTilde_PcB_B + inertiaRateFromMotion;
+        -this->fuelMassDot * this->rTilde_PcB_B * this->rTilde_PcB_B + inertiaRateFromMotion;
     this->effProps.IEffPrimePntB_BDynamics = inertiaRateFromMotion;
     this->effProps.hasMassPropertyRateDynamics = this->fuelMassDot != 0.0;
 
@@ -162,9 +162,9 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]]
 {
     if (this->massState == nullptr) {
         this->bskLogger.bskLog(
-          BSK_ERROR,
-          "LinearSpringMassDamper was attached to a FuelTank but never added to Spacecraft. Every particle "
-          "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
+            BSK_ERROR,
+            "LinearSpringMassDamper was attached to a FuelTank but never added to Spacecraft. Every particle "
+            "passed to pushFuelSloshParticle must also be passed to addStateEffector.");
     }
     // Read the current RK-stage state before the tank allocates propellant flow.
     this->fuelMass = this->massState->stateView()(0, 0);

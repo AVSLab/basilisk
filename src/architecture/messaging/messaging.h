@@ -65,7 +65,7 @@ class ReadFunctor : public ReadFunctorBase
     {
       public:
         explicit SourceReplacementGuard(bool& replacementFlag)
-          : flag(replacementFlag)
+            : flag(replacementFlag)
         {
             this->flag = true;
         }
@@ -81,8 +81,8 @@ class ReadFunctor : public ReadFunctorBase
     {
       public:
         SourceHandleGuard(void* handle, SourceCallback acquire, SourceCallback release, bool acquireReference)
-          : handle(handle)
-          , release(release)
+            : handle(handle)
+            , release(release)
         {
             if (acquireReference && this->handle && acquire) {
                 acquire(this->handle);
@@ -137,9 +137,9 @@ class ReadFunctor : public ReadFunctorBase
 
     //! constructor
     ReadFunctor(messageType* payloadPtr, MsgHeader* headerPtr)
-      : payloadPointer(payloadPtr)
-      , headerPointer(headerPtr)
-      , initialized(true)
+        : payloadPointer(payloadPtr)
+        , headerPointer(headerPtr)
+        , initialized(true)
     {
         this->setPointerData(headerPtr, payloadPtr);
     };
@@ -159,11 +159,11 @@ class ReadFunctor : public ReadFunctorBase
 
     //! copy constructor -- take an additional reference to the source
     ReadFunctor(const ReadFunctor& other)
-      : payloadPointer(other.payloadPointer)
-      , headerPointer(other.headerPointer)
-      , initialized(other.initialized)
-      , bskLogger(other.bskLogger)
-      , zeroMsgPayload(other.zeroMsgPayload)
+        : payloadPointer(other.payloadPointer)
+        , headerPointer(other.headerPointer)
+        , initialized(other.initialized)
+        , bskLogger(other.bskLogger)
+        , zeroMsgPayload(other.zeroMsgPayload)
     {
         this->setPointerData(other.headerPointer, other.payloadPointer);
         this->adoptHandleFrom_(other);
@@ -222,14 +222,14 @@ class ReadFunctor : public ReadFunctorBase
 
     //! move constructor -- steal the source token and null out the moved-from reader
     ReadFunctor(ReadFunctor&& other)
-      : payloadPointer(other.payloadPointer)
-      , headerPointer(other.headerPointer)
-      , initialized(other.initialized)
-      , sourceHandle(other.sourceHandle)
-      , acquireSource(other.acquireSource)
-      , releaseSource(other.releaseSource)
-      , bskLogger(std::move(other.bskLogger))
-      , zeroMsgPayload(std::move(other.zeroMsgPayload))
+        : payloadPointer(other.payloadPointer)
+        , headerPointer(other.headerPointer)
+        , initialized(other.initialized)
+        , sourceHandle(other.sourceHandle)
+        , acquireSource(other.acquireSource)
+        , releaseSource(other.releaseSource)
+        , bskLogger(std::move(other.bskLogger))
+        , zeroMsgPayload(std::move(other.zeroMsgPayload))
     {
         this->setPointerData(this->headerPointer, this->payloadPointer);
         other.payloadPointer = nullptr;
@@ -359,8 +359,8 @@ class ReadFunctor : public ReadFunctorBase
         if (!this->initialized) {
             messageType var;
             bskLogger.bskError(
-              "In C++ read functor, you are requesting the write time of an unconnected msg of type %s.",
-              typeid(var).name());
+                "In C++ read functor, you are requesting the write time of an unconnected msg of type %s.",
+                typeid(var).name());
         }
         return this->headerPointer->timeWritten;
     };
@@ -487,8 +487,8 @@ class WriteFunctor
     WriteFunctor() {};
     //! write functor constructor
     WriteFunctor(messageType* payloadPointer, MsgHeader* headerPointer)
-      : payloadPointer(payloadPointer)
-      , headerPointer(headerPointer) {};
+        : payloadPointer(payloadPointer)
+        , headerPointer(headerPointer) {};
     //! write functor constructor
     void operator()(messageType* payload, int64_t moduleID, uint64_t callTime)
     {
@@ -561,7 +561,7 @@ Message<messageType>::Message()
 
 template<typename messageType>
 Message<messageType>::Message(const Message& other)
-  : Message()
+    : Message()
 {
     *this = other;
 }
@@ -580,7 +580,7 @@ Message<messageType>& Message<messageType>::operator=(const Message& other)
 
 template<typename messageType>
 Message<messageType>::Message(Message&& other)
-  : Message()
+    : Message()
 {
     *this = std::move(other);
 }
@@ -663,14 +663,14 @@ class Recorder : public SysModel
         if (!messageReader->isLinked()) {
             messageType var;
             bskLogger.bskError(
-              "In C++ read functor, you are requesting to record an un-connected input message of type %s.",
-              typeid(var).name());
+                "In C++ read functor, you are requesting to record an un-connected input message of type %s.",
+                typeid(var).name());
         }
         this->ModelTag = "Rec:" + findMsgName(std::string(typeid(*messageReader).name()));
     }
     //! -- Copy recorder state while keeping a unique SysModel module ID
     Recorder(const Recorder& obj)
-      : SysModel()
+        : SysModel()
     {
         this->copyRecorderState(obj);
     }
@@ -815,8 +815,9 @@ class Recorder : public SysModel
     void logInvalidMessageWarning()
     {
         messageType var;
-        bskLogger.bskLog(
-          BSK_WARNING, "Recording message of type %s that is not properly initialized or written", typeid(var).name());
+        bskLogger.bskLog(BSK_WARNING,
+                         "Recording message of type %s that is not properly initialized or written",
+                         typeid(var).name());
     };
 
     //! record the supplied message payload

@@ -28,7 +28,7 @@ struct svStochasticIntegratorEulerHeun::FlatStorage
 };
 
 svStochasticIntegratorEulerHeun::svStochasticIntegratorEulerHeun(DynamicObject* dynIn)
-  : StochasticRKIntegratorBase(dynIn)
+    : StochasticRKIntegratorBase(dynIn)
 {
 }
 

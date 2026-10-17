@@ -31,15 +31,15 @@ LinearTranslationOneDOFStateEffector::LinearTranslationOneDOFStateEffector()
 
     this->nameOfRhoState = "linearTranslationRho" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     this->nameOfRhoDotState =
-      "linearTranslationRhoDot" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+        "linearTranslationRhoDot" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     this->nameOfInertialPositionProperty =
-      "linearTranslationInertialPosition" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+        "linearTranslationInertialPosition" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     this->nameOfInertialVelocityProperty =
-      "linearTranslationInertialVelocity" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+        "linearTranslationInertialVelocity" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     this->nameOfInertialAttitudeProperty =
-      "linearTranslationInertialAttitude" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+        "linearTranslationInertialAttitude" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     this->nameOfInertialAngVelocityProperty =
-      "linearTranslationInertialAngVelocity" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
+        "linearTranslationInertialAngVelocity" + std::to_string(LinearTranslationOneDOFStateEffector::effectorID);
     LinearTranslationOneDOFStateEffector::effectorID++;
 }
 
@@ -308,7 +308,7 @@ void LinearTranslationOneDOFStateEffector::updateEffectorMassProps(double integT
     this->effProps.rEffPrime_CB_B = this->rPrime_FcB_B;
     this->effProps.IEffPntB_B = this->IPntFc_B + this->mass * this->rTilde_FcB_B * this->rTilde_FcB_B.transpose();
     this->effProps.IEffPrimePntB_B =
-      -this->mass * (this->rPrimeTilde_FcB_B * this->rTilde_FcB_B + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
+        -this->mass * (this->rPrimeTilde_FcB_B * this->rTilde_FcB_B + this->rTilde_FcB_B * this->rPrimeTilde_FcB_B);
 }
 
 /*! @brief Update the effector Backsubstitution contributions.
@@ -371,19 +371,19 @@ void LinearTranslationOneDOFStateEffector::computeBackSubContributions(BackSubMa
 
         backSubContr.vecTrans = this->dcm_FB.transpose() * attBodyForce_F;
         backSubContr.vecRot =
-          this->dcm_FB.transpose() * attBodyTorquePntF_F +
-          (this->r_F0B_B + this->rho * this->fHat_B).cross(this->dcm_FB.transpose() * attBodyForce_F);
+            this->dcm_FB.transpose() * attBodyTorquePntF_F +
+            (this->r_F0B_B + this->rho * this->fHat_B).cross(this->dcm_FB.transpose() * attBodyForce_F);
         return;
     }
 
     this->aRho = -this->fHat_B.transpose();
     this->bRho = this->fHat_B.cross(this->r_FcB_B);
     this->cRho =
-      1.0 / this->mass *
-      (this->motorForce - this->k * (this->rho - this->rhoRef) - this->c * (this->rhoDot - this->rhoDotRef) +
-       this->fHat_B.transpose() * (F_g + this->dcm_FB.transpose() * attBodyForce_F -
-                                   this->mass * (2 * this->omega_BN_B.cross(this->rPrime_FcB_B) +
-                                                 this->omega_BN_B.cross(this->omega_BN_B.cross(this->r_FcB_B)))));
+        1.0 / this->mass *
+        (this->motorForce - this->k * (this->rho - this->rhoRef) - this->c * (this->rhoDot - this->rhoDotRef) +
+         this->fHat_B.transpose() * (F_g + this->dcm_FB.transpose() * attBodyForce_F -
+                                     this->mass * (2 * this->omega_BN_B.cross(this->rPrime_FcB_B) +
+                                                   this->omega_BN_B.cross(this->omega_BN_B.cross(this->r_FcB_B)))));
 
     Eigen::Vector3d rCrossFHat_B = this->r_FcB_B.cross(this->fHat_B);
     backSubContr.matrixA = this->mass * this->fHat_B * this->aRho.transpose();
@@ -432,7 +432,7 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
     Eigen::Vector3d term1 = 2.0 * omegaTilde_PB_P * rPPrime_FcP_P + omegaPrimeTilde_PB_P * r_FcP_P +
                             omegaTilde_PB_P * omegaTilde_PB_P * r_FcP_P + rPrimePrime_PB_P;
     Eigen::Vector3d term2 =
-      rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P;
+        rPrimePrime_PB_P + 2.0 * omegaTilde_BN_P * rPrime_PB_P + omegaTilde_BN_P * omegaTilde_BN_P * r_PB_P;
     Eigen::Vector3d term3 = omegaPrime_PB_P + omegaTilde_BN_P * omega_PB_P;
     backSubContr.vecTrans += -this->mass * term1 - this->mass * this->aRho.transpose() * term2 * fHat_P -
                              this->mass * this->bRho.transpose() * term3 * fHat_P;
@@ -453,7 +453,7 @@ void LinearTranslationOneDOFStateEffector::addPrescribedMotionCouplingContributi
     Eigen::Vector3d vecRotTerm1 = -IPntFc_P * omegaPrime_PB_P - omegaTilde_PN_P * IPntFc_P * omega_PB_P;
     Eigen::Vector3d vecRotTerm2 = -this->mass * rTilde_FcB_P * term1;
     Eigen::Vector3d vecRotTerm3 =
-      -this->mass * (omegaTilde_BN_P * rTilde_PB_P - omegaTilde_PB_P * rTilde_FcP_P) * rPPrime_FcP_P;
+        -this->mass * (omegaTilde_BN_P * rTilde_PB_P - omegaTilde_PB_P * rTilde_FcP_P) * rPPrime_FcP_P;
     -this->mass * omegaTilde_BN_P * rTilde_FcB_P*(omegaTilde_PB_P * r_FcP_P + rPrime_PB_P);
     Eigen::Vector3d vecRotTerm4 = -this->mass * this->cRho * rTilde_PB_P * fHat_P;
     Eigen::Vector3d vecRotTerm5 = -this->mass * rTilde_FcB_P * fHat_P * (this->aRho.transpose() * term2) -
@@ -530,9 +530,9 @@ void LinearTranslationOneDOFStateEffector::computeTranslatingBodyInertialStates(
     Eigen::Vector3d rDot_FcB_B = this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B);
     this->v_FcN_N = (Eigen::Vector3d) * this->inertialVelocityProperty + this->dcm_BN.transpose() * rDot_FcB_B;
     *this->v_FN_N =
-      (Eigen::Vector3d) * this->inertialVelocityProperty +
-      this->dcm_BN.transpose() *
-        (this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
+        (Eigen::Vector3d) * this->inertialVelocityProperty +
+        this->dcm_BN.transpose() *
+            (this->rPrime_FcB_B + this->omega_BN_B.cross(this->r_FcB_B - this->dcm_FB.transpose() * this->r_FcF_F));
 }
 
 /*! @brief Update the scheduled effector state.

@@ -50,8 +50,8 @@ class DynParamRegisterer
      * @param stateNamePrefix Prefix appended to every registered state name.
      */
     DynParamRegisterer(DynParamManager& manager, std::string stateNamePrefix)
-      : manager(manager)
-      , stateNamePrefix(stateNamePrefix)
+        : manager(manager)
+        , stateNamePrefix(stateNamePrefix)
     {
     }
 

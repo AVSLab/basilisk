@@ -86,8 +86,9 @@ void Update_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, in
          magnetic field value. */
     bFieldNormSqrd = v3Dot(tamSensorBodyInMsgBuffer.tam_B, tamSensorBodyInMsgBuffer.tam_B);
     if (bFieldNormSqrd > DB0_EPS) {
-        v3Cross(
-          tamSensorBodyInMsgBuffer.tam_B, tauRequestInMsgBuffer.torqueRequestBody, dipoleRequestOutMsgBuffer.dipole_B);
+        v3Cross(tamSensorBodyInMsgBuffer.tam_B,
+                tauRequestInMsgBuffer.torqueRequestBody,
+                dipoleRequestOutMsgBuffer.dipole_B);
         v3Scale(1 / bFieldNormSqrd, dipoleRequestOutMsgBuffer.dipole_B, dipoleRequestOutMsgBuffer.dipole_B);
     }
 

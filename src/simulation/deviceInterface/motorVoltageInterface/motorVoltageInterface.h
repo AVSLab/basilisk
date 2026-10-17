@@ -52,7 +52,7 @@ class MotorVoltageInterface : public SysModel
 
   public:
     ReadFunctor<ArrayMotorVoltageMsgPayload>
-      motorVoltageInMsg;                                   //!< --     Message that contains motor voltage input states
+        motorVoltageInMsg;                                 //!< --     Message that contains motor voltage input states
     Message<ArrayMotorTorqueMsgPayload> motorTorqueOutMsg; //!< --     Output Message for motor torques
     Eigen::VectorXd voltage2TorqueGain;                    //!< Nm/V   gain to convert voltage to motor torque
     Eigen::VectorXd scaleFactor;                           //!<        scale the output - like a constant gain error

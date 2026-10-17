@@ -39,7 +39,7 @@ struct MJGeomInfo
     std::vector<double> pos = std::vector<double>(3);  ///< Position in body frame (3 elements).
     std::vector<double> quat = std::vector<double>(4); ///< Quaternion in body frame (4 elements: w, x, y, z).
     std::vector<double> rgba =
-      std::vector<double>(4); ///< Effective RGBA after geom/material precedence (0-1 range, alpha last).
+        std::vector<double>(4); ///< Effective RGBA after geom/material precedence (0-1 range, alpha last).
 };
 
 #endif

@@ -95,6 +95,6 @@ void Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime
      quick-start guide which module is being executed */
     char info[MAX_LOGGING_LENGTH];
     snprintf(
-      info, sizeof(info), "C Module ID %lld ran Update at %fs", (long long int)moduleID, (double)callTime / (1e9));
+        info, sizeof(info), "C Module ID %lld ran Update at %fs", (long long int)moduleID, (double)callTime / (1e9));
     _bskLog(configData->bskLogger, BSK_INFORMATION, info);
 }

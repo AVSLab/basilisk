@@ -109,7 +109,7 @@ std::vector<std::pair<std::string, std::string>> readCustomDoubleSplit(mjSpec* s
 } // namespace
 
 MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::string>& files)
-  : scene(scene)
+    : scene(scene)
 {
     this->virtualFileSystem.reset(new mjVFS());
     mj_defaultVFS(virtualFileSystem.get());
@@ -157,7 +157,7 @@ MJSpec::MJSpec(MJScene& scene, std::string xmlString, const std::vector<std::str
     this->model.reset(mj_compile(this->spec.get(), this->virtualFileSystem.get()));
     if (!this->model) {
         MJBasilisk::detail::logAndThrow<std::runtime_error>(
-          compileErrorMessage(this->spec.get(), "Failed to compile the initial MuJoCo model"));
+            compileErrorMessage(this->spec.get(), "Failed to compile the initial MuJoCo model"));
     }
     this->data.reset(mj_makeData(this->model.get()));
     if (!this->data) {
@@ -224,13 +224,13 @@ void MJSpec::loadActuators()
     for (auto&& [actuatorName, siteHint] :
          readCustomDoubleSplit(this->spec.get(), "basilisk:forcetorqueactuator", ' ', '@')) {
         this->actuators.emplace_back(
-          this->createActuator<MJForceTorqueActuator>(actuatorName, siteHint, actuatorObjects));
+            this->createActuator<MJForceTorqueActuator>(actuatorName, siteHint, actuatorObjects));
     }
     // For those actuators not used by the composite actuators, we generate
     // a MJSingleActuator
     for (auto&& [actuatorName, actuatorObj] : actuatorObjects) {
         this->actuators.emplace_back(
-          std::make_unique<MJSingleActuator>(actuatorName, std::vector{ std::move(actuatorObj) }));
+            std::make_unique<MJSingleActuator>(actuatorName, std::vector{ std::move(actuatorObj) }));
     }
 }
 
@@ -346,7 +346,7 @@ MJSingleActuator& MJSpec::addJointSingleActuator(const std::string& name, const 
     newMjsActuator->biastype = mjBIAS_NONE;
     newMjsActuator->gainprm[0] = 1;
     auto& actuator = this->actuators.emplace_back(
-      std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
+        std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
@@ -370,7 +370,7 @@ MJSingleActuator& MJSpec::addSingleActuator(const std::string& name,
     newMjsActuator->gainprm[0] = 1;
     std::copy_n(gear.data(), 6, newMjsActuator->gear);
     auto& actuator = this->actuators.emplace_back(
-      std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
+        std::make_unique<MJSingleActuator>(name, std::vector{ MJActuatorObject{ newMjsActuator } }));
     return *static_cast<MJSingleActuator*>(actuator.get());
 }
 
@@ -382,14 +382,14 @@ bool MJSpec::recompileIfNeeded()
     this->scene.requireSceneMutationAllowed("MuJoCo recompilation");
 
     std::unique_ptr<mjModel, MJBasilisk::detail::mjModelDeleter> candidate(
-      mj_compile(this->spec.get(), this->virtualFileSystem.get()));
+        mj_compile(this->spec.get(), this->virtualFileSystem.get()));
     if (!candidate) {
         MJBasilisk::detail::logAndThrow<std::runtime_error>(
-          compileErrorMessage(this->spec.get(), "Failed to compile the pending MuJoCo model"));
+            compileErrorMessage(this->spec.get(), "Failed to compile the pending MuJoCo model"));
     }
     if (!this->scene.modelTopologyMatches(*candidate)) {
         MJBasilisk::detail::logAndThrow<std::logic_error>(
-          "MuJoCo recompilation would change finalized state or qpos-policy topology.");
+            "MuJoCo recompilation would change finalized state or qpos-policy topology.");
     }
     auto objectPrefixMatches = [this, &candidate](mjtObj type, mjtSize currentCount, mjtSize candidateCount) {
         if (candidateCount < currentCount) {
@@ -414,7 +414,7 @@ bool MJSpec::recompileIfNeeded()
          !objectPrefixMatches(mjOBJ_EQUALITY, this->model->neq, candidate->neq) ||
          !objectPrefixMatches(mjOBJ_PLUGIN, this->model->nplugin, candidate->nplugin))) {
         MJBasilisk::detail::logAndThrow<std::logic_error>(
-          "MuJoCo recompilation would reorder or remove runtime-state objects.");
+            "MuJoCo recompilation would reorder or remove runtime-state objects.");
     }
 
     auto intPrefixMatches = [](const int* current, const int* pending, mjtSize count) {
@@ -432,7 +432,7 @@ bool MJSpec::recompileIfNeeded()
          !intPrefixMatches(this->model->plugin_statenum, candidate->plugin_statenum, this->model->nplugin) ||
          !intPrefixMatches(this->model->body_mocapid, candidate->body_mocapid, this->model->nbody))) {
         MJBasilisk::detail::logAndThrow<std::logic_error>(
-          "MuJoCo recompilation would change positional runtime-state layout.");
+            "MuJoCo recompilation would change positional runtime-state layout.");
     }
 
     std::unique_ptr<mjData, MJBasilisk::detail::mjDataDeleter> candidateData(mj_makeData(candidate.get()));
@@ -452,11 +452,11 @@ bool MJSpec::recompileIfNeeded()
     std::copy_n(this->data->ctrl, std::min(this->model->nu, candidate->nu), candidateData->ctrl);
     std::copy_n(this->data->qfrc_applied, std::min(this->model->nv, candidate->nv), candidateData->qfrc_applied);
     std::copy_n(
-      this->data->xfrc_applied, 6 * std::min(this->model->nbody, candidate->nbody), candidateData->xfrc_applied);
+        this->data->xfrc_applied, 6 * std::min(this->model->nbody, candidate->nbody), candidateData->xfrc_applied);
     std::copy_n(this->data->eq_active, std::min(this->model->neq, candidate->neq), candidateData->eq_active);
     std::copy_n(this->data->mocap_pos, 3 * std::min(this->model->nmocap, candidate->nmocap), candidateData->mocap_pos);
     std::copy_n(
-      this->data->mocap_quat, 4 * std::min(this->model->nmocap, candidate->nmocap), candidateData->mocap_quat);
+        this->data->mocap_quat, 4 * std::min(this->model->nmocap, candidate->nmocap), candidateData->mocap_quat);
     std::copy_n(this->data->userdata, std::min(this->model->nuserdata, candidate->nuserdata), candidateData->userdata);
 
     this->model.swap(candidate);

@@ -211,7 +211,7 @@ void sunlineTimeUpdate(sunlineEKFConfig* configData, double updateTime)
     mSetSubMatrix(Id, 3, 3, Gamma, 6, 3, 0, 0);
 
     mMultMt(
-      configData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
+        configData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
     mMultM(Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES, gammaQGammaT);
     mAdd(configData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, configData->covarBar);
 
@@ -350,7 +350,7 @@ void sunlineMeasUpdate(sunlineEKFConfig* configData, double updateTime)
 
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(
-      configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
+        configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
 
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead
      * to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance,

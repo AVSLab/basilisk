@@ -99,8 +99,8 @@ struct HingedPanel
 
 /*! @brief NHingedRigidBodyStateEffector class */
 class NHingedRigidBodyStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     std::string nameOfThetaState;    //!< Identifier for the theta state data container
@@ -165,9 +165,9 @@ class NHingedRigidBodyStateEffector final
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>>
-      ownedNHingedRigidBodyOutMsgs; //!< Storage for nHingedRigidBodyOutMsgs.
+        ownedNHingedRigidBodyOutMsgs; //!< Storage for nHingedRigidBodyOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>>
-      ownedNHingedRigidBodyConfigLogOutMsgs; //!< Storage for nHingedRigidBodyConfigLogOutMsgs.
+        ownedNHingedRigidBodyConfigLogOutMsgs; //!< Storage for nHingedRigidBodyConfigLogOutMsgs.
 };
 
 #endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */

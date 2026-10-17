@@ -43,9 +43,9 @@ class SpaceToGroundTransmitter : public DataNodeBase
     double packetSize; //!< Size of packet to downklink (bytes)
     int numBuffers;    //!< Number of buffers the transmitter can access
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>>
-      storageUnitInMsgs; //!< vector of input messages for storage unit messages
+        storageUnitInMsgs; //!< vector of input messages for storage unit messages
     std::vector<ReadFunctor<AccessMsgPayload>>
-      groundLocationAccessInMsgs; //!< vector of input message for ground location access
+        groundLocationAccessInMsgs; //!< vector of input message for ground location access
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer; //!< local copy of data storage messages
     uint64_t hasAccess;                                             //!< class variable
     BSKLogger bskLogger;                                            //!< class variable

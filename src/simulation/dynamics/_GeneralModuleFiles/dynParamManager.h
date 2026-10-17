@@ -167,7 +167,7 @@ class DynParamManager
 
   private:
     std::map<std::string, Eigen::MatrixXd>
-      dynProperties;                         //!< Named, non-integrated matrices; map nodes keep pointers stable.
+        dynProperties;                       //!< Named, non-integrated matrices; map nodes keep pointers stable.
     std::unique_ptr<StateRegistry> registry; //!< Owns registration and buffer storage at a stable address.
 };
 

@@ -190,11 +190,11 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
     if (this->scStateInMsgs.size() > 0) {
         scRead = true;
         this->scStateExtrapolation.prepareFromMessages(
-          CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
+            CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
         for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
             scMsg = this->scStateExtrapolation.applyMessage(
-              this->scStateInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
+                this->scStateInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -210,7 +210,7 @@ bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
     bool planetRead = true;
     if (this->planetPosInMsg.isLinked()) {
         this->planetState = this->scStateExtrapolation.applyPlanetMessage(
-          this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
+            this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
         planetRead = this->planetPosInMsg.isWritten();
     }
 
@@ -292,7 +292,7 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     if (this->readMessages(CurrentSimNanos)) {
         // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
         const uint64_t epochNanos =
-          this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+            this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
         updateLocalMagField(static_cast<double>(epochNanos) * NANO2SEC);
     }
 

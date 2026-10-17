@@ -58,7 +58,7 @@ class Spacecraft : public DynamicObject
     Eigen::Vector3d dvAccum_CN_B; //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body
                                   //!< frame coordinates
     Eigen::Vector3d
-      dvAccum_BN_B; //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
+        dvAccum_BN_B; //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_CN_N; //!< [m/s] accumulated delta-v of center of mass relative to inertial frame in
                                   //!< inertial frame coordinates
     Eigen::Vector3d nonConservativeAccelpntB_B; //!< [m/s/s] Current spacecraft body acceleration in the B frame
@@ -79,8 +79,8 @@ class Spacecraft : public DynamicObject
     void computeEnergyMomentum(double time); //!< This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);     //!< This method computes the total mass properties of the s/c
     void calcForceTorqueFromStateEffectors(
-      double time,
-      Eigen::Vector3d omega_BN_B); //!< This method computes the force and torque from the stateEffectors
+        double time,
+        Eigen::Vector3d omega_BN_B); //!< This method computes the force and torque from the stateEffectors
     void Reset(uint64_t CurrentSimNanos);
     void writeOutputStateMessages(uint64_t clockTime); //!< Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);        //!< Runtime hook back into Basilisk arch
@@ -88,8 +88,8 @@ class Spacecraft : public DynamicObject
     void equationsOfMotion(double integTimeSeconds,
                            double timeStep); //!< This method computes the equations of motion for the whole system
     void equationsOfMotionDiffusion(
-      double integTimeSeconds,
-      double timeStep); //!< This method computes the diffusion equations of motion for the whole system
+        double integTimeSeconds,
+        double timeStep); //!< This method computes the diffusion equations of motion for the whole system
     void addStateEffector(StateEffector* newSateEffector);        //!< Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector* newDynamicEffector); //!< Attaches a dynamicEffector
     void preIntegration(uint64_t callTimeNanos) final;            //!< method to perform pre-integration steps

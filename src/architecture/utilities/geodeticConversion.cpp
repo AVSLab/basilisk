@@ -52,7 +52,7 @@ Eigen::Vector3d PCPF2LLA(Eigen::Vector3d pcpfPosition, double planetEqRad, doubl
     llaPosition.fill(0.0);
     if (planetPoRad < 0.0) {
         llaPosition[2] =
-          pcpfPosition.norm() - planetEqRad; //  Altitude is the height above assumed-spherical planet surface
+            pcpfPosition.norm() - planetEqRad; //  Altitude is the height above assumed-spherical planet surface
         llaPosition[1] = atan2(pcpfPosition[1], pcpfPosition[0]);
         llaPosition[0] = atan2(pcpfPosition[2], sqrt(pow(pcpfPosition[0], 2.0) + pow(pcpfPosition[1], 2.0)));
     } else {

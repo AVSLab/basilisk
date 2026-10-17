@@ -50,9 +50,9 @@ class FacetedSpacecraftProjectedArea : public SysModel
     ReadFunctor<SpicePlanetStateMsgPayload> sunStateInMsg; //!< Sun spice ephemeris input message
     ReadFunctor<BodyHeadingMsgPayload> bodyHeadingInMsg;   //!< Body heading input message
     std::vector<ReadFunctor<FacetElementBodyMsgPayload>>
-      facetElementBodyInMsgs; //!< List of facet geometry input data (Expressed in hub B frame)
+        facetElementBodyInMsgs; //!< List of facet geometry input data (Expressed in hub B frame)
     std::vector<Message<ProjectedAreaMsgPayload>*>
-      facetProjectedAreaOutMsgs;                               //!< List of facet projected area output messages
+        facetProjectedAreaOutMsgs;                             //!< List of facet projected area output messages
     Message<ProjectedAreaMsgPayload> totalProjectedAreaOutMsg; //!< Total spacecraft projected area output message
     Message<ProjectedAreaMsgPayload> surfaceAreaOutMsg;        //!< Spacecraft surface area output message
 
@@ -65,7 +65,7 @@ class FacetedSpacecraftProjectedArea : public SysModel
     /* Facet input message data */
     std::vector<double> facetAreaList; //!< [m^2] List of facet areas
     std::vector<Eigen::Vector3d>
-      facetNHat_BList; //!< [-] List of facet normal vectors expressed in hub B frame components
+        facetNHat_BList; //!< [-] List of facet normal vectors expressed in hub B frame components
 
     /* Facet output message data */
     std::vector<double> facetProjectedAreaList{}; //!< [m^2] List of facet projected areas
@@ -74,7 +74,7 @@ class FacetedSpacecraftProjectedArea : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<ProjectedAreaMsgPayload>>>
-      ownedFacetProjectedAreaOutMsgs; //!< Storage for facetProjectedAreaOutMsgs.
+        ownedFacetProjectedAreaOutMsgs; //!< Storage for facetProjectedAreaOutMsgs.
 };
 
 #endif

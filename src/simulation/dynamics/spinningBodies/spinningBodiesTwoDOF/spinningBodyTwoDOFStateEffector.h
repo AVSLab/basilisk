@@ -42,8 +42,8 @@
 
 /*! @brief spinning body state effector class */
 class SpinningBodyTwoDOFStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     double mass1 = 0.0;               //!< [kg] mass of lower spinning body (can be 0)
@@ -64,12 +64,12 @@ class SpinningBodyTwoDOFStateEffector final
     std::string nameOfInertialVelocityProperty1; //!< identifier for the lower spinning body inertial velocity property
     std::string nameOfInertialAttitudeProperty1; //!< identifier for the lower spinning body inertial attitude property
     std::string
-      nameOfInertialAngVelocityProperty1; //!< identifier for the lower spinning body inertial angular velocity property
+        nameOfInertialAngVelocityProperty1; //!< identifier for the lower spinning body inertial angular velocity property
     std::string nameOfInertialPositionProperty2; //!< identifier for the upper spinning body inertial position property
     std::string nameOfInertialVelocityProperty2; //!< identifier for the upper spinning body inertial velocity property
     std::string nameOfInertialAttitudeProperty2; //!< identifier for the upper spinning body inertial attitude property
     std::string
-      nameOfInertialAngVelocityProperty2; //!< identifier for the upper spinning body inertial angular velocity property
+        nameOfInertialAngVelocityProperty2; //!< identifier for the upper spinning body inertial angular velocity property
     Eigen::Vector3d r_S1B_B{
         0.0,
         0.0,
@@ -89,7 +89,7 @@ class SpinningBodyTwoDOFStateEffector final
     Eigen::Matrix3d dcm_S20S1;    //!< DCM from the S1 frame to the S20 frame (S2 frame for theta2=0)
     std::vector<Message<HingedRigidBodyMsgPayload>*> spinningBodyOutMsgs; //!< vector of state output messages
     std::vector<Message<SCStatesMsgPayload>*>
-      spinningBodyConfigLogOutMsgs;                           //!< vector of spinning body state config log messages
+        spinningBodyConfigLogOutMsgs;                         //!< vector of spinning body state config log messages
     ReadFunctor<ArrayMotorTorqueMsgPayload> motorTorqueInMsg; //!< (optional) motor torque input message name
     ReadFunctor<ArrayEffectorLockMsgPayload> motorLockInMsg;  //!< (optional) motor lock input message name
     std::vector<ReadFunctor<HingedRigidBodyMsgPayload>> spinningBodyRefInMsgs{
@@ -109,7 +109,7 @@ class SpinningBodyTwoDOFStateEffector final
                             int segment) override;             //!< Method for adding attached dynamic effector
     void registerProperties(DynParamManager& states) override; //!< Method for registering the SB inertial properties
     void linkInPrescribedMotionProperties(
-      DynParamManager& states) override; //!< Method for getting access to prescribed motion properties
+        DynParamManager& states) override; //!< Method for getting access to prescribed motion properties
     void updateContributions(double integTime,
                              BackSubMatrices& backSubContr,
                              Eigen::MRPd sigma_BN,
@@ -120,15 +120,15 @@ class SpinningBodyTwoDOFStateEffector final
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for SB to compute its derivatives
     void updateEffectorMassProps(
-      double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
+        double integTime) override; //!< Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(
-      double integTime,
-      Eigen::Vector3d& rotAngMomPntCContr_B,
-      double& rotEnergyContr,
-      Eigen::Vector3d omega_BN_B) override;   //!< Method for computing energy and momentum for SBs
+        double integTime,
+        Eigen::Vector3d& rotAngMomPntCContr_B,
+        double& rotEnergyContr,
+        Eigen::Vector3d omega_BN_B) override; //!< Method for computing energy and momentum for SBs
     void computeSpinningBodyInertialStates(); //!< Method for computing the SB's states
     void addPrescribedMotionCouplingContributions(BackSubMatrices& backSubContr)
-      override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
+        override; //!< Method for adding coupling contributions for state effector branching on prescribed motion
 
   private:
     void validateConfiguration();
@@ -269,9 +269,9 @@ class SpinningBodyTwoDOFStateEffector final
     Eigen::Vector3d v_Sc1N_N{ 0.0, 0.0, 0.0 }; //!< [m/s] inertial velocity vector of Sc1 relative to inertial frame
     Eigen::Vector3d v_Sc2N_N{ 0.0, 0.0, 0.0 }; //!< [m/s] inertial velocity vector of Sc2 relative to inertial frame
     Eigen::MatrixXd*
-      r_S1N_N; //!< [m] position vector of lower spinning body origin S1 relative to the inertial frame origin N
+        r_S1N_N; //!< [m] position vector of lower spinning body origin S1 relative to the inertial frame origin N
     Eigen::MatrixXd*
-      r_S2N_N; //!< [m] position vector of upper spinning body origin S2 relative to the inertial frame origin N
+        r_S2N_N; //!< [m] position vector of upper spinning body origin S2 relative to the inertial frame origin N
     Eigen::MatrixXd* v_S1N_N;      //!< [m/s] inertial velocity vector of S1 relative to inertial frame
     Eigen::MatrixXd* v_S2N_N;      //!< [m/s] inertial velocity vector of S2 relative to inertial frame
     Eigen::MatrixXd* sigma_S1N;    //!< MRP attitude of frame S1 relative to inertial frame
@@ -286,9 +286,9 @@ class SpinningBodyTwoDOFStateEffector final
     double theta2Dot = 0.0;             //!< [rad/s] second axis angle rate
     StateData* hubSigmaState = nullptr; //!< hub attitude state, read live for the published kinematics
     Eigen::MatrixXd* inertialPositionProperty =
-      nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+        nullptr; //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd* inertialVelocityProperty =
-      nullptr;                           //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+        nullptr;                         //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
     StateData* theta1State = nullptr;    //!< state manager of theta1 for spinning body
     StateData* theta1DotState = nullptr; //!< state manager of theta1Dot for spinning body
     StateData* theta2State = nullptr;    //!< state manager of theta2 for spinning body
@@ -299,9 +299,9 @@ class SpinningBodyTwoDOFStateEffector final
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<HingedRigidBodyMsgPayload>>>
-      ownedSpinningBodyOutMsgs; //!< Storage for spinningBodyOutMsgs.
+        ownedSpinningBodyOutMsgs; //!< Storage for spinningBodyOutMsgs.
     std::vector<std::unique_ptr<Message<SCStatesMsgPayload>>>
-      ownedSpinningBodyConfigLogOutMsgs; //!< Storage for spinningBodyConfigLogOutMsgs.
+        ownedSpinningBodyConfigLogOutMsgs; //!< Storage for spinningBodyConfigLogOutMsgs.
 };
 
 #endif /* SPINNING_BODY_TWO_DOF_STATE_EFFECTOR_H */

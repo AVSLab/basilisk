@@ -78,7 +78,7 @@ class MJObject
      * @param mjsObject Pointer to the MuJoCo object.
      */
     MJObject(mjsObjectType* mjsObject)
-      : mjsObject(mjsObject)
+        : mjsObject(mjsObject)
     {
         static size_t namelessIndex = 0; // figure out a better way?
 
@@ -105,8 +105,8 @@ class MJObject
         auto idOrFail = mj_name2id(mujocoModel, mjObjectTypeInt, this->name.c_str());
         if (idOrFail < 0) {
             MJBasilisk::detail::logAndThrow<std::runtime_error>(
-              "Could not find " + std::string(MJBasilisk::detail::getObjectTypeName<mjsObjectType>()) +
-              " in MuJoCo with name: " + this->name);
+                "Could not find " + std::string(MJBasilisk::detail::getObjectTypeName<mjsObjectType>()) +
+                " in MuJoCo with name: " + this->name);
         }
 
         this->id = size_t(idOrFail);

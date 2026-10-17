@@ -55,8 +55,8 @@
  * @f$\sigma_{\mathrm{st}}@f$, and stationarity holds by construction.
  */
 class IgbmNoiseStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     /*! @brief Constructor. */

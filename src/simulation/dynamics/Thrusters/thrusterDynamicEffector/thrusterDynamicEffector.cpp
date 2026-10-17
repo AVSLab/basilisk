@@ -28,11 +28,11 @@
 
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
-  : stepsInRamp(30)
-  , mDotTotal(0.0)
-  , fuelMass(-1.0)
-  , prevFireTime(0.0)
-  , prevCommandTime(0xFFFFFFFFFFFFFFFF)
+    : stepsInRamp(30)
+    , mDotTotal(0.0)
+    , fuelMass(-1.0)
+    , prevFireTime(0.0)
+    , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
     CallCounts = 0;
     forceExternal_B.fill(0.0);
@@ -98,7 +98,7 @@ void ThrusterDynamicEffector::validateConfiguration()
 {
     if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
         this->bskLogger.bskError(
-          "ThrusterDynamicEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.", MAX_EFF_CNT);
+            "ThrusterDynamicEffector: a linked cmdsInMsg supports at most MAX_EFF_CNT (%d) thrusters.", MAX_EFF_CNT);
     }
 }
 
@@ -159,11 +159,11 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
             // For each case where we are above the minimum firing request, reset the thruster
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd = *CmdIt;
             this->thrusterData[THIter]->ThrustOps.fireCounter +=
-              this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0 : 1;
+                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? 0 : 1;
         } else {
             // Will ensure that thruster shuts down once this cmd expires
             this->thrusterData[THIter]->ThrustOps.ThrustOnCmd =
-              this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? *CmdIt : 0.0;
+                this->thrusterData[THIter]->ThrustOps.ThrustFactor > 0.0 ? *CmdIt : 0.0;
         }
         this->thrusterData[THIter]->ThrustOps.ThrusterStartTime = currentTime;
         this->thrusterData[THIter]->ThrustOps.PreviousIterTime = currentTime;
@@ -354,7 +354,7 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeSt
                 mDotNozzle = tmpThrustMag / (EARTH_GRAV * it->steadyIsp * ops->IspFactor * ops->ispBlowDownFactor);
             }
             this->forceExternal_B +=
-              2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
+                2 * mDotNozzle * (this->bodyToHubInfo.at(index).omega_FB_B + omegaLocal_BN_B).cross(thrustLocation_B);
 
             // Add the mass depletion torque contribution
             BM1 = thrustDirection_B;
@@ -519,11 +519,11 @@ void ThrusterDynamicEffector::ComputeThrusterFire(const std::shared_ptr<THRSimCo
         // If the current on-time is less than the ramp delta, set that ramp thrust factor
         if (LocalOnRamp < it->TimeDelta) {
             ops->ThrustFactor = (it->ThrustFactor - prevValidThrFactor) / (it->TimeDelta - prevValidDelta) *
-                                  (LocalOnRamp - prevValidDelta) +
+                                    (LocalOnRamp - prevValidDelta) +
                                 prevValidThrFactor;
-            ops->IspFactor =
-              (it->IspFactor - prevValidIspFactor) / (it->TimeDelta - prevValidDelta) * (LocalOnRamp - prevValidDelta) +
-              prevValidIspFactor;
+            ops->IspFactor = (it->IspFactor - prevValidIspFactor) / (it->TimeDelta - prevValidDelta) *
+                                 (LocalOnRamp - prevValidDelta) +
+                             prevValidIspFactor;
             ops->ThrustOnRampTime = LocalOnRamp;
             ops->totalOnTime += (currentTime - ops->PreviousIterTime);
             ops->PreviousIterTime = currentTime;
@@ -570,10 +570,10 @@ void ThrusterDynamicEffector::ComputeThrusterShut(const std::shared_ptr<THRSimCo
         // Once we find the location in the off-ramp, set that thrust factor to current
         if (LocalOffRamp < it->TimeDelta) {
             ops->ThrustFactor = (it->ThrustFactor - prevValidThrFactor) / (it->TimeDelta - prevValidDelta) *
-                                  (LocalOffRamp - prevValidDelta) +
+                                    (LocalOffRamp - prevValidDelta) +
                                 prevValidThrFactor;
             ops->IspFactor = (it->IspFactor - prevValidIspFactor) / (it->TimeDelta - prevValidDelta) *
-                               (LocalOffRamp - prevValidDelta) +
+                                 (LocalOffRamp - prevValidDelta) +
                              prevValidIspFactor;
             ops->ThrustOffRampTime = LocalOffRamp;
             ops->PreviousIterTime = currentTime;
@@ -622,7 +622,7 @@ double ThrusterDynamicEffector::thrFactorToTime(const std::shared_ptr<THRSimConf
 
         // Linearly interpolate between the points, check for numerical garbage, and return clean interpolation
         rampTime = (it->TimeDelta - prevValidDelta) / (it->ThrustFactor - prevValidThrFactor) *
-                     (thrData->ThrustOps.ThrustFactor - prevValidThrFactor) +
+                       (thrData->ThrustOps.ThrustFactor - prevValidThrFactor) +
                    prevValidDelta;
         rampTime = rampTime < 0.0 ? 0.0 : rampTime;
         break;

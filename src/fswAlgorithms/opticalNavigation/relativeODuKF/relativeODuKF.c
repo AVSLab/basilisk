@@ -73,8 +73,8 @@ void Reset_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t modul
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
-      (double)configData->numStates;
+        configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
+        (double)configData->numStates;
     configData->gamma = sqrt((double)configData->numStates + configData->lambdaVal);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
@@ -98,7 +98,7 @@ void Reset_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t modul
     badUpdate += ukfCholDecomp(configData->sBar, (int)configData->numStates, (int)configData->numStates, tempMatrix);
 
     badUpdate +=
-      ukfCholDecomp(configData->qNoise, (int)configData->numStates, (int)configData->numStates, configData->sQnoise);
+        ukfCholDecomp(configData->qNoise, (int)configData->numStates, (int)configData->numStates, configData->sQnoise);
 
     mCopy(tempMatrix, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates, configData->numStates, configData->sQnoise);
@@ -284,9 +284,9 @@ int relODuKFTimeUpdate(RelODuKFConfig* configData, double updateTime)
     uint64_t i, Index;
     double sBarT[ODUKF_N_STATES * ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
     double xComp[ODUKF_N_STATES],
-      AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES) * ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
+        AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES) * ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
     double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES * ODUKF_N_STATES],
-      xErr[ODUKF_N_STATES];                            // Row of A mat, R of QR decomp of A, state error
+        xErr[ODUKF_N_STATES];                          // Row of A mat, R of QR decomp of A, state error
     double sBarUp[ODUKF_N_STATES * ODUKF_N_STATES];    // S bar cholupdate
     double* spPtr;                                     // sigma point intermediate varaible
     double procNoise[ODUKF_N_STATES * ODUKF_N_STATES]; // process noise
@@ -415,12 +415,12 @@ int relODuKFMeasUpdate(RelODuKFConfig* configData)
     double yBar[3], syInv[3 * 3];                                            // measurement, Sy inv
     double kMat[ODUKF_N_STATES * 3], cholNoise[ODUKF_N_MEAS * ODUKF_N_MEAS]; // Kalman Gain, chol decomp of noise
     double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES * ODUKF_N_STATES],
-      tempYVec[3];                           // state error, U column eq 28, intermediate variables
+        tempYVec[3];                         // state error, U column eq 28, intermediate variables
     double AT[(2 * ODUKF_N_STATES + 3) * 3]; // Process noise matrix
     double rAT[3 * 3], syT[3 * 3];           // QR R decomp, Sy transpose
     double sy[3 * 3];                        // Chol of covariance
     double updMat[3 * 3], pXY[ODUKF_N_STATES * 3],
-      Umat[ODUKF_N_STATES * 3]; // Intermediate variable, covariance eq 26, U eq 28
+        Umat[ODUKF_N_STATES * 3]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate = 0;
 
     vCopy(configData->state, configData->numStates, configData->statePrev);

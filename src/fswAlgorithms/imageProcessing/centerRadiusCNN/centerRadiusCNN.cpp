@@ -110,7 +110,7 @@ void CenterRadiusCNN::UpdateState(uint64_t CurrentSimNanos)
     }
     /*!-  evaluate CNN on image */
     cv::Mat img_blob =
-      cv::dnn::blobFromImage(imageCV, 1.0 / 255.0, cv::Size(imageCV.rows, imageCV.cols), cv::Scalar(0, 0, 0), true);
+        cv::dnn::blobFromImage(imageCV, 1.0 / 255.0, cv::Size(imageCV.rows, imageCV.cols), cv::Scalar(0, 0, 0), true);
 
     positionNet2.setInput(img_blob);
     cv::Mat output = positionNet2.forward();

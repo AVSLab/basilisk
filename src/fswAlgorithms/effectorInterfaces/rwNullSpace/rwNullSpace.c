@@ -111,7 +111,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t
 void Update_rwNullSpace(rwNullSpaceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     ArrayMotorTorqueMsgPayload
-      cntrRequest;                     /* [Nm]  array of the RW motor torque solution vector from the control module */
+        cntrRequest;                   /* [Nm]  array of the RW motor torque solution vector from the control module */
     RWSpeedMsgPayload rwSpeeds;        /* [r/s] array of RW speeds */
     RWSpeedMsgPayload rwDesiredSpeeds; /* [r/s] array of RW speeds */
     ArrayMotorTorqueMsgPayload finalControl; /* [Nm]  array of final RW motor torques containing both

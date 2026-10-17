@@ -315,7 +315,7 @@ void PolyhedralGravityModel::initializeEdges()
 
         // Compute the edge line and length
         edgeLine =
-          (this->xyzVertex.row(this->edgeVertex(n, 1)) - this->xyzVertex.row(this->edgeVertex(n, 0))).transpose();
+            (this->xyzVertex.row(this->edgeVertex(n, 1)) - this->xyzVertex.row(this->edgeVertex(n, 0))).transpose();
         this->edgeLength(n) = edgeLine.norm();
         edgeLine /= this->edgeLength(n);
 

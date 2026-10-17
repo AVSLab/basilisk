@@ -111,7 +111,7 @@ class SideEffectDiffusionDynamics final : public DynamicObject
 {
   public:
     explicit SideEffectDiffusionDynamics(bool mutateUnboundState)
-      : mutateUnboundState(mutateUnboundState)
+        : mutateUnboundState(mutateUnboundState)
     {
         StateSpec drivenSpec;
         drivenSpec.state = { 1, 1 };
@@ -233,7 +233,7 @@ void expectNoAllocationsAfterBind()
     stepIntegrator(integrator, 0.0, 0.0);
 
     const auto observed =
-      integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
+        integrator_allocation_test::trackAllocations([&]() { stepIntegrator(integrator, 0.0, 0.125); });
     EXPECT_EQ(observed.allocationCalls(), 0U);
 }
 

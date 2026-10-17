@@ -24,8 +24,8 @@
 
 /*! @brief Message to store current storage unit stored data, storage capacity, and received data.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  DataStorageStatusMsgPayload
+    //@cond DOXYGEN_IGNORE
+    DataStorageStatusMsgPayload
 //@endcond
 {
     double storageLevel;    //!< [b] Storage unit stored data in bits.

@@ -131,7 +131,7 @@ void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
                     double sigma_RN_b_S[3];
                     MRPshadow(this->attRefMsg_b.sigma_RN, sigma_RN_b_S);
                     linearInterpolation(
-                      this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, sigma_RN_b_S, t, &attMsgBuffer.sigma_RN[0]);
+                        this->t_a, this->attRefMsg_a.sigma_RN, this->t_b, sigma_RN_b_S, t, &attMsgBuffer.sigma_RN[0]);
                 }
                 linearInterpolation(this->t_a,
                                     this->attRefMsg_a.omega_RN_N,

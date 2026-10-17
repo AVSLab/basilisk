@@ -45,8 +45,8 @@ typedef struct
 
 /*! @brief drag dynamic effector */
 class DragDynamicEffector final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
   public:
     DragDynamicEffector();
@@ -69,7 +69,7 @@ class DragDynamicEffector final
     StateData* hubSigma;                            //!< Hub/Inertial attitude represented by MRP
     StateData* hubVelocity;                         //!< m/s Hub inertial velocity vector
     std::string densityCorrectionStateName =
-      "";                         //!< If not '', finds a state with this name to get ``densityCorrection``
+        "";                       //!< If not '', finds a state with this name to get ``densityCorrection``
     StateData* densityCorrection; //!< Used density is ``(1 + densityCorrection) * atmoInData.neutralDensity``
     Eigen::Vector3d v_B;     //!< m/s spacecraft velocity expressed in body frame B (relative to air if windVelInMsg is
                              //!< linked, else relative to inertial frame N)

@@ -24,8 +24,8 @@
 
 /*! attached body to hub information structure*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  BodyToHubInfo
+    //@cond DOXYGEN_IGNORE
+    BodyToHubInfo
 //@endcond
 {
     Eigen::Vector3d r_FB_B;     //!< position vector of the frame F relative to frame B

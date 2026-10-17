@@ -27,7 +27,7 @@ void FlatStochasticWorkspace::bind(const std::vector<StochasticObjectDescriptor>
                                    size_t scratchVectorCount)
 {
     const size_t derivativeScalarCount =
-      objects.empty() ? 0 : objects.back().derivativeOffset + objects.back().derivativeCount;
+        objects.empty() ? 0 : objects.back().derivativeOffset + objects.back().derivativeCount;
     const size_t diffusionScalarCount = slots.empty() ? 0 : slots.back().packedBegin + slots.back().packedCount;
 
     Eigen::MatrixXd newDriftStages(static_cast<Eigen::Index>(derivativeScalarCount),

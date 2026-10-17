@@ -32,7 +32,7 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
 {
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError(
-          "FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
+            "FacetedSpacecraftModel: numArticulatedFacets cannot be greater than total numFacets");
     }
     if (this->facetElementInMsgs.size() != this->numFacets || this->facetElementBodyOutMsgs.size() != this->numFacets ||
         this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets) {
@@ -90,7 +90,7 @@ void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
     // Populate output data lists for fixed facets
     for (uint64_t idx = this->numArticulatedFacets; idx < this->numFacets; idx++) {
         this->facetR_CopB_BList[idx] =
-          this->facetDcm_F0BList[idx].transpose() * this->facetR_CopF_FList[idx] + this->facetR_FB_BList[idx];
+            this->facetDcm_F0BList[idx].transpose() * this->facetR_CopF_FList[idx] + this->facetR_FB_BList[idx];
         this->facetNHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetNHat_FList[idx];
         this->facetRotHat_BList[idx] = this->facetDcm_F0BList[idx].transpose() * this->facetRotHat_FList[idx];
     }
@@ -117,7 +117,7 @@ void FacetedSpacecraftModel::UpdateState(uint64_t callTime)
     for (uint64_t idx = 0; idx < this->numArticulatedFacets; idx++) {
         if (!this->articulatedFacetDataInMsgs[idx].isLinked() || !this->articulatedFacetDataInMsgs[idx].isWritten()) {
             this->bskLogger->bskError(
-              "FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
+                "FacetedSpacecraftModel: Articulated facet input message is not linked or written.");
         }
         articulatedFacetAngleList.push_back(this->articulatedFacetDataInMsgs[idx]().theta);
     }
@@ -190,7 +190,7 @@ void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgP
         this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
         if (this->numArticulatedFacets > this->numFacets) {
             this->bskLogger->bskError(
-              "FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
+                "FacetedSpacecraftModel: addArticulatedFacet() called more times than number of set total facets.");
         }
     }
 }
@@ -220,7 +220,7 @@ void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets)
     this->numArticulatedFacets = static_cast<uint64_t>(this->articulatedFacetDataInMsgs.size());
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError(
-          "FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
+            "FacetedSpacecraftModel:  numArticulatedFacets cannot be greater than number of set total facets.");
     }
 }
 

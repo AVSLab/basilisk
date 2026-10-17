@@ -164,7 +164,7 @@ void PlanetGrid::initialize(BSKLogger bskLogger)
             this->normAreas[patchIndex] = normArea;                                                     // [sr]
             // Assign albedo value: from CSV data if loaded, otherwise use constant average
             this->patchAlbedo[patchIndex] =
-              this->useAlbedoData ? albGrid[latitudeIndex][longitudeIndex] : this->albedoAvg; // [-]
+                this->useAlbedoData ? albGrid[latitudeIndex][longitudeIndex] : this->albedoAvg; // [-]
         }
     }
 
@@ -302,8 +302,9 @@ std::vector<PatchResult> PlanetGrid::computePatches(const double r_sat_N[3],
     // Iterate over all patches and compute radiation contributions
     for (size_t patchIndex = 0; patchIndex < patchCount; ++patchIndex) {
         // Patch direction in planet frame P
-        const Eigen::Vector3d dir_P(
-          this->patchDirs_P[patchIndex][0], this->patchDirs_P[patchIndex][1], this->patchDirs_P[patchIndex][2]); // [-]
+        const Eigen::Vector3d dir_P(this->patchDirs_P[patchIndex][0],
+                                    this->patchDirs_P[patchIndex][1],
+                                    this->patchDirs_P[patchIndex][2]); // [-]
         // Rotate patch direction to inertial frame N and scale by planet radius
         const Eigen::Vector3d r_dAP_N = R_planet * (dcm_NP * dir_P); // [m]
         const Eigen::Vector3d rHat_dAP_N = r_dAP_N / r_dAP_N.norm(); // [-]
@@ -403,20 +404,22 @@ void PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
         const double RP = e.grid.RP_m;
         if (REQ <= 0.0) {
             this->bskLogger.bskError(
-              "PlanetRadiationBase (Reset): REQ_m must be positive, got %f for planet %d.", REQ, i);
+                "PlanetRadiationBase (Reset): REQ_m must be positive, got %f for planet %d.", REQ, i);
         }
         if (RP < 0.0 && RP != -1.0) {
             this->bskLogger.bskError(
-              "PlanetRadiationBase (Reset): RP_m must be non-negative or -1 (sentinel), got %f for planet %d.", RP, i);
+                "PlanetRadiationBase (Reset): RP_m must be non-negative or -1 (sentinel), got %f for planet %d.",
+                RP,
+                i);
         }
         if (RP > 0.0 && RP != REQ) {
             if (RP >= REQ) {
                 this->bskLogger.bskError(
-                  "PlanetRadiationBase (Reset): RP_m must be less than REQ_m for oblate spheroid, "
-                  "got RP_m=%f, REQ_m=%f for planet %d.",
-                  RP,
-                  REQ,
-                  i);
+                    "PlanetRadiationBase (Reset): RP_m must be less than REQ_m for oblate spheroid, "
+                    "got RP_m=%f, REQ_m=%f for planet %d.",
+                    RP,
+                    REQ,
+                    i);
             }
             const double ec = std::sqrt(1.0 - pow(RP, 2) / pow(REQ, 2));
             e.R_planet = std::sqrt(pow(REQ, 2) * 0.5 *
@@ -429,7 +432,7 @@ void PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
             e.grid.initialize(this->bskLogger);
         } catch (const std::exception& ex) {
             this->bskLogger.bskError(
-              "PlanetRadiationBase (Reset): grid.initialize(this->bskLogger) failed for planet %d: %s", i, ex.what());
+                "PlanetRadiationBase (Reset): grid.initialize(this->bskLogger) failed for planet %d: %s", i, ex.what());
         }
     }
 

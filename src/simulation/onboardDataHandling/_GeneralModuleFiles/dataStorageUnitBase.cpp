@@ -198,7 +198,7 @@ void DataStorageUnitBase::integrateDataStatus(double currentTime)
                 //! amount
             } else if (strcmp(it->dataName, "") != 0) {
                 std::snprintf(
-                  tmpDataInstance.dataInstanceName, sizeof(tmpDataInstance.dataInstanceName), "%s", it->dataName);
+                    tmpDataInstance.dataInstanceName, sizeof(tmpDataInstance.dataInstanceName), "%s", it->dataName);
                 tmpDataInstance.dataInstanceSum = dataDelta > 0 ? dataDelta : 0;
                 this->storedData.push_back(tmpDataInstance);
             }
@@ -362,8 +362,10 @@ void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
                                    partitionName.size(),
                                    sizeof(tmpDataInstance.dataInstanceName) - 1);
             }
-            std::snprintf(
-              tmpDataInstance.dataInstanceName, sizeof(tmpDataInstance.dataInstanceName), "%s", partitionName.c_str());
+            std::snprintf(tmpDataInstance.dataInstanceName,
+                          sizeof(tmpDataInstance.dataInstanceName),
+                          "%s",
+                          partitionName.c_str());
             //! Only perform this operation if the resulting sum in the partition is not negative. If it is, initialize
             //! to zero.
             if (data < 0) {

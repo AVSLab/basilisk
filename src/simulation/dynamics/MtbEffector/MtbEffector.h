@@ -35,8 +35,8 @@
 /*! @brief This module converts magnetic torque bar dipoles to body torques.
  */
 class MtbEffector final
-  : public SysModel
-  , public DynamicEffector
+    : public SysModel
+    , public DynamicEffector
 {
 
   public:
@@ -50,10 +50,10 @@ class MtbEffector final
 
   public:
     Message<MTBMsgPayload>
-      mtbOutMsg;         //!< output message containing net torque produced by the torque bars in Body components
+        mtbOutMsg;       //!< output message containing net torque produced by the torque bars in Body components
     StateData* hubSigma; //!< Hub/Inertial attitude represented by MRP
     ReadFunctor<MTBCmdMsgPayload>
-      mtbCmdInMsg; //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
+        mtbCmdInMsg; //!< input msg for commanded mtb dipole array in the magnetic torque bar frame T
     ReadFunctor<MagneticFieldMsgPayload> magInMsg;        //!< input msg for magnetic field data in inertial frame N
     ReadFunctor<MTBArrayConfigMsgPayload> mtbParamsInMsg; //!< input msg for layout of magnetic torque bars
     BSKLogger bskLogger;                                  //!< BSK Logging

@@ -60,8 +60,8 @@ class AllocationDynamics final : public DynamicObject
 {
   public:
     explicit AllocationDynamics(bool stochastic, size_t noiseCount = 1)
-      : stochastic(stochastic)
-      , noiseCount(stochastic ? noiseCount : 0)
+        : stochastic(stochastic)
+        , noiseCount(stochastic ? noiseCount : 0)
     {
         this->reset();
     }
@@ -147,7 +147,7 @@ class ScopedEigenNoMalloc
 {
   public:
     ScopedEigenNoMalloc()
-      : previous(Eigen::internal::is_malloc_allowed())
+        : previous(Eigen::internal::is_malloc_allowed())
     {
         Eigen::internal::set_is_malloc_allowed(false);
     }
@@ -314,12 +314,12 @@ TEST(IntegratorAllocationTracker, SuspensionIsNestedAndTrackingIsThreadLocal)
 TEST(IntegratorAllocationTracker, EigenRuntimeNoMallocPositiveControl)
 {
     ASSERT_DEATH(
-      {
-          Eigen::internal::set_is_malloc_allowed(false);
-          Eigen::MatrixXd matrix(64, 64);
-          matrix.setZero();
-      },
-      "heap allocation is forbidden");
+        {
+            Eigen::internal::set_is_malloc_allowed(false);
+            Eigen::MatrixXd matrix(64, 64);
+            matrix.setZero();
+        },
+        "heap allocation is forbidden");
 }
 
 TEST(IntegratorAllocationTracker, FixedAdaptiveAndStochasticUseNoObservedAllocatorsAfterBind)

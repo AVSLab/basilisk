@@ -199,7 +199,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig* configData, double updateTime)
     double stmT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], covPhiT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double Gamma[EKF_N_STATES_SWITCH][EKF_N_STATES_SWITCH - 3];
     double qGammaT[(EKF_N_STATES_SWITCH - 3) * EKF_N_STATES_SWITCH],
-      gammaQGammaT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
+        gammaQGammaT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double d_tilde[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
@@ -210,7 +210,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig* configData, double updateTime)
     /*! - Propagate the previous reference states and STM to the current time */
     sunlineDynMatrix(configData->state, configData->bVec_B, configData->dt, configData->dynMat);
     sunlineStateSTMProp(
-      configData->dynMat, configData->bVec_B, configData->dt, configData->state, configData->stateTransition);
+        configData->dynMat, configData->bVec_B, configData->dt, configData->state, configData->stateTransition);
 
     /* Do the time update on the state error */
     mMultV(configData->stateTransition, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, configData->x, configData->xBar);
@@ -343,7 +343,7 @@ void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 
     /* - omega_tilde in dynamics */
     mSetSubMatrix(
-      skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 0, 0);
+        skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 0, 0);
 
     /* Populate the first 3x3 matrix of the dynamics matrix*/
     mTranspose(dynMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, dynMat);
@@ -380,7 +380,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig* configData, double updateTime)
 
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(
-      configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
+        configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
 
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead
      * to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance,
@@ -704,11 +704,21 @@ void sunlineSEKFSwitch(double* bVec_B, double* states, double* covar)
     mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, 4, 3);
 
     mMultV(switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, states, states);
-    mMultM(
-      switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, covar, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, switchMatP);
+    mMultM(switchMat,
+           EKF_N_STATES_SWITCH,
+           EKF_N_STATES_SWITCH,
+           covar,
+           EKF_N_STATES_SWITCH,
+           EKF_N_STATES_SWITCH,
+           switchMatP);
     mTranspose(switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, switchMat);
-    mMultM(
-      switchMatP, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, switchMat, EKF_N_STATES_SWITCH, EKF_N_STATES_SWITCH, covar);
+    mMultM(switchMatP,
+           EKF_N_STATES_SWITCH,
+           EKF_N_STATES_SWITCH,
+           switchMat,
+           EKF_N_STATES_SWITCH,
+           EKF_N_STATES_SWITCH,
+           covar);
     return;
 }
 

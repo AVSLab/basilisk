@@ -53,7 +53,7 @@ void BoreAngCalc::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
         this->useInertialHeading = true;
     } else {
         bskLogger.bskError(
-          "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
+            "Either boreAngCalc.celBodyInMsg was not linked or boreAngCalc.inertialHeadingVec_N was not set.");
     }
 }
 
@@ -148,7 +148,7 @@ void BoreAngCalc::computeInertialOutputData()
 
     // Calculate the inertial heading vector
     Eigen::Vector3d inertialHeadingVec_B =
-      dcm_BN * this->inertialHeadingVec_N; // inertial heading written in the body frame
+        dcm_BN * this->inertialHeadingVec_N; // inertial heading written in the body frame
     double dotValue = this->boreVec_B.dot(inertialHeadingVec_B);
     this->boresightAng.missAngle = fabs(safeAcos(dotValue));
 

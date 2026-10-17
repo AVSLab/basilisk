@@ -41,7 +41,7 @@ class MJFwdKinematics : public SysModel
      * @param scene Reference to an MJScene object.
      */
     MJFwdKinematics(MJScene& scene)
-      : scene(scene)
+        : scene(scene)
     {
     }
 

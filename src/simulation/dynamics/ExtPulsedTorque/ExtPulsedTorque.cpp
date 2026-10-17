@@ -67,7 +67,7 @@ void ExtPulsedTorque::validateConfiguration()
     const double countPeriod = 2.0 * static_cast<double>(this->countOnPulse) + this->countOff;
     if (!std::isfinite(countPeriod * this->pulseInterval)) {
         this->bskLogger.bskError(
-          "ExtPulsedTorque: pulse counts and pulseInterval must produce a finite cycle duration.");
+            "ExtPulsedTorque: pulse counts and pulseInterval must produce a finite cycle duration.");
     }
 }
 
@@ -120,8 +120,8 @@ void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[may
     // period cannot advance the initial pulse edges. Bound it to keep adjacent windows separate.
     const auto isNearTransition = [this, integTime, phase](double transition) {
         const double tolerance =
-          std::min(0.25 * this->pulseInterval,
-                   4.0 * std::numeric_limits<double>::epsilon() * std::max(integTime, transition)); // [s]
+            std::min(0.25 * this->pulseInterval,
+                     4.0 * std::numeric_limits<double>::epsilon() * std::max(integTime, transition)); // [s]
         return std::abs(phase - transition) <= tolerance;
     };
     if (isNearTransition(cycleDuration)) {

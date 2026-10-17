@@ -140,8 +140,8 @@ void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTi
         x_map = planetRad / denom * (X);
         y_map = planetRad / denom * (Y);
         rho_map =
-          planetRad * (X / (sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2))) -
-                       1.0 / X * sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2)) / pow(circlesIn.circlesRadii[0], 2));
+            planetRad * (X / (sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2))) -
+                         1.0 / X * sqrt(1 + pow(circlesIn.circlesRadii[0] * X, 2)) / pow(circlesIn.circlesRadii[0], 2));
         mSetIdentity(covar_map_C, 3, 3);
         covar_map_C[0] = x_map;
         covar_map_C[4] = y_map;

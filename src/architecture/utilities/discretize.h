@@ -70,8 +70,8 @@ class Discretize
 
   private:
     roundDirection_t
-      roundDirection;  //!< -- Direction to round when discretizing. "toZero", "fromZero", and "near" are the options.
-    uint8_t numStates; //!< -- Number of states to be discretized (length of vector fed in)
+        roundDirection; //!< -- Direction to round when discretizing. "toZero", "fromZero", and "near" are the options.
+    uint8_t numStates;  //!< -- Number of states to be discretized (length of vector fed in)
     Eigen::VectorXd discErrors; //!< -- Errors from discretization. Can be returned to adjusted integrated values.
     bool carryError;            //!< -- true if discError should be added next time around, false if not.
 };

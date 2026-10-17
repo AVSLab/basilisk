@@ -43,7 +43,7 @@ struct svStochasticIntegratorRDI1WM::FlatStorage
 };
 
 svStochasticIntegratorRDI1WM::svStochasticIntegratorRDI1WM(DynamicObject* dynIn)
-  : StochasticRKIntegratorBase(dynIn)
+    : StochasticRKIntegratorBase(dynIn)
 {
 }
 
@@ -88,13 +88,13 @@ void svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double time
             const auto derivativeOffset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
             const auto derivativeCount = static_cast<Eigen::Index>(descriptor.derivativeCount);
             this->flatStorage->scaledDrift.segment(derivativeOffset, derivativeCount) =
-              this->flatStorage->firstDrift.segment(derivativeOffset, derivativeCount) * a021;
+                this->flatStorage->firstDrift.segment(derivativeOffset, derivativeCount) * a021;
             for (size_t localNoiseIndex = 0; localNoiseIndex < descriptor.noiseCount; ++localNoiseIndex) {
                 const auto diffusionOffset =
-                  static_cast<Eigen::Index>(packedOffsets.at(descriptor.localNoiseOffset + localNoiseIndex));
+                    static_cast<Eigen::Index>(packedOffsets.at(descriptor.localNoiseOffset + localNoiseIndex));
                 const auto diffusionCount = static_cast<Eigen::Index>(descriptor.diffusionCount);
                 this->flatStorage->scaledDiffusions.segment(diffusionOffset, diffusionCount) =
-                  this->flatStorage->firstDiffusions.segment(diffusionOffset, diffusionCount) * b021;
+                    this->flatStorage->firstDiffusions.segment(diffusionOffset, diffusionCount) * b021;
             }
         }
         this->buildStochasticCandidate(this->stochasticAcceptedState(),
@@ -109,14 +109,16 @@ void svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double time
         for (const auto& descriptor : this->stochasticStateDescriptors()) {
             const auto offset = static_cast<Eigen::Index>(descriptor.derivativeOffset);
             Eigen::Map<const Eigen::MatrixXd> firstDrift(
-              this->flatStorage->firstDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
-            Eigen::Map<const Eigen::MatrixXd> secondDrift(
-              this->flatStorage->secondDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+                this->flatStorage->firstDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+            Eigen::Map<const Eigen::MatrixXd> secondDrift(this->flatStorage->secondDrift.data() + offset,
+                                                          descriptor.derivativeRows,
+                                                          descriptor.derivativeColumns);
             Eigen::Map<Eigen::MatrixXd> combinedDrift(this->flatStorage->combinedDrift.data() + offset,
                                                       descriptor.derivativeRows,
                                                       descriptor.derivativeColumns);
-            Eigen::Map<Eigen::MatrixXd> scaledDrift(
-              this->flatStorage->scaledDrift.data() + offset, descriptor.derivativeRows, descriptor.derivativeColumns);
+            Eigen::Map<Eigen::MatrixXd> scaledDrift(this->flatStorage->scaledDrift.data() + offset,
+                                                    descriptor.derivativeRows,
+                                                    descriptor.derivativeColumns);
             combinedDrift = firstDrift * alpha1;
             scaledDrift = secondDrift * alpha2;
             combinedDrift += scaledDrift;
@@ -127,10 +129,10 @@ void svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double time
                 Eigen::Map<Eigen::MatrixXd>(this->flatStorage->scaledDiffusions.data() + offset,
                                             descriptor.diffusionRows,
                                             descriptor.diffusionColumns) =
-                  Eigen::Map<const Eigen::MatrixXd>(this->flatStorage->firstDiffusions.data() + offset,
-                                                    descriptor.diffusionRows,
-                                                    descriptor.diffusionColumns) *
-                  beta11;
+                    Eigen::Map<const Eigen::MatrixXd>(this->flatStorage->firstDiffusions.data() + offset,
+                                                      descriptor.diffusionRows,
+                                                      descriptor.diffusionColumns) *
+                    beta11;
             }
         }
         this->buildStochasticCandidate(this->stochasticAcceptedState(),

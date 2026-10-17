@@ -150,7 +150,7 @@ void Spacecraft::readOptionalRefMsg()
     if (this->attRefInMsg.isLinked()) {
         if (this->pointMassTranslationalOnly) {
             bskLogger.bskError(
-              "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
+                "spacecraft: pointMassTranslationalOnly does not support attitude reference input messages.");
         }
         Eigen::Vector3d omega_BN_B;
         AttRefMsgPayload attRefMsgBuffer;
@@ -368,22 +368,22 @@ void Spacecraft::updateSCMassProps(double time)
         (*this->mDot_SC)(0, 0) += (*it)->effProps.mEffDot;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
         (*this->cPrime_B) +=
-          (*it)->effProps.mEff * (*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot * (*it)->effProps.rEff_CB_B;
+            (*it)->effProps.mEff * (*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot * (*it)->effProps.rEff_CB_B;
         const bool hasDynamicsRates = (*it)->effProps.hasMassPropertyRateDynamics;
         const double effectorMassRateDynamics =
-          hasDynamicsRates ? (*it)->effProps.mEffDotDynamics : (*it)->effProps.mEffDot;
+            hasDynamicsRates ? (*it)->effProps.mEffDotDynamics : (*it)->effProps.mEffDot;
         this->mDotDynamics += effectorMassRateDynamics;
         this->cPrimeEffectorDynamics_B +=
-          (*it)->effProps.mEff *
-          (hasDynamicsRates ? (*it)->effProps.rEffPrime_CB_BDynamics : (*it)->effProps.rEffPrime_CB_B);
+            (*it)->effProps.mEff *
+            (hasDynamicsRates ? (*it)->effProps.rEffPrime_CB_BDynamics : (*it)->effProps.rEffPrime_CB_B);
         this->ISCPntBPrimeDynamics_B +=
-          hasDynamicsRates ? (*it)->effProps.IEffPrimePntB_BDynamics : (*it)->effProps.IEffPrimePntB_B;
+            hasDynamicsRates ? (*it)->effProps.IEffPrimePntB_BDynamics : (*it)->effProps.IEffPrimePntB_B;
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
     (*this->c_B) = (*this->c_B) / (*this->m_SC)(0, 0);
     (*this->cPrime_B) =
-      (*this->cPrime_B) / (*this->m_SC)(0, 0) - (*this->mDot_SC)(0, 0) * (*this->c_B) / (*this->m_SC)(0, 0);
+        (*this->cPrime_B) / (*this->m_SC)(0, 0) - (*this->mDot_SC)(0, 0) * (*this->c_B) / (*this->m_SC)(0, 0);
     this->cPrimeEffectorDynamics_B /= (*this->m_SC)(0, 0);
     Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->stateView();
     Eigen::Vector3d cLocal_B = (*this->c_B);
@@ -434,7 +434,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
         }
         Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
         Eigen::Vector3d nonConservativeAccel_N =
-          (this->sumForceExternal_N + dcm_NB * this->sumForceExternal_B) / (*this->m_SC)(0, 0);
+            (this->sumForceExternal_N + dcm_NB * this->sumForceExternal_B) / (*this->m_SC)(0, 0);
 
         this->hubR_N->setDerivative(vLocal_BN_N);
         this->hubV_N->setDerivative(*this->g_N + nonConservativeAccel_N);
@@ -543,12 +543,12 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     this->hub.hubBackSubMatrices.matrixC += (*this->m_SC)(0, 0) * intermediateMatrix;
     this->hub.hubBackSubMatrices.matrixD += *ISCPntB_B;
     this->hub.hubBackSubMatrices.vecTrans +=
-      -2.0 * (*this->m_SC)(0, 0) * omegaLocalBN_B.cross(cPrimeLocal_B) -
-      (*this->m_SC)(0, 0) * omegaLocalBN_B.cross(omegaLocalBN_B.cross(cLocal_B)) -
-      2.0 * mDotLocal * (cPrimeLocal_B + omegaLocalBN_B.cross(cLocal_B));
+        -2.0 * (*this->m_SC)(0, 0) * omegaLocalBN_B.cross(cPrimeLocal_B) -
+        (*this->m_SC)(0, 0) * omegaLocalBN_B.cross(omegaLocalBN_B.cross(cLocal_B)) -
+        2.0 * mDotLocal * (cPrimeLocal_B + omegaLocalBN_B.cross(cLocal_B));
     intermediateVector = *ISCPntB_B * omegaLocalBN_B;
     this->hub.hubBackSubMatrices.vecRot +=
-      -omegaLocalBN_B.cross(intermediateVector) - inertiaRateLocal_B * omegaLocalBN_B;
+        -omegaLocalBN_B.cross(intermediateVector) - inertiaRateLocal_B * omegaLocalBN_B;
 
     // - Map external force_N to the body frame
     Eigen::Vector3d sumForceExternalMappedToB;
@@ -570,7 +570,7 @@ void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
     this->hub.computeDerivatives(
-      integTimeSeconds, this->hubV_N->derivativeView(), this->hubOmega_BN_B->derivativeView(), sigmaBNLoc);
+        integTimeSeconds, this->hubV_N->derivativeView(), this->hubOmega_BN_B->derivativeView(), sigmaBNLoc);
 
     Eigen::Vector3d hubVDeriv = this->hubV_N->derivativeView();
     Eigen::Vector3d hubOmegaDeriv = this->hubOmega_BN_B->derivativeView();
@@ -619,7 +619,7 @@ void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeBeforeNanos =
-      integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
+        integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
     this->timeBefore = static_cast<double>(integrateToThisTimeNanos) * NANO2SEC;
     if (this->pointMassTranslationalOnly) {
         return;
@@ -650,7 +650,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
     // - non-conservative acceleration of the body frame in the body frame
     if (fabs(this->timeStep) > 1e-10) {
         this->nonConservativeAccelpntB_B =
-          (newDcm_NB.transpose() * (newV_BN_N - this->hubGravVelocity->stateView())) / this->timeStep;
+            (newDcm_NB.transpose() * (newV_BN_N - this->hubGravVelocity->stateView())) / this->timeStep;
     } else {
         this->nonConservativeAccelpntB_B = { 0., 0., 0. };
     }
@@ -660,7 +660,7 @@ void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
     newOmega_BN_B = this->hubOmega_BN_B->stateView();
     if (fabs(this->timeStep) > 1e-10) {
         this->omegaDot_BN_B =
-          (newOmega_BN_B - this->oldOmega_BN_B) / this->timeStep; // angular acceleration of B wrt N in the Body frame
+            (newOmega_BN_B - this->oldOmega_BN_B) / this->timeStep; // angular acceleration of B wrt N in the Body frame
     } else {
         this->omegaDot_BN_B = { 0., 0., .0 };
     }
@@ -715,7 +715,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(
-      time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+        time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -728,7 +728,7 @@ void Spacecraft::computeEnergyMomentum(double time)
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(
-          time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
+            time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->stateView());
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }
@@ -738,8 +738,8 @@ void Spacecraft::computeEnergyMomentum(double time)
 
     // - Add in orbital kinetic energy into the total orbital energy calculations
     this->totOrbEnergy +=
-      1.0 / 2.0 * (*this->m_SC)(0, 0) *
-      (rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0 * rDotBNLocal_B.dot(cDotLocal_B) + cDotLocal_B.dot(cDotLocal_B));
+        1.0 / 2.0 * (*this->m_SC)(0, 0) *
+        (rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0 * rDotBNLocal_B.dot(cDotLocal_B) + cDotLocal_B.dot(cDotLocal_B));
 
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;

@@ -61,21 +61,21 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->nameOfTheta2State = "DualHingedRigidBodyStateEffectorTheta2" + std::to_string(this->effectorID);
     this->nameOfTheta2DotState = "DualHingedRigidBodyStateEffectorTheta2Dot" + std::to_string(this->effectorID);
     this->nameOfInertialPositionProperty1 =
-      "DualHingedRigidBodyStateEffectorInertialPosition1" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialPosition1" + std::to_string(this->effectorID);
     this->nameOfInertialVelocityProperty1 =
-      "DualHingedRigidBodyStateEffectorInertialVelocity1" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialVelocity1" + std::to_string(this->effectorID);
     this->nameOfInertialAttitudeProperty1 =
-      "DualHingedRigidBodyStateEffectorInertialAttitude1" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialAttitude1" + std::to_string(this->effectorID);
     this->nameOfInertialAngVelocityProperty1 =
-      "DualHingedRigidBodyStateEffectorInertialAngVelocity1" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialAngVelocity1" + std::to_string(this->effectorID);
     this->nameOfInertialPositionProperty2 =
-      "DualHingedRigidBodyStateEffectorInertialPosition2" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialPosition2" + std::to_string(this->effectorID);
     this->nameOfInertialVelocityProperty2 =
-      "DualHingedRigidBodyStateEffectorInertialVelocity2" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialVelocity2" + std::to_string(this->effectorID);
     this->nameOfInertialAttitudeProperty2 =
-      "DualHingedRigidBodyStateEffectorInertialAttitude2" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialAttitude2" + std::to_string(this->effectorID);
     this->nameOfInertialAngVelocityProperty2 =
-      "DualHingedRigidBodyStateEffectorInertialAngVelocity2" + std::to_string(this->effectorID);
+        "DualHingedRigidBodyStateEffectorInertialAngVelocity2" + std::to_string(this->effectorID);
     this->effectorID++;
 
     for (int c = 0; c < 2; c++) {
@@ -114,7 +114,7 @@ void DualHingedRigidBodyStateEffector::validateConfiguration()
     const double totalMass = this->mass1 + this->mass2; // [kg]
     if (!std::isfinite(totalMass) || totalMass <= 0.0) {
         this->bskLogger.bskError(
-          "DualHingedRigidBodyStateEffector: mass1 + mass2 must be finite and greater than zero.");
+            "DualHingedRigidBodyStateEffector: mass1 + mass2 must be finite and greater than zero.");
     }
     if (!this->dcm_H1B.allFinite() || !eigenIsRotationMatrix(this->dcm_H1B)) {
         this->bskLogger.bskError("DualHingedRigidBodyStateEffector: dcm_H1B must be a finite, orthogonal, "
@@ -264,9 +264,9 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
     // First, find the rPrimeSB_B
     this->rPrimeS1P_P = this->d1 * this->theta1Dot * this->sHat13_P;
     this->rPrimeS2P_P =
-      this->l1 * this->theta1Dot * this->sHat13_P + this->d2 * (this->theta1Dot + this->theta2Dot) * this->sHat23_P;
+        this->l1 * this->theta1Dot * this->sHat13_P + this->d2 * (this->theta1Dot + this->theta2Dot) * this->sHat23_P;
     this->effProps.rEffPrime_CB_B =
-      1.0 / this->effProps.mEff * (this->mass1 * this->rPrimeS1P_P + this->mass2 * this->rPrimeS2P_P);
+        1.0 / this->effProps.mEff * (this->mass1 * this->rPrimeS1P_P + this->mass2 * this->rPrimeS2P_P);
 
     // - Next find the body time derivative of the inertia about point B
     // - Define tilde matrix of rPrimeSB_B
@@ -279,10 +279,10 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime 
                             (this->sHat21_P * this->sHat23_P.transpose() + this->sHat23_P * this->sHat21_P.transpose());
     // - Find body time derivative of IPntB_B
     this->effProps.IEffPrimePntB_B =
-      this->IS1PrimePntS1_P -
-      this->mass1 * (this->rPrimeTildeS1P_P * this->rTildeS1P_P + this->rTildeS1P_P * this->rPrimeTildeS1P_P) +
-      this->IS2PrimePntS2_P -
-      this->mass2 * (this->rPrimeTildeS2P_P * this->rTildeS2P_P + this->rTildeS2P_P * this->rPrimeTildeS2P_P);
+        this->IS1PrimePntS1_P -
+        this->mass1 * (this->rPrimeTildeS1P_P * this->rTildeS1P_P + this->rTildeS1P_P * this->rPrimeTildeS1P_P) +
+        this->IS2PrimePntS2_P -
+        this->mass2 * (this->rPrimeTildeS2P_P * this->rTildeS2P_P + this->rTildeS2P_P * this->rPrimeTildeS2P_P);
 
     return;
 }
@@ -377,57 +377,57 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                                  this->mass2 * this->d2 * this->sHat23_P.cross(this->r_S2P_P).transpose());
 
     this->vectorVDHRB(0) =
-      -(this->IPntS1_S1(0, 0) - this->IPntS1_S1(2, 2)) * this->omega_PN_S1(2) * this->omega_PN_S1(0) + this->u1 -
-      this->u2 - this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->k2 * this->theta2 +
-      this->c2 * this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1_P + externalTorquePan1PntH1_P) +
-      this->l1 * this->sHat13_P.dot(gravForcePan2_P + externalForcePan2_P) -
-      this->mass1 * this->d1 *
-        this->sHat13_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS1P_P) +
-                           this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P))) -
-      this->mass2 * this->l1 *
-        this->sHat13_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS2P_P) +
-                           this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) +
-                           this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
-                           this->d2 * (this->theta1Dot + this->theta2Dot) * (this->theta1Dot + this->theta2Dot) *
-                             this->sHat21_P);
+        -(this->IPntS1_S1(0, 0) - this->IPntS1_S1(2, 2)) * this->omega_PN_S1(2) * this->omega_PN_S1(0) + this->u1 -
+        this->u2 - this->k1 * this->theta1 - this->c1 * this->theta1Dot + this->k2 * this->theta2 +
+        this->c2 * this->theta2Dot + this->sHat12_P.dot(gravTorquePan1PntH1_P + externalTorquePan1PntH1_P) +
+        this->l1 * this->sHat13_P.dot(gravForcePan2_P + externalForcePan2_P) -
+        this->mass1 * this->d1 *
+            this->sHat13_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS1P_P) +
+                               this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S1P_P))) -
+        this->mass2 * this->l1 *
+            this->sHat13_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS2P_P) +
+                               this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) +
+                               this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
+                               this->d2 * (this->theta1Dot + this->theta2Dot) * (this->theta1Dot + this->theta2Dot) *
+                                   this->sHat21_P);
 
     this->vectorVDHRB(1) =
-      -(this->IPntS2_S2(0, 0) - this->IPntS2_S2(2, 2)) * this->omega_PN_S2(2) * this->omega_PN_S2(0) + this->u2 -
-      this->k2 * this->theta2 - this->c2 * this->theta2Dot +
-      this->sHat22_P.dot(gravTorquePan2PntH2_P + externalTorquePan2PntH2_P) -
-      this->mass2 * this->d2 *
-        this->sHat23_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS2P_P) +
-                           this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) +
-                           this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P);
+        -(this->IPntS2_S2(0, 0) - this->IPntS2_S2(2, 2)) * this->omega_PN_S2(2) * this->omega_PN_S2(0) + this->u2 -
+        this->k2 * this->theta2 - this->c2 * this->theta2Dot +
+        this->sHat22_P.dot(gravTorquePan2PntH2_P + externalTorquePan2PntH2_P) -
+        this->mass2 * this->d2 *
+            this->sHat23_P.dot(2 * this->omega_PNLoc_P.cross(this->rPrimeS2P_P) +
+                               this->omega_PNLoc_P.cross(this->omega_PNLoc_P.cross(this->r_S2P_P)) +
+                               this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     backSubContr.matrixA = (this->mass1 * this->d1 * this->sHat13_P + this->mass2 * this->l1 * this->sHat13_P +
                             this->mass2 * this->d2 * this->sHat23_P) *
-                             matrixEDHRB.row(0) * this->matrixFDHRB +
+                               matrixEDHRB.row(0) * this->matrixFDHRB +
                            this->mass2 * this->d2 * this->sHat23_P * this->matrixEDHRB.row(1) * this->matrixFDHRB;
     backSubContr.matrixB = (this->mass1 * this->d1 * this->sHat13_P + this->mass2 * this->l1 * this->sHat13_P +
                             this->mass2 * this->d2 * this->sHat23_P) *
-                             this->matrixEDHRB.row(0) * (matrixGDHRB) +
+                               this->matrixEDHRB.row(0) * (matrixGDHRB) +
                            this->mass2 * this->d2 * this->sHat23_P * this->matrixEDHRB.row(1) * (matrixGDHRB);
     backSubContr.vecTrans = -(this->mass1 * this->d1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
                               this->mass2 * (this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
                                              this->d2 * (this->theta1Dot + this->theta2Dot) *
-                                               (this->theta1Dot + this->theta2Dot) * this->sHat21_P) +
+                                                 (this->theta1Dot + this->theta2Dot) * this->sHat21_P) +
                               (this->mass1 * this->d1 * this->sHat13_P + this->mass2 * this->l1 * this->sHat13_P +
                                this->mass2 * this->d2 * this->sHat23_P) *
-                                this->matrixEDHRB.row(0) * this->vectorVDHRB +
+                                  this->matrixEDHRB.row(0) * this->vectorVDHRB +
                               this->mass2 * this->d2 * this->sHat23_P * this->matrixEDHRB.row(1) * this->vectorVDHRB) +
                             externalForcePan1_P + externalForcePan2_P;
 
     // - Define rotational matrice contributions (Eq 96 in paper)
 
     Eigen::Vector3d rotFactor0_P =
-      this->IPntS1_S1(1, 1) * this->sHat12_P + this->mass1 * this->d1 * this->r_S1P_P.cross(this->sHat13_P) +
-      this->IPntS2_S2(1, 1) * this->sHat22_P + this->mass2 * this->l1 * this->r_S2P_P.cross(this->sHat13_P) +
-      this->mass2 * this->d2 * this->r_S2P_P.cross(this->sHat23_P);
+        this->IPntS1_S1(1, 1) * this->sHat12_P + this->mass1 * this->d1 * this->r_S1P_P.cross(this->sHat13_P) +
+        this->IPntS2_S2(1, 1) * this->sHat22_P + this->mass2 * this->l1 * this->r_S2P_P.cross(this->sHat13_P) +
+        this->mass2 * this->d2 * this->r_S2P_P.cross(this->sHat23_P);
     Eigen::Vector3d rotFactor1_P =
-      this->IPntS2_S2(1, 1) * this->sHat22_P + this->mass2 * this->d2 * this->r_S2P_P.cross(this->sHat23_P);
+        this->IPntS2_S2(1, 1) * this->sHat22_P + this->mass2 * this->d2 * this->r_S2P_P.cross(this->sHat23_P);
     backSubContr.matrixC = rotFactor0_P * this->matrixEDHRB.row(0) * this->matrixFDHRB +
                            rotFactor1_P * this->matrixEDHRB.row(1) * this->matrixFDHRB;
 
@@ -435,18 +435,18 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime [[ma
                            rotFactor1_P * this->matrixEDHRB.row(1) * this->matrixGDHRB;
 
     backSubContr.vecRot =
-      -(this->theta1Dot * this->IPntS1_S1(1, 1) * this->omega_PNLoc_P.cross(this->sHat12_P) +
-        this->mass1 * this->omega_PNLoc_P.cross(this->r_S1P_P.cross(this->rPrimeS1P_P)) +
-        this->mass1 * this->d1 * this->theta1Dot * this->theta1Dot * this->r_S1P_P.cross(this->sHat11_P) +
-        (this->theta1Dot + this->theta2Dot) * this->IPntS2_S2(1, 1) * this->omega_PNLoc_P.cross(this->sHat22_P) +
-        this->mass2 * this->omega_PNLoc_P.cross(this->r_S2P_P.cross(this->rPrimeS2P_P)) +
-        this->mass2 * this->r_S2P_P.cross(this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
-                                          this->d2 * (this->theta1Dot + this->theta2Dot) *
-                                            (this->theta1Dot + this->theta2Dot) * this->sHat21_P) +
-        rotFactor0_P * this->matrixEDHRB.row(0) * this->vectorVDHRB +
-        rotFactor1_P * this->matrixEDHRB.row(1) * this->vectorVDHRB) +
-      this->dcm_S1P.transpose() * attBodyTorquePntH1_S1 + this->dcm_S2P.transpose() * attBodyTorquePntH2_S2 +
-      this->r_H1B_B.cross(externalForcePan1_P) + this->r_H2P_P.cross(externalForcePan2_P);
+        -(this->theta1Dot * this->IPntS1_S1(1, 1) * this->omega_PNLoc_P.cross(this->sHat12_P) +
+          this->mass1 * this->omega_PNLoc_P.cross(this->r_S1P_P.cross(this->rPrimeS1P_P)) +
+          this->mass1 * this->d1 * this->theta1Dot * this->theta1Dot * this->r_S1P_P.cross(this->sHat11_P) +
+          (this->theta1Dot + this->theta2Dot) * this->IPntS2_S2(1, 1) * this->omega_PNLoc_P.cross(this->sHat22_P) +
+          this->mass2 * this->omega_PNLoc_P.cross(this->r_S2P_P.cross(this->rPrimeS2P_P)) +
+          this->mass2 * this->r_S2P_P.cross(this->l1 * this->theta1Dot * this->theta1Dot * this->sHat11_P +
+                                            this->d2 * (this->theta1Dot + this->theta2Dot) *
+                                                (this->theta1Dot + this->theta2Dot) * this->sHat21_P) +
+          rotFactor0_P * this->matrixEDHRB.row(0) * this->vectorVDHRB +
+          rotFactor1_P * this->matrixEDHRB.row(1) * this->vectorVDHRB) +
+        this->dcm_S1P.transpose() * attBodyTorquePntH1_S1 + this->dcm_S2P.transpose() * attBodyTorquePntH2_S2 +
+        this->r_H1B_B.cross(externalForcePan1_P) + this->r_H2P_P.cross(externalForcePan2_P);
 
     return;
 }
@@ -620,7 +620,7 @@ void DualHingedRigidBodyStateEffector::computePanelInertialStates()
     omega_PN_P = this->omega_BN_B;
     *this->omega_SN_S[0] = this->dcm_S1P * (omega_PN_P + this->theta1Dot * this->sHat12_P);
     *this->omega_SN_S[1] =
-      this->dcm_S2P * (omega_PN_P + this->theta1Dot * this->sHat12_P + this->theta2Dot * this->sHat22_P);
+        this->dcm_S2P * (omega_PN_P + this->theta1Dot * this->sHat12_P + this->theta2Dot * this->sHat22_P);
 
     // inertial position vectors
     Eigen::Vector3d r_PN_N;

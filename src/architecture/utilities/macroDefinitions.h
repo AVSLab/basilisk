@@ -93,7 +93,7 @@ static inline uint64_t secToNano(double seconds)
 
     if (result > (double)UINT64_MAX) {
         fprintf(
-          stderr, "[secToNano] ERROR: Input time %.15f seconds exceeds uint64_t capacity. Returning 0.\n", seconds);
+            stderr, "[secToNano] ERROR: Input time %.15f seconds exceeds uint64_t capacity. Returning 0.\n", seconds);
         return 0;
     }
 

@@ -41,7 +41,7 @@ void HillFrameRelativeControl::Reset(uint64_t currentSimNanos [[maybe_unused]])
     const bool deputyStateLinked = this->deputyTransInMsg.isLinked();
     if (hillStateLinked == deputyStateLinked) {
         this->bskLogger.bskError(
-          "hillFrameRelativeControl requires exactly one of hillStateInMsg or deputyTransInMsg to be linked.");
+            "hillFrameRelativeControl requires exactly one of hillStateInMsg or deputyTransInMsg to be linked.");
     }
     if (!this->deputyVehicleConfigInMsg.isLinked()) {
         this->bskLogger.bskError("hillFrameRelativeControl.deputyVehicleConfigInMsg was not linked.");
@@ -132,7 +132,7 @@ void HillFrameRelativeControl::computeForceCommand()
 
     const double thetaDot = hChiefNorm / (rChiefNorm * rChiefNorm); // Chief true-latitude rate. [rad/s]
     const double rDot =
-      v3Dot(this->chiefNavBuffer.r_BN_N, this->chiefNavBuffer.v_BN_N) / rChiefNorm; // Chief radial rate. [m/s]
+        v3Dot(this->chiefNavBuffer.r_BN_N, this->chiefNavBuffer.v_BN_N) / rChiefNorm; // Chief radial rate. [m/s]
     const double thetaDDot = -2.0 * rDot * thetaDot / rChiefNorm; // Chief true-latitude acceleration. [rad/s^2]
     const double muOverR3 = this->mu / (rChiefNorm * rChiefNorm *
                                         rChiefNorm); // Gravitational parameter divided by chief radius cubed. [1/s^2]

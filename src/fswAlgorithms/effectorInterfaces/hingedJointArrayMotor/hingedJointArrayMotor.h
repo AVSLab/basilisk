@@ -61,7 +61,7 @@ class HingedJointArrayMotor : public SysModel
     ReadFunctor<JointArrayStateMsgPayload> desJointStatesInMsg;  //!< desired joint states input msg
     std::vector<ReadFunctor<ScalarJointStateMsgPayload>> jointStatesInMsgs; //!< vector of joint state input msgs
     std::vector<ReadFunctor<ScalarJointStateMsgPayload>>
-      jointStateDotsInMsgs; //!< vector of joint state derivative input msgs
+        jointStateDotsInMsgs; //!< vector of joint state derivative input msgs
 
     std::vector<Message<SingleActuatorMsgPayload>*> motorTorquesOutMsgs; //!< vector of joint motor torque output msgs
 
@@ -98,7 +98,7 @@ class HingedJointArrayMotor : public SysModel
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<SingleActuatorMsgPayload>>>
-      ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
+        ownedMotorTorquesOutMsgs; //!< Storage for motorTorquesOutMsgs.
 };
 
 #endif

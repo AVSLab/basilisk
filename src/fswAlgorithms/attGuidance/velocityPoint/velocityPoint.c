@@ -85,7 +85,7 @@ void Update_velocityPoint(velocityPointConfig* configData, uint64_t callTime, in
 
     /*! - Compute and store output message */
     computeVelocityPointingReference(
-      configData, navData.r_BN_N, navData.v_BN_N, primPlanet.r_BdyZero_N, primPlanet.v_BdyZero_N, &attRefOut);
+        configData, navData.r_BN_N, navData.v_BN_N, primPlanet.r_BdyZero_N, primPlanet.v_BdyZero_N, &attRefOut);
 
     AttRefMsg_C_write(&attRefOut, &configData->attRefOutMsg, moduleID, callTime);
 

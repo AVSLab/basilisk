@@ -99,7 +99,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig* configData, uint64_t ca
 {
     NavTransMsgPayload chiefTransMsg; /*!< ---  Input message that consists of the position and velocity of the chief */
     NavTransMsgPayload
-      deputyTransMsg;    /*!< ---  Input message that consists of the position and velocity of the deputy */
+        deputyTransMsg;  /*!< ---  Input message that consists of the position and velocity of the deputy */
     double rho_N[3];     /*!< ---  Vector pointing from deputy to chief in inertial frame components */
     double dcm_RN[3][3]; /*!< ---  DCM from R-frame to N-frame */
     double temp_z[3] = { 0.0, 0.0, 1.0 }; /*!< ---  z-axis used for cross-product */

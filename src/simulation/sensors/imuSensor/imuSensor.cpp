@@ -159,7 +159,7 @@ void ImuSensor::readInputMessages()
     Eigen::Vector3d v_CN_N = cArray2EigenVector3d(this->StateCurrent.v_CN_N);
     // toRotationMatrix() gives [NB], which maps body to inertial components
     this->current_v_SC_N =
-      v_BN_N - v_CN_N + this->current_sigma_BN.toRotationMatrix() * this->current_omega_BN_B.cross(this->sensorPos_B);
+        v_BN_N - v_CN_N + this->current_sigma_BN.toRotationMatrix() * this->current_omega_BN_B.cross(this->sensorPos_B);
 
     return;
 }
@@ -369,7 +369,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime [[maybe_unused]])
 {
     // Calculate "instantaneous" linear acceleration
     Eigen::Vector3d
-      rDotDot_SN_B; // sensor non conservative acceleration relative to inertial frame in body frame coordinates
+        rDotDot_SN_B; // sensor non conservative acceleration relative to inertial frame in body frame coordinates
     rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) +
                    this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;

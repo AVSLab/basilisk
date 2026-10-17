@@ -90,8 +90,8 @@ struct RKAdaptiveCoefficients : public RKCoefficients<numberStages>
  */
 template<size_t numberStages>
 class svIntegratorAdaptiveRungeKutta
-  : public svIntegratorRungeKutta<numberStages>
-  , public StateVecAdaptiveIntegrator
+    : public svIntegratorRungeKutta<numberStages>
+    , public StateVecAdaptiveIntegrator
 {
   public:
     /**
@@ -304,18 +304,18 @@ class svIntegratorAdaptiveRungeKutta
 
 template<size_t numberStages>
 svIntegratorAdaptiveRungeKutta<numberStages>::svIntegratorAdaptiveRungeKutta(
-  DynamicObject* dynIn,
-  const RKAdaptiveCoefficients<numberStages>& coefficients,
-  const double methodLargestOrder)
-  : svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(dynIn, coefficients)
-  , methodLargestOrder(methodLargestOrder)
-  , bStarArray(coefficients.bStarArray)
+    DynamicObject* dynIn,
+    const RKAdaptiveCoefficients<numberStages>& coefficients,
+    const double methodLargestOrder)
+    : svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(dynIn, coefficients)
+    , methodLargestOrder(methodLargestOrder)
+    , bStarArray(coefficients.bStarArray)
 {
     if (!std::isfinite(this->methodLargestOrder) || this->methodLargestOrder <= 0.0) {
         throw std::invalid_argument("Adaptive Runge-Kutta order must be finite and positive.");
     }
     if (!std::all_of(
-          this->bStarArray.cbegin(), this->bStarArray.cend(), [](double value) { return std::isfinite(value); })) {
+            this->bStarArray.cbegin(), this->bStarArray.cend(), [](double value) { return std::isfinite(value); })) {
         throw std::invalid_argument("Adaptive Runge-Kutta coefficients must all be finite.");
     }
 }
@@ -374,9 +374,9 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double starting
             for (size_t stageIndex = 0; stageIndex < numberStages; ++stageIndex) {
                 const auto& stageCoefficients = this->coefficients.aMatrix.at(stageIndex);
                 const bool stageUsesBase =
-                  stageIndex == 0 && std::none_of(stageCoefficients.cbegin(),
-                                                  stageCoefficients.cend(),
-                                                  [](double coefficient) { return coefficient != 0.0; });
+                    stageIndex == 0 && std::none_of(stageCoefficients.cbegin(),
+                                                    stageCoefficients.cend(),
+                                                    [](double coefficient) { return coefficient != 0.0; });
                 if (stageUsesBase) {
                     if (!liveStateIsBase) {
                         this->scatterStates(this->baseState);
@@ -389,7 +389,7 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::integrateImpl(double starting
                 }
 
                 const double stageTime =
-                  startingTime + elapsedTime + this->coefficients.cArray.at(stageIndex) * timeStep;
+                    startingTime + elapsedTime + this->coefficients.cArray.at(stageIndex) * timeStep;
                 this->evaluateDerivatives(stageTime, timeStep);
                 // User equations may mutate live state while producing derivatives.
                 liveStateIsBase = false;
@@ -434,11 +434,11 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError
     for (const auto& tolerance : this->toleranceSpans) {
         const auto offset = static_cast<Eigen::Index>(tolerance.globalStateOffset);
         Eigen::Map<Eigen::MatrixXd> truncationError(
-          this->candidateState.data() + offset, tolerance.rows, tolerance.columns);
+            this->candidateState.data() + offset, tolerance.rows, tolerance.columns);
         const Eigen::Map<const Eigen::MatrixXd> lowOrderState(
-          this->lowOrderState.data() + offset, tolerance.rows, tolerance.columns);
+            this->lowOrderState.data() + offset, tolerance.rows, tolerance.columns);
         const Eigen::Map<const Eigen::MatrixXd> highOrderState(
-          this->highOrderState.data() + offset, tolerance.rows, tolerance.columns);
+            this->highOrderState.data() + offset, tolerance.rows, tolerance.columns);
 
         truncationError = highOrderState - lowOrderState;
 
@@ -455,9 +455,9 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError
                                              "threshold.");
                 }
                 const double absoluteError = std::abs(truncationError(index));
-                const double relativeError = threshold == 0.0
-                                               ? (absoluteError == 0.0 ? 0.0 : std::numeric_limits<double>::infinity())
-                                               : absoluteError / threshold;
+                const double relativeError =
+                    threshold == 0.0 ? (absoluteError == 0.0 ? 0.0 : std::numeric_limits<double>::infinity())
+                                     : absoluteError / threshold;
                 maxRelativeError = std::max(maxRelativeError, relativeError);
             }
         } else {
@@ -472,8 +472,8 @@ double svIntegratorAdaptiveRungeKutta<numberStages>::computeFlatMaxRelativeError
                 throw std::runtime_error("Adaptive Runge-Kutta produced an invalid error threshold.");
             }
             const double relativeError = threshold == 0.0
-                                           ? (errorNorm == 0.0 ? 0.0 : std::numeric_limits<double>::infinity())
-                                           : errorNorm / threshold;
+                                             ? (errorNorm == 0.0 ? 0.0 : std::numeric_limits<double>::infinity())
+                                             : errorNorm / threshold;
             maxRelativeError = std::max(maxRelativeError, relativeError);
         }
     }
@@ -484,7 +484,7 @@ template<size_t numberStages>
 void svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool force)
 {
     const bool defaultTolerancesChanged =
-      this->relTol != this->resolvedRelativeTolerance || this->absTol != this->resolvedAbsoluteTolerance;
+        this->relTol != this->resolvedRelativeTolerance || this->absTol != this->resolvedAbsoluteTolerance;
     if (!force && this->resolvedToleranceConfigurationGeneration == this->toleranceConfigurationGeneration &&
         !defaultTolerancesChanged) {
         return;
@@ -517,7 +517,7 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::resolveToleranceSpans(bool fo
         applyOverride(this->stateToleranceOverrides);
 
         const auto objectOverride =
-          this->objectToleranceOverrides.find(this->dynamics().at(descriptor.dynamicObjectIndex));
+            this->objectToleranceOverrides.find(this->dynamics().at(descriptor.dynamicObjectIndex));
         if (objectOverride != this->objectToleranceOverrides.cend()) {
             applyOverride(objectOverride->second);
         }
@@ -624,8 +624,8 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setRelativeTolerance(const Dy
 
 template<size_t numberStages>
 inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getRelativeTolerance(
-  const DynamicObject& dynamicObject,
-  std::string stateName)
+    const DynamicObject& dynamicObject,
+    std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -651,8 +651,8 @@ void svIntegratorAdaptiveRungeKutta<numberStages>::setAbsoluteTolerance(const Dy
 
 template<size_t numberStages>
 inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAbsoluteTolerance(
-  const DynamicObject& dynamicObject,
-  std::string stateName)
+    const DynamicObject& dynamicObject,
+    std::string stateName)
 {
     const DynamicObject* dynamicObjectPointer = this->requireDynamicObject(dynamicObject);
     const auto objectTolerances = this->objectToleranceOverrides.find(dynamicObjectPointer);
@@ -667,7 +667,7 @@ inline std::optional<double> svIntegratorAdaptiveRungeKutta<numberStages>::getAb
 
 template<size_t numberStages>
 const DynamicObject* svIntegratorAdaptiveRungeKutta<numberStages>::requireDynamicObject(
-  const DynamicObject& dynamicObject) const
+    const DynamicObject& dynamicObject) const
 {
     auto it = std::find(this->dynamics().cbegin(), this->dynamics().cend(), &dynamicObject);
     if (it == this->dynamics().end()) {

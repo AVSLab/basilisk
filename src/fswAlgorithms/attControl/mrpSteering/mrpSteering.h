@@ -34,7 +34,7 @@ typedef struct
     double omega_max; //!< [rad/sec] Maximum rate command of steering control
 
     uint32_t
-      ignoreOuterLoopFeedforward; //!< []      Boolean flag indicating if outer feedforward term should be included
+        ignoreOuterLoopFeedforward; //!< []      Boolean flag indicating if outer feedforward term should be included
 
     /* declare module IO interfaces */
     RateCmdMsg_C rateCmdOutMsg; //!< rate command output message

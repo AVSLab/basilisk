@@ -19,7 +19,7 @@
 #include "svStochasticIntegratorSRIW1.h"
 
 svStochasticIntegratorSRIW1::svStochasticIntegratorSRIW1(DynamicObject* dyn)
-  : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSRIW1::getCoefficients())
+    : svIntegratorStrongStochasticRungeKuttaSRI(dyn, svStochasticIntegratorSRIW1::getCoefficients())
 {
 }
 

@@ -19,7 +19,7 @@
 #include "svStochasticIntegratorW2Ito2.h"
 
 svStochasticIntegratorW2Ito2::svStochasticIntegratorW2Ito2(DynamicObject* dyn)
-  : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
+    : svStochasticIntegratorW2Ito(dyn, svStochasticIntegratorW2Ito2::getCoefficients())
 {
 }
 

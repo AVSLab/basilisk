@@ -32,8 +32,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  a thruster. This structure is managed using a `std::shared_ptr` to avoid duplication of configuration data across the
  simulation and to enable access and updates to the parameters during simulation.*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  THRSimConfig
+    //@cond DOXYGEN_IGNORE
+    THRSimConfig
 //@endcond
 {
     Eigen::Vector3d thrLoc_B;                  //!< [m] Thruster location expressed in body
@@ -52,9 +52,9 @@ typedef struct
     double cutoffFrequency;                    //!< [rad/s] cutoff frequency for first-order behavior
     double MaxSwirlTorque; //!< [Nm] Steady state magnitude of the swirl torque produced by ionic thrusters
     std::vector<double>
-      thrBlowDownCoeff; //!< Polynomial coefficients for fuel mass to thrust blow down model in descending order
+        thrBlowDownCoeff; //!< Polynomial coefficients for fuel mass to thrust blow down model in descending order
     std::vector<double>
-      ispBlowDownCoeff; //!< Polynomial coefficients for fuel mass to Isp blow down model in descending order
+        ispBlowDownCoeff; //!< Polynomial coefficients for fuel mass to Isp blow down model in descending order
 } THRSimConfig;
 
 #endif

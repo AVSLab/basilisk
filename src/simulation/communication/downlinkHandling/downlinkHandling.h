@@ -190,7 +190,7 @@ class DownlinkHandling : public DataNodeBase
     bool requireFullPacket;      //!< [-]     If true, wait for >=1 full packet before downlinking
 
     std::vector<Message<DataStorageStatusMsgPayload>*>
-      storageUnitMsgPtrs; //!< Storage-msg pointer list for duplicate checks
+        storageUnitMsgPtrs; //!< Storage-msg pointer list for duplicate checks
     std::vector<ReadFunctor<DataStorageStatusMsgPayload>> storageUnitInMsgs; //!< Storage status subscribers
     std::vector<DataStorageStatusMsgPayload> storageUnitMsgsBuffer;          //!< Local storage status buffers
 

@@ -51,7 +51,7 @@ void FacetedSRPEffector::validateConfiguration()
         }
         if (!this->facetProjectedAreaInMsgs[idx].isLinked()) {
             this->bskLogger.bskError(
-              "FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
+                "FacetedSRPEffector: Input message error. facetProjectedAreaInMsgs is not linked.");
         }
     }
 }
@@ -178,10 +178,10 @@ void FacetedSRPEffector::computeForceTorque(double callTime [[maybe_unused]], do
             double cosTheta = facetProjectedAreaList[idx] / facetAreaList[idx];
 
             facetSRPForcePntB_B =
-              -SRPPressure * this->facetProjectedAreaList[idx] *
-              ((1 - this->facetSpecularCoeffList[idx]) * sunDirHat_B +
-               2 * ((this->facetDiffuseCoeffList[idx] / 3) + this->facetSpecularCoeffList[idx] * cosTheta) *
-                 this->facetNHat_BList[idx]);                                               // [N]
+                -SRPPressure * this->facetProjectedAreaList[idx] *
+                ((1 - this->facetSpecularCoeffList[idx]) * sunDirHat_B +
+                 2 * ((this->facetDiffuseCoeffList[idx] / 3) + this->facetSpecularCoeffList[idx] * cosTheta) *
+                     this->facetNHat_BList[idx]);                                           // [N]
             facetSRPTorquePntB_B = this->facetR_CopB_BList[idx].cross(facetSRPForcePntB_B); // [Nm]
 
             // Add the facet contribution to the total SRP force and torque acting on the spacecraft

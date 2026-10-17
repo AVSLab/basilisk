@@ -64,9 +64,9 @@ class SmallBodyNavUKF : public SysModel
     ReadFunctor<NavTransMsgPayload> navTransInMsg;           //!< Translational nav input message
     ReadFunctor<EphemerisMsgPayload> asteroidEphemerisInMsg; //!< Small body ephemeris input message
     Message<SmallBodyNavUKFMsgPayload>
-      smallBodyNavUKFOutMsg; //!< Small body nav UKF output msg - states and covariances
+        smallBodyNavUKFOutMsg; //!< Small body nav UKF output msg - states and covariances
     SmallBodyNavUKFMsg_C
-      smallBodyNavUKFOutMsgC = {}; //!< C-wrapped Small body nav UKF output msg - states and covariances
+        smallBodyNavUKFOutMsgC = {}; //!< C-wrapped Small body nav UKF output msg - states and covariances
 
     BSKLogger bskLogger; //!< -- BSK Logging
 

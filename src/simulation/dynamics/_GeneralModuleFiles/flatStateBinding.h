@@ -243,9 +243,9 @@ class FlatStateBinding
     std::vector<FlatObjectDescriptor> objectDescriptors; ///< Borrowed buffer metadata in integration order.
     std::vector<FlatStateDescriptor> stateDescriptors;   ///< Per-state metadata in registration order.
     std::vector<FlatUpdateRun>
-      stateUpdateRuns; ///< Adjacent compatible Euclidean states coalesced for vector arithmetic.
+        stateUpdateRuns; ///< Adjacent compatible Euclidean states coalesced for vector arithmetic.
     std::vector<size_t>
-      canonicalNoiseTraversalOrder; ///< State indices sorted by object and name for stable noise assignment.
+        canonicalNoiseTraversalOrder; ///< State indices sorted by object and name for stable noise assignment.
 };
 
 #endif /* flatStateBinding_h */

@@ -211,7 +211,7 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
     }
 
     configData->outTorqAngErr = computeTorqueAngErr(
-      D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 16*/
+        D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
         all thruster forces values to not exceed saturation.
@@ -228,7 +228,7 @@ void Update_thrForceMapping(thrForceMappingConfig* configData, uint64_t callTime
         if (maxFractUse > 1.0) {
             vScale(1.0 / maxFractUse, F, configData->numThrusters, F);
             configData->outTorqAngErr = computeTorqueAngErr(
-              D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag);
+                D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F, configData->thrForcMag);
         }
     }
 
@@ -338,11 +338,9 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT],
 
         /*! - loop over all thrusters and compute the actual torque to be applied */
         for (uint32_t i = 0; i < numForces; i++) {
-            thrusterForce =
-              fabs(F[i]) < FMag[i]
-                ? F[i]
-                : FMag[i] * fabs(F[i]) / F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such
-                                                  we check if FMag[i] is equal to zero in reset() */
+            /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such
+               we check if FMag[i] is equal to zero in reset() */
+            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i] * fabs(F[i]) / F[i];
             v3Scale(thrusterForce, DT[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }

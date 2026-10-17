@@ -138,10 +138,10 @@ class svIntegratorStrongStochasticRungeKuttaSRA : public StochasticRKIntegratorB
 
 template<size_t numberStages>
 svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::svIntegratorStrongStochasticRungeKuttaSRA(
-  DynamicObject* dynIn,
-  const SRACoefficients<numberStages>& coefficients)
-  : StochasticRKIntegratorBase(dynIn)
-  , coefficients(coefficients)
+    DynamicObject* dynIn,
+    const SRACoefficients<numberStages>& coefficients)
+    : StochasticRKIntegratorBase(dynIn)
+    , coefficients(coefficients)
 {
     stochastic_tableau::validateExplicitMatrix(this->coefficients.A0);
     stochastic_tableau::validateExplicitMatrix(this->coefficients.B0);
@@ -182,7 +182,7 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrateImpl(doub
     };
     auto buildCandidate = [&](double driftStep, const Eigen::VectorXd& diffusionSteps) {
         this->buildStochasticCandidate(
-          this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
+            this->stochasticAcceptedState(), workspace.drift(), driftStep, workspace.diffusions(), diffusionSteps);
     };
 
     try {
@@ -206,7 +206,7 @@ void svIntegratorStrongStochasticRungeKuttaSRA<numberStages>::integrateImpl(doub
         const bool coalesceFinalUpdate = this->stochasticUpdatesAreAllEuclidean();
         if (coalesceFinalUpdate) {
             this->beginAllEuclideanFinalCandidate(
-              this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), this->flatDW());
+                this->stochasticAcceptedState(), workspace.drift(), timeStep, workspace.diffusions(), this->flatDW());
         } else {
             buildCandidate(timeStep, this->flatDW());
         }

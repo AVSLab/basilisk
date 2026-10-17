@@ -164,11 +164,11 @@ void Update_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, in
 
     /*! - stack data in time order */
 
-    dvAccumulation_QuickSort(&(inputAccData.accPkts[0]),
-                             0,
-                             MAX_ACC_BUF_PKT -
-                               1); /* measTime is the array we want to sort. We're sorting the time calculated for each
-                                      measurement taken from the accelerometer in order in terms of time. */
+    dvAccumulation_QuickSort(
+        &(inputAccData.accPkts[0]),
+        0,
+        MAX_ACC_BUF_PKT - 1); /* measTime is the array we want to sort. We're sorting the time calculated for each
+                                 measurement taken from the accelerometer in order in terms of time. */
 
     /*! - Ensure that the computed dt doesn't get huge.*/
     if (configData->dvInitialized == 0) {

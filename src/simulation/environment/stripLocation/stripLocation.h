@@ -73,7 +73,7 @@ class StripLocation : public SysModel
     Eigen::Vector3d r_LP_P_Start; //!< [m] ground location of the starting point of the strip relative to PCPF
     Eigen::Vector3d r_LP_P_End;   //!< [m] ground location of the ending point of the strip relative to PCPF
     Eigen::Vector3d
-      pStart; //!< [m] normalized starting point to make sure it is on the Earth surface for the interpolation
+        pStart; //!< [m] normalized starting point to make sure it is on the Earth surface for the interpolation
     Eigen::Vector3d pStartUpdated; //!< [m] updated starting point after pre-imaging update
     Eigen::Vector3d pEnd; //!< [m] normalized ending point to make sure it is on the Earth surface for the interpolation
     double acquisitionSpeed;                               //!< [m/ns] constant acquisition speed of the camera
@@ -95,23 +95,23 @@ class StripLocation : public SysModel
 
     Eigen::Vector3d r_North_N; //!< inertial 3rd axis, defined as "North"
     Eigen::Vector3d
-      r_LP_P; //!< [m] ground location of the current target point on the central line of the strip relative to PCPF
+        r_LP_P; //!< [m] ground location of the current target point on the central line of the strip relative to PCPF
     Eigen::Vector3d
-      r_LP_N; //!< [m] current target position vector relative to planet origin vector in inertial coordinates
+        r_LP_N; //!< [m] current target position vector relative to planet origin vector in inertial coordinates
     Eigen::Vector3d
-      r_LN_N; //!< [m] current target position vector relative to inertial frame origin in inertial coordinates
+        r_LN_N; //!< [m] current target position vector relative to inertial frame origin in inertial coordinates
     Eigen::Vector3d r_PN_N; //!< [m] planet position vector relative to inertial frame origin
     Eigen::Vector3d
-      v_LP_P; //!< [m/s] velocity of the current target point on the central line of the strip relative to PCPF
+        v_LP_P; //!< [m/s] velocity of the current target point on the central line of the strip relative to PCPF
     Eigen::Vector3d
-      v_LP_N; //!< [m/s] velocity vector of the current target point relative to the planet in the inertial frame
+        v_LP_N; //!< [m/s] velocity vector of the current target point relative to the planet in the inertial frame
     Eigen::Vector3d v_LN_N; //!< [m/s] velocity vector of the current target point relative to the inertial origin in
                             //!< the inertial frame
     Eigen::Matrix3d dcm_LP; //!< rotation matrix from planet-centered, planet-fixed frame P to site-local topographic
                             //!< (SEZ) frame L coordinates
     Eigen::Matrix3d dcm_PN; //!< rotation matrix from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Matrix3d
-      dcm_PN_dot; //!< rotation matrix derivative from inertial frame N to planet-centered to planet-fixed frame P
+        dcm_PN_dot; //!< rotation matrix derivative from inertial frame N to planet-centered to planet-fixed frame P
     Eigen::Vector3d w_PN;      //!< [rad/s] angular velocity of planet-fixed frame P relative to inertial frame N
     Eigen::Vector3d rhat_LP_N; //!< surface normal vector from the target location in inertial coordinates
     double theta; //!< [rad] angle between pStart and pEnd from the center of Earth (the Earth is assumed perfectly
@@ -119,8 +119,8 @@ class StripLocation : public SysModel
     double thetaUpdated;      //!< [rad] updated angle between pStartUpdated and pEnd used in target propagation
     double lengthCentralLine; //!< [m] length of the central line
     double
-      lengthCentralLineUpdated; //!< [m] updated length of the central line taking into account the pre-imaging time
-    uint64_t OldSimNanos;       //!< [ns] previous currentSimNanos
+        lengthCentralLineUpdated; //!< [m] updated length of the central line taking into account the pre-imaging time
+    uint64_t OldSimNanos;         //!< [ns] previous currentSimNanos
 
     // Public output-message vectors are borrowed views; only these smart pointers own the messages.
     std::vector<std::unique_ptr<Message<AccessMsgPayload>>> ownedAccessOutMsgs; //!< Storage for accessOutMsgs.

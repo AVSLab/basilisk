@@ -93,8 +93,8 @@ void PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
         }
         if (this->zeroBaseIndex < 0) {
             bskLogger.bskError(
-              "PlanetEphemeris zeroBase '%s' is not one of the bodies configured in this module instance.",
-              this->zeroBase.c_str());
+                "PlanetEphemeris zeroBase '%s' is not one of the bodies configured in this module instance.",
+                this->zeroBase.c_str());
         }
     }
 
@@ -111,9 +111,9 @@ void PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
         /*! - check that the right number of planet local sidereal time angles are provided */
         if (this->lst0.size() != this->planetNames.size()) {
             bskLogger.bskError(
-              "Only %zu planet initial principal rotation angles provided, but %zu planet names are present.",
-              this->lst0.size(),
-              this->planetNames.size());
+                "Only %zu planet initial principal rotation angles provided, but %zu planet names are present.",
+                this->lst0.size(),
+                this->planetNames.size());
         }
 
         /*! - check that the right number of planet polar axis right ascension angles are provided */
@@ -159,7 +159,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
     double M;    // [r] current mean anomaly
     double lst;  // [r] local sidereal time angle
     double
-      omega_NP_P[3];    // [r/s] angular velocity of inertial frame relative to planet frame in planet frame components
+        omega_NP_P[3];  // [r/s] angular velocity of inertial frame relative to planet frame in planet frame components
     double tilde[3][3]; // [] skew-symmetric matrix
     double theta_PN[3]; // [rad] 3-2-3 planet orientation coordinates
     std::vector<SpicePlanetStateMsgPayload> planetStates(this->planetNames.size());

@@ -29,26 +29,26 @@ KeplerianOrbit::KeplerianOrbit()
 
 /*! The constructor requires orbital elements and a gravitational constant value */
 KeplerianOrbit::KeplerianOrbit(ClassicElements oe, const double mu)
-  : mu(mu)
-  , semi_major_axis(oe.a)
-  , eccentricity(oe.e)
-  , inclination(oe.i)
-  , argument_of_periapsis(oe.omega)
-  , right_ascension(oe.Omega)
-  , true_anomaly(oe.f)
+    : mu(mu)
+    , semi_major_axis(oe.a)
+    , eccentricity(oe.e)
+    , inclination(oe.i)
+    , argument_of_periapsis(oe.omega)
+    , right_ascension(oe.Omega)
+    , true_anomaly(oe.f)
 {
     this->change_orbit();
 }
 
 /*! The copy constructor works with python copy*/
 KeplerianOrbit::KeplerianOrbit(const KeplerianOrbit& orig)
-  : mu(orig.mu)
-  , semi_major_axis(orig.a())
-  , eccentricity(orig.e())
-  , inclination(orig.i())
-  , argument_of_periapsis(orig.omega())
-  , right_ascension(orig.RAAN())
-  , true_anomaly(orig.f())
+    : mu(orig.mu)
+    , semi_major_axis(orig.a())
+    , eccentricity(orig.e())
+    , inclination(orig.i())
+    , argument_of_periapsis(orig.omega())
+    , right_ascension(orig.RAAN())
+    , true_anomaly(orig.f())
 {
     this->change_orbit();
 }

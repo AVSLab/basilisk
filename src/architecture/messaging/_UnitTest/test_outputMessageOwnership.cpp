@@ -53,7 +53,7 @@ struct AllocationProbe
     int failAfter = -1;
 
     explicit AllocationProbe(int failAfter = -1)
-      : failAfter(failAfter)
+        : failAfter(failAfter)
     {
         activeProbe = this;
     }

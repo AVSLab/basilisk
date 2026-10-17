@@ -35,7 +35,7 @@ class MJSystemMassMatrix : public SysModel
     ~MJSystemMassMatrix() = default; /*! This is the destructor for the module class. */
 
     void Reset(
-      uint64_t CurrentSimNanos); /*! This method is used to reset the module and checks that the scene is setup. */
+        uint64_t CurrentSimNanos); /*! This method is used to reset the module and checks that the scene is setup. */
     void UpdateState(uint64_t CurrentSimNanos); /*! This method is used to extract the total spacecraft mass matrix from
                                                    the MuJoCo scene. */
 
@@ -43,7 +43,7 @@ class MJSystemMassMatrix : public SysModel
     MJScene* scene{ nullptr }; //!< pointer to the MuJoCo scene
 
     Message<MJSysMassMatrixMsgPayload>
-      massMatrixOutMsg; //!< system mass matrix C++ output msg in generalized coordinates
+        massMatrixOutMsg; //!< system mass matrix C++ output msg in generalized coordinates
 
     BSKLogger bskLogger; //!< BSK Logging
   private:

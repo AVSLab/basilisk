@@ -128,17 +128,17 @@ void SmallBodyWaypointFeedback::computeControl(uint64_t CurrentSimNanos [[maybe_
     dx2 = x2 - x2_ref;
 
     /* Now compute current f */
-    f_curr =
-      -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
-      pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1 - mu_ast * x1 / pow(x1.norm(), 3) +
-      mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1 / pow(r_SO_O.norm(), 3) +
-      C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
+    f_curr = -F_ddot * o_hat_3_tilde * x1 - 2 * F_dot * o_hat_3_tilde * x2 -
+             pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1 - mu_ast * x1 / pow(x1.norm(), 3) +
+             mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1 /
+                 pow(r_SO_O.norm(), 3) +
+             C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Now compute reference f */
     f_ref = -F_ddot * o_hat_3_tilde * x1_ref - 2 * F_dot * o_hat_3_tilde * x2_ref -
             pow(F_dot, 2) * o_hat_3_tilde * o_hat_3_tilde * x1_ref - mu_ast * x1_ref / pow(x1_ref.norm(), 3) +
             mu_sun * (3 * (r_SO_O / r_SO_O.norm()) * (r_SO_O / r_SO_O.norm()).transpose() - I) * x1_ref /
-              pow(r_SO_O.norm(), 3) +
+                pow(r_SO_O.norm(), 3) +
             C_SRP * P_0 * (1 + rho) * (A_sc / M_sc) * pow(AU * 1000., 2) * o_hat_1 / pow(r_SO_O.norm(), 2);
 
     /* Compute the thrust in the small body's hill frame */

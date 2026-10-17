@@ -32,7 +32,7 @@ GroundMapping::GroundMapping()
 {
     //! - Set some default initial conditions:
     this->minimumElevation =
-      0. * D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 0 degrees
+        0. * D2R; // [rad] minimum elevation above the local horizon needed to see a spacecraft; defaults to 0 degrees
     this->maximumRange = -1;           // [m] Maximum range for the groundLocation to compute access.
     this->halfFieldOfView = 10. * D2R; // [rad] half-angle field-of-view of the instrument
     this->cameraPos_B.setZero(3);      // Default to zero
@@ -151,8 +151,8 @@ void GroundMapping::computeAccess(uint64_t c)
 
     Eigen::Vector3d v_BP_N = cArray2EigenVector3d(scStateInMsgBuffer.v_BN_N) - this->v_PN_N; // [m/s]
     Eigen::Vector3d v_BL_L =
-      this->dcm_LP.at(c) * this->dcm_PN *
-      (v_BP_N - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
+        this->dcm_LP.at(c) * this->dcm_PN *
+        (v_BP_N - this->w_PN.cross(r_BP_N)); // V observed from gL wrt P frame, expressed in L frame coords (SEZ)
     eigenVector3d2CArray(v_BL_L, this->accessMsgBuffer.at(c).v_BL_L);
     this->accessMsgBuffer.at(c).range_dot = v_BL_L.dot(r_BL_L) / r_BL_mag;
     if (isOverhead) {
@@ -161,8 +161,8 @@ void GroundMapping::computeAccess(uint64_t c)
     } else {
         this->accessMsgBuffer.at(c).az_dot = (-r_BL_L[0] * v_BL_L[1] + r_BL_L[1] * v_BL_L[0]) / pow(xy_norm, 2);
         this->accessMsgBuffer.at(c).el_dot =
-          (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3)) /
-          (1 + pow(r_BL_L[2] / xy_norm, 2));
+            (v_BL_L[2] / xy_norm - r_BL_L[2] * (r_BL_L[0] * v_BL_L[0] + r_BL_L[1] * v_BL_L[1]) / pow(xy_norm, 3)) /
+            (1 + pow(r_BL_L[2] / xy_norm, 2));
     }
 
     uint64_t within_view = this->checkInstrumentFOV();
@@ -204,15 +204,15 @@ uint64_t GroundMapping::checkInstrumentFOV()
 {
     /* Compute the projection of the mapping point along the instrument's boresight */
     double boresightNormalProj =
-      ((this->r_LP_N - (this->r_BP_N + this->dcm_NB * cameraPos_B)).transpose()) * (dcm_NB * this->nHat_B);
+        ((this->r_LP_N - (this->r_BP_N + this->dcm_NB * cameraPos_B)).transpose()) * (dcm_NB * this->nHat_B);
 
     /* Check that the normal projection is within the maximum range*/
     if ((boresightNormalProj >= 0) && (boresightNormalProj <= this->maximumRange || this->maximumRange < 0)) {
         /* Compute the radius of the instrument's cone at the projection distance */
         double coneRadius = boresightNormalProj * tan(this->halfFieldOfView);
         double orthDistance =
-          (this->r_LP_N - (this->r_BP_N + this->dcm_NB * cameraPos_B) - boresightNormalProj * dcm_NB * this->nHat_B)
-            .norm();
+            (this->r_LP_N - (this->r_BP_N + this->dcm_NB * cameraPos_B) - boresightNormalProj * dcm_NB * this->nHat_B)
+                .norm();
         /* Check that the orthogonal distance is less than the cone radius */
         if (orthDistance < coneRadius) {
             return 1;
@@ -234,7 +234,7 @@ void GroundMapping::WriteMessages(uint64_t CurrentClock)
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
         this->accessOutMsgs.at(c)->write(&this->accessMsgBuffer.at(c), this->moduleID, CurrentClock);
         this->currentGroundStateOutMsgs.at(c)->write(
-          &this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
+            &this->currentGroundStateMsgBuffer.at(c), this->moduleID, CurrentClock);
     }
 }
 

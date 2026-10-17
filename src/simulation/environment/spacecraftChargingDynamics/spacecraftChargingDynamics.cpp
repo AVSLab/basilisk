@@ -219,15 +219,15 @@ void SpacecraftChargingDynamics::computeCurrents()
 {
     // Compute the plasma electron currents
     this->servicerPlasmaElectronCurrent =
-      this->computePlasmaElectronCurrent(this->servicerSurfaceArea, this->servicerPotential);
+        this->computePlasmaElectronCurrent(this->servicerSurfaceArea, this->servicerPotential);
     this->targetPlasmaElectronCurrent =
-      this->computePlasmaElectronCurrent(this->targetSurfaceArea, this->targetPotential);
+        this->computePlasmaElectronCurrent(this->targetSurfaceArea, this->targetPotential);
 
     // Compute the plasma ion currents
     this->servicerPlasmaIonCurrent = this->computePlasmaIonCurrent(
-      this->servicerSurfaceArea, this->servicerSunlitArea, this->servicerPotential, this->v_SN_N_norm);
+        this->servicerSurfaceArea, this->servicerSunlitArea, this->servicerPotential, this->v_SN_N_norm);
     this->targetPlasmaIonCurrent = this->computePlasmaIonCurrent(
-      this->targetSurfaceArea, this->targetSunlitArea, this->targetPotential, this->v_TN_N_norm);
+        this->targetSurfaceArea, this->targetSunlitArea, this->targetPotential, this->v_TN_N_norm);
 
     // Compute the electron beam currents
     this->computeElectronBeamCurrent();
@@ -244,7 +244,7 @@ void SpacecraftChargingDynamics::computeCurrents()
 double SpacecraftChargingDynamics::computePlasmaElectronCurrent(double surfaceArea, double spacecraftPotential)
 {
     double thermalVelocityElectrons =
-      std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI)); // [m/s] thermal electron velocity
+        std::sqrt((8 * Q_CHARGE * this->tempElectrons) / (MASS_ELECTRON * MPI)); // [m/s] thermal electron velocity
 
     double plasmaElectronCurrent{};
     if (spacecraftPotential <= 0.0) {
@@ -271,7 +271,7 @@ double SpacecraftChargingDynamics::computePlasmaIonCurrent(double surfaceArea,
                                                            double v_BN_N_norm)
 {
     double thermalVelocityIons =
-      std::sqrt((8 * Q_CHARGE * this->tempIons) / (MASS_PROTON * MPI)); // [m/s] thermal ion velocity
+        std::sqrt((8 * Q_CHARGE * this->tempIons) / (MASS_PROTON * MPI)); // [m/s] thermal ion velocity
     double relativeVelocityIons = std::abs(v_BN_N_norm - bulkVelocityIons);
 
     double plasmaIonCurrent{};
@@ -296,7 +296,7 @@ void SpacecraftChargingDynamics::computeElectronBeamCurrent()
 {
     if (this->electronBeamEnergy > (this->servicerPotential - this->targetPotential)) {
         double intermediateTerm =
-          -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
+            -1 * (this->electronBeamEnergy - this->servicerPotential + this->targetPotential) / 20.0;
         this->servicerEBCurrent = this->electronBeamCurrent * (1 - exp(intermediateTerm));
         this->targetEBCurrent = -this->alphaEB * this->electronBeamCurrent * (1 - exp(intermediateTerm));
     } else {

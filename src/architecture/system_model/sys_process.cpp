@@ -25,7 +25,7 @@
     the process the same name.
  */
 SysProcess::SysProcess(std::string name)
-  : SysProcess()
+    : SysProcess()
 {
     this->processName = std::move(name);
 }

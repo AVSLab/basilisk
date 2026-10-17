@@ -82,7 +82,7 @@ std::string normalizeBodyName(const std::string& name)
 {
     std::string out = name;
     std::transform(
-      out.begin(), out.end(), out.begin(), [](unsigned char ch) { return static_cast<char>(std::toupper(ch)); });
+        out.begin(), out.end(), out.begin(), [](unsigned char ch) { return static_cast<char>(std::toupper(ch)); });
     return out;
 }
 }
@@ -99,7 +99,7 @@ class SpiceInterface::SpiceReconstruction
   public:
     //! Construct bound to the owning interface (used for frame/observer settings and logging).
     explicit SpiceReconstruction(SpiceInterface& owner)
-      : owner(owner)
+        : owner(owner)
     {
     }
 
@@ -434,8 +434,13 @@ class SpiceInterface::SpiceReconstruction
         // Reconstruction may request a future knot (interpolate=true); guard against a query past
         // kernel coverage aborting the process, exactly as SpiceKernel does elsewhere.
         SpiceErrorModeGuard guard;
-        spkezr_c(
-          planetName.c_str(), et, owner.referenceBase.c_str(), "NONE", owner.zeroBase.c_str(), localState, &lighttime);
+        spkezr_c(planetName.c_str(),
+                 et,
+                 owner.referenceBase.c_str(),
+                 "NONE",
+                 owner.zeroBase.c_str(),
+                 localState,
+                 &lighttime);
         PosKnot kn;
         if (failed_c()) {
             reset_c();
@@ -472,12 +477,12 @@ class SpiceInterface::SpiceReconstruction
         if (failed_c()) {
             reset_c();
             owner.bskLogger.bskLog(
-              BSK_WARNING,
-              "spiceInterface: orientation knot query failed for "
-              "'%s' (frame %s) at ET %g; using identity for that knot (will retry on later calls).",
-              planetName.c_str(),
-              planetFrame.c_str(),
-              et);
+                BSK_WARNING,
+                "spiceInterface: orientation knot query failed for "
+                "'%s' (frame %s) at ET %g; using identity for that knot (will retry on later calls).",
+                planetName.c_str(),
+                planetFrame.c_str(),
+                et);
         } else {
             double C[3][3], Cdot[3][3];
             m66Get33Matrix(0, 0, aux, C);
@@ -751,8 +756,8 @@ void SpiceInterface::initTimeData()
         EpochMsgPayload epochMsg;
         epochMsg = this->epochInMsg();
         if (!this->epochInMsg.isWritten()) {
-            bskLogger.bskError(
-              "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            bskLogger.bskError("The input epoch message name was set, but the message was never written.  Not using "
+                               "the input message.");
         } else {
             // Set the epoch information from the input message
             char string[255];
@@ -1052,7 +1057,7 @@ void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spic
         //! keeps identity J20002Pfix / zero rate exactly as before)
         if (planit->computeOrient) {
             if (pi && this->recon->orientation(
-                        *pi, planit->PlanetName, planetFrame, tNanos, planit->J20002Pfix, planit->J20002Pfix_dot)) {
+                          *pi, planit->PlanetName, planetFrame, tNanos, planit->J20002Pfix, planit->J20002Pfix_dot)) {
                 // handled by reconstruction or disabled (values already written)
             } else {
                 // pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
@@ -1087,7 +1092,7 @@ void SpiceInterface::setPlanetPositionReconstruction(const std::string& planetNa
                                                      bool interpolate)
 {
     this->reconState().configure(
-      planetName, &SpiceReconstruction::PlanetInterp::posCfg, knotStep, nKnots, useVelocity, interpolate);
+        planetName, &SpiceReconstruction::PlanetInterp::posCfg, knotStep, nKnots, useVelocity, interpolate);
 }
 
 void SpiceInterface::setPlanetOrientationReconstruction(const std::string& planetName,
@@ -1097,7 +1102,7 @@ void SpiceInterface::setPlanetOrientationReconstruction(const std::string& plane
                                                         bool interpolate)
 {
     this->reconState().configure(
-      planetName, &SpiceReconstruction::PlanetInterp::orientCfg, knotStep, nKnots, useVelocity, interpolate);
+        planetName, &SpiceReconstruction::PlanetInterp::orientCfg, knotStep, nKnots, useVelocity, interpolate);
 }
 
 void SpiceInterface::setPlanetPositionDisabled(const std::string& planetName)
@@ -1243,7 +1248,7 @@ SpiceKernel::~SpiceKernel() noexcept
 }
 
 SpiceKernel::SpiceKernel(std::string path_)
-  : path(std::move(path_))
+    : path(std::move(path_))
 {
     SpiceErrorModeGuard guard;
     furnsh_c(path.c_str());

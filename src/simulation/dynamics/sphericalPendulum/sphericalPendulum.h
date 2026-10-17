@@ -33,9 +33,9 @@
 
 /*! @brief spherical pendulum state effector model */
 class SphericalPendulum final
-  : public StateEffector
-  , public SysModel
-  , public FuelSlosh
+    : public StateEffector
+    , public SysModel
+    , public FuelSlosh
 {
   public:
     double pendulumRadius;           //!< [m] distance between the center of the tank and the spherical pendulum mass

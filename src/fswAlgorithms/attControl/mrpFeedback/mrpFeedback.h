@@ -45,7 +45,7 @@ typedef struct
 
     double ISCPntB_B[9]; //!< [kg m^2]  Spacecraft Inertia
     RWArrayConfigMsgPayload
-      rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+        rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module IO interfaces */
     RWSpeedMsg_C rwSpeedsInMsg;                 //!< RW speed input message (Optional)

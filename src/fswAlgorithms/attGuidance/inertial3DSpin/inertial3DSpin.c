@@ -94,7 +94,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig* configData, uint64_t callTime, 
     /*! - Generate inertial 3D Spinning Reference */
     configData->attRefOutBuffer = AttRefMsg_C_zeroMsgPayload();
     computeReference_inertial3DSpin(
-      configData, attRefInMsgBuffer.omega_RN_N, attRefInMsgBuffer.domega_RN_N, configData->omega_RR0_R0, dt);
+        configData, attRefInMsgBuffer.omega_RN_N, attRefInMsgBuffer.domega_RN_N, configData->omega_RR0_R0, dt);
     /*! - Write output message */
     AttRefMsg_C_write(&configData->attRefOutBuffer, &configData->attRefOutMsg, moduleID, callTime);
 

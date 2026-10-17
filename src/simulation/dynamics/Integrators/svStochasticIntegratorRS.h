@@ -32,25 +32,27 @@
 struct RSCoefficients
 {
     double a021, /*!< drift-stage A-matrix coefficient */ a031, /*!< drift-stage A-matrix coefficient */ a032,
-      /*!< drift-stage A-matrix coefficient */ a131,
-      /*!< drift-stage A-matrix coefficient */ a141; //!< drift-stage A-matrix coefficient
+        /*!< drift-stage A-matrix coefficient */ a131,
+        /*!< drift-stage A-matrix coefficient */ a141; //!< drift-stage A-matrix coefficient
     double b031, /*!< first diffusion-stage B-matrix coefficient */ b032,
-      /*!< first diffusion-stage B-matrix coefficient */ b121, /*!< first diffusion-stage B-matrix coefficient */ b131,
-      /*!< first diffusion-stage B-matrix coefficient */ b132, /*!< first diffusion-stage B-matrix coefficient */ b141,
-      /*!< first diffusion-stage B-matrix coefficient */ b142,
-      /*!< first diffusion-stage B-matrix coefficient */ b143; //!< first diffusion-stage B-matrix coefficient
+        /*!< first diffusion-stage B-matrix coefficient */ b121,
+        /*!< first diffusion-stage B-matrix coefficient */ b131,
+        /*!< first diffusion-stage B-matrix coefficient */ b132,
+        /*!< first diffusion-stage B-matrix coefficient */ b141,
+        /*!< first diffusion-stage B-matrix coefficient */ b142,
+        /*!< first diffusion-stage B-matrix coefficient */ b143; //!< first diffusion-stage B-matrix coefficient
     double b221, /*!< second diffusion-stage B-matrix coefficient */ b231,
-      /*!< second diffusion-stage B-matrix coefficient */ b331,
-      /*!< second diffusion-stage B-matrix coefficient */ b332,
-      /*!< second diffusion-stage B-matrix coefficient */ b341,
-      /*!< second diffusion-stage B-matrix coefficient */ b342; //!< second diffusion-stage B-matrix coefficient
+        /*!< second diffusion-stage B-matrix coefficient */ b331,
+        /*!< second diffusion-stage B-matrix coefficient */ b332,
+        /*!< second diffusion-stage B-matrix coefficient */ b341,
+        /*!< second diffusion-stage B-matrix coefficient */ b342; //!< second diffusion-stage B-matrix coefficient
     double alpha1, /*!< drift weight vector */ alpha2, /*!< drift weight vector */ alpha3,
-      /*!< drift weight vector */ alpha4; //!< drift weight vector
+        /*!< drift weight vector */ alpha4; //!< drift weight vector
     double c02, /*!< stage time node */ c03, /*!< stage time node */ c13,
-      /*!< stage time node */ c14; //!< stage time node
+        /*!< stage time node */ c14; //!< stage time node
     double beta11, /*!< diffusion weight vector */ beta12, /*!< diffusion weight vector */ beta13,
-      /*!< diffusion weight vector */ beta14, /*!< diffusion weight vector */ beta22,
-      /*!< diffusion weight vector */ beta23; //!< diffusion weight vector
+        /*!< diffusion weight vector */ beta14, /*!< diffusion weight vector */ beta22,
+        /*!< diffusion weight vector */ beta23; //!< diffusion weight vector
 };
 
 /**
@@ -95,8 +97,12 @@ class svStochasticIntegratorRS : public StochasticRKIntegratorBase
      */
     void bindStochasticMethodStorage() override
     {
-        this->flatWorkspace.bind(
-          this->stochasticObjectDescriptors(), this->stochasticNoiseBindings(), this->stochasticNoiseSlots(), 4, 8, 4);
+        this->flatWorkspace.bind(this->stochasticObjectDescriptors(),
+                                 this->stochasticNoiseBindings(),
+                                 this->stochasticNoiseSlots(),
+                                 4,
+                                 8,
+                                 4);
     }
 
     /** RS coefficients. */

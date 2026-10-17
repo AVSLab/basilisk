@@ -38,7 +38,7 @@ struct svStochasticIntegratorRKMil::FlatStorage
 };
 
 svStochasticIntegratorRKMil::svStochasticIntegratorRKMil(DynamicObject* dynIn)
-  : StochasticRKIntegratorBase(dynIn)
+    : StochasticRKIntegratorBase(dynIn)
 {
 }
 
@@ -83,13 +83,13 @@ void svStochasticIntegratorRKMil::applyCandidate(const Eigen::VectorXd& base,
                 const size_t globalSlot = localNoiseSlots.at(localIndex);
                 const size_t offset = packedOffsets.at(localIndex);
                 state +=
-                  descriptor.diffusionView(diffusions, offset) * pseudoSteps(static_cast<Eigen::Index>(globalSlot));
+                    descriptor.diffusionView(diffusions, offset) * pseudoSteps(static_cast<Eigen::Index>(globalSlot));
             }
         } else {
             this->buildStochasticDriftCandidate(
-              descriptor, descriptor.stateView(base), descriptor.derivativeView(drift), timeStep, state);
+                descriptor, descriptor.stateView(base), descriptor.derivativeView(drift), timeStep, state);
             this->applyStochasticNoiseInLocalOrder(
-              descriptor, state, diffusions, pseudoSteps, 0, this->globalNoiseCount());
+                descriptor, state, diffusions, pseudoSteps, 0, this->globalNoiseCount());
         }
         std::copy_n(state.data(), descriptor.stateCount, descriptor.state->stateView().data());
     }

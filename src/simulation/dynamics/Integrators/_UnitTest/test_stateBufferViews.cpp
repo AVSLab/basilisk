@@ -73,7 +73,7 @@ TEST_F(StateBufferViews, StateAndDerivativeViewsAliasColumnMajorRecords)
         view << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0;
 
         const auto matrixValues =
-          kind == StateBufferKind::State ? this->matrix->getState() : this->matrix->getStateDeriv();
+            kind == StateBufferKind::State ? this->matrix->getState() : this->matrix->getStateDeriv();
         EXPECT_DOUBLE_EQ(matrixValues(1, 0), 2.0);
         EXPECT_DOUBLE_EQ(matrixValues(0, 1), 3.0);
         const auto tailValues = kind == StateBufferKind::State ? this->tail->getState() : this->tail->getStateDeriv();
@@ -224,7 +224,7 @@ TEST(StateBufferAccess, QuaternionPoliciesKeepIndependentBufferDimensions)
     highOrder.derivative = { 4, 1 };
     highOrder.noiseCount = 1;
     auto* attitude =
-      manager.registerState("highOrder", highOrder, std::make_unique<MJHighOrderQuaternionStatePolicy>());
+        manager.registerState("highOrder", highOrder, std::make_unique<MJHighOrderQuaternionStatePolicy>());
     manager.finalizeStates();
     auto& registry = manager.getStateRegistry();
     EXPECT_EQ(registry.segmentView(registry.getStateSegment(0, 8)).size(), 8);

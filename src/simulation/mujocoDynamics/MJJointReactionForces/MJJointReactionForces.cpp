@@ -95,9 +95,9 @@ void MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
             if (!bodyIsTreeRoot || !jointIsFirstOnBody) {
                 bskLogger.bskError(
-                  "MJJointReactionForces: Free joint j=%d on body b=%d must be the first joint on a tree root body.",
-                  j,
-                  b);
+                    "MJJointReactionForces: Free joint j=%d on body b=%d must be the first joint on a tree root body.",
+                    j,
+                    b);
             }
         }
     }

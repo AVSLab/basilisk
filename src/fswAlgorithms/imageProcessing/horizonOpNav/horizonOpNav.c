@@ -160,7 +160,7 @@ void Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_
     m33SetZero(tranf);
     /*! Set the map from pixel to position eq (8) in Journal*/
     m33Set(
-      1 / d_x, -alpha / (d_x * d_y), (alpha * v_p - d_y * u_p) / (d_x * d_y), 0, 1 / d_y, -v_p / d_y, 0, 0, 1, tranf);
+        1 / d_x, -alpha / (d_x * d_y), (alpha * v_p - d_y * u_p) / (d_x * d_y), 0, 1 / d_y, -v_p / d_y, 0, 0, 1, tranf);
 
     /*! Set the noise matrix in pix eq (53) in Engineering Note*/
     m33Set((sigma_pix * sigma_pix) / (d_x * d_x), 0, 0, 0, (sigma_pix * sigma_pix) / (d_x * d_x), 0, 0, 0, 0, R_s);

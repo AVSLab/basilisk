@@ -29,7 +29,7 @@ void lowPassFilterSignal(double newMeas, LowPassFilterData* lpData)
     /*! See documentation of algorithm in documentation for LP torque filter module*/
     double hOmeg = lpData->hStep * lpData->omegCutoff;
     lpData->currentState =
-      (1.0 / (2.0 + hOmeg) * (lpData->currentState * (2.0 - hOmeg) + hOmeg * (newMeas + lpData->currentMeas)));
+        (1.0 / (2.0 + hOmeg) * (lpData->currentState * (2.0 - hOmeg) + hOmeg * (newMeas + lpData->currentMeas)));
     lpData->currentMeas = newMeas;
     return;
 }

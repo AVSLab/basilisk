@@ -91,7 +91,7 @@ void Update_cssProcessTelem(CSSConfigData* configData, uint64_t callTime, int64_
     CSSArraySensorMsgPayload inMsgBuffer;
     double inputValues[MAX_NUM_CSS_SENSORS]; /* [-] Current measured CSS value for the constellation of CSS sensor */
     double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev,
-      ValueMult; /* Parameters used for the Chebyshev Recursion Forumula */
+        ValueMult; /* Parameters used for the Chebyshev Recursion Forumula */
     CSSArraySensorMsgPayload outputBuffer;
 
     outputBuffer = CSSArraySensorMsg_C_zeroMsgPayload();

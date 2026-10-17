@@ -146,7 +146,7 @@ TEST(eigenMRP, testCompositionMatchesRotationMatrixProduct)
     Eigen::MRPd sigmaCombined = sigmaOne * sigmaTwo;
 
     expectMatrixNear(
-      sigmaCombined.toRotationMatrix(), sigmaOne.toRotationMatrix() * sigmaTwo.toRotationMatrix(), kTolerance);
+        sigmaCombined.toRotationMatrix(), sigmaOne.toRotationMatrix() * sigmaTwo.toRotationMatrix(), kTolerance);
 }
 
 TEST(eigenMRP, testCompositionUsesShadowSetNearSingularity)
@@ -171,7 +171,7 @@ TEST(eigenMRP, testCompoundCompositionMatchesBinaryComposition)
 
     expectVectorNear(sigmaProduct.coeffs(), (sigmaOne * sigmaTwo).coeffs(), kTolerance);
     expectMatrixNear(
-      sigmaProduct.toRotationMatrix(), sigmaOne.toRotationMatrix() * sigmaTwo.toRotationMatrix(), kTolerance);
+        sigmaProduct.toRotationMatrix(), sigmaOne.toRotationMatrix() * sigmaTwo.toRotationMatrix(), kTolerance);
 }
 
 TEST(eigenMRP, testCoefficientAdditionAndSubtractionOperators)

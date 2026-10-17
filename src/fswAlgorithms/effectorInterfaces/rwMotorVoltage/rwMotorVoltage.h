@@ -53,7 +53,7 @@ typedef struct
     RWAvailabilityMsg_C rwAvailInMsg; /*!< [-] The name of the RWs availability message*/
 
     RWArrayConfigMsgPayload
-      rwConfigParams; /*!< [-] struct to store message containing RW config parameters in body B frame */
+        rwConfigParams; /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     BSKLogger* bskLogger; //!< BSK Logging
 

@@ -118,7 +118,7 @@ void MRPSteeringLaw(mrpSteeringConfig* configData, double sigma_BR[3], double om
             sigma_i = sigma_BR[i];
             value = (3 * configData->K3 * sigma_i * sigma_i + configData->K1) /
                     (pow(M_PI_2 / configData->omega_max *
-                           (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i),
+                             (configData->K1 * sigma_i + configData->K3 * sigma_i * sigma_i * sigma_i),
                          2) +
                      1);
             omega_ast_p[i] = -value * sigma_p[i];

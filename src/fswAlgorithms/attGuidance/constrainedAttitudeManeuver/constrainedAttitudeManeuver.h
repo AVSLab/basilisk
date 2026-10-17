@@ -128,7 +128,7 @@ class ConstrainedAttitudeManeuver : public SysModel
     double keepOutBore_B[3];      //!< Body-frame direction of the boresight of the sensitive instrument
     constraintStruct constraints; //!< Structure containing the constraint directions in inertial coordinates
     scBoresightStruct
-      boresights; //!< Structure containing the instrument boresight directions in body frame coordinates
+        boresights; //!< Structure containing the instrument boresight directions in body frame coordinates
     std::map<int, std::map<int, std::map<int, Node>>> NodesMap; //!< C++ map from node indices to Node class
     int keyS[3];                                                //!< Key to Start node in NodesMap
     int keyG[3];                                                //!< Key to Goal node in NodesMap

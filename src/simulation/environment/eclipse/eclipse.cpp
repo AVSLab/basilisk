@@ -47,7 +47,7 @@ void Eclipse::Reset(uint64_t CurrenSimNanos)
 
     if (this->positionInMsgs.size() == 0) {
         bskLogger.bskError(
-          "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
+            "Eclipse: positionInMsgs is empty.  Must use addSpacecraftToModel() to add at least one spacecraft.");
     }
 
     if (this->planetInMsgs.size() == 0) {
@@ -85,19 +85,19 @@ bool Eclipse::getExtrapolateScStateToStepMidpoint() const
 void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
     this->scStateExtrapolation.prepareFromMessages(
-      CurrentSimNanos, this->previousUpdateNanos, this->positionInMsgs, this->bskLogger);
+        CurrentSimNanos, this->previousUpdateNanos, this->positionInMsgs, this->bskLogger);
 
     for (long unsigned int c = 0; c < this->positionInMsgs.size(); c++) {
         this->scStateBuffer.at(c) = this->scStateExtrapolation.applyMessage(
-          this->positionInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
+            this->positionInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
     }
 
     this->sunInMsgState =
-      this->scStateExtrapolation.applyPlanetMessage(this->sunInMsg, CurrentSimNanos, this->previousUpdateNanos);
+        this->scStateExtrapolation.applyPlanetMessage(this->sunInMsg, CurrentSimNanos, this->previousUpdateNanos);
 
     for (long unsigned int c = 0; c < this->planetInMsgs.size(); c++) {
         this->planetBuffer[c] = this->scStateExtrapolation.applyPlanetMessage(
-          this->planetInMsgs[c], CurrentSimNanos, this->previousUpdateNanos);
+            this->planetInMsgs[c], CurrentSimNanos, this->previousUpdateNanos);
     }
 }
 

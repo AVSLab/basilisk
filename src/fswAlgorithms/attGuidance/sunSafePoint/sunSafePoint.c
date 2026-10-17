@@ -133,7 +133,7 @@ void Update_sunSafePoint(sunSafePointConfig* configData, uint64_t callTime, int6
             }
             v3Normalize(e_hat, configData->sunMnvrVec);
             v3Scale(
-              tan(configData->sunAngleErr * 0.25), configData->sunMnvrVec, configData->attGuidanceOutBuffer.sigma_BR);
+                tan(configData->sunAngleErr * 0.25), configData->sunMnvrVec, configData->attGuidanceOutBuffer.sigma_BR);
             MRPswitch(configData->attGuidanceOutBuffer.sigma_BR, 1.0, configData->attGuidanceOutBuffer.sigma_BR);
         }
 

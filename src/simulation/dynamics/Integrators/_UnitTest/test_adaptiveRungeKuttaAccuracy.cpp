@@ -190,8 +190,8 @@ TYPED_TEST(AdaptiveRungeKuttaAccuracy, CoupledOscillatorConvergesWithTighterTole
         const auto finalSecond = second.value->stateView();
         ASSERT_TRUE(finalFirst.allFinite());
         ASSERT_TRUE(finalSecond.allFinite());
-        const double error =
-          std::max((finalFirst - exactFirst).cwiseAbs().maxCoeff(), (finalSecond - exactSecond).cwiseAbs().maxCoeff());
+        const double error = std::max((finalFirst - exactFirst).cwiseAbs().maxCoeff(),
+                                      (finalSecond - exactSecond).cwiseAbs().maxCoeff());
         if (tolerance == 1e-8) {
             // These are global-error bounds for this eight-second trajectory,
             // rather than an assertion that local tolerances bound global error.

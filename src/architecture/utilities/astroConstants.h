@@ -39,8 +39,8 @@ static constexpr double AU2KM_DEPRECATED = AU;
 #define AU2KM AU2KM_DEPRECATED
 #elif defined(__GNUC__) || defined(__clang__)
 static const double AU2KM_DEPRECATED
-  __attribute__((deprecated("AU2KM is deprecated in favor of AU. In C/C++ both names work until Apr 24, 2027. After "
-                            "that date, code must use AU exclusively."))) = AU;
+    __attribute__((deprecated("AU2KM is deprecated in favor of AU. In C/C++ both names work until Apr 24, 2027. After "
+                              "that date, code must use AU exclusively."))) = AU;
 #define AU2KM AU2KM_DEPRECATED
 #else
 #define AU2KM AU /* DEPRECATED: use AU. Works until Apr 24, 2027 */

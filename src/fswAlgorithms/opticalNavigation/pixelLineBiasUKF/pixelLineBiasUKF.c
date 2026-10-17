@@ -79,8 +79,8 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTim
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
-      (double)configData->numStates;
+        configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
+        (double)configData->numStates;
     configData->gamma = sqrt((double)configData->numStates + configData->lambdaVal);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
@@ -110,7 +110,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig* configData, uint64_t callTim
     badUpdate += ukfCholDecomp(configData->sBar, (int)configData->numStates, (int)configData->numStates, tempMatrix);
 
     badUpdate +=
-      ukfCholDecomp(configData->qNoise, (int)configData->numStates, (int)configData->numStates, configData->sQnoise);
+        ukfCholDecomp(configData->qNoise, (int)configData->numStates, (int)configData->numStates, configData->sQnoise);
 
     mCopy(tempMatrix, configData->numStates, configData->numStates, configData->sBar);
     mTranspose(configData->sQnoise, configData->numStates, configData->numStates, configData->sQnoise);
@@ -294,9 +294,10 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig* configData, double update
     uint64_t i, Index;
     double sBarT[PIXLINE_N_STATES * PIXLINE_N_STATES]; // Sbar transpose (chol decomp of covar)
     double xComp[PIXLINE_N_STATES],
-      AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES) * PIXLINE_N_STATES]; // Intermediate state, process noise chol decomp
+        AT[(2 * PIXLINE_N_STATES + PIXLINE_N_STATES) *
+           PIXLINE_N_STATES]; // Intermediate state, process noise chol decomp
     double aRow[PIXLINE_N_STATES], rAT[PIXLINE_N_STATES * PIXLINE_N_STATES],
-      xErr[PIXLINE_N_STATES];                              // Row of A mat, R of QR decomp of A, state error
+        xErr[PIXLINE_N_STATES];                            // Row of A mat, R of QR decomp of A, state error
     double sBarUp[PIXLINE_N_STATES * PIXLINE_N_STATES];    // S bar cholupdate
     double* spPtr;                                         // sigma point intermediate varaible
     double procNoise[PIXLINE_N_STATES * PIXLINE_N_STATES]; // process noise
@@ -464,14 +465,14 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig* configData)
             configData->obs[i + 3] = round(configData->obs[i + 3]);
             if (i < 2) {
                 configData->yMeas[i * (configData->countHalfSPs * 2 + 1) + j] =
-                  centers[i] - configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
+                    centers[i] - configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
             }
             if (i == 2) {
                 configData->yMeas[i * (configData->countHalfSPs * 2 + 1) + j] =
-                  radius - configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
+                    radius - configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
             }
             configData->yMeas[(i + PIXLINE_N_MEAS / 2) * (configData->countHalfSPs * 2 + 1) + j] =
-              configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
+                configData->SP[j * configData->numStates + PIXLINE_DYN_STATES + i];
         }
     }
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
@@ -489,14 +490,14 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig* configData)
     uint32_t i;
     double yBar[PIXLINE_N_MEAS], syInv[PIXLINE_N_MEAS * PIXLINE_N_MEAS]; // measurement, Sy inv
     double kMat[PIXLINE_N_STATES * PIXLINE_N_MEAS],
-      cholNoise[PIXLINE_N_MEAS * PIXLINE_N_MEAS]; // Kalman Gain, chol decomp of noise
+        cholNoise[PIXLINE_N_MEAS * PIXLINE_N_MEAS]; // Kalman Gain, chol decomp of noise
     double xHat[PIXLINE_N_STATES], Ucol[PIXLINE_N_STATES], sBarT[PIXLINE_N_STATES * PIXLINE_N_STATES],
-      tempYVec[PIXLINE_N_MEAS]; // state error, U column eq 28, intermediate variables
+        tempYVec[PIXLINE_N_MEAS]; // state error, U column eq 28, intermediate variables
     double AT[(2 * PIXLINE_N_STATES + PIXLINE_N_MEAS) * PIXLINE_N_MEAS];               // Process noise matrix
     double rAT[PIXLINE_N_MEAS * PIXLINE_N_MEAS], syT[PIXLINE_N_MEAS * PIXLINE_N_MEAS]; // QR R decomp, Sy transpose
     double sy[PIXLINE_N_MEAS * PIXLINE_N_MEAS];                                        // Chol of covariance
     double updMat[PIXLINE_N_MEAS * PIXLINE_N_MEAS], pXY[PIXLINE_N_STATES * PIXLINE_N_MEAS],
-      Umat[PIXLINE_N_STATES * PIXLINE_N_MEAS]; // Intermediate variable, covariance eq 26, U eq 28
+        Umat[PIXLINE_N_STATES * PIXLINE_N_MEAS]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate = 0;
 
     vCopy(configData->state, configData->numStates, configData->statePrev);
@@ -533,9 +534,9 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig* configData)
      of observations*/
     mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
     mSetSubMatrix(
-      configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3, 3);
+        configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3, 3);
     mSetSubMatrix(
-      configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
+        configData->circlesInBuffer.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
     badUpdate += ukfCholDecomp(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, cholNoise);
     memcpy(&(AT[2 * configData->countHalfSPs * configData->numObs]),
            cholNoise,

@@ -35,7 +35,7 @@ AtmosphereBase::AtmosphereBase()
 {
     //! - zero class variables
     this->planetRadius =
-      0.0; // [m] Earth magnetic spherical reference radius (see p. 404 in doi:10.1007/978-1-4939-0802-8)
+        0.0; // [m] Earth magnetic spherical reference radius (see p. 404 in doi:10.1007/978-1-4939-0802-8)
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
     this->scStateInMsgs.clear();
@@ -105,7 +105,7 @@ void AtmosphereBase::Reset(uint64_t CurrentSimNanos)
         }
         if (this->planetPolarRadius > this->planetRadius) {
             bskLogger.bskError(
-              "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
+                "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
         }
     }
 
@@ -194,11 +194,11 @@ bool AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
     if (this->scStateInMsgs.size() > 0) {
         scRead = true;
         this->scStateExtrapolation.prepareFromMessages(
-          CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
+            CurrentSimNanos, this->previousUpdateNanos, this->scStateInMsgs, this->bskLogger);
         for (long unsigned int c = 0; c < this->scStateInMsgs.size(); c++) {
             bool tmpScRead;
             scMsg = this->scStateExtrapolation.applyMessage(
-              this->scStateInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
+                this->scStateInMsgs.at(c), CurrentSimNanos, this->previousUpdateNanos);
             tmpScRead = this->scStateInMsgs.at(c).isWritten();
             scRead = scRead && tmpScRead;
 
@@ -214,7 +214,7 @@ bool AtmosphereBase::readMessages(uint64_t CurrentSimNanos)
     bool planetRead = true;
     if (this->planetPosInMsg.isLinked()) {
         this->planetState = this->scStateExtrapolation.applyPlanetMessage(
-          this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
+            this->planetPosInMsg, CurrentSimNanos, this->previousUpdateNanos);
         planetRead = this->planetPosInMsg.isWritten();
     }
 
@@ -242,7 +242,7 @@ void AtmosphereBase::setPlanetPolarRadius(double polarRadius)
 {
     if (polarRadius == 0.0) {
         bskLogger.bskError(
-          "Atmosphere model: the planet polar radius must be positive, or negative to select a spherical planet.");
+            "Atmosphere model: the planet polar radius must be positive, or negative to select a spherical planet.");
     }
     this->planetPolarRadius = polarRadius;
 }
@@ -296,7 +296,7 @@ void AtmosphereBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, 
     if (this->planetPolarRadius >= 0.0) {
         if (this->planetPolarRadius > this->planetRadius) {
             bskLogger.bskError(
-              "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
+                "Atmosphere model: the planet polar radius must not exceed the equatorial radius planetRadius.");
         }
         this->orbitAltitude = PCPF2LLA(this->r_BP_P, this->planetRadius, this->planetPolarRadius)[2];
     } else {
@@ -350,7 +350,7 @@ void AtmosphereBase::UpdateState(uint64_t CurrentSimNanos)
     if (this->readMessages(CurrentSimNanos)) {
         // time dependent models are evaluated at the epoch of the (possibly extrapolated) geometry
         const uint64_t epochNanos =
-          this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
+            this->scStateExtrapolation.evaluationEpochNanos(CurrentSimNanos, this->previousUpdateNanos); // [ns]
         this->updateLocalAtmosphere(static_cast<double>(epochNanos) * NANO2SEC);
     }
 

@@ -80,10 +80,10 @@ class Camera : public SysModel
     double ppFocusDistance{}; //!< Distance to the point of focus, minimum value of 0.1, Value of 0 to turn off this
                               //!< parameter entirely.
     double ppAperture{};      //!<  Ratio of the aperture (known as f-stop or f-number). The smaller the value is, the
-                         //!<  shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off
-                         //!<  this parameter entirely.
+    //!<  shallower the depth of field is. Valid Setting Range: 0.05 to 32. Value of 0 to turn off
+    //!<  this parameter entirely.
     double
-      ppFocalLength{};   //!< [m] Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
+        ppFocalLength{}; //!< [m] Valid setting range: 0.001m to 0.3m. Value of 0 to turn off this parameter entirely.
     int ppMaxBlurSize{}; //!< Convolution kernel size of the bokeh filter, which determines the maximum radius of bokeh.
                          //!< It also affects the performance (the larger the kernel is, the longer the GPU time is
                          //!< required). Depth textures Value of 1 for Small, 2 for Medium, 3 for Large, 4 for Extra

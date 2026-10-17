@@ -26,8 +26,8 @@
  It defines where in the cycle the thruster is and how much longer it should be
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct
-  //@cond DOXYGEN_IGNORE
-  THROperation
+    //@cond DOXYGEN_IGNORE
+    THROperation
 //@endcond
 {
     uint64_t fireCounter;                   //!< Number of times thruster fired

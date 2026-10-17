@@ -39,8 +39,8 @@
 
 /*! @brief prescribed motion state effector class */
 class PrescribedMotionStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     PrescribedMotionStateEffector();
@@ -75,24 +75,24 @@ class PrescribedMotionStateEffector final
     void registerStates(DynParamManager& statesIn) override;       //!< Method for registering the effector's states
     void linkInStates(DynParamManager& states) override; //!< Method for giving the effector access to hub states
     void registerProperties(
-      DynParamManager& states) override; //!< Method for registering the prescribed motion properties
+        DynParamManager& states) override; //!< Method for registering the prescribed motion properties
     void updateContributions(
-      double integTime,
-      BackSubMatrices& backSubContr,
-      Eigen::MRPd sigma_BN,
-      Eigen::Vector3d omega_BN_B,
-      Eigen::Vector3d g_N) override; //!< Method for computing the effector's Backsubstitution contributions
+        double integTime,
+        BackSubMatrices& backSubContr,
+        Eigen::MRPd sigma_BN,
+        Eigen::Vector3d omega_BN_B,
+        Eigen::Vector3d g_N) override; //!< Method for computing the effector's Backsubstitution contributions
     void computeDerivatives(double integTime,
                             Eigen::Vector3d rDDot_BN_N,
                             Eigen::Vector3d omegaDot_BN_B,
                             Eigen::MRPd sigma_BN) override; //!< Method for effector to compute its state derivatives
     void updateEffectorMassProps(
-      double integTime) override; //!< Method for calculating the effector mass props and prop rates
+        double integTime) override; //!< Method for calculating the effector mass props and prop rates
     void updateEnergyMomContributions(
-      double integTime,
-      Eigen::Vector3d& rotAngMomPntCContr_B,
-      double& rotEnergyContr,
-      Eigen::Vector3d omega_BN_B) override;       //!< Method for computing the energy and momentum of the effector
+        double integTime,
+        Eigen::Vector3d& rotAngMomPntCContr_B,
+        double& rotEnergyContr,
+        Eigen::Vector3d omega_BN_B) override;     //!< Method for computing the energy and momentum of the effector
     void computePrescribedMotionInertialStates(); //!< Method for computing the effector's states relative to the
                                                   //!< inertial frame
     void addStateEffector(StateEffector* newStateEffector); //!< Method to attach a state effector to prescribed motion
@@ -100,15 +100,15 @@ class PrescribedMotionStateEffector final
     void freezeTopology() noexcept override;
 
     ReadFunctor<PrescribedTranslationMsgPayload>
-      prescribedTranslationInMsg; //!< Input message for the effector's translational prescribed states
+        prescribedTranslationInMsg; //!< Input message for the effector's translational prescribed states
     ReadFunctor<PrescribedRotationMsgPayload>
-      prescribedRotationInMsg; //!< Input message for the effector's rotational prescribed states
+        prescribedRotationInMsg; //!< Input message for the effector's rotational prescribed states
     Message<PrescribedTranslationMsgPayload>
-      prescribedTranslationOutMsg; //!< Output message for the effector's translational prescribed states
+        prescribedTranslationOutMsg; //!< Output message for the effector's translational prescribed states
     Message<PrescribedRotationMsgPayload>
-      prescribedRotationOutMsg; //!< Output message for the effector's rotational prescribed states
+        prescribedRotationOutMsg; //!< Output message for the effector's rotational prescribed states
     Message<SCStatesMsgPayload>
-      prescribedMotionConfigLogOutMsg; //!< Output config log message for the effector's states
+        prescribedMotionConfigLogOutMsg; //!< Output config log message for the effector's states
 
   private:
     void validateMass(double candidateMass); //!< Reject invalid mass without changing configuration or states
@@ -150,9 +150,9 @@ class PrescribedMotionStateEffector final
     Eigen::Vector3d rPrime_PcB_B; //!< [m/s] B frame time derivative of r_PcB_B in B frame components
     Eigen::Vector3d rPrimePrime_PcB_B; //!< [m/s^2] B frame time derivative of rPrime_PcB_B in B frame components
     Eigen::Vector3d
-      omega_BN_B; //!< [rad/s] Angular velocity of frame B relative to the inertial frame in B frame components
+        omega_BN_B; //!< [rad/s] Angular velocity of frame B relative to the inertial frame in B frame components
     Eigen::Vector3d
-      omega_PN_B; //!< [rad/s] Angular velocity of frame P relative to the inertial frame in B frame components
+        omega_PN_B; //!< [rad/s] Angular velocity of frame P relative to the inertial frame in B frame components
     Eigen::Vector3d rDot_PcB_B; //!< [m/s] Inertial time derivative of r_PcB_B in B frame components
     Eigen::MRPd sigma_BN;       //!< MRP attitude of frame B relative to the inertial frame
 
@@ -169,15 +169,15 @@ class PrescribedMotionStateEffector final
 
     // Effector properties relative to the inertial frame
     Eigen::Vector3d
-      r_PcN_N; //!< [m] Position of frame P center of mass relative to the inertial frame in inertial frame components
+        r_PcN_N; //!< [m] Position of frame P center of mass relative to the inertial frame in inertial frame components
     Eigen::Vector3d v_PcN_N; //!< [m/s] Inertial velocity of frame P center of mass relative to the inertial frame in
                              //!< inertial frame components
     Eigen::MatrixXd* r_PN_N; //!< [m] Position of frame P relative to the inertial frame in inertial frame components
     Eigen::MatrixXd*
-      v_PN_N; //!< [m/s] Inertial velocity of frame P relative to the inertial frame in inertial frame components
+        v_PN_N; //!< [m/s] Inertial velocity of frame P relative to the inertial frame in inertial frame components
     Eigen::MatrixXd* sigma_PN; //!< MRP attitude of frame P relative to the inertial frame
     Eigen::MatrixXd*
-      omega_PN_P; //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
+        omega_PN_P; //!< [rad/s] Angular velocity of frame P relative to the inertial frame in P frame components
 
     // Hub states
     Eigen::MatrixXd* inertialPositionProperty; //!< [m] r_N Inertial position relative to system spice zeroBase/refBase
@@ -205,12 +205,12 @@ class PrescribedMotionStateEffector final
     std::string nameOfPrescribedAttitudeProperty;     //!< Identifier for prescribed attitude sigma_PB
     std::string nameOfPrescribedAngVelocityProperty;  //!< Identifier for prescribed angular velocity omega_PB_P
     std::string
-      nameOfPrescribedAngAccelerationProperty; //!< Identifier for prescribed angular acceleration omegaPrime_PB_P
+        nameOfPrescribedAngAccelerationProperty; //!< Identifier for prescribed angular acceleration omegaPrime_PB_P
 
     std::string nameOfInertialPositionProperty; //!< Identifier for prescribed motion inertial position r_PN_N
     std::string nameOfInertialVelocityProperty; //!< Identifier for prescribed motion inertial velocity property v_PN_N
     std::string
-      nameOfInertialAttitudeProperty; //!< Identifier for the prescribed motion inertial attitude property sigma_PN
+        nameOfInertialAttitudeProperty; //!< Identifier for the prescribed motion inertial attitude property sigma_PN
     std::string nameOfInertialAngVelocityProperty; //!< Identifier for the prescribed motion inertial angular velocity
                                                    //!< property omega_PN_P
 

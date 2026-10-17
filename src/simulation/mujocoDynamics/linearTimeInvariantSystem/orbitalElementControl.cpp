@@ -61,28 +61,28 @@ Eigen::Matrix<double, 6, 3> calculateClassicalBMatrix(double mu, const ClassicEl
     const double sinI = std::sin(i);
     if (std::abs(sinI) <= eps) {
         bskLogger.bskLog(
-          BSK_ERROR,
-          "OrbitalElementControl::calculateClassicalBMatrix: singular inclination detected (sin(i) near zero).");
+            BSK_ERROR,
+            "OrbitalElementControl::calculateClassicalBMatrix: singular inclination detected (sin(i) near zero).");
     }
     const double eta = std::sqrt(1.0 - e * e);
     const double b = a * eta;
     const double n = std::sqrt(mu / std::pow(a, 3));
     const double h = n * a * b;
     if (std::abs(h) <= eps) {
-        bskLogger.bskLog(
-          BSK_ERROR,
-          "OrbitalElementControl::calculateClassicalBMatrix: singular orbit detected (angular momentum h near zero).");
+        bskLogger.bskLog(BSK_ERROR,
+                         "OrbitalElementControl::calculateClassicalBMatrix: singular orbit detected (angular momentum "
+                         "h near zero).");
     }
     if (std::abs(e) <= eps || std::abs(h * e) <= eps) {
         bskLogger.bskLog(
-          BSK_ERROR,
-          "OrbitalElementControl::calculateClassicalBMatrix: singular eccentricity detected (h*e near zero).");
+            BSK_ERROR,
+            "OrbitalElementControl::calculateClassicalBMatrix: singular eccentricity detected (h*e near zero).");
     }
     const double p = a * (1.0 - e * e);
     const double denom = (1.0 + e * std::cos(f));
     if (std::abs(denom) <= eps) {
         bskLogger.bskLog(
-          BSK_ERROR, "OrbitalElementControl::calculateClassicalBMatrix: invalid geometry (1 + e*cos(f) near zero).");
+            BSK_ERROR, "OrbitalElementControl::calculateClassicalBMatrix: invalid geometry (1 + e*cos(f) near zero).");
     }
     const double r = p / denom;
 
@@ -154,11 +154,11 @@ void OrbitalElementControl::setProportionalGain(const Eigen::MatrixXd& K)
 
     if (K_rows != 6 || K_cols != 6) {
         bskLogger.bskLog(
-          BSK_ERROR,
-          "%s",
-          (std::string("OrbitalElementControl::setProportionalGain: gain has inconsistent dimensions. ") +
-           "Expected size [6x6], but received [" + std::to_string(K_rows) + " x " + std::to_string(K_cols) + "].")
-            .c_str());
+            BSK_ERROR,
+            "%s",
+            (std::string("OrbitalElementControl::setProportionalGain: gain has inconsistent dimensions. ") +
+             "Expected size [6x6], but received [" + std::to_string(K_rows) + " x " + std::to_string(K_cols) + "].")
+                .c_str());
     }
 
     if (!isMatrixSPD(K)) {
@@ -180,7 +180,7 @@ void OrbitalElementControl::setIntegralGain(const Eigen::MatrixXd& K)
                          (std::string("OrbitalElementControl::setIntegralGain: gain K has inconsistent dimensions. ") +
                           "Expected size [6x6], but received [" + std::to_string(K_rows) + " x " +
                           std::to_string(K_cols) + "].")
-                           .c_str());
+                             .c_str());
     }
 
     if (!isMatrixSPD(K)) {
@@ -202,7 +202,7 @@ Eigen::VectorXd OrbitalElementControl::readInput(uint64_t /*CurrentSimNanos*/)
 
     if (targetOE.a == 0.0) {
         this->bskLogger.bskLog(
-          BSK_ERROR, "OrbitalElementControl::readInput: targetOE.a is zero; target message may be unwritten.");
+            BSK_ERROR, "OrbitalElementControl::readInput: targetOE.a is zero; target message may be unwritten.");
     }
 
     // Relative OE error: [da/a, de, di, dOmega, domega, dM]

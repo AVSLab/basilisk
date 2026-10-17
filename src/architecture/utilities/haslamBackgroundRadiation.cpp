@@ -21,10 +21,10 @@
 #include <cstring>
 
 HaslamMap::HaslamMap()
-  : nside(0)
-  , npix(0)
-  , initialized(false)
-  , beamSize_arcmin(this->angularRes)
+    : nside(0)
+    , npix(0)
+    , initialized(false)
+    , beamSize_arcmin(this->angularRes)
 {
 }
 
@@ -141,7 +141,7 @@ bool HaslamMap::loadHaslamMap()
     int anynull;
 
     if (fits_read_col(
-          fptr, TFLOAT, 1, 1, 1, this->npix, &nullval, this->brightnessTemperatures.data(), &anynull, &status)) {
+            fptr, TFLOAT, 1, 1, 1, this->npix, &nullval, this->brightnessTemperatures.data(), &anynull, &status)) {
         char err_text[256];
         fits_get_errstatus(status, err_text);
         this->bskLogger.bskError("HaslamMap: Error reading data: %s", err_text);
@@ -151,9 +151,9 @@ bool HaslamMap::loadHaslamMap()
     }
 
     this->bskLogger.bskLog(
-      BSK_INFORMATION,
-      "%s",
-      ("HaslamMap: Loaded NSIDE=" + std::to_string(this->nside) + ", NPIX=" + std::to_string(this->npix)).c_str());
+        BSK_INFORMATION,
+        "%s",
+        ("HaslamMap: Loaded NSIDE=" + std::to_string(this->nside) + ", NPIX=" + std::to_string(this->npix)).c_str());
     closeFile();
     return true;
 }

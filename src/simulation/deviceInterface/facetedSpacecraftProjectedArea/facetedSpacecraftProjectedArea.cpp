@@ -43,14 +43,14 @@ void FacetedSpacecraftProjectedArea::Reset(uint64_t callTime)
     if (!this->bodyHeadingInMsg.isLinked() && !this->sunStateInMsg.isLinked() &&
         !this->spacecraftStateInMsg.isLinked()) {
         this->bskLogger->bskError(
-          "FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
+            "FacetedSpacecraftProjectedArea: Input message error. No valid heading source configured.");
     }
 
     // Check facet element messages are linked
     for (uint64_t idx = 0; idx < this->facetElementBodyInMsgs.size(); idx++) {
         if (!this->facetElementBodyInMsgs[idx].isLinked()) {
             this->bskLogger->bskError(
-              "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
+                "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not linked.");
         }
     }
 
@@ -117,7 +117,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages()
     if (this->spacecraftStateInMsg.isLinked()) {
         if (!this->spacecraftStateInMsg.isWritten()) {
             this->bskLogger->bskError(
-              "FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
+                "FacetedSpacecraftProjectedArea: Input message error. spacecraftStateInMsg is linked but not written.");
         }
 
         SCStatesMsgPayload spacecraftStateIn{};
@@ -130,7 +130,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages()
             // Also requires spacecraftStateInMsg
             if (!this->sunStateInMsg.isWritten()) {
                 this->bskLogger->bskError(
-                  "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
+                    "FacetedSpacecraftProjectedArea: Input message error. sunStateInMsg is linked but not written.");
             }
 
             SpicePlanetStateMsgPayload sunStateIn{};
@@ -145,7 +145,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages()
                 this->bodyHeadingVec_B = r_SB_B / norm;
             } else {
                 this->bskLogger->bskError(
-                  "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                    "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
             }
         } else {
             // Option 2: Spacecraft velocity heading (Application: drag)
@@ -156,13 +156,13 @@ bool FacetedSpacecraftProjectedArea::readInputMessages()
                 this->bodyHeadingVec_B = v_BN_B / norm;
             } else {
                 this->bskLogger->bskError(
-                  "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
+                    "FacetedSpacecraftProjectedArea: No unique body heading vector can be resolved.");
             }
         }
     } else if (this->bodyHeadingInMsg.isLinked()) {
         if (!this->bodyHeadingInMsg.isWritten()) {
             this->bskLogger->bskError(
-              "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
+                "FacetedSpacecraftProjectedArea: Input message error. bodyHeadingInMsg is linked but not written.");
         }
         // Option 3: Direct heading
         BodyHeadingMsgPayload bodyHeadingIn{};
@@ -182,7 +182,7 @@ bool FacetedSpacecraftProjectedArea::readInputMessages()
             this->facetNHat_BList[idx] = cArray2EigenVector3d(facetElementBodyIn.nHat_B);
         } else {
             this->bskLogger->bskError(
-              "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
+                "FacetedSpacecraftProjectedArea: Input message error. facetElementBodyInMsgs is not written.");
         }
     }
 

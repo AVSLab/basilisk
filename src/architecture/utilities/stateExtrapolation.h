@@ -209,12 +209,12 @@ static inline SpicePlanetStateMsgPayload extrapolatePlanetStateToEpoch(const Spi
     using RowMajorMatrix3d = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
     // J20002Pfix is [PN], it maps inertial to planet-fixed components. Its transpose [NP] is advanced.
     Eigen::Matrix3d dcm_NPfix =
-      RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
+        RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix[0][0])).transpose();
     if (dcm_NPfix.isZero()) { // position-only planet message that leaves the optional orientation uninitialized
         dcm_NPfix = Eigen::Matrix3d::Identity();
     }
     const Eigen::Matrix3d dcm_NPfix_dot =
-      RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
+        RowMajorMatrix3d(Eigen::Map<const RowMajorMatrix3d>(&planetState.J20002Pfix_dot[0][0])).transpose();
     const PlanetSpin spin = planetSpin(dcm_NPfix, dcm_NPfix_dot);
     const Eigen::Matrix3d dcmAdvanced_NPfix = advanceDcm(dcm_NPfix, spin, dt);
     Eigen::Map<RowMajorMatrix3d>(&extrapolated.J20002Pfix[0][0]) = dcmAdvanced_NPfix.transpose();
@@ -330,13 +330,13 @@ class ScStateExtrapolation
             // update interval
             const bool periodKnown = this->writeIntervalNanos[index] != 0;
             const bool periodDiffers = periodKnown && this->writeIntervalNanos[index] != moduleIntervalNanos;
-            const bool lagged =
-              periodKnown && !periodDiffers && isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            const bool lagged = periodKnown && !periodDiffers &&
+                                isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
             allLagged = allLagged && lagged;
             allStepLagMessages =
-              allStepLagMessages && isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
-            mismatch =
-              mismatch || (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
+                allStepLagMessages && isStepLagMessage(currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            mismatch = mismatch ||
+                       (this->rewritten[index] && timeWrittenNanos < currentSimNanos && (periodDiffers || !lagged));
         }
         this->lagConsistent = allLagged;
         this->allStepLag = allStepLagMessages;
@@ -454,7 +454,7 @@ class ScStateExtrapolation
                                            uint64_t previousUpdateNanos) const
     {
         SpicePlanetStateMsgPayload planet =
-          this->movePlanetToEpoch(planetState, currentSimNanos, timeWrittenNanos, previousUpdateNanos);
+            this->movePlanetToEpoch(planetState, currentSimNanos, timeWrittenNanos, previousUpdateNanos);
         // a position-only message leaves the optional orientation at zero: treat it as identity on every path
         const double* dcmElements = &planet.J20002Pfix[0][0]; // [-]
         if (std::all_of(dcmElements, dcmElements + 9, [](double e) { return e == 0.0; })) {

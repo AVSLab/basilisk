@@ -65,8 +65,8 @@ class MJJoint : public MJObject<mjsJoint>
      * @param body Reference to the body the joint is associated with.
      */
     MJJoint(mjsJoint* joint, MJBody& body)
-      : MJObject(joint)
-      , body(body)
+        : MJObject(joint)
+        , body(body)
     {
     }
 

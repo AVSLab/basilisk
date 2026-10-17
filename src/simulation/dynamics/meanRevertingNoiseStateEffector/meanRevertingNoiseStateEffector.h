@@ -39,8 +39,8 @@
  * standard deviation.
  */
 class MeanRevertingNoiseStateEffector final
-  : public StateEffector
-  , public SysModel
+    : public StateEffector
+    , public SysModel
 {
   public:
     /*! @brief Constructor. */

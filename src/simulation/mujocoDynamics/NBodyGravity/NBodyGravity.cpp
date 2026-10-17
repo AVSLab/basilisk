@@ -56,7 +56,7 @@ void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     for (auto&& [name, target] : targets) {
         if (!target.centerOfMassStateInMsg.isLinked()) {
             bskLogger.bskError(
-              "%sTarget '%s' centerOfMassStateInMsg is not linked!", errorPrefix.c_str(), name.c_str());
+                "%sTarget '%s' centerOfMassStateInMsg is not linked!", errorPrefix.c_str(), name.c_str());
         }
 
         if (!target.massPropertiesInMsg.isLinked()) {
@@ -78,11 +78,13 @@ void NBodyGravity::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
             bskLogger.bskError("%sSource '%s' has no gravity model!", errorPrefix.c_str(), name.c_str());
         }
 
-        auto error =
-          source.gravBody ? gravityModel->initializeParameters(*source.gravBody) : gravityModel->initializeParameters();
+        auto error = source.gravBody ? gravityModel->initializeParameters(*source.gravBody)
+                                     : gravityModel->initializeParameters();
         if (error) {
-            bskLogger.bskError(
-              "%sWhile initializing source '%s' gravity model: %s", errorPrefix.c_str(), name.c_str(), error->c_str());
+            bskLogger.bskError("%sWhile initializing source '%s' gravity model: %s",
+                               errorPrefix.c_str(),
+                               name.c_str(),
+                               error->c_str());
         }
 
         if (gravityModel->dependsOnOrientation() && !isStateLinked(source)) {
@@ -129,7 +131,7 @@ GravitySource& NBodyGravity::addGravitySource(std::string name,
                                               bool isCentralBody)
 {
     auto [source, actuallyEmplaced] =
-      this->sources.emplace(name, GravitySource{ gravityModel, {}, isCentralBody, nullptr });
+        this->sources.emplace(name, GravitySource{ gravityModel, {}, isCentralBody, nullptr });
 
     if (!actuallyEmplaced) {
         bskLogger.bskError("Cannot use repeated source name: %s", name.c_str());
@@ -145,7 +147,7 @@ GravitySource& NBodyGravity::addGravitySource(std::string name, std::shared_ptr<
     }
 
     auto [source, actuallyEmplaced] =
-      this->sources.emplace(name, GravitySource{ nullptr, {}, false, std::move(gravBody) });
+        this->sources.emplace(name, GravitySource{ nullptr, {}, false, std::move(gravBody) });
 
     if (!actuallyEmplaced) {
         bskLogger.bskError("Cannot use repeated source name: %s", name.c_str());
@@ -161,7 +163,7 @@ GravityTarget& NBodyGravity::addGravityTarget(std::string name)
     // which proved to cause weird bugs (multiple messages pointing to the same
     // address in memory for their payload).
     auto [target, actuallyEmplaced] =
-      this->targets.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple());
+        this->targets.emplace(std::piecewise_construct, std::forward_as_tuple(name), std::forward_as_tuple());
 
     if (!actuallyEmplaced) {
         bskLogger.bskError("Cannot use repeated target name: %s", name.c_str());

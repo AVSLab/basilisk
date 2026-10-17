@@ -209,7 +209,7 @@ class svStochasticIntegratorDRI1NM : public svStochasticIntegratorDRI1
   public:
     /** Constructor. */
     explicit svStochasticIntegratorDRI1NM(DynamicObject* dyn)
-      : svStochasticIntegratorDRI1(dyn)
+        : svStochasticIntegratorDRI1(dyn)
     {
         this->setNonMixing(true);
     }

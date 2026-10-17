@@ -98,8 +98,8 @@ void Reset_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t m
 
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal =
-      configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
-      (double)configData->numStates;
+        configData->alpha * configData->alpha * ((double)configData->numStates + configData->kappa) -
+        (double)configData->numStates;
     configData->gamma = sqrt((double)configData->numStates + configData->lambdaVal);
 
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
@@ -117,7 +117,7 @@ void Reset_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t m
     ukfCholDecomp(configData->sBar, (int32_t)configData->numStates, (int32_t)configData->numStates, tempMatrix);
     mCopy(tempMatrix, configData->numStates, configData->numStates, configData->sBar);
     ukfCholDecomp(
-      configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
+        configData->qNoise, (int32_t)configData->numStates, (int32_t)configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates, configData->numStates, configData->sQnoise);
 
     return;
@@ -242,7 +242,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig* configData, double updateTime)
     sunlineStateProp(&(configData->SP[0 * configData->numStates + 0]), configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
     vScale(
-      configData->wM[0], &(configData->SP[0 * configData->numStates + 0]), configData->numStates, configData->xBar);
+        configData->wM[0], &(configData->SP[0 * configData->numStates + 0]), configData->numStates, configData->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates, sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
@@ -284,7 +284,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig* configData, double updateTime)
            configData->numStates * configData->numStates * sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(
-      AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
+        AT, (int32_t)(2 * configData->countHalfSPs + configData->numStates), (int32_t)configData->countHalfSPs, rAT);
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates, configData->sBar);
 
@@ -332,7 +332,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig* configData)
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
             for (size_t j = 0; j < configData->countHalfSPs * 2 + 1; j++) {
                 configData->yMeas[obsCounter * (configData->countHalfSPs * 2 + 1) + j] =
-                  v3Dot(&(configData->SP[j * SKF_N_STATES]), sensorNormal);
+                    v3Dot(&(configData->SP[j * SKF_N_STATES]), sensorNormal);
             }
             obsCounter++;
         }

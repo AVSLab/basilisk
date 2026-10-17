@@ -72,8 +72,8 @@ class MJSpec
          * @param spec Reference to the `MJSpec` object.
          */
         NoRecompileGuard(MJSpec& spec)
-          : spec(spec)
-          , prevShouldRecompileWhenAsked(spec.shouldRecompileWhenAsked)
+            : spec(spec)
+            , prevShouldRecompileWhenAsked(spec.shouldRecompileWhenAsked)
         {
             spec.shouldRecompileWhenAsked = false;
         }
@@ -360,7 +360,7 @@ template<typename T>
 T& MJSpec::getActuator(const std::string& name)
 {
     auto actuatorPtr =
-      std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) { return obj->getName() == name; });
+        std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) { return obj->getName() == name; });
 
     if (actuatorPtr == std::end(actuators))
         BSKLogger{}.bskError("Tried to get actuator '%s' but it does not exist.", name.c_str());

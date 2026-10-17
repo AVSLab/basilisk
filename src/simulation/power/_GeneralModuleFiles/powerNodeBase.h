@@ -45,8 +45,8 @@ class PowerNodeBase : public SysModel
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     virtual void evaluatePowerModel(
-      PowerNodeUsageMsgPayload*
-        powerUsageMsg) = 0; //!< Virtual void method used to compute module-wise power usage/generation.
+        PowerNodeUsageMsgPayload*
+            powerUsageMsg) = 0; //!< Virtual void method used to compute module-wise power usage/generation.
     virtual void customReset(uint64_t CurrentClock);         //!< Custom Reset method, similar to customSelfInit.
     virtual void customWriteMessages(uint64_t CurrentClock); //!< custom Write method, similar to customSelfInit.
     virtual bool customReadMessages(); //!< Custom read method, similar to customSelfInit; returns `true' by default.
@@ -56,7 +56,7 @@ class PowerNodeBase : public SysModel
     ReadFunctor<DeviceStatusMsgPayload> nodeStatusInMsg; //!< note status input message
     double nodePowerOut;                                 //!< [W] Power provided (+) or consumed (-).
     uint64_t
-      powerStatus;       //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+        powerStatus;     //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
     BSKLogger bskLogger; //!< -- BSK Logging
 
   protected:

@@ -68,8 +68,8 @@ class SmallBodyNavEKF : public SysModel
     void computeDynamicsMatrix(const StateVector& x_hat); //!< Computes the new dynamics matrix, A_k
     void measurementUpdate();                             //!< Computes the measurement update for the EKF
     void computeEquationsOfMotion(
-      const StateVector& x_hat,
-      const StateMatrix& Phi); //!< Computes the EOMs of the state and state transition matrix
+        const StateVector& x_hat,
+        const StateMatrix& Phi); //!< Computes the EOMs of the state and state transition matrix
 
   public:
     ReadFunctor<NavTransMsgPayload> navTransInMsg;           //!< Translational nav input message
@@ -143,7 +143,7 @@ class SmallBodyNavEKF : public SysModel
     double F_ddot;                 //!< Second time derivative of true anomaly
     Eigen::Matrix3d dcm_ON;        //!< DCM from the inertial frame to the small-body's hill frame
     Eigen::Vector3d
-      r_SO_O; //!< Vector from the small body's origin to the inertial frame origin in small-body hill frame components
+        r_SO_O; //!< Vector from the small body's origin to the inertial frame origin in small-body hill frame components
 };
 
 #endif

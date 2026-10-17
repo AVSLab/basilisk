@@ -38,8 +38,9 @@ void PrescribedLinearTranslation::SelfInit()
 void PrescribedLinearTranslation::Reset(uint64_t callTime [[maybe_unused]])
 {
     if (!this->linearTranslationRigidBodyInMsg.isLinked()) {
-        _bskLog(
-          this->bskLogger, BSK_ERROR, "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
+        _bskLog(this->bskLogger,
+                BSK_ERROR,
+                "prescribedLinearTranslation.linearTranslationRigidBodyInMsg wasn't connected.");
     }
 
     this->tInit = 0.0;
@@ -129,7 +130,7 @@ void PrescribedLinearTranslation::computeBangBangParametersNoSmoothing()
 
     // Define the parabolic constants for the first and second half of the translation
     this->a =
-      0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
+        0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->tInit) * (this->t_b1 - this->tInit));
     this->b = -0.5 * (this->transPosRef - this->transPosInit) / ((this->t_b1 - this->t_f) * (this->t_b1 - this->t_f));
 }
 
@@ -146,8 +147,8 @@ void PrescribedLinearTranslation::computeBangCoastBangParametersNoSmoothing()
 
     // Determine the hub-relative position at time t_b1
     this->transPos_tb1 =
-      sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
-      this->transPosInit;
+        sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+        this->transPosInit;
     this->transVel_tb1 = sign * this->transAccelMax * this->coastOptionBangDuration;
 
     // Determine the distance traveled during the coast period
@@ -244,8 +245,8 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
     // Determine the hub-relative position and velocity at time t_b1
     this->transVel_tb1 = sign * this->transAccelMax * this->coastOptionBangDuration + this->transVel_ts1;
     this->transPos_tb1 =
-      sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
-      this->transVel_ts1 * this->coastOptionBangDuration + this->transPos_ts1;
+        sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+        this->transVel_ts1 * this->coastOptionBangDuration + this->transPos_ts1;
 
     // Determine the time at the end of the second smoothing segment t_s2
     this->t_s2 = this->t_b1 + this->smoothingDuration;
@@ -269,8 +270,8 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
     // Determine the hub-relative position and velocity at time t_s3
     this->transVel_ts3 = -sign * 0.5 * this->transAccelMax * this->smoothingDuration + this->transVel_tc;
     this->transPos_ts3 =
-      -sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
-      this->transVel_tc * this->smoothingDuration + this->transPos_tc;
+        -sign * (3.0 / 20.0) * this->transAccelMax * this->smoothingDuration * this->smoothingDuration +
+        this->transVel_tc * this->smoothingDuration + this->transPos_tc;
 
     // Determine the time at the end of the second bang segment t_b2
     this->t_b2 = this->t_s3 + this->coastOptionBangDuration;
@@ -278,8 +279,8 @@ void PrescribedLinearTranslation::computeSmoothedBangCoastBangParameters()
     // Determine the hub-relative position and velocity at time t_b2
     this->transVel_tb2 = -sign * this->transAccelMax * this->coastOptionBangDuration + this->transVel_ts3;
     this->transPos_tb2 =
-      -sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
-      this->transVel_ts3 * this->coastOptionBangDuration + this->transPos_ts3;
+        -sign * 0.5 * this->transAccelMax * this->coastOptionBangDuration * this->coastOptionBangDuration +
+        this->transVel_ts3 * this->coastOptionBangDuration + this->transPos_ts3;
 
     // Determine the time when the translation is complete t_f
     this->t_f = this->t_b2 + this->smoothingDuration;
@@ -491,8 +492,8 @@ void PrescribedLinearTranslation::computeFirstSmoothedSegment(double t)
     double term1 = (3.0 * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
     double term2 = (2.0 * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
                    (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
-    double term3 =
-      ((t - this->tInit) * (t - this->tInit) * (t - this->tInit)) / (this->smoothingDuration * this->smoothingDuration);
+    double term3 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
+                   (this->smoothingDuration * this->smoothingDuration);
     double term4 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
                    (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term5 = ((t - this->tInit) * (t - this->tInit) * (t - this->tInit) * (t - this->tInit)) /
@@ -551,8 +552,8 @@ void PrescribedLinearTranslation::computeSecondSmoothedSegment(double t)
 
     this->transAccel = sign * this->transAccelMax * (1.0 - term1 + term2);
     this->transVel = sign * this->transAccelMax * ((t - this->t_b1) - term3 + term4) + this->transVel_tb1;
-    this->transPos =
-      sign * this->transAccelMax * (term5 - term6 + term7) + this->transVel_tb1 * (t - this->t_b1) + this->transPos_tb1;
+    this->transPos = sign * this->transAccelMax * (term5 - term6 + term7) + this->transVel_tb1 * (t - this->t_b1) +
+                     this->transPos_tb1;
 }
 
 /*! This method computes the third smoothing segment scalar translational states for the smoothed profiler options.
@@ -576,7 +577,7 @@ void PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
         term2 = (2.0 * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
                 (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term3 =
-          ((t - this->t_c) * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
+            ((t - this->t_c) * (t - this->t_c) * (t - this->t_c)) / (this->smoothingDuration * this->smoothingDuration);
         term4 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
                 (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
         term5 = ((t - this->t_c) * (t - this->t_c) * (t - this->t_c) * (t - this->t_c)) /
@@ -587,7 +588,7 @@ void PrescribedLinearTranslation::computeThirdSmoothedSegment(double t)
         this->transAccel = -sign * this->transAccelMax * (term1 - term2);
         this->transVel = -sign * this->transAccelMax * (term3 - term4) + this->transVel_tc;
         this->transPos =
-          -sign * this->transAccelMax * (term5 - term6) + this->transVel_tc * (t - this->t_c) + this->transPos_tc;
+            -sign * this->transAccelMax * (term5 - term6) + this->transVel_tc * (t - this->t_c) + this->transPos_tc;
     } else {
         term1 = (3.0 * (t - this->t_b2) * (t - this->t_b2)) / (this->smoothingDuration * this->smoothingDuration);
         term2 = (2.0 * (t - this->t_b2) * (t - this->t_b2) * (t - this->t_b2)) /
@@ -620,7 +621,7 @@ void PrescribedLinearTranslation::computeFourthSmoothedSegment(double t)
     double term2 = (2.0 * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
                    (this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term3 =
-      ((this->t_f - t) * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
+        ((this->t_f - t) * (this->t_f - t) * (this->t_f - t)) / (this->smoothingDuration * this->smoothingDuration);
     double term4 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
                    (2.0 * this->smoothingDuration * this->smoothingDuration * this->smoothingDuration);
     double term5 = ((this->t_f - t) * (this->t_f - t) * (this->t_f - t) * (this->t_f - t)) /
@@ -695,7 +696,7 @@ void PrescribedLinearTranslation::writeOutputMessages(uint64_t callTime)
     // Write the output messages
     this->prescribedTranslationOutMsg.write(&prescribedTranslationMsgOut, this->moduleID, callTime);
     PrescribedTranslationMsg_C_write(
-      &prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
+        &prescribedTranslationMsgOut, &prescribedTranslationOutMsgC, this->moduleID, callTime);
     this->linearTranslationRigidBodyOutMsg.write(&linearTranslationRigidBodyMsgOut, this->moduleID, callTime);
 }
 
