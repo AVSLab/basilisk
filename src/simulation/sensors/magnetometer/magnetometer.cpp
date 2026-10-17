@@ -69,8 +69,7 @@ Magnetometer::~Magnetometer()
 }
 
 //! - This method composes the transformation matrix from Body to Sensor frame.
-Eigen::Matrix3d
-Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
+Eigen::Matrix3d Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
 {
     this->dcm_SB = eigenM1(roll) * eigenM2(pitch) * eigenM3(yaw);
 
@@ -80,8 +79,7 @@ Magnetometer::setBodyToSensorDCM(double yaw, double pitch, double roll)
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void
-Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->magInMsg.isLinked()) {
         bskLogger.bskError("Magnetic field interface message name (magInMsg) is empty.");
@@ -120,8 +118,7 @@ Magnetometer::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! This method reads necessary input messages. */
-void
-Magnetometer::readInputMessages()
+void Magnetometer::readInputMessages()
 {
     //! - Read magnetic field model ephemeris message
     this->magData = this->magInMsg();
@@ -131,8 +128,7 @@ Magnetometer::readInputMessages()
 }
 
 /*! This method computes the magnetic field vector information in the sensor frame.*/
-void
-Magnetometer::computeMagData()
+void Magnetometer::computeMagData()
 {
     Eigen::Vector3d tam_N;
     Eigen::Matrix3d dcm_BN;
@@ -146,16 +142,14 @@ Magnetometer::computeMagData()
 }
 
 /*! This method computes the true sensed values for the sensor. */
-void
-Magnetometer::computeTrueOutput()
+void Magnetometer::computeTrueOutput()
 {
     this->tamTrue_S = this->tam_S;
 }
 
 /*! This method takes the true values (tamTrue_S) and converts
  it over to an errored value.  It applies Gaussian noise, constant bias and scale factor to the truth. */
-void
-Magnetometer::applySensorErrors()
+void Magnetometer::applySensorErrors()
 {
     //! - If any of the standard deviation vector elements is not positive, do not use noise error from RNG.
     bool anyNoiseComponentUninitialized = false;
@@ -209,15 +203,13 @@ Magnetometer::applySensorErrors()
 }
 
 /*! This method applies saturation using the given bounds. */
-void
-Magnetometer::applySaturation()
+void Magnetometer::applySaturation()
 {
     this->tamSensed_S = this->saturateUtility.saturate(this->tamSensed_S);
 }
 
 /*! This method writes the output messages. */
-void
-Magnetometer::writeOutputMessages(uint64_t Clock)
+void Magnetometer::writeOutputMessages(uint64_t Clock)
 {
     TAMSensorMsgPayload localMessage;
     //! - Zero the output message
@@ -231,8 +223,7 @@ Magnetometer::writeOutputMessages(uint64_t Clock)
  calls to compute the current magnetic field information and write the output message for
  the rest of the model.
  @param CurrentSimNanos The current simulation time from the architecture */
-void
-Magnetometer::UpdateState(uint64_t CurrentSimNanos)
+void Magnetometer::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs
     this->readInputMessages();
@@ -248,29 +239,25 @@ Magnetometer::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-void
-Magnetometer::setAMatrix(const Eigen::Matrix3d& matrix)
+void Magnetometer::setAMatrix(const Eigen::Matrix3d& matrix)
 {
     this->AMatrix = matrix;
     this->noiseModel.setPropMatrix(matrix);
 }
 
-Eigen::Matrix3d
-Magnetometer::getAMatrix() const
+Eigen::Matrix3d Magnetometer::getAMatrix() const
 {
     return this->AMatrix;
 }
 
-void
-Magnetometer::setFaultState(int axis, MagFaultState_t state)
+void Magnetometer::setFaultState(int axis, MagFaultState_t state)
 {
     if (axis >= 0 && axis < 3) {
         this->faultStateAxis[axis] = state;
     }
 }
 
-MagFaultState_t
-Magnetometer::getFaultState(int axis) const
+MagFaultState_t Magnetometer::getFaultState(int axis) const
 {
     if (axis >= 0 && axis < 3) {
         return this->faultStateAxis[axis];

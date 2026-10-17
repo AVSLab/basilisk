@@ -36,8 +36,7 @@ GravityGradientEffector::~GravityGradientEffector()
 
  @param CurrentSimNanos [ns] Time at which the reset occurs
 */
-void
-GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* zero the effector output forces and torques */
     this->forceExternal_B.fill(0.0);
@@ -50,8 +49,7 @@ GravityGradientEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! Validate that at least one gravity-gradient source planet was configured. */
-void
-GravityGradientEffector::validateConfiguration()
+void GravityGradientEffector::validateConfiguration()
 {
     if (this->planetPropertyNames.empty()) {
         bskLogger.bskError(
@@ -63,8 +61,7 @@ GravityGradientEffector::validateConfiguration()
  @param planetName The planet name
 
  */
-void
-GravityGradientEffector::addPlanetName(std::string planetName)
+void GravityGradientEffector::addPlanetName(std::string planetName)
 {
     this->planetPropertyNames.push_back(planetName);
 
@@ -75,8 +72,7 @@ GravityGradientEffector::addPlanetName(std::string planetName)
  *
  * @param[in] CurrentClock [ns] Current simulation time.
  */
-void
-GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
+void GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     GravityGradientMsgPayload outMsg;
     eigenVector3d2CArray(this->torqueExternalPntB_B, outMsg.gravityGradientTorque_B);
@@ -91,8 +87,7 @@ GravityGradientEffector::WriteOutputMessages(uint64_t CurrentClock)
  * @param[in] states Dynamic parameter manager containing the required states and properties.
  */
 
-void
-GravityGradientEffector::linkInStates(DynParamManager& states)
+void GravityGradientEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
@@ -114,8 +109,7 @@ GravityGradientEffector::linkInStates(DynParamManager& states)
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step.
  */
-void
-GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
+void GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], double timeStep [[maybe_unused]])
 {
     // Zero out the force/torque values to begin with
     this->torqueExternalPntB_B.setZero();
@@ -162,8 +156,7 @@ GravityGradientEffector::computeForceTorque(double integTime [[maybe_unused]], d
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
+void GravityGradientEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->WriteOutputMessages(CurrentSimNanos);
     return;

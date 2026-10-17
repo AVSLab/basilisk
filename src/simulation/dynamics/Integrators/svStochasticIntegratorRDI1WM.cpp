@@ -49,8 +49,7 @@ svStochasticIntegratorRDI1WM::svStochasticIntegratorRDI1WM(DynamicObject* dynIn)
 
 svStochasticIntegratorRDI1WM::~svStochasticIntegratorRDI1WM() noexcept = default;
 
-void
-svStochasticIntegratorRDI1WM::bindFlatStorage()
+void svStochasticIntegratorRDI1WM::bindFlatStorage()
 {
     auto storage = std::make_unique<FlatStorage>();
     const auto derivativeSize = this->stochasticPackedDerivatives().size();
@@ -66,8 +65,7 @@ svStochasticIntegratorRDI1WM::bindFlatStorage()
     this->flatStorage = std::move(storage);
 }
 
-void
-svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorRDI1WM::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

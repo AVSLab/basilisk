@@ -33,8 +33,7 @@
  @param configData The configuration data associated with RW null space model
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_inertial3D(inertial3DConfig* configData, int64_t moduleID)
+void SelfInit_inertial3D(inertial3DConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -46,8 +45,7 @@ SelfInit_inertial3D(inertial3DConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
 */
-void
-Reset_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)configData;
     (void)callTime;
@@ -61,8 +59,7 @@ Reset_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttRefMsgPayload attRefOut; /* output message structure */
 
@@ -81,8 +78,7 @@ Update_inertial3D(inertial3DConfig* configData, uint64_t callTime, int64_t modul
  @param configData The configuration data associated with the null space control
  @param attRefOut Output message
  */
-void
-computeInertialPointingReference(inertial3DConfig* configData, AttRefMsgPayload* attRefOut)
+void computeInertialPointingReference(inertial3DConfig* configData, AttRefMsgPayload* attRefOut)
 {
     v3Copy(configData->sigma_R0N, attRefOut->sigma_RN);
     v3SetZero(attRefOut->omega_RN_N);

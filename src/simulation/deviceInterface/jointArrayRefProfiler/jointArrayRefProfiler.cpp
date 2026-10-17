@@ -28,8 +28,7 @@ namespace {
  * @param wrapStart Lower bound of the wrapping interval [rad].
  * @return Wrapped angle [rad].
  */
-double
-wrapJointAngle(double angle, double wrapStart)
+double wrapJointAngle(double angle, double wrapStart)
 {
     const double fullCircle = 2.0 * M_PI; // [rad]
     double wrappedAngle = std::fmod(angle - wrapStart, fullCircle);
@@ -43,16 +42,14 @@ wrapJointAngle(double angle, double wrapStart)
  * @param angleDisplacement Angular displacement [rad].
  * @return Shortest equivalent angular displacement [rad].
  */
-double
-shortestAngularDisplacement(double angleDisplacement)
+double shortestAngularDisplacement(double angleDisplacement)
 {
     return std::remainder(angleDisplacement, 2.0 * M_PI);
 }
 
 } // namespace
 
-void
-JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (this->jointStatesInMsgs.empty()) {
@@ -122,8 +119,7 @@ JointArrayRefProfiler::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->targetJointAngles = Eigen::VectorXd::Zero(this->numHingedJoints);
 }
 
-void
-JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
+void JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
 {
     if (!this->desJointStatesInMsg.isWritten()) {
         this->bskLogger.bskError("JointArrayRefProfiler called before desired joint states message was written.");
@@ -211,8 +207,7 @@ JointArrayRefProfiler::UpdateState(uint64_t CurrentSimNanos)
     this->desJointStatesOutMsg.write(&desJointStatesOut, this->moduleID, CurrentSimNanos);
 }
 
-void
-JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unused]])
+void JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     double beta = 1.0 - std::exp(-this->wc * this->filterDt);
 
@@ -226,8 +221,7 @@ JointArrayRefProfiler::computeLowPassFilter(uint64_t CurrentSimNanos [[maybe_unu
     }
 }
 
-void
-JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos)
+void JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -255,8 +249,7 @@ JointArrayRefProfiler::computeLinearProfile(uint64_t CurrentSimNanos)
     }
 }
 
-void
-JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos)
+void JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -291,8 +284,7 @@ JointArrayRefProfiler::computeCubicProfile(uint64_t CurrentSimNanos)
     }
 }
 
-void
-JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos)
+void JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos)
 {
     double tau = diffNanoToSec(CurrentSimNanos, this->profileStartTime); // time since profile start in seconds
 
@@ -332,51 +324,43 @@ JointArrayRefProfiler::computeQuinticProfile(uint64_t CurrentSimNanos)
     }
 }
 
-void
-JointArrayRefProfiler::setProfileType(std::string profileType)
+void JointArrayRefProfiler::setProfileType(std::string profileType)
 {
     this->profileType = profileType;
 }
 
-void
-JointArrayRefProfiler::setProfileDuration(double profileDuration)
+void JointArrayRefProfiler::setProfileDuration(double profileDuration)
 {
     this->profileDuration = profileDuration;
 }
 
-void
-JointArrayRefProfiler::setWc(double wc)
+void JointArrayRefProfiler::setWc(double wc)
 {
     this->wc = wc;
 }
 
-void
-JointArrayRefProfiler::setFilterDt(double filterDt)
+void JointArrayRefProfiler::setFilterDt(double filterDt)
 {
     this->filterDt = filterDt;
 }
 
-void
-JointArrayRefProfiler::setJointAngleWrapStart(double jointAngleWrapStart)
+void JointArrayRefProfiler::setJointAngleWrapStart(double jointAngleWrapStart)
 {
     this->jointAngleWrapStart = jointAngleWrapStart;
     this->jointAngleWrappingEnabled = true;
 }
 
-void
-JointArrayRefProfiler::disableJointAngleWrapping()
+void JointArrayRefProfiler::disableJointAngleWrapping()
 {
     this->jointAngleWrappingEnabled = false;
 }
 
-void
-JointArrayRefProfiler::setUseShortestPath(bool useShortestPath)
+void JointArrayRefProfiler::setUseShortestPath(bool useShortestPath)
 {
     this->useShortestPath = useShortestPath;
 }
 
-void
-JointArrayRefProfiler::addHingedJoint()
+void JointArrayRefProfiler::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;

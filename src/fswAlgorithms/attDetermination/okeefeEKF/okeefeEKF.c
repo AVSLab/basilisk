@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_okeefeEKF(okeefeEKFConfig* configData, int64_t moduleID)
+void SelfInit_okeefeEKF(okeefeEKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -45,8 +44,7 @@ SelfInit_okeefeEKF(okeefeEKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -114,8 +112,7 @@ Reset_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleID
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
@@ -178,8 +175,7 @@ Update_okeefeEKF(okeefeEKFConfig* configData, uint64_t callTime, int64_t moduleI
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void
-sunlineTimeUpdate(okeefeEKFConfig* configData, double updateTime)
+void sunlineTimeUpdate(okeefeEKFConfig* configData, double updateTime)
 {
     double stmT[SKF_N_STATES_HALF * SKF_N_STATES_HALF], covPhiT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
     double qGammaT[SKF_N_STATES_HALF * SKF_N_STATES_HALF], gammaQGammaT[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -238,8 +234,10 @@ sunlineTimeUpdate(okeefeEKFConfig* configData, double updateTime)
     @param prev_states The states saved from previous step for this purpose
     @param omega Pointer to the rotation rate
  */
-void
-sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev_states[SKF_N_STATES_HALF], double* omega)
+void sunlineRateCompute(double states[SKF_N_STATES_HALF],
+                        double dt,
+                        double prev_states[SKF_N_STATES_HALF],
+                        double* omega)
 {
 
     double dk_dot_dkmin1_normal, dk_cross_dkmin1_normal[SKF_N_STATES_HALF];
@@ -292,13 +290,12 @@ sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev_stat
     @param prevstates pointer to previous states
     @param stateTransition pointer to state transition matrix
  */
-void
-sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                    double dt,
-                    double omega[SKF_N_STATES_HALF],
-                    double* stateInOut,
-                    double* prevstates,
-                    double* stateTransition)
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+                         double dt,
+                         double omega[SKF_N_STATES_HALF],
+                         double* stateInOut,
+                         double* prevstates,
+                         double* stateTransition)
 {
 
     double propagatedVel[SKF_N_STATES_HALF];
@@ -337,8 +334,7 @@ sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void
-sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* dynMat)
+void sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* dynMat)
 {
     (void)dt;
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -358,8 +354,7 @@ sunlineDynMatrixOkeefe(double omega[SKF_N_STATES_HALF], double dt, double* dynMa
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void
-sunlineMeasUpdate(okeefeEKFConfig* configData, double updateTime)
+void sunlineMeasUpdate(okeefeEKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -423,16 +418,15 @@ sunlineMeasUpdate(okeefeEKFConfig* configData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void
-sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
-                       double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
-                       double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                       double qObsVal,
-                       int numObsInt,
-                       double yObs[MAX_N_CSS_MEAS],
-                       double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                       double* x,
-                       double* covar)
+void sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
+                            double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
+                            double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+                            double qObsVal,
+                            int numObsInt,
+                            double yObs[MAX_N_CSS_MEAS],
+                            double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+                            double* x,
+                            double* covar)
 {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES_HALF];
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -492,16 +486,15 @@ sunlineCKFUpdateOkeefe(double xBar[SKF_N_STATES_HALF],
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void
-okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
-                double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                double qObsVal,
-                int numObsInt,
-                double yObs[MAX_N_CSS_MEAS],
-                double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                double* states,
-                double* x,
-                double* covar)
+void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
+                     double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+                     double qObsVal,
+                     int numObsInt,
+                     double yObs[MAX_N_CSS_MEAS],
+                     double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+                     double* states,
+                     double* x,
+                     double* covar)
 {
 
     double eye[SKF_N_STATES_HALF * SKF_N_STATES_HALF], kH[SKF_N_STATES_HALF * SKF_N_STATES_HALF];
@@ -565,17 +558,16 @@ okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF * MAX_N_CSS_MEAS],
  @param CBias Vector of biases
  */
 
-void
-sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
-                    size_t numCSS,
-                    double cssSensorCos[MAX_N_CSS_MEAS],
-                    double sensorUseThresh,
-                    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                    double CBias[MAX_NUM_CSS_SENSORS],
-                    double* obs,
-                    double* yMeas,
-                    int* numObs,
-                    double* measMat)
+void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
+                         size_t numCSS,
+                         double cssSensorCos[MAX_N_CSS_MEAS],
+                         double sensorUseThresh,
+                         double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
+                         double CBias[MAX_NUM_CSS_SENSORS],
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -608,12 +600,11 @@ sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF],
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void
-sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
-                        double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
-                        double qObsVal,
-                        int numObsInt,
-                        double* kalmanGain)
+void sunlineKalmanGainOkeefe(double covarBar[SKF_N_STATES_HALF * SKF_N_STATES_HALF],
+                             double hObs[MAX_N_CSS_MEAS * SKF_N_STATES_HALF],
+                             double qObsVal,
+                             int numObsInt,
+                             double* kalmanGain)
 {
     double hObsT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];
     double covHT[SKF_N_STATES_HALF * MAX_N_CSS_MEAS];

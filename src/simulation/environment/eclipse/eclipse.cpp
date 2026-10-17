@@ -36,8 +36,7 @@ Eclipse::~Eclipse() = default;
 /*! Reset the module to origina configuration values.
 
  */
-void
-Eclipse::Reset(uint64_t CurrenSimNanos)
+void Eclipse::Reset(uint64_t CurrenSimNanos)
 {
     this->previousUpdateNanos = CurrenSimNanos;
     this->scStateExtrapolation.reset();
@@ -64,8 +63,7 @@ Eclipse::Reset(uint64_t CurrenSimNanos)
  that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
-void
-Eclipse::setExtrapolateScStateToStepMidpoint(bool enable)
+void Eclipse::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
@@ -73,8 +71,7 @@ Eclipse::setExtrapolateScStateToStepMidpoint(bool enable)
 /*! Returns whether the spacecraft state extrapolation is enabled.
  @return [-] true if the spacecraft state is extrapolated
  */
-bool
-Eclipse::getExtrapolateScStateToStepMidpoint() const
+bool Eclipse::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
@@ -85,8 +82,7 @@ Eclipse::getExtrapolateScStateToStepMidpoint() const
  @param CurrentSimNanos [ns] current simulation time
 
  */
-void
-Eclipse::readInputMessages(uint64_t CurrentSimNanos)
+void Eclipse::readInputMessages(uint64_t CurrentSimNanos)
 {
     this->scStateExtrapolation.prepareFromMessages(
       CurrentSimNanos, this->previousUpdateNanos, this->positionInMsgs, this->bskLogger);
@@ -110,8 +106,7 @@ Eclipse::readInputMessages(uint64_t CurrentSimNanos)
  @param CurrentClock The current simulation time (used for time stamping)
 
  */
-void
-Eclipse::writeOutputMessages(uint64_t CurrentClock)
+void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
     for (long unsigned int c = 0; c < this->eclipseOutMsgs.size(); c++) {
         EclipseMsgPayload tmpEclipseMsg = {};
@@ -125,8 +120,7 @@ Eclipse::writeOutputMessages(uint64_t CurrentClock)
  @param CurrentSimNanos The current clock time for the simulation
 
  */
-void
-Eclipse::UpdateState(uint64_t CurrentSimNanos)
+void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages(CurrentSimNanos);
 
@@ -221,8 +215,7 @@ Eclipse::UpdateState(uint64_t CurrentSimNanos)
  @param s_BP_N [m] position of the spacecraft relative to the occulting body
  @return [-] illumination fraction, 0.0 for a total eclipse and 1.0 for no eclipse
  */
-double
-Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
+double Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N)
 {
     double area = 0.0;
     double illuminationFraction = 1.0; // Initialise to value for no eclipse
@@ -255,8 +248,7 @@ Eclipse::computePercentIllumination(double planetRadius, Eigen::Vector3d r_HB_N,
     @param tmpScMsg The state output message for the spacecraft for which to compute the eclipse data.
 
  */
-void
-Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     this->positionInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -276,8 +268,7 @@ Eclipse::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
  @param tmpSpMsg The planet name
 
  */
-void
-Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
+void Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
 {
     this->planetInMsgs.push_back(tmpSpMsg->addSubscriber());
 
@@ -290,8 +281,7 @@ Eclipse::addPlanetToModel(Message<SpicePlanetStateMsgPayload>* tmpSpMsg)
  @param  planetSpiceName The planet name according to the spice NAIF Integer ID codes.
  @return double  The equatorial radius in metres associated with the given planet name.
  */
-double
-Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
+double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
 {
     if (planetSpiceName == "mercury") {
         return REQ_MERCURY * 1000.0; // [meters]

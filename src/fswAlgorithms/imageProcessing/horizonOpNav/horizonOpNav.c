@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void
-SelfInit_horizonOpNav(HorizonOpNavData* configData, int64_t moduleID)
+void SelfInit_horizonOpNav(HorizonOpNavData* configData, int64_t moduleID)
 {
     (void)moduleID;
     OpNavMsg_C_init(&configData->opNavOutMsg);
@@ -41,8 +40,7 @@ SelfInit_horizonOpNav(HorizonOpNavData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Reset_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -66,8 +64,7 @@ Reset_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID)
+void Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t moduleID)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3], Q[3][3], B[3][3];
     double planetRad_Eq, planetRad_Pol;
@@ -291,8 +288,7 @@ Update_horizonOpNav(HorizonOpNavData* configData, uint64_t callTime, int64_t mod
  @param Q     The output Q matrix (numbLimb x 3)
  @param R     The output R matrix (3 x 3)
  */
-void
-QRDecomp(double* inMat, size_t nRow, double* Q, double* R)
+void QRDecomp(double* inMat, size_t nRow, double* Q, double* R)
 {
     size_t i, j;
     double *sourceMatT, *QT;
@@ -335,8 +331,7 @@ QRDecomp(double* inMat, size_t nRow, double* Q, double* R)
  @param nRow  The number of rows/columns
  @param n     The solution vector
  */
-void
-BackSub(double* R, double* inVec, int32_t nRow, double* n)
+void BackSub(double* R, double* inVec, int32_t nRow, double* n)
 {
     int32_t i, j;
     double sum;

@@ -24,8 +24,7 @@
 #include <stdexcept>
 
 namespace {
-void
-requireQuaternionSpec(const StateSpec& spec, uint32_t derivativeRows)
+void requireQuaternionSpec(const StateSpec& spec, uint32_t derivativeRows)
 {
     const MatrixShape quaternion{ 4, 1 };
     const MatrixShape tangent{ 3, 1 };
@@ -39,14 +38,12 @@ requireQuaternionSpec(const StateSpec& spec, uint32_t derivativeRows)
     }
 }
 
-void
-integrateQuaternion(MutableMatrixView quaternion, ConstMatrixView angularVelocity, double timeStep)
+void integrateQuaternion(MutableMatrixView quaternion, ConstMatrixView angularVelocity, double timeStep)
 {
     mju_quatIntegrate(quaternion.data(), angularVelocity.data(), timeStep);
 }
 
-void
-normalizeQuaternion(MutableMatrixView quaternion)
+void normalizeQuaternion(MutableMatrixView quaternion)
 {
     const double norm = std::sqrt(quaternion.squaredNorm());
     if (norm > 0.0) {
@@ -55,63 +52,55 @@ normalizeQuaternion(MutableMatrixView quaternion)
 }
 }
 
-bool
-MJNativeQuaternionStatePolicy::topologyEquals(const StateUpdatePolicy& other) const
+bool MJNativeQuaternionStatePolicy::topologyEquals(const StateUpdatePolicy& other) const
 {
     return dynamic_cast<const MJNativeQuaternionStatePolicy*>(&other) != nullptr;
 }
 
-void
-MJNativeQuaternionStatePolicy::validate(const StateSpec& spec) const
+void MJNativeQuaternionStatePolicy::validate(const StateSpec& spec) const
 {
     requireQuaternionSpec(spec, 3);
 }
 
-void
-MJNativeQuaternionStatePolicy::buildDriftCandidate(ConstMatrixView base,
-                                                   ConstMatrixView combinedDrift,
-                                                   double timeStep,
-                                                   MutableMatrixView output) const
+void MJNativeQuaternionStatePolicy::buildDriftCandidate(ConstMatrixView base,
+                                                        ConstMatrixView combinedDrift,
+                                                        double timeStep,
+                                                        MutableMatrixView output) const
 {
     output = base;
     integrateQuaternion(output, combinedDrift, timeStep);
 }
 
-void
-MJNativeQuaternionStatePolicy::applyNoiseIncrement(MutableMatrixView state,
-                                                   ConstMatrixView diffusionTangent,
-                                                   double pseudoStep) const
+void MJNativeQuaternionStatePolicy::applyNoiseIncrement(MutableMatrixView state,
+                                                        ConstMatrixView diffusionTangent,
+                                                        double pseudoStep) const
 {
     integrateQuaternion(state, diffusionTangent, pseudoStep);
 }
 
-bool
-MJHighOrderQuaternionStatePolicy::topologyEquals(const StateUpdatePolicy& other) const
+bool MJHighOrderQuaternionStatePolicy::topologyEquals(const StateUpdatePolicy& other) const
 {
     return dynamic_cast<const MJHighOrderQuaternionStatePolicy*>(&other) != nullptr;
 }
 
-void
-MJHighOrderQuaternionStatePolicy::validate(const StateSpec& spec) const
+void MJHighOrderQuaternionStatePolicy::validate(const StateSpec& spec) const
 {
     requireQuaternionSpec(spec, 4);
 }
 
-void
-MJHighOrderQuaternionStatePolicy::buildDriftCandidate(ConstMatrixView base,
-                                                      ConstMatrixView combinedDrift,
-                                                      double timeStep,
-                                                      MutableMatrixView output) const
+void MJHighOrderQuaternionStatePolicy::buildDriftCandidate(ConstMatrixView base,
+                                                           ConstMatrixView combinedDrift,
+                                                           double timeStep,
+                                                           MutableMatrixView output) const
 {
     output = base;
     output += combinedDrift * timeStep;
     normalizeQuaternion(output);
 }
 
-void
-MJHighOrderQuaternionStatePolicy::applyNoiseIncrement(MutableMatrixView state,
-                                                      ConstMatrixView diffusionTangent,
-                                                      double pseudoStep) const
+void MJHighOrderQuaternionStatePolicy::applyNoiseIncrement(MutableMatrixView state,
+                                                           ConstMatrixView diffusionTangent,
+                                                           double pseudoStep) const
 {
     integrateQuaternion(state, diffusionTangent, pseudoStep);
 }

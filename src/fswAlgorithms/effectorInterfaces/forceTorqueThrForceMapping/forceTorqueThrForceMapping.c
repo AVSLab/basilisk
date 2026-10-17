@@ -27,8 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, int64_t moduleID)
+void SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayCmdForceMsg_C_init(&configData->thrForceCmdOutMsg);
@@ -42,8 +41,7 @@ SelfInit_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!THRArrayConfigMsg_C_isLinked(&configData->thrConfigInMsg)) {
         _bskError(configData->bskLogger, "Error: forceTorqueThrForceMapping.thrConfigInMsg was not connected.");
@@ -91,8 +89,9 @@ Reset_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, u
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_forceTorqueThrForceMapping(forceTorqueThrForceMappingConfig* configData,
+                                       uint64_t callTime,
+                                       int64_t moduleID)
 {
     CmdTorqueBodyMsgPayload cmdTorqueInMsgBuffer;       //!< local copy of message buffer
     CmdForceBodyMsgPayload cmdForceInMsgBuffer;         //!< local copy of message buffer

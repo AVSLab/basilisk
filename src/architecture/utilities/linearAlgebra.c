@@ -26,8 +26,7 @@
 
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double) * (dim)))
 
-void
-vElementwiseMult(double* v1, size_t dim, double* v2, double* result)
+void vElementwiseMult(double* v1, size_t dim, double* v2, double* result)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -35,8 +34,7 @@ vElementwiseMult(double* v1, size_t dim, double* v2, double* result)
     }
 }
 
-void
-vCopy(double* v, size_t dim, double* result)
+void vCopy(double* v, size_t dim, double* result)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -44,8 +42,7 @@ vCopy(double* v, size_t dim, double* result)
     }
 }
 
-void
-vSetZero(double* v, size_t dim)
+void vSetZero(double* v, size_t dim)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -53,8 +50,7 @@ vSetZero(double* v, size_t dim)
     }
 }
 
-void
-vSetOnes(double* v, size_t dim)
+void vSetOnes(double* v, size_t dim)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -62,8 +58,7 @@ vSetOnes(double* v, size_t dim)
     }
 }
 
-void
-vAdd(double* v1, size_t dim, double* v2, double* result)
+void vAdd(double* v1, size_t dim, double* v2, double* result)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -71,8 +66,7 @@ vAdd(double* v1, size_t dim, double* v2, double* result)
     }
 }
 
-void
-vSubtract(double* v1, size_t dim, double* v2, double* result)
+void vSubtract(double* v1, size_t dim, double* v2, double* result)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -80,8 +74,7 @@ vSubtract(double* v1, size_t dim, double* v2, double* result)
     }
 }
 
-void
-vScale(double scaleFactor, double* v, size_t dim, double* result)
+void vScale(double scaleFactor, double* v, size_t dim, double* result)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -89,8 +82,7 @@ vScale(double scaleFactor, double* v, size_t dim, double* result)
     }
 }
 
-double
-vDot(double* v1, size_t dim, double* v2)
+double vDot(double* v1, size_t dim, double* v2)
 {
     size_t i;
     double result = 0.0;
@@ -101,8 +93,7 @@ vDot(double* v1, size_t dim, double* v2)
     return result;
 }
 
-void
-vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result)
+void vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result)
 {
     double* m_result = (double*)result;
 
@@ -115,8 +106,7 @@ vOuterProduct(double* v1, size_t dim1, double* v2, size_t dim2, void* result)
     }
 }
 
-void
-vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result)
+void vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result)
 {
     size_t dim11 = 1;
     size_t dim12 = dim1;
@@ -143,8 +133,7 @@ vtMultM(double* v, void* mx, size_t dim1, size_t dim2, void* result)
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void
-vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result)
+void vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result)
 {
     size_t dim11 = 1;
     size_t dim12 = dim2;
@@ -171,14 +160,12 @@ vtMultMt(double* v, void* mx, size_t dim1, size_t dim2, void* result)
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-double
-vNorm(double* v, size_t dim)
+double vNorm(double* v, size_t dim)
 {
     return sqrt(vDot(v, dim, v));
 }
 
-double
-vMax(double* array, size_t dim)
+double vMax(double* array, size_t dim)
 {
     size_t i;
     double result;
@@ -192,8 +179,7 @@ vMax(double* array, size_t dim)
     return result;
 }
 
-double
-vMaxAbs(double* array, size_t dim)
+double vMaxAbs(double* array, size_t dim)
 {
     size_t i;
     double result;
@@ -207,8 +193,7 @@ vMaxAbs(double* array, size_t dim)
     return result;
 }
 
-void
-vNormalize(double* v, size_t dim, double* result)
+void vNormalize(double* v, size_t dim, double* result)
 {
     double norm = vNorm(v, dim);
 
@@ -219,8 +204,7 @@ vNormalize(double* v, size_t dim, double* result)
     }
 }
 
-int
-vIsEqual(double* v1, size_t dim, double* v2, double accuracy)
+int vIsEqual(double* v1, size_t dim, double* v2, double accuracy)
 {
     size_t i;
     for (i = 0; i < dim; i++) {
@@ -231,8 +215,7 @@ vIsEqual(double* v1, size_t dim, double* v2, double accuracy)
     return 1;
 }
 
-int
-vIsZero(double* v, size_t dim, double accuracy)
+int vIsZero(double* v, size_t dim, double accuracy)
 {
     size_t i;
     int result = 1;
@@ -246,8 +229,7 @@ vIsZero(double* v, size_t dim, double accuracy)
     return result;
 }
 
-void
-vPrint(FILE* pFile, const char* name, double* v, size_t dim)
+void vPrint(FILE* pFile, const char* name, double* v, size_t dim)
 {
     size_t i;
     fprintf(pFile, "%s = [", name);
@@ -261,8 +243,7 @@ vPrint(FILE* pFile, const char* name, double* v, size_t dim)
 }
 
 /*I hope you allocated the output prior to calling this!*/
-void
-vSort(double* Input, double* Output, size_t dim)
+void vSort(double* Input, double* Output, size_t dim)
 {
     size_t i, j;
     memcpy(Output, Input, dim * sizeof(double));
@@ -277,15 +258,13 @@ vSort(double* Input, double* Output, size_t dim)
     }
 }
 
-void
-v2Set(double v0, double v1, double result[2])
+void v2Set(double v0, double v1, double result[2])
 {
     result[0] = v0;
     result[1] = v1;
 }
 
-void
-v2SetZero(double v[2])
+void v2SetZero(double v[2])
 {
     size_t dim = 2;
     size_t i;
@@ -294,8 +273,7 @@ v2SetZero(double v[2])
     }
 }
 
-void
-v2Copy(double v[2], double result[2])
+void v2Copy(double v[2], double result[2])
 {
     size_t dim = 2;
     size_t i;
@@ -304,8 +282,7 @@ v2Copy(double v[2], double result[2])
     }
 }
 
-void
-v2Scale(double scaleFactor, double v[2], double result[2])
+void v2Scale(double scaleFactor, double v[2], double result[2])
 {
     size_t dim = 2;
     size_t i;
@@ -314,8 +291,7 @@ v2Scale(double scaleFactor, double v[2], double result[2])
     }
 }
 
-double
-v2Dot(double v1[2], double v2[2])
+double v2Dot(double v1[2], double v2[2])
 {
     size_t dim = 2;
     size_t i;
@@ -326,8 +302,7 @@ v2Dot(double v1[2], double v2[2])
     return result;
 }
 
-int
-v2IsEqual(double v1[2], double v2[2], double accuracy)
+int v2IsEqual(double v1[2], double v2[2], double accuracy)
 {
     size_t dim = 2;
     size_t i;
@@ -339,8 +314,7 @@ v2IsEqual(double v1[2], double v2[2], double accuracy)
     return 1;
 }
 
-int
-v2IsZero(double v[2], double accuracy)
+int v2IsZero(double v[2], double accuracy)
 {
     size_t dim = 2;
     size_t i;
@@ -352,8 +326,7 @@ v2IsZero(double v[2], double accuracy)
     return 1;
 }
 
-void
-v2Add(double v1[2], double v2[2], double result[2])
+void v2Add(double v1[2], double v2[2], double result[2])
 {
     size_t dim = 2;
     size_t i;
@@ -362,8 +335,7 @@ v2Add(double v1[2], double v2[2], double result[2])
     }
 }
 
-void
-v2Subtract(double v1[2], double v2[2], double result[2])
+void v2Subtract(double v1[2], double v2[2], double result[2])
 {
     size_t dim = 2;
     size_t i;
@@ -372,14 +344,12 @@ v2Subtract(double v1[2], double v2[2], double result[2])
     }
 }
 
-double
-v2Norm(double v[2])
+double v2Norm(double v[2])
 {
     return sqrt(v2Dot(v, v));
 }
 
-void
-v2Normalize(double v[2], double result[2])
+void v2Normalize(double v[2], double result[2])
 {
     double norm = v2Norm(v);
     if (norm > DB0_EPS) {
@@ -389,16 +359,14 @@ v2Normalize(double v[2], double result[2])
     }
 }
 
-void
-v3Set(double v0, double v1, double v2, double result[3])
+void v3Set(double v0, double v1, double v2, double result[3])
 {
     result[0] = v0;
     result[1] = v1;
     result[2] = v2;
 }
 
-void
-v3Copy(double v[3], double result[3])
+void v3Copy(double v[3], double result[3])
 {
     size_t dim = 3;
     size_t i;
@@ -407,8 +375,7 @@ v3Copy(double v[3], double result[3])
     }
 }
 
-void
-v3SetZero(double v[3])
+void v3SetZero(double v[3])
 {
     size_t dim = 3;
     size_t i;
@@ -417,8 +384,7 @@ v3SetZero(double v[3])
     }
 }
 
-void
-v3Add(double v1[3], double v2[3], double result[3])
+void v3Add(double v1[3], double v2[3], double result[3])
 {
     size_t dim = 3;
     size_t i;
@@ -427,8 +393,7 @@ v3Add(double v1[3], double v2[3], double result[3])
     }
 }
 
-void
-v3Subtract(double v1[3], double v2[3], double result[3])
+void v3Subtract(double v1[3], double v2[3], double result[3])
 {
     size_t dim = 3;
     size_t i;
@@ -437,8 +402,7 @@ v3Subtract(double v1[3], double v2[3], double result[3])
     }
 }
 
-void
-v3Scale(double scaleFactor, double v[3], double result[3])
+void v3Scale(double scaleFactor, double v[3], double result[3])
 {
     size_t dim = 3;
     size_t i;
@@ -447,14 +411,12 @@ v3Scale(double scaleFactor, double v[3], double result[3])
     }
 }
 
-double
-v3Dot(double v1[3], double v2[3])
+double v3Dot(double v1[3], double v2[3])
 {
     return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
-void
-v3OuterProduct(double v1[3], double v2[3], double result[3][3])
+void v3OuterProduct(double v1[3], double v2[3], double result[3][3])
 {
     size_t dim = 3;
     size_t i;
@@ -466,8 +428,7 @@ v3OuterProduct(double v1[3], double v2[3], double result[3][3])
     }
 }
 
-void
-v3tMultM33(double v[3], double mx[3][3], double result[3])
+void v3tMultM33(double v[3], double mx[3][3], double result[3])
 {
     size_t dim11 = 1;
     size_t dim12 = 3;
@@ -487,8 +448,7 @@ v3tMultM33(double v[3], double mx[3][3], double result[3])
     v3Copy(m_result, result);
 }
 
-void
-v3tMultM33t(double v[3], double mx[3][3], double result[3])
+void v3tMultM33t(double v[3], double mx[3][3], double result[3])
 {
     size_t dim11 = 1;
     size_t dim12 = 3;
@@ -508,14 +468,12 @@ v3tMultM33t(double v[3], double mx[3][3], double result[3])
     v3Copy(m_result, result);
 }
 
-double
-v3Norm(double v[3])
+double v3Norm(double v[3])
 {
     return sqrt(v3Dot(v, v));
 }
 
-void
-v3Normalize(double v[3], double result[3])
+void v3Normalize(double v[3], double result[3])
 {
     double norm = v3Norm(v);
     if (norm > DB0_EPS) {
@@ -525,8 +483,7 @@ v3Normalize(double v[3], double result[3])
     }
 }
 
-int
-v3IsEqual(double v1[3], double v2[3], double accuracy)
+int v3IsEqual(double v1[3], double v2[3], double accuracy)
 {
     size_t dim = 3;
     size_t i;
@@ -538,8 +495,7 @@ v3IsEqual(double v1[3], double v2[3], double accuracy)
     return 1;
 }
 
-int
-v3IsEqualRel(double v1[3], double v2[3], double accuracy)
+int v3IsEqualRel(double v1[3], double v2[3], double accuracy)
 {
     size_t dim = 3;
     size_t i;
@@ -553,8 +509,7 @@ v3IsEqualRel(double v1[3], double v2[3], double accuracy)
     return 1;
 }
 
-int
-v3IsZero(double v[3], double accuracy)
+int v3IsZero(double v[3], double accuracy)
 {
     size_t dim = 3;
     size_t i;
@@ -566,8 +521,7 @@ v3IsZero(double v[3], double accuracy)
     return 1;
 }
 
-void
-v3Print(FILE* pFile, const char* name, double v[3])
+void v3Print(FILE* pFile, const char* name, double v[3])
 {
     size_t dim = 3;
     size_t i;
@@ -581,8 +535,7 @@ v3Print(FILE* pFile, const char* name, double v[3])
     fprintf(pFile, "]\n");
 }
 
-void
-v3Cross(double v1[3], double v2[3], double result[3])
+void v3Cross(double v1[3], double v2[3], double result[3])
 {
     double v1c[3];
     double v2c[3];
@@ -593,8 +546,7 @@ v3Cross(double v1[3], double v2[3], double result[3])
     result[2] = v1c[0] * v2c[1] - v1c[1] * v2c[0];
 }
 
-void
-v3Perpendicular(double v[3], double result[3])
+void v3Perpendicular(double v[3], double result[3])
 {
     if (fabs(v[0]) > DB0_EPS) {
         result[0] = -(v[1] + v[2]) / v[0];
@@ -612,8 +564,7 @@ v3Perpendicular(double v[3], double result[3])
     v3Normalize(result, result);
 }
 
-void
-v3Tilde(double v[3], double result[3][3])
+void v3Tilde(double v[3], double result[3][3])
 {
     result[0][0] = 0.0;
     result[0][1] = -v[2];
@@ -626,8 +577,7 @@ v3Tilde(double v[3], double result[3][3])
     result[2][2] = 0.0;
 }
 
-void
-v3Sort(double v[3], double result[3])
+void v3Sort(double v[3], double result[3])
 {
     double temp;
     v3Copy(v, result);
@@ -650,14 +600,12 @@ v3Sort(double v[3], double result[3])
     }
 }
 
-void
-v3PrintScreen(const char* name, double vec[3])
+void v3PrintScreen(const char* name, double vec[3])
 {
     printf("%s (%20.15g, %20.15g, %20.15g)\n", name, vec[0], vec[1], vec[2]);
 }
 
-void
-v4Set(double v0, double v1, double v2, double v3, double result[4])
+void v4Set(double v0, double v1, double v2, double v3, double result[4])
 {
     result[0] = v0;
     result[1] = v1;
@@ -665,8 +613,7 @@ v4Set(double v0, double v1, double v2, double v3, double result[4])
     result[3] = v3;
 }
 
-void
-v4Copy(double v[4], double result[4])
+void v4Copy(double v[4], double result[4])
 {
     size_t dim = 4;
     size_t i;
@@ -675,8 +622,7 @@ v4Copy(double v[4], double result[4])
     }
 }
 
-void
-v4SetZero(double v[4])
+void v4SetZero(double v[4])
 {
     size_t dim = 4;
     size_t i;
@@ -685,8 +631,7 @@ v4SetZero(double v[4])
     }
 }
 
-double
-v4Dot(double v1[4], double v2[4])
+double v4Dot(double v1[4], double v2[4])
 {
     size_t dim = 4;
     size_t i;
@@ -697,14 +642,12 @@ v4Dot(double v1[4], double v2[4])
     return result;
 }
 
-double
-v4Norm(double v[4])
+double v4Norm(double v[4])
 {
     return sqrt(v4Dot(v, v));
 }
 
-int
-v4IsEqual(double v1[4], double v2[4], double accuracy)
+int v4IsEqual(double v1[4], double v2[4], double accuracy)
 {
     size_t dim = 4;
     size_t i;
@@ -716,8 +659,7 @@ v4IsEqual(double v1[4], double v2[4], double accuracy)
     return 1;
 }
 
-int
-v4IsZero(double v[4], double accuracy)
+int v4IsZero(double v[4], double accuracy)
 {
     size_t dim = 4;
     size_t i;
@@ -729,8 +671,7 @@ v4IsZero(double v[4], double accuracy)
     return 1;
 }
 
-void
-v6Set(double v0, double v1, double v2, double v3, double v4, double v5, double result[6])
+void v6Set(double v0, double v1, double v2, double v3, double v4, double v5, double result[6])
 {
     result[0] = v0;
     result[1] = v1;
@@ -740,8 +681,7 @@ v6Set(double v0, double v1, double v2, double v3, double v4, double v5, double r
     result[5] = v5;
 }
 
-void
-v6Copy(double v[6], double result[6])
+void v6Copy(double v[6], double result[6])
 {
     size_t dim = 6;
     size_t i;
@@ -750,8 +690,7 @@ v6Copy(double v[6], double result[6])
     }
 }
 
-double
-v6Dot(double v1[6], double v2[6])
+double v6Dot(double v1[6], double v2[6])
 {
     size_t dim = 6;
     size_t i;
@@ -762,8 +701,7 @@ v6Dot(double v1[6], double v2[6])
     return result;
 }
 
-void
-v6Scale(double scaleFactor, double v[6], double result[6])
+void v6Scale(double scaleFactor, double v[6], double result[6])
 {
     size_t dim = 6;
     size_t i;
@@ -772,8 +710,7 @@ v6Scale(double scaleFactor, double v[6], double result[6])
     }
 }
 
-void
-v6OuterProduct(double v1[6], double v2[6], double result[6][6])
+void v6OuterProduct(double v1[6], double v2[6], double result[6][6])
 {
     size_t dim = 6;
     size_t i;
@@ -785,8 +722,7 @@ v6OuterProduct(double v1[6], double v2[6], double result[6][6])
     }
 }
 
-int
-v6IsEqual(double v1[6], double v2[6], double accuracy)
+int v6IsEqual(double v1[6], double v2[6], double accuracy)
 {
     size_t dim = 6;
     size_t i;
@@ -798,8 +734,7 @@ v6IsEqual(double v1[6], double v2[6], double accuracy)
     return 1;
 }
 
-void
-mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result)
+void mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result)
 {
     /*
      * Computes the least squares inverse.
@@ -815,8 +750,7 @@ mLeastSquaresInverse(void* mx, size_t dim1, size_t dim2, void* result)
     mMultM(mxGrammianInverse, dim2, dim2, mxTranspose, dim2, dim1, m_result);
 }
 
-void
-mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result)
+void mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result)
 {
     /*
      * Computes the minumum norm inverse.
@@ -833,8 +767,7 @@ mMinimumNormInverse(void* mx, size_t dim1, size_t dim2, void* result)
     mMultM(mxTranspose, dim2, dim1, mxMxTransposeInverse, dim1, dim1, m_result);
 }
 
-void
-mCopy(void* mx, size_t dim1, size_t dim2, void* result)
+void mCopy(void* mx, size_t dim1, size_t dim2, void* result)
 {
     double* m_mx = (double*)mx;
     double* m_result = (double*)result;
@@ -848,8 +781,7 @@ mCopy(void* mx, size_t dim1, size_t dim2, void* result)
     }
 }
 
-void
-mSetZero(void* result, size_t dim1, size_t dim2)
+void mSetZero(void* result, size_t dim1, size_t dim2)
 {
     double* m_result = (double*)result;
 
@@ -862,8 +794,7 @@ mSetZero(void* result, size_t dim1, size_t dim2)
     }
 }
 
-void
-mSetIdentity(void* result, size_t dim1, size_t dim2)
+void mSetIdentity(void* result, size_t dim1, size_t dim2)
 {
     double* m_result = (double*)result;
 
@@ -876,8 +807,7 @@ mSetIdentity(void* result, size_t dim1, size_t dim2)
     }
 }
 
-void
-mDiag(void* v, size_t dim, void* result)
+void mDiag(void* v, size_t dim, void* result)
 {
     double* m_v = (double*)v;
     double* m_result = (double*)result;
@@ -891,8 +821,7 @@ mDiag(void* v, size_t dim, void* result)
     }
 }
 
-void
-mTranspose(void* mx, size_t dim1, size_t dim2, void* result)
+void mTranspose(void* mx, size_t dim1, size_t dim2, void* result)
 {
     double* m_mx = (double*)mx;
     double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
@@ -911,8 +840,7 @@ mTranspose(void* mx, size_t dim1, size_t dim2, void* result)
     MOVE_DOUBLE(m_result, dim2 * dim1, result);
 }
 
-void
-mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
+void mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -927,8 +855,7 @@ mAdd(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
     }
 }
 
-void
-mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
+void mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -943,8 +870,7 @@ mSubtract(void* mx1, size_t dim1, size_t dim2, void* mx2, void* result)
     }
 }
 
-void
-mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result)
+void mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result)
 {
     double* m_mx = (double*)mx;
     double* m_result = (double*)result;
@@ -958,8 +884,7 @@ mScale(double scaleFactor, void* mx, size_t dim1, size_t dim2, void* result)
     }
 }
 
-void
-mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
+void mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -987,8 +912,7 @@ mMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t di
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void
-mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
+void mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -1016,8 +940,7 @@ mtMultM(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t d
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
 }
 
-void
-mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
+void mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -1045,8 +968,7 @@ mMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t d
     MOVE_DOUBLE(m_result, dim11 * dim21, result);
 }
 
-void
-mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
+void mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t dim22, void* result)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -1074,8 +996,7 @@ mtMultMt(void* mx1, size_t dim11, size_t dim12, void* mx2, size_t dim21, size_t 
     MOVE_DOUBLE(m_result, dim12 * dim21, result);
 }
 
-void
-mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
+void mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
@@ -1102,8 +1023,7 @@ mMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
 }
 
-void
-mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
+void mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
@@ -1130,8 +1050,7 @@ mtMultV(void* mx, size_t dim1, size_t dim2, void* v, void* result)
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
 }
 
-double
-mTrace(void* mx, size_t dim)
+double mTrace(void* mx, size_t dim)
 {
     double* m_mx = (double*)mx;
 
@@ -1144,8 +1063,7 @@ mTrace(void* mx, size_t dim)
     return result;
 }
 
-double
-mDeterminant(void* mx, size_t dim)
+double mDeterminant(void* mx, size_t dim)
 {
     double* m_mx = (double*)mx;
 
@@ -1185,8 +1103,7 @@ mDeterminant(void* mx, size_t dim)
     return (result);
 }
 
-void
-mCofactor(void* mx, size_t dim, void* result)
+void mCofactor(void* mx, size_t dim, void* result)
 {
     /* The (j,i)th cofactor of A is defined as (-1)^(i + j)*det(A_(i,j))
        where A_(i,j) is the submatrix of A obtained from A by removing the ith row and jth column */
@@ -1235,8 +1152,7 @@ mCofactor(void* mx, size_t dim, void* result)
     MOVE_DOUBLE(m_result, dim * dim, result);
 }
 
-int
-mInverse(void* mx, size_t dim, void* result)
+int mInverse(void* mx, size_t dim, void* result)
 {
     /* Inverse of a square matrix A with non zero determinant is adjoint matrix divided by determinant */
     /* The adjoint matrix is the square matrix X such that the (i,j)th entry of X is the (j,i)th cofactor of A */
@@ -1271,8 +1187,7 @@ mInverse(void* mx, size_t dim, void* result)
     return status;
 }
 
-int
-mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
+int mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
 {
     double* m_mx1 = (double*)mx1;
     double* m_mx2 = (double*)mx2;
@@ -1289,8 +1204,7 @@ mIsEqual(void* mx1, size_t dim1, size_t dim2, void* mx2, double accuracy)
     return 1;
 }
 
-int
-mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy)
+int mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy)
 {
     double* m_mx = (double*)mx;
 
@@ -1306,8 +1220,7 @@ mIsZero(void* mx, size_t dim1, size_t dim2, double accuracy)
     return 1;
 }
 
-void
-mPrintScreen(const char* name, void* mx, size_t dim1, size_t dim2)
+void mPrintScreen(const char* name, void* mx, size_t dim1, size_t dim2)
 {
     double* m_mx = (double*)mx;
 
@@ -1328,8 +1241,7 @@ mPrintScreen(const char* name, void* mx, size_t dim1, size_t dim2)
     printf("];\n");
 }
 
-void
-mPrint(FILE* pFile, const char* name, void* mx, size_t dim1, size_t dim2)
+void mPrint(FILE* pFile, const char* name, void* mx, size_t dim1, size_t dim2)
 {
     double* m_mx = (double*)mx;
 
@@ -1350,15 +1262,14 @@ mPrint(FILE* pFile, const char* name, void* mx, size_t dim1, size_t dim2)
     fprintf(pFile, "];\n");
 }
 
-void
-mGetSubMatrix(void* mx,
-              size_t dim1,
-              size_t dim2,
-              size_t dim1Start,
-              size_t dim2Start,
-              size_t dim1Result,
-              size_t dim2Result,
-              void* result)
+void mGetSubMatrix(void* mx,
+                   size_t dim1,
+                   size_t dim2,
+                   size_t dim1Start,
+                   size_t dim2Start,
+                   size_t dim1Result,
+                   size_t dim2Result,
+                   void* result)
 {
     (void)dim1;
     double* m_mx = (double*)mx;
@@ -1373,15 +1284,14 @@ mGetSubMatrix(void* mx,
     }
 }
 
-void
-mSetSubMatrix(void* mx,
-              size_t dim1,
-              size_t dim2,
-              void* result,
-              size_t dim1Result,
-              size_t dim2Result,
-              size_t dim1Start,
-              size_t dim2Start)
+void mSetSubMatrix(void* mx,
+                   size_t dim1,
+                   size_t dim2,
+                   void* result,
+                   size_t dim1Result,
+                   size_t dim2Result,
+                   size_t dim1Start,
+                   size_t dim2Start)
 {
     (void)dim1Result;
     double* m_mx = (double*)mx;
@@ -1396,8 +1306,7 @@ mSetSubMatrix(void* mx,
     }
 }
 
-void
-m22Set(double m00, double m01, double m10, double m11, double m[2][2])
+void m22Set(double m00, double m01, double m10, double m11, double m[2][2])
 {
     m[0][0] = m00;
     m[0][1] = m01;
@@ -1405,8 +1314,7 @@ m22Set(double m00, double m01, double m10, double m11, double m[2][2])
     m[1][1] = m11;
 }
 
-void
-m22Copy(double mx[2][2], double result[2][2])
+void m22Copy(double mx[2][2], double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1419,8 +1327,7 @@ m22Copy(double mx[2][2], double result[2][2])
     }
 }
 
-void
-m22SetZero(double result[2][2])
+void m22SetZero(double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1433,8 +1340,7 @@ m22SetZero(double result[2][2])
     }
 }
 
-void
-m22SetIdentity(double result[2][2])
+void m22SetIdentity(double result[2][2])
 {
     size_t dim = 2;
     size_t i;
@@ -1446,8 +1352,7 @@ m22SetIdentity(double result[2][2])
     }
 }
 
-void
-m22Transpose(double mx[2][2], double result[2][2])
+void m22Transpose(double mx[2][2], double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1462,8 +1367,7 @@ m22Transpose(double mx[2][2], double result[2][2])
     m22Copy(m_result, result);
 }
 
-void
-m22Add(double mx1[2][2], double mx2[2][2], double result[2][2])
+void m22Add(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1476,8 +1380,7 @@ m22Add(double mx1[2][2], double mx2[2][2], double result[2][2])
     }
 }
 
-void
-m22Subtract(double mx1[2][2], double mx2[2][2], double result[2][2])
+void m22Subtract(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1490,8 +1393,7 @@ m22Subtract(double mx1[2][2], double mx2[2][2], double result[2][2])
     }
 }
 
-void
-m22Scale(double scaleFactor, double mx[2][2], double result[2][2])
+void m22Scale(double scaleFactor, double mx[2][2], double result[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1504,8 +1406,7 @@ m22Scale(double scaleFactor, double mx[2][2], double result[2][2])
     }
 }
 
-void
-m22MultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
+void m22MultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
     size_t dim11 = 2;
     size_t dim12 = 2;
@@ -1525,8 +1426,7 @@ m22MultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
     m22Copy(m_result, result);
 }
 
-void
-m22tMultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
+void m22tMultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
     size_t dim11 = 2;
     size_t dim12 = 2;
@@ -1546,8 +1446,7 @@ m22tMultM22(double mx1[2][2], double mx2[2][2], double result[2][2])
     m22Copy(m_result, result);
 }
 
-void
-m22MultM22t(double mx1[2][2], double mx2[2][2], double result[2][2])
+void m22MultM22t(double mx1[2][2], double mx2[2][2], double result[2][2])
 {
     size_t dim11 = 2;
     size_t dim12 = 2;
@@ -1567,8 +1466,7 @@ m22MultM22t(double mx1[2][2], double mx2[2][2], double result[2][2])
     m22Copy(m_result, result);
 }
 
-void
-m22MultV2(double mx[2][2], double v[2], double result[2])
+void m22MultV2(double mx[2][2], double v[2], double result[2])
 {
     size_t dim11 = 2;
     size_t dim12 = 2;
@@ -1588,8 +1486,7 @@ m22MultV2(double mx[2][2], double v[2], double result[2])
     v2Copy(m_result, result);
 }
 
-void
-m22tMultV2(double mx[2][2], double v[2], double result[2])
+void m22tMultV2(double mx[2][2], double v[2], double result[2])
 {
     size_t dim11 = 2;
     size_t dim12 = 2;
@@ -1609,8 +1506,7 @@ m22tMultV2(double mx[2][2], double v[2], double result[2])
     v2Copy(m_result, result);
 }
 
-double
-m22Trace(double mx[2][2])
+double m22Trace(double mx[2][2])
 {
     size_t dim = 2;
     size_t i;
@@ -1622,16 +1518,14 @@ m22Trace(double mx[2][2])
     return result;
 }
 
-double
-m22Determinant(double mx[2][2])
+double m22Determinant(double mx[2][2])
 {
     double value;
     value = mx[0][0] * mx[1][1] - mx[1][0] * mx[0][1];
     return value;
 }
 
-int
-m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy)
+int m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy)
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1647,8 +1541,7 @@ m22IsEqual(double mx1[2][2], double mx2[2][2], double accuracy)
     return 1;
 }
 
-int
-m22IsZero(double mx[2][2], double accuracy)
+int m22IsZero(double mx[2][2], double accuracy)
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1664,8 +1557,7 @@ m22IsZero(double mx[2][2], double accuracy)
     return 1;
 }
 
-void
-m22Print(FILE* pFile, const char* name, double mx[2][2])
+void m22Print(FILE* pFile, const char* name, double mx[2][2])
 {
     size_t dim1 = 2;
     size_t dim2 = 2;
@@ -1686,8 +1578,7 @@ m22Print(FILE* pFile, const char* name, double mx[2][2])
     fprintf(pFile, "]\n");
 }
 
-int
-m22Inverse(double mx[2][2], double result[2][2])
+int m22Inverse(double mx[2][2], double result[2][2])
 {
     double det = m22Determinant(mx);
     double detInv;
@@ -1709,8 +1600,7 @@ m22Inverse(double mx[2][2], double result[2][2])
     return status;
 }
 
-void
-m22PrintScreen(const char* name, double mx[2][2])
+void m22PrintScreen(const char* name, double mx[2][2])
 {
     int i;
     printf("%s:\n", name);
@@ -1719,17 +1609,16 @@ m22PrintScreen(const char* name, double mx[2][2])
     }
 }
 
-void
-m33Set(double m00,
-       double m01,
-       double m02,
-       double m10,
-       double m11,
-       double m12,
-       double m20,
-       double m21,
-       double m22,
-       double m[3][3])
+void m33Set(double m00,
+            double m01,
+            double m02,
+            double m10,
+            double m11,
+            double m12,
+            double m20,
+            double m21,
+            double m22,
+            double m[3][3])
 {
     m[0][0] = m00;
     m[0][1] = m01;
@@ -1742,8 +1631,7 @@ m33Set(double m00,
     m[2][2] = m22;
 }
 
-void
-m33Copy(double mx[3][3], double result[3][3])
+void m33Copy(double mx[3][3], double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1756,8 +1644,7 @@ m33Copy(double mx[3][3], double result[3][3])
     }
 }
 
-void
-m33SetZero(double result[3][3])
+void m33SetZero(double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1770,8 +1657,7 @@ m33SetZero(double result[3][3])
     }
 }
 
-void
-m33SetIdentity(double result[3][3])
+void m33SetIdentity(double result[3][3])
 {
     size_t dim = 3;
     size_t i;
@@ -1783,8 +1669,7 @@ m33SetIdentity(double result[3][3])
     }
 }
 
-void
-m33Transpose(double mx[3][3], double result[3][3])
+void m33Transpose(double mx[3][3], double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1799,8 +1684,7 @@ m33Transpose(double mx[3][3], double result[3][3])
     m33Copy(m_result, result);
 }
 
-void
-m33Add(double mx1[3][3], double mx2[3][3], double result[3][3])
+void m33Add(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1813,8 +1697,7 @@ m33Add(double mx1[3][3], double mx2[3][3], double result[3][3])
     }
 }
 
-void
-m33Subtract(double mx1[3][3], double mx2[3][3], double result[3][3])
+void m33Subtract(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1827,8 +1710,7 @@ m33Subtract(double mx1[3][3], double mx2[3][3], double result[3][3])
     }
 }
 
-void
-m33Scale(double scaleFactor, double mx[3][3], double result[3][3])
+void m33Scale(double scaleFactor, double mx[3][3], double result[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1841,8 +1723,7 @@ m33Scale(double scaleFactor, double mx[3][3], double result[3][3])
     }
 }
 
-void
-m33MultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
+void m33MultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
     size_t dim11 = 3;
     size_t dim12 = 3;
@@ -1862,8 +1743,7 @@ m33MultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
     m33Copy(m_result, result);
 }
 
-void
-m33tMultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
+void m33tMultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
     size_t dim11 = 3;
     size_t dim12 = 3;
@@ -1883,8 +1763,7 @@ m33tMultM33(double mx1[3][3], double mx2[3][3], double result[3][3])
     m33Copy(m_result, result);
 }
 
-void
-m33MultM33t(double mx1[3][3], double mx2[3][3], double result[3][3])
+void m33MultM33t(double mx1[3][3], double mx2[3][3], double result[3][3])
 {
     size_t dim11 = 3;
     size_t dim12 = 3;
@@ -1904,8 +1783,7 @@ m33MultM33t(double mx1[3][3], double mx2[3][3], double result[3][3])
     m33Copy(m_result, result);
 }
 
-void
-m33MultV3(double mx[3][3], double v[3], double result[3])
+void m33MultV3(double mx[3][3], double v[3], double result[3])
 {
     size_t dim11 = 3;
     size_t dim12 = 3;
@@ -1925,8 +1803,7 @@ m33MultV3(double mx[3][3], double v[3], double result[3])
     v3Copy(m_result, result);
 }
 
-void
-m33tMultV3(double mx[3][3], double v[3], double result[3])
+void m33tMultV3(double mx[3][3], double v[3], double result[3])
 {
     size_t dim11 = 3;
     size_t dim12 = 3;
@@ -1946,8 +1823,7 @@ m33tMultV3(double mx[3][3], double v[3], double result[3])
     v3Copy(m_result, result);
 }
 
-double
-m33Trace(double mx[3][3])
+double m33Trace(double mx[3][3])
 {
     size_t dim = 3;
     size_t i;
@@ -1959,8 +1835,7 @@ m33Trace(double mx[3][3])
     return result;
 }
 
-double
-m33Determinant(double mx[3][3])
+double m33Determinant(double mx[3][3])
 {
     double value;
     value = mx[0][0] * mx[1][1] * mx[2][2] + mx[0][1] * mx[1][2] * mx[2][0] + mx[0][2] * mx[1][0] * mx[2][1] -
@@ -1968,8 +1843,7 @@ m33Determinant(double mx[3][3])
     return value;
 }
 
-int
-m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy)
+int m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy)
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -1985,8 +1859,7 @@ m33IsEqual(double mx1[3][3], double mx2[3][3], double accuracy)
     return 1;
 }
 
-int
-m33IsZero(double mx[3][3], double accuracy)
+int m33IsZero(double mx[3][3], double accuracy)
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -2002,8 +1875,7 @@ m33IsZero(double mx[3][3], double accuracy)
     return 1;
 }
 
-void
-m33Print(FILE* pFile, const char* name, double mx[3][3])
+void m33Print(FILE* pFile, const char* name, double mx[3][3])
 {
     size_t dim1 = 3;
     size_t dim2 = 3;
@@ -2024,8 +1896,7 @@ m33Print(FILE* pFile, const char* name, double mx[3][3])
     fprintf(pFile, "]\n");
 }
 
-int
-m33Inverse(double mx[3][3], double result[3][3])
+int m33Inverse(double mx[3][3], double result[3][3])
 {
     double det = m33Determinant(mx);
     double detInv;
@@ -2052,8 +1923,7 @@ m33Inverse(double mx[3][3], double result[3][3])
     return status;
 }
 
-void
-m33SingularValues(double mx[3][3], double result[3])
+void m33SingularValues(double mx[3][3], double result[3])
 {
     double sv[3];
     double a[3];
@@ -2080,8 +1950,7 @@ m33SingularValues(double mx[3][3], double result[3])
     v3Sort(sv, result);
 }
 
-void
-m33EigenValues(double mx[3][3], double result[3])
+void m33EigenValues(double mx[3][3], double result[3])
 {
     double sv[3];
     double a[3];
@@ -2099,16 +1968,14 @@ m33EigenValues(double mx[3][3], double result[3])
     v3Sort(sv, result);
 }
 
-double
-m33ConditionNumber(double mx[3][3])
+double m33ConditionNumber(double mx[3][3])
 {
     double sv[3];
     m33SingularValues(mx, sv);
     return (sv[0] / sv[2]);
 }
 
-void
-m33PrintScreen(const char* name, double mx[3][3])
+void m33PrintScreen(const char* name, double mx[3][3])
 {
     int i;
     printf("%s:\n", name);
@@ -2117,24 +1984,23 @@ m33PrintScreen(const char* name, double mx[3][3])
     }
 }
 
-void
-m44Set(double m00,
-       double m01,
-       double m02,
-       double m03,
-       double m10,
-       double m11,
-       double m12,
-       double m13,
-       double m20,
-       double m21,
-       double m22,
-       double m23,
-       double m30,
-       double m31,
-       double m32,
-       double m33,
-       double m[4][4])
+void m44Set(double m00,
+            double m01,
+            double m02,
+            double m03,
+            double m10,
+            double m11,
+            double m12,
+            double m13,
+            double m20,
+            double m21,
+            double m22,
+            double m23,
+            double m30,
+            double m31,
+            double m32,
+            double m33,
+            double m[4][4])
 {
     m[0][0] = m00;
     m[0][1] = m01;
@@ -2154,8 +2020,7 @@ m44Set(double m00,
     m[3][3] = m33;
 }
 
-void
-m44Copy(double mx[4][4], double result[4][4])
+void m44Copy(double mx[4][4], double result[4][4])
 {
     size_t dim1 = 4;
     size_t dim2 = 4;
@@ -2168,8 +2033,7 @@ m44Copy(double mx[4][4], double result[4][4])
     }
 }
 
-void
-m44SetZero(double result[4][4])
+void m44SetZero(double result[4][4])
 {
     size_t dim1 = 4;
     size_t dim2 = 4;
@@ -2182,8 +2046,7 @@ m44SetZero(double result[4][4])
     }
 }
 
-void
-m44MultV4(double mx[4][4], double v[4], double result[4])
+void m44MultV4(double mx[4][4], double v[4], double result[4])
 {
     size_t dim11 = 4;
     size_t dim12 = 4;
@@ -2203,8 +2066,7 @@ m44MultV4(double mx[4][4], double v[4], double result[4])
     v4Copy(m_result, result);
 }
 
-double
-m44Determinant(double mx[4][4])
+double m44Determinant(double mx[4][4])
 {
     double value;
     value = mx[0][3] * mx[1][2] * mx[2][1] * mx[3][0] - mx[0][2] * mx[1][3] * mx[2][1] * mx[3][0] -
@@ -2222,8 +2084,7 @@ m44Determinant(double mx[4][4])
     return value;
 }
 
-int
-m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy)
+int m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy)
 {
     size_t dim1 = 4;
     size_t dim2 = 4;
@@ -2239,8 +2100,7 @@ m44IsEqual(double mx1[4][4], double mx2[4][4], double accuracy)
     return 1;
 }
 
-int
-m44Inverse(double mx[4][4], double result[4][4])
+int m44Inverse(double mx[4][4], double result[4][4])
 {
     double det = m44Determinant(mx);
     double detInv;
@@ -2322,44 +2182,43 @@ m44Inverse(double mx[4][4], double result[4][4])
     return status;
 }
 
-void
-m66Set(double m00,
-       double m01,
-       double m02,
-       double m03,
-       double m04,
-       double m05,
-       double m10,
-       double m11,
-       double m12,
-       double m13,
-       double m14,
-       double m15,
-       double m20,
-       double m21,
-       double m22,
-       double m23,
-       double m24,
-       double m25,
-       double m30,
-       double m31,
-       double m32,
-       double m33,
-       double m34,
-       double m35,
-       double m40,
-       double m41,
-       double m42,
-       double m43,
-       double m44,
-       double m45,
-       double m50,
-       double m51,
-       double m52,
-       double m53,
-       double m54,
-       double m55,
-       double m[6][6])
+void m66Set(double m00,
+            double m01,
+            double m02,
+            double m03,
+            double m04,
+            double m05,
+            double m10,
+            double m11,
+            double m12,
+            double m13,
+            double m14,
+            double m15,
+            double m20,
+            double m21,
+            double m22,
+            double m23,
+            double m24,
+            double m25,
+            double m30,
+            double m31,
+            double m32,
+            double m33,
+            double m34,
+            double m35,
+            double m40,
+            double m41,
+            double m42,
+            double m43,
+            double m44,
+            double m45,
+            double m50,
+            double m51,
+            double m52,
+            double m53,
+            double m54,
+            double m55,
+            double m[6][6])
 {
     m[0][0] = m00;
     m[0][1] = m01;
@@ -2399,8 +2258,7 @@ m66Set(double m00,
     m[5][5] = m55;
 }
 
-void
-m66Copy(double mx[6][6], double result[6][6])
+void m66Copy(double mx[6][6], double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2413,8 +2271,7 @@ m66Copy(double mx[6][6], double result[6][6])
     }
 }
 
-void
-m66SetZero(double result[6][6])
+void m66SetZero(double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2427,8 +2284,7 @@ m66SetZero(double result[6][6])
     }
 }
 
-void
-m66SetIdentity(double result[6][6])
+void m66SetIdentity(double result[6][6])
 {
     size_t dim = 6;
     size_t i;
@@ -2440,8 +2296,7 @@ m66SetIdentity(double result[6][6])
     }
 }
 
-void
-m66Transpose(double mx[6][6], double result[6][6])
+void m66Transpose(double mx[6][6], double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2456,8 +2311,7 @@ m66Transpose(double mx[6][6], double result[6][6])
     m66Copy(m_result, result);
 }
 
-void
-m66Get33Matrix(size_t row, size_t col, double m[6][6], double mij[3][3])
+void m66Get33Matrix(size_t row, size_t col, double m[6][6], double mij[3][3])
 {
     size_t i;
     size_t j;
@@ -2469,8 +2323,7 @@ m66Get33Matrix(size_t row, size_t col, double m[6][6], double mij[3][3])
     }
 }
 
-void
-m66Set33Matrix(size_t row, size_t col, double mij[3][3], double m[6][6])
+void m66Set33Matrix(size_t row, size_t col, double mij[3][3], double m[6][6])
 {
     size_t i;
     size_t j;
@@ -2482,8 +2335,7 @@ m66Set33Matrix(size_t row, size_t col, double mij[3][3], double m[6][6])
     }
 }
 
-void
-m66Scale(double scaleFactor, double mx[6][6], double result[6][6])
+void m66Scale(double scaleFactor, double mx[6][6], double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2496,8 +2348,7 @@ m66Scale(double scaleFactor, double mx[6][6], double result[6][6])
     }
 }
 
-void
-m66Add(double mx1[6][6], double mx2[6][6], double result[6][6])
+void m66Add(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2510,8 +2361,7 @@ m66Add(double mx1[6][6], double mx2[6][6], double result[6][6])
     }
 }
 
-void
-m66Subtract(double mx1[6][6], double mx2[6][6], double result[6][6])
+void m66Subtract(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2524,8 +2374,7 @@ m66Subtract(double mx1[6][6], double mx2[6][6], double result[6][6])
     }
 }
 
-void
-m66MultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
+void m66MultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
     size_t dim11 = 6;
     size_t dim12 = 6;
@@ -2545,8 +2394,7 @@ m66MultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
     m66Copy(m_result, result);
 }
 
-void
-m66tMultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
+void m66tMultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
     size_t dim11 = 6;
     size_t dim12 = 6;
@@ -2566,8 +2414,7 @@ m66tMultM66(double mx1[6][6], double mx2[6][6], double result[6][6])
     m66Copy(m_result, result);
 }
 
-void
-m66MultM66t(double mx1[6][6], double mx2[6][6], double result[6][6])
+void m66MultM66t(double mx1[6][6], double mx2[6][6], double result[6][6])
 {
     size_t dim11 = 6;
     size_t dim12 = 6;
@@ -2587,8 +2434,7 @@ m66MultM66t(double mx1[6][6], double mx2[6][6], double result[6][6])
     m66Copy(m_result, result);
 }
 
-void
-m66MultV6(double mx[6][6], double v[6], double result[6])
+void m66MultV6(double mx[6][6], double v[6], double result[6])
 {
     size_t dim11 = 6;
     size_t dim12 = 6;
@@ -2608,8 +2454,7 @@ m66MultV6(double mx[6][6], double v[6], double result[6])
     v6Copy(m_result, result);
 }
 
-void
-m66tMultV6(double mx[6][6], double v[6], double result[6])
+void m66tMultV6(double mx[6][6], double v[6], double result[6])
 {
     size_t dim11 = 6;
     size_t dim12 = 6;
@@ -2629,8 +2474,7 @@ m66tMultV6(double mx[6][6], double v[6], double result[6])
     v6Copy(m_result, result);
 }
 
-int
-m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy)
+int m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy)
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2646,8 +2490,7 @@ m66IsEqual(double mx1[6][6], double mx2[6][6], double accuracy)
     return 1;
 }
 
-int
-m66IsZero(double mx[6][6], double accuracy)
+int m66IsZero(double mx[6][6], double accuracy)
 {
     size_t dim1 = 6;
     size_t dim2 = 6;
@@ -2663,8 +2506,7 @@ m66IsZero(double mx[6][6], double accuracy)
     return 1;
 }
 
-void
-m99SetZero(double result[9][9])
+void m99SetZero(double result[9][9])
 {
     size_t dim1 = 9;
     size_t dim2 = 9;
@@ -2677,8 +2519,7 @@ m99SetZero(double result[9][9])
     }
 }
 
-void
-cubicRoots(double a[3], double result[3])
+void cubicRoots(double a[3], double result[3])
 {
     /* Solve cubic formula for x^3 + a[2]*x^2 + a[1]*x + a[0] = 0 */
     /* see http://mathworld.wolfram.com/CubicFormula.html */
@@ -2717,8 +2558,7 @@ cubicRoots(double a[3], double result[3])
     }
 }
 
-double
-safeAcos(double x)
+double safeAcos(double x)
 {
     if (x < -1.0)
         return acos(-1);
@@ -2727,8 +2567,7 @@ safeAcos(double x)
     return acos(x);
 }
 
-double
-safeAsin(double x)
+double safeAsin(double x)
 {
     if (x < -1.0)
         return asin(-1);
@@ -2737,8 +2576,7 @@ safeAsin(double x)
     return asin(x);
 }
 
-double
-safeSqrt(double x)
+double safeSqrt(double x)
 {
     if (x < 0.0)
         return 0.0;

@@ -32,8 +32,7 @@ class DerivedSysModel : public SysModel
 
 namespace {
 
-void
-expectMessagePointersReferenceOwnStorage(Message<CModuleTemplateMsgPayload>& message)
+void expectMessagePointersReferenceOwnStorage(Message<CModuleTemplateMsgPayload>& message)
 {
     messagePointerData* pointers = message.GetPointers();
     EXPECT_EQ(reinterpret_cast<uintptr_t>(pointers->header), message.getHeaderAddress());

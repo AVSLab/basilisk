@@ -33,8 +33,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void
-SelfInit_mrpPD(MrpPDConfig* configData, int64_t moduleID)
+void SelfInit_mrpPD(MrpPDConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*! - Create output message for module */
@@ -48,8 +47,7 @@ SelfInit_mrpPD(MrpPDConfig* configData, int64_t moduleID)
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -74,8 +72,7 @@ Reset_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mrpPD(MrpPDConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double Lr[3];                          /*!< required control torque vector [Nm] */
     double omega_BN_B[3];                  /*!< Inertial angular body vector in body B-frame components */

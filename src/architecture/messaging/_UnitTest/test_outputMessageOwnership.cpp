@@ -89,8 +89,7 @@ struct AllocationProbe
 };
 } // namespace
 
-void*
-operator new(std::size_t size)
+void* operator new(std::size_t size)
 {
     if (activeProbe != nullptr) {
         activeProbe->beforeAllocation();
@@ -105,8 +104,7 @@ operator new(std::size_t size)
     return pointer;
 }
 
-void
-operator delete(void* pointer) noexcept
+void operator delete(void* pointer) noexcept
 {
     if (activeProbe != nullptr) {
         activeProbe->forget(pointer);
@@ -114,29 +112,24 @@ operator delete(void* pointer) noexcept
     std::free(pointer);
 }
 
-void*
-operator new[](std::size_t size)
+void* operator new[](std::size_t size)
 {
     return ::operator new(size);
 }
-void
-operator delete[](void* pointer) noexcept
+void operator delete[](void* pointer) noexcept
 {
     ::operator delete(pointer);
 }
-void
-operator delete(void* pointer, std::size_t) noexcept
+void operator delete(void* pointer, std::size_t) noexcept
 {
     ::operator delete(pointer);
 }
-void
-operator delete[](void* pointer, std::size_t) noexcept
+void operator delete[](void* pointer, std::size_t) noexcept
 {
     ::operator delete(pointer);
 }
 
-void*
-operator new(std::size_t size, std::align_val_t alignment)
+void* operator new(std::size_t size, std::align_val_t alignment)
 {
     if (activeProbe != nullptr) {
         activeProbe->beforeAllocation();
@@ -158,8 +151,7 @@ operator new(std::size_t size, std::align_val_t alignment)
     return pointer;
 }
 
-void
-operator delete(void* pointer, std::align_val_t) noexcept
+void operator delete(void* pointer, std::align_val_t) noexcept
 {
     if (activeProbe != nullptr) {
         activeProbe->forget(pointer);
@@ -171,23 +163,19 @@ operator delete(void* pointer, std::align_val_t) noexcept
 #endif
 }
 
-void*
-operator new[](std::size_t size, std::align_val_t alignment)
+void* operator new[](std::size_t size, std::align_val_t alignment)
 {
     return ::operator new(size, alignment);
 }
-void
-operator delete[](void* pointer, std::align_val_t alignment) noexcept
+void operator delete[](void* pointer, std::align_val_t alignment) noexcept
 {
     ::operator delete(pointer, alignment);
 }
-void
-operator delete(void* pointer, std::size_t, std::align_val_t alignment) noexcept
+void operator delete(void* pointer, std::size_t, std::align_val_t alignment) noexcept
 {
     ::operator delete(pointer, alignment);
 }
-void
-operator delete[](void* pointer, std::size_t, std::align_val_t alignment) noexcept
+void operator delete[](void* pointer, std::size_t, std::align_val_t alignment) noexcept
 {
     ::operator delete(pointer, alignment);
 }
@@ -200,8 +188,7 @@ struct alignas(64) OverAlignedValue
 static_assert(alignof(OverAlignedValue) > __STDCPP_DEFAULT_NEW_ALIGNMENT__);
 
 template<typename Factory>
-std::pair<bool, std::size_t>
-runTrial(const Factory& factory, int failAfter = -1)
+std::pair<bool, std::size_t> runTrial(const Factory& factory, int failAfter = -1)
 {
     AllocationProbe probe(failAfter);
     bool failed = false;
@@ -214,8 +201,7 @@ runTrial(const Factory& factory, int failAfter = -1)
 }
 
 template<typename Factory>
-void
-expectCleanup(const Factory& factory)
+void expectCleanup(const Factory& factory)
 {
     factory(); // Warm up library caches before measuring module-owned allocations.
     auto result = runTrial(factory);
@@ -224,8 +210,7 @@ expectCleanup(const Factory& factory)
 }
 
 template<typename Factory>
-void
-expectCleanupAfterAllocationFailure(const Factory& factory)
+void expectCleanupAfterAllocationFailure(const Factory& factory)
 {
 #if defined(_MSC_VER) && _ITERATOR_DEBUG_LEVEL != 0
     // MSVC's debug STL allocates iterator proxies inside noexcept container

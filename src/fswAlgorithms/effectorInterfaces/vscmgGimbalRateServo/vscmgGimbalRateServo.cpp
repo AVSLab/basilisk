@@ -22,8 +22,7 @@
 #include <iostream>
 
 /*! Initialize C-wrapped output messages */
-void
-VscmgGimbalRateServo::SelfInit()
+void VscmgGimbalRateServo::SelfInit()
 {
     VSCMGArrayTorqueMsg_C_init(&this->cmdsOutMsgC);
 }
@@ -38,8 +37,7 @@ VscmgGimbalRateServo::VscmgGimbalRateServo()
 /*! Reset the module to original configuration values.
 
  */
-void
-VscmgGimbalRateServo::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void VscmgGimbalRateServo::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!this->vsmcgParamsInMsg.isLinked()) {
         bskLogger.bskError("VscmgGimbalRateServo.vsmcgParamsInMsg was not linked.");
@@ -57,8 +55,7 @@ VscmgGimbalRateServo::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->vscmgConfigParams = this->vsmcgParamsInMsg();
 }
 
-void
-VscmgGimbalRateServo::UpdateState(uint64_t CurrentSimNanos)
+void VscmgGimbalRateServo::UpdateState(uint64_t CurrentSimNanos)
 {
     Eigen::Matrix3d BG0;
     Eigen::Matrix3d GG0;
@@ -120,8 +117,7 @@ VscmgGimbalRateServo::UpdateState(uint64_t CurrentSimNanos)
     VSCMGArrayTorqueMsg_C_write(&this->outputTorques, &this->cmdsOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
-void
-VscmgGimbalRateServo::setK_gammaDot(double var)
+void VscmgGimbalRateServo::setK_gammaDot(double var)
 {
     this->K_gammaDot = var;
 }

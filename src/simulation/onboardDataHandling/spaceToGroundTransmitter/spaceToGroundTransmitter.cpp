@@ -45,8 +45,7 @@ SpaceToGroundTransmitter::~SpaceToGroundTransmitter()
 
  @param tmpStorageUnitMsg A spacecraft state message name.
  */
-void
-SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
+void SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusMsgPayload>* tmpStorageUnitMsg)
 {
     this->storageUnitInMsgs.push_back(tmpStorageUnitMsg->addSubscriber());
 
@@ -57,15 +56,13 @@ SpaceToGroundTransmitter::addStorageUnitToTransmitter(Message<DataStorageStatusM
 
     @param tmpAccessMsg input name.
 */
-void
-SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg)
+void SpaceToGroundTransmitter::addAccessMsgToTransmitter(Message<AccessMsgPayload>* tmpAccessMsg)
 {
     this->groundLocationAccessInMsgs.push_back(tmpAccessMsg->addSubscriber());
     return;
 }
 
-bool
-SpaceToGroundTransmitter::customReadMessages()
+bool SpaceToGroundTransmitter::customReadMessages()
 {
 
     DataStorageStatusMsgPayload nodeMsg;
@@ -111,8 +108,7 @@ SpaceToGroundTransmitter::customReadMessages()
  @param dataUsageSimMsg
  @param currentTime
 */
-void
-SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
+void SpaceToGroundTransmitter::evaluateDataModel(DataNodeUsageMsgPayload* dataUsageSimMsg, double currentTime)
 {
 
     this->currentTimestep = currentTime - this->previousTime;

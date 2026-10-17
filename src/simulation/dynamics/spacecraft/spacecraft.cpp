@@ -53,8 +53,7 @@ Spacecraft::~Spacecraft() {}
 /*! This method is used to reset the module.
 
  */
-void
-Spacecraft::Reset(uint64_t CurrentSimNanos)
+void Spacecraft::Reset(uint64_t CurrentSimNanos)
 {
     // - Verify the user-supplied hub configuration before the dynamics are initialized
     this->hub.validateConfiguration(this->pointMassTranslationalOnly);
@@ -85,8 +84,7 @@ Spacecraft::Reset(uint64_t CurrentSimNanos)
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void
-Spacecraft::addStateEffector(StateEffector* newStateEffector)
+void Spacecraft::addStateEffector(StateEffector* newStateEffector)
 {
     this->requireMutableTopology("Spacecraft::addStateEffector");
     this->assignStateParamNames<StateEffector*>(newStateEffector);
@@ -95,8 +93,7 @@ Spacecraft::addStateEffector(StateEffector* newStateEffector)
 }
 
 /*! This method attaches a dynamicEffector to the dynamicObject */
-void
-Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
+void Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
 {
     this->assignStateParamNames<DynamicEffector*>(newDynamicEffector);
 
@@ -104,8 +101,7 @@ Spacecraft::addDynamicEffector(DynamicEffector* newDynamicEffector)
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
-void
-Spacecraft::writeOutputStateMessages(uint64_t clockTime)
+void Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 {
     // - Populate state output message
     SCStatesMsgPayload stateOut;
@@ -149,8 +145,7 @@ Spacecraft::writeOutputStateMessages(uint64_t clockTime)
 
 /*! If the optional attitude reference input message is set, then read in the reference attitude and set it for the
  * hub*/
-void
-Spacecraft::readOptionalRefMsg()
+void Spacecraft::readOptionalRefMsg()
 {
     if (this->attRefInMsg.isLinked()) {
         if (this->pointMassTranslationalOnly) {
@@ -184,8 +179,7 @@ Spacecraft::readOptionalRefMsg()
 }
 
 /*! This method is a part of sysModel and is used to integrate the state and update the state in the messaging system */
-void
-Spacecraft::UpdateState(uint64_t CurrentSimNanos)
+void Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 {
     // - Get access to the spice bodies
     this->gravField.UpdateState(CurrentSimNanos);
@@ -212,8 +206,7 @@ Spacecraft::UpdateState(uint64_t CurrentSimNanos)
 
 /*! This method allows the spacecraft to have access to the current state of the hub for MRP switching, writing
  messages, and calculating energy and momentum */
-void
-Spacecraft::linkInStates(DynParamManager& statesIn)
+void Spacecraft::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to all hub states
     this->hubR_N = statesIn.getStateObject(this->hub.nameOfHubPosition);
@@ -244,8 +237,7 @@ Spacecraft::linkInStates(DynParamManager& statesIn)
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
  stateEffectors, and the hub, initialize gravity, and initialize the sim with the initial conditions specified in python
  for the simulation */
-void
-Spacecraft::registerDynamics()
+void Spacecraft::registerDynamics()
 {
     // - Spacecraft initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1, 1);
@@ -344,8 +336,7 @@ Spacecraft::registerDynamics()
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors
  */
-void
-Spacecraft::updateSCMassProps(double time)
+void Spacecraft::updateSCMassProps(double time)
 {
     // - Zero the properties which will get populated in this method
     (*this->m_SC).setZero();
@@ -401,8 +392,7 @@ Spacecraft::updateSCMassProps(double time)
 
 /*! Return true if the spacecraft can use direct rigid-hub equations instead of
  the full Backsubstitution path. */
-bool
-Spacecraft::useHubOnlyFastPath() const
+bool Spacecraft::useHubOnlyFastPath() const
 {
     return this->states.empty() && this->hub.r_BcB_B.isZero();
 }
@@ -411,8 +401,7 @@ Spacecraft::useHubOnlyFastPath() const
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the
  dynParam Manager thus solving for Xdot*/
-void
-Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
+void Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
 {
     // - Update time to the current time
     uint64_t integTimeNanos = secToNano(integTimeSeconds);
@@ -592,8 +581,7 @@ Spacecraft::equationsOfMotion(double integTimeSeconds, double timeStep)
     }
 }
 
-void
-Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
+void Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
 {
     this->equationsOfMotion(integTimeSeconds, timeStep);
 }
@@ -601,8 +589,7 @@ Spacecraft::equationsOfMotionDiffusion(double integTimeSeconds, double timeStep)
 /*! Prepare for integration process
  @param integrateToThisTimeNanos Time to integrate to
  */
-void
-Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
+void Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeStep = diffNanoToSec(integrateToThisTimeNanos, this->timeBeforeNanos); // - Find the time step in seconds
     if (this->pointMassTranslationalOnly) {
@@ -629,8 +616,7 @@ Spacecraft::preIntegration(uint64_t integrateToThisTimeNanos)
 /*! Perform post-integration steps
  @param integrateToThisTimeNanos Time to integrate to
  */
-void
-Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
+void Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 {
     this->timeBeforeNanos =
       integrateToThisTimeNanos; // - copy the current time into previous time for next integrate state call
@@ -698,8 +684,7 @@ Spacecraft::postIntegration(uint64_t integrateToThisTimeNanos)
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
  total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used
  for validation purposes. */
-void
-Spacecraft::computeEnergyMomentum(double time)
+void Spacecraft::computeEnergyMomentum(double time)
 {
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = hubR_N->stateView();
@@ -780,8 +765,7 @@ Spacecraft::computeEnergyMomentum(double time)
 /*! This method is used to find the force and torque that each stateEffector is applying to the spacecraft. These values
  are held in the stateEffector class. Additionally, the stateDerivative value is behind the state values because they
  are calculated in the intergrator calls */
-void
-Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
+void Spacecraft::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
 {
     // - Loop over stateEffectors to get their contributions to energy and momentum
     std::vector<StateEffector*>::iterator it;

@@ -33,8 +33,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
+void SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     configData->imaged = 0;
@@ -53,8 +52,7 @@ SelfInit_simpleInstrumentController(simpleInstrumentControllerConfig* configData
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -79,8 +77,9 @@ Reset_simpleInstrumentController(simpleInstrumentControllerConfig* configData, u
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_simpleInstrumentController(simpleInstrumentControllerConfig* configData,
+                                       uint64_t callTime,
+                                       int64_t moduleID)
 {
     double sigma_BR_norm; //!< Norm of sigma_BR
     double omega_BR_norm; //!< Norm of omega_BR

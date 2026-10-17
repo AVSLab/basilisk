@@ -50,8 +50,7 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector() = default;
 
  @param NewPanel the panel to append to the chain
  */
-void
-NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
+void NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 {
     this->requireMutableTopology("NHingedRigidBodyStateEffector::addHingedPanel");
     this->PanelVec.push_back(NewPanel);
@@ -72,8 +71,7 @@ NHingedRigidBodyStateEffector::addHingedPanel(HingedPanel NewPanel)
 
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void
-NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->computePanelInertialStates();
 
@@ -103,8 +101,7 @@ NHingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 }
 
 /*! This method computes the panel states relative to the inertial frame */
-void
-NHingedRigidBodyStateEffector::computePanelInertialStates()
+void NHingedRigidBodyStateEffector::computePanelInertialStates()
 {
     // - read live: the cached copy lags half a step at write time, unless a prescribed body set it
     if (this->prescribedAttitudeProperty == nullptr) {
@@ -135,8 +132,7 @@ NHingedRigidBodyStateEffector::computePanelInertialStates()
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
+void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 {
     // - Get access to the hub states
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -149,8 +145,7 @@ NHingedRigidBodyStateEffector::linkInStates(DynParamManager& states)
 }
 
 /*! @brief Validate panel masses, uniformity, and the fixed hinge orientation before state registration. */
-void
-NHingedRigidBodyStateEffector::validateConfiguration()
+void NHingedRigidBodyStateEffector::validateConfiguration()
 {
     if (this->PanelVec.empty()) {
         this->bskLogger.bskError("NHingedRigidBodyStateEffector: at least one hinged panel is required.");
@@ -192,8 +187,7 @@ NHingedRigidBodyStateEffector::validateConfiguration()
 /*! @brief Validate configuration without changing integrated states.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void
-NHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void NHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -202,8 +196,7 @@ NHingedRigidBodyStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  *
  * @param[in,out] statesIn Dynamic parameter manager used to register states or properties.
  */
-void
-NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
+void NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 {
     this->validateConfiguration();
 
@@ -234,8 +227,7 @@ NHingedRigidBodyStateEffector::registerStates(DynParamManager& statesIn)
 
  @param newDynamicEffector the dynamic effector to be attached
  @param segment the panel to attach to, counting outward from the hub starting at 1 */
-void
-NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
+void NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEffector, int segment)
 {
     if (segment <= 0 || segment > (int)this->PanelVec.size()) {
         this->bskLogger.bskError("NHingedRigidBodyStateEffector: specifying attachment to a non-existent panel.");
@@ -252,8 +244,7 @@ NHingedRigidBodyStateEffector::addDynamicEffector(DynamicEffector* newDynamicEff
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
+void NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
 {
     Eigen::Vector3d stateInit = Eigen::Vector3d::Zero();
     std::vector<HingedPanel>::iterator PanelIt;
@@ -277,8 +268,7 @@ NHingedRigidBodyStateEffector::registerProperties(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Define summation variables
     double sum_Theta = 0;
@@ -378,8 +368,7 @@ NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime [[maybe_
  *
  * @param[in] cond Condition evaluated by the Heaviside function.
  */
-double
-NHingedRigidBodyStateEffector::HeaviFunc(double cond)
+double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 {
     double ans;
     if (cond < 0.0)
@@ -398,12 +387,11 @@ NHingedRigidBodyStateEffector::HeaviFunc(double cond)
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-NHingedRigidBodyStateEffector::updateContributions(double integTime,
-                                                   BackSubMatrices& backSubContr,
-                                                   Eigen::MRPd sigma_BN,
-                                                   Eigen::Vector3d omega_BN_B,
-                                                   Eigen::Vector3d g_N [[maybe_unused]])
+void NHingedRigidBodyStateEffector::updateContributions(double integTime,
+                                                        BackSubMatrices& backSubContr,
+                                                        Eigen::MRPd sigma_BN,
+                                                        Eigen::Vector3d omega_BN_B,
+                                                        Eigen::Vector3d g_N [[maybe_unused]])
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -681,11 +669,10 @@ NHingedRigidBodyStateEffector::updateContributions(double integTime,
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                  Eigen::Vector3d rDDot_BN_N,
-                                                  Eigen::Vector3d omegaDot_BN_B,
-                                                  Eigen::MRPd sigma_BN)
+void NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                       Eigen::Vector3d rDDot_BN_N,
+                                                       Eigen::Vector3d omegaDot_BN_B,
+                                                       Eigen::MRPd sigma_BN)
 {
     // - Grab necessary values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
@@ -726,11 +713,10 @@ NHingedRigidBodyStateEffector::computeDerivatives(double integTime [[maybe_unuse
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                            Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                            double& rotEnergyContr,
-                                                            Eigen::Vector3d omega_BN_B)
+void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                                 Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                                 double& rotEnergyContr,
+                                                                 Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     this->omegaLoc_BN_B = omega_BN_B;
@@ -766,8 +752,7 @@ NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime [[m
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     this->writeOutputStateMessages(CurrentSimNanos);
 

@@ -23,8 +23,7 @@
  * only a subset of the messages in owners, as in nested output collections.
  */
 template<typename Payload>
-void
-addOwnedMessage(std::vector<std::unique_ptr<Message<Payload>>>& owners, std::vector<Message<Payload>*>& views)
+void addOwnedMessage(std::vector<std::unique_ptr<Message<Payload>>>& owners, std::vector<Message<Payload>*>& views)
 {
     owners.push_back(std::make_unique<Message<Payload>>());
     try {

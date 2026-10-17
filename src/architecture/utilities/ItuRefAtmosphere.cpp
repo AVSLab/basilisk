@@ -26,34 +26,29 @@ ItuAtmosphere::ItuAtmosphere() {}
 
 // Destructor
 ItuAtmosphere::~ItuAtmosphere() {}
-const ItuAtmosphere&
-ItuAtmosphere::instance()
+const ItuAtmosphere& ItuAtmosphere::instance()
 {
     static ItuAtmosphere inst;
     return inst;
 }
 
 // Getters
-double
-ItuAtmosphere::getTempISA(double altitude_m)
+double ItuAtmosphere::getTempISA(double altitude_m)
 {
     return instance().calcTempISA(altitude_m);
 }
 
-double
-ItuAtmosphere::getPresISA(double altitude_m)
+double ItuAtmosphere::getPresISA(double altitude_m)
 {
     return instance().calcPresISA(altitude_m);
 }
 
-double
-ItuAtmosphere::getWaterVapDensityISA(double altitude_m)
+double ItuAtmosphere::getWaterVapDensityISA(double altitude_m)
 {
     return instance().calcWaterVapDensityISA(altitude_m);
 }
 
-size_t
-ItuAtmosphere::findLayerIndex(double altitude_m) const
+size_t ItuAtmosphere::findLayerIndex(double altitude_m) const
 {
     size_t layer_idx = NUM_LAYERS - 1;
     for (size_t i = 0; i < NUM_LAYERS - 1; ++i) {
@@ -65,8 +60,7 @@ ItuAtmosphere::findLayerIndex(double altitude_m) const
     return layer_idx;
 }
 
-double
-ItuAtmosphere::geometricHeight(double altitude_m) const
+double ItuAtmosphere::geometricHeight(double altitude_m) const
 {
     // For altitudes above 84.852 km, convert geopotential height to geometric height
     return (R_EARTH_ITU * altitude_m * 1e-3) / (R_EARTH_ITU - altitude_m * 1e-3); // ITU-R P.835-7 eq 1b
@@ -74,8 +68,7 @@ ItuAtmosphere::geometricHeight(double altitude_m) const
 
 /* Calculate Temperature according to ITU-R P.835-7
  */
-double
-ItuAtmosphere::calcTempISA(double altitude_m) const
+double ItuAtmosphere::calcTempISA(double altitude_m) const
 {
     // Clamp above model validity (85 km)
     if (altitude_m >= ATMOSPHERE_DATA[NUM_LAYERS - 1].h) {
@@ -115,8 +108,7 @@ ItuAtmosphere::calcTempISA(double altitude_m) const
 /* Calculate Pressure according to ITU-R P.835-7
  * barometric formula for each atmospheric layer
  */
-double
-ItuAtmosphere::calcPresISA(double altitude_m) const
+double ItuAtmosphere::calcPresISA(double altitude_m) const
 {
     // Find which layer the altitude falls into
     size_t layer_idx = ItuAtmosphere::findLayerIndex(altitude_m);
@@ -161,8 +153,7 @@ ItuAtmosphere::calcPresISA(double altitude_m) const
 /* Calculate Water Vapor Density according to ITU-R P.835-7
  * Uses exponential decay model with different scale heights
  */
-double
-ItuAtmosphere::calcWaterVapDensityISA(double altitude_m) const
+double ItuAtmosphere::calcWaterVapDensityISA(double altitude_m) const
 {
     // Calculate geometric height
     double Z = ItuAtmosphere::geometricHeight(altitude_m); // [km] Geometric height

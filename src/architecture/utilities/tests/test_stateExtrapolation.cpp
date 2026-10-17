@@ -28,8 +28,7 @@
 #include "architecture/utilities/stateExtrapolation.h"
 
 namespace {
-SCStatesMsgPayload
-makeState()
+SCStatesMsgPayload makeState()
 {
     SCStatesMsgPayload state{};
     state.r_BN_N[0] = 7.0e6; // [m]
@@ -172,13 +171,12 @@ namespace {
 constexpr uint64_t SECOND_NANOS = 1000000000ULL; // [ns]
 
 /*! Prepare the extrapolation for one spacecraft message and apply it. */
-SCStatesMsgPayload
-applySingle(ScStateExtrapolation& extrapolation,
-            const SCStatesMsgPayload& in,
-            uint64_t now,
-            uint64_t written,
-            uint64_t previousUpdate,
-            BSKLogger& logger)
+SCStatesMsgPayload applySingle(ScStateExtrapolation& extrapolation,
+                               const SCStatesMsgPayload& in,
+                               uint64_t now,
+                               uint64_t written,
+                               uint64_t previousUpdate,
+                               BSKLogger& logger)
 {
     extrapolation.prepare(now, previousUpdate, { written }, logger);
     return extrapolation.apply(in, now, written, previousUpdate);
@@ -186,14 +184,13 @@ applySingle(ScStateExtrapolation& extrapolation,
 
 /*! Feed the spacecraft write times seen by a module running at the given period and record which updates were
  * extrapolated. */
-void
-runModule(ScStateExtrapolation& extrapolation,
-          BSKLogger& logger,
-          uint64_t modulePeriodNanos,
-          uint64_t scPeriodNanos,
-          int numUpdates,
-          std::vector<bool>& extrapolated,
-          bool scRunsFirst = false)
+void runModule(ScStateExtrapolation& extrapolation,
+               BSKLogger& logger,
+               uint64_t modulePeriodNanos,
+               uint64_t scPeriodNanos,
+               int numUpdates,
+               std::vector<bool>& extrapolated,
+               bool scRunsFirst = false)
 {
     const SCStatesMsgPayload in = makeState();
     uint64_t previousUpdate = 0; // [ns]
@@ -486,8 +483,9 @@ struct TwoSpacecraftResult
     bool mismatch;
 };
 
-TwoSpacecraftResult
-runTwoSpacecraft(uint64_t firstWritten, uint64_t secondWritten, const SpicePlanetStateMsgPayload& planet)
+TwoSpacecraftResult runTwoSpacecraft(uint64_t firstWritten,
+                                     uint64_t secondWritten,
+                                     const SpicePlanetStateMsgPayload& planet)
 {
     const uint64_t now = 20 * SECOND_NANOS;      // [ns]
     const uint64_t previous = 10 * SECOND_NANOS; // [ns]
@@ -504,8 +502,7 @@ runTwoSpacecraft(uint64_t firstWritten, uint64_t secondWritten, const SpicePlane
              extrapolation.mismatchDetected() };
 }
 
-SpicePlanetStateMsgPayload
-makeMovingPlanet()
+SpicePlanetStateMsgPayload makeMovingPlanet()
 {
     SpicePlanetStateMsgPayload planet{};
     planet.PositionVector[0] = 1.0e7; // [m]

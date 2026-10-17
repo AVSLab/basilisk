@@ -33,8 +33,7 @@ typedef enum
 } logLevel_t;
 
 extern logLevel_t LogLevel;
-void
-printDefaultLogLevel(void);
+void printDefaultLogLevel(void);
 
 /// \cond DO_NOT_DOCUMENT
 
@@ -81,10 +80,8 @@ printDefaultLogLevel(void);
 %include "std_except.i"
 #endif
 
-void
-setDefaultLogLevel(logLevel_t logLevel);
-logLevel_t
-getDefaultLogLevel();
+void setDefaultLogLevel(logLevel_t logLevel);
+logLevel_t getDefaultLogLevel();
 
 /*! Custom Basilisk runtime error class */
 class BasiliskError : public std::runtime_error
@@ -180,18 +177,12 @@ typedef struct BSKLogger BSKLogger;
 #define EXTERN_NORETURN BSK_NORETURN
 #endif
 
-EXTERN BSKLogger*
-_BSKLogger(void);
-EXTERN void
-_BSKLogger_d(BSKLogger*);
-EXTERN void
-_printLogLevel(BSKLogger*);
-EXTERN void
-_setLogLevel(BSKLogger*, logLevel_t);
-EXTERN void
-_bskLog(BSKLogger*, logLevel_t, const char*);
-EXTERN_NORETURN void
-_bskError(BSKLogger*, const char*);
+EXTERN BSKLogger* _BSKLogger(void);
+EXTERN void _BSKLogger_d(BSKLogger*);
+EXTERN void _printLogLevel(BSKLogger*);
+EXTERN void _setLogLevel(BSKLogger*, logLevel_t);
+EXTERN void _bskLog(BSKLogger*, logLevel_t, const char*);
+EXTERN_NORETURN void _bskError(BSKLogger*, const char*);
 #ifndef SWIG
 /*! Log through the C++ logger without allowing an exception to cross the C ABI.
  *
@@ -199,8 +190,7 @@ _bskError(BSKLogger*, const char*);
  *  C++ exception. It returns zero on success and a nonzero value when logging
  *  throws. A null logger is treated as logging-disabled success.
  */
-EXTERN int
-_bskLogNoThrow(BSKLogger*, logLevel_t, const char*) BSK_NOEXCEPT;
+EXTERN int _bskLogNoThrow(BSKLogger*, logLevel_t, const char*) BSK_NOEXCEPT;
 #endif
 
 /// \endcond

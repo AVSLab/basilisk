@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void
-SelfInit_pixelLineConverter(PixelLineConvertData* configData, int64_t moduleID)
+void SelfInit_pixelLineConverter(PixelLineConvertData* configData, int64_t moduleID)
 {
     (void)moduleID;
     OpNavMsg_C_init(&configData->opNavOutMsg);
@@ -41,8 +40,7 @@ SelfInit_pixelLineConverter(PixelLineConvertData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Reset_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -66,8 +64,7 @@ Reset_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID)
+void Update_pixelLineConverter(PixelLineConvertData* configData, uint64_t callTime, int64_t moduleID)
 {
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
     double reCentered[2];

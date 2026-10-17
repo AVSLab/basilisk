@@ -24,8 +24,7 @@
  @param lpData The configuration data and history of the LP filter
  @param newMeas The new measurement to take in to the filter
  */
-void
-lowPassFilterSignal(double newMeas, LowPassFilterData* lpData)
+void lowPassFilterSignal(double newMeas, LowPassFilterData* lpData)
 {
     /*! See documentation of algorithm in documentation for LP torque filter module*/
     double hOmeg = lpData->hStep * lpData->omegCutoff;

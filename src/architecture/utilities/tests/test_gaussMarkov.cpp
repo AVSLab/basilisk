@@ -23,8 +23,7 @@
 #include <random>
 #include <stdint.h>
 
-Eigen::Vector2d
-calculateSD(const Eigen::MatrixXd& dat, int64_t numPts)
+Eigen::Vector2d calculateSD(const Eigen::MatrixXd& dat, int64_t numPts)
 {
     // Calculate mean properly
     Eigen::Vector2d means = dat.rowwise().mean();

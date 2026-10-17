@@ -33,8 +33,7 @@
  * @param dateTime [in,out] broken-down UTC date and time, normalized in place; `tm_isdst` is set to 0
  * @return the time in seconds since 1970-01-01 00:00:00 UTC, or -1 if it cannot be represented
  */
-static inline time_t
-normalizeUtcTime(struct tm* dateTime)
+static inline time_t normalizeUtcTime(struct tm* dateTime)
 {
     dateTime->tm_isdst = 0;
 #ifdef _WIN32

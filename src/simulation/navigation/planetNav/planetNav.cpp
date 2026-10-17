@@ -51,8 +51,7 @@ PlanetNav::~PlanetNav()
 
     @param CurrentSimNanos The clock time associated with the module call
 */
-void
-PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->ephemerisInMsg.isLinked()) {
@@ -80,8 +79,7 @@ PlanetNav::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This method reads the input messages associated with the planet state
  */
-void
-PlanetNav::readInputMessages()
+void PlanetNav::readInputMessages()
 {
     this->truePlanetState = this->ephemerisInMsg();
 }
@@ -90,8 +88,7 @@ PlanetNav::readInputMessages()
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void
-PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
+void PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     this->noisePlanetState.timeTag = (double)CurrentSimNanos * NANO2SEC;
     this->ephemerisOutMsg.write(&this->noisePlanetState, this->moduleID, CurrentSimNanos);
@@ -100,8 +97,7 @@ PlanetNav::writeOutputMessages(uint64_t CurrentSimNanos)
 /*! This method applies the errors to the truePlanetState
 
  */
-void
-PlanetNav::applyErrors()
+void PlanetNav::applyErrors()
 {
     //! - Add errors
     v3Add(this->truePlanetState.r_BdyZero_N, &(this->navErrors.data()[0]), this->noisePlanetState.r_BdyZero_N);
@@ -115,8 +111,7 @@ PlanetNav::applyErrors()
 
  @param CurrentSimNanos The clock time associated with the model call
  */
-void
-PlanetNav::computeErrors(uint64_t CurrentSimNanos)
+void PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
     StateMatrix localProp = this->AMatrix;
@@ -140,8 +135,7 @@ PlanetNav::computeErrors(uint64_t CurrentSimNanos)
 
     @param CurrentSimNanos The clock time associated with the model call
 */
-void
-PlanetNav::UpdateState(uint64_t CurrentSimNanos)
+void PlanetNav::UpdateState(uint64_t CurrentSimNanos)
 {
     /* zero the output msg buffer */
     this->noisePlanetState = this->ephemerisOutMsg.zeroMsgPayload;

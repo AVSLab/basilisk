@@ -18,8 +18,7 @@
  */
 #include "meanRevertingNoise.h"
 
-void
-MeanRevertingNoise::registerStates(DynParamRegisterer registerer)
+void MeanRevertingNoise::registerStates(DynParamRegisterer registerer)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -31,8 +30,7 @@ MeanRevertingNoise::registerStates(DynParamRegisterer registerer)
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(0.0));
 }
 
-void
-MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos)
+void MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos)
 {
     // Safety
     if (!xState) {
@@ -57,8 +55,7 @@ MeanRevertingNoise::UpdateState(uint64_t CurrentSimNanos)
     writeOutput(CurrentSimNanos, x0);
 }
 
-double
-MeanRevertingNoise::getStateValue() const
+double MeanRevertingNoise::getStateValue() const
 {
     if (!xState) {
         BSKLogger{}.bskError("MeanRevertingNoise: getStateValue before initialization");
@@ -66,8 +63,7 @@ MeanRevertingNoise::getStateValue() const
     return xState->stateView()(0, 0);
 }
 
-void
-MeanRevertingNoise::setStateValue(double val)
+void MeanRevertingNoise::setStateValue(double val)
 {
     if (!xState) {
         bskLogger.bskError("MeanRevertingNoise: setStateValue before initialization");
@@ -75,8 +71,7 @@ MeanRevertingNoise::setStateValue(double val)
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(val));
 }
 
-void
-MeanRevertingNoise::setTimeConstant(double t)
+void MeanRevertingNoise::setTimeConstant(double t)
 {
     if (t <= 0.0) {
         bskLogger.bskError("MeanRevertingNoise::setTimeConstant: tau must be > 0");
@@ -84,8 +79,7 @@ MeanRevertingNoise::setTimeConstant(double t)
     timeConstant = t;
 }
 
-void
-MeanRevertingNoise::setStationaryStd(double s)
+void MeanRevertingNoise::setStationaryStd(double s)
 {
     if (s < 0.0) {
         bskLogger.bskError("MeanRevertingNoise::setStationaryStd: sigma_st must be >= 0");

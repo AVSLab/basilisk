@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the sun safe control
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_sunSafeACS(sunSafeACSConfig* configData, int64_t moduleID)
+void SelfInit_sunSafeACS(sunSafeACSConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRArrayOnTimeCmdMsg_C_init(&configData->thrData.thrOnTimeOutMsg);
@@ -41,8 +40,7 @@ SelfInit_sunSafeACS(sunSafeACSConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -59,8 +57,7 @@ Reset_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunSafeACS(sunSafeACSConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     CmdTorqueBodyMsgPayload cntrRequest;
 

@@ -66,8 +66,7 @@ SmallBodyNavEKF::SmallBodyNavEKF()
 SmallBodyNavEKF::~SmallBodyNavEKF() {}
 
 /*! Initialize C-wrapped output messages */
-void
-SmallBodyNavEKF::SelfInit()
+void SmallBodyNavEKF::SelfInit()
 {
     NavTransMsg_C_init(&this->navTransOutMsgC);
     SmallBodyNavMsg_C_init(&this->smallBodyNavOutMsgC);
@@ -77,8 +76,7 @@ SmallBodyNavEKF::SelfInit()
 /*! @brief Validate filter dimensions and required input message connections.
     @param CurrentSimNanos Current simulation time [ns].
 */
-void
-SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateStateDimensions();
 
@@ -98,8 +96,7 @@ SmallBodyNavEKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! @brief Reject invalid dimensions before converting Python-facing dynamic arrays to fixed-size Eigen storage. */
-void
-SmallBodyNavEKF::validateStateDimensions()
+void SmallBodyNavEKF::validateStateDimensions()
 {
     if (this->x_hat_k.size() != stateSize) {
         bskLogger.bskError("SmallBodyNavEKF.x_hat_k must contain exactly %d states.", stateSize);
@@ -118,14 +115,12 @@ SmallBodyNavEKF::validateStateDimensions()
 /*! This method is used to add a thruster to the filter.
 
 */
-void
-SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrusterMsg)
+void SmallBodyNavEKF::addThrusterToFilter(Message<THROutputMsgPayload>* tmpThrusterMsg)
 {
     this->addThrusterToFilter(tmpThrusterMsg->addSubscriber());
 }
 
-void
-SmallBodyNavEKF::addThrusterToFilter(ReadFunctor<THROutputMsgPayload> reader)
+void SmallBodyNavEKF::addThrusterToFilter(ReadFunctor<THROutputMsgPayload> reader)
 {
     this->thrusterInMsgs.push_back(reader);
 }
@@ -134,8 +129,7 @@ SmallBodyNavEKF::addThrusterToFilter(ReadFunctor<THROutputMsgPayload> reader)
     @param CurrentSimNanos
 
 */
-void
-SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos)
 {
     /* Read in the input messages */
     if ((this->navTransInMsg.timeWritten() + this->navAttInMsg.timeWritten() +
@@ -172,8 +166,7 @@ SmallBodyNavEKF::readMessages(uint64_t CurrentSimNanos)
     @param CurrentSimNanos
 
 */
-void
-SmallBodyNavEKF::predict(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::predict(uint64_t CurrentSimNanos)
 {
     /* Get the orbital elements of the asteroid, we assume the uncertainty on the pos. and vel. of the body are low
      * enough to consider them known apriori */
@@ -219,8 +212,7 @@ SmallBodyNavEKF::predict(uint64_t CurrentSimNanos)
     @param CurrentSimNanos
 
 */
-void
-SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos)
 {
     const StateVector currentState = x_hat_k;
     const double timeStep = diffNanoToSec(CurrentSimNanos, prevTime);
@@ -255,8 +247,7 @@ SmallBodyNavEKF::aprioriState(uint64_t CurrentSimNanos)
     @param Phi
 
 */
-void
-SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const StateMatrix& Phi)
+void SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const StateMatrix& Phi)
 {
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
@@ -302,8 +293,7 @@ SmallBodyNavEKF::computeEquationsOfMotion(const StateVector& x_hat, const StateM
     @param CurrentSimNanos
 
 */
-void
-SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos [[maybe_unused]])
+void SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     const StateMatrix currentCovariance = P_k;
     const StateMatrix processNoise = Q;
@@ -316,8 +306,7 @@ SmallBodyNavEKF::aprioriCovar(uint64_t CurrentSimNanos [[maybe_unused]])
     states are transferred to the shadow set and the covariance is updated.
 
  */
-void
-SmallBodyNavEKF::checkMRPSwitching()
+void SmallBodyNavEKF::checkMRPSwitching()
 {
     /* Create temporary values for sigma_AN */
     Eigen::Vector3d sigma_AN;
@@ -350,8 +339,7 @@ SmallBodyNavEKF::checkMRPSwitching()
 /*! This method performs the KF measurement update step
 
 */
-void
-SmallBodyNavEKF::measurementUpdate()
+void SmallBodyNavEKF::measurementUpdate()
 {
     /* Compute Kalman gain */
     const StateMatrix measurementNoise = R;
@@ -399,8 +387,7 @@ SmallBodyNavEKF::measurementUpdate()
 /*! This method computes the state dynamics matrix, A, for the next iteration
 
 */
-void
-SmallBodyNavEKF::computeDynamicsMatrix(const StateVector& x_hat)
+void SmallBodyNavEKF::computeDynamicsMatrix(const StateVector& x_hat)
 {
     /* Create temporary state vectors for readability */
     Eigen::Vector3d x_1;
@@ -436,8 +423,7 @@ SmallBodyNavEKF::computeDynamicsMatrix(const StateVector& x_hat)
 /*! This is the main method that gets called every time the module is updated.
 
 */
-void
-SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 {
     this->validateStateDimensions();
     this->readMessages(CurrentSimNanos);
@@ -457,8 +443,7 @@ SmallBodyNavEKF::UpdateState(uint64_t CurrentSimNanos)
 /*! This method writes the output messages
 
 */
-void
-SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos)
+void SmallBodyNavEKF::writeMessages(uint64_t CurrentSimNanos)
 {
     /* Create output msg buffers */
     NavTransMsgPayload navTransOutMsgBuffer;

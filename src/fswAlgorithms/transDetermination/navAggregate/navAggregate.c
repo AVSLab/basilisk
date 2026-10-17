@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the Nav aggregation interface
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_aggregateNav(NavAggregateData* configData, int64_t moduleID)
+void SelfInit_aggregateNav(NavAggregateData* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navAttOutMsg);
@@ -42,8 +41,7 @@ SelfInit_aggregateNav(NavAggregateData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -195,8 +193,7 @@ Reset_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID)
+void Update_aggregateNav(NavAggregateData* configData, uint64_t callTime, int64_t moduleID)
 {
     uint32_t i;
     NavAttMsgPayload navAttOutMsgBuffer;     /* [-] The local storage of the outgoing attitude navibation message data*/

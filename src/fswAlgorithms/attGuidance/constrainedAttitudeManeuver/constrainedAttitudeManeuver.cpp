@@ -92,8 +92,7 @@ Node::~Node()
 }
 
 /*! This method appends a pointer to neighboring node to the neighbors class variable */
-void
-Node::appendNeighbor(Node* node)
+void Node::appendNeighbor(Node* node)
 {
     this->neighbors[this->neighborCount] = node;
     this->neighborCount += 1;
@@ -114,16 +113,14 @@ NodeList::~NodeList()
 }
 
 /*! This method appends a pointer to the node list. */
-void
-NodeList::append(Node* node)
+void NodeList::append(Node* node)
 {
     this->list[this->N] = node;
     this->N += 1;
 }
 
 /*! This method removes the pointer at index M from the node list. */
-void
-NodeList::pop(int M)
+void NodeList::pop(int M)
 {
     for (int m = M; m < this->N - 1; m++) {
         this->list[m] = this->list[m + 1];
@@ -132,15 +129,13 @@ NodeList::pop(int M)
 }
 
 /*! This method resets the list counter to 0, effectively clearing the list. */
-void
-NodeList::clear()
+void NodeList::clear()
 {
     this->N = 0;
 }
 
 /*! This method swaps the two pointers at indices m and n. */
-void
-NodeList::swap(int m, int n)
+void NodeList::swap(int m, int n)
 {
     Node* p1 = this->list[m];
     Node* p2 = this->list[n];
@@ -149,8 +144,7 @@ NodeList::swap(int m, int n)
 }
 
 /*! This method sorts the nodes in the list according to their priority. */
-void
-NodeList::sort()
+void NodeList::sort()
 {
     int M;
     double p;
@@ -168,8 +162,7 @@ NodeList::sort()
 }
 
 /*! This method returns true if a node is contained in the list, false otherwise. */
-bool
-NodeList::contains(Node* node)
+bool NodeList::contains(Node* node)
 {
     bool flag = false;
     for (int n = 0; n < this->N; n++) {
@@ -206,15 +199,13 @@ ConstrainedAttitudeManeuver::~ConstrainedAttitudeManeuver()
 }
 
 /*! Initialize C-wrapped output messages */
-void
-ConstrainedAttitudeManeuver::SelfInit()
+void ConstrainedAttitudeManeuver::SelfInit()
 {
     AttRefMsg_C_init(&this->attRefOutMsgC);
 }
 
 /*! Add keep-out body-frame direction  */
-void
-ConstrainedAttitudeManeuver::appendKeepOutDirection(double direction[3], double Fov)
+void ConstrainedAttitudeManeuver::appendKeepOutDirection(double direction[3], double Fov)
 {
     int N = this->boresights.keepOutBoresightCount;
     v3Normalize(direction, this->boresights.keepOutBoresight_B[N]);
@@ -223,8 +214,7 @@ ConstrainedAttitudeManeuver::appendKeepOutDirection(double direction[3], double 
 }
 
 /*! Add keep-in body-frame direction  */
-void
-ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], double Fov)
+void ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], double Fov)
 {
     int N = this->boresights.keepInBoresightCount;
     v3Normalize(direction, this->boresights.keepInBoresight_B[N]);
@@ -234,8 +224,7 @@ ConstrainedAttitudeManeuver::appendKeepInDirection(double direction[3], double F
 
 /*! This method is used to reset the module. The input messages are read here,
 the grid is generated and the graph search is performed. */
-void
-ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ConstrainedAttitudeManeuver::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     ReadInputs();
 
@@ -268,8 +257,7 @@ trajectory and writes the output message.
 
  @param CurrentSimNanos The current simulation time for system
  */
-void
-ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
+void ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
 {
     double t = static_cast<double>(CurrentSimNanos) * NANO2SEC;
     double sigma_RN[3], sigmaDot_RN[3], sigmaDDot_RN[3], omega_RN_R[3], omegaDot_RN_R[3];
@@ -304,8 +292,7 @@ ConstrainedAttitudeManeuver::UpdateState(uint64_t CurrentSimNanos)
  appropriate parameters
 
  */
-void
-ConstrainedAttitudeManeuver::ReadInputs()
+void ConstrainedAttitudeManeuver::ReadInputs()
 {
     double relPosVector[3];
 
@@ -342,8 +329,7 @@ ConstrainedAttitudeManeuver::ReadInputs()
 /*! This method generates the MRP grid and connects the free neighboring nodes
 
  */
-void
-ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
+void ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
 {
     int N = this->N;
     double u[20];
@@ -601,8 +587,7 @@ ConstrainedAttitudeManeuver::GenerateGrid(Node startNode, Node goalNode)
    variable path
 
  */
-void
-ConstrainedAttitudeManeuver::backtrack(Node* p)
+void ConstrainedAttitudeManeuver::backtrack(Node* p)
 {
     if (p == &NodesMap[this->keyS[0]][this->keyS[1]][this->keyS[2]]) {
         this->path.append(p);
@@ -617,8 +602,7 @@ ConstrainedAttitudeManeuver::backtrack(Node* p)
 /*! This method applies standard distance-based A* to find a valid path
 
  */
-void
-ConstrainedAttitudeManeuver::AStar()
+void ConstrainedAttitudeManeuver::AStar()
 {
     for (std::map<int, std::map<int, std::map<int, Node>>>::iterator it1 = NodesMap.begin(); it1 != NodesMap.end();
          it1++) {
@@ -674,8 +658,7 @@ ConstrainedAttitudeManeuver::AStar()
 /*! This method applies the effort-based A* to find a valid path
 
  */
-void
-ConstrainedAttitudeManeuver::effortBasedAStar()
+void ConstrainedAttitudeManeuver::effortBasedAStar()
 {
     int Nmax = 100;
     int n = 0;
@@ -735,8 +718,7 @@ ConstrainedAttitudeManeuver::effortBasedAStar()
    interpolation/approximation
 
  */
-void
-ConstrainedAttitudeManeuver::pathHandle()
+void ConstrainedAttitudeManeuver::pathHandle()
 {
     double S = 0;
     Eigen::VectorXd T(this->path.N);
@@ -793,8 +775,7 @@ ConstrainedAttitudeManeuver::pathHandle()
 /*! This method performs the BSpline interpolation/approximation and outputs an Output structure
 
  */
-void
-ConstrainedAttitudeManeuver::spline()
+void ConstrainedAttitudeManeuver::spline()
 {
     double sigmaDot_start[3], sigmaDot_goal[3];
     dMRP(this->scStateMsgBuffer.sigma_BN, this->scStateMsgBuffer.omega_BN_B, sigmaDot_start);
@@ -819,8 +800,7 @@ ConstrainedAttitudeManeuver::spline()
 /*! This method computes the torque vector required at time step with index n
 
  */
-void
-ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
+void ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 {
     double sigma[3], sigmaDot[3], sigmaDDot[3], omega[3], omegaDot[3], L1[3], L2[3], H[3];
 
@@ -844,8 +824,7 @@ ConstrainedAttitudeManeuver::computeTorque(int n, double I[9], double L[3])
 /*! This method computes the torque vector required at time step with index n
 
  */
-double
-ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_unused]][9])
+double ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_unused]][9])
 {
     double L[3];
     computeTorque(n, this->vehicleConfigMsgBuffer.ISCPntB_B, L);
@@ -856,8 +835,7 @@ ConstrainedAttitudeManeuver::computeTorqueNorm(int n, double I [[maybe_unused]][
 /*! This method integrates the control torque norm over maneuver time and returns the cost for the effort-based A*.
 
  */
-double
-ConstrainedAttitudeManeuver::effortEvaluation()
+double ConstrainedAttitudeManeuver::effortEvaluation()
 {
     double effort = 0;
     double l_a, l_b;
@@ -881,8 +859,7 @@ ConstrainedAttitudeManeuver::effortEvaluation()
     It is designed to be used in the UnitTest primarily.
 
  */
-double
-ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
+double ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
 {
     if (nodeCoord < 0 || nodeCoord > 2 || NodesMap[key[0]][key[1]].count(key[2]) == 0) {
         return 1000; // random large number that will cause the UnitTest comparison to fail
@@ -895,8 +872,7 @@ ConstrainedAttitudeManeuver::returnNodeCoord(int key[3], int nodeCoord)
     It is designed to be used in the UnitTest primarily.
 
  */
-bool
-ConstrainedAttitudeManeuver::returnNodeState(int key[3])
+bool ConstrainedAttitudeManeuver::returnNodeState(int key[3])
 {
     if (NodesMap[key[0]][key[1]].count(key[2]) != 0) {
         return this->NodesMap[key[0]][key[1]][key[2]].isFree;
@@ -909,8 +885,7 @@ ConstrainedAttitudeManeuver::returnNodeState(int key[3])
     It is designed to be used in the UnitTest primarily.
 
  */
-double
-ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
+double ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 {
     if (index < 0 || index > this->path.N - 1) {
         return 1000; // random large number that will cause the UnitTest comparison to fail
@@ -920,8 +895,7 @@ ConstrainedAttitudeManeuver::returnPathCoord(int index, int nodeCoord)
 }
 
 /*! This helper function returns the coordinates of the 8 symmetrical points to a point in 3D cartesian space. */
-void
-mirrorFunction(int indices[3], int mirrorIndices[8][3])
+void mirrorFunction(int indices[3], int mirrorIndices[8][3])
 {
     mirrorIndices[0][0] = indices[0];
     mirrorIndices[0][1] = indices[1];
@@ -950,8 +924,7 @@ mirrorFunction(int indices[3], int mirrorIndices[8][3])
 }
 
 /*! For a set of indices, this helper function returns the indices of the 26 immediate neighbors. */
-void
-neighboringNodes(int indices[3], int neighbors[26][3])
+void neighboringNodes(int indices[3], int neighbors[26][3])
 {
     neighbors[0][0] = indices[0] - 1;
     neighbors[0][1] = indices[1];
@@ -1034,8 +1007,7 @@ neighboringNodes(int indices[3], int neighbors[26][3])
 }
 
 /*! This function implements the MRP cartesian distance between 2 nodes.  */
-double
-distance(Node n1, Node n2)
+double distance(Node n1, Node n2)
 {
     double n1n, n2n;
     double D, d[4];

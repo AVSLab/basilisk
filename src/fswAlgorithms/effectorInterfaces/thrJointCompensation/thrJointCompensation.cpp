@@ -22,8 +22,7 @@
 #include <cstring>
 #include <iostream>
 
-void
-ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->armConfigInMsg.isLinked()) {
@@ -91,8 +90,7 @@ ThrJointCompensation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->kinCfg.armHingeGlobalIdx.assign(nFlat, 0);
 }
 
-void
-ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
+void ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -423,14 +421,12 @@ ThrJointCompensation::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void
-ThrJointCompensation::setUMax(std::vector<double> var)
+void ThrJointCompensation::setUMax(std::vector<double> var)
 {
     this->uMax = var;
 }
 
-void
-ThrJointCompensation::addHingedJoint()
+void ThrJointCompensation::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;
@@ -442,8 +438,7 @@ ThrJointCompensation::addHingedJoint()
     addOwnedMessage(this->ownedMotorTorquesOutMsgs, this->motorTorquesOutMsgs);
 }
 
-void
-ThrJointCompensation::addThruster()
+void ThrJointCompensation::addThruster()
 {
     // increase the number of thrusters by 1
     this->numThrusters++;

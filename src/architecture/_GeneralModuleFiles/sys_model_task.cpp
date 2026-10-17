@@ -35,8 +35,7 @@ SysModelTask::SysModelTask(uint64_t InputPeriod, uint64_t FirstStartTime)
 
 /*! This method self-initializes all of the models that have been added to the Task.
  */
-void
-SysModelTask::SelfInitTaskList() const
+void SysModelTask::SelfInitTaskList() const
 {
     //! - Loop over all models and do the self init for each
     for (auto const& modelPair : this->TaskModels) {
@@ -49,8 +48,7 @@ SysModelTask::SelfInitTaskList() const
  See sys_model_task.h for related method ResetTask()
  @param CurrentSimTime The time to start at after reset
 */
-void
-SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
+void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
     for (auto const& modelPair : this->TaskModels) {
         modelPair.ModelPtr->Reset(CurrentSimTime);
@@ -63,8 +61,7 @@ SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
  Then, it sets its NextStartTime appropriately.
  @param CurrentSimNanos The current simulation time in [ns]
  */
-void
-SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
+void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
 {
     //! - Loop over all of the models in the simulation and call their UpdateState
     for (auto ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
@@ -82,8 +79,7 @@ SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added (highest goes first)
  */
-void
-SysModelTask::AddNewObject(SysModel* NewModel, int32_t Priority)
+void SysModelTask::AddNewObject(SysModel* NewModel, int32_t Priority)
 {
     ModelPriorityPair LocalPair;
 
@@ -108,8 +104,7 @@ SysModelTask::AddNewObject(SysModel* NewModel, int32_t Priority)
    was specified at task creation.
  @param newPeriod The period that the task should run at going forward
  */
-void
-SysModelTask::updatePeriod(uint64_t newPeriod)
+void SysModelTask::updatePeriod(uint64_t newPeriod)
 {
     //! - If the requested time is above the min time, set the next time based on the previous time plus the new period
     if (this->NextStartTime > this->TaskPeriod) {

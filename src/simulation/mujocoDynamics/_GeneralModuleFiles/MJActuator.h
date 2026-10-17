@@ -41,8 +41,7 @@
  * @return A string view representing the actuator type.
  */
 template<>
-constexpr std::string_view
-MJBasilisk::detail::getObjectTypeName<mjsActuator>()
+constexpr std::string_view MJBasilisk::detail::getObjectTypeName<mjsActuator>()
 {
     return "actuator";
 }

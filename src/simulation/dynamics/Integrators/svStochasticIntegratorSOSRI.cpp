@@ -26,8 +26,7 @@ svStochasticIntegratorSOSRI::svStochasticIntegratorSOSRI(DynamicObject* dyn)
 // Coefficients for the SOSRI tableau (stability-optimized SRI, four stages). Matrix
 // entries use the plain [stage i][sub-term j] convention of SRICoefficients (see
 // svIntegratorStrongStochasticRungeKuttaSRI.h).
-SRICoefficients<4>
-svStochasticIntegratorSOSRI::getCoefficients()
+SRICoefficients<4> svStochasticIntegratorSOSRI::getCoefficients()
 {
     SRICoefficients<4> c;
 

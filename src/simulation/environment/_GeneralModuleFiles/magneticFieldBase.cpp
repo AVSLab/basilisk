@@ -65,8 +65,7 @@ MagneticFieldBase::~MagneticFieldBase() = default;
 
  @param tmpScMsg A spacecraft state message name.
  */
-void
-MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
 
     /* add input message */
@@ -85,8 +84,7 @@ MagneticFieldBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 /*! This method is used to reset the module.
 
  */
-void
-MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
+void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -115,8 +113,7 @@ MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void
-MagneticFieldBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void MagneticFieldBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -125,8 +122,7 @@ MagneticFieldBase::customReset(uint64_t CurrentClock [[maybe_unused]])
  is set by a module variable.
 
  */
-void
-MagneticFieldBase::customSetEpochFromVariable()
+void MagneticFieldBase::customSetEpochFromVariable()
 {
     return;
 }
@@ -135,8 +131,7 @@ MagneticFieldBase::customSetEpochFromVariable()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-MagneticFieldBase::writeMessages(uint64_t CurrentClock)
+void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
     for (long unsigned int c = 0; c < this->envOutMsgs.size(); c++) {
         this->envOutMsgs.at(c)->write(&this->magFieldOutBuffer.at(c), this->moduleID, CurrentClock);
@@ -151,8 +146,7 @@ MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
 
  */
-void
-MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -165,8 +159,7 @@ MagneticFieldBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
  that is not the output of the previous module update is never extrapolated.
  @param enable [-] true to extrapolate the spacecraft state to the middle of the step
  */
-void
-MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)
+void MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
@@ -174,8 +167,7 @@ MagneticFieldBase::setExtrapolateScStateToStepMidpoint(bool enable)
 /*! Returns whether the spacecraft state extrapolation is enabled.
  @return [-] true if the spacecraft state is extrapolated
  */
-bool
-MagneticFieldBase::getExtrapolateScStateToStepMidpoint() const
+bool MagneticFieldBase::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
@@ -187,8 +179,7 @@ MagneticFieldBase::getExtrapolateScStateToStepMidpoint() const
  @param CurrentSimNanos [ns] current simulation time
  @return true if all required messages were read
  */
-bool
-MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
+bool MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload scMsg;
 
@@ -232,8 +223,7 @@ MagneticFieldBase::readMessages(uint64_t CurrentSimNanos)
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
 
  */
-bool
-MagneticFieldBase::customReadMessages()
+bool MagneticFieldBase::customReadMessages()
 {
     return true;
 }
@@ -241,8 +231,7 @@ MagneticFieldBase::customReadMessages()
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
 
  */
-void
-MagneticFieldBase::updateLocalMagField(double currentTime)
+void MagneticFieldBase::updateLocalMagField(double currentTime)
 {
     std::vector<SCStatesMsgPayload>::iterator it;
     uint64_t atmoInd = 0;
@@ -273,8 +262,7 @@ MagneticFieldBase::updateLocalMagField(double currentTime)
  @param scState A spacecraft states message struct.
 
  */
-void
-MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState)
+void MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SCStatesMsgPayload* scState)
 {
     //! - compute spacecraft position vector relative to planet
     v3Subtract(scState->r_BN_N, planetState->PositionVector, this->r_BP_N.data());
@@ -292,8 +280,7 @@ MagneticFieldBase::updateRelativePos(SpicePlanetStateMsgPayload* planetState, SC
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
+void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - clear the output buffer
     std::vector<MagneticFieldMsgPayload>::iterator it;

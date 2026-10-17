@@ -62,8 +62,7 @@ SphericalPendulum::SphericalPendulum()
 uint64_t SphericalPendulum::effectorID = 1;
 
 /*! @brief Validate initial mass and damping, retaining zero mass and semidefinite damping. */
-void
-SphericalPendulum::validateConfiguration()
+void SphericalPendulum::validateConfiguration()
 {
     if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
         this->bskLogger.bskError("SphericalPendulum: massInit must be finite and non-negative.");
@@ -78,8 +77,7 @@ SphericalPendulum::validateConfiguration()
 /*! @brief Validate configuration without restoring depleted mass or changing integrated states.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void
-SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SphericalPendulum::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -94,8 +92,7 @@ SphericalPendulum::~SphericalPendulum()
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-SphericalPendulum::linkInStates(DynParamManager& states)
+void SphericalPendulum::linkInStates(DynParamManager& states)
 {
     // - Grab access to gravity
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -107,8 +104,7 @@ SphericalPendulum::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-SphericalPendulum::registerStates(DynParamManager& states)
+void SphericalPendulum::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
 
@@ -147,8 +143,7 @@ SphericalPendulum::registerStates(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
+void SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
 
     // - Grab phi and theta from state manager and define r_PcB_B
@@ -237,8 +232,7 @@ SphericalPendulum::updateEffectorMassProps(double integTime [[maybe_unused]])
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
+void SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
 {
     if (this->massState == nullptr) {
         this->bskLogger.bskLog(
@@ -266,12 +260,11 @@ SphericalPendulum::retrieveMassValue(double integTime [[maybe_unused]])
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-SphericalPendulum::updateContributions(double integTime [[maybe_unused]],
-                                       BackSubMatrices& backSubContr,
-                                       Eigen::MRPd sigma_BN,
-                                       Eigen::Vector3d omega_BN_B,
-                                       Eigen::Vector3d g_N [[maybe_unused]])
+void SphericalPendulum::updateContributions(double integTime [[maybe_unused]],
+                                            BackSubMatrices& backSubContr,
+                                            Eigen::MRPd sigma_BN,
+                                            Eigen::Vector3d omega_BN_B,
+                                            Eigen::Vector3d g_N [[maybe_unused]])
 {
     if (this->massFSP <= 0.0) {
         this->aPhi.setZero();
@@ -391,11 +384,10 @@ SphericalPendulum::updateContributions(double integTime [[maybe_unused]],
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]],
-                                      Eigen::Vector3d rDDot_BN_N,
-                                      Eigen::Vector3d omegaDot_BN_B,
-                                      Eigen::MRPd sigma_BN)
+void SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]],
+                                           Eigen::Vector3d rDDot_BN_N,
+                                           Eigen::Vector3d omegaDot_BN_B,
+                                           Eigen::MRPd sigma_BN)
 {
 
     // - Find DCM
@@ -434,11 +426,10 @@ SphericalPendulum::computeDerivatives(double integTime [[maybe_unused]],
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                double& rotEnergyContr,
-                                                Eigen::Vector3d omega_BN_B)
+void SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                     Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                     double& rotEnergyContr,
+                                                     Eigen::Vector3d omega_BN_B)
 {
 
     //  - Get variables needed for energy momentum calcs
@@ -460,8 +451,7 @@ SphericalPendulum::updateEnergyMomContributions(double integTime [[maybe_unused]
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-SphericalPendulum::modifyStates(double integTime [[maybe_unused]])
+void SphericalPendulum::modifyStates(double integTime [[maybe_unused]])
 {
     // when theta>45° change reference system in order to avoid singularities on aPhi, bPhi, cPhi
     if (fabs(cos(this->theta)) < sqrt(2) / 2) {

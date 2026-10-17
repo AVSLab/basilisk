@@ -22,8 +22,7 @@
 
 namespace {
 // Computes the facet solid angle.
-inline double
-computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eigen::Vector3d rk)
+inline double computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eigen::Vector3d rk)
 {
     // Computes solid angle
     double wy, wx, wf;
@@ -36,8 +35,7 @@ computeSolidangle(const Eigen::Vector3d ri, const Eigen::Vector3d rj, const Eige
 }
 }
 
-std::optional<std::string>
-PolyhedralGravityModel::initializeParameters()
+std::optional<std::string> PolyhedralGravityModel::initializeParameters()
 {
     // If data hasn't been loaded, quit and return failure
     if (this->xyzVertex.size() == 0 || this->orderFacet.size() == 0) {
@@ -55,15 +53,13 @@ PolyhedralGravityModel::initializeParameters()
     return {};
 }
 
-std::optional<std::string>
-PolyhedralGravityModel::initializeParameters(const GravBodyData& body)
+std::optional<std::string> PolyhedralGravityModel::initializeParameters(const GravBodyData& body)
 {
     this->muBody = body.mu;
     return this->initializeParameters();
 }
 
-Eigen::Vector3d
-PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
+Eigen::Vector3d PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -143,8 +139,7 @@ PolyhedralGravityModel::computeField(const Eigen::Vector3d& pos_BP_P) const
     return acc;
 }
 
-double
-PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const
+double PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) const
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -224,8 +219,7 @@ PolyhedralGravityModel::computePotentialEnergy(const Eigen::Vector3d& pos_BP_P) 
     return U;
 }
 
-void
-PolyhedralGravityModel::initializeFacets()
+void PolyhedralGravityModel::initializeFacets()
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -300,8 +294,7 @@ PolyhedralGravityModel::initializeFacets()
     }
 }
 
-void
-PolyhedralGravityModel::initializeEdges()
+void PolyhedralGravityModel::initializeEdges()
 {
     const Eigen::Index nFacet = this->orderFacet.rows();
     const Eigen::Index nEdge = 3 * nFacet / 2;
@@ -335,8 +328,7 @@ PolyhedralGravityModel::initializeEdges()
     }
 }
 
-bool
-PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, Eigen::Index idxEdge, int idxFacet)
+bool PolyhedralGravityModel::addEdge(Eigen::Vector2i edge, Eigen::Index idxEdge, int idxFacet)
 {
     // Flag telling if an edge is already stored
     bool isEdgeRepeat = false;

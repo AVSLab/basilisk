@@ -24,8 +24,7 @@ svIntegratorRKF45::svIntegratorRKF45(DynamicObject* dyn)
 {
 }
 
-RKAdaptiveCoefficients<6>
-svIntegratorRKF45::getCoefficients()
+RKAdaptiveCoefficients<6> svIntegratorRKF45::getCoefficients()
 {
     RKAdaptiveCoefficients<6> coefficients;
 

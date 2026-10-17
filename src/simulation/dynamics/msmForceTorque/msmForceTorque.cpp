@@ -31,8 +31,7 @@ MsmForceTorque::~MsmForceTorque() = default;
 /*! This method is used to reset the module and checks that required input messages are connect.
 
 */
-void
-MsmForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MsmForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     for (size_t c = 0; c < this->scStateInMsgs.size(); c++) {
@@ -67,10 +66,9 @@ MsmForceTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*!   Subscribe to the spacecraft state message and store the corresponding MSM radii and sphere positions
  */
-void
-MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
-                                     std::vector<double> radii,
-                                     std::vector<Eigen::Vector3d> r_SB_B)
+void MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
+                                          std::vector<double> radii,
+                                          std::vector<Eigen::Vector3d> r_SB_B)
 {
     /* add the message reader to the vector of input spacecraft state messages */
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
@@ -107,8 +105,7 @@ MsmForceTorque::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg,
 
 /*!  Read in the input messages
  */
-void
-MsmForceTorque::readMessages()
+void MsmForceTorque::readMessages()
 {
     VoltMsgPayload voltInMsgBuffer;         //!< local copy of voltage input message buffer
     SCStatesMsgPayload scStateInMsgsBuffer; //!< local copy of spacecraft state input message buffer
@@ -127,8 +124,7 @@ MsmForceTorque::readMessages()
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
 
 */
-void
-MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
+void MsmForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     // read the input messages
     this->readMessages();

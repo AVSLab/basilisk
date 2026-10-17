@@ -36,8 +36,7 @@ SimpleBattery::~SimpleBattery()
 
 /*! custom reset function.
  */
-void
-SimpleBattery::customReset(uint64_t CurrentClock [[maybe_unused]])
+void SimpleBattery::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
 
     if (this->storageCapacity <= 0.0) {
@@ -48,8 +47,7 @@ SimpleBattery::customReset(uint64_t CurrentClock [[maybe_unused]])
 
 /*! This method allows the user to set the fault status of the battery capacity
  */
-void
-SimpleBattery::readInputMessage()
+void SimpleBattery::readInputMessage()
 {
     if (this->batteryFaultInMsg.isLinked()) {
         PowerStorageFaultMsgPayload faultMsg;
@@ -65,8 +63,7 @@ SimpleBattery::readInputMessage()
  @param *msg:  pointer to a PowerStorageStatusMsgPayload instance
 
  */
-void
-SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
+void SimpleBattery::evaluateBatteryModel(PowerStorageStatusMsgPayload* msg)
 {
 
     this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);

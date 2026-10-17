@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the delta-V maneuver guidance
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, int64_t moduleID)
+void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     DvExecutionDataMsg_C_init(&configData->burnExecOutMsg);
@@ -44,8 +43,7 @@ SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, int64_t moduleID
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The unique module identifier
  */
-void
-Reset_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -66,8 +64,7 @@ Reset_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_dvExecuteGuidance(dvExecuteGuidanceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double burnAccum[3];
     double dvExecuteMag;

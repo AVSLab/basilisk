@@ -567,8 +567,7 @@ Message<messageType>::Message(const Message& other)
 }
 
 template<typename messageType>
-Message<messageType>&
-Message<messageType>::operator=(const Message& other)
+Message<messageType>& Message<messageType>::operator=(const Message& other)
 {
     if (this != &other) {
         this->payload = other.payload;
@@ -587,8 +586,7 @@ Message<messageType>::Message(Message&& other)
 }
 
 template<typename messageType>
-Message<messageType>&
-Message<messageType>::operator=(Message&& other)
+Message<messageType>& Message<messageType>::operator=(Message&& other)
 {
     if (this != &other) {
         this->payload = std::move(other.payload);
@@ -600,23 +598,20 @@ Message<messageType>::operator=(Message&& other)
 }
 
 template<typename messageType>
-ReadFunctor<messageType>
-Message<messageType>::addSubscriber()
+ReadFunctor<messageType> Message<messageType>::addSubscriber()
 {
     this->header.isLinked = 1;
     return this->read;
 }
 
 template<typename messageType>
-WriteFunctor<messageType>
-Message<messageType>::addAuthor()
+WriteFunctor<messageType> Message<messageType>::addAuthor()
 {
     return this->write;
 }
 
 template<typename messageType>
-messageType*
-Message<messageType>::subscribeRaw(MsgHeader** msgPtr)
+messageType* Message<messageType>::subscribeRaw(MsgHeader** msgPtr)
 {
     *msgPtr = &this->header;
     this->header.isLinked = 1;
@@ -624,8 +619,7 @@ Message<messageType>::subscribeRaw(MsgHeader** msgPtr)
 }
 
 template<typename messageType>
-messageType*
-Message<messageType>::getMsgPointers(MsgHeader** msgPtr)
+messageType* Message<messageType>::getMsgPointers(MsgHeader** msgPtr)
 {
     *msgPtr = &this->header;
     return &this->payload;

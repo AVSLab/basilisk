@@ -357,8 +357,7 @@ class MJSpec
 // Implementation of templated methods
 
 template<typename T>
-T&
-MJSpec::getActuator(const std::string& name)
+T& MJSpec::getActuator(const std::string& name)
 {
     auto actuatorPtr =
       std::find_if(std::begin(actuators), std::end(actuators), [&](auto&& obj) { return obj->getName() == name; });
@@ -377,10 +376,9 @@ template<class>
 constexpr bool dependent_false = false;
 
 template<typename T>
-std::unique_ptr<T>
-MJSpec::createActuator(const std::string& name,
-                       const std::string& siteHint,
-                       std::unordered_map<std::string, MJActuatorObject>& existingActuators)
+std::unique_ptr<T> MJSpec::createActuator(const std::string& name,
+                                          const std::string& siteHint,
+                                          std::unordered_map<std::string, MJActuatorObject>& existingActuators)
 {
     // Composite actuator types require multiple mujoco actuators
     // with different gears
@@ -439,8 +437,7 @@ MJSpec::createActuator(const std::string& name,
 }
 
 template<typename T>
-inline T&
-MJSpec::addCompositeActuator(const std::string& name, const std::string& site)
+inline T& MJSpec::addCompositeActuator(const std::string& name, const std::string& site)
 {
     if ((this->hasActuator(name)))
         BSKLogger{}.bskError("Tried to add actuator with name '%s' but one already exists with that name.",

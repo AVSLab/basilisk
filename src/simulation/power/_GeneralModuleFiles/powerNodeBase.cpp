@@ -41,8 +41,7 @@ PowerNodeBase::~PowerNodeBase()
 /*! This method is used to reset the module. In general, no functionality must be reset.
 
  */
-void
-PowerNodeBase::Reset(uint64_t CurrentSimNanos)
+void PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 {
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
@@ -53,8 +52,7 @@ PowerNodeBase::Reset(uint64_t CurrentSimNanos)
 /*! This method writes out a message.
 
  */
-void
-PowerNodeBase::writeMessages(uint64_t CurrentClock)
+void PowerNodeBase::writeMessages(uint64_t CurrentClock)
 {
     //! - write power output message
     this->nodePowerOutMsg.write(&this->nodePowerMsg, this->moduleID, CurrentClock);
@@ -68,8 +66,7 @@ PowerNodeBase::writeMessages(uint64_t CurrentClock)
 /*! This method is used to read incoming power status messages.
 
  */
-bool
-PowerNodeBase::readMessages()
+bool PowerNodeBase::readMessages()
 {
     DeviceStatusMsgPayload statusMsg;
 
@@ -93,8 +90,7 @@ PowerNodeBase::readMessages()
 /*! Core compute operation that implements switching logic and computes module-wise power consumption.
  */
 
-void
-PowerNodeBase::computePowerStatus(double currentTime [[maybe_unused]])
+void PowerNodeBase::computePowerStatus(double currentTime [[maybe_unused]])
 {
     if (this->powerStatus > 0) {
         this->evaluatePowerModel(&this->nodePowerMsg);
@@ -108,8 +104,7 @@ PowerNodeBase::computePowerStatus(double currentTime [[maybe_unused]])
 /*! Provides logic for running the read / compute / write operation that is the module's function.
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
+void PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 {
 
     //! - Only update the power status if we were able to read in messages.
@@ -128,8 +123,7 @@ PowerNodeBase::UpdateState(uint64_t CurrentSimNanos)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void
-PowerNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void PowerNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -137,8 +131,7 @@ PowerNodeBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 /*! custom Write method, similar to customSelfInit.
 
  */
-void
-PowerNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void PowerNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -146,8 +139,7 @@ PowerNodeBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 /*! Custom read method, similar to customSelfInit; returns `true` by default.
 
  */
-bool
-PowerNodeBase::customReadMessages()
+bool PowerNodeBase::customReadMessages()
 {
     return true;
 }

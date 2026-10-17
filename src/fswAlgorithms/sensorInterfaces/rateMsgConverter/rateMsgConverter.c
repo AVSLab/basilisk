@@ -37,8 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_rateMsgConverter(rateMsgConverterConfig* configData, int64_t moduleID)
+void SelfInit_rateMsgConverter(rateMsgConverterConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navRateOutMsg);
@@ -51,8 +50,7 @@ SelfInit_rateMsgConverter(rateMsgConverterConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -68,8 +66,7 @@ Reset_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rateMsgConverter(rateMsgConverterConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     IMUSensorBodyMsgPayload inMsg;
     NavAttMsgPayload outMsg;

@@ -170,8 +170,7 @@ struct nrlmsise_output
 /*   Neutral Atmosphere Empircial Model from the surface to lower
  *   exosphere.
  */
-void
-gtd7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
+void gtd7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GTD7D */
 /*   This subroutine provides Effective Total Mass Density for output
@@ -179,21 +178,18 @@ gtd7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise
  *   affect satellite drag above 500 km. See the section "output" for
  *   additional details.
  */
-void
-gtd7d(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
+void gtd7d(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GTS7 */
 /*   Thermospheric portion of NRLMSISE-00
  */
-void
-gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
+void gts7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output);
 
 /* GHP7 */
 /*   To specify outputs at a pressure level (press) rather than at
  *   an altitude.
  */
-void
-ghp7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output, double press);
+void ghp7(struct nrlmsise_input* input, struct nrlmsise_flags* flags, struct nrlmsise_output* output, double press);
 
 /* ------------------------------------------------------------------- */
 /* ----------------------- COMPILATION TWEAKS ------------------------ */

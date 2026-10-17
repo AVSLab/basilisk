@@ -32,8 +32,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig* configData, int64_t moduleID)
+void SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     MTBCmdMsg_C_init(&configData->mtbCmdOutMsg);
@@ -50,8 +49,7 @@ SelfInit_mtbMomentumManagement(mtbMomentumManagementConfig* configData, int64_t 
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -87,8 +85,7 @@ Reset_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Declare and initialize local variables.
@@ -184,8 +181,7 @@ Update_mtbMomentumManagement(mtbMomentumManagementConfig* configData, uint64_t c
 /*
  * Returns the tilde matrix in the form of a 1-D array.
  */
-void
-v3TildeM(double v[3], void* result)
+void v3TildeM(double v[3], void* result)
 {
     double* m_result = (double*)result;
     m_result[MXINDEX(3, 0, 0)] = 0.0;

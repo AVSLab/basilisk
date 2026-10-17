@@ -46,8 +46,7 @@ MagneticFieldWMM::~MagneticFieldWMM()
     }
 }
 
-void
-MagneticFieldWMM::configureWMMFile(const std::string& file)
+void MagneticFieldWMM::configureWMMFile(const std::string& file)
 {
     namespace fs = std::filesystem;
 
@@ -63,8 +62,7 @@ MagneticFieldWMM::configureWMMFile(const std::string& file)
 /*! Custom Reset() method.  This loads the WMM coefficient file and gets the model setup.
 
  */
-void
-MagneticFieldWMM::customReset(uint64_t CurrentClock [[maybe_unused]])
+void MagneticFieldWMM::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     if (this->magneticModel != nullptr) {
         /* clean up the prior initialization */
@@ -80,8 +78,7 @@ MagneticFieldWMM::customReset(uint64_t CurrentClock [[maybe_unused]])
    an epoch message is set then this variable is not used.
 
  */
-void
-MagneticFieldWMM::customSetEpochFromVariable()
+void MagneticFieldWMM::customSetEpochFromVariable()
 {
     //! - only convert if the fraction year variable was set to a non-zero value.  Otherwise use the BSK epoch default
     //! setup by the base class.
@@ -93,8 +90,7 @@ MagneticFieldWMM::customSetEpochFromVariable()
 /*! Convert a fraction year double value into a time structure with gregorian date/time information
 
  */
-void
-MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear [[maybe_unused]], struct tm* gregorian)
+void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear [[maybe_unused]], struct tm* gregorian)
 {
     //! -Use the WMM routine to get the year, month and day information
     MAGtype_Date calendar;
@@ -134,8 +130,7 @@ MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear [[maybe_unused]], 
 /*! Convert a time structure with gregorian date/time information into a fraction year value.
  @return double
  */
-double
-MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
+double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
 {
     double decimalYear;        // [years]  fraction year date/time format
     struct tm localDateTime{}; // []       date/time structure
@@ -172,8 +167,7 @@ MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
  @param currentTime current time (s)
 
  */
-void
-MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime)
+void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, double currentTime)
 {
     Eigen::Vector3d rHat_P; // []    normalized position vector in E frame components
     double PM[3][3];        // []    DCM from magnetic field frame to planet frame P
@@ -211,8 +205,7 @@ MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldMsgPayload* msg, doubl
 /*! Performs memory cleanup necessary for magnetic field models
 
  */
-void
-MagneticFieldWMM::cleanupEarthMagFieldModel()
+void MagneticFieldWMM::cleanupEarthMagFieldModel()
 {
     MAG_FreeMagneticModelMemory(this->timedMagneticModel);
     MAG_FreeMagneticModelMemory(this->magneticModel);
@@ -221,8 +214,7 @@ MagneticFieldWMM::cleanupEarthMagFieldModel()
     MAG_FreeSphVarMemory(this->SphVariables);
 }
 
-void
-MagneticFieldWMM::computeWmmField(double decimalYear, MAGtype_CoordSpherical coordSpherical, double B_M[3])
+void MagneticFieldWMM::computeWmmField(double decimalYear, MAGtype_CoordSpherical coordSpherical, double B_M[3])
 {
     MAGtype_MagneticResults MagneticResultsSph;
 
@@ -247,8 +239,7 @@ MagneticFieldWMM::computeWmmField(double decimalYear, MAGtype_CoordSpherical coo
     v3Scale(1e-9, B_M, B_M); /* convert nano-Tesla to Tesla */
 }
 
-void
-MagneticFieldWMM::initializeWmm()
+void MagneticFieldWMM::initializeWmm()
 {
     int nMax = 0;
     int nTerms;

@@ -30,8 +30,7 @@
 #include <vector>
 namespace fs = std::filesystem;
 
-void
-PlanetGrid::initialize(BSKLogger bskLogger)
+void PlanetGrid::initialize(BSKLogger bskLogger)
 {
     this->initialized = false;
     this->patchDirs_P.clear();
@@ -172,8 +171,7 @@ PlanetGrid::initialize(BSKLogger bskLogger)
     this->initialized = true;
 }
 
-std::vector<std::vector<double>>
-PlanetGrid::loadAlbedoGridFromCsv(BSKLogger bskLogger) const
+std::vector<std::vector<double>> PlanetGrid::loadAlbedoGridFromCsv(BSKLogger bskLogger) const
 {
     // Load albedo grid from CSV file at albedoDataPath/albedoDataFile
     std::error_code ec;
@@ -272,13 +270,12 @@ PlanetGrid::loadAlbedoGridFromCsv(BSKLogger bskLogger) const
     return albGrid;
 }
 
-std::vector<PatchResult>
-PlanetGrid::computePatches(const double r_sat_N[3],
-                           const double r_sun_N[3],
-                           const double r_planet_N[3],
-                           double J20002Pfix[3][3],
-                           double R_planet,
-                           const double S_sun) const
+std::vector<PatchResult> PlanetGrid::computePatches(const double r_sat_N[3],
+                                                    const double r_sun_N[3],
+                                                    const double r_planet_N[3],
+                                                    double J20002Pfix[3][3],
+                                                    double R_planet,
+                                                    const double S_sun) const
 {
     const size_t patchCount = static_cast<size_t>(this->nLat) * static_cast<size_t>(this->nLon);
     if (!this->initialized || this->patchDirs_P.size() != patchCount || this->normAreas.size() != patchCount ||
@@ -356,8 +353,7 @@ PlanetGrid::computePatches(const double r_sat_N[3],
     return results;
 }
 
-void
-PlanetRadiationBase::addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg, const PlanetGrid& gridConfig)
+void PlanetRadiationBase::addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg, const PlanetGrid& gridConfig)
 {
     PlanetEntry e;
     e.planetMsg = msg;
@@ -365,8 +361,7 @@ PlanetRadiationBase::addPlanetEntry(ReadFunctor<SpicePlanetStateMsgPayload> msg,
     this->planets.push_back(e);
 }
 
-void
-PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
+void PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
 {
     if (!this->spacecraftStateInMsg.isLinked()) {
         this->bskLogger.bskError("PlanetRadiationBase (Reset): spacecraftStateInMsg is not linked.");
@@ -441,8 +436,7 @@ PlanetRadiationBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 }
 
-void
-PlanetRadiationBase::UpdateState(uint64_t CurrentSimNanos)
+void PlanetRadiationBase::UpdateState(uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload scMsg = this->spacecraftStateInMsg();
     SpicePlanetStateMsgPayload sunMsg = this->sunPositionInMsg();
@@ -482,10 +476,9 @@ PlanetRadiationBase::UpdateState(uint64_t CurrentSimNanos)
 
    The calculation follows the apparent angular radii of the Sun and planet
    as seen from the patch and computes the overlap area of the two disks.*/
-double
-PlanetRadiationBase::computeIlluminationAtdA(double Rplanet,          // [m]
-                                             Eigen::Vector3d r_dAP_N, // [m]
-                                             Eigen::Vector3d r_SP_N)  // [m]
+double PlanetRadiationBase::computeIlluminationAtdA(double Rplanet,          // [m]
+                                                    Eigen::Vector3d r_dAP_N, // [m]
+                                                    Eigen::Vector3d r_SP_N)  // [m]
 {
     using std::acos;
     using std::asin;
@@ -527,10 +520,9 @@ PlanetRadiationBase::computeIlluminationAtdA(double Rplanet,          // [m]
     return std::max(0.0, std::min(1.0, illuminationFactor));
 }
 
-bool
-PlanetRadiationBase::isPatchEclipsed(const PatchResult& patch,
-                                     const SCStatesMsgPayload& /*scMsg*/,
-                                     const SpicePlanetStateMsgPayload& /*sunMsg*/)
+bool PlanetRadiationBase::isPatchEclipsed(const PatchResult& patch,
+                                          const SCStatesMsgPayload& /*scMsg*/,
+                                          const SpicePlanetStateMsgPayload& /*sunMsg*/)
 {
     if (!this->getEclipseCase()) {
         return false;
@@ -540,8 +532,7 @@ PlanetRadiationBase::isPatchEclipsed(const PatchResult& patch,
                                          this->currentR_SP_N) < 0.001;
 }
 
-bool
-PlanetRadiationBase::getEclipseCase()
+bool PlanetRadiationBase::getEclipseCase()
 {
     static bool warned = false;
     if (this->m_eclipseCase != this->eclipseCase) {
@@ -556,8 +547,7 @@ PlanetRadiationBase::getEclipseCase()
     return this->m_eclipseCase;
 }
 
-void
-PlanetRadiationBase::setEclipseCase(bool value)
+void PlanetRadiationBase::setEclipseCase(bool value)
 {
     static bool warned = false;
     if (this->m_eclipseCase != this->eclipseCase) {

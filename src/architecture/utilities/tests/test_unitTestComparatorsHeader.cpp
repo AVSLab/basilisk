@@ -21,10 +21,8 @@
 #include "unitTestComparators.h"
 #include <limits>
 
-extern "C" int
-compareAbsoluteFromC(double first, double second, double tolerance);
-extern "C" int
-compareRelativeFromC(double first, double second, double tolerance);
+extern "C" int compareAbsoluteFromC(double first, double second, double tolerance);
+extern "C" int compareRelativeFromC(double first, double second, double tolerance);
 
 /** @brief Verify C and C++ consumers share valid, finite comparison behavior. */
 TEST(UnitTestComparators, cAndCppHeaderCompatibility)

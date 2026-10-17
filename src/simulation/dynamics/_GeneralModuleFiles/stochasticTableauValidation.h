@@ -34,8 +34,7 @@
 namespace stochastic_tableau {
 /** @brief Reject a nonfinite entry before coefficients can enter stage arithmetic. */
 template<size_t numberStages>
-void
-validateFinite(const std::array<double, numberStages>& coefficients)
+void validateFinite(const std::array<double, numberStages>& coefficients)
 {
     for (double coefficient : coefficients) {
         if (!std::isfinite(coefficient)) {
@@ -46,8 +45,7 @@ validateFinite(const std::array<double, numberStages>& coefficients)
 
 /** @brief Require finite coefficients and zero diagonal/upper triangle for explicit stages. */
 template<size_t numberStages>
-void
-validateExplicitMatrix(const std::array<std::array<double, numberStages>, numberStages>& matrix)
+void validateExplicitMatrix(const std::array<std::array<double, numberStages>, numberStages>& matrix)
 {
     using Matrix = typename std::decay<decltype(matrix)>::type;
     static_assert(std::tuple_size<Matrix>::value == numberStages,

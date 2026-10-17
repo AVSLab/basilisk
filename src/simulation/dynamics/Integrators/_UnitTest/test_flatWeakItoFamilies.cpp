@@ -170,8 +170,8 @@ class OrderedWeakItoDynamics final : public DynamicObject
     StateData* state = nullptr;
 };
 
-std::shared_ptr<PrescribedGaussianNoiseGenerator>
-prescribed(std::initializer_list<double> dW, std::initializer_list<double> dZ)
+std::shared_ptr<PrescribedGaussianNoiseGenerator> prescribed(std::initializer_list<double> dW,
+                                                             std::initializer_list<double> dZ)
 {
     auto generator = std::make_shared<PrescribedGaussianNoiseGenerator>();
     generator->pushStep(std::vector<double>(dW), std::vector<double>(dZ));
@@ -179,8 +179,7 @@ prescribed(std::initializer_list<double> dW, std::initializer_list<double> dZ)
 }
 
 template<typename Integrator>
-void
-expectZeroDurationAndRollback()
+void expectZeroDurationAndRollback()
 {
     WeakItoDynamics dynamics(2);
     Integrator integrator(&dynamics);
@@ -204,8 +203,7 @@ expectZeroDurationAndRollback()
 }
 
 template<typename Integrator>
-void
-expectNoAllocationAfterBind()
+void expectNoAllocationAfterBind()
 {
     WeakItoDynamics dynamics(2);
     Integrator integrator(&dynamics);
@@ -218,8 +216,7 @@ expectNoAllocationAfterBind()
 }
 
 template<typename Integrator>
-void
-expectNoiseCountPath(size_t noiseCount)
+void expectNoiseCountPath(size_t noiseCount)
 {
     WeakItoDynamics dynamics(noiseCount);
     Integrator integrator(&dynamics);
@@ -234,8 +231,7 @@ expectNoiseCountPath(size_t noiseCount)
 // Numerical snapshots use EXPECT_DOUBLE_EQ's four-ULP tolerance, as in the
 // paper-reference tests, to allow platform-dependent floating-point rounding.
 template<typename Integrator>
-void
-expectMixedTopology(double expectedFirst, double expectedSecond)
+void expectMixedTopology(double expectedFirst, double expectedSecond)
 {
     WeakItoDynamics dynamics(2, true);
     Integrator integrator(&dynamics);
@@ -247,8 +243,7 @@ expectMixedTopology(double expectedFirst, double expectedSecond)
 }
 
 template<typename Integrator>
-void
-expectNoncommutativeSpecialPolicy(double expected)
+void expectNoncommutativeSpecialPolicy(double expected)
 {
     OrderedWeakItoDynamics dynamics;
     Integrator integrator(&dynamics);

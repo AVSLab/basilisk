@@ -51,8 +51,7 @@ LinearSpringMassDamper::LinearSpringMassDamper()
 uint64_t LinearSpringMassDamper::effectorID = 1;
 
 /*! @brief Validate the initial particle mass, retaining the supported empty-particle case. */
-void
-LinearSpringMassDamper::validateConfiguration()
+void LinearSpringMassDamper::validateConfiguration()
 {
     if (!std::isfinite(this->massInit) || this->massInit < 0.0) {
         this->bskLogger.bskError("LinearSpringMassDamper: massInit must be finite and non-negative.");
@@ -62,8 +61,7 @@ LinearSpringMassDamper::validateConfiguration()
 /*! @brief Validate configuration without restoring depleted mass or changing integrated states.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void
-LinearSpringMassDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void LinearSpringMassDamper::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -78,8 +76,7 @@ LinearSpringMassDamper::~LinearSpringMassDamper()
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-LinearSpringMassDamper::linkInStates(DynParamManager& states)
+void LinearSpringMassDamper::linkInStates(DynParamManager& states)
 {
     // - Grab access to gravity
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -95,8 +92,7 @@ LinearSpringMassDamper::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-LinearSpringMassDamper::registerStates(DynParamManager& states)
+void LinearSpringMassDamper::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
     // - Register rho and rhoDot
@@ -123,8 +119,7 @@ LinearSpringMassDamper::registerStates(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]])
+void LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Grab rho from state manager and define r_PcB_B
     this->rho = this->rhoState->stateView()(0, 0);
@@ -163,8 +158,7 @@ LinearSpringMassDamper::updateEffectorMassProps(double integTime [[maybe_unused]
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
+void LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
 {
     if (this->massState == nullptr) {
         this->bskLogger.bskLog(
@@ -192,12 +186,11 @@ LinearSpringMassDamper::retrieveMassValue(double integTime [[maybe_unused]])
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]],
-                                            BackSubMatrices& backSubContr,
-                                            Eigen::MRPd sigma_BN,
-                                            Eigen::Vector3d omega_BN_B,
-                                            Eigen::Vector3d g_N [[maybe_unused]])
+void LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]],
+                                                 BackSubMatrices& backSubContr,
+                                                 Eigen::MRPd sigma_BN,
+                                                 Eigen::Vector3d omega_BN_B,
+                                                 Eigen::Vector3d g_N [[maybe_unused]])
 {
     if (this->massSMD <= 0.0) {
         this->aRho.setZero();
@@ -258,11 +251,10 @@ LinearSpringMassDamper::updateContributions(double integTime [[maybe_unused]],
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]],
-                                           Eigen::Vector3d rDDot_BN_N,
-                                           Eigen::Vector3d omegaDot_BN_B,
-                                           Eigen::MRPd sigma_BN)
+void LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]],
+                                                Eigen::Vector3d rDDot_BN_N,
+                                                Eigen::Vector3d omegaDot_BN_B,
+                                                Eigen::MRPd sigma_BN)
 {
 
     // - Find DCM
@@ -296,11 +288,10 @@ LinearSpringMassDamper::computeDerivatives(double integTime [[maybe_unused]],
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                     Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                     double& rotEnergyContr,
-                                                     Eigen::Vector3d omega_BN_B)
+void LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                          Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                          double& rotEnergyContr,
+                                                          Eigen::Vector3d omega_BN_B)
 {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -322,8 +313,7 @@ LinearSpringMassDamper::updateEnergyMomContributions(double integTime [[maybe_un
  * @param[in] integTime [s] Current integration time.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;

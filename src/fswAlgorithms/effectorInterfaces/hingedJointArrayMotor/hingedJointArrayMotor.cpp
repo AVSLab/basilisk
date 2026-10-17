@@ -23,8 +23,7 @@
 #include <cstring>
 #include <iostream>
 
-void
-HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
@@ -76,8 +75,7 @@ HingedJointArrayMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->treeInfoInitialized = false;
 }
 
-void
-HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
+void HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -279,8 +277,7 @@ HingedJointArrayMotor::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void
-HingedJointArrayMotor::setKtheta(std::vector<double> var)
+void HingedJointArrayMotor::setKtheta(std::vector<double> var)
 {
     const std::size_t N = var.size();
     const int m = static_cast<int>(std::llround(std::sqrt(static_cast<double>(N))));
@@ -291,8 +288,7 @@ HingedJointArrayMotor::setKtheta(std::vector<double> var)
     this->Ktheta = Kmap;
 }
 
-void
-HingedJointArrayMotor::setPtheta(std::vector<double> var)
+void HingedJointArrayMotor::setPtheta(std::vector<double> var)
 {
     const std::size_t N = var.size();
     const int m = static_cast<int>(std::llround(std::sqrt(static_cast<double>(N))));
@@ -303,14 +299,12 @@ HingedJointArrayMotor::setPtheta(std::vector<double> var)
     this->Ptheta = Pmap;
 }
 
-void
-HingedJointArrayMotor::setUMax(std::vector<double> var)
+void HingedJointArrayMotor::setUMax(std::vector<double> var)
 {
     this->uMax = var;
 }
 
-void
-HingedJointArrayMotor::addHingedJoint()
+void HingedJointArrayMotor::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;

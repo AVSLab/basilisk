@@ -32,8 +32,7 @@ MJSite::MJSite(mjsSite* site, MJBody& body)
 {
 }
 
-void
-MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
+void MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
 {
     // Copy new position in the mjSpec
     std::copy_n(position.data(), 3, mjsObject->pos);
@@ -49,15 +48,13 @@ MJSite::setPositionRelativeToBody(const Eigen::Vector3d& position)
     }
 }
 
-void
-MJSite::commitPositionRelativeToBody(const Eigen::Vector3d& position, mjModel* targetModel) noexcept
+void MJSite::commitPositionRelativeToBody(const Eigen::Vector3d& position, mjModel* targetModel) noexcept
 {
     std::copy_n(position.data(), 3, this->mjsObject->pos);
     std::copy_n(position.data(), 3, targetModel->site_pos + 3 * this->getId());
 }
 
-void
-MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
+void MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
 {
     auto mat = attitude.toRotationMatrix();
     auto quat = Eigen::Quaterniond(mat);
@@ -77,8 +74,7 @@ MJSite::setAttitudeRelativeToBody(const Eigen::MRPd& attitude)
     }
 }
 
-void
-MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos)
+void MJSite::writeFwdKinematicsMessage(mjModel* model, mjData* data, uint64_t CurrentSimNanos)
 {
     SCStatesMsgPayload payload = this->stateOutMsg.zeroMsgPayload;
 

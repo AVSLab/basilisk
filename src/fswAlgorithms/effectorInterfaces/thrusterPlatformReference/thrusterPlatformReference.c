@@ -30,8 +30,7 @@ static const double epsilon = 1e-12; // [-] Module tolerance for zero
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, int64_t moduleID)
+void SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRef1OutMsg);
@@ -48,8 +47,7 @@ SelfInit_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, 
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!VehicleConfigMsg_C_isLinked(&configData->vehConfigInMsg)) {
         _bskError(configData->bskLogger, " thrusterPlatformReference.vehConfigInMsg wasn't connected.");
@@ -92,8 +90,7 @@ Reset_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, uin
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign message buffers */
     VehicleConfigMsgPayload vehConfigMsgIn = VehicleConfigMsg_C_read(&configData->vehConfigInMsg);
@@ -231,8 +228,7 @@ Update_thrusterPlatformReference(ThrusterPlatformReferenceConfig* configData, ui
     THRConfigMsg_C_write(&thrusterConfigOut, &configData->thrusterConfigBOutMsg, moduleID, callTime);
 }
 
-void
-tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
+void tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
 {
     // compute principal rotation angle phi
     double phi = acos(fmin(fmax(v3Dot(THat_F, rHat_CM_F), -1), 1));
@@ -268,8 +264,7 @@ tprComputeFirstRotation(double THat_F[3], double rHat_CM_F[3], double F1M[3][3])
     PRV2C(PRV_phi, F1M);
 }
 
-void
-tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double THat_F[3], double F2F1[3][3])
+void tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], double THat_F[3], double F2F1[3][3])
 {
     // define offset vector aVec
     double aVec[3];
@@ -309,8 +304,7 @@ tprComputeSecondRotation(double r_CM_F[3], double r_TM_F[3], double r_CT_F[3], d
     PRV2C(PRV_psi, F2F1);
 }
 
-void
-tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
+void tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
 {
     double e1 = e_theta[0];
     double e2 = e_theta[1];
@@ -376,8 +370,7 @@ tprComputeThirdRotation(double e_theta[3], double F2M[3][3], double F3F2[3][3])
     PRV2C(PRV_theta, F3F2);
 }
 
-void
-tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3])
+void tprComputeFinalRotation(double r_CM_M[3], double r_TM_F[3], double T_F[3], double FM[3][3])
 {
     /*! define unit vectors of CM direction in M coordinates and thrust direction in F coordinates */
     double rHat_CM_M[3];

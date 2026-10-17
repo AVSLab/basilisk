@@ -40,8 +40,7 @@ LambertValidator::~LambertValidator() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->navTransInMsg.isLinked()) {
@@ -67,8 +66,7 @@ LambertValidator::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertValidator::UpdateState(uint64_t currentSimNanos)
+void LambertValidator::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -118,8 +116,7 @@ LambertValidator::UpdateState(uint64_t currentSimNanos)
     It also checks if the message contents are valid for this module.
 
 */
-void
-LambertValidator::readMessages()
+void LambertValidator::readMessages()
 {
     NavTransMsgPayload navTransInMsgBuffer = this->navTransInMsg();
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
@@ -168,8 +165,7 @@ LambertValidator::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertValidator::writeMessages(uint64_t currentSimNanos)
+void LambertValidator::writeMessages(uint64_t currentSimNanos)
 {
     DvBurnCmdMsgPayload dvBurnCmdOutMsgBuffer;
     dvBurnCmdOutMsgBuffer = this->dvBurnCmdOutMsg.zeroMsgPayload;
@@ -237,8 +233,7 @@ LambertValidator::writeMessages(uint64_t currentSimNanos)
 
     @return Fixed-size initial state vectors to propagate.
 */
-LambertValidator::InitialStates
-LambertValidator::getInitialStates()
+LambertValidator::InitialStates LambertValidator::getInitialStates()
 {
     // get direction cosine matrix (DCM) from inertial frame N to Hill frame H
     double rc_N[3];
@@ -321,8 +316,7 @@ LambertValidator::getInitialStates()
     @param initialStates array of initial state vectors to be propagated
 
 */
-void
-LambertValidator::countViolations(const InitialStates& initialStates)
+void LambertValidator::countViolations(const InitialStates& initialStates)
 {
     this->violationsDistanceTarget = 0;
     this->violationsOrbitRadius = 0;
@@ -342,8 +336,7 @@ LambertValidator::countViolations(const InitialStates& initialStates)
     @param X state for each time step
 
 */
-void
-LambertValidator::checkConstraintViolations(const std::vector<double>& t, const std::vector<StateVector>& X)
+void LambertValidator::checkConstraintViolations(const std::vector<double>& t, const std::vector<StateVector>& X)
 {
     // check maximum distance from target at final time constraint
     Eigen::Vector3d rf_BN_N = X.back().head<3>();
@@ -364,8 +357,7 @@ LambertValidator::checkConstraintViolations(const std::vector<double>& t, const 
 /*! This method returns true only if the Lambert solution is valid, converged, and no constraints are violated
     @return bool
 */
-bool
-LambertValidator::checkPerformance() const
+bool LambertValidator::checkPerformance() const
 {
     // difference of Lambert solution w.r.t. previous time step
     double solutionDifference = xLambert - prevLambertSolutionX;
@@ -399,11 +391,10 @@ LambertValidator::checkPerformance() const
     @param dt Time step.
     @return Time values and corresponding six-element state vectors.
 */
-LambertValidator::PropagationResult
-LambertValidator::propagate(const EquationsOfMotion& EOM,
-                            std::array<double, 2> interval,
-                            const StateVector& X0,
-                            double dt)
+LambertValidator::PropagationResult LambertValidator::propagate(const EquationsOfMotion& EOM,
+                                                                std::array<double, 2> interval,
+                                                                const StateVector& X0,
+                                                                double dt)
 {
     double t0 = interval[0];
     double tf = interval[1];
@@ -437,8 +428,10 @@ LambertValidator::propagate(const EquationsOfMotion& EOM,
     @param dt Time step.
     @return Integrated six-element state vector.
 */
-LambertValidator::StateVector
-LambertValidator::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X0, double t0, double dt)
+LambertValidator::StateVector LambertValidator::RK4(const EquationsOfMotion& ODEfunction,
+                                                    const StateVector& X0,
+                                                    double t0,
+                                                    double dt)
 {
     double h = dt;
 
@@ -452,56 +445,47 @@ LambertValidator::RK4(const EquationsOfMotion& ODEfunction, const StateVector& X
     return X;
 }
 
-void
-LambertValidator::setLambertSolutionSpecifier(const double value)
+void LambertValidator::setLambertSolutionSpecifier(const double value)
 {
     this->lambertSolutionSpecifier = value;
 }
 
-void
-LambertValidator::setFinalTime(const double value)
+void LambertValidator::setFinalTime(const double value)
 {
     this->finalTime = value;
 }
 
-void
-LambertValidator::setManeuverTime(const double value)
+void LambertValidator::setManeuverTime(const double value)
 {
     this->maneuverTime = value;
 }
 
-void
-LambertValidator::setMaxDistanceTarget(const double value)
+void LambertValidator::setMaxDistanceTarget(const double value)
 {
     this->maxDistanceTarget = value;
 }
 
-void
-LambertValidator::setMinOrbitRadius(const double value)
+void LambertValidator::setMinOrbitRadius(const double value)
 {
     this->minOrbitRadius = value;
 }
 
-void
-LambertValidator::setUncertaintyStates(const Eigen::MatrixXd& value)
+void LambertValidator::setUncertaintyStates(const Eigen::MatrixXd& value)
 {
     this->uncertaintyStates = value;
 }
 
-void
-LambertValidator::setUncertaintyDV(const double value)
+void LambertValidator::setUncertaintyDV(const double value)
 {
     this->uncertaintyDV = value;
 }
 
-void
-LambertValidator::setDvConvergenceTolerance(const double value)
+void LambertValidator::setDvConvergenceTolerance(const double value)
 {
     this->dvConvergenceTolerance = value;
 }
 
-void
-LambertValidator::setIgnoreConstraintViolations(const bool value)
+void LambertValidator::setIgnoreConstraintViolations(const bool value)
 {
     this->ignoreConstraintViolations = value;
 }

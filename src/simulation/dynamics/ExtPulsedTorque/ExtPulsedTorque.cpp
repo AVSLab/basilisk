@@ -39,8 +39,7 @@ ExtPulsedTorque::~ExtPulsedTorque()
  *
  * @param[in] statesIn Dynamic parameter manager containing the required states.
  */
-void
-ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
+void ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 {
     this->validateConfiguration();
 }
@@ -48,15 +47,13 @@ ExtPulsedTorque::linkInStates(DynParamManager& statesIn [[maybe_unused]])
 /*! @brief Validate pulse configuration without changing its phase relative to simulation time.
  * @param CurrentSimNanos [ns] Scheduler reset time; it does not shift the pulse sequence.
  */
-void
-ExtPulsedTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ExtPulsedTorque::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
 }
 
 /*! @brief Validate pulse parameters before attachment, reset, or torque evaluation. */
-void
-ExtPulsedTorque::validateConfiguration()
+void ExtPulsedTorque::validateConfiguration()
 {
     if (!this->pulsedTorqueExternalPntB_B.allFinite()) {
         this->bskLogger.bskError("ExtPulsedTorque: pulsedTorqueExternalPntB_B must contain only finite values.");
@@ -78,8 +75,7 @@ ExtPulsedTorque::validateConfiguration()
  @param currentClock The current time used for time-stamping the message
 
  */
-void
-ExtPulsedTorque::writeOutputMessages(uint64_t currentClock [[maybe_unused]])
+void ExtPulsedTorque::writeOutputMessages(uint64_t currentClock [[maybe_unused]])
 {
     return;
 }
@@ -88,8 +84,7 @@ ExtPulsedTorque::writeOutputMessages(uint64_t currentClock [[maybe_unused]])
  associated buffer structure.
 
  */
-void
-ExtPulsedTorque::readInputMessages()
+void ExtPulsedTorque::readInputMessages()
 {
     return;
 }
@@ -102,8 +97,7 @@ ExtPulsedTorque::readInputMessages()
  * @param[in] integTime [s] Current integration time.
  * @param[in] timeStep [s] Integration time step; unused because pulse timing uses pulseInterval.
  */
-void
-ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
+void ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
 {
     this->validateConfiguration();
     if (!std::isfinite(integTime) || integTime < 0.0) {
@@ -148,8 +142,7 @@ ExtPulsedTorque::computeForceTorque(double integTime, double timeStep [[maybe_un
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
+void ExtPulsedTorque::UpdateState(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     return;
 }

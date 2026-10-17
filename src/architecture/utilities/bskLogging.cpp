@@ -30,8 +30,7 @@ namespace {
 #if defined(__clang__) || defined(__GNUC__)
 __attribute__((format(printf, 1, 0)))
 #endif
-std::string
-formatLogMessage(const char* info, va_list args)
+std::string formatLogMessage(const char* info, va_list args)
 {
     char formatMessage[MAX_LOGGING_LENGTH];
     vsnprintf(formatMessage, sizeof(formatMessage), info, args);
@@ -42,22 +41,19 @@ formatLogMessage(const char* info, va_list args)
 /*! This method sets the default logging verbosity
     @param logLevel
  */
-void
-setDefaultLogLevel(logLevel_t logLevel)
+void setDefaultLogLevel(logLevel_t logLevel)
 {
     LogLevel = logLevel;
 }
 
 /*! This method gets the default logging verbosity */
-logLevel_t
-getDefaultLogLevel()
+logLevel_t getDefaultLogLevel()
 {
     return LogLevel;
 }
 
 /*! This method prints the default logging verbosity */
-void
-printDefaultLogLevel()
+void printDefaultLogLevel()
 {
     std::map<int, const char*> logLevelMap{
         { 0, "BSK_DEBUG" }, { 1, "BSK_INFORMATION" }, { 2, "BSK_WARNING" }, { 3, "BSK_ERROR" }, { 4, "BSK_SILENT" }
@@ -83,23 +79,20 @@ BSKLogger::BSKLogger(logLevel_t logLevel)
 
 /*! This method changes the logging verbosity after construction
  */
-void
-BSKLogger::setLogLevel(logLevel_t logLevel)
+void BSKLogger::setLogLevel(logLevel_t logLevel)
 {
     this->_logLevel = logLevel;
 }
 
 /*! This method reads the current logging verbosity */
-void
-BSKLogger::printLogLevel()
+void BSKLogger::printLogLevel()
 {
     const char* currLevelStr = this->logLevelMap[this->_logLevel];
     printf("Current Logging Level: %s\n", currLevelStr);
 }
 
 /*! Get the current log level value */
-int
-BSKLogger::getLogLevel()
+int BSKLogger::getLogLevel()
 {
     return this->_logLevel;
 }
@@ -109,8 +102,7 @@ BSKLogger::getLogLevel()
     @param targetLevel
     @param info
 */
-void
-BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
+void BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
 {
     const char* targetLevelStr = this->logLevelMap[targetLevel];
     va_list args;
@@ -141,8 +133,7 @@ BSKLogger::bskLog(logLevel_t targetLevel, const char* info, ...)
     This should be used in C++ code paths that do not return after the error.
     @param info
 */
-BSK_NORETURN void
-BSKLogger::bskError(const char* info, ...)
+BSK_NORETURN void BSKLogger::bskError(const char* info, ...)
 {
     va_list args;
     va_start(args, info);
@@ -153,21 +144,18 @@ BSKLogger::bskError(const char* info, ...)
 }
 
 /*! Section contains C interfacing to C++ object */
-EXTERN BSKLogger*
-_BSKLogger(void)
+EXTERN BSKLogger* _BSKLogger(void)
 {
     return new BSKLogger();
 }
 
-EXTERN void
-_BSKLogger_d(BSKLogger* bskLogger)
+EXTERN void _BSKLogger_d(BSKLogger* bskLogger)
 {
     delete bskLogger;
 }
 
 /*! This method reads the current logging verbosity */
-EXTERN void
-_printLogLevel(BSKLogger* bskLogger)
+EXTERN void _printLogLevel(BSKLogger* bskLogger)
 {
     bskLogger->printLogLevel();
 }
@@ -176,8 +164,7 @@ _printLogLevel(BSKLogger* bskLogger)
     @param bskLogger
     @param logLevel
  */
-EXTERN void
-_setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
+EXTERN void _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
 {
     bskLogger->setLogLevel(logLevel);
 }
@@ -185,8 +172,7 @@ _setLogLevel(BSKLogger* bskLogger, logLevel_t logLevel)
 /*! This method logs information. The current behavior is to simply print out the message and the targeted logging
    level. This should be the main method called in user code.
 */
-EXTERN void
-_bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
+EXTERN void _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
 {
     bskLogger->bskLog(logLevel, "%s", info);
 }
@@ -198,8 +184,7 @@ _bskLog(BSKLogger* bskLogger, logLevel_t logLevel, const char* info)
     :param info: preformatted message text
     :returns: zero on success and nonzero when the C++ logger throws
  */
-EXTERN int
-_bskLogNoThrow(BSKLogger* bskLogger, logLevel_t logLevel, const char* info) BSK_NOEXCEPT
+EXTERN int _bskLogNoThrow(BSKLogger* bskLogger, logLevel_t logLevel, const char* info) BSK_NOEXCEPT
 {
     if (bskLogger == nullptr) {
         return 0;
@@ -213,8 +198,7 @@ _bskLogNoThrow(BSKLogger* bskLogger, logLevel_t logLevel, const char* info) BSK_
     return 0;
 }
 
-EXTERN_NORETURN void
-_bskError(BSKLogger* bskLogger, const char* info)
+EXTERN_NORETURN void _bskError(BSKLogger* bskLogger, const char* info)
 {
     bskLogger->bskError("%s", info == nullptr ? "" : info);
 }

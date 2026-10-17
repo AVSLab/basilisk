@@ -28,8 +28,7 @@ FacetedSpacecraftModel::~FacetedSpacecraftModel() = default;
 /*! This method resets required module variables and checks the input messages to ensure they are linked.
  @param callTime [ns] Time the method is called
 */
-void
-FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
+void FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
 {
     if (this->numArticulatedFacets > this->numFacets) {
         this->bskLogger->bskError(
@@ -100,8 +99,7 @@ FacetedSpacecraftModel::Reset(uint64_t callTime [[maybe_unused]])
 /*! Module update method.
  @param callTime [s] Time the method is called
 */
-void
-FacetedSpacecraftModel::UpdateState(uint64_t callTime)
+void FacetedSpacecraftModel::UpdateState(uint64_t callTime)
 {
     // Stop the simulation if Reset() failed to populate the facet lists
     if (this->articulatedFacetDataInMsgs.size() != this->numArticulatedFacets ||
@@ -154,8 +152,7 @@ FacetedSpacecraftModel::UpdateState(uint64_t callTime)
 /*! Method to write module output messages.
  @param callTime [s] Time the method is called
 */
-void
-FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime)
+void FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime)
 {
     for (uint64_t idx = 0; idx < this->numFacets; idx++) {
         FacetElementBodyMsgPayload facetElementBodyOut = this->facetElementBodyOutMsgs[idx]->zeroMsgPayload;
@@ -173,16 +170,14 @@ FacetedSpacecraftModel::writeOutputMessages(uint64_t callTime)
 articulatedFacetDataInMsgs input messages.
  @param tmpMsg hingedRigidBody input message containing facet articulation angle data
 */
-void
-FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg)
+void FacetedSpacecraftModel::addArticulatedFacet(Message<HingedRigidBodyMsgPayload>* tmpMsg)
 {
     // Safety check
     assert(tmpMsg != nullptr && "addArticulatedFacet() received null msg pointer");
     this->addArticulatedFacet(tmpMsg->addSubscriber());
 }
 
-void
-FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader)
+void FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayload> reader)
 {
     // Store the request regardless of adder/setter call order
     this->articulatedFacetRequestInMsgs.push_back(reader);
@@ -203,8 +198,7 @@ FacetedSpacecraftModel::addArticulatedFacet(ReadFunctor<HingedRigidBodyMsgPayloa
 /*! Setter method for the total number of spacecraft facets.
  @param numFacets [-]
 */
-void
-FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets)
+void FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets)
 {
     this->numFacets = numFacets;
 
@@ -233,8 +227,7 @@ FacetedSpacecraftModel::setNumTotalFacets(const uint64_t numFacets)
 /*! Getter method for the total number of spacecraft facets.
  @return Total number of spacecraft facets.
 */
-uint64_t
-FacetedSpacecraftModel::getNumTotalFacets() const
+uint64_t FacetedSpacecraftModel::getNumTotalFacets() const
 {
     return this->numFacets;
 }

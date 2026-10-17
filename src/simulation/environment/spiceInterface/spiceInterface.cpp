@@ -72,15 +72,13 @@ struct SpiceErrorModeGuard
  * Used to key kernels so that one physical file maps to a single
  * cache entry even if referenced through different relative paths.
  */
-std::string
-absolutize(const std::filesystem::path& path)
+std::string absolutize(const std::filesystem::path& path)
 {
     return std::filesystem::absolute(path).lexically_normal().string();
 }
 
 //! Uppercase-normalized body name, used as the reconstruction map key (case-insensitive).
-std::string
-normalizeBodyName(const std::string& name)
+std::string normalizeBodyName(const std::string& name)
 {
     std::string out = name;
     std::transform(
@@ -585,8 +583,7 @@ class SpiceInterface::SpiceReconstruction
     double et0 = 0.0;                            //!< ET (s past J2000) at sim time 0
 };
 
-SpiceInterface::SpiceReconstruction&
-SpiceInterface::reconState()
+SpiceInterface::SpiceReconstruction& SpiceInterface::reconState()
 {
     if (!this->recon) {
         this->recon = std::make_unique<SpiceReconstruction>(*this);
@@ -642,8 +639,7 @@ SpiceInterface::SpiceInterface()
 // Defined here so SpiceReconstruction is complete when its owning pointer is destroyed.
 SpiceInterface::~SpiceInterface() = default;
 
-void
-SpiceInterface::clearKeeper()
+void SpiceInterface::clearKeeper()
 {
     kclear_c();
 }
@@ -652,8 +648,7 @@ SpiceInterface::clearKeeper()
 
  */
 /*! Reset the module to original configuration values. */
-void
-SpiceInterface::Reset(uint64_t CurrenSimNanos)
+void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 {
     // Allow explicit kernels (full paths) to bypass SPICEDataPath requirement
     const bool hasExplicitKernels = !this->kernelPaths.empty();
@@ -748,8 +743,7 @@ SpiceInterface::Reset(uint64_t CurrenSimNanos)
  output message for time data
 
  */
-void
-SpiceInterface::initTimeData()
+void SpiceInterface::initTimeData()
 {
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsg.isLinked()) {
@@ -794,8 +788,7 @@ SpiceInterface::initTimeData()
  elapsed time gives the GPS time (week, seconds, rollovers).
 
  */
-void
-SpiceInterface::computeGPSData()
+void SpiceInterface::computeGPSData()
 {
     //! - Take the elapsed atomic time since the GPS epoch, held at zero before the epoch
     double gpsElapsed = std::max(unitim_c(this->J2000Current, "TDB", "TAI") - this->TAIGPSEpoch, 0.0); // [s]
@@ -817,8 +810,7 @@ SpiceInterface::computeGPSData()
 
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void
-SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
+void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     SpiceTimeMsgPayload OutputData;
 
@@ -862,8 +854,7 @@ SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 
  @param CurrentSimNanos The current clock time for the simulation
  */
-void
-SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
+void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + static_cast<double>(CurrentSimNanos) * NANO2SEC;
@@ -891,8 +882,7 @@ SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 
 /*! take a vector of planet name strings and create the vector of
     planet state output messages and the vector of planet state message payloads */
-void
-SpiceInterface::addPlanetNames(std::vector<std::string> planetNames)
+void SpiceInterface::addPlanetNames(std::vector<std::string> planetNames)
 {
     std::vector<std::string>::iterator it;
 
@@ -922,8 +912,7 @@ SpiceInterface::addPlanetNames(std::vector<std::string> planetNames)
 
 /*! take a vector of spacecraft name strings and create the vectors of
     spacecraft state output messages and the vector of spacecraft state message payloads */
-void
-SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames)
+void SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames)
 {
     std::vector<std::string>::iterator it;
     std::array<SpiceChar, charBufferSize> name{};
@@ -966,8 +955,7 @@ SpiceInterface::addSpacecraftNames(std::vector<std::string> spacecraftNames)
     return;
 }
 
-void
-SpiceInterface::addKernelPath(const std::string& kernelPath)
+void SpiceInterface::addKernelPath(const std::string& kernelPath)
 {
     if (kernelPath.empty()) {
         bskLogger.bskLog(BSK_WARNING, "spiceInterface: ignoring empty kernel path");
@@ -976,16 +964,14 @@ SpiceInterface::addKernelPath(const std::string& kernelPath)
     this->kernelPaths.push_back(kernelPath);
 }
 
-void
-SpiceInterface::addKernelPaths(const std::vector<std::string>& kernelPaths)
+void SpiceInterface::addKernelPaths(const std::vector<std::string>& kernelPaths)
 {
     for (const auto& k : kernelPaths) {
         addKernelPath(k);
     }
 }
 
-void
-SpiceInterface::clearKernelPaths()
+void SpiceInterface::clearKernelPaths()
 {
     this->kernelPaths.clear();
     this->configuredLoadedKernelKeys.clear();
@@ -995,10 +981,9 @@ SpiceInterface::clearKernelPaths()
  and saves the information off into the array.
 
  */
-void
-SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData,
-                              uint64_t CurrentSimNanos,
-                              bool allowReconstruction)
+void SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData,
+                                   uint64_t CurrentSimNanos,
+                                   bool allowReconstruction)
 {
     std::vector<SpicePlanetStateMsgPayload>::iterator planit;
 
@@ -1095,50 +1080,44 @@ SpiceInterface::pullSpiceData(std::vector<SpicePlanetStateMsgPayload>* spiceData
 //  SPICE query reconstruction (opt-in, per planet, per channel)
 // ---------------------------------------------------------------------------
 
-void
-SpiceInterface::setPlanetPositionReconstruction(const std::string& planetName,
-                                                uint64_t knotStep,
-                                                int nKnots,
-                                                bool useVelocity,
-                                                bool interpolate)
+void SpiceInterface::setPlanetPositionReconstruction(const std::string& planetName,
+                                                     uint64_t knotStep,
+                                                     int nKnots,
+                                                     bool useVelocity,
+                                                     bool interpolate)
 {
     this->reconState().configure(
       planetName, &SpiceReconstruction::PlanetInterp::posCfg, knotStep, nKnots, useVelocity, interpolate);
 }
 
-void
-SpiceInterface::setPlanetOrientationReconstruction(const std::string& planetName,
-                                                   uint64_t knotStep,
-                                                   int nKnots,
-                                                   bool useVelocity,
-                                                   bool interpolate)
+void SpiceInterface::setPlanetOrientationReconstruction(const std::string& planetName,
+                                                        uint64_t knotStep,
+                                                        int nKnots,
+                                                        bool useVelocity,
+                                                        bool interpolate)
 {
     this->reconState().configure(
       planetName, &SpiceReconstruction::PlanetInterp::orientCfg, knotStep, nKnots, useVelocity, interpolate);
 }
 
-void
-SpiceInterface::setPlanetPositionDisabled(const std::string& planetName)
+void SpiceInterface::setPlanetPositionDisabled(const std::string& planetName)
 {
     this->reconState().entry(planetName).posCfg.mode = SpiceReconstruction::ChannelMode::Disabled;
 }
 
-void
-SpiceInterface::setPlanetOrientationDisabled(const std::string& planetName)
+void SpiceInterface::setPlanetOrientationDisabled(const std::string& planetName)
 {
     this->reconState().entry(planetName).orientCfg.mode = SpiceReconstruction::ChannelMode::Disabled;
 }
 
-void
-SpiceInterface::setPlanetExactSpice(const std::string& planetName)
+void SpiceInterface::setPlanetExactSpice(const std::string& planetName)
 {
     auto& pi = this->reconState().entry(planetName);
     pi.posCfg.mode = SpiceReconstruction::ChannelMode::Exact;
     pi.orientCfg.mode = SpiceReconstruction::ChannelMode::Exact;
 }
 
-void
-SpiceInterface::countSpiceQuery(const std::string& planetName, bool isPosition)
+void SpiceInterface::countSpiceQuery(const std::string& planetName, bool isPosition)
 {
     auto& counts = this->spiceQueryCounts[normalizeBodyName(planetName)];
     if (isPosition) {
@@ -1148,8 +1127,7 @@ SpiceInterface::countSpiceQuery(const std::string& planetName, bool isPosition)
     }
 }
 
-std::pair<long, long>
-SpiceInterface::getPlanetSpiceQueryCount(const std::string& planetName)
+std::pair<long, long> SpiceInterface::getPlanetSpiceQueryCount(const std::string& planetName)
 {
     auto it = this->spiceQueryCounts.find(normalizeBodyName(planetName));
     if (it == this->spiceQueryCounts.end()) {
@@ -1171,8 +1149,7 @@ SpiceInterface::getPlanetSpiceQueryCount(const std::string& planetName)
  * @param dataPath   Directory where the kernel is located.
  * @return 0 on success, 1 if loading the kernel failed.
  */
-int
-SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath)
+int SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath)
 {
     std::filesystem::path base(dataPath);
     std::filesystem::path fullPath = base / kernelName;
@@ -1194,8 +1171,7 @@ SpiceInterface::loadSpiceKernel(char* kernelName, const char* dataPath)
  * @param dataPath   Directory where the kernel is located.
  * @return always 0.
  */
-int
-SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath)
+int SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath)
 {
     std::filesystem::path base(dataPath);
     std::filesystem::path fullPath = base / kernelName;
@@ -1204,8 +1180,7 @@ SpiceInterface::unloadSpiceKernel(char* kernelName, const char* dataPath)
     return 0;
 }
 
-std::string
-SpiceInterface::getCurrentTimeString()
+std::string SpiceInterface::getCurrentTimeString()
 {
     // Preserve the existing output capacity, with room for a character and its terminator.
     if (this->timeOutPicture.size() < 7) {
@@ -1229,8 +1204,7 @@ SpiceInterface::getCurrentTimeString()
 std::mutex SpiceKernel::mutex;
 std::unordered_map<std::string, std::weak_ptr<SpiceKernel>> SpiceKernel::cache;
 
-std::shared_ptr<SpiceKernel>
-SpiceKernel::request(const std::filesystem::path& path)
+std::shared_ptr<SpiceKernel> SpiceKernel::request(const std::filesystem::path& path)
 {
     const std::string key = absolutize(path);
 

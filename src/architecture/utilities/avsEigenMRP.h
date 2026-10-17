@@ -538,8 +538,7 @@ typedef Map<MRP<double>, Aligned> MRPMapAlignedd;
 // This product can be specialized for a given architecture via the Arch template argument.
 namespace internal {
 template<class Derived, typename QuaternionType>
-EIGEN_STRONG_INLINE void
-assign_mrp_from_quaternion_short(MRPBase<Derived>& sig, QuaternionType q)
+EIGEN_STRONG_INLINE void assign_mrp_from_quaternion_short(MRPBase<Derived>& sig, QuaternionType q)
 {
     typedef typename internal::traits<Derived>::Scalar Scalar;
 
@@ -580,8 +579,8 @@ struct mrp_product
 /** \returns the concatenation of two rotations as a MRP-MRP product */
 template<class Derived>
 template<class OtherDerived>
-EIGEN_STRONG_INLINE MRP<typename internal::traits<Derived>::Scalar>
-MRPBase<Derived>::operator*(const MRPBase<OtherDerived>& other) const
+EIGEN_STRONG_INLINE MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::operator*(
+  const MRPBase<OtherDerived>& other) const
 {
     EIGEN_STATIC_ASSERT(
       (internal::is_same<typename Derived::Scalar, typename OtherDerived::Scalar>::value),
@@ -594,8 +593,7 @@ MRPBase<Derived>::operator*(const MRPBase<OtherDerived>& other) const
 /** \sa operator*(MRP) */
 template<class Derived>
 template<class OtherDerived>
-EIGEN_STRONG_INLINE Derived&
-MRPBase<Derived>::operator*=(const MRPBase<OtherDerived>& other)
+EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator*=(const MRPBase<OtherDerived>& other)
 {
     derived() = derived() * other.derived();
     return derived();
@@ -604,8 +602,7 @@ MRPBase<Derived>::operator*=(const MRPBase<OtherDerived>& other)
 /** Coefficient-wise MRP addition; this is not attitude composition. */
 template<class Derived>
 template<class OtherDerived>
-EIGEN_STRONG_INLINE Derived&
-MRPBase<Derived>::operator+=(const MRPBase<OtherDerived>& other)
+EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator+=(const MRPBase<OtherDerived>& other)
 {
     derived().coeffs() = derived().coeffs() + other.derived().coeffs();
     return derived();
@@ -613,8 +610,7 @@ MRPBase<Derived>::operator+=(const MRPBase<OtherDerived>& other)
 /** Coefficient-wise MRP subtraction; this is not attitude composition. */
 template<class Derived>
 template<class OtherDerived>
-EIGEN_STRONG_INLINE Derived&
-MRPBase<Derived>::operator-=(const MRPBase<OtherDerived>& other)
+EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator-=(const MRPBase<OtherDerived>& other)
 {
     derived().coeffs() = derived().coeffs() - other.derived().coeffs();
     return derived();
@@ -626,15 +622,13 @@ MRPBase<Derived>::operator-=(const MRPBase<OtherDerived>& other)
  * to compute the 3x3 rotation matrix once and reuse it.
  */
 template<class Derived>
-EIGEN_STRONG_INLINE typename MRPBase<Derived>::Vector3
-MRPBase<Derived>::_transformVector(const Vector3& v) const
+EIGEN_STRONG_INLINE typename MRPBase<Derived>::Vector3 MRPBase<Derived>::_transformVector(const Vector3& v) const
 {
     return this->toRotationMatrix() * v;
 }
 
 template<class Derived>
-EIGEN_STRONG_INLINE MRPBase<Derived>&
-MRPBase<Derived>::operator=(const MRPBase<Derived>& other)
+EIGEN_STRONG_INLINE MRPBase<Derived>& MRPBase<Derived>::operator=(const MRPBase<Derived>& other)
 {
     coeffs() = other.coeffs();
     return derived();
@@ -642,8 +636,7 @@ MRPBase<Derived>::operator=(const MRPBase<Derived>& other)
 
 template<class Derived>
 template<class OtherDerived>
-EIGEN_STRONG_INLINE Derived&
-MRPBase<Derived>::operator=(const MRPBase<OtherDerived>& other)
+EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator=(const MRPBase<OtherDerived>& other)
 {
     coeffs() = other.coeffs();
     return derived();
@@ -652,8 +645,7 @@ MRPBase<Derived>::operator=(const MRPBase<OtherDerived>& other)
 /** Set \c *this from an angle-axis \a aa and returns a reference to \c *this
  */
 template<class Derived>
-EIGEN_STRONG_INLINE Derived&
-MRPBase<Derived>::operator=(const AngleAxisType& aa)
+EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator=(const AngleAxisType& aa)
 {
     Quaternion<Scalar> q(aa);
     internal::assign_mrp_from_quaternion_short(*this, q);
@@ -668,8 +660,7 @@ MRPBase<Derived>::operator=(const AngleAxisType& aa)
 
 template<class Derived>
 template<class MatrixDerived>
-inline Derived&
-MRPBase<Derived>::operator=(const MatrixBase<MatrixDerived>& xpr)
+inline Derived& MRPBase<Derived>::operator=(const MatrixBase<MatrixDerived>& xpr)
 {
     EIGEN_STATIC_ASSERT(
       (internal::is_same<typename Derived::Scalar, typename MatrixDerived::Scalar>::value),
@@ -681,8 +672,7 @@ MRPBase<Derived>::operator=(const MatrixBase<MatrixDerived>& xpr)
 /** Convert the MRP sigma_B/N to a 3x3 rotation matrix [NB].
  */
 template<class Derived>
-inline typename MRPBase<Derived>::Matrix3
-MRPBase<Derived>::toRotationMatrix(void) const
+inline typename MRPBase<Derived>::Matrix3 MRPBase<Derived>::toRotationMatrix(void) const
 {
     // NOTE if inlined, then gcc 4.2 and 4.4 get rid of the temporary (not gcc 4.3 !!)
     // if not inlined then the cost of the return by value is huge ~ +35%,
@@ -730,8 +720,7 @@ MRPBase<Derived>::toRotationMatrix(void) const
  */
 template<class Derived>
 template<typename Derived1, typename Derived2>
-inline Derived&
-MRPBase<Derived>::setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
+inline Derived& MRPBase<Derived>::setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
 {
     const RealScalar minimumUsableSquaredNorm = std::numeric_limits<RealScalar>::min();
     if (a.squaredNorm() <= minimumUsableSquaredNorm || b.squaredNorm() <= minimumUsableSquaredNorm) {
@@ -761,8 +750,7 @@ MRPBase<Derived>::setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixB
  */
 template<typename Scalar, int Options>
 template<typename Derived1, typename Derived2>
-MRP<Scalar, Options>
-MRP<Scalar, Options>::FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
+MRP<Scalar, Options> MRP<Scalar, Options>::FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
 {
     MRP sig;
     sig.setFromTwoVectors(a, b);
@@ -774,8 +762,7 @@ MRP<Scalar, Options>::FromTwoVectors(const MatrixBase<Derived1>& a, const Matrix
  * \sa MRPBase::shadow()
  */
 template<class Derived>
-inline MRP<typename internal::traits<Derived>::Scalar>
-MRPBase<Derived>::shadow() const
+inline MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::shadow() const
 {
     Scalar n2 = this->squaredNorm();
     if (n2 > Scalar(0))
@@ -793,8 +780,7 @@ MRPBase<Derived>::shadow() const
  * \sa MRPBase::shadow()
  */
 template<class Derived>
-inline typename MRPBase<Derived>::Matrix3
-MRPBase<Derived>::Bmat() const
+inline typename MRPBase<Derived>::Matrix3 MRPBase<Derived>::Bmat() const
 {
     Matrix3 B;
     Scalar ms2, s1s2, s1s3, s2s3;
@@ -823,8 +809,7 @@ MRPBase<Derived>::Bmat() const
  * \sa MRPBase::conjugate()
  */
 template<class Derived>
-inline MRP<typename internal::traits<Derived>::Scalar>
-MRPBase<Derived>::inverse() const
+inline MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::inverse() const
 {
     return MRP<Scalar>(-this->coeffs());
 }
@@ -837,8 +822,7 @@ MRPBase<Derived>::inverse() const
  * \sa MRPBase::inverse()
  */
 template<class Derived>
-inline MRP<typename internal::traits<Derived>::Scalar>
-MRPBase<Derived>::conjugate() const
+inline MRP<typename internal::traits<Derived>::Scalar> MRPBase<Derived>::conjugate() const
 {
     return MRP<Scalar>(-this->coeffs());
 }
@@ -848,8 +832,8 @@ MRPBase<Derived>::conjugate() const
  */
 template<class Derived>
 template<class OtherDerived>
-inline typename internal::traits<Derived>::Scalar
-MRPBase<Derived>::angularDistance(const MRPBase<OtherDerived>& other) const
+inline typename internal::traits<Derived>::Scalar MRPBase<Derived>::angularDistance(
+  const MRPBase<OtherDerived>& other) const
 {
     using std::abs;
     using std::atan;

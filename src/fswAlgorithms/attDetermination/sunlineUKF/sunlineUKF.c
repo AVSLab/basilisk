@@ -32,8 +32,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_sunlineUKF(SunlineUKFConfig* configData, int64_t moduleID)
+void SelfInit_sunlineUKF(SunlineUKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -47,8 +46,7 @@ SelfInit_sunlineUKF(SunlineUKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -132,8 +130,7 @@ Reset_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double yBar[MAX_N_CSS_MEAS];
@@ -201,8 +198,7 @@ Update_sunlineUKF(SunlineUKFConfig* configData, uint64_t callTime, int64_t modul
     @param stateInOut The state that is propagated
     @param dt Time step (s)
 */
-void
-sunlineStateProp(double* stateInOut, double dt)
+void sunlineStateProp(double* stateInOut, double dt)
 {
 
     double propagatedVel[3];
@@ -229,8 +225,7 @@ sunlineStateProp(double* stateInOut, double dt)
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void
-sunlineUKFTimeUpdate(SunlineUKFConfig* configData, double updateTime)
+void sunlineUKFTimeUpdate(SunlineUKFConfig* configData, double updateTime)
 {
     size_t i, Index;
     double sBarT[SKF_N_STATES * SKF_N_STATES];
@@ -322,8 +317,7 @@ sunlineUKFTimeUpdate(SunlineUKFConfig* configData, double updateTime)
  @param configData The configuration data associated with the CSS estimator
 
  */
-void
-sunlineUKFMeasModel(SunlineUKFConfig* configData)
+void sunlineUKFMeasModel(SunlineUKFConfig* configData)
 {
 
     double sensorNormal[3];
@@ -355,8 +349,7 @@ sunlineUKFMeasModel(SunlineUKFConfig* configData)
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void
-sunlineUKFMeasUpdate(SunlineUKFConfig* configData, double updateTime)
+void sunlineUKFMeasUpdate(SunlineUKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS * MAX_N_CSS_MEAS];

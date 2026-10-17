@@ -36,32 +36,29 @@ DynParamManager::DynParamManager()
 
 DynParamManager::~DynParamManager() = default;
 
-void
-DynParamManager::finalizeStates()
+void DynParamManager::finalizeStates()
 {
     this->registry->finalizeStates();
 }
 
-StateData*
-DynParamManager::registerState(std::string stateName, const StateSpec& spec)
+StateData* DynParamManager::registerState(std::string stateName, const StateSpec& spec)
 {
     return this->registry->registerState(std::move(stateName), spec);
 }
 
-StateData*
-DynParamManager::registerState(std::string stateName, const StateSpec& spec, std::unique_ptr<StateUpdatePolicy> policy)
+StateData* DynParamManager::registerState(std::string stateName,
+                                          const StateSpec& spec,
+                                          std::unique_ptr<StateUpdatePolicy> policy)
 {
     return this->registry->registerState(std::move(stateName), spec, std::move(policy));
 }
 
-StateData*
-DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
+StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
     return this->registry->registerState(nRow, nCol, std::move(stateName));
 }
 
-StateData*
-DynParamManager::getStateObject(std::string stateName)
+StateData* DynParamManager::getStateObject(std::string stateName)
 {
     StateData* state = this->registry->getStateObject(stateName);
     if (state == nullptr) {
@@ -70,20 +67,17 @@ DynParamManager::getStateObject(std::string stateName)
     return state;
 }
 
-void
-DynParamManager::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
+void DynParamManager::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
 {
     this->registry->registerSharedNoiseSource(std::move(sharedNoises));
 }
 
-bool
-DynParamManager::statesAreFinalized() const noexcept
+bool DynParamManager::statesAreFinalized() const noexcept
 {
     return this->registry->statesAreFinalized();
 }
 
-Eigen::MatrixXd*
-DynParamManager::createProperty(std::string propName, const Eigen::MatrixXd& propValue)
+Eigen::MatrixXd* DynParamManager::createProperty(std::string propName, const Eigen::MatrixXd& propValue)
 {
     auto [property, inserted] = this->dynProperties.emplace(std::move(propName), propValue);
     if (!inserted) {
@@ -92,8 +86,7 @@ DynParamManager::createProperty(std::string propName, const Eigen::MatrixXd& pro
     return &property->second;
 }
 
-Eigen::MatrixXd*
-DynParamManager::getPropertyReference(std::string propName)
+Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
 {
     auto property = this->dynProperties.find(propName);
     if (property == this->dynProperties.end()) {
@@ -102,8 +95,7 @@ DynParamManager::getPropertyReference(std::string propName)
     return &property->second;
 }
 
-void
-DynParamManager::setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue)
+void DynParamManager::setPropertyValue(const std::string propName, const Eigen::MatrixXd& propValue)
 {
     auto property = this->dynProperties.find(propName);
     if (property == this->dynProperties.end()) {

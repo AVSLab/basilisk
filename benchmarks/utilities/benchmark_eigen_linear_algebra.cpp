@@ -67,16 +67,14 @@ struct BenchmarkOptions
     bool smokeMode = false;
 };
 
-void
-printUsage(const char* executableName)
+void printUsage(const char* executableName)
 {
     std::cout << "Usage: " << executableName << " [iterationScale] [--smoke]\n"
               << "  iterationScale is a positive integer multiplier for the default loop counts.\n"
               << "  --smoke caps each operation's iteration count to verify that the benchmark still executes.\n";
 }
 
-BenchmarkOptions
-parseOptions(int argc, char** argv)
+BenchmarkOptions parseOptions(int argc, char** argv)
 {
     BenchmarkOptions options;
     bool scaleWasProvided = false;
@@ -110,8 +108,7 @@ parseOptions(int argc, char** argv)
     return options;
 }
 
-std::uint64_t
-scaledIterations(std::uint64_t baseIterations, std::uint64_t scale)
+std::uint64_t scaledIterations(std::uint64_t baseIterations, std::uint64_t scale)
 {
     if (baseIterations > std::numeric_limits<std::uint64_t>::max() / scale) {
         throw std::overflow_error("iteration count overflow.");
@@ -119,8 +116,7 @@ scaledIterations(std::uint64_t baseIterations, std::uint64_t scale)
     return baseIterations * scale;
 }
 
-std::uint64_t
-benchmarkIterations(std::uint64_t baseIterations, const BenchmarkOptions& options)
+std::uint64_t benchmarkIterations(std::uint64_t baseIterations, const BenchmarkOptions& options)
 {
     if (options.smokeMode) {
         constexpr std::uint64_t smokeIterationCap = 1000;
@@ -129,24 +125,21 @@ benchmarkIterations(std::uint64_t baseIterations, const BenchmarkOptions& option
     return scaledIterations(baseIterations, options.iterationScale);
 }
 
-double
-perturbation(std::uint64_t iteration)
+double perturbation(std::uint64_t iteration)
 {
     constexpr double perturbationStep = 1.0e-12;
     constexpr std::uint64_t perturbationPeriod = 97;
     return perturbationStep * static_cast<double>(((iteration + perturbationSeed) % perturbationPeriod) + 1);
 }
 
-std::uint64_t
-warmupIterations(std::uint64_t iterations)
+std::uint64_t warmupIterations(std::uint64_t iterations)
 {
     constexpr std::uint64_t warmupDivisor = 200;
     constexpr std::uint64_t maxWarmupIterations = 2000;
     return std::max<std::uint64_t>(1, std::min(iterations / warmupDivisor, maxWarmupIterations));
 }
 
-TimedRun
-timeLoop(const LoopFunction& loopFunction, std::uint64_t iterations)
+TimedRun timeLoop(const LoopFunction& loopFunction, std::uint64_t iterations)
 {
     const auto start = Clock::now();
     const double checksum = loopFunction(iterations);
@@ -157,18 +150,16 @@ timeLoop(const LoopFunction& loopFunction, std::uint64_t iterations)
     return { elapsedNanoseconds / static_cast<double>(iterations), checksum };
 }
 
-double
-relativeDifference(double firstValue, double secondValue)
+double relativeDifference(double firstValue, double secondValue)
 {
     const double scale = std::max({ std::abs(firstValue), std::abs(secondValue), 1.0 });
     return std::abs(firstValue - secondValue) / scale;
 }
 
-BenchmarkResult
-runBenchmarkPair(const std::string& name,
-                 std::uint64_t iterations,
-                 const LoopFunction& eigenLoop,
-                 const LoopFunction& linearAlgebraLoop)
+BenchmarkResult runBenchmarkPair(const std::string& name,
+                                 std::uint64_t iterations,
+                                 const LoopFunction& eigenLoop,
+                                 const LoopFunction& linearAlgebraLoop)
 {
     const std::uint64_t warmup = warmupIterations(iterations);
     benchmarkSink += eigenLoop(warmup);
@@ -184,8 +175,7 @@ runBenchmarkPair(const std::string& name,
              relativeDifference(eigenRun.checksum, linearAlgebraRun.checksum) };
 }
 
-double
-matrixValue(std::size_t row, std::size_t col, double diagonalBoost)
+double matrixValue(std::size_t row, std::size_t col, double diagonalBoost)
 {
     const double baseValue = 0.05 * static_cast<double>((row + 1) * (col + 2));
     if (row == col) {
@@ -194,8 +184,7 @@ matrixValue(std::size_t row, std::size_t col, double diagonalBoost)
     return baseValue / static_cast<double>(row + col + 2);
 }
 
-void
-fillMatrix3(double matrix[3][3], double diagonalBoost)
+void fillMatrix3(double matrix[3][3], double diagonalBoost)
 {
     for (std::size_t row = 0; row < 3; row++) {
         for (std::size_t col = 0; col < 3; col++) {
@@ -204,8 +193,7 @@ fillMatrix3(double matrix[3][3], double diagonalBoost)
     }
 }
 
-Eigen::Matrix3d
-makeEigenMatrix3(double diagonalBoost)
+Eigen::Matrix3d makeEigenMatrix3(double diagonalBoost)
 {
     Eigen::Matrix3d matrix;
     for (Eigen::Index row = 0; row < matrix.rows(); row++) {
@@ -216,8 +204,7 @@ makeEigenMatrix3(double diagonalBoost)
     return matrix;
 }
 
-void
-fillMatrix4(double matrix[4][4], double diagonalBoost)
+void fillMatrix4(double matrix[4][4], double diagonalBoost)
 {
     for (std::size_t row = 0; row < 4; row++) {
         for (std::size_t col = 0; col < 4; col++) {
@@ -226,8 +213,7 @@ fillMatrix4(double matrix[4][4], double diagonalBoost)
     }
 }
 
-Eigen::Matrix4d
-makeEigenMatrix4(double diagonalBoost)
+Eigen::Matrix4d makeEigenMatrix4(double diagonalBoost)
 {
     Eigen::Matrix4d matrix;
     for (Eigen::Index row = 0; row < matrix.rows(); row++) {
@@ -238,8 +224,7 @@ makeEigenMatrix4(double diagonalBoost)
     return matrix;
 }
 
-void
-fillMatrix6(double matrix[6][6], double diagonalBoost)
+void fillMatrix6(double matrix[6][6], double diagonalBoost)
 {
     for (std::size_t row = 0; row < 6; row++) {
         for (std::size_t col = 0; col < 6; col++) {
@@ -248,8 +233,7 @@ fillMatrix6(double matrix[6][6], double diagonalBoost)
     }
 }
 
-Matrix6d
-makeEigenMatrix6(double diagonalBoost)
+Matrix6d makeEigenMatrix6(double diagonalBoost)
 {
     Matrix6d matrix;
     for (Eigen::Index row = 0; row < matrix.rows(); row++) {
@@ -260,8 +244,7 @@ makeEigenMatrix6(double diagonalBoost)
     return matrix;
 }
 
-std::vector<double>
-makeLinearAlgebraMatrix(std::size_t dimension, double diagonalBoost)
+std::vector<double> makeLinearAlgebraMatrix(std::size_t dimension, double diagonalBoost)
 {
     std::vector<double> matrix(dimension * dimension);
     for (std::size_t row = 0; row < dimension; row++) {
@@ -272,8 +255,7 @@ makeLinearAlgebraMatrix(std::size_t dimension, double diagonalBoost)
     return matrix;
 }
 
-Eigen::MatrixXd
-makeEigenDynamicMatrix(std::size_t dimension, double diagonalBoost)
+Eigen::MatrixXd makeEigenDynamicMatrix(std::size_t dimension, double diagonalBoost)
 {
     Eigen::MatrixXd matrix(static_cast<Eigen::Index>(dimension), static_cast<Eigen::Index>(dimension));
     for (Eigen::Index row = 0; row < matrix.rows(); row++) {
@@ -284,8 +266,7 @@ makeEigenDynamicMatrix(std::size_t dimension, double diagonalBoost)
     return matrix;
 }
 
-double
-runEigenVector3Dot(std::uint64_t iterations)
+double runEigenVector3Dot(std::uint64_t iterations)
 {
     Eigen::Vector3d vectorA(1.1, -2.2, 3.3);
     Eigen::Vector3d vectorB(-4.4, 5.5, -6.6);
@@ -302,8 +283,7 @@ runEigenVector3Dot(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraVector3Dot(std::uint64_t iterations)
+double runLinearAlgebraVector3Dot(std::uint64_t iterations)
 {
     double vectorA[3] = { 1.1, -2.2, 3.3 };
     double vectorB[3] = { -4.4, 5.5, -6.6 };
@@ -320,8 +300,7 @@ runLinearAlgebraVector3Dot(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenVector3Cross(std::uint64_t iterations)
+double runEigenVector3Cross(std::uint64_t iterations)
 {
     Eigen::Vector3d vectorA(1.1, -2.2, 3.3);
     Eigen::Vector3d vectorB(-4.4, 5.5, -6.6);
@@ -340,8 +319,7 @@ runEigenVector3Cross(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraVector3Cross(std::uint64_t iterations)
+double runLinearAlgebraVector3Cross(std::uint64_t iterations)
 {
     double vectorA[3] = { 1.1, -2.2, 3.3 };
     double vectorB[3] = { -4.4, 5.5, -6.6 };
@@ -360,8 +338,7 @@ runLinearAlgebraVector3Cross(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix3Multiply(std::uint64_t iterations)
+double runEigenMatrix3Multiply(std::uint64_t iterations)
 {
     Eigen::Matrix3d matrixA = makeEigenMatrix3(4.0);
     Eigen::Matrix3d matrixB = makeEigenMatrix3(1.0);
@@ -380,8 +357,7 @@ runEigenMatrix3Multiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix3Multiply(std::uint64_t iterations)
+double runLinearAlgebraMatrix3Multiply(std::uint64_t iterations)
 {
     double matrixA[3][3];
     double matrixB[3][3];
@@ -402,8 +378,7 @@ runLinearAlgebraMatrix3Multiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix3TransposeMultiply(std::uint64_t iterations)
+double runEigenMatrix3TransposeMultiply(std::uint64_t iterations)
 {
     Eigen::Matrix3d matrixA = makeEigenMatrix3(4.0);
     Eigen::Matrix3d matrixB = makeEigenMatrix3(1.0);
@@ -422,8 +397,7 @@ runEigenMatrix3TransposeMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix3TransposeMultiply(std::uint64_t iterations)
+double runLinearAlgebraMatrix3TransposeMultiply(std::uint64_t iterations)
 {
     double matrixA[3][3];
     double matrixB[3][3];
@@ -444,8 +418,7 @@ runLinearAlgebraMatrix3TransposeMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix3VectorMultiply(std::uint64_t iterations)
+double runEigenMatrix3VectorMultiply(std::uint64_t iterations)
 {
     Eigen::Matrix3d matrixA = makeEigenMatrix3(4.0);
     Eigen::Vector3d vectorA(1.1, -2.2, 3.3);
@@ -464,8 +437,7 @@ runEigenMatrix3VectorMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix3VectorMultiply(std::uint64_t iterations)
+double runLinearAlgebraMatrix3VectorMultiply(std::uint64_t iterations)
 {
     double matrixA[3][3];
     double vectorA[3] = { 1.1, -2.2, 3.3 };
@@ -485,8 +457,7 @@ runLinearAlgebraMatrix3VectorMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix3Inverse(std::uint64_t iterations)
+double runEigenMatrix3Inverse(std::uint64_t iterations)
 {
     Eigen::Matrix3d matrixA = makeEigenMatrix3(5.0);
     Eigen::Matrix3d result;
@@ -504,8 +475,7 @@ runEigenMatrix3Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix3Inverse(std::uint64_t iterations)
+double runLinearAlgebraMatrix3Inverse(std::uint64_t iterations)
 {
     double matrixA[3][3];
     double result[3][3];
@@ -524,8 +494,7 @@ runLinearAlgebraMatrix3Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix4Inverse(std::uint64_t iterations)
+double runEigenMatrix4Inverse(std::uint64_t iterations)
 {
     Eigen::Matrix4d matrixA = makeEigenMatrix4(6.0);
     Eigen::Matrix4d result;
@@ -543,8 +512,7 @@ runEigenMatrix4Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix4Inverse(std::uint64_t iterations)
+double runLinearAlgebraMatrix4Inverse(std::uint64_t iterations)
 {
     double matrixA[4][4];
     double result[4][4];
@@ -563,8 +531,7 @@ runLinearAlgebraMatrix4Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix6Multiply(std::uint64_t iterations)
+double runEigenMatrix6Multiply(std::uint64_t iterations)
 {
     Matrix6d matrixA = makeEigenMatrix6(5.0);
     Matrix6d matrixB = makeEigenMatrix6(2.0);
@@ -583,8 +550,7 @@ runEigenMatrix6Multiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix6Multiply(std::uint64_t iterations)
+double runLinearAlgebraMatrix6Multiply(std::uint64_t iterations)
 {
     double matrixA[6][6];
     double matrixB[6][6];
@@ -605,8 +571,7 @@ runLinearAlgebraMatrix6Multiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenMatrix6VectorMultiply(std::uint64_t iterations)
+double runEigenMatrix6VectorMultiply(std::uint64_t iterations)
 {
     Matrix6d matrixA = makeEigenMatrix6(5.0);
     Vector6d vectorA;
@@ -626,8 +591,7 @@ runEigenMatrix6VectorMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraMatrix6VectorMultiply(std::uint64_t iterations)
+double runLinearAlgebraMatrix6VectorMultiply(std::uint64_t iterations)
 {
     double matrixA[6][6];
     double vectorA[6] = { 1.1, -2.2, 3.3, -4.4, 5.5, -6.6 };
@@ -647,8 +611,7 @@ runLinearAlgebraMatrix6VectorMultiply(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runEigenDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
+double runEigenDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
 {
     Eigen::MatrixXd matrixA = makeEigenDynamicMatrix(dimension, 5.0);
     Eigen::MatrixXd matrixB = makeEigenDynamicMatrix(dimension, 2.0);
@@ -668,8 +631,7 @@ runEigenDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
     return checksum;
 }
 
-double
-runLinearAlgebraDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
+double runLinearAlgebraDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
 {
     std::vector<double> matrixA = makeLinearAlgebraMatrix(dimension, 5.0);
     std::vector<double> matrixB = makeLinearAlgebraMatrix(dimension, 2.0);
@@ -689,8 +651,7 @@ runLinearAlgebraDynamicMultiply(std::uint64_t iterations, std::size_t dimension)
     return checksum;
 }
 
-double
-runEigenGeneralMatrix6Inverse(std::uint64_t iterations)
+double runEigenGeneralMatrix6Inverse(std::uint64_t iterations)
 {
     constexpr std::size_t dimension = 6;
     Eigen::MatrixXd matrixA = makeEigenDynamicMatrix(dimension, 8.0);
@@ -709,8 +670,7 @@ runEigenGeneralMatrix6Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-double
-runLinearAlgebraGeneralMatrix6Inverse(std::uint64_t iterations)
+double runLinearAlgebraGeneralMatrix6Inverse(std::uint64_t iterations)
 {
     constexpr std::size_t dimension = 6;
     std::vector<double> matrixA = makeLinearAlgebraMatrix(dimension, 8.0);
@@ -729,8 +689,7 @@ runLinearAlgebraGeneralMatrix6Inverse(std::uint64_t iterations)
     return checksum;
 }
 
-void
-printResults(const std::vector<BenchmarkResult>& results)
+void printResults(const std::vector<BenchmarkResult>& results)
 {
     std::cout << std::fixed << std::setprecision(3);
     std::cout << "\n";
@@ -748,8 +707,7 @@ printResults(const std::vector<BenchmarkResult>& results)
 
 } // namespace
 
-int
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
     try {
         const BenchmarkOptions options = parseOptions(argc, argv);

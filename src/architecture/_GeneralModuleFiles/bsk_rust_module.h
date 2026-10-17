@@ -282,12 +282,9 @@ enum
 typedef struct BskRustError BskRustError;
 
 BSK_RUST_EXTERN_C_BEGIN
-BskRustErrorKind
-BskRustError_kind(const BskRustError* error);
-const char*
-BskRustError_message(const BskRustError* error);
-void
-Destroy_BskRustError(BskRustError* error);
+BskRustErrorKind BskRustError_kind(const BskRustError* error);
+const char* BskRustError_message(const BskRustError* error);
+void Destroy_BskRustError(BskRustError* error);
 BSK_RUST_EXTERN_C_END
 
 /*! Emit ``extern "C"`` allocation and lifecycle function declarations for a

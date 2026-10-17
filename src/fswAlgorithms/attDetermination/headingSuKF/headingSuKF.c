@@ -32,8 +32,7 @@
  @param configData The configuration data associated with the heading estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_headingSuKF(HeadingSuKFConfig* configData, int64_t moduleID)
+void SelfInit_headingSuKF(HeadingSuKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     OpNavMsg_C_init(&configData->opnavDataOutMsg);
@@ -48,8 +47,7 @@ SelfInit_headingSuKF(HeadingSuKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -124,8 +122,7 @@ Reset_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double yBar[OPNAV_MEAS];
@@ -232,8 +229,7 @@ Update_headingSuKF(HeadingSuKFConfig* configData, uint64_t callTime, int64_t mod
     @param b_Vec pointer to b vector
     @param dt time step
 */
-void
-headingStateProp(double* stateInOut, double* b_Vec, double dt)
+void headingStateProp(double* stateInOut, double* b_Vec, double dt)
 {
 
     double propagatedVel[HEAD_N_STATES];
@@ -267,8 +263,7 @@ headingStateProp(double* stateInOut, double* b_Vec, double dt)
      @param configData The configuration data associated with the heading estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void
-headingSuKFTimeUpdate(HeadingSuKFConfig* configData, double updateTime)
+void headingSuKFTimeUpdate(HeadingSuKFConfig* configData, double updateTime)
 {
     int i, Index;
     double sBarT[HEAD_N_STATES_SWITCH * HEAD_N_STATES_SWITCH];
@@ -359,8 +354,7 @@ headingSuKFTimeUpdate(HeadingSuKFConfig* configData, double updateTime)
  @param configData The configuration data associated with the heading estimator
 
  */
-void
-headingSuKFMeasModel(HeadingSuKFConfig* configData)
+void headingSuKFMeasModel(HeadingSuKFConfig* configData)
 {
     /*! - Loop over sigma points */
     int j;
@@ -385,8 +379,7 @@ headingSuKFMeasModel(HeadingSuKFConfig* configData)
  @param configData The configuration data associated with the heading estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void
-headingSuKFMeasUpdate(HeadingSuKFConfig* configData, double updateTime)
+void headingSuKFMeasUpdate(HeadingSuKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     double yBar[OPNAV_MEAS], syInv[OPNAV_MEAS * OPNAV_MEAS];
@@ -503,8 +496,7 @@ headingSuKFMeasUpdate(HeadingSuKFConfig* configData, double updateTime)
  @param covar Pointer to the covariance
  */
 
-void
-headingSuKFSwitch(double* bVec_B, double* states, double* covar)
+void headingSuKFSwitch(double* bVec_B, double* states, double* covar)
 {
     double dcm_BSold[HEAD_N_STATES][HEAD_N_STATES];
     double dcm_BSnew_T[HEAD_N_STATES][HEAD_N_STATES];
@@ -558,8 +550,7 @@ headingSuKFSwitch(double* bVec_B, double* states, double* covar)
     return;
 }
 
-void
-headingSuKFComputeDCM_BS(double sunheading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double* dcm)
+void headingSuKFComputeDCM_BS(double sunheading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double* dcm)
 {
     double s1_B[HEAD_N_STATES];
     double s2_B[HEAD_N_STATES];

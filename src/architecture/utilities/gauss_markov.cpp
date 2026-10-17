@@ -52,8 +52,7 @@ GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed)
     this->propagatedState.resize(stateCount);
 }
 
-void
-GaussMarkov::initializeRNG()
+void GaussMarkov::initializeRNG()
 {
     //! - Set up standard normal distribution N(0,1) parameters for random number generation
     std::normal_distribution<double>::param_type updatePair(0.0, 1.0);
@@ -62,8 +61,7 @@ GaussMarkov::initializeRNG()
     this->rNum.param(updatePair);
 }
 
-uint64_t
-GaussMarkov::deriveSecondarySeed(uint64_t baseSeed)
+uint64_t GaussMarkov::deriveSecondarySeed(uint64_t baseSeed)
 {
     constexpr uint64_t secondaryStreamDiscriminator = 0x9E3779B97F4A7C15ULL;
     // Keep the secondary seed representable by both 32-bit and 64-bit engine result types.
@@ -96,8 +94,7 @@ GaussMarkov::~GaussMarkov() {}
     state, and then applies appropriate errors to the states to set the current
     error level.
 */
-void
-GaussMarkov::computeNextState()
+void GaussMarkov::computeNextState()
 {
     //! - Check for consistent sizes
     if ((this->propMatrix.size() != this->noiseMatrix.size()) ||

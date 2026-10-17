@@ -25,8 +25,7 @@ ThrustCMEstimation::ThrustCMEstimation() = default;
 ThrustCMEstimation::~ThrustCMEstimation() = default;
 
 /*! Initialize C-wrapped output messages */
-void
-ThrustCMEstimation::SelfInit()
+void ThrustCMEstimation::SelfInit()
 {
     VehicleConfigMsg_C_init(&this->vehConfigOutMsgC);
 }
@@ -36,8 +35,7 @@ ThrustCMEstimation::SelfInit()
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-ThrustCMEstimation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ThrustCMEstimation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /*! - Check if the required message has not been connected */
     if (!this->thrusterConfigBInMsg.isLinked()) {
@@ -72,8 +70,7 @@ ThrustCMEstimation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
-void
-ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
+void ThrustCMEstimation::UpdateState(uint64_t CurrentSimNanos)
 {
     /*! create output message buffers */
     VehicleConfigMsgPayload vehConfigOutBuffer = {};

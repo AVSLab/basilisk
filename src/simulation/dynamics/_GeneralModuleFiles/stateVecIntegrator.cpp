@@ -25,15 +25,13 @@ StateVecIntegrator::StateVecIntegrator(DynamicObject* dynIn)
 {
 }
 
-void
-StateVecIntegrator::integrate(double currentTime, double timeStep)
+void StateVecIntegrator::integrate(double currentTime, double timeStep)
 {
     this->ensureIntegrationBinding();
     this->integrateImpl(currentTime, timeStep);
 }
 
-void
-StateVecIntegrator::ensureIntegrationBinding()
+void StateVecIntegrator::ensureIntegrationBinding()
 {
     if (!this->bindingPrepared) {
         this->prepareIntegrationBinding();
@@ -43,16 +41,14 @@ StateVecIntegrator::ensureIntegrationBinding()
     }
 }
 
-void
-StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
+void StateVecIntegrator::evaluateDerivatives(double time, double timeStep)
 {
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotion(time, timeStep);
     }
 }
 
-void
-StateVecIntegrator::evaluateDiffusions(double time, double timeStep)
+void StateVecIntegrator::evaluateDiffusions(double time, double timeStep)
 {
     for (DynamicObject* object : this->dynPtrs) {
         object->equationsOfMotionDiffusion(time, timeStep);

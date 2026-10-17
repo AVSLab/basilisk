@@ -27,8 +27,7 @@
  @param configData The configuration data associated with the OD filter
  @param moduleId The ID associated with the configData
 */
-void
-SelfInit_relODuKF(RelODuKFConfig* configData, int64_t moduleId)
+void SelfInit_relODuKF(RelODuKFConfig* configData, int64_t moduleId)
 {
     (void)moduleId;
     NavTransMsg_C_init(&configData->navStateOutMsg);
@@ -42,8 +41,7 @@ SelfInit_relODuKF(RelODuKFConfig* configData, int64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
  */
-void
-Reset_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
+void Reset_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
 {
     (void)moduleId;
     // check if the required message has not been connected
@@ -125,8 +123,7 @@ Reset_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The ID associated with the configData
  */
-void
-Update_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
+void Update_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
 {
     double newTimeTag = 0.0; /* [s] Local Time-tag variable*/
     double yBar[3], tempYVec[3];
@@ -210,8 +207,7 @@ Update_relODuKF(RelODuKFConfig* configData, uint64_t callTime, int64_t moduleId)
  @param stateInOut The state that is propagated
  @param dt Time step (s)
  */
-void
-relODStateProp(RelODuKFConfig* configData, double* stateInOut, double dt)
+void relODStateProp(RelODuKFConfig* configData, double* stateInOut, double dt)
 {
 
     double muPlanet;
@@ -264,8 +260,7 @@ relODStateProp(RelODuKFConfig* configData, double* stateInOut, double dt)
  @param muPlanet Planet gravity constant
  @param stateDeriv State derivative vector
  */
-void
-relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double* stateDeriv)
+void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double* stateDeriv)
 {
     double rNorm;
     double dvdt[3];
@@ -284,8 +279,7 @@ relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double* stateD
  @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int
-relODuKFTimeUpdate(RelODuKFConfig* configData, double updateTime)
+int relODuKFTimeUpdate(RelODuKFConfig* configData, double updateTime)
 {
     uint64_t i, Index;
     double sBarT[ODUKF_N_STATES * ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
@@ -396,8 +390,7 @@ relODuKFTimeUpdate(RelODuKFConfig* configData, double updateTime)
 
  @param configData The configuration data associated with the OD filter
  */
-void
-relODuKFMeasModel(RelODuKFConfig* configData)
+void relODuKFMeasModel(RelODuKFConfig* configData)
 {
     size_t i, j;
     v3Copy(configData->opNavInBuffer.r_BN_N, configData->obs);
@@ -416,8 +409,7 @@ relODuKFMeasModel(RelODuKFConfig* configData)
 
  @param configData The configuration data associated with the OD filter
  */
-int
-relODuKFMeasUpdate(RelODuKFConfig* configData)
+int relODuKFMeasUpdate(RelODuKFConfig* configData)
 {
     uint32_t i;
     double yBar[3], syInv[3 * 3];                                            // measurement, Sy inv
@@ -549,8 +541,7 @@ relODuKFMeasUpdate(RelODuKFConfig* configData)
 
  @param configData The configuration data associated with the OD filter
  */
-void
-relODuKFCleanUpdate(RelODuKFConfig* configData)
+void relODuKFCleanUpdate(RelODuKFConfig* configData)
 {
     size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/

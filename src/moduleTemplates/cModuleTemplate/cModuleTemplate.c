@@ -34,8 +34,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID)
+void SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     CModuleTemplateMsg_C_init(&configData->dataOutMsg);
@@ -49,8 +48,7 @@ SelfInit_cModuleTemplate(cModuleTemplateConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! Reset the runtime counter; preserve the user-configured sampleConfigVector. */
     configData->updateCounter = 0.0;
@@ -70,8 +68,7 @@ Reset_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int6
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_cModuleTemplate(cModuleTemplateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // Zero the output buffer each update to avoid publishing uninitialized fields.
     CModuleTemplateMsgPayload outMsgBuffer = CModuleTemplateMsg_C_zeroMsgPayload();

@@ -29,8 +29,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
  */
-void
-SelfInit_oeStateEphem(OEStateEphemData* configData, int64_t moduleID)
+void SelfInit_oeStateEphem(OEStateEphemData* configData, int64_t moduleID)
 {
     (void)moduleID;
     EphemerisMsg_C_init(&configData->stateFitOutMsg);
@@ -42,8 +41,7 @@ SelfInit_oeStateEphem(OEStateEphemData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Reset_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -61,8 +59,7 @@ Reset_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identification integer
  */
-void
-Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
+void Update_oeStateEphem(OEStateEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
     double currentScaledValue;     /* [s] scaled time value to within [-1,1] */
     double currentEphTime;         /* [s] current ephemeris time */

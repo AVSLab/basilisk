@@ -28,8 +28,7 @@
 #include <memory>
 
 namespace {
-mjsEquality*
-createConstrainedEquality(const std::string& jointName, mjSpec* spec)
+mjsEquality* createConstrainedEquality(const std::string& jointName, mjSpec* spec)
 {
     auto mjsequality = mjs_addEquality(spec, 0);
 
@@ -46,8 +45,7 @@ createConstrainedEquality(const std::string& jointName, mjSpec* spec)
     return mjsequality;
 }
 
-StateSpec
-euclideanVectorSpec(uint32_t rows)
+StateSpec euclideanVectorSpec(uint32_t rows)
 {
     StateSpec spec;
     spec.state = { rows, 1 };
@@ -57,8 +55,7 @@ euclideanVectorSpec(uint32_t rows)
     return spec;
 }
 
-StateData*
-registerQuaternionState(DynParamRegisterer registerer, const std::string& name, bool highOrder)
+StateData* registerQuaternionState(DynParamRegisterer registerer, const std::string& name, bool highOrder)
 {
     StateSpec spec;
     spec.state = { 4, 1 };
@@ -72,8 +69,7 @@ registerQuaternionState(DynParamRegisterer registerer, const std::string& name, 
     return registerer.registerState(name, spec, std::make_unique<MJNativeQuaternionStatePolicy>());
 }
 
-Eigen::Matrix<double, 4, 1>
-quaternionRate(ConstMatrixView quaternion, const double* angularVelocity)
+Eigen::Matrix<double, 4, 1> quaternionRate(ConstMatrixView quaternion, const double* angularVelocity)
 {
     const double w = quaternion(0);
     const double x = quaternion(1);
@@ -91,8 +87,7 @@ quaternionRate(ConstMatrixView quaternion, const double* angularVelocity)
     return result;
 }
 
-void
-setQuaternionDerivative(StateData& quaternion, const double* angularVelocity)
+void setQuaternionDerivative(StateData& quaternion, const double* angularVelocity)
 {
     auto derivative = quaternion.derivativeView();
     if (derivative.rows() == 3) {
@@ -103,16 +98,14 @@ setQuaternionDerivative(StateData& quaternion, const double* angularVelocity)
 }
 } // namespace
 
-void
-MJJoint::configure(const mjModel* model)
+void MJJoint::configure(const mjModel* model)
 {
     MJObject::configure(model);
     this->qposAdr = model->jnt_qposadr[this->getId()];
     this->qvelAdr = model->jnt_dofadr[this->getId()];
 }
 
-void
-MJJoint::checkInitialized() const
+void MJJoint::checkInitialized() const
 {
     if (!this->qposAdr.has_value() || !this->statesRegistered) {
         body.getSpec().getScene().bskLogger.bskError(
@@ -131,29 +124,25 @@ MJScalarJoint::MJScalarJoint(mjsJoint* joint, MJBody& body)
     body.getSpec().markAsNeedingToRecompileModel();
 }
 
-Eigen::Vector3d
-MJScalarJoint::getAxis() const
+Eigen::Vector3d MJScalarJoint::getAxis() const
 {
     checkInitialized();
     const auto m = this->body.getSpec().getMujocoModel();
     return Eigen::Vector3d(m->jnt_axis + (this->getId() * 3));
 }
 
-bool
-MJScalarJoint::isHinge() const
+bool MJScalarJoint::isHinge() const
 {
     return this->mjsObject->type == mjJNT_HINGE;
 }
 
-void
-MJScalarJoint::configure(const mjModel* model)
+void MJScalarJoint::configure(const mjModel* model)
 {
     MJJoint::configure(model);
     this->constrainedEquality.configure(model);
 }
 
-void
-MJScalarJoint::updateConstrainedEquality()
+void MJScalarJoint::updateConstrainedEquality()
 {
     bool useConstraint = this->constrainedStateInMsg.isLinked();
     this->constrainedEquality.setActive(useConstraint);
@@ -162,8 +151,7 @@ MJScalarJoint::updateConstrainedEquality()
     }
 }
 
-void
-MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
+void MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
 {
     checkInitialized();
 
@@ -178,28 +166,24 @@ MJScalarJoint::writeJointStateMessage(uint64_t CurrentSimNanos)
     this->stateDotOutMsg.write(&stateDotOutMsgPayload, scene.moduleID, CurrentSimNanos);
 }
 
-void
-MJScalarJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+void MJScalarJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
 {
     (void)highOrderAttitude;
     this->qposState = registerer.registerState("joint_" + this->name + "_qpos", euclideanVectorSpec(1));
 }
 
-void
-MJScalarJoint::registerVelocityStates(DynParamRegisterer registerer)
+void MJScalarJoint::registerVelocityStates(DynParamRegisterer registerer)
 {
     this->qvelState = registerer.registerState("joint_" + this->name + "_qvel", euclideanVectorSpec(1));
     this->statesRegistered = true;
 }
 
-void
-MJScalarJoint::setPositionDerivativeFromMujoco(const mjData* data)
+void MJScalarJoint::setPositionDerivativeFromMujoco(const mjData* data)
 {
     this->qposState->derivativeView()(0) = data->qvel[this->qvelAdr.value()];
 }
 
-void
-MJScalarJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+void MJScalarJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
 {
     if (this->qposState->stateData() != qposBase + this->qposAdr.value() ||
         this->qvelState->stateData() != qvelBase + this->qvelAdr.value()) {
@@ -208,24 +192,21 @@ MJScalarJoint::validateStateLayout(const double* qposBase, const double* qvelBas
     }
 }
 
-void
-MJScalarJoint::setPosition(double value)
+void MJScalarJoint::setPosition(double value)
 {
     checkInitialized();
     this->qposState->stateView()(0) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void
-MJScalarJoint::setVelocity(double value)
+void MJScalarJoint::setVelocity(double value)
 {
     checkInitialized();
     this->qvelState->stateView()(0) = value;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-MJSingleJointEquality&
-MJScalarJoint::getConstrainedEquality()
+MJSingleJointEquality& MJScalarJoint::getConstrainedEquality()
 {
     return this->constrainedEquality;
 }
@@ -234,28 +215,24 @@ MJScalarJoint::getConstrainedEquality()
 // MJBallJoint
 // ---------------------------------------------------------------------------
 
-void
-MJBallJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+void MJBallJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
 {
     this->qposState = registerQuaternionState(registerer, "joint_" + this->name + "_qpos", highOrderAttitude);
 }
 
-void
-MJBallJoint::registerVelocityStates(DynParamRegisterer registerer)
+void MJBallJoint::registerVelocityStates(DynParamRegisterer registerer)
 {
     this->qvelState = registerer.registerState("joint_" + this->name + "_qvel", euclideanVectorSpec(3));
     this->statesRegistered = true;
 }
 
-void
-MJBallJoint::setPositionDerivativeFromMujoco(const mjData* data)
+void MJBallJoint::setPositionDerivativeFromMujoco(const mjData* data)
 {
     const auto qvelAddress = this->qvelAdr.value();
     setQuaternionDerivative(*this->qposState, data->qvel + qvelAddress);
 }
 
-void
-MJBallJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+void MJBallJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
 {
     if (this->qposState->stateData() != qposBase + this->qposAdr.value() ||
         this->qvelState->stateData() != qvelBase + this->qvelAdr.value()) {
@@ -268,16 +245,14 @@ MJBallJoint::validateStateLayout(const double* qposBase, const double* qvelBase)
 // MJFreeJoint
 // ---------------------------------------------------------------------------
 
-void
-MJFreeJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
+void MJFreeJoint::registerPositionStates(DynParamRegisterer registerer, bool highOrderAttitude)
 {
     const std::string prefix = "joint_" + this->name;
     this->qposTranslationState = registerer.registerState(prefix + "_qposTranslation", euclideanVectorSpec(3));
     this->qposAttitudeState = registerQuaternionState(registerer, prefix + "_qposAttitude", highOrderAttitude);
 }
 
-void
-MJFreeJoint::registerVelocityStates(DynParamRegisterer registerer)
+void MJFreeJoint::registerVelocityStates(DynParamRegisterer registerer)
 {
     const std::string prefix = "joint_" + this->name;
     this->qvelTranslationState = registerer.registerState(prefix + "_qvelTranslation", euclideanVectorSpec(3));
@@ -285,16 +260,14 @@ MJFreeJoint::registerVelocityStates(DynParamRegisterer registerer)
     this->statesRegistered = true;
 }
 
-void
-MJFreeJoint::setPositionDerivativeFromMujoco(const mjData* data)
+void MJFreeJoint::setPositionDerivativeFromMujoco(const mjData* data)
 {
     const auto qvelAddress = this->qvelAdr.value();
     std::copy_n(data->qvel + qvelAddress, 3, this->qposTranslationState->derivativeView().data());
     setQuaternionDerivative(*this->qposAttitudeState, data->qvel + qvelAddress + 3);
 }
 
-void
-MJFreeJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
+void MJFreeJoint::validateStateLayout(const double* qposBase, const double* qvelBase) const
 {
     const auto qposAddress = this->qposAdr.value();
     const auto qvelAddress = this->qvelAdr.value();
@@ -307,24 +280,21 @@ MJFreeJoint::validateStateLayout(const double* qposBase, const double* qvelBase)
     }
 }
 
-void
-MJFreeJoint::setPosition(const Eigen::Vector3d& position)
+void MJFreeJoint::setPosition(const Eigen::Vector3d& position)
 {
     checkInitialized();
     this->qposTranslationState->stateView() = position;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void
-MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
+void MJFreeJoint::setVelocity(const Eigen::Vector3d& velocity)
 {
     checkInitialized();
     this->qvelTranslationState->stateView() = velocity;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void
-MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
+void MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
 {
     checkInitialized();
     auto mat = attitude.toRotationMatrix();
@@ -337,32 +307,28 @@ MJFreeJoint::setAttitude(const Eigen::MRPd& attitude)
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-void
-MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
+void MJFreeJoint::setAttitudeRate(const Eigen::Vector3d& attitudeRate)
 {
     checkInitialized();
     this->qvelAttitudeState->stateView() = attitudeRate;
     this->body.getSpec().getScene().markKinematicsAsStale();
 }
 
-Eigen::Vector3d
-MJFreeJoint::getTranslationalVelocityFromData(const mjData* data) const
+Eigen::Vector3d MJFreeJoint::getTranslationalVelocityFromData(const mjData* data) const
 {
     checkInitialized();
     auto i = this->qvelAdr.value();
     return { data->qvel[i], data->qvel[i + 1], data->qvel[i + 2] };
 }
 
-Eigen::Vector3d
-MJFreeJoint::getTranslationalPositionFromData(const mjData* data) const
+Eigen::Vector3d MJFreeJoint::getTranslationalPositionFromData(const mjData* data) const
 {
     checkInitialized();
     auto i = this->qposAdr.value();
     return { data->qpos[i], data->qpos[i + 1], data->qpos[i + 2] };
 }
 
-void
-MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel)
+void MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d& vel)
 {
     checkInitialized();
     auto i = this->qvelAdr.value();
@@ -371,8 +337,7 @@ MJFreeJoint::setTranslationalVelocityInData(mjData* data, const Eigen::Vector3d&
     data->qvel[i + 2] = vel[2];
 }
 
-void
-MJFreeJoint::setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos)
+void MJFreeJoint::setTranslationalPositionInData(mjData* data, const Eigen::Vector3d& pos)
 {
     checkInitialized();
     auto i = this->qposAdr.value();

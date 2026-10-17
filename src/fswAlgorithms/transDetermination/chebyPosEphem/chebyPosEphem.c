@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_chebyPosEphem(ChebyPosEphemData* configData, int64_t moduleID)
+void SelfInit_chebyPosEphem(ChebyPosEphemData* configData, int64_t moduleID)
 {
     (void)moduleID;
     EphemerisMsg_C_init(&configData->posFitOutMsg);
@@ -45,8 +44,7 @@ SelfInit_chebyPosEphem(ChebyPosEphemData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Reset_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -88,8 +86,7 @@ Reset_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64_t mo
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64_t moduleID)
+void Update_chebyPosEphem(ChebyPosEphemData* configData, uint64_t callTime, int64_t moduleID)
 {
 
     double currentEphTime;

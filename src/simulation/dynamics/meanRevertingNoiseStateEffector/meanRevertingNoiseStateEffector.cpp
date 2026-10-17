@@ -34,8 +34,7 @@ MeanRevertingNoiseStateEffector::MeanRevertingNoiseStateEffector()
     MeanRevertingNoiseStateEffector::effectorID++;
 }
 
-void
-MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
+void MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
         this->bskLogger.bskError(
@@ -44,8 +43,7 @@ MeanRevertingNoiseStateEffector::setStationaryStd(double sigmaStationary)
     this->sigmaStationary = sigmaStationary;
 }
 
-void
-MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
+void MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (!std::isfinite(timeConstant) || timeConstant <= 0.0) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setTimeConstant requires finite timeConstant > 0.");
@@ -53,8 +51,7 @@ MeanRevertingNoiseStateEffector::setTimeConstant(double timeConstant)
     this->timeConstant = timeConstant;
 }
 
-double
-MeanRevertingNoiseStateEffector::getStateValue() const
+double MeanRevertingNoiseStateEffector::getStateValue() const
 {
     if (this->state == nullptr) {
         return this->stateInit;
@@ -62,8 +59,7 @@ MeanRevertingNoiseStateEffector::getStateValue() const
     return this->state->stateView()(0, 0);
 }
 
-void
-MeanRevertingNoiseStateEffector::setStateValue(double val)
+void MeanRevertingNoiseStateEffector::setStateValue(double val)
 {
     if (!std::isfinite(val)) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::setStateValue requires a finite state value.");
@@ -76,8 +72,7 @@ MeanRevertingNoiseStateEffector::setStateValue(double val)
     }
 }
 
-void
-MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
+void MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -91,16 +86,12 @@ MeanRevertingNoiseStateEffector::registerStates(DynParamManager& states)
     this->state->setState(state);
 }
 
-void
-MeanRevertingNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
-{
-}
+void MeanRevertingNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]]) {}
 
-void
-MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                                    Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                                    Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                                    Eigen::MRPd sigma_BN [[maybe_unused]])
+void MeanRevertingNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                         Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                                         Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                                         Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("MeanRevertingNoiseStateEffector::computeDerivatives called before registerStates.");

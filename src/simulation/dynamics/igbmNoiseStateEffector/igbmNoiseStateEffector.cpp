@@ -35,8 +35,7 @@ IgbmNoiseStateEffector::IgbmNoiseStateEffector()
     IgbmNoiseStateEffector::effectorID++;
 }
 
-void
-IgbmNoiseStateEffector::setMean(double mean)
+void IgbmNoiseStateEffector::setMean(double mean)
 {
     if (!std::isfinite(mean) || mean <= 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setMean requires finite mean > 0.");
@@ -44,8 +43,7 @@ IgbmNoiseStateEffector::setMean(double mean)
     this->mean = mean;
 }
 
-void
-IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
+void IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
 {
     if (!std::isfinite(sigmaStationary) || sigmaStationary < 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setStationaryStd requires finite sigmaStationary >= 0.");
@@ -53,8 +51,7 @@ IgbmNoiseStateEffector::setStationaryStd(double sigmaStationary)
     this->sigmaStationary = sigmaStationary;
 }
 
-void
-IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
+void IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
 {
     if (!std::isfinite(timeConstant) || timeConstant <= 0.0) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::setTimeConstant requires finite timeConstant > 0.");
@@ -62,8 +59,7 @@ IgbmNoiseStateEffector::setTimeConstant(double timeConstant)
     this->timeConstant = timeConstant;
 }
 
-double
-IgbmNoiseStateEffector::getStateValue() const
+double IgbmNoiseStateEffector::getStateValue() const
 {
     if (this->state == nullptr) {
         return this->stateInitSet ? this->stateInit : this->mean - 1.0;
@@ -71,8 +67,7 @@ IgbmNoiseStateEffector::getStateValue() const
     return this->state->stateView()(0, 0);
 }
 
-void
-IgbmNoiseStateEffector::setStateValue(double val)
+void IgbmNoiseStateEffector::setStateValue(double val)
 {
     // The state is the correction delta; the process is only well-posed from a positive
     // initial factor 1 + delta, so reject an initial condition that is zero or below.
@@ -91,8 +86,7 @@ IgbmNoiseStateEffector::setStateValue(double val)
     }
 }
 
-void
-IgbmNoiseStateEffector::registerStates(DynParamManager& states)
+void IgbmNoiseStateEffector::registerStates(DynParamManager& states)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -109,16 +103,12 @@ IgbmNoiseStateEffector::registerStates(DynParamManager& states)
     this->state->setState(state);
 }
 
-void
-IgbmNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]])
-{
-}
+void IgbmNoiseStateEffector::linkInStates(DynParamManager& states [[maybe_unused]]) {}
 
-void
-IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                           Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                           Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                           Eigen::MRPd sigma_BN [[maybe_unused]])
+void IgbmNoiseStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                                Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                                Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     if (this->state == nullptr) {
         this->bskLogger.bskError("IgbmNoiseStateEffector::computeDerivatives called before registerStates.");

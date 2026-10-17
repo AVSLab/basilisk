@@ -32,8 +32,7 @@ LambertSolver::~LambertSolver() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSolver::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void LambertSolver::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
@@ -46,8 +45,7 @@ LambertSolver::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSolver::UpdateState(uint64_t currentSimNanos)
+void LambertSolver::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -71,8 +69,7 @@ LambertSolver::UpdateState(uint64_t currentSimNanos)
     this module.
 
 */
-void
-LambertSolver::readMessages()
+void LambertSolver::readMessages()
 {
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
 
@@ -101,8 +98,7 @@ LambertSolver::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSolver::writeMessages(uint64_t currentSimNanos)
+void LambertSolver::writeMessages(uint64_t currentSimNanos)
 {
     // Make local copies of messages
     LambertSolutionMsgPayload lambertSolutionOutMsgBuffer;
@@ -154,8 +150,7 @@ LambertSolver::writeMessages(uint64_t currentSimNanos)
     The orbit frame is also determined.
 
 */
-void
-LambertSolver::problemGeometry()
+void LambertSolver::problemGeometry()
 {
     double c = (this->r2_N - this->r1_N).norm(); // chord length
     double r1 = this->r1_N.norm();
@@ -201,8 +196,7 @@ LambertSolver::problemGeometry()
 /*! This method finds the free variable x that satisfies the requested time of flight TOF.
 
 */
-void
-LambertSolver::findx()
+void LambertSolver::findx()
 {
     // find x that satisfies time-of-flight constraint using numerical root finder
     if (this->solverMethod == GOODING) {
@@ -254,8 +248,7 @@ LambertSolver::findx()
     @param x free variable of Lambert's problem that satisfies the given time of flight
     @return std::array<Eigen::Vector3d, 2>
 */
-std::array<Eigen::Vector3d, 2>
-LambertSolver::computeVelocities(double x)
+std::array<Eigen::Vector3d, 2> LambertSolver::computeVelocities(double x)
 {
     double c = (this->r2_N - this->r1_N).norm(); // chord length
     double r1 = this->r1_N.norm();
@@ -292,8 +285,7 @@ LambertSolver::computeVelocities(double x)
     @param T non-dimensional time-of-flight
     @return std::array<double, 2>
 */
-std::array<double, 2>
-LambertSolver::goodingInitialGuess(double lam, double T)
+std::array<double, 2> LambertSolver::goodingInitialGuess(double lam, double T)
 {
     // T for x=0 and zero revolution
     double T00 = acos(lam) + lam * sqrt(1.0 - pow(lam, 2));
@@ -401,8 +393,7 @@ LambertSolver::goodingInitialGuess(double lam, double T)
     @param T non-dimensional time-of-flight
     @return std::array<double, 2>
 */
-std::array<double, 2>
-LambertSolver::izzoInitialGuess(double lam, double T)
+std::array<double, 2> LambertSolver::izzoInitialGuess(double lam, double T)
 {
     // T for x=0 and zero revolution
     double T00 = acos(lam) + lam * sqrt(1.0 - pow(lam, 2));
@@ -454,8 +445,7 @@ LambertSolver::izzoInitialGuess(double lam, double T)
     @param lam lambda parameter that defines the problem geometry
     @return double
 */
-double
-LambertSolver::x2tof(double x, int N, double lam)
+double LambertSolver::x2tof(double x, int N, double lam)
 {
     // if x is close to 1.0 (parabolic case), time-of-flight is computed according to Battin
     double battin = 0.01;
@@ -503,8 +493,7 @@ LambertSolver::x2tof(double x, int N, double lam)
     @param lam lambda parameter that defines the problem geometry
     @return std::array<double, 3>
 */
-std::array<double, 3>
-LambertSolver::dTdx(double x, double T, double lam)
+std::array<double, 3> LambertSolver::dTdx(double x, double T, double lam)
 {
     double DT;  // dT/dx
     double D2T; // d2T/dx2
@@ -534,8 +523,7 @@ LambertSolver::dTdx(double x, double T, double lam)
     @param N number of revolutions
     @return std::array<double, 3>
 */
-std::array<double, 3>
-LambertSolver::householder(double T, double x0, int N)
+std::array<double, 3> LambertSolver::householder(double T, double x0, int N)
 {
     double tol = 1e-8;
     int iterMax = 8;
@@ -576,8 +564,7 @@ LambertSolver::householder(double T, double x0, int N)
     @param N number of revolutions
     @return std::array<double, 3>
 */
-std::array<double, 3>
-LambertSolver::halley(double T, double x0, int N)
+std::array<double, 3> LambertSolver::halley(double T, double x0, int N)
 {
     double tol = 1e-8;
     int iterMax = 8;
@@ -615,8 +602,7 @@ LambertSolver::halley(double T, double x0, int N)
     @param N number of revolutions
     @return double
 */
-double
-LambertSolver::getTmin(double T0M, int N)
+double LambertSolver::getTmin(double T0M, int N)
 {
     double tol = 1e-5;
     double iterMax = 12;
@@ -650,8 +636,7 @@ LambertSolver::getTmin(double T0M, int N)
     @param z argument of hypergeometric function
     @return double
 */
-double
-LambertSolver::hypergeometricF(double z)
+double LambertSolver::hypergeometricF(double z)
 {
     double tol = 1e-11;
     double Sj = 1.0;
@@ -676,8 +661,7 @@ LambertSolver::hypergeometricF(double z)
     return Sj;
 }
 
-void
-LambertSolver::setAlignmentThreshold(const double value)
+void LambertSolver::setAlignmentThreshold(const double value)
 {
     this->alignmentThreshold = value;
 }

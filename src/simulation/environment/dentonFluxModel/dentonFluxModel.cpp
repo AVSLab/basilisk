@@ -33,8 +33,7 @@ DentonFluxModel::~DentonFluxModel() = default;
     @param CurrentSimNanos current simulation time in nano-seconds
 
 */
-void
-DentonFluxModel::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void DentonFluxModel::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // Check that required input messages are connected
     if (!this->scStateInMsg.isLinked()) {
@@ -113,8 +112,7 @@ DentonFluxModel::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     @param eFile electron data file full path
     @param iFile ion data file full path
 */
-void
-DentonFluxModel::configureDentonFiles(const std::string& eFile, const std::string& iFile)
+void DentonFluxModel::configureDentonFiles(const std::string& eFile, const std::string& iFile)
 {
     this->eDataFullPath = eFile;
     this->iDataFullPath = iFile;
@@ -124,8 +122,7 @@ DentonFluxModel::configureDentonFiles(const std::string& eFile, const std::strin
     @param CurrentSimNanos current simulation time in nano-seconds
 
 */
-void
-DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
+void DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
 {
     // Make local copies of messages
     SCStatesMsgPayload scStateInMsgBuffer;            //!< local copy of spacecraft states
@@ -263,8 +260,7 @@ DentonFluxModel::UpdateState(uint64_t CurrentSimNanos)
     @param r_BE_N spacecraft position vector relative to the Earth
 
 */
-void
-DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
+void DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 {
     // r_SE_N and r_BE_N are projected onto the equatorial plane to compute angle,
     // thus only x and y components are used (z component is perpendicular to equator)
@@ -290,16 +286,15 @@ DentonFluxModel::calcLocalTime(double r_SE_N[3], double r_BE_N[3])
 /*! Bilinear interpolation method
 
 */
-double
-DentonFluxModel::bilinear(int x1,
-                          int x2,
-                          double y1,
-                          double y2,
-                          double y,
-                          double f11,
-                          double f12,
-                          double f13,
-                          double f14)
+double DentonFluxModel::bilinear(int x1,
+                                 int x2,
+                                 double y1,
+                                 double y2,
+                                 double y,
+                                 double f11,
+                                 double f12,
+                                 double f13,
+                                 double f14)
 {
     // Define variables
     double R1, R2, bilinear = 0.0;
@@ -315,9 +310,8 @@ DentonFluxModel::bilinear(int x1,
     return bilinear;
 }
 
-void
-DentonFluxModel::readDentonDataFile(const std::string& fullPath,
-                                    double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
+void DentonFluxModel::readDentonDataFile(const std::string& fullPath,
+                                         double data[MAX_NUM_KPS][MAX_NUM_ENERGIES][MAX_NUM_LOCAL_TIMES])
 {
     double temp = 0.0;
 

@@ -21,8 +21,7 @@
 #include <gtest/gtest.h>
 
 namespace {
-int
-callBskErrorFromNonVoid(BSKLogger& bskLogger)
+int callBskErrorFromNonVoid(BSKLogger& bskLogger)
 {
     bskLogger.bskError("fatal value %d", 7);
 }
@@ -31,8 +30,7 @@ callBskErrorFromNonVoid(BSKLogger& bskLogger)
 // MSVC /EHc assumes extern "C" calls do not throw, so catch through a C++ helper.
 __declspec(noinline)
 #endif
-void
-callCBskError(BSKLogger& bskLogger, const char* info)
+void callCBskError(BSKLogger& bskLogger, const char* info)
 {
     _bskError(&bskLogger, info);
 }

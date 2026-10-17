@@ -31,8 +31,7 @@ HillFrameRelativeControl::~HillFrameRelativeControl() = default;
 
 /*! This method is used to reset the module and checks that required input messages are connected.
  */
-void
-HillFrameRelativeControl::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void HillFrameRelativeControl::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     if (!this->chiefTransInMsg.isLinked()) {
         this->bskLogger.bskError("hillFrameRelativeControl.chiefTransInMsg was not linked.");
@@ -65,8 +64,7 @@ HillFrameRelativeControl::Reset(uint64_t currentSimNanos [[maybe_unused]])
 
 /*! This is the main method that gets called every time the module is updated.
  */
-void
-HillFrameRelativeControl::UpdateState(uint64_t currentSimNanos)
+void HillFrameRelativeControl::UpdateState(uint64_t currentSimNanos)
 {
     this->readMessages();
     this->computeForceCommand();
@@ -75,16 +73,14 @@ HillFrameRelativeControl::UpdateState(uint64_t currentSimNanos)
 
 /*! This method self initializes the C-wrapped output message.
  */
-void
-HillFrameRelativeControl::SelfInit()
+void HillFrameRelativeControl::SelfInit()
 {
     CmdForceInertialMsg_C_init(&this->forceOutMsgC);
 }
 
 /*! Reads the input messages
  */
-void
-HillFrameRelativeControl::readMessages()
+void HillFrameRelativeControl::readMessages()
 {
     this->chiefNavBuffer = this->chiefTransInMsg();
     this->deputyVehicleBuffer = this->deputyVehicleConfigInMsg();
@@ -97,8 +93,7 @@ HillFrameRelativeControl::readMessages()
 
 /*! Computes the inertial force command from Hill-frame relative-state tracking errors.
  */
-void
-HillFrameRelativeControl::computeForceCommand()
+void HillFrameRelativeControl::computeForceCommand()
 {
     v3SetZero(this->forceCmd_N); // Reset commanded inertial force vector before recomputing this cycle. [N]
 
@@ -177,8 +172,7 @@ HillFrameRelativeControl::computeForceCommand()
 
 /*! Writes the output message
  */
-void
-HillFrameRelativeControl::writeMessages(uint64_t currentSimNanos)
+void HillFrameRelativeControl::writeMessages(uint64_t currentSimNanos)
 {
     CmdForceInertialMsgPayload forceOutMsgBuffer = this->forceOutMsg.zeroMsgPayload;
     v3Copy(this->forceCmd_N, forceOutMsgBuffer.forceRequestInertial);
@@ -188,8 +182,7 @@ HillFrameRelativeControl::writeMessages(uint64_t currentSimNanos)
 
 /*! Sets the position feedback gain matrix.
  */
-void
-HillFrameRelativeControl::setK(const std::vector<double>& gain)
+void HillFrameRelativeControl::setK(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
         this->bskLogger.bskError("hillFrameRelativeControl: K must contain exactly 9 elements.");
@@ -213,8 +206,7 @@ HillFrameRelativeControl::setK(const std::vector<double>& gain)
 
 /*! Sets the velocity feedback gain matrix.
  */
-void
-HillFrameRelativeControl::setP(const std::vector<double>& gain)
+void HillFrameRelativeControl::setP(const std::vector<double>& gain)
 {
     if (gain.size() != 9) {
         this->bskLogger.bskError("hillFrameRelativeControl: P must contain exactly 9 elements.");
@@ -238,8 +230,7 @@ HillFrameRelativeControl::setP(const std::vector<double>& gain)
 
 /*! Sets the Hill-frame relative position reference.
  */
-void
-HillFrameRelativeControl::setReferencePosition(const std::vector<double>& rRef_H)
+void HillFrameRelativeControl::setReferencePosition(const std::vector<double>& rRef_H)
 {
     if (rRef_H.size() != 3) {
         this->bskLogger.bskError("hillFrameRelativeControl.setReferencePosition requires a length-3 vector.");
@@ -251,8 +242,7 @@ HillFrameRelativeControl::setReferencePosition(const std::vector<double>& rRef_H
 
 /*! Sets the Hill-frame relative velocity reference.
  */
-void
-HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& vRef_H)
+void HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& vRef_H)
 {
     if (vRef_H.size() != 3) {
         this->bskLogger.bskError("hillFrameRelativeControl.setReferenceVelocity requires a length-3 vector.");
@@ -262,8 +252,7 @@ HillFrameRelativeControl::setReferenceVelocity(const std::vector<double>& vRef_H
     v3Copy(vRefArray, this->vRef_H.data());
 }
 
-void
-HillFrameRelativeControl::setMu(double mu)
+void HillFrameRelativeControl::setMu(double mu)
 {
     if (mu <= 0.0) {
         this->bskLogger.bskError("hillFrameRelativeControl: mu must be positive.");
@@ -272,34 +261,29 @@ HillFrameRelativeControl::setMu(double mu)
     }
 }
 
-std::vector<double>
-HillFrameRelativeControl::getK() const
+std::vector<double> HillFrameRelativeControl::getK() const
 {
     return { this->K[0][0], this->K[0][1], this->K[0][2], this->K[1][0], this->K[1][1],
              this->K[1][2], this->K[2][0], this->K[2][1], this->K[2][2] };
 }
 
-std::vector<double>
-HillFrameRelativeControl::getP() const
+std::vector<double> HillFrameRelativeControl::getP() const
 {
     return { this->P[0][0], this->P[0][1], this->P[0][2], this->P[1][0], this->P[1][1],
              this->P[1][2], this->P[2][0], this->P[2][1], this->P[2][2] };
 }
 
-std::vector<double>
-HillFrameRelativeControl::getReferencePosition() const
+std::vector<double> HillFrameRelativeControl::getReferencePosition() const
 {
     return { this->rRef_H[0], this->rRef_H[1], this->rRef_H[2] };
 }
 
-std::vector<double>
-HillFrameRelativeControl::getReferenceVelocity() const
+std::vector<double> HillFrameRelativeControl::getReferenceVelocity() const
 {
     return { this->vRef_H[0], this->vRef_H[1], this->vRef_H[2] };
 }
 
-double
-HillFrameRelativeControl::getMu() const
+double HillFrameRelativeControl::getMu() const
 {
     return this->mu;
 }

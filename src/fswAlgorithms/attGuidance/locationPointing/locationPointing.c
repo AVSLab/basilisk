@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_locationPointing(locationPointingConfig* configData, int64_t moduleID)
+void SelfInit_locationPointing(locationPointingConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
@@ -47,8 +46,7 @@ SelfInit_locationPointing(locationPointingConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
 
@@ -142,8 +140,7 @@ Reset_locationPointing(locationPointingConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_locationPointing(locationPointingConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /* Local copies*/
     NavAttMsgPayload scAttInMsgBuffer;             //!< local copy of input message buffer

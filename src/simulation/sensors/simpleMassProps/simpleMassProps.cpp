@@ -35,8 +35,7 @@ SimpleMassProps::~SimpleMassProps()
 /*! This method is used to reset the module.
 
  */
-void
-SimpleMassProps::Reset(uint64_t CurrentSimNanos)
+void SimpleMassProps::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
     if (!this->scMassPropsInMsg.isLinked()) {
@@ -54,8 +53,7 @@ SimpleMassProps::Reset(uint64_t CurrentSimNanos)
 
 /*! This method reads the spacecraft mass properties state input message
  */
-void
-SimpleMassProps::readInputMessages()
+void SimpleMassProps::readInputMessages()
 {
     // read the incoming power message and transfer it to the data buffer
     this->scMassPropsMsgBuffer = this->scMassPropsInMsg();
@@ -67,8 +65,7 @@ SimpleMassProps::readInputMessages()
 
  @param CurrentClock The clock time associated with the model call
  */
-void
-SimpleMassProps::writeOutputMessages(uint64_t CurrentClock)
+void SimpleMassProps::writeOutputMessages(uint64_t CurrentClock)
 {
     // write the output message
     this->vehicleConfigOutMsg.write(&this->vehicleConfigMsgBuffer, this->moduleID, CurrentClock);
@@ -78,8 +75,7 @@ SimpleMassProps::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method transfers the spacecraft mass propertiies information to a FSW format
  */
-void
-SimpleMassProps::computeMassProperties()
+void SimpleMassProps::computeMassProperties()
 {
     // copy the mass value
     this->vehicleConfigMsgBuffer.massSC = this->scMassPropsMsgBuffer.massSC;
@@ -101,8 +97,7 @@ SimpleMassProps::computeMassProperties()
    transfers its contents and writes to an output FSW message.
 
  */
-void
-SimpleMassProps::UpdateState(uint64_t CurrentSimNanos)
+void SimpleMassProps::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeMassProperties();

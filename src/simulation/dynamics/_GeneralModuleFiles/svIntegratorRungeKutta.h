@@ -166,8 +166,7 @@ svIntegratorRungeKutta<numberStages>::svIntegratorRungeKutta(DynamicObject* dynI
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, double timeStep)
+void svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, double timeStep)
 {
     this->gatherStates(this->baseState);
 
@@ -228,8 +227,7 @@ svIntegratorRungeKutta<numberStages>::integrateImpl(double currentTime, double t
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::bindFlatStorage()
+void svIntegratorRungeKutta<numberStages>::bindFlatStorage()
 {
     if (this->flatBinding.isBound() && this->flatBinding.objects().size() == this->dynamics().size()) {
         this->validateFlatBinding();
@@ -253,15 +251,13 @@ svIntegratorRungeKutta<numberStages>::bindFlatStorage()
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::validateFlatBinding() const
+void svIntegratorRungeKutta<numberStages>::validateFlatBinding() const
 {
     this->flatBinding.validate(this->dynamics());
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::resetFlatStorage() noexcept
+void svIntegratorRungeKutta<numberStages>::resetFlatStorage() noexcept
 {
     this->flatBinding.reset();
     Eigen::VectorXd().swap(this->baseState);
@@ -271,8 +267,7 @@ svIntegratorRungeKutta<numberStages>::resetFlatStorage() noexcept
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::gatherStates(Eigen::VectorXd& output) const
+void svIntegratorRungeKutta<numberStages>::gatherStates(Eigen::VectorXd& output) const
 {
     if (output.size() != this->baseState.size()) {
         throw std::invalid_argument("Flat Runge-Kutta state buffer has an invalid size.");
@@ -281,8 +276,7 @@ svIntegratorRungeKutta<numberStages>::gatherStates(Eigen::VectorXd& output) cons
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::scatterStates(const Eigen::VectorXd& input) const
+void svIntegratorRungeKutta<numberStages>::scatterStates(const Eigen::VectorXd& input) const
 {
     if (input.size() != this->baseState.size()) {
         throw std::invalid_argument("Flat Runge-Kutta state buffer has an invalid size.");
@@ -291,19 +285,17 @@ svIntegratorRungeKutta<numberStages>::scatterStates(const Eigen::VectorXd& input
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::gatherDerivatives(size_t stageIndex)
+void svIntegratorRungeKutta<numberStages>::gatherDerivatives(size_t stageIndex)
 {
     auto stage = this->kStorage.col(static_cast<Eigen::Index>(stageIndex));
     this->flatBinding.gatherDerivatives(stage.data(), stage.size());
 }
 
 template<size_t numberStages>
-void
-svIntegratorRungeKutta<numberStages>::buildFlatCandidate(double timeStep,
-                                                         const std::array<double, numberStages>& stageCoefficients,
-                                                         size_t maxStage,
-                                                         Eigen::Ref<Eigen::VectorXd> output)
+void svIntegratorRungeKutta<numberStages>::buildFlatCandidate(double timeStep,
+                                                              const std::array<double, numberStages>& stageCoefficients,
+                                                              size_t maxStage,
+                                                              Eigen::Ref<Eigen::VectorXd> output)
 {
     if (output.size() != this->baseState.size()) {
         throw std::invalid_argument("Flat Runge-Kutta candidate buffer has an invalid size.");

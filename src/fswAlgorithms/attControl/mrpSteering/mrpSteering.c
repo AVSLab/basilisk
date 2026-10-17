@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
 */
-void
-SelfInit_mrpSteering(mrpSteeringConfig* configData, int64_t moduleID)
+void SelfInit_mrpSteering(mrpSteeringConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     RateCmdMsg_C_init(&configData->rateCmdOutMsg);
@@ -45,8 +44,7 @@ SelfInit_mrpSteering(mrpSteeringConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Reset_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -65,8 +63,7 @@ Reset_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttGuidMsgPayload guidCmd; /* Guidance Message */
     RateCmdMsgPayload outMsg;  /* copy of output message */
@@ -95,8 +92,7 @@ Update_mrpSteering(mrpSteeringConfig* configData, uint64_t callTime, int64_t mod
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void
-MRPSteeringLaw(mrpSteeringConfig* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
+void MRPSteeringLaw(mrpSteeringConfig* configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
 {
     double sigma_i;    /* ith component of sigma_B/R */
     double B[3][3];    /* B-matrix of MRP differential kinematic equations */

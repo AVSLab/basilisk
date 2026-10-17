@@ -32,8 +32,7 @@ LambertSurfaceRelativeVelocity::~LambertSurfaceRelativeVelocity() = default;
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos [[maybe_unused]])
+void LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->lambertProblemInMsg.isLinked()) {
@@ -49,8 +48,7 @@ LambertSurfaceRelativeVelocity::Reset(uint64_t currentSimNanos [[maybe_unused]])
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
+void LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
 {
     // read messages
     this->readMessages();
@@ -78,8 +76,7 @@ LambertSurfaceRelativeVelocity::UpdateState(uint64_t currentSimNanos)
 /*! This method reads the input messages each call of updateState.
 
 */
-void
-LambertSurfaceRelativeVelocity::readMessages()
+void LambertSurfaceRelativeVelocity::readMessages()
 {
     LambertProblemMsgPayload lambertProblemInMsgBuffer = this->lambertProblemInMsg();
     EphemerisMsgPayload ephemerisInMsgBuffer = this->ephemerisInMsg();
@@ -96,8 +93,7 @@ LambertSurfaceRelativeVelocity::readMessages()
     @param currentSimNanos current simulation time in nano-seconds
 
 */
-void
-LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos)
+void LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos)
 {
     DesiredVelocityMsgPayload desiredVelocityOutMsgBuffer;
     desiredVelocityOutMsgBuffer = this->desiredVelocityOutMsg.zeroMsgPayload;
@@ -109,14 +105,12 @@ LambertSurfaceRelativeVelocity::writeMessages(uint64_t currentSimNanos)
     this->desiredVelocityOutMsg.write(&desiredVelocityOutMsgBuffer, this->moduleID, currentSimNanos);
 }
 
-void
-LambertSurfaceRelativeVelocity::setVRelativeDesired_S(const Eigen::Vector3d value)
+void LambertSurfaceRelativeVelocity::setVRelativeDesired_S(const Eigen::Vector3d value)
 {
     this->vRelativeDesired_S = value;
 }
 
-void
-LambertSurfaceRelativeVelocity::setTime(const double value)
+void LambertSurfaceRelativeVelocity::setTime(const double value)
 {
     this->time = value;
 }

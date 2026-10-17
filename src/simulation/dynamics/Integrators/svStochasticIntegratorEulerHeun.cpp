@@ -34,8 +34,7 @@ svStochasticIntegratorEulerHeun::svStochasticIntegratorEulerHeun(DynamicObject* 
 
 svStochasticIntegratorEulerHeun::~svStochasticIntegratorEulerHeun() noexcept = default;
 
-void
-svStochasticIntegratorEulerHeun::bindFlatStorage()
+void svStochasticIntegratorEulerHeun::bindFlatStorage()
 {
     auto storage = std::make_unique<FlatStorage>();
     storage->firstDrift.resize(this->stochasticPackedDerivatives().size());
@@ -43,8 +42,7 @@ svStochasticIntegratorEulerHeun::bindFlatStorage()
     this->flatStorage = std::move(storage);
 }
 
-void
-svStochasticIntegratorEulerHeun::integrateImpl(double currentTime, double timeStep)
+void svStochasticIntegratorEulerHeun::integrateImpl(double currentTime, double timeStep)
 {
     if (timeStep == 0.0) {
         return;

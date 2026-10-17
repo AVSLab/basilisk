@@ -90,8 +90,7 @@ struct ProcessFixture
     SysProcess process;
 };
 
-void
-initialize(SimModel& simulation)
+void initialize(SimModel& simulation)
 {
     simulation.assignRemainingProcs();
     simulation.ResetSimulation();

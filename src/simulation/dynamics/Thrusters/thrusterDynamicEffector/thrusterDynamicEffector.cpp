@@ -54,8 +54,7 @@ ThrusterDynamicEffector::~ThrusterDynamicEffector() = default;
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
     //! Clear out any currently firing thrusters and re-init cmd array
@@ -71,8 +70,7 @@ ThrusterDynamicEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
+void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 {
     size_t idx = 0;
 
@@ -96,8 +94,7 @@ ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
 }
 
 /*! @brief Validate configuration dimensions before initialization or command processing. */
-void
-ThrusterDynamicEffector::validateConfiguration()
+void ThrusterDynamicEffector::validateConfiguration()
 {
     if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
         this->bskLogger.bskError(
@@ -108,8 +105,7 @@ ThrusterDynamicEffector::validateConfiguration()
 /*! @brief Read the incoming command message and populate the thruster command vector.
  * @return Whether a new command is available, or zero commands were supplied for an unlinked input.
  */
-bool
-ThrusterDynamicEffector::ReadInputs()
+bool ThrusterDynamicEffector::ReadInputs()
 {
     this->validateConfiguration();
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0); // [s]
@@ -149,8 +145,7 @@ ThrusterDynamicEffector::ReadInputs()
 
  @param currentTime The current simulation time converted to a double
  */
-void
-ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
+void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
     if (this->NewThrustCmds.size() > this->thrusterData.size()) {
         this->bskLogger.bskError("ThrusterDynamicEffector: NewThrustCmds must not exceed the thruster count.");
@@ -186,8 +181,7 @@ ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 * the hub.
 
  */
-void
-ThrusterDynamicEffector::UpdateThrusterProperties()
+void ThrusterDynamicEffector::UpdateThrusterProperties()
 {
     // Save hub variables
     Eigen::MRPd sigma_BN;
@@ -243,8 +237,7 @@ ThrusterDynamicEffector::UpdateThrusterProperties()
 
  @param states The states to link
  */
-void
-ThrusterDynamicEffector::linkInStates(DynParamManager& states)
+void ThrusterDynamicEffector::linkInStates(DynParamManager& states)
 {
     this->validateConfiguration();
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0); // [s]
@@ -266,8 +259,7 @@ ThrusterDynamicEffector::linkInStates(DynParamManager& states)
 /*! This method is used to link properties to the thrusters
  @param properties The parameter manager to collect from
  */
-void
-ThrusterDynamicEffector::linkInProperties(DynParamManager& properties)
+void ThrusterDynamicEffector::linkInProperties(DynParamManager& properties)
 {
     this->validateConfiguration();
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0); // [s]
@@ -281,8 +273,7 @@ ThrusterDynamicEffector::linkInProperties(DynParamManager& properties)
  @param integTime Integration time
  @param timeStep Current integration time step used
  */
-void
-ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
+void ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep [[maybe_unused]])
 {
     // Save omega_BN_B
     Eigen::Vector3d omegaLocal_BN_B;
@@ -389,8 +380,7 @@ ThrusterDynamicEffector::computeForceTorque(double integTime, double timeStep [[
 
  @param newThruster thruster sim config(s)
  */
-void
-ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
 {
     this->thrusterData.push_back(newThruster);
 
@@ -414,16 +404,14 @@ ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
  @param newThruster thruster sim config(s)
  @param bodyStateMsg body states to which thruster(s) are attached
  */
-void
-ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
-                                     Message<SCStatesMsgPayload>* bodyStateMsg)
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
+                                          Message<SCStatesMsgPayload>* bodyStateMsg)
 {
     this->addThruster(newThruster, bodyStateMsg->addSubscriber());
 }
 
-void
-ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
-                                     ReadFunctor<SCStatesMsgPayload> bodyStateReader)
+void ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
+                                          ReadFunctor<SCStatesMsgPayload> bodyStateReader)
 {
     this->thrusterData.push_back(newThruster);
 
@@ -449,8 +437,7 @@ ThrusterDynamicEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
  *
  * @param[in,out] CurrentThruster Thruster configuration whose blow-down properties are updated.
  */
-void
-ThrusterDynamicEffector::computeBlowDownDecay(const std::shared_ptr<THRSimConfig>& CurrentThruster)
+void ThrusterDynamicEffector::computeBlowDownDecay(const std::shared_ptr<THRSimConfig>& CurrentThruster)
 {
     THROperation* ops = &(CurrentThruster->ThrustOps);
 
@@ -483,8 +470,7 @@ ThrusterDynamicEffector::computeBlowDownDecay(const std::shared_ptr<THRSimConfig
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-ThrusterDynamicEffector::computeStateContribution(double integTime [[maybe_unused]])
+void ThrusterDynamicEffector::computeStateContribution(double integTime [[maybe_unused]])
 {
 
     THROperation* ops;
@@ -513,8 +499,8 @@ ThrusterDynamicEffector::computeStateContribution(double integTime [[maybe_unuse
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void
-ThrusterDynamicEffector::ComputeThrusterFire(const std::shared_ptr<THRSimConfig>& CurrentThruster, double currentTime)
+void ThrusterDynamicEffector::ComputeThrusterFire(const std::shared_ptr<THRSimConfig>& CurrentThruster,
+                                                  double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
     THROperation* ops = &(CurrentThruster->ThrustOps);
@@ -564,8 +550,8 @@ ThrusterDynamicEffector::ComputeThrusterFire(const std::shared_ptr<THRSimConfig>
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param currentTime The current simulation clock time converted to a double
  */
-void
-ThrusterDynamicEffector::ComputeThrusterShut(const std::shared_ptr<THRSimConfig>& CurrentThruster, double currentTime)
+void ThrusterDynamicEffector::ComputeThrusterShut(const std::shared_ptr<THRSimConfig>& CurrentThruster,
+                                                  double currentTime)
 {
     std::vector<THRTimePair>::iterator it;
     THROperation* ops = &(CurrentThruster->ThrustOps);
@@ -610,9 +596,8 @@ ThrusterDynamicEffector::ComputeThrusterShut(const std::shared_ptr<THRSimConfig>
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double
-ThrusterDynamicEffector::thrFactorToTime(const std::shared_ptr<THRSimConfig>& thrData,
-                                         std::vector<THRTimePair>* thrRamp)
+double ThrusterDynamicEffector::thrFactorToTime(const std::shared_ptr<THRSimConfig>& thrData,
+                                                std::vector<THRTimePair>* thrRamp)
 {
     std::vector<THRTimePair>::iterator it;
     // Grab the last element in the ramp and determine if it goes up or down
@@ -654,8 +639,7 @@ ThrusterDynamicEffector::thrFactorToTime(const std::shared_ptr<THRSimConfig>& th
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     // Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if (this->ReadInputs()) {

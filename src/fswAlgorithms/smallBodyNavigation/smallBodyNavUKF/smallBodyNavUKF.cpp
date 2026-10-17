@@ -51,8 +51,7 @@ SmallBodyNavUKF::SmallBodyNavUKF()
 SmallBodyNavUKF::~SmallBodyNavUKF() {}
 
 /*! Initialize C-wrapped output messages */
-void
-SmallBodyNavUKF::SelfInit()
+void SmallBodyNavUKF::SelfInit()
 {
     SmallBodyNavUKFMsg_C_init(&this->smallBodyNavUKFOutMsgC);
 }
@@ -60,8 +59,7 @@ SmallBodyNavUKF::SelfInit()
 /*! This method is used to reset the module, check that required input messages are connect and compute weigths.
 
 */
-void
-SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* check that required input messages are connected */
     if (!this->navTransInMsg.isLinked()) {
@@ -86,8 +84,7 @@ SmallBodyNavUKF::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! This method is used to read the input messages.
 
 */
-void
-SmallBodyNavUKF::readMessages()
+void SmallBodyNavUKF::readMessages()
 {
     /* Read in the input messages */
     this->navTransInMsgBuffer = this->navTransInMsg();
@@ -98,8 +95,7 @@ SmallBodyNavUKF::readMessages()
     @param CurrentSimNanos
 
 */
-void
-SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos)
 {
     /* Read angular velocity of the small body fixed frame */
     this->omega_AN_A = cArray2EigenVector3d(this->asteroidEphemerisInMsgBuffer.omega_BN_B);
@@ -168,8 +164,7 @@ SmallBodyNavUKF::processUT(uint64_t CurrentSimNanos)
 /*! This method does the UT to the a-priori state to compute the a-priori measurements
 
 */
-void
-SmallBodyNavUKF::measurementUT()
+void SmallBodyNavUKF::measurementUT()
 {
     /* Compute square root matrix of covariance */
     StateMatrix Psqrt_k1_ = P_k1_.llt().matrixL();
@@ -226,8 +221,7 @@ SmallBodyNavUKF::measurementUT()
 /*! This method collects the measurements and updates the estimation
 
 */
-void
-SmallBodyNavUKF::kalmanUpdate()
+void SmallBodyNavUKF::kalmanUpdate()
 {
     /* Read attitude MRP of the small body fixed frame w.r.t. inertial */
     Eigen::Vector3d sigma_AN;
@@ -255,8 +249,7 @@ SmallBodyNavUKF::kalmanUpdate()
 /*! This method writes the output messages
 
 */
-void
-SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos)
 {
     /* Create output msg buffers */
     SmallBodyNavUKFMsgPayload smallBodyNavUKFOutMsgBuffer;
@@ -279,8 +272,7 @@ SmallBodyNavUKF::writeMessages(uint64_t CurrentSimNanos)
 /*! This is the main method that gets called every time the module is updated.
 
 */
-void
-SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
+void SmallBodyNavUKF::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readMessages();
     this->processUT(CurrentSimNanos);

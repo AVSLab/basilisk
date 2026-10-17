@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, int64_t moduleID)
+void SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     PrescribedRotationMsg_C_init(&configData->prescribedRotationOutMsg);
@@ -46,8 +45,7 @@ SelfInit_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, int64_t moduleID
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
     // Check if the required input messages are linked */
@@ -91,8 +89,7 @@ are updated in this routine as a function of time and written to the prescribedM
  @param callTime [ns] Time the method is called
  @param moduleID The module identifier
 */
-void
-Update_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_prescribedRot2DOF(PrescribedRot2DOFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     // Create buffer messages
     HingedRigidBodyMsgPayload spinningBodyRef1In;

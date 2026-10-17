@@ -41,8 +41,7 @@ MotorThermal::~MotorThermal()
 /*! This method is used to reset the module.
 
  */
-void
-MotorThermal::Reset(uint64_t CurrentSimNanos)
+void MotorThermal::Reset(uint64_t CurrentSimNanos)
 {
     // check if input message is linked
     if (!this->rwStateInMsg.isLinked()) {
@@ -84,8 +83,7 @@ MotorThermal::Reset(uint64_t CurrentSimNanos)
 
 /*! This method reads the reaction wheel state input message
  */
-void
-MotorThermal::readInputMessages()
+void MotorThermal::readInputMessages()
 {
     // read the incoming power message
     this->rwStateBuffer = this->rwStateInMsg();
@@ -97,8 +95,7 @@ MotorThermal::readInputMessages()
 
  @param CurrentClock The clock time associated with the model call
  */
-void
-MotorThermal::writeOutputMessages(uint64_t CurrentClock)
+void MotorThermal::writeOutputMessages(uint64_t CurrentClock)
 {
     this->temperatureOutMsg.write(&this->temperatureBuffer, this->moduleID, CurrentClock);
 
@@ -107,8 +104,7 @@ MotorThermal::writeOutputMessages(uint64_t CurrentClock)
 
 /*! This method computes the reaction wheel temperature
  */
-void
-MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
+void MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
 {
     double wheelPower;
     double frictionHeat;
@@ -142,8 +138,7 @@ MotorThermal::computeTemperature(uint64_t CurrentSimNanos)
 
 /*! This method is used to update the module.
  */
-void
-MotorThermal::UpdateState(uint64_t CurrentSimNanos)
+void MotorThermal::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeTemperature(CurrentSimNanos);

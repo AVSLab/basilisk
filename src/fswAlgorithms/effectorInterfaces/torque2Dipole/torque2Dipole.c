@@ -27,8 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_torque2Dipole(torque2DipoleConfig* configData, int64_t moduleID)
+void SelfInit_torque2Dipole(torque2DipoleConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     /*
@@ -45,8 +44,7 @@ SelfInit_torque2Dipole(torque2DipoleConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Check if the required input messages are connected.
@@ -70,8 +68,7 @@ Reset_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_torque2Dipole(torque2DipoleConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*
      * Initialize local variables.

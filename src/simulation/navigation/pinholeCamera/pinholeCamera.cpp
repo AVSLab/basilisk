@@ -44,8 +44,7 @@ PinholeCamera::PinholeCamera()
 PinholeCamera::~PinholeCamera() = default;
 
 /*! Resets the module.*/
-void
-PinholeCamera::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void PinholeCamera::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     /* Get number of landmarks */
     this->n = int(this->r_LP_P.size());
@@ -67,8 +66,7 @@ PinholeCamera::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  * @param pos: landmark position in planet-rotating frame
  * @param normal: landmark surface normal in planet-rotating frame
  */
-void
-PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal)
+void PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal)
 {
     /* Add the landmark position and surface normal */
     this->r_LP_P.push_back(pos);
@@ -84,8 +82,7 @@ PinholeCamera::addLandmark(Eigen::Vector3d& pos, Eigen::Vector3d& normal)
 
 /*! Loop through landmarks
  */
-void
-PinholeCamera::loopLandmarks()
+void PinholeCamera::loopLandmarks()
 {
     /* Define ith landmark position, surface normal, camera pixel
      and field of view/lighting flags */
@@ -119,8 +116,7 @@ PinholeCamera::loopLandmarks()
 /*! Check lighting condition of a landmark
  * @param nLmk: landmark surface normal in planet-rotating frame
  */
-bool
-PinholeCamera::checkLighting(Eigen::Vector3d nLmk)
+bool PinholeCamera::checkLighting(Eigen::Vector3d nLmk)
 {
     /* Compute Sun's incident angle */
     double angleSun;
@@ -142,8 +138,7 @@ PinholeCamera::checkLighting(Eigen::Vector3d nLmk)
  * @param rLmk: landmark position in planet-rotating frame
  * @param nLmk: landmark surface normal in planet-rotating frame
  */
-bool
-PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::Vector3d nLmk)
+bool PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::Vector3d nLmk)
 {
     /* Define relative position from landmark to spacecraft and its unit-vector */
     Eigen::Vector3d dr, eLmk_P;
@@ -175,8 +170,7 @@ PinholeCamera::checkFOV(Eigen::Vector2i pLmk, Eigen::Vector3d rLmk, Eigen::Vecto
 /*! Compute pixel from 3D coordinates
  * @param rLmk: landmark position in planet-rotating frame
  */
-Eigen::Vector2i
-PinholeCamera::computePixel(Eigen::Vector3d rLmk)
+Eigen::Vector2i PinholeCamera::computePixel(Eigen::Vector3d rLmk)
 {
     /* Compute relative distance between landmark and spacecraft
      in camera frame */
@@ -210,8 +204,7 @@ PinholeCamera::computePixel(Eigen::Vector3d rLmk)
 
 /*! Process input messages to module variables
  */
-void
-PinholeCamera::processInputs()
+void PinholeCamera::processInputs()
 {
     /* Extract planet dcm */
     double dcm_PN_array[3][3];
@@ -238,8 +231,7 @@ PinholeCamera::processInputs()
 
 /*! Read module input messages
  */
-void
-PinholeCamera::readInputMessages()
+void PinholeCamera::readInputMessages()
 {
     /* Read planet ephemeris and spacecraft state messages */
     this->ephemerisPlanet = this->ephemerisInMsg();
@@ -248,8 +240,7 @@ PinholeCamera::readInputMessages()
 
 /*! Write module output messages
  */
-void
-PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
+void PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
 {
     /* Loop through landmarks */
     for (int i = 0; i < this->n; i++) {
@@ -269,8 +260,7 @@ PinholeCamera::writeOutputMessages(uint64_t CurrentClock)
  Update module
  @param CurrentSimNanos
  */
-void
-PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
+void PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
 {
     /* Read messages */
     this->readInputMessages();
@@ -292,11 +282,10 @@ PinholeCamera::UpdateState(uint64_t CurrentSimNanos)
  * @param eBatch_SP_P: batch unit-vectors from planet to Sun in planet-rotating frame
  * @param show_progress: boolean variable that prints batch processing status when true
  */
-void
-PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
-                            Eigen::MatrixXd mrpBatch_BP,
-                            Eigen::MatrixXd eBatch_SP_P,
-                            bool show_progress)
+void PinholeCamera::processBatch(Eigen::MatrixXd rBatch_BP_P,
+                                 Eigen::MatrixXd mrpBatch_BP,
+                                 Eigen::MatrixXd eBatch_SP_P,
+                                 bool show_progress)
 {
     /* Obtain number of samples in the batch to be processed */
     int nBatch;

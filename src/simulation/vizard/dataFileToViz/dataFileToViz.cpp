@@ -52,8 +52,7 @@ DataFileToViz::~DataFileToViz()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void
-DataFileToViz::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void DataFileToViz::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskError("DataFileToViz: dataFileName must be an non-empty string.");
@@ -137,8 +136,7 @@ DataFileToViz::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*!
  set the number of satellites being read in
  */
-void
-DataFileToViz::setNumOfSatellites(int numSat)
+void DataFileToViz::setNumOfSatellites(int numSat)
 {
     for (int i = 0; i < numSat; i++) {
         /* create output message */
@@ -149,8 +147,7 @@ DataFileToViz::setNumOfSatellites(int numSat)
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void
-DataFileToViz::appendThrPos(double pos_B[3])
+void DataFileToViz::appendThrPos(double pos_B[3])
 {
     this->thrPosList.push_back(cArray2EigenVector3d(pos_B));
 }
@@ -158,8 +155,7 @@ DataFileToViz::appendThrPos(double pos_B[3])
 /*!
  Add a thruster 3d unit direction vector to the list.  The input vectors gets normalized before being added to the list.
  */
-void
-DataFileToViz::appendThrDir(double dir_B[3])
+void DataFileToViz::appendThrDir(double dir_B[3])
 {
     v3Normalize(dir_B, dir_B);
     this->thrDirList.push_back(cArray2EigenVector3d(dir_B));
@@ -168,8 +164,7 @@ DataFileToViz::appendThrDir(double dir_B[3])
 /*!
  Add a thruster maximum force value to the list of thrusters.
  */
-void
-DataFileToViz::appendThrForceMax(double forceMax)
+void DataFileToViz::appendThrForceMax(double forceMax)
 {
     this->thrForceMaxList.push_back(forceMax);
 }
@@ -177,8 +172,7 @@ DataFileToViz::appendThrForceMax(double forceMax)
 /*!
  Add a thruster cluster map for each spacecraft
 */
-void
-DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster)
+void DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::vector<int> numThrPerCluster)
 {
     this->thrMsgDataSC.push_back(thrMsgData);
 
@@ -203,8 +197,7 @@ DataFileToViz::appendThrClusterMap(std::vector<ThrClusterMap> thrMsgData, std::v
 /*!
  Add a RW output msg list for each spacecraft
 */
-void
-DataFileToViz::appendNumOfRWs(int numRW)
+void DataFileToViz::appendNumOfRWs(int numRW)
 {
     std::vector<Message<RWConfigLogMsgPayload>*> vecMsgs;
     for (int i = 0; i < numRW; i++) {
@@ -221,8 +214,7 @@ DataFileToViz::appendNumOfRWs(int numRW)
 /*!
  Add a RW maximum motor torque value to the list
  */
-void
-DataFileToViz::appendUMax(double uMax)
+void DataFileToViz::appendUMax(double uMax)
 {
     this->rwUMaxList.push_back(uMax);
 }
@@ -230,8 +222,7 @@ DataFileToViz::appendUMax(double uMax)
 /*!
  Add a RW wheel rate value to the list
  */
-void
-DataFileToViz::appendOmegaMax(double OmegaMax)
+void DataFileToViz::appendOmegaMax(double OmegaMax)
 {
     this->rwOmegaMaxList.push_back(OmegaMax);
 }
@@ -239,8 +230,7 @@ DataFileToViz::appendOmegaMax(double OmegaMax)
 /*!
  Add a thruster 3d position vector to the list of thruster locations
  */
-void
-DataFileToViz::appendRwPos(double pos_B[3])
+void DataFileToViz::appendRwPos(double pos_B[3])
 {
     this->rwPosList.push_back(cArray2EigenVector3d(pos_B));
 }
@@ -249,8 +239,7 @@ DataFileToViz::appendRwPos(double pos_B[3])
  Add a RW spin axis unit direction vector to the list.  The input vectors gets normalized before being added to the
  list.
  */
-void
-DataFileToViz::appendRwDir(double dir_B[3])
+void DataFileToViz::appendRwDir(double dir_B[3])
 {
     v3Normalize(dir_B, dir_B);
     this->rwDirList.push_back(cArray2EigenVector3d(dir_B));
@@ -259,8 +248,7 @@ DataFileToViz::appendRwDir(double dir_B[3])
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void
-DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
+void DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle.is_open()) {
@@ -385,8 +373,7 @@ DataFileToViz::UpdateState(uint64_t CurrentSimNanos)
 
 /*! pull a 3-d set of double values from the input stream
  */
-void
-DataFileToViz::pullVector(std::istringstream* iss, double vec[3])
+void DataFileToViz::pullVector(std::istringstream* iss, double vec[3])
 {
     double x, y, z;
     x = pullScalar(iss);
@@ -397,8 +384,7 @@ DataFileToViz::pullVector(std::istringstream* iss, double vec[3])
 
 /*! pull a 4-d set of double values from the input stream
  */
-void
-DataFileToViz::pullVector4(std::istringstream* iss, double* vec)
+void DataFileToViz::pullVector4(std::istringstream* iss, double* vec)
 {
     double q0, q1, q2, q3;
     q0 = pullScalar(iss);
@@ -410,8 +396,7 @@ DataFileToViz::pullVector4(std::istringstream* iss, double* vec)
 
 /*! pull a double from the input stream
  */
-double
-DataFileToViz::pullScalar(std::istringstream* iss)
+double DataFileToViz::pullScalar(std::istringstream* iss)
 {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;

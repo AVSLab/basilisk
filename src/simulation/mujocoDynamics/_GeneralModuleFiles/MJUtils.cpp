@@ -22,14 +22,12 @@
 using namespace std::string_literals;
 
 namespace MJBasilisk::detail {
-void
-logMujocoError(const char* err)
+void logMujocoError(const char* err)
 {
     BSKLogger{}.bskError("MuJoCo internal error: %s", err);
 }
 
-void
-logMujocoWarning(const char* err)
+void logMujocoWarning(const char* err)
 {
     BSKLogger{}.bskLog(BSK_WARNING, "%s", ("MuJoCo internal warning: "s + err).c_str());
 }

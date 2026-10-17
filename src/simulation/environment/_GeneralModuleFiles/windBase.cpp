@@ -43,8 +43,7 @@ WindBase::WindBase()
 
 WindBase::~WindBase() = default;
 
-void
-WindBase::Reset(uint64_t CurrentSimNanos)
+void WindBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousUpdateNanos = CurrentSimNanos;
     this->scStateExtrapolation.reset();
@@ -76,8 +75,7 @@ WindBase::Reset(uint64_t CurrentSimNanos)
     customReset(CurrentSimNanos);
 }
 
-void
-WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     // Read the planet message to get the current SPICE data
     if (this->planetPosInMsg.isWritten()) {
@@ -89,25 +87,19 @@ WindBase::customReset(uint64_t CurrentClock [[maybe_unused]])
     }
 }
 
-void
-WindBase::customSetEpochFromVariable()
-{
-}
+void WindBase::customSetEpochFromVariable() {}
 
-void
-WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
+void WindBase::setExtrapolateScStateToStepMidpoint(bool enable)
 {
     this->scStateExtrapolation.setEnabled(enable);
 }
 
-bool
-WindBase::getExtrapolateScStateToStepMidpoint() const
+bool WindBase::getExtrapolateScStateToStepMidpoint() const
 {
     return this->scStateExtrapolation.isEnabled();
 }
 
-bool
-WindBase::readMessages(uint64_t CurrentSimNanos)
+bool WindBase::readMessages(uint64_t CurrentSimNanos)
 {
     this->scStates.clear();
     bool scRead =
@@ -133,26 +125,23 @@ WindBase::readMessages(uint64_t CurrentSimNanos)
     return scRead && planetRead && customReadMessages();
 }
 
-bool
-WindBase::customReadMessages()
+bool WindBase::customReadMessages()
 {
     return true;
 }
 
-Eigen::Vector3d
-WindBase::computeRelativePos(const SpicePlanetStateMsgPayload& planetState, const SCStatesMsgPayload& scState) const
+Eigen::Vector3d WindBase::computeRelativePos(const SpicePlanetStateMsgPayload& planetState,
+                                             const SCStatesMsgPayload& scState) const
 {
     return Eigen::Vector3d(scState.r_BN_N) - Eigen::Vector3d(planetState.PositionVector); // r_BP_N
 }
 
-Eigen::Vector3d
-WindBase::getPlanetOmega_N() const
+Eigen::Vector3d WindBase::getPlanetOmega_N() const
 {
     return this->planetOmega_N;
 }
 
-void
-WindBase::setPlanetOmega_N(const Eigen::Vector3d& omega)
+void WindBase::setPlanetOmega_N(const Eigen::Vector3d& omega)
 {
     // Validate input for NaN and infinite values
     if (std::isnan(omega(0)) || std::isnan(omega(1)) || std::isnan(omega(2)) || std::isinf(omega(0)) ||
@@ -164,20 +153,17 @@ WindBase::setPlanetOmega_N(const Eigen::Vector3d& omega)
     this->useSpiceOmega = false;
 }
 
-bool
-WindBase::getUseSpiceOmegaFlag() const
+bool WindBase::getUseSpiceOmegaFlag() const
 {
     return this->useSpiceOmega;
 }
 
-void
-WindBase::setUseSpiceOmegaFlag(bool useSpice)
+void WindBase::setUseSpiceOmegaFlag(bool useSpice)
 {
     this->useSpiceOmega = useSpice;
 }
 
-void
-WindBase::updatePlanetOmegaFromSpice()
+void WindBase::updatePlanetOmegaFromSpice()
 {
     Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C_dot(this->planetState.J20002Pfix_dot[0]);
     Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> C(this->planetState.J20002Pfix[0]);
@@ -186,8 +172,7 @@ WindBase::updatePlanetOmegaFromSpice()
     this->spiceOmega_N = C.transpose() * omega_P;
 }
 
-Eigen::Vector3d
-WindBase::getSelectedOmega()
+Eigen::Vector3d WindBase::getSelectedOmega()
 {
     if (this->useSpiceOmega && this->planetPosInMsg.isWritten()) {
         return this->spiceOmega_N;
@@ -195,8 +180,7 @@ WindBase::getSelectedOmega()
     return this->planetOmega_N; // manual fallback
 }
 
-void
-WindBase::updateLocalWind(double currentTime)
+void WindBase::updateLocalWind(double currentTime)
 {
     // Compute co-rotating atmosphere velocity: omega_planet_N x r_BP_N
     const Eigen::Vector3d omega_planet_N = this->getSelectedOmega();
@@ -211,8 +195,7 @@ WindBase::updateLocalWind(double currentTime)
     }
 }
 
-void
-WindBase::writeMessages(uint64_t CurrentClock)
+void WindBase::writeMessages(uint64_t CurrentClock)
 {
     for (size_t c = 0; c < this->envOutMsgs.size(); c++) {
         if (c < this->envOutBuffer.size()) {
@@ -222,13 +205,9 @@ WindBase::writeMessages(uint64_t CurrentClock)
     customWriteMessages(CurrentClock);
 }
 
-void
-WindBase::customWriteMessages(uint64_t /*CurrentClock*/)
-{
-}
+void WindBase::customWriteMessages(uint64_t /*CurrentClock*/) {}
 
-void
-WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     //! - add input message
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
@@ -237,8 +216,7 @@ WindBase::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
     addOwnedMessage(this->ownedEnvOutMsgs, this->envOutMsgs);
 }
 
-void
-WindBase::UpdateState(uint64_t CurrentSimNanos)
+void WindBase::UpdateState(uint64_t CurrentSimNanos)
 {
     this->envOutBuffer.clear();
 

@@ -44,8 +44,7 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector() = default;
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-ReactionWheelStateEffector::linkInStates(DynParamManager& states)
+void ReactionWheelStateEffector::linkInStates(DynParamManager& states)
 {
     //! - Get access to the hub states
     this->g_N = states.getPropertyReference(this->propName_vehicleGravity);
@@ -55,8 +54,7 @@ ReactionWheelStateEffector::linkInStates(DynParamManager& states)
  *
  * @param[in,out] rw Reaction-wheel configuration to initialize.
  */
-void
-ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& rw)
+void ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& rw)
 {
     const bool simplifiedModel = rw.RWModel == BalancedWheels || rw.RWModel == JitterSimple;
     const bool contributesMass =
@@ -101,8 +99,7 @@ ReactionWheelStateEffector::initializeWheelConfiguration(RWConfigPayload& rw)
 }
 
 /*! @brief Reject wheel arrays that cannot fit the command and speed payloads. */
-void
-ReactionWheelStateEffector::validateDimensions()
+void ReactionWheelStateEffector::validateDimensions()
 {
     this->validateRegisteredLayout();
     if (this->ReactionWheelData.size() > MAX_EFF_CNT) {
@@ -112,8 +109,7 @@ ReactionWheelStateEffector::validateDimensions()
 }
 
 /*! @brief Reject state-layout changes without relying on live parent state pointers. */
-void
-ReactionWheelStateEffector::validateRegisteredLayout()
+void ReactionWheelStateEffector::validateRegisteredLayout()
 {
     if (!this->registeredWheelModels) {
         return;
@@ -150,8 +146,7 @@ ReactionWheelStateEffector::validateRegisteredLayout()
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-ReactionWheelStateEffector::registerStates(DynParamManager& states)
+void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 {
     this->validateDimensions();
     this->NewRWCmds.resize(this->ReactionWheelData.size(), RWCmdMsgPayload{});
@@ -197,8 +192,7 @@ ReactionWheelStateEffector::registerStates(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     this->validateRegisteredLayout();
     // - Zero the mass props information because these will be accumulated during this call
@@ -290,12 +284,11 @@ ReactionWheelStateEffector::updateEffectorMassProps(double integTime [[maybe_unu
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]],
-                                                BackSubMatrices& backSubContr,
-                                                Eigen::MRPd sigma_BN,
-                                                Eigen::Vector3d omega_BN_B,
-                                                Eigen::Vector3d g_N [[maybe_unused]])
+void ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]],
+                                                     BackSubMatrices& backSubContr,
+                                                     Eigen::MRPd sigma_BN,
+                                                     Eigen::Vector3d omega_BN_B,
+                                                     Eigen::Vector3d g_N [[maybe_unused]])
 {
     this->validateRegisteredLayout();
     Eigen::Vector3d omegaLoc_BN_B;
@@ -422,11 +415,10 @@ ReactionWheelStateEffector::updateContributions(double integTime [[maybe_unused]
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                               Eigen::Vector3d rDDot_BN_N,
-                                               Eigen::Vector3d omegaDot_BN_B,
-                                               Eigen::MRPd sigma_BN)
+void ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                                    Eigen::Vector3d rDDot_BN_N,
+                                                    Eigen::Vector3d omegaDot_BN_B,
+                                                    Eigen::MRPd sigma_BN)
 {
     this->validateRegisteredLayout();
     Eigen::MatrixXd& OmegasDot = this->omegasDotBuffer;
@@ -507,11 +499,10 @@ ReactionWheelStateEffector::computeDerivatives(double integTime [[maybe_unused]]
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                         Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                         double& rotEnergyContr,
-                                                         Eigen::Vector3d omega_BN_B)
+void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                              Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                              double& rotEnergyContr,
+                                                              Eigen::Vector3d omega_BN_B)
 {
     this->validateRegisteredLayout();
     Eigen::MRPd sigmaBNLocal;
@@ -550,8 +541,7 @@ ReactionWheelStateEffector::updateEnergyMomContributions(double integTime [[mayb
  * @param[in] NewRW Reaction-wheel configuration to add.
  * @note Wheels can only be added before state registration.
  */
-void
-ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
+void ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> NewRW)
 {
     this->requireMutableTopology("ReactionWheelStateEffector::addReactionWheel");
     /* store the RW information */
@@ -568,8 +558,7 @@ ReactionWheelStateEffector::addReactionWheel(std::shared_ptr<RWConfigPayload> Ne
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateDimensions();
     RWCmdMsgPayload RWCmdInitializer;
@@ -599,8 +588,7 @@ ReactionWheelStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->validateRegisteredLayout();
     const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
@@ -640,8 +628,7 @@ ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  @param integTimeNanos The current time used for time-stamping the message
 
  */
-void
-ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
 {
     this->validateDimensions();
     const double* omegasVector = this->numRW > 0 ? this->OmegasState->stateView().data() : nullptr;
@@ -666,8 +653,7 @@ ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
  associated command structure for operating the RWs.
 
  */
-void
-ReactionWheelStateEffector::ReadInputs()
+void ReactionWheelStateEffector::ReadInputs()
 {
     this->validateDimensions();
     this->NewRWCmds.resize(this->ReactionWheelData.size(), RWCmdMsgPayload{});
@@ -694,8 +680,7 @@ ReactionWheelStateEffector::ReadInputs()
 
  @param CurrentTime The current simulation time converted to a double
  */
-void
-ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_unused]])
+void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_unused]])
 {
     this->validateRegisteredLayout();
     if (this->NewRWCmds.size() > this->ReactionWheelData.size()) {
@@ -759,8 +744,7 @@ ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime [[maybe_unuse
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();

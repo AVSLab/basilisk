@@ -25,8 +25,7 @@
 
 #include <iostream>
 
-void
-MJFwdKinematics::fwdKinematics(MJScene& scene, uint64_t CurrentSimNanos)
+void MJFwdKinematics::fwdKinematics(MJScene& scene, uint64_t CurrentSimNanos)
 {
     mjModel* model = scene.getMujocoModel();
     mjData* data = scene.getMujocoData();

@@ -37,8 +37,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_simpleDeadband(simpleDeadbandConfig* configData, int64_t moduleID)
+void SelfInit_simpleDeadband(simpleDeadbandConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
@@ -51,8 +50,7 @@ SelfInit_simpleDeadband(simpleDeadbandConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -70,8 +68,7 @@ Reset_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Read the input message and set it as the output by default */
     configData->attGuidOut = AttGuidMsg_C_read(&configData->guidInMsg);
@@ -93,8 +90,7 @@ Update_simpleDeadband(simpleDeadbandConfig* configData, uint64_t callTime, int64
 
  @param configData The configuration data associated with the attitude tracking simple module
  */
-void
-applyDBLogic_simpleDeadband(simpleDeadbandConfig* configData)
+void applyDBLogic_simpleDeadband(simpleDeadbandConfig* configData)
 {
     uint32_t areErrorsBelowUpperThresh =
       (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);

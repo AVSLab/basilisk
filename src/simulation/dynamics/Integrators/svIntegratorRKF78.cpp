@@ -24,8 +24,7 @@ svIntegratorRKF78::svIntegratorRKF78(DynamicObject* dyn)
 {
 }
 
-RKAdaptiveCoefficients<13>
-svIntegratorRKF78::getCoefficients()
+RKAdaptiveCoefficients<13> svIntegratorRKF78::getCoefficients()
 {
     RKAdaptiveCoefficients<13> coefficients;
 

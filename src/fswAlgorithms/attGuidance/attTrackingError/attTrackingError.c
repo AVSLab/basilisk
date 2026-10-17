@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the attitude tracking error module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_attTrackingError(attTrackingErrorConfig* configData, int64_t moduleID)
+void SelfInit_attTrackingError(attTrackingErrorConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttGuidMsg_C_init(&configData->attGuidOutMsg);
@@ -42,8 +41,7 @@ SelfInit_attTrackingError(attTrackingErrorConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -66,8 +64,7 @@ Reset_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttRefMsgPayload ref;         /* reference guidance message */
     NavAttMsgPayload nav;         /* navigation message */
@@ -93,8 +90,10 @@ Update_attTrackingError(attTrackingErrorConfig* configData, uint64_t callTime, i
  @param ref The reference attitude
  @param attGuidOut Output attitude guidance message
  */
-void
-computeAttitudeError(double sigma_R0R[3], NavAttMsgPayload nav, AttRefMsgPayload ref, AttGuidMsgPayload* attGuidOut)
+void computeAttitudeError(double sigma_R0R[3],
+                          NavAttMsgPayload nav,
+                          AttRefMsgPayload ref,
+                          AttGuidMsgPayload* attGuidOut)
 {
     double sigma_RR0[3]; /* MRP from the original reference frame R0 to the corrected reference frame R */
     double sigma_RN[3];  /* MRP from inertial to updated reference frame */

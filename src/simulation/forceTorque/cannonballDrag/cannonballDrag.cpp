@@ -21,15 +21,13 @@
 #include "architecture/utilities/avsEigenMRP.h"
 #include <Eigen/Dense>
 
-void
-CannonballDrag::SelfInit()
+void CannonballDrag::SelfInit()
 {
     ForceAtSiteMsg_C_init(&this->forceOutMsgC);
     TorqueAtSiteMsg_C_init(&this->torqueOutMsgC);
 }
 
-void
-CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
+void CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
 {
     double density = this->atmoDensInMsg().neutralDensity;
 
@@ -72,8 +70,7 @@ CannonballDrag::UpdateState(uint64_t CurrentSimNanos)
     TorqueAtSiteMsg_C_write(&torquePayload, &this->torqueOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
-void
-CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
+void CannonballDrag::Reset(uint64_t /*CurrentSimNanos*/)
 {
     if (!this->atmoDensInMsg.isLinked()) {
         bskLogger.bskError("CannonballDrag: atmoDensInMsg is not linked. "

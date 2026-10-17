@@ -27,8 +27,7 @@
 #include "architecture/utilities/tests/unitTestComparators.h"
 #include "avsLibrarySelfCheck.h"
 
-int
-testLinearAlgebra(double accuracy)
+int testLinearAlgebra(double accuracy)
 {
     int errorCount = 0;
 
@@ -2293,8 +2292,7 @@ testLinearAlgebra(double accuracy)
     return errorCount;
 }
 
-int
-testOrbitalAnomalies(double accuracy)
+int testOrbitalAnomalies(double accuracy)
 {
     int errorCount = 0;
 
@@ -2374,8 +2372,7 @@ testOrbitalAnomalies(double accuracy)
     return errorCount;
 }
 
-int
-testOrbitalHill(double accuracy)
+int testOrbitalHill(double accuracy)
 {
     int errorCount = 0;
 
@@ -2440,8 +2437,7 @@ testOrbitalHill(double accuracy)
     return errorCount;
 }
 
-int
-testRigidBodyKinematics(double accuracy)
+int testRigidBodyKinematics(double accuracy)
 {
     int errorCount = 0;
 

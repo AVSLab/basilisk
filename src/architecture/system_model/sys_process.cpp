@@ -33,8 +33,7 @@ SysProcess::SysProcess(std::string name)
 /*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
  * all process tasks.
  */
-void
-SysProcess::selfInitProcess()
+void SysProcess::selfInitProcess()
 {
 
     this->nextTaskTime = 0;
@@ -49,8 +48,7 @@ SysProcess::selfInitProcess()
     ensuring that all parameters go back to their default state.
     @param currentTime Current simulation time in ns that reset is occurring at
 */
-void
-SysProcess::resetProcess(uint64_t currentTime)
+void SysProcess::resetProcess(uint64_t currentTime)
 {
 
     for (auto const& process : this->processTasks) {
@@ -64,8 +62,7 @@ SysProcess::resetProcess(uint64_t currentTime)
  *  all process tasks to the first task time. 2) clears the process list
  *  and then adds everything back into the process with the correct priority.
  */
-void
-SysProcess::reInitProcess()
+void SysProcess::reInitProcess()
 {
 
     for (auto const& task : this->processTasks) {
@@ -82,8 +79,7 @@ SysProcess::reInitProcess()
 /*! This method steps the next task up to currentNanos
  * unless it isn't supposed to run yet.
  */
-void
-SysProcess::singleStepNextTask(uint64_t currentNanos)
+void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
 
     //! - Check to make sure that there are models to be called.
@@ -125,8 +121,7 @@ SysProcess::singleStepNextTask(uint64_t currentNanos)
  @param newTask The new task that we are adding to the list
  @param taskPriority The selected priority of the task being added
  */
-void
-SysProcess::addNewTask(SysModelTask* newTask, int32_t taskPriority)
+void SysProcess::addNewTask(SysModelTask* newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
@@ -144,8 +139,7 @@ SysProcess::addNewTask(SysModelTask* newTask, int32_t taskPriority)
  the simulation will faithfully schedule it.
  @param taskCall Pointer to a struct that contains start time and task handle.
  */
-void
-SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
+void SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
 {
     //! - Iteratre through all of the task models to find correct place
     for (auto it = this->processTasks.begin(); it != this->processTasks.end(); it++) {
@@ -164,8 +158,7 @@ SysProcess::scheduleTask(const ModelScheduleEntry& taskCall)
     a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
     and you are really only turning one on at a time.
 */
-void
-SysProcess::disableAllTasks() const
+void SysProcess::disableAllTasks() const
 {
     //! - Iterate through all of the tasks to disable them
     for (auto const& scheduleEntry : this->processTasks) {
@@ -176,8 +169,7 @@ SysProcess::disableAllTasks() const
  a processes tasks.  It is handy for a process that starts out almost entirely
  inhibited but you want to turn it all on at once.
  */
-void
-SysProcess::enableAllTasks() const
+void SysProcess::enableAllTasks() const
 {
     //! - Iterate through all of the task models to disable them
     for (auto const& scheduleEntry : this->processTasks) {
@@ -190,8 +182,7 @@ SysProcess::enableAllTasks() const
     @param taskName The name of the task you want to change period of
     @param newPeriod the new number of nanoseconds you want between calls
 */
-void
-SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
+void SysProcess::changeTaskPeriod(std::string const& taskName, uint64_t newPeriod)
 {
     //! - Iteratre through all of the task models to disable them
     for (ModelScheduleEntry& scheduleEntry : this->processTasks) {

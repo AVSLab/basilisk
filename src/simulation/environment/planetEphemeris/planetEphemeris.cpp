@@ -29,8 +29,7 @@
 
 namespace {
 /*! Compare two planet names without regard to letter case. */
-bool
-planetNamesMatch(const std::string& firstName, const std::string& secondName)
+bool planetNamesMatch(const std::string& firstName, const std::string& secondName)
 {
     return firstName.size() == secondName.size() &&
            std::equal(firstName.begin(),
@@ -53,8 +52,7 @@ PlanetEphemeris::PlanetEphemeris()
 PlanetEphemeris::~PlanetEphemeris() = default;
 
 /*! add list of planet names */
-void
-PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
+void PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
 {
     for (const auto& name : names) {
         if (name.size() >= MAX_BODY_NAME_LENGTH) {
@@ -73,8 +71,7 @@ PlanetEphemeris::setPlanetNames(std::vector<std::string> names)
     }
 }
 
-void
-PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
+void PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
 {
     this->epochTime = static_cast<double>(CurrentSimNanos) * NANO2SEC;
 
@@ -150,8 +147,7 @@ PlanetEphemeris::Reset(uint64_t CurrentSimNanos)
 
  @param CurrentSimNanos The current clock time for the simulation
  */
-void
-PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
+void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
 {
     std::vector<std::string>::iterator it;
     double time; // [s] time since epoch

@@ -36,8 +36,7 @@ HingedRigidBodyMotor::~HingedRigidBodyMotor() {}
 /** @brief Checks that required input messages and controller gains are configured.
  * @param CurrentSimNanos [ns] Current simulation time; unused during reset.
  */
-void
-HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     //! check that required input messages are connected
     if (!this->hingedBodyStateSensedInMsg.isLinked()) {
@@ -57,8 +56,7 @@ HingedRigidBodyMotor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /** @brief Calculates and limits the commanded hinge torque.
  * @param CurrentSimNanos [ns] Current simulation time.
  */
-void
-HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
+void HingedRigidBodyMotor::UpdateState(uint64_t CurrentSimNanos)
 {
     //! local variables
     double sensedTheta;    // [rad]

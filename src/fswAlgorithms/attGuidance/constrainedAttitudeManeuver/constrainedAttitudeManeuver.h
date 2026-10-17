@@ -153,13 +153,10 @@ class ConstrainedAttitudeManeuver : public SysModel
     SpicePlanetStateMsgPayload keepInCelBodyMsgBuffer;
 };
 
-void
-mirrorFunction(int indices[3], int mirrorIndices[8][3]);
+void mirrorFunction(int indices[3], int mirrorIndices[8][3]);
 
-void
-neighboringNodes(int indices[3], int neighbors[26][3]);
+void neighboringNodes(int indices[3], int neighbors[26][3]);
 
-double
-distance(Node n1, Node n2);
+double distance(Node n1, Node n2);
 
 #endif

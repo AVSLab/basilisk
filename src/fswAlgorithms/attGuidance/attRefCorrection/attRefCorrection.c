@@ -27,8 +27,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_attRefCorrection(attRefCorrectionConfig* configData, int64_t moduleID)
+void SelfInit_attRefCorrection(attRefCorrectionConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     AttRefMsg_C_init(&configData->attRefOutMsg);
@@ -42,8 +41,7 @@ SelfInit_attRefCorrection(attRefCorrectionConfig* configData, int64_t moduleID)
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -59,8 +57,7 @@ Reset_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, in
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_attRefCorrection(attRefCorrectionConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     AttRefMsgPayload attRefMsgBuffer; //!< local copy of message buffer
     double sigma_BBc[3];              //!< MRP from corrected body frame to body frame

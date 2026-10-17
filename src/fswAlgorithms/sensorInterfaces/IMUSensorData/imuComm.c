@@ -28,8 +28,7 @@
  @param configData The configuration data associated with the IMU sensor interface
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_imuProcessTelem(IMUConfigData* configData, int64_t moduleID)
+void SelfInit_imuProcessTelem(IMUConfigData* configData, int64_t moduleID)
 {
     (void)moduleID;
     IMUSensorBodyMsg_C_init(&configData->imuSensorOutMsg);
@@ -41,8 +40,7 @@ SelfInit_imuProcessTelem(IMUConfigData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -59,8 +57,7 @@ Reset_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Update_imuProcessTelem(IMUConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     IMUSensorMsgPayload LocalInput;
 

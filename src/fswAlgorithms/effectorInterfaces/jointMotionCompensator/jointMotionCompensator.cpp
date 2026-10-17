@@ -22,8 +22,7 @@
 #include <cstring>
 #include <iostream>
 
-void
-JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->massMatrixInMsg.isLinked()) {
@@ -45,8 +44,7 @@ JointMotionCompensator::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->treeInfoInitialized = false;
 }
 
-void
-JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
+void JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
 {
     MJSysMassMatrixMsgPayload massMatrixIn = this->massMatrixInMsg();
     MJJointReactionsMsgPayload reactionForcesIn = this->reactionForcesInMsg();
@@ -210,8 +208,7 @@ JointMotionCompensator::UpdateState(uint64_t CurrentSimNanos)
     }
 }
 
-void
-JointMotionCompensator::setUMax(std::vector<double> var)
+void JointMotionCompensator::setUMax(std::vector<double> var)
 {
     // Check each entry is non-negative
     for (size_t i = 0; i < var.size(); ++i) {
@@ -223,8 +220,7 @@ JointMotionCompensator::setUMax(std::vector<double> var)
     this->uMax = var;
 }
 
-void
-JointMotionCompensator::addSpacecraft()
+void JointMotionCompensator::addSpacecraft()
 {
     // increase the number of spacecraft by 1
     this->numSpacecraft++;
@@ -235,8 +231,7 @@ JointMotionCompensator::addSpacecraft()
     addOwnedMessage(this->ownedHubTorqueOutMsgs, this->hubTorqueOutMsgs);
 }
 
-void
-JointMotionCompensator::addHingedJoint()
+void JointMotionCompensator::addHingedJoint()
 {
     // increase the number of hinged joints by 1
     this->numHingedJoints++;

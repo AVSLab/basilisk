@@ -33,8 +33,7 @@ MappingInstrument::~MappingInstrument() = default;
  @param CurrentSimNanos
 
  */
-void
-MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that the baud rate is set
     if (this->nodeBaudRate < 0.0) {
@@ -48,8 +47,7 @@ MappingInstrument::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  @param CurrentSimNanos
 
  */
-void
-MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
+void MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 {
     /* Loop through each access message */
     for (long unsigned int c = 0; c < this->accessInMsgs.size(); c++) {
@@ -82,8 +80,7 @@ MappingInstrument::UpdateState(uint64_t CurrentSimNanos)
 /*! Adds a mapping point (access message and name) to the module
  *
  */
-void
-MappingInstrument::addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg, std::string dataName)
+void MappingInstrument::addMappingPoint(Message<AccessMsgPayload>* tmpAccessMsg, std::string dataName)
 {
     DataNodeUsageMsgPayload dataNodeUsageMsg = {};
     if (dataName.size() >= sizeof(dataNodeUsageMsg.dataName)) {

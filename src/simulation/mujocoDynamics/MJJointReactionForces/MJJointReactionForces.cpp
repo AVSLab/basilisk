@@ -24,8 +24,7 @@
 #include <mujoco/mujoco.h>
 
 namespace {
-void
-fillForcePayload(std::vector<double>& forces, const mjtNum* forceData, std::size_t nDOF)
+void fillForcePayload(std::vector<double>& forces, const mjtNum* forceData, std::size_t nDOF)
 {
     forces.resize(nDOF);
     if constexpr (std::is_same_v<mjtNum, double>) {
@@ -37,8 +36,7 @@ fillForcePayload(std::vector<double>& forces, const mjtNum* forceData, std::size
 }
 }
 
-void
-MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!scene) {
         bskLogger.bskError("MJJointReactionForces: scene pointer not set!");
@@ -105,8 +103,7 @@ MJJointReactionForces::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     }
 }
 
-void
-MJJointReactionForces::UpdateState(uint64_t CurrentSimNanos)
+void MJJointReactionForces::UpdateState(uint64_t CurrentSimNanos)
 {
     const mjData* data = scene->getMujocoData();
 

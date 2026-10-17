@@ -27,8 +27,7 @@
 
 namespace {
 
-bool
-checkedAddInt64(int64_t left, int64_t right, int64_t& result)
+bool checkedAddInt64(int64_t left, int64_t right, int64_t& result)
 {
     if ((right > 0 && left > std::numeric_limits<int64_t>::max() - right) ||
         (right < 0 && left < std::numeric_limits<int64_t>::min() - right)) {
@@ -68,8 +67,7 @@ DataStorageUnitBase::~DataStorageUnitBase()
  @param CurrentSimNanos
 
  */
-void
-DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
 {
     this->previousTime = 0;
 
@@ -83,8 +81,7 @@ DataStorageUnitBase::Reset(uint64_t CurrentSimNanos)
  @param tmpNodeMsg
 
  */
-void
-DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNodeMsg)
+void DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNodeMsg)
 {
     this->nodeDataUseInMsgs.push_back(tmpNodeMsg->addSubscriber());
 
@@ -95,8 +92,7 @@ DataStorageUnitBase::addDataNodeToModel(Message<DataNodeUsageMsgPayload>* tmpNod
  @param CurrentSimNanos The current simulation time in nanoseconds
 
  */
-void
-DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
+void DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - update data information
     if (this->readMessages()) {
@@ -115,8 +111,7 @@ DataStorageUnitBase::UpdateState(uint64_t CurrentSimNanos)
 /*! This method is used to read the incoming data supply/outgoing data messages and store them for future use.
 
  */
-bool
-DataStorageUnitBase::readMessages()
+bool DataStorageUnitBase::readMessages()
 {
     DataNodeUsageMsgPayload nodeMsg;
 
@@ -148,8 +143,7 @@ DataStorageUnitBase::readMessages()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-DataStorageUnitBase::writeMessages(uint64_t CurrentClock)
+void DataStorageUnitBase::writeMessages(uint64_t CurrentClock)
 {
     //! zero output message to begin with
     this->storageStatusMsg = this->storageUnitDataOutMsg.zeroMsgPayload;
@@ -176,8 +170,7 @@ DataStorageUnitBase::writeMessages(uint64_t CurrentClock)
  @param currentTime
 
  */
-void
-DataStorageUnitBase::integrateDataStatus(double currentTime)
+void DataStorageUnitBase::integrateDataStatus(double currentTime)
 {
     int index = -1;
     this->currentTimestep = currentTime - this->previousTime;
@@ -225,8 +218,7 @@ DataStorageUnitBase::integrateDataStatus(double currentTime)
  * @param tmpNodeMsg
  * @return index
  */
-int
-DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload* tmpNodeMsg)
+int DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload* tmpNodeMsg)
 {
     // Initialize index as -1 (indicates data is not in storedData)
     int index = -1;
@@ -243,8 +235,7 @@ DataStorageUnitBase::messageInStoredData(DataNodeUsageMsgPayload* tmpNodeMsg)
 /*! Sums all of the data in the storedData vector
  @return double
  */
-int64_t
-DataStorageUnitBase::sumAllData()
+int64_t DataStorageUnitBase::sumAllData()
 {
     int64_t dataSum = 0;
 
@@ -264,8 +255,7 @@ DataStorageUnitBase::sumAllData()
  @param baudRate Data production rate in bits per second.
  @return Integrated data change in bits.
  */
-int64_t
-DataStorageUnitBase::computeDataDelta(double baudRate)
+int64_t DataStorageUnitBase::computeDataDelta(double baudRate)
 {
     const double roundedDataDelta = std::round(baudRate * this->currentTimestep); // [bits]
     const double int64Limit = std::ldexp(1.0, 63);                                // [bits]
@@ -283,8 +273,7 @@ DataStorageUnitBase::computeDataDelta(double baudRate)
  @param allowEqual Whether a result equal to the capacity is accepted.
  @return True when the mathematical sum satisfies the capacity limit.
  */
-bool
-DataStorageUnitBase::dataFitsInCapacity(int64_t dataDelta, bool allowEqual) const
+bool DataStorageUnitBase::dataFitsInCapacity(int64_t dataDelta, bool allowEqual) const
 {
     int64_t updatedSum;
     if (!checkedAddInt64(this->storedDataSum, dataDelta, updatedSum)) {
@@ -297,8 +286,7 @@ DataStorageUnitBase::dataFitsInCapacity(int64_t dataDelta, bool allowEqual) cons
  @param partition Partition to update.
  @param dataDelta Data change in bits.
  */
-void
-DataStorageUnitBase::applyDataDelta(dataInstance& partition, int64_t dataDelta)
+void DataStorageUnitBase::applyDataDelta(dataInstance& partition, int64_t dataDelta)
 {
     int64_t updatedData;
     if (!checkedAddInt64(partition.dataInstanceSum, dataDelta, updatedData)) {
@@ -314,8 +302,7 @@ DataStorageUnitBase::applyDataDelta(dataInstance& partition, int64_t dataDelta)
 /*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
 
  */
-void
-DataStorageUnitBase::customReset(uint64_t CurrentClock [[maybe_unused]])
+void DataStorageUnitBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -323,8 +310,7 @@ DataStorageUnitBase::customReset(uint64_t CurrentClock [[maybe_unused]])
 /*! custom Write method, similar to customSelfInit.
 
  */
-void
-DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
+void DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 {
     return;
 }
@@ -332,8 +318,7 @@ DataStorageUnitBase::customWriteMessages(uint64_t CurrentClock [[maybe_unused]])
 /*! Custom read method, similar to customSelfInit; returns `true` by default.
 
  */
-bool
-DataStorageUnitBase::customReadMessages()
+bool DataStorageUnitBase::customReadMessages()
 {
     return true;
 }
@@ -343,8 +328,7 @@ DataStorageUnitBase::customReadMessages()
  @param data          //Amount of data to add to the partition
 
  */
-void
-DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
+void DataStorageUnitBase::setDataBuffer(std::string partitionName, int64_t data)
 {
     dataInstance tmpDataInstance;
 

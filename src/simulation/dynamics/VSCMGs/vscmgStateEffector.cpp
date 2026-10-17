@@ -30,8 +30,7 @@ namespace {
  * @param index Index of the configured VSCMG device.
  * @param name Name of the divisor for the error message.
  */
-void
-requireFiniteNonzeroDivisor(double value, BSKLogger& logger, size_t index, const char* name)
+void requireFiniteNonzeroDivisor(double value, BSKLogger& logger, size_t index, const char* name)
 {
     if (!std::isfinite(value) || value == 0.0 || !std::isfinite(1.0 / value)) {
         logger.bskError(
@@ -64,8 +63,7 @@ VSCMGStateEffector::~VSCMGStateEffector() = default;
  *
  * @param[in] states Dynamic parameter manager containing the required states.
  */
-void
-VSCMGStateEffector::linkInStates(DynParamManager& states)
+void VSCMGStateEffector::linkInStates(DynParamManager& states)
 {
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
     //! - Get access to the hub states
@@ -78,8 +76,7 @@ VSCMGStateEffector::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-VSCMGStateEffector::registerStates(DynParamManager& states)
+void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
     this->initializeConfiguration();
     this->newVSCMGCmds.resize(this->VSCMGData.size(), VSCMGCmdMsgPayload{});
@@ -129,8 +126,7 @@ VSCMGStateEffector::registerStates(DynParamManager& states)
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
@@ -296,12 +292,11 @@ VSCMGStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
-                                        BackSubMatrices& backSubContr,
-                                        Eigen::MRPd sigma_BN,
-                                        Eigen::Vector3d omega_BN_B,
-                                        Eigen::Vector3d g_N [[maybe_unused]])
+void VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
+                                             BackSubMatrices& backSubContr,
+                                             Eigen::MRPd sigma_BN,
+                                             Eigen::Vector3d omega_BN_B,
+                                             Eigen::Vector3d g_N [[maybe_unused]])
 {
     Eigen::Vector3d omegaLoc_BN_B;
     Eigen::Vector3d tempF;
@@ -487,11 +482,10 @@ VSCMGStateEffector::updateContributions(double integTime [[maybe_unused]],
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]],
-                                       Eigen::Vector3d rDDot_BN_N,
-                                       Eigen::Vector3d omegaDot_BN_B,
-                                       Eigen::MRPd sigma_BN)
+void VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]],
+                                            Eigen::Vector3d rDDot_BN_N,
+                                            Eigen::Vector3d omegaDot_BN_B,
+                                            Eigen::MRPd sigma_BN)
 {
     Eigen::MatrixXd OmegasDot(this->numVSCMG, 1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter, 1);
@@ -560,11 +554,10 @@ VSCMGStateEffector::computeDerivatives(double integTime [[maybe_unused]],
  * @param[in,out] rotEnergyContr [J] Rotational energy contribution.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
-                                                 Eigen::Vector3d& rotAngMomPntCContr_B,
-                                                 double& rotEnergyContr,
-                                                 Eigen::Vector3d omega_BN_B [[maybe_unused]])
+void VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused]],
+                                                      Eigen::Vector3d& rotAngMomPntCContr_B,
+                                                      double& rotEnergyContr,
+                                                      Eigen::Vector3d omega_BN_B [[maybe_unused]])
 {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcm_BN; /* direction cosine matrix from N to B */
@@ -608,8 +601,7 @@ VSCMGStateEffector::updateEnergyMomContributions(double integTime [[maybe_unused
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->initializeConfiguration();
     this->newVSCMGCmds.assign(this->VSCMGData.size(), VSCMGCmdMsgPayload{});
@@ -623,8 +615,7 @@ VSCMGStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  * commands or rewind integrated states. Balanced and simple jitter models permit massless devices;
  * their unused mass fractions are set to zero rather than dividing by zero.
  */
-void
-VSCMGStateEffector::initializeConfiguration()
+void VSCMGStateEffector::initializeConfiguration()
 {
     if (this->VSCMGData.size() > MAX_EFF_CNT) {
         this->bskLogger.bskError(
@@ -772,8 +763,7 @@ VSCMGStateEffector::initializeConfiguration()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     this->outputStates = this->speedOutMsg.zeroMsgPayload;
     VSCMGConfigMsgPayload tmpVSCMG;
@@ -831,8 +821,7 @@ VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  associated command structure for operating the VSCMGs.
 
  */
-void
-VSCMGStateEffector::ReadInputs()
+void VSCMGStateEffector::ReadInputs()
 {
     uint64_t i;
 
@@ -870,8 +859,7 @@ VSCMGStateEffector::ReadInputs()
 
  @param CurrentTime The current simulation time converted to a double
  */
-void
-VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unused]])
+void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unused]])
 {
     std::vector<VSCMGCmdMsgPayload>::iterator CmdIt;
     size_t it = 0;
@@ -994,8 +982,7 @@ VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime [[maybe_unused]])
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
     ReadInputs();
@@ -1008,8 +995,7 @@ VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 
  @param NewVSCMG VSCMG device to be added
  */
-void
-VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload* NewVSCMG)
+void VSCMGStateEffector::AddVSCMG(VSCMGConfigMsgPayload* NewVSCMG)
 {
     this->requireMutableTopology("VSCMGStateEffector::AddVSCMG");
     this->VSCMGData.push_back(*NewVSCMG);

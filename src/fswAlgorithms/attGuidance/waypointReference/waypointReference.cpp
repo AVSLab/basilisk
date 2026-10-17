@@ -52,8 +52,7 @@ WaypointReference::~WaypointReference()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void
-WaypointReference::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void WaypointReference::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->dataFileName.length() == 0) {
         bskLogger.bskError("WaypointReference: dataFileName must be an non-empty string.");
@@ -86,8 +85,7 @@ WaypointReference::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void
-WaypointReference::UpdateState(uint64_t CurrentSimNanos)
+void WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 {
     /* ensure that a file was opened */
     if (this->fileHandle->is_open()) {
@@ -162,8 +160,7 @@ WaypointReference::UpdateState(uint64_t CurrentSimNanos)
 }
 
 /*! Pull one line of dataFileName and stores time t and relative attitude in attRefMsg_t */
-void
-WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
+void WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
 {
     std::string line;
 
@@ -249,8 +246,7 @@ WaypointReference::pullDataLine(uint64_t* t, AttRefMsgPayload* attRefMsg_t)
 
 /*! pull a 3-d set of double values from the input stream
  */
-void
-WaypointReference::pullVector(std::istringstream* iss, double vec[3])
+void WaypointReference::pullVector(std::istringstream* iss, double vec[3])
 {
     double x, y, z;
     x = pullScalar(iss);
@@ -261,8 +257,7 @@ WaypointReference::pullVector(std::istringstream* iss, double vec[3])
 
 /*! pull a 4-d set of double values from the input stream
  */
-void
-WaypointReference::pullVector4(std::istringstream* iss, double* vec)
+void WaypointReference::pullVector4(std::istringstream* iss, double* vec)
 {
     double q0, q1, q2, q3;
     q0 = pullScalar(iss);
@@ -274,8 +269,7 @@ WaypointReference::pullVector4(std::istringstream* iss, double* vec)
 
 /*! pull a double from the input stream
  */
-double
-WaypointReference::pullScalar(std::istringstream* iss)
+double WaypointReference::pullScalar(std::istringstream* iss)
 {
     const char delimiterString = *this->delimiter.c_str();
     std::string item;
@@ -287,8 +281,12 @@ WaypointReference::pullScalar(std::istringstream* iss)
 
 /*! linearly interpolate between two vectors v_a and v_b
  */
-void
-WaypointReference::linearInterpolation(uint64_t t_a, double v_a[3], uint64_t t_b, double v_b[3], uint64_t t, double* v)
+void WaypointReference::linearInterpolation(uint64_t t_a,
+                                            double v_a[3],
+                                            uint64_t t_b,
+                                            double v_b[3],
+                                            uint64_t t,
+                                            double* v)
 {
     const double interpolationFraction = diffNanoToSec(t, t_a) / diffNanoToSec(t_b, t_a);
     for (int i = 0; i < 3; i++) {

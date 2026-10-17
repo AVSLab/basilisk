@@ -120,8 +120,7 @@ VizInterface::~VizInterface()
 /*! A Reset method to put the module back into a clean state
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void
-VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (this->broadcastStream) {
         // Setup ZMQ for broadcast socket
@@ -306,8 +305,7 @@ VizInterface::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! A method in which the module reads the content of all available bsk messages
  */
-void
-VizInterface::ReadBSKMessages()
+void VizInterface::ReadBSKMessages()
 {
     std::vector<VizSpacecraftData>::iterator scIt;
 
@@ -542,8 +540,7 @@ VizInterface::ReadBSKMessages()
 /*! The method in which the vizInterface writes a protobuffer with the information from the simulation.
  @param CurrentSimNanos The current sim time in nanoseconds
  */
-void
-VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
+void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     auto message = std::make_unique<vizProtobufferMessage::VizMessage>();
 
@@ -1407,8 +1404,7 @@ VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 /*! Update this module at the task rate
  @param CurrentSimNanos The current sim time
  */
-void
-VizInterface::UpdateState(uint64_t CurrentSimNanos)
+void VizInterface::UpdateState(uint64_t CurrentSimNanos)
 {
 
     this->FrameNumber += 1;
@@ -1421,8 +1417,7 @@ VizInterface::UpdateState(uint64_t CurrentSimNanos)
 /*! Method to add a Vizard instrument camera module to vizInterface
  @param tmpMsg Camera configuration msg
  */
-void
-VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg)
+void VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg)
 {
     /* add the message reader to the vector of input messages */
     this->cameraConfInMsgs.push_back(tmpMsg->addSubscriber());
@@ -1449,8 +1444,7 @@ VizInterface::addCamMsgToModule(Message<CameraConfigMsgPayload>* tmpMsg)
     Parse and package into VizUserInputMsgPayload for handling in Python.
  @param CurrentSimNanos The current sim time
  */
-void
-VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
+void VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
 {
 
     // Send "REQUEST_INPUT" to elicit a response from Vizard
@@ -1556,8 +1550,7 @@ VizInterface::receiveUserInput(uint64_t CurrentSimNanos)
 
 /*! Requests an image from Vizard and stores it in the image output message
  */
-void
-VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
+void VizInterface::requestImage(size_t camCounter, uint64_t CurrentSimNanos)
 {
     /*! -- Send request */
     std::string cmdMsg = "REQUEST_IMAGE_";

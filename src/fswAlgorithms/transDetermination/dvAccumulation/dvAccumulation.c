@@ -29,15 +29,13 @@
  @param configData The configuration data associated with the Nav aggregation interface
  @param moduleID The Basilisk module identifier
  */
-void
-SelfInit_dvAccumulation(DVAccumulationData* configData, int64_t moduleID)
+void SelfInit_dvAccumulation(DVAccumulationData* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavTransMsg_C_init(&configData->dvAcumOutMsg);
 }
 
-void
-Reset_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -76,16 +74,14 @@ Reset_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, int64_t 
 }
 
 /* Experimenting QuickSort START */
-void
-dvAccumulation_swap(AccPktDataMsgPayload* p, AccPktDataMsgPayload* q)
+void dvAccumulation_swap(AccPktDataMsgPayload* p, AccPktDataMsgPayload* q)
 {
     AccPktDataMsgPayload t;
     t = *p;
     *p = *q;
     *q = t;
 }
-int
-dvAccumulation_partition(AccPktDataMsgPayload* A, int start, int end)
+int dvAccumulation_partition(AccPktDataMsgPayload* A, int start, int end)
 {
     int i;
     uint64_t pivot = A[end].measTime;
@@ -105,8 +101,7 @@ dvAccumulation_partition(AccPktDataMsgPayload* A, int start, int end)
   @param A --> Array to be sorted,
   @param start  --> Starting index,
   @param end  --> Ending index */
-void
-dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end)
+void dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end)
 {
     /*! - Create an auxiliary stack array. This contains indicies. */
     int stack[MAX_ACC_BUF_PKT];
@@ -153,8 +148,7 @@ dvAccumulation_QuickSort(AccPktDataMsgPayload* A, int start, int end)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */
-void
-Update_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, int64_t moduleID)
+void Update_dvAccumulation(DVAccumulationData* configData, uint64_t callTime, int64_t moduleID)
 {
     int i;
     double dt;

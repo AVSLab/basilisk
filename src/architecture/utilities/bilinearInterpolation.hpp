@@ -36,17 +36,16 @@
 @param x Function x coordinate for interpolation
 @param y Function y coordinate for interpolation
 */
-double
-bilinearInterpolation(double x1,
-                      double x2,
-                      double y1,
-                      double y2,
-                      double z11,
-                      double z12,
-                      double z21,
-                      double z22,
-                      double x,
-                      double y)
+double bilinearInterpolation(double x1,
+                             double x2,
+                             double y1,
+                             double y2,
+                             double z11,
+                             double z12,
+                             double z21,
+                             double z22,
+                             double x,
+                             double y)
 {
 
     assert(x1 < x && x < x2);

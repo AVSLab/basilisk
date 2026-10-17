@@ -41,8 +41,7 @@ Saturate::~Saturate() {}
     @param unsaturatedStates Vector of unsaturated states.
     @return Vector of saturated states.
 */
-Eigen::VectorXd
-Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
+Eigen::VectorXd Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
 {
     Eigen::VectorXd workingStates;
     workingStates.resize(this->numStates);
@@ -57,8 +56,7 @@ Saturate::saturate(const Eigen::Ref<const Eigen::VectorXd>& unsaturatedStates)
 
     @param bounds One row per state, with lower and upper bounds in the two columns.
 */
-void
-Saturate::setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds)
+void Saturate::setBounds(const Eigen::Ref<const Eigen::MatrixX2d>& bounds)
 {
     this->stateBounds = bounds;
 }

@@ -45,8 +45,7 @@ TabularAtmosphere::~TabularAtmosphere()
  * lengths.
  *
  */
-void
-TabularAtmosphere::customReset(uint64_t CurrentClock [[maybe_unused]])
+void TabularAtmosphere::customReset(uint64_t CurrentClock [[maybe_unused]])
 {
     this->altList_length = (int)this->altList.size();
     this->rhoList_length = (int)this->rhoList.size();
@@ -71,8 +70,7 @@ TabularAtmosphere::customReset(uint64_t CurrentClock [[maybe_unused]])
  * lists OR if outside bounds of envMinReach and envMaxReach.
  *
  */
-void
-TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime [[maybe_unused]])
+void TabularAtmosphere::evaluateAtmosphereModel(AtmoPropsMsgPayload* msg, double currentTime [[maybe_unused]])
 {
     if ((this->orbitAltitude < this->altList[0]) || (this->orbitAltitude > this->altList.back())) {
         msg->neutralDensity = 0.0;

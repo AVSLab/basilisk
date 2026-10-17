@@ -22,8 +22,7 @@
 #include <iostream>
 
 /*! Initialize C-wrapped output messages */
-void
-VscmgVelocitySteering::SelfInit()
+void VscmgVelocitySteering::SelfInit()
 {
     VSCMGRefStatesMsg_C_init(&this->vscmgRefStatesOutMsgC);
 }
@@ -42,8 +41,7 @@ VscmgVelocitySteering::VscmgVelocitySteering()
 /*! This method is used to reset the module, checks that required input messages are connected, and initializes internal
  * states.
  */
-void
-VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->vscmgParamsInMsg.isLinked()) {
@@ -78,8 +76,7 @@ VscmgVelocitySteering::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
  */
-void
-VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
+void VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
 {
     double omegas;              /*![rad/s] projection of body angular velocity onto gsHat axis*/
     double omegat;              /*![rad/s] projection of body angular velocity onto gtHat axis*/
@@ -191,22 +188,19 @@ VscmgVelocitySteering::UpdateState(uint64_t CurrentSimNanos)
     VSCMGRefStatesMsg_C_write(&this->outputRefStates, &this->vscmgRefStatesOutMsgC, this->moduleID, CurrentSimNanos);
 }
 
-void
-VscmgVelocitySteering::setMu(double var)
+void VscmgVelocitySteering::setMu(double var)
 {
     this->mu = var;
 }
 
-void
-VscmgVelocitySteering::setW0_s(std::vector<double> var)
+void VscmgVelocitySteering::setW0_s(std::vector<double> var)
 {
     for (size_t i = 0; i < var.size() && i < MAX_EFF_CNT; ++i) {
         this->W0_s[i] = var[i];
     }
 }
 
-void
-VscmgVelocitySteering::setW_g(std::vector<double> var)
+void VscmgVelocitySteering::setW_g(std::vector<double> var)
 {
     for (size_t i = 0; i < var.size() && i < MAX_EFF_CNT; ++i) {
         this->W_g[i] = var[i];

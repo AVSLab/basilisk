@@ -66,8 +66,7 @@ ThrusterStateEffector::~ThrusterStateEffector() = default;
  *
  * @param[in] CurrentSimNanos [ns] Current simulation time.
  */
-void
-ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->validateConfiguration();
     // Clear out any currently firing thrusters and re-init cmd array
@@ -81,8 +80,7 @@ ThrusterStateEffector::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 }
 
 /*! @brief Validate configuration dimensions before initialization or command processing. */
-void
-ThrusterStateEffector::validateConfiguration()
+void ThrusterStateEffector::validateConfiguration()
 {
     this->validateRegisteredCount();
     if (this->cmdsInMsg.isLinked() && this->thrusterData.size() > MAX_EFF_CNT) {
@@ -100,8 +98,7 @@ ThrusterStateEffector::validateConfiguration()
 }
 
 /*! @brief Reject device-count changes without relying on a live parent state pointer. */
-void
-ThrusterStateEffector::validateRegisteredCount()
+void ThrusterStateEffector::validateRegisteredCount()
 {
     if (this->registeredThrusterCount && this->thrusterData.size() != *this->registeredThrusterCount) {
         this->bskLogger.bskError("ThrusterStateEffector: thruster count cannot change after state registration. "
@@ -112,8 +109,7 @@ ThrusterStateEffector::validateRegisteredCount()
 /*! @brief Read the incoming command message and populate the thruster command vector.
  * @return Whether a new command is available, or zero commands were supplied for an unlinked input.
  */
-bool
-ThrusterStateEffector::ReadInputs()
+bool ThrusterStateEffector::ReadInputs()
 {
     this->validateConfiguration();
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0); // [s]
@@ -153,8 +149,7 @@ ThrusterStateEffector::ReadInputs()
  @param CurrentClock The current time used for time-stamping the message
 
  */
-void
-ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
+void ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     this->validateRegisteredCount();
     size_t idx = 0;
@@ -186,8 +181,7 @@ ThrusterStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
  into NewThrustCmds.
 
  */
-void
-ThrusterStateEffector::ConfigureThrustRequests()
+void ThrusterStateEffector::ConfigureThrustRequests()
 {
     this->validateRegisteredCount();
     if (this->NewThrustCmds.size() > this->thrusterData.size()) {
@@ -223,8 +217,7 @@ ThrusterStateEffector::ConfigureThrustRequests()
 * the hub.
 
  */
-void
-ThrusterStateEffector::UpdateThrusterProperties()
+void ThrusterStateEffector::UpdateThrusterProperties()
 {
     this->validateRegisteredCount();
     // Save hub variables
@@ -274,8 +267,7 @@ ThrusterStateEffector::UpdateThrusterProperties()
  * @param[in] newThruster Thruster configuration to add.
  * @note Thrusters can only be added before state registration.
  */
-void
-ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
+void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
 {
     this->requireMutableTopology("ThrusterStateEffector::addThruster");
     this->thrusterData.push_back(newThruster);
@@ -305,15 +297,14 @@ ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster)
  * @param[in] bodyStateMsg State message for the body carrying the thruster.
  * @note Thrusters can only be added before state registration.
  */
-void
-ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster, Message<SCStatesMsgPayload>* bodyStateMsg)
+void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
+                                        Message<SCStatesMsgPayload>* bodyStateMsg)
 {
     this->addThruster(newThruster, bodyStateMsg->addSubscriber());
 }
 
-void
-ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
-                                   ReadFunctor<SCStatesMsgPayload> bodyStateReader)
+void ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
+                                        ReadFunctor<SCStatesMsgPayload> bodyStateReader)
 {
     this->requireMutableTopology("ThrusterStateEffector::addThruster");
     this->thrusterData.push_back(newThruster);
@@ -342,8 +333,7 @@ ThrusterStateEffector::addThruster(std::shared_ptr<THRSimConfig> newThruster,
 
  @param states The states to link
  */
-void
-ThrusterStateEffector::linkInStates(DynParamManager& states)
+void ThrusterStateEffector::linkInStates(DynParamManager& states)
 {
     this->hubSigma = states.getStateObject(this->stateNameOfSigma);
     this->hubOmega = states.getStateObject(this->stateNameOfOmega);
@@ -354,8 +344,7 @@ ThrusterStateEffector::linkInStates(DynParamManager& states)
  *
  * @param[in,out] states Dynamic parameter manager used to register states or properties.
  */
-void
-ThrusterStateEffector::registerStates(DynParamManager& states)
+void ThrusterStateEffector::registerStates(DynParamManager& states)
 {
     this->validateConfiguration();
     this->NewThrustCmds.resize(this->thrusterData.size(), 0.0); // [s]
@@ -384,11 +373,10 @@ ThrusterStateEffector::registerStates(DynParamManager& states)
  * @param[in] omegaDot_BN_B [rad/s^2] Hub angular acceleration expressed in body-frame components.
  * @param[in] sigma_BN Hub attitude relative to the inertial frame.
  */
-void
-ThrusterStateEffector::computeDerivatives(double integTime,
-                                          Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
-                                          Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
-                                          Eigen::MRPd sigma_BN [[maybe_unused]])
+void ThrusterStateEffector::computeDerivatives(double integTime,
+                                               Eigen::Vector3d rDDot_BN_N [[maybe_unused]],
+                                               Eigen::Vector3d omegaDot_BN_B [[maybe_unused]],
+                                               Eigen::MRPd sigma_BN [[maybe_unused]])
 {
     this->validateRegisteredCount();
     if (this->thrusterData.empty()) {
@@ -429,8 +417,7 @@ ThrusterStateEffector::computeDerivatives(double integTime,
  * @param[in] integTime [s] Current integration time.
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  */
-void
-ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
+void ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], Eigen::Vector3d omega_BN_B)
 {
     this->validateRegisteredCount();
     // Save omega_BN_B
@@ -524,12 +511,11 @@ ThrusterStateEffector::calcForceTorqueOnBody(double integTime [[maybe_unused]], 
  * @param[in] omega_BN_B [rad/s] Hub angular velocity expressed in body-frame components.
  * @param[in] g_N [m/s^2] Gravitational acceleration expressed in inertial-frame components.
  */
-void
-ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]],
-                                           BackSubMatrices& backSubContr,
-                                           Eigen::MRPd sigma_BN [[maybe_unused]],
-                                           Eigen::Vector3d omega_BN_B [[maybe_unused]],
-                                           Eigen::Vector3d g_N [[maybe_unused]])
+void ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]],
+                                                BackSubMatrices& backSubContr,
+                                                Eigen::MRPd sigma_BN [[maybe_unused]],
+                                                Eigen::Vector3d omega_BN_B [[maybe_unused]],
+                                                Eigen::Vector3d g_N [[maybe_unused]])
 {
     // Define the translational and rotational contributions from the computed force and torque
     backSubContr.vecTrans = this->forceOnBody_B;
@@ -541,8 +527,7 @@ ThrusterStateEffector::updateContributions(double integTime [[maybe_unused]],
  *
  * @param[in] integTime [s] Current integration time.
  */
-void
-ThrusterStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
+void ThrusterStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]])
 {
     this->validateRegisteredCount();
 
@@ -575,8 +560,7 @@ ThrusterStateEffector::updateEffectorMassProps(double integTime [[maybe_unused]]
 
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void
-ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void ThrusterStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if (this->ReadInputs()) {

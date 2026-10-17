@@ -30,8 +30,7 @@
  @param configData The configuration data associated with the Inertial UKF estimator
  @param moduleId The module identifier
  */
-void
-SelfInit_inertialUKF(InertialUKFConfig* configData, int64_t moduleId)
+void SelfInit_inertialUKF(InertialUKFConfig* configData, int64_t moduleId)
 {
     (void)moduleId;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -45,8 +44,7 @@ SelfInit_inertialUKF(InertialUKFConfig* configData, int64_t moduleId)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleId The module identifier
  */
-void
-Reset_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t moduleId)
+void Reset_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t moduleId)
 {
     (void)moduleId;
 
@@ -136,8 +134,7 @@ Reset_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t modu
 
  @param configData The configuration data associated with the Inertial UKF estimator
  */
-void
-Read_STMessages(InertialUKFConfig* configData)
+void Read_STMessages(InertialUKFConfig* configData)
 {
     uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
     int isWritten;             /* [-] has the message been written */
@@ -176,8 +173,7 @@ Read_STMessages(InertialUKFConfig* configData)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;                              /* [s] Local Time-tag variable*/
     uint64_t timeOfRWSpeeds;                        /* [ns] Read time for the RWs*/
@@ -307,8 +303,7 @@ Update_inertialUKF(InertialUKFConfig* configData, uint64_t callTime, int64_t mod
     @param stateInOut The state that is propagated
     @param dt Time step (s)
 */
-void
-inertialStateProp(InertialUKFConfig* configData, double* stateInOut, double dt)
+void inertialStateProp(InertialUKFConfig* configData, double* stateInOut, double dt)
 {
 
     double sigmaDot[3];           /* [1/s] */
@@ -354,8 +349,7 @@ inertialStateProp(InertialUKFConfig* configData, double* stateInOut, double dt)
      @param configData The configuration data associated with the Inertial UKF estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-int
-inertialUKFTimeUpdate(InertialUKFConfig* configData, double updateTime)
+int inertialUKFTimeUpdate(InertialUKFConfig* configData, double updateTime)
 {
     size_t i;
     size_t Index;
@@ -475,8 +469,7 @@ inertialUKFTimeUpdate(InertialUKFConfig* configData, double updateTime)
  @param currentST current star tracker state
 
  */
-void
-inertialUKFMeasModel(InertialUKFConfig* configData, int currentST)
+void inertialUKFMeasModel(InertialUKFConfig* configData, int currentST)
 {
     double quatTranspose[4]; /* [-] */
     double quatMeas[4];      /* [-] */
@@ -518,8 +511,7 @@ inertialUKFMeasModel(InertialUKFConfig* configData, int currentST)
  @param propTime The time that we need to fix the filter to (seconds)
  @param gyrData The gyro measurements that we are going to accumulate forward into time
  */
-void
-inertialUKFAggGyrData(InertialUKFConfig* configData, double prevTime, double propTime, AccDataMsgPayload* gyrData)
+void inertialUKFAggGyrData(InertialUKFConfig* configData, double prevTime, double propTime, AccDataMsgPayload* gyrData)
 {
     (void)propTime;
     uint32_t minFutInd; /* [-] Index in buffer that is the oldest new meas*/
@@ -593,8 +585,7 @@ inertialUKFAggGyrData(InertialUKFConfig* configData, double prevTime, double pro
  @param configData The configuration data associated with the Inertial UKF estimator
  @param currentST Current star tracker state
  */
-int
-inertialUKFMeasUpdate(InertialUKFConfig* configData, int currentST)
+int inertialUKFMeasUpdate(InertialUKFConfig* configData, int currentST)
 {
     uint32_t i;
     double yBar[3], syInv[3 * 3];
@@ -725,8 +716,7 @@ inertialUKFMeasUpdate(InertialUKFConfig* configData, int currentST)
 
  @param configData The configuration data associated with the Inertial UKF estimator
  */
-void
-inertialUKFCleanUpdate(InertialUKFConfig* configData)
+void inertialUKFCleanUpdate(InertialUKFConfig* configData)
 {
     size_t i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/

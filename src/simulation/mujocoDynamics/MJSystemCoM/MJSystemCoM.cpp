@@ -23,8 +23,7 @@
 #include <mujoco/mujoco.h>
 
 /*! Initialize C-wrapped output messages */
-void
-MJSystemCoM::SelfInit()
+void MJSystemCoM::SelfInit()
 {
     SCStatesMsg_C_init(&this->comStatesOutMsgC);
 }
@@ -35,8 +34,7 @@ MJSystemCoM::MJSystemCoM() {}
 
 /*! This method is used to reset the module and checks that required input messages are connect.
  */
-void
-MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     if (!scene) {
         bskLogger.bskError("MJSystemCoM: scene pointer not set!");
@@ -59,8 +57,7 @@ MJSystemCoM::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
 /*! This extracts the total spacecraft CoM position and velocity
  */
-void
-MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
+void MJSystemCoM::UpdateState(uint64_t CurrentSimNanos)
 {
     const auto model = scene->getMujocoModel();
     const auto data = scene->getMujocoData();

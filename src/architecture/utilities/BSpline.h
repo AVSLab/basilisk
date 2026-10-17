@@ -86,11 +86,8 @@ class OutputDataSet
     Eigen::VectorXd C3; //!< coordinate #3 of the control points
 };
 
-void
-interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output);
+void interpolate(const InputDataSet& Input, int Num, int P, OutputDataSet* Output);
 
-void
-approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output);
+void approximate(const InputDataSet& Input, int Num, int Q, int P, OutputDataSet* Output);
 
-void
-basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN, double* NN1, double* NN2);
+void basisFunction(double t, const Eigen::VectorXd& U, int I, int P, double* NN, double* NN1, double* NN2);

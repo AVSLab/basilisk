@@ -74,8 +74,7 @@ LinkBudget::LinkBudget()
 
 /*! This method is used to reset the module and checks that required input messages are connect.
  */
-void
-LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check that required input messages are connected
     if (!this->antennaInPayload_1.isLinked()) {
@@ -87,8 +86,7 @@ LinkBudget::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     this->initialization();
 }
 
-void
-LinkBudget::initialization()
+void LinkBudget::initialization()
 {
     // Read current message values before using them
     this->readMessages();
@@ -160,8 +158,7 @@ LinkBudget::initialization()
 
 /*! This is the main method that gets called every time the module is updated.  Provide an appropriate description.
  */
-void
-LinkBudget::UpdateState(uint64_t CurrentSimNanos)
+void LinkBudget::UpdateState(uint64_t CurrentSimNanos)
 {
     // read in the input messages
     this->readMessages();
@@ -174,28 +171,24 @@ LinkBudget::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-void
-LinkBudget::readMessages()
+void LinkBudget::readMessages()
 {
     // read in the input messages
     this->antennaIn_1 = this->antennaInPayload_1();
     this->antennaIn_2 = this->antennaInPayload_2();
 }
 
-void
-LinkBudget::setOxygenLookupFilePath(const std::string& filePath)
+void LinkBudget::setOxygenLookupFilePath(const std::string& filePath)
 {
     this->oxygenLookupFilePath = filePath;
 }
 
-void
-LinkBudget::setWaterVaporLookupFilePath(const std::string& filePath)
+void LinkBudget::setWaterVaporLookupFilePath(const std::string& filePath)
 {
     this->waterVaporLookupFilePath = filePath;
 }
 
-void
-LinkBudget::calculateLinkBudget()
+void LinkBudget::calculateLinkBudget()
 {
     if (this->freqLoss) {
         // Calculate frequency offset loss only if enabled
@@ -221,8 +214,7 @@ LinkBudget::calculateLinkBudget()
         this->calculatePointingLoss();
     }
 }
-void
-LinkBudget::calculateFSPL()
+void LinkBudget::calculateFSPL()
 {
     double dx = this->antennaIn_1.r_AN_N[0] - this->antennaIn_2.r_AN_N[0];
     double dy = this->antennaIn_1.r_AN_N[1] - this->antennaIn_2.r_AN_N[1];
@@ -241,8 +233,7 @@ LinkBudget::calculateFSPL()
     double lambda = SPEED_LIGHT / this->centerfreq;
     this->L_FSPL = 20.0 * std::log10((4.0 * MPI * distance) / lambda); // 20*log10(4*pi*d / lambda)
 }
-void
-LinkBudget::calculateAtmosphericLoss()
+void LinkBudget::calculateAtmosphericLoss()
 {
     double h_i;               // [m]             Altitude, ground station altitude (above spherical earth surface)
     double gamma_i;           // [dB/km]         Specific attenuation for layer i
@@ -294,8 +285,7 @@ LinkBudget::calculateAtmosphericLoss()
 }
 /* Slant angle calculation at ground antenna location (helper function for atmospheric attenuation calculation)
  */
-double
-LinkBudget::calcCosSlantGround(Eigen::Vector3d r_AgN_N, Eigen::Vector3d n_Ag_N, Eigen::Vector3d r_AsN_N)
+double LinkBudget::calcCosSlantGround(Eigen::Vector3d r_AgN_N, Eigen::Vector3d n_Ag_N, Eigen::Vector3d r_AsN_N)
 {
     // (ITU-R P.676-13 eq 12)
     Eigen::Vector3d n_AsAg_N =
@@ -308,8 +298,7 @@ LinkBudget::calcCosSlantGround(Eigen::Vector3d r_AgN_N, Eigen::Vector3d n_Ag_N, 
 /* getPointingError: Calculate pointing error between two antennas (how much off axis to the other antenna in azimuth
  * and elevation)
  */
-Eigen::Vector2d
-LinkBudget::getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vector3d r_A2N_N, Eigen::MRPd sigma_AN1)
+Eigen::Vector2d LinkBudget::getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vector3d r_A2N_N, Eigen::MRPd sigma_AN1)
 {
     Eigen::Matrix3d dcm_NA1 = sigma_AN1.toRotationMatrix(); // DCM from {A1} to {N} frame
     Eigen::Vector3d r_A2A1_N = r_A2N_N - r_A1N_N;
@@ -331,8 +320,7 @@ LinkBudget::getPointingError(Eigen::Vector3d r_A1N_N, Eigen::Vector3d r_A2N_N, E
 /* Calculate pointing loss based on pointing errors of both antennas
    -> This function assumes a 'gaussian' antenna pattern' in the main lobe / far-field
 */
-void
-LinkBudget::calculatePointingLoss()
+void LinkBudget::calculatePointingLoss()
 {
     // Check if one antenna is on the ground
     if (this->gndAntPnt == nullptr) {
@@ -367,8 +355,7 @@ LinkBudget::calculatePointingLoss()
         return;
     }
 }
-void
-LinkBudget::calculateFrequencyOffsetLoss()
+void LinkBudget::calculateFrequencyOffsetLoss()
 {
     // [Hz] lower frequency (take the highest lower frequency)
     double f_low = std::max(this->antennaIn_1.frequency - this->antennaIn_1.B / 2.0,
@@ -399,8 +386,7 @@ LinkBudget::calculateFrequencyOffsetLoss()
         return;
     }
 }
-void
-LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTable* lookupTable)
+void LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTable* lookupTable)
 {
     std::string filename;
     std::string line;
@@ -549,8 +535,7 @@ LinkBudget::generateLookupTable(LinkBudgetTypes::GasType gasType, LookupTable* l
         bskLogger.bskLog(BSK_WARNING, "LinkBudget: No data loaded from %s", filename.c_str());
     }
 }
-void
-LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* attenuationLookup, double frequency)
+void LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* attenuationLookup, double frequency)
 {
     // Clear all cached layer data so repeated Reset() calls rebuild a consistent table.
     attenuationLookup->layer_i.clear();
@@ -663,8 +648,7 @@ LinkBudget::precomputeAtmosphericAttenuationAtLayers(AttenuationLookupTable* att
         h_i += delta_h_layer_i;
     }
 }
-void
-LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
+void LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     // always zero the output message buffers before assigning values
     linkBudgetOutPayloadBuffer = this->linkBudgetOutPayload.zeroMsgPayload;
@@ -697,8 +681,7 @@ LinkBudget::writeOutputMessages(uint64_t CurrentSimNanos)
     // write to the output messages
     this->linkBudgetOutPayload.write(&linkBudgetOutPayloadBuffer, this->moduleID, CurrentSimNanos);
 }
-void
-LinkBudget::calculateCNR()
+void LinkBudget::calculateCNR()
 {
     // If no valid link, set CNR to 0 for both antennas
     if (!this->linkValid) {

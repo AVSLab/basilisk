@@ -27,8 +27,7 @@
  @param configData The configuration data associated with the ST sensor interface
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_stProcessTelem(STConfigData* configData, int64_t moduleID)
+void SelfInit_stProcessTelem(STConfigData* configData, int64_t moduleID)
 {
     (void)moduleID;
     STAttMsg_C_init(&configData->stAttOutMsg);
@@ -40,8 +39,7 @@ SelfInit_stProcessTelem(STConfigData* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_stProcessTelem(STConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Reset_stProcessTelem(STConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -58,8 +56,7 @@ Reset_stProcessTelem(STConfigData* configData, uint64_t callTime, int64_t module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_stProcessTelem(STConfigData* configData, uint64_t callTime, int64_t moduleID)
+void Update_stProcessTelem(STConfigData* configData, uint64_t callTime, int64_t moduleID)
 {
     double dcm_CN[3][3]; /* dcm, inertial to case frame */
     double dcm_BN[3][3]; /* dcm, inertial to body frame */

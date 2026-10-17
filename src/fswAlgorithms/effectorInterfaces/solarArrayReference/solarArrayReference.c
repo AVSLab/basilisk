@@ -32,8 +32,7 @@ static const double epsilon = 1e-12; // [-] Module tolerance for zero
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_solarArrayReference(solarArrayReferenceConfig* configData, int64_t moduleID)
+void SelfInit_solarArrayReference(solarArrayReferenceConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     HingedRigidBodyMsg_C_init(&configData->hingedRigidBodyRefOutMsg);
@@ -46,8 +45,7 @@ SelfInit_solarArrayReference(solarArrayReferenceConfig* configData, int64_t modu
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_solarArrayReference(solarArrayReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_solarArrayReference(solarArrayReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
     if (!NavAttMsg_C_isLinked(&configData->attNavInMsg)) {
@@ -91,8 +89,7 @@ Reset_solarArrayReference(solarArrayReferenceConfig* configData, uint64_t callTi
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_solarArrayReference(solarArrayReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_solarArrayReference(solarArrayReferenceConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign buffer messages */
     NavAttMsgPayload attNavIn = NavAttMsg_C_read(&configData->attNavInMsg);

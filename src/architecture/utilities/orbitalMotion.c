@@ -35,8 +35,7 @@
  * Outputs:
  *   HN: Hill frame DCM relative to inertial frame
  */
-void
-hillFrame(double* rc_N, double* vc_N, double HN[3][3])
+void hillFrame(double* rc_N, double* vc_N, double HN[3][3])
 {
     double ir_N[3];     /* orbit radial unit direction vector */
     double itheta_N[3]; /* along-track unit direction vector */
@@ -63,8 +62,7 @@ hillFrame(double* rc_N, double* vc_N, double HN[3][3])
  *   rd_N: deputy inertial position vector
  *   vd_N: deputy inertial velocity vector
  */
-void
-hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
+void hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* rd_N, double* vd_N)
 {
     double HN[3][3];      /* DCM of Hill frame relative to inertial */
     double NH[3][3];      /* DCM of inertial frame relative to Hill */
@@ -103,8 +101,7 @@ hill2rv(double* rc_N, double* vc_N, double* rho_H, double* rhoPrime_H, double* r
  *   rho_H: deputy Hill position vector
  *   rhoPrime_H: deputy Hill velocity vector
  */
-void
-rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
+void rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, double* rhoPrime_H)
 {
     double HN[3][3];      /* DCM of Hill frame relative to inertial */
     double hVec_N[3];     /* orbit angular momentum vector */
@@ -142,8 +139,7 @@ rv2hill(double* rc_N, double* vc_N, double* rd_N, double* vd_N, double* rho_H, d
  * Outputs:
  *   f = true anomaly (rad)
  */
-double
-E2f(double Ecc, double e)
+double E2f(double Ecc, double e)
 {
     double f;
 
@@ -167,8 +163,7 @@ E2f(double Ecc, double e)
  * Outputs:
  *   M = mean elliptic anomaly (rad)
  */
-double
-E2M(double Ecc, double e)
+double E2M(double Ecc, double e)
 {
     double M;
 
@@ -192,8 +187,7 @@ E2M(double Ecc, double e)
  * Outputs:
  *   Ecc = eccentric anomaly (rad)
  */
-double
-f2E(double f, double e)
+double f2E(double f, double e)
 {
     double Ecc;
 
@@ -216,8 +210,7 @@ f2E(double f, double e)
  * Outputs:
  *   H = hyperbolic anomaly (rad)
  */
-double
-f2H(double f, double e)
+double f2H(double f, double e)
 {
     double H;
 
@@ -240,8 +233,7 @@ f2H(double f, double e)
  * Outputs:
  *   f = true anomaly angle (rad)
  */
-double
-H2f(double H, double e)
+double H2f(double H, double e)
 {
     double f;
 
@@ -264,8 +256,7 @@ H2f(double H, double e)
  * Outputs:
  *   N = mean hyperbolic anomaly (rad)
  */
-double
-H2N(double H, double e)
+double H2N(double H, double e)
 {
     double N;
 
@@ -289,8 +280,7 @@ H2N(double H, double e)
  * Outputs:
  *   Ecc = eccentric anomaly (rad)
  */
-double
-M2E(double M, double e)
+double M2E(double M, double e)
 {
     double small = 1e-13;
     double dE = 10 * small;
@@ -324,8 +314,7 @@ M2E(double M, double e)
  * Outputs:
  *   H = hyperbolic anomaly (rad)
  */
-double
-N2H(double N, double e)
+double N2H(double N, double e)
 {
     double small = 1e-13;
     double dH = 10 * small;
@@ -385,8 +374,7 @@ N2H(double N, double e)
  *   rVec = position vector
  *   vVec = velocity vector
  */
-void
-elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
+void elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
 {
     double e;     /* eccentricty */
     double a;     /* semi-major axis */
@@ -478,8 +466,7 @@ elem2rv(double mu, ClassicElements* elements, double* rVec, double* vVec)
  * Outputs:
  *   elements = orbital elements
  */
-void
-rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
+void rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
 {
     double hVec[3];  /* orbit angular momentum vector */
     double ihHat[3]; /* normalized orbit angular momentum vector */
@@ -589,8 +576,7 @@ rv2elem(double mu, double* rVec, double* vVec, ClassicElements* elements)
  * Outputs:
  *   density = density at the given altitude in kg/m^3
  */
-double
-atmosphericDensity(double alt)
+double atmosphericDensity(double alt)
 {
     double logdensity;
     double density;
@@ -620,8 +606,7 @@ atmosphericDensity(double alt)
  * @return Debye length [m], or NaN if alt is non-finite or outside the valid range.
  * @note Values above 1000 km are highly speculative.
  */
-double
-debyeLength(double alt)
+double debyeLength(double alt)
 {
     double debyedist;
     double a;
@@ -677,8 +662,7 @@ debyeLength(double alt)
  *   advec = The inertial acceleration vector due to atmospheric
  *             drag in km/sec^2
  */
-void
-atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, double* advec)
+void atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, double* advec)
 {
     double r;
     double v;
@@ -726,8 +710,7 @@ atmosphericDrag(double Cd, double A, double m, double* rvec, double* vvec, doubl
  *   ajtot = The total acceleration vector due to the J
  *             perturbations in km/sec^2 [accelx;accely;accelz]
  */
-void
-jPerturb(double* rvec, int num, double* ajtot, ...)
+void jPerturb(double* rvec, int num, double* ajtot, ...)
 {
     double mu;
     double req;
@@ -909,8 +892,7 @@ jPerturb(double* rvec, int num, double* ajtot, ...)
  *       components of the output are the same as the vector
  *       components of the sunvec input vector.
  */
-void
-solarRad(double A, double m, double* sunvec, double* arvec)
+void solarRad(double A, double m, double* sunvec, double* arvec)
 {
     double c;
     double Cr;
@@ -930,8 +912,7 @@ solarRad(double A, double m, double* sunvec, double* arvec)
 }
 
 /*! maps classical mean orbit elements to Osculating elements */
-void
-clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
+void clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* elements_p, double sgn)
 {
     // Classical orbital elements = (a,e,i,Omega,omega,f)
     // First-order J2 Mapping Between Mean and Osculating Orbital Elements
@@ -1040,8 +1021,7 @@ clMeanOscMap(double req, double J2, ClassicElements* elements, ClassicElements* 
 }
 
 /*! maps from classical orbit elements to equinoctial elements */
-void
-clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
+void clElem2eqElem(ClassicElements* elements_cl, equinoctialElements* elements_eq)
 {
     // conversion
     // from classical orbital elements (a,e,i,Omega,omega,f)

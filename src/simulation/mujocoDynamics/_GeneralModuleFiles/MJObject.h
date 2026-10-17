@@ -49,8 +49,7 @@ namespace MJBasilisk::detail {
  * @return A human-readable name for the object type. Defaults to "object".
  */
 template<typename T>
-constexpr std::string_view
-getObjectTypeName()
+constexpr std::string_view getObjectTypeName()
 {
     return "object";
 }

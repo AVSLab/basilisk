@@ -31,8 +31,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData
  */
-void
-SelfInit_rwMotorTorque(rwMotorTorqueConfig* configData, int64_t moduleID)
+void SelfInit_rwMotorTorque(rwMotorTorqueConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     ArrayMotorTorqueMsg_C_init(&configData->rwMotorTorqueOutMsg);
@@ -45,8 +44,7 @@ SelfInit_rwMotorTorque(rwMotorTorqueConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Reset_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)callTime;
     (void)moduleID;
@@ -90,8 +88,7 @@ Reset_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t 
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The ID associated with the configData
  */
-void
-Update_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_rwMotorTorque(rwMotorTorqueConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     RWAvailabilityMsgPayload wheelsAvailability; /*!< Msg containing RW availability */
     CmdTorqueBodyMsgPayload LrInputMsg;          /*!< Msg containing Lr control torque */

@@ -26,8 +26,7 @@
  @param configData The configuration data associated with this module
  @param moduleID The module identifier
  */
-void
-SelfInit_thrusterPlatformState(thrusterPlatformStateConfig* configData, int64_t moduleID)
+void SelfInit_thrusterPlatformState(thrusterPlatformStateConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     THRConfigMsg_C_init(&configData->thrusterConfigBOutMsg);
@@ -40,8 +39,7 @@ SelfInit_thrusterPlatformState(thrusterPlatformStateConfig* configData, int64_t 
  @param callTime [ns] time the method is called
  @param moduleID The module identifier
 */
-void
-Reset_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     if (!THRConfigMsg_C_isLinked(&configData->thrusterConfigFInMsg)) {
         _bskError(configData->bskLogger, " thrusterPlatformState.thrusterConfigFInMsg wasn't connected.");
@@ -64,8 +62,7 @@ Reset_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t ca
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
 */
-void
-Update_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_thrusterPlatformState(thrusterPlatformStateConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     /*! - Create and assign message buffers */
     THRConfigMsgPayload thrusterConfigFIn = THRConfigMsg_C_read(&configData->thrusterConfigFInMsg);

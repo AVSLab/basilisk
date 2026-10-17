@@ -45,8 +45,7 @@ class StateVecIntegratorTestAccess
  * @param currentTime [s] Start time of the integration step.
  * @param timeStep [s] Duration of the integration step.
  */
-inline void
-stepIntegrator(StateVecIntegrator& integrator, double currentTime, double timeStep)
+inline void stepIntegrator(StateVecIntegrator& integrator, double currentTime, double timeStep)
 {
     StateVecIntegratorTestAccess::step(integrator, currentTime, timeStep);
 }
@@ -57,8 +56,7 @@ stepIntegrator(StateVecIntegrator& integrator, double currentTime, double timeSt
  * @param currentTime [s] Start time of the integration step.
  * @param timeStep [s] Duration of the integration step.
  */
-inline void
-stepIntegrator(StateVecIntegrator* integrator, double currentTime, double timeStep)
+inline void stepIntegrator(StateVecIntegrator* integrator, double currentTime, double timeStep)
 {
     StateVecIntegratorTestAccess::step(*integrator, currentTime, timeStep);
 }

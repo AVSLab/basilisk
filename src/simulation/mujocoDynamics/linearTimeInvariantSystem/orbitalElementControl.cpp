@@ -24,8 +24,7 @@
 
 namespace {
 
-double
-angleWarp(double angle)
+double angleWarp(double angle)
 {
     const double width = 2.0 * M_PI;
     double adjusted = angle;
@@ -46,8 +45,7 @@ angleWarp(double angle)
  * Rows: da, de, di, dOmega, domega, dM
  * Cols: f_R, f_T, f_N in Hill or LVLH frame.
  */
-Eigen::Matrix<double, 6, 3>
-calculateClassicalBMatrix(double mu, const ClassicElements& oe_cl, BSKLogger& bskLogger)
+Eigen::Matrix<double, 6, 3> calculateClassicalBMatrix(double mu, const ClassicElements& oe_cl, BSKLogger& bskLogger)
 {
     Eigen::Matrix<double, 6, 3> B;
     B.setZero();
@@ -116,8 +114,7 @@ calculateClassicalBMatrix(double mu, const ClassicElements& oe_cl, BSKLogger& bs
     return B;
 }
 
-bool
-isMatrixSPD(const Eigen::MatrixXd& mat)
+bool isMatrixSPD(const Eigen::MatrixXd& mat)
 {
     if ((mat - mat.transpose()).norm() > 1e-12) {
         return false;
@@ -133,8 +130,7 @@ isMatrixSPD(const Eigen::MatrixXd& mat)
 
 } // anonymous namespace
 
-void
-OrbitalElementControl::Reset(uint64_t CurrentSimNanos)
+void OrbitalElementControl::Reset(uint64_t CurrentSimNanos)
 {
     // Base class checks A/B/C/D consistency.
     LinearTimeInvariantSystem::Reset(CurrentSimNanos);
@@ -151,8 +147,7 @@ OrbitalElementControl::Reset(uint64_t CurrentSimNanos)
     }
 }
 
-void
-OrbitalElementControl::setProportionalGain(const Eigen::MatrixXd& K)
+void OrbitalElementControl::setProportionalGain(const Eigen::MatrixXd& K)
 {
     const size_t K_rows = static_cast<size_t>(K.rows());
     const size_t K_cols = static_cast<size_t>(K.cols());
@@ -174,8 +169,7 @@ OrbitalElementControl::setProportionalGain(const Eigen::MatrixXd& K)
     this->setD(K);
 }
 
-void
-OrbitalElementControl::setIntegralGain(const Eigen::MatrixXd& K)
+void OrbitalElementControl::setIntegralGain(const Eigen::MatrixXd& K)
 {
     const size_t K_rows = static_cast<size_t>(K.rows());
     const size_t K_cols = static_cast<size_t>(K.cols());
@@ -198,8 +192,7 @@ OrbitalElementControl::setIntegralGain(const Eigen::MatrixXd& K)
     this->setC(K);
 }
 
-Eigen::VectorXd
-OrbitalElementControl::readInput(uint64_t /*CurrentSimNanos*/)
+Eigen::VectorXd OrbitalElementControl::readInput(uint64_t /*CurrentSimNanos*/)
 {
     const size_t n = this->getInputSize();
     Eigen::VectorXd result = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(n));
@@ -229,8 +222,7 @@ OrbitalElementControl::readInput(uint64_t /*CurrentSimNanos*/)
     return result;
 }
 
-void
-OrbitalElementControl::writeOutput(uint64_t CurrentSimNanos, const Eigen::VectorXd& y)
+void OrbitalElementControl::writeOutput(uint64_t CurrentSimNanos, const Eigen::VectorXd& y)
 {
     // Copy current classical elements into ClassicElements struct.
     const ClassicElementsMsgPayload& inputElement = this->currentOEInMsg();

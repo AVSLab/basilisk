@@ -55,8 +55,7 @@ GroundLocation::GroundLocation()
 GroundLocation::~GroundLocation() = default;
 
 /*! Resets the internal position to the specified initial position.*/
-void
-GroundLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void GroundLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     this->r_LP_P = this->r_LP_P_Init;
 
@@ -71,8 +70,7 @@ GroundLocation::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
  * @param longitude
  * @param alt
  */
-void
-GroundLocation::specifyLocation(double lat, double longitude, double alt)
+void GroundLocation::specifyLocation(double lat, double longitude, double alt)
 {
     Eigen::Vector3d tmpLLAPosition(lat, longitude, alt);
     this->r_LP_P_Init = LLA2PCPF(tmpLLAPosition, this->planetRadius);
@@ -82,8 +80,7 @@ GroundLocation::specifyLocation(double lat, double longitude, double alt)
 /*! Specifies the ground location from planet-centered, planet-fixed coordinates
  * @param r_LP_P_Loc
  */
-void
-GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc)
+void GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc)
 {
     /* Assign to r_LP_P_Init */
     this->r_LP_P_Init = r_LP_P_Loc;
@@ -98,8 +95,7 @@ GroundLocation::specifyLocationPCPF(Eigen::Vector3d& r_LP_P_Loc)
 /*! Adds a scState message name to the vector of names to be subscribed to. Also creates a corresponding access message
  * output name.
  */
-void
-GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
+void GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 {
     this->scStateInMsgs.push_back(tmpScMsg->addSubscriber());
 
@@ -113,8 +109,7 @@ GroundLocation::addSpacecraftToModel(Message<SCStatesMsgPayload>* tmpScMsg)
 
 /*! Read module messages
  */
-bool
-GroundLocation::ReadMessages()
+bool GroundLocation::ReadMessages()
 {
     SCStatesMsgPayload scMsg;
 
@@ -147,8 +142,7 @@ GroundLocation::ReadMessages()
 
 /*! write module messages
  */
-void
-GroundLocation::WriteMessages(uint64_t CurrentClock)
+void GroundLocation::WriteMessages(uint64_t CurrentClock)
 {
     //! - write access message for each spacecraft
     for (long unsigned int c = 0; c < this->accessMsgBuffer.size(); c++) {
@@ -157,8 +151,7 @@ GroundLocation::WriteMessages(uint64_t CurrentClock)
     this->currentGroundStateOutMsg.write(&this->currentGroundStateBuffer, this->moduleID, CurrentClock);
 }
 
-void
-GroundLocation::updateInertialPositions()
+void GroundLocation::updateInertialPositions()
 {
     // First, get the rotation matrix from the inertial to planet frame from SPICE:
     this->dcm_PN = cArray2EigenMatrix3d(*this->planetState.J20002Pfix);
@@ -180,8 +173,7 @@ GroundLocation::updateInertialPositions()
     eigenVector3d2CArray(this->rhat_LP_N, this->currentGroundStateBuffer.rHat_LP_N);
 }
 
-void
-GroundLocation::computeAccess()
+void GroundLocation::computeAccess()
 {
     // Update the groundLocation's inertial position
     this->updateInertialPositions();
@@ -246,8 +238,7 @@ GroundLocation::computeAccess()
  update module
  @param CurrentSimNanos
  */
-void
-GroundLocation::UpdateState(uint64_t CurrentSimNanos)
+void GroundLocation::UpdateState(uint64_t CurrentSimNanos)
 {
     this->ReadMessages();
     this->computeAccess();

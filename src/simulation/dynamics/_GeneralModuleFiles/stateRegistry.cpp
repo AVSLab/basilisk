@@ -34,8 +34,7 @@
 
 namespace {
 // Validate each matrix shape before allocating seed matrices or computing offsets.
-size_t
-checkedProduct(const MatrixShape& shape, const std::string& stateName, const char* field)
+size_t checkedProduct(const MatrixShape& shape, const std::string& stateName, const char* field)
 {
     if (shape.rows == 0 || shape.cols == 0) {
         throw std::invalid_argument("State '" + stateName + "' " + field + " shape must be nonzero.");
@@ -53,8 +52,7 @@ checkedProduct(const MatrixShape& shape, const std::string& stateName, const cha
 }
 
 // Buffer offsets must fit both size_t arithmetic and Eigen indexing.
-size_t
-checkedAdd(size_t left, size_t right, const char* bufferName)
+size_t checkedAdd(size_t left, size_t right, const char* bufferName)
 {
     if (left > std::numeric_limits<size_t>::max() - right) {
         throw std::overflow_error(std::string("The ") + bufferName + " buffer size overflows.");
@@ -67,8 +65,7 @@ checkedAdd(size_t left, size_t right, const char* bufferName)
 }
 
 // Return a complete record's scalar offset and size in the selected buffer.
-std::pair<size_t, size_t>
-recordRange(const StateLayout& layout, StateBufferKind kind)
+std::pair<size_t, size_t> recordRange(const StateLayout& layout, StateBufferKind kind)
 {
     switch (kind) {
         case StateBufferKind::State:
@@ -83,11 +80,10 @@ recordRange(const StateLayout& layout, StateBufferKind kind)
 
 // Typed accessors supply their buffer directly so resolving a cached segment
 // does not need a buffer-selection branch.
-const double*
-resolveSegment(const StateRegistry* registry,
-               const StateBufferSegment& segment,
-               StateBufferKind expectedKind,
-               const Eigen::VectorXd& buffer)
+const double* resolveSegment(const StateRegistry* registry,
+                             const StateBufferSegment& segment,
+                             StateBufferKind expectedKind,
+                             const Eigen::VectorXd& buffer)
 {
     if (segment.registry != registry || segment.bufferKind != expectedKind ||
         segment.offset > static_cast<size_t>(buffer.size()) ||
@@ -98,8 +94,7 @@ resolveSegment(const StateRegistry* registry,
 }
 }
 
-void
-StateRegistry::finalizeStates()
+void StateRegistry::finalizeStates()
 {
     if (this->finalized) {
         return;
@@ -114,22 +109,21 @@ StateRegistry::finalizeStates()
     this->finalized = true;
 }
 
-StateData*
-StateRegistry::registerState(std::string stateName, const StateSpec& spec)
+StateData* StateRegistry::registerState(std::string stateName, const StateSpec& spec)
 {
     return this->registerManagedState(std::move(stateName), spec, nullptr);
 }
 
-StateData*
-StateRegistry::registerState(std::string stateName, const StateSpec& spec, std::unique_ptr<StateUpdatePolicy> policy)
+StateData* StateRegistry::registerState(std::string stateName,
+                                        const StateSpec& spec,
+                                        std::unique_ptr<StateUpdatePolicy> policy)
 {
     return this->registerManagedState(std::move(stateName), spec, std::move(policy));
 }
 
-StateData*
-StateRegistry::registerManagedState(std::string stateName,
-                                    const StateSpec& spec,
-                                    std::unique_ptr<StateUpdatePolicy> policy)
+StateData* StateRegistry::registerManagedState(std::string stateName,
+                                               const StateSpec& spec,
+                                               std::unique_ptr<StateUpdatePolicy> policy)
 {
     this->validateSpec(stateName, spec, policy.get());
 
@@ -180,8 +174,7 @@ StateRegistry::registerManagedState(std::string stateName,
     return result;
 }
 
-StateData*
-StateRegistry::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
+StateData* StateRegistry::registerState(uint32_t nRow, uint32_t nCol, std::string stateName)
 {
     StateSpec spec;
     spec.state = { nRow, nCol };
@@ -199,8 +192,9 @@ StateRegistry::registerState(uint32_t nRow, uint32_t nCol, std::string stateName
     return this->registerState(std::move(stateName), spec);
 }
 
-void
-StateRegistry::validateSpec(const std::string& stateName, const StateSpec& spec, const StateUpdatePolicy* policy) const
+void StateRegistry::validateSpec(const std::string& stateName,
+                                 const StateSpec& spec,
+                                 const StateUpdatePolicy* policy) const
 {
     if (stateName.empty()) {
         throw std::invalid_argument("A state name cannot be empty.");
@@ -231,8 +225,7 @@ StateRegistry::validateSpec(const std::string& stateName, const StateSpec& spec,
     policy->validate(spec);
 }
 
-void
-StateRegistry::allocateBuffers()
+void StateRegistry::allocateBuffers()
 {
     NoiseTopology noiseTopology = this->canonicalNoiseTopology();
     std::vector<StateLayout> layouts;
@@ -300,8 +293,7 @@ StateRegistry::allocateBuffers()
     this->pendingNoiseGroups.clear();
 }
 
-StateRegistry::NoiseTopology
-StateRegistry::canonicalNoiseTopology() const
+StateRegistry::NoiseTopology StateRegistry::canonicalNoiseTopology() const
 {
     NoiseTopology result = this->pendingNoiseGroups;
     std::set<NoiseEndpoint> memberships;
@@ -326,8 +318,7 @@ StateRegistry::canonicalNoiseTopology() const
     return result;
 }
 
-StateData*
-StateRegistry::getStateObject(const std::string& stateName) const
+StateData* StateRegistry::getStateObject(const std::string& stateName) const
 {
     const auto state = this->stateSlotByName.find(stateName);
     if (state != this->stateSlotByName.end()) {
@@ -336,22 +327,19 @@ StateRegistry::getStateObject(const std::string& stateName) const
     return nullptr;
 }
 
-const std::vector<StateData*>&
-StateRegistry::getStateRegistrationOrder() const
+const std::vector<StateData*>& StateRegistry::getStateRegistrationOrder() const
 {
     this->requireFinalized("getStateRegistrationOrder()");
     return this->registrationOrderView;
 }
 
-const std::vector<StateLayout>&
-StateRegistry::getStateLayouts() const
+const std::vector<StateLayout>& StateRegistry::getStateLayouts() const
 {
     this->requireFinalized("getStateLayouts()");
     return this->stateLayoutView;
 }
 
-StateBufferSegment
-StateRegistry::getSegment(StateBufferKind kind, size_t firstSlot, size_t elementCount) const
+StateBufferSegment StateRegistry::getSegment(StateBufferKind kind, size_t firstSlot, size_t elementCount) const
 {
     this->requireFinalized("getSegment()");
     if (firstSlot >= this->stateRecords.size()) {
@@ -368,15 +356,13 @@ StateRegistry::getSegment(StateBufferKind kind, size_t firstSlot, size_t element
     return { this, kind, offset, count };
 }
 
-MutableMatrixView
-StateRegistry::segmentView(const StateBufferSegment& segment)
+MutableMatrixView StateRegistry::segmentView(const StateBufferSegment& segment)
 {
     const auto view = static_cast<const StateRegistry&>(*this).segmentView(segment);
     return MutableMatrixView(const_cast<double*>(view.data()), view.rows(), view.cols());
 }
 
-ConstMatrixView
-StateRegistry::segmentView(const StateBufferSegment& segment) const
+ConstMatrixView StateRegistry::segmentView(const StateBufferSegment& segment) const
 {
     const double* data;
     switch (segment.bufferKind) {
@@ -395,72 +381,61 @@ StateRegistry::segmentView(const StateBufferSegment& segment) const
     return ConstMatrixView(data, static_cast<Eigen::Index>(segment.count), 1);
 }
 
-StateBufferSegment
-StateRegistry::getStateSegment(size_t firstSlot, size_t elementCount) const
+StateBufferSegment StateRegistry::getStateSegment(size_t firstSlot, size_t elementCount) const
 {
     return this->getSegment(StateBufferKind::State, firstSlot, elementCount);
 }
 
-StateBufferSegment
-StateRegistry::getDerivativeSegment(size_t firstSlot, size_t elementCount) const
+StateBufferSegment StateRegistry::getDerivativeSegment(size_t firstSlot, size_t elementCount) const
 {
     return this->getSegment(StateBufferKind::Derivative, firstSlot, elementCount);
 }
 
-StateBufferSegment
-StateRegistry::getDiffusionSegment(size_t firstSlot, size_t elementCount) const
+StateBufferSegment StateRegistry::getDiffusionSegment(size_t firstSlot, size_t elementCount) const
 {
     return this->getSegment(StateBufferKind::Diffusion, firstSlot, elementCount);
 }
 
-double*
-StateRegistry::stateSegmentData(const StateBufferSegment& segment)
+double* StateRegistry::stateSegmentData(const StateBufferSegment& segment)
 {
     return const_cast<double*>(static_cast<const StateRegistry&>(*this).stateSegmentData(segment));
 }
 
-const double*
-StateRegistry::stateSegmentData(const StateBufferSegment& segment) const
+const double* StateRegistry::stateSegmentData(const StateBufferSegment& segment) const
 {
     this->requireFinalized("stateSegmentData()");
     return resolveSegment(this, segment, StateBufferKind::State, this->liveBuffers.states);
 }
 
-double*
-StateRegistry::derivativeSegmentData(const StateBufferSegment& segment)
+double* StateRegistry::derivativeSegmentData(const StateBufferSegment& segment)
 {
     return const_cast<double*>(static_cast<const StateRegistry&>(*this).derivativeSegmentData(segment));
 }
 
-const double*
-StateRegistry::derivativeSegmentData(const StateBufferSegment& segment) const
+const double* StateRegistry::derivativeSegmentData(const StateBufferSegment& segment) const
 {
     this->requireFinalized("derivativeSegmentData()");
     return resolveSegment(this, segment, StateBufferKind::Derivative, this->liveBuffers.derivatives);
 }
 
-double*
-StateRegistry::diffusionSegmentData(const StateBufferSegment& segment)
+double* StateRegistry::diffusionSegmentData(const StateBufferSegment& segment)
 {
     return const_cast<double*>(static_cast<const StateRegistry&>(*this).diffusionSegmentData(segment));
 }
 
-const double*
-StateRegistry::diffusionSegmentData(const StateBufferSegment& segment) const
+const double* StateRegistry::diffusionSegmentData(const StateBufferSegment& segment) const
 {
     this->requireFinalized("diffusionSegmentData()");
     return resolveSegment(this, segment, StateBufferKind::Diffusion, this->liveBuffers.diffusions);
 }
 
-const StateRegistry::NoiseTopology&
-StateRegistry::getSharedNoiseTopology() const
+const StateRegistry::NoiseTopology& StateRegistry::getSharedNoiseTopology() const
 {
     this->requireFinalized("getSharedNoiseTopology()");
     return this->finalizedNoiseTopology;
 }
 
-void
-StateRegistry::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
+void StateRegistry::registerSharedNoiseSource(std::vector<std::pair<const StateData&, size_t>> sharedNoises)
 {
     NoiseGroup group;
     group.reserve(sharedNoises.size());
@@ -487,22 +462,19 @@ StateRegistry::registerSharedNoiseSource(std::vector<std::pair<const StateData&,
     this->pendingNoiseGroups.push_back(std::move(group));
 }
 
-void
-StateRegistry::requireFinalized(const char* operation) const
+void StateRegistry::requireFinalized(const char* operation) const
 {
     if (!this->finalized) {
         throw std::logic_error(std::string(operation) + " requires finalized state topology.");
     }
 }
 
-const std::string&
-StateRegistry::handleName(size_t slot) const
+const std::string& StateRegistry::handleName(size_t slot) const
 {
     return this->stateRecords.at(slot).name;
 }
 
-void
-StateRegistry::setHandleNoiseCount(size_t slot, size_t numSources)
+void StateRegistry::setHandleNoiseCount(size_t slot, size_t numSources)
 {
     StateRecord& record = this->stateRecords.at(slot);
     if (this->finalized) {
@@ -543,14 +515,12 @@ StateRegistry::setHandleNoiseCount(size_t slot, size_t numSources)
     record.spec = updatedSpec;
 }
 
-double*
-StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex)
+double* StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex)
 {
     return const_cast<double*>(static_cast<const StateRegistry&>(*this).activeDiffusionData(slot, localNoiseIndex));
 }
 
-const double*
-StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex) const
+const double* StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex) const
 {
     const StateRecord& record = this->stateRecords.at(slot);
     const StateSpec& spec = record.spec;
@@ -565,30 +535,26 @@ StateRegistry::activeDiffusionData(size_t slot, size_t localNoiseIndex) const
            localNoiseIndex * layout.diffusionCountPerSource;
 }
 
-void
-StateRegistry::requireRawAccess(const char* field) const
+void StateRegistry::requireRawAccess(const char* field) const
 {
     if (!this->finalized) {
         throw std::logic_error(std::string("Raw ") + field + " access requires finalized state storage.");
     }
 }
 
-double*
-StateRegistry::liveStateData(size_t slot)
+double* StateRegistry::liveStateData(size_t slot)
 {
     this->requireRawAccess("state");
     return this->liveBuffers.states.data() + this->stateLayoutView.at(slot).stateOffset;
 }
 
-double*
-StateRegistry::liveDerivativeData(size_t slot)
+double* StateRegistry::liveDerivativeData(size_t slot)
 {
     this->requireRawAccess("derivative");
     return this->liveBuffers.derivatives.data() + this->stateLayoutView.at(slot).derivOffset;
 }
 
-double*
-StateRegistry::liveDiffusionData(size_t slot, size_t localNoiseIndex)
+double* StateRegistry::liveDiffusionData(size_t slot, size_t localNoiseIndex)
 {
     this->requireRawAccess("diffusion");
     const StateLayout& layout = this->stateLayoutView.at(slot);

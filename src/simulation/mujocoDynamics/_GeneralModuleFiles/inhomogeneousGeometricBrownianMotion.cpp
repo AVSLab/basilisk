@@ -18,8 +18,7 @@
  */
 #include "inhomogeneousGeometricBrownianMotion.h"
 
-void
-InhomogeneousGeometricBrownianMotion::registerStates(DynParamRegisterer registerer)
+void InhomogeneousGeometricBrownianMotion::registerStates(DynParamRegisterer registerer)
 {
     StateSpec spec;
     spec.state = { 1, 1 };
@@ -34,8 +33,7 @@ InhomogeneousGeometricBrownianMotion::registerStates(DynParamRegisterer register
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(mean));
 }
 
-void
-InhomogeneousGeometricBrownianMotion::UpdateState(uint64_t CurrentSimNanos)
+void InhomogeneousGeometricBrownianMotion::UpdateState(uint64_t CurrentSimNanos)
 {
     // Safety
     if (!xState) {
@@ -61,8 +59,7 @@ InhomogeneousGeometricBrownianMotion::UpdateState(uint64_t CurrentSimNanos)
     writeOutput(CurrentSimNanos, x0);
 }
 
-double
-InhomogeneousGeometricBrownianMotion::getStateValue() const
+double InhomogeneousGeometricBrownianMotion::getStateValue() const
 {
     if (!xState) {
         BSKLogger{}.bskError("InhomogeneousGeometricBrownianMotion: getStateValue before initialization");
@@ -70,8 +67,7 @@ InhomogeneousGeometricBrownianMotion::getStateValue() const
     return xState->stateView()(0, 0);
 }
 
-void
-InhomogeneousGeometricBrownianMotion::setStateValue(double val)
+void InhomogeneousGeometricBrownianMotion::setStateValue(double val)
 {
     if (!xState) {
         bskLogger.bskError("InhomogeneousGeometricBrownianMotion: setStateValue before initialization");
@@ -85,8 +81,7 @@ InhomogeneousGeometricBrownianMotion::setStateValue(double val)
     xState->setState(Eigen::Matrix<double, 1, 1>::Constant(val));
 }
 
-void
-InhomogeneousGeometricBrownianMotion::setMean(double m)
+void InhomogeneousGeometricBrownianMotion::setMean(double m)
 {
     if (m <= 0.0) {
         bskLogger.bskError("InhomogeneousGeometricBrownianMotion::setMean: mu must be > 0");
@@ -94,8 +89,7 @@ InhomogeneousGeometricBrownianMotion::setMean(double m)
     mean = m;
 }
 
-void
-InhomogeneousGeometricBrownianMotion::setTimeConstant(double t)
+void InhomogeneousGeometricBrownianMotion::setTimeConstant(double t)
 {
     if (t <= 0.0) {
         bskLogger.bskError("InhomogeneousGeometricBrownianMotion::setTimeConstant: tau must be > 0");
@@ -103,8 +97,7 @@ InhomogeneousGeometricBrownianMotion::setTimeConstant(double t)
     timeConstant = t;
 }
 
-void
-InhomogeneousGeometricBrownianMotion::setStationaryStd(double s)
+void InhomogeneousGeometricBrownianMotion::setStationaryStd(double s)
 {
     if (s < 0.0) {
         bskLogger.bskError("InhomogeneousGeometricBrownianMotion::setStationaryStd: sigma_st must be >= 0");

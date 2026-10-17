@@ -31,8 +31,7 @@
  @param configData The configuration data associated with the CSS WLS estimator
  @param moduleID The module identifier
  */
-void
-SelfInit_sunlineSEKF(sunlineSEKFConfig* configData, int64_t moduleID)
+void SelfInit_sunlineSEKF(sunlineSEKFConfig* configData, int64_t moduleID)
 {
     (void)moduleID;
     NavAttMsg_C_init(&configData->navStateOutMsg);
@@ -46,8 +45,7 @@ SelfInit_sunlineSEKF(sunlineSEKFConfig* configData, int64_t moduleID)
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Reset_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Reset_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     (void)moduleID;
     CSSConfigMsgPayload cssConfigInBuffer;
@@ -120,8 +118,7 @@ Reset_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t modu
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The module identifier
  */
-void
-Update_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t moduleID)
+void Update_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t moduleID)
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
@@ -197,8 +194,7 @@ Update_sunlineSEKF(sunlineSEKFConfig* configData, uint64_t callTime, int64_t mod
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void
-sunlineTimeUpdate(sunlineSEKFConfig* configData, double updateTime)
+void sunlineTimeUpdate(sunlineSEKFConfig* configData, double updateTime)
 {
     double stmT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], covPhiT[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
     double Gamma[EKF_N_STATES_SWITCH][EKF_N_STATES_SWITCH - 3];
@@ -279,12 +275,11 @@ sunlineTimeUpdate(sunlineSEKFConfig* configData, double updateTime)
     @param dt time step
     @param stateTransition
  */
-void
-sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                    double bVec[SKF_N_STATES_HALF],
-                    double dt,
-                    double* stateInOut,
-                    double* stateTransition)
+void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+                         double bVec[SKF_N_STATES_HALF],
+                         double dt,
+                         double* stateInOut,
+                         double* stateTransition)
 {
 
     double deltatASTM[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
@@ -327,8 +322,7 @@ sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void
-sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double* dynMat)
+void sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double* dynMat)
 {
     (void)dt;
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -368,8 +362,7 @@ sunlineDynMatrix(double states[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HA
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void
-sunlineMeasUpdate(sunlineSEKFConfig* configData, double updateTime)
+void sunlineMeasUpdate(sunlineSEKFConfig* configData, double updateTime)
 {
     (void)updateTime;
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -432,16 +425,15 @@ sunlineMeasUpdate(sunlineSEKFConfig* configData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void
-sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
-                 double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
-                 double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                 double qObsVal,
-                 size_t numObs,
-                 double yObs[MAX_N_CSS_MEAS],
-                 double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                 double* x,
-                 double* covar)
+void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
+                      double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
+                      double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+                      double qObsVal,
+                      size_t numObs,
+                      double yObs[MAX_N_CSS_MEAS],
+                      double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+                      double* x,
+                      double* covar)
 {
     double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[EKF_N_STATES_SWITCH];
     double eye[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
@@ -510,16 +502,15 @@ sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH],
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void
-sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
-                  double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                  double qObsVal,
-                  size_t numObs,
-                  double yObs[MAX_N_CSS_MEAS],
-                  double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                  double* states,
-                  double* x,
-                  double* covar)
+void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
+                       double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+                       double qObsVal,
+                       size_t numObs,
+                       double yObs[MAX_N_CSS_MEAS],
+                       double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+                       double* states,
+                       double* x,
+                       double* covar)
 {
 
     double eye[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH], kH[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH];
@@ -591,16 +582,15 @@ sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS],
  @param measMat Point to the H measurement matrix
  */
 
-void
-sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
-                    size_t numCSS,
-                    double cssSensorCos[MAX_N_CSS_MEAS],
-                    double sensorUseThresh,
-                    double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
-                    double* obs,
-                    double* yMeas,
-                    int* numObs,
-                    double* measMat)
+void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
+                         size_t numCSS,
+                         double cssSensorCos[MAX_N_CSS_MEAS],
+                         double sensorUseThresh,
+                         double cssNHat_B[MAX_NUM_CSS_SENSORS * 3],
+                         double* obs,
+                         double* yMeas,
+                         int* numObs,
+                         double* measMat)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -633,12 +623,11 @@ sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH],
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void
-sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
-                  double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
-                  double qObsVal,
-                  size_t numObs,
-                  double* kalmanGain)
+void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
+                       double hObs[MAX_N_CSS_MEAS * EKF_N_STATES_SWITCH],
+                       double qObsVal,
+                       size_t numObs,
+                       double* kalmanGain)
 {
     double hObsT[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
     double covHT[EKF_N_STATES_SWITCH * MAX_N_CSS_MEAS];
@@ -679,8 +668,7 @@ sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH * EKF_N_STATES_SWITCH],
  @param covar Pointer to the covariance
  */
 
-void
-sunlineSEKFSwitch(double* bVec_B, double* states, double* covar)
+void sunlineSEKFSwitch(double* bVec_B, double* states, double* covar)
 {
     double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -730,8 +718,7 @@ sunlineSEKFSwitch(double* bVec_B, double* states, double* covar)
  @param dcm DCM pointer to be returned
 
  */
-void
-sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm)
+void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double* dcm)
 {
     double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];

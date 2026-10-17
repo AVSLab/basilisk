@@ -50,8 +50,7 @@ StarTracker::~StarTracker()
 /*! This method is used to reset the module.
  @param CurrentSimNanos The current simulation time from the architecture
   */
-void
-StarTracker::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void StarTracker::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     // check if input message has not been included
     if (!this->scStateInMsg.isLinked()) {
@@ -74,8 +73,7 @@ StarTracker::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 /*!
     read input messages
  */
-void
-StarTracker::readInputMessages()
+void StarTracker::readInputMessages()
 {
     this->scState = this->scStateInMsg();
     this->sensorTimeTag = this->scStateInMsg.timeWritten();
@@ -84,8 +82,7 @@ StarTracker::readInputMessages()
 /*!
    compute sensor errors
  */
-void
-StarTracker::computeSensorErrors()
+void StarTracker::computeSensorErrors()
 {
     this->errorModel.setPropMatrix(this->AMatrix);
     this->errorModel.computeNextState();
@@ -95,8 +92,7 @@ StarTracker::computeSensorErrors()
 /*!
    apply sensor errors
  */
-void
-StarTracker::applySensorErrors()
+void StarTracker::applySensorErrors()
 {
     double sigmaSensed[3];
     PRV2MRP(&(this->navErrors.data()[0]), this->mrpErrors);
@@ -110,8 +106,7 @@ StarTracker::applySensorErrors()
     @param sigma
     @param sensorValues
  */
-void
-StarTracker::computeQuaternion(double* sigma, STSensorMsgPayload* sensorValues)
+void StarTracker::computeQuaternion(double* sigma, STSensorMsgPayload* sensorValues)
 {
     double dcm_BN[3][3]; /* dcm, inertial to body frame */
     double dcm_CN[3][3]; /* dcm, inertial to case frame */
@@ -123,8 +118,7 @@ StarTracker::computeQuaternion(double* sigma, STSensorMsgPayload* sensorValues)
 /*!
     compute true output values
  */
-void
-StarTracker::computeTrueOutput()
+void StarTracker::computeTrueOutput()
 {
     this->trueValues.timeTag = this->sensorTimeTag;
     this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
@@ -133,8 +127,7 @@ StarTracker::computeTrueOutput()
 /*!
     write output messages
  */
-void
-StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
+void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     this->sensorOutMsg.write(&this->sensedValues, this->moduleID, CurrentSimNanos);
 }
@@ -142,8 +135,7 @@ StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 /*!
     update module states
  */
-void
-StarTracker::UpdateState(uint64_t CurrentSimNanos)
+void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->computeSensorErrors();
@@ -156,8 +148,7 @@ StarTracker::UpdateState(uint64_t CurrentSimNanos)
     Setter for `AMatrix` used for error propagation
     @param propMatrix Matrix to set
 */
-void
-StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
+void StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
 {
     if (propMatrix.rows() != 3 || propMatrix.cols() != 3) {
         bskLogger.bskError("StarTracker: Propagation matrix must be 3x3");
@@ -170,21 +161,18 @@ StarTracker::setAMatrix(const Eigen::MatrixXd& propMatrix)
     Getter for `AMatrix` used for error propagation
     @return Current matrix
 */
-Eigen::MatrixXd
-StarTracker::getAMatrix() const
+Eigen::MatrixXd StarTracker::getAMatrix() const
 {
     return this->AMatrix;
 }
 
-void
-StarTracker::setWalkBounds(const Eigen::Vector3d& bounds)
+void StarTracker::setWalkBounds(const Eigen::Vector3d& bounds)
 {
     this->walkBounds = bounds;
     this->errorModel.setUpperBounds(bounds);
 }
 
-Eigen::Vector3d
-StarTracker::getWalkBounds() const
+Eigen::Vector3d StarTracker::getWalkBounds() const
 {
     return this->walkBounds;
 }

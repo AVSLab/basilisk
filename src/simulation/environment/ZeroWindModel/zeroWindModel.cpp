@@ -21,11 +21,10 @@
 
 ZeroWindModel::ZeroWindModel() = default;
 
-void
-ZeroWindModel::evaluateWindModel(WindMsgPayload* msg,
-                                 const Eigen::Vector3d& r_BP_N [[maybe_unused]],
-                                 const Eigen::Vector3d& v_corotatingAir_N,
-                                 double /*currentTime*/)
+void ZeroWindModel::evaluateWindModel(WindMsgPayload* msg,
+                                      const Eigen::Vector3d& r_BP_N [[maybe_unused]],
+                                      const Eigen::Vector3d& v_corotatingAir_N,
+                                      double /*currentTime*/)
 {
     // For ZeroWindModel, v_air_N is just the co-rotating atmosphere velocity
     Eigen::Map<Eigen::Vector3d>(msg->v_air_N) = v_corotatingAir_N;

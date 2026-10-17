@@ -35,8 +35,7 @@ OrbElemConvert::~OrbElemConvert()
 /*! This method is used to reset the module.
 
  */
-void
-OrbElemConvert::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
+void OrbElemConvert::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 {
     int numInputs = 0;  //!< number of input messages connected
     int numOutputs = 0; //!< number of output messages connected
@@ -66,8 +65,7 @@ OrbElemConvert::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
 
  @param CurrentClock The current time in the system for output stamping
  */
-void
-OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
+void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     if (this->elemOutMsg.isLinked() && this->inputsGood) {
         auto payload = ClassicElementsMsgPayload();
@@ -102,8 +100,7 @@ OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 /*! The name kind of says it all right?  Converts CurrentElem to pos/vel.
 
  */
-void
-OrbElemConvert::Elements2Cartesian()
+void OrbElemConvert::Elements2Cartesian()
 {
     elem2rv(mu, &CurrentElem, r_N, v_N);
 }
@@ -111,8 +108,7 @@ OrbElemConvert::Elements2Cartesian()
 /*! The name kind of says it all right?  Converts pos/vel to CurrentElem.
 
  */
-void
-OrbElemConvert::Cartesian2Elements()
+void OrbElemConvert::Cartesian2Elements()
 {
     rv2elem(mu, r_N, v_N, &CurrentElem);
 }
@@ -121,8 +117,7 @@ OrbElemConvert::Cartesian2Elements()
  appropriate parameters based on which direction the module is running
 
  */
-void
-OrbElemConvert::ReadInputs()
+void OrbElemConvert::ReadInputs()
 {
     this->inputsGood = false;
     if (this->elemInMsg.isLinked()) {
@@ -163,8 +158,7 @@ OrbElemConvert::ReadInputs()
 
  @param CurrentSimNanos The current simulation time for system
  */
-void
-OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
+void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();

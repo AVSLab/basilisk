@@ -22,20 +22,17 @@
 #include <cstdlib>
 #include <new>
 
-extern "C" void*
-basilisk_allocation_probe_new(std::size_t size)
+extern "C" void* basilisk_allocation_probe_new(std::size_t size)
 {
     return ::operator new(size);
 }
 
-extern "C" void
-basilisk_allocation_probe_delete(void* memory)
+extern "C" void basilisk_allocation_probe_delete(void* memory)
 {
     ::operator delete(memory);
 }
 
-extern "C" void*
-basilisk_allocation_probe_aligned_new(std::size_t size, std::size_t alignment)
+extern "C" void* basilisk_allocation_probe_aligned_new(std::size_t size, std::size_t alignment)
 {
 #if defined(__cpp_aligned_new)
     return ::operator new(size, static_cast<std::align_val_t>(alignment));
@@ -46,8 +43,7 @@ basilisk_allocation_probe_aligned_new(std::size_t size, std::size_t alignment)
 #endif
 }
 
-extern "C" void
-basilisk_allocation_probe_aligned_delete(void* memory, std::size_t alignment)
+extern "C" void basilisk_allocation_probe_aligned_delete(void* memory, std::size_t alignment)
 {
 #if defined(__cpp_aligned_new)
     ::operator delete(memory, static_cast<std::align_val_t>(alignment));
@@ -57,32 +53,27 @@ basilisk_allocation_probe_aligned_delete(void* memory, std::size_t alignment)
 #endif
 }
 
-extern "C" void*
-basilisk_allocation_probe_malloc(std::size_t size)
+extern "C" void* basilisk_allocation_probe_malloc(std::size_t size)
 {
     return std::malloc(size);
 }
 
-extern "C" void*
-basilisk_allocation_probe_calloc(std::size_t count, std::size_t size)
+extern "C" void* basilisk_allocation_probe_calloc(std::size_t count, std::size_t size)
 {
     return std::calloc(count, size);
 }
 
-extern "C" void*
-basilisk_allocation_probe_realloc(void* memory, std::size_t size)
+extern "C" void* basilisk_allocation_probe_realloc(void* memory, std::size_t size)
 {
     return std::realloc(memory, size);
 }
 
-extern "C" void
-basilisk_allocation_probe_free(void* memory)
+extern "C" void basilisk_allocation_probe_free(void* memory)
 {
     std::free(memory);
 }
 
-extern "C" void*
-basilisk_allocation_probe_aligned_alloc(std::size_t alignment, std::size_t size)
+extern "C" void* basilisk_allocation_probe_aligned_alloc(std::size_t alignment, std::size_t size)
 {
 #if defined(_WIN32)
     (void)alignment;
@@ -93,8 +84,7 @@ basilisk_allocation_probe_aligned_alloc(std::size_t alignment, std::size_t size)
 #endif
 }
 
-extern "C" int
-basilisk_allocation_probe_posix_memalign(void** result, std::size_t alignment, std::size_t size)
+extern "C" int basilisk_allocation_probe_posix_memalign(void** result, std::size_t alignment, std::size_t size)
 {
 #if defined(_WIN32)
     (void)result;

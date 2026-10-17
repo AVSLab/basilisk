@@ -24,11 +24,10 @@
 #include <stdexcept>
 
 namespace {
-void
-requireShape(Eigen::Ref<const Eigen::MatrixXd> value,
-             const MatrixShape& expected,
-             const std::string& stateName,
-             const char* field)
+void requireShape(Eigen::Ref<const Eigen::MatrixXd> value,
+                  const MatrixShape& expected,
+                  const std::string& stateName,
+                  const char* field)
 {
     if (value.rows() != static_cast<Eigen::Index>(expected.rows) ||
         value.cols() != static_cast<Eigen::Index>(expected.cols)) {
@@ -39,8 +38,7 @@ requireShape(Eigen::Ref<const Eigen::MatrixXd> value,
     }
 }
 
-void
-copyValues(MutableMatrixView target, const Eigen::Ref<const Eigen::MatrixXd>& source)
+void copyValues(MutableMatrixView target, const Eigen::Ref<const Eigen::MatrixXd>& source)
 {
     // Preserve support for strided blocks while copying contiguous input in one pass.
     if (source.cols() == 1 || source.outerStride() == source.rows()) {
@@ -59,32 +57,27 @@ StateData::StateData(StateRegistry* registry, size_t registrationSlot, const Sta
 {
 }
 
-std::string
-StateData::getName() const
+std::string StateData::getName() const
 {
     return this->owner->handleName(this->slot);
 }
 
-bool
-StateData::usesPerComponentErrorControl() const
+bool StateData::usesPerComponentErrorControl() const
 {
     return this->owner->handleSpec(this->slot).errorControl == ErrorControlMode::PerComponent;
 }
 
-size_t
-StateData::getNumNoiseSources() const
+size_t StateData::getNumNoiseSources() const
 {
     return this->owner->handleSpec(this->slot).noiseCount;
 }
 
-void
-StateData::setNumNoiseSources(size_t numSources)
+void StateData::setNumNoiseSources(size_t numSources)
 {
     this->owner->setHandleNoiseCount(this->slot, numSources);
 }
 
-void
-StateData::setState(Eigen::Ref<const Eigen::MatrixXd> newState)
+void StateData::setState(Eigen::Ref<const Eigen::MatrixXd> newState)
 {
     if (newState.rows() != this->viewStateShape.rows || newState.cols() != this->viewStateShape.cols) {
         requireShape(newState, this->viewStateShape, this->owner->handleName(this->slot), "state");
@@ -92,8 +85,7 @@ StateData::setState(Eigen::Ref<const Eigen::MatrixXd> newState)
     copyValues(this->stateView(), newState);
 }
 
-void
-StateData::setDerivative(Eigen::Ref<const Eigen::MatrixXd> newDeriv)
+void StateData::setDerivative(Eigen::Ref<const Eigen::MatrixXd> newDeriv)
 {
     if (newDeriv.rows() != this->viewDerivativeShape.rows || newDeriv.cols() != this->viewDerivativeShape.cols) {
         requireShape(newDeriv, this->viewDerivativeShape, this->owner->handleName(this->slot), "derivative");
@@ -101,8 +93,7 @@ StateData::setDerivative(Eigen::Ref<const Eigen::MatrixXd> newDeriv)
     copyValues(this->derivativeView(), newDeriv);
 }
 
-void
-StateData::setDiffusion(Eigen::Ref<const Eigen::MatrixXd> newDiffusion, size_t index)
+void StateData::setDiffusion(Eigen::Ref<const Eigen::MatrixXd> newDiffusion, size_t index)
 {
     const StateSpec& spec = this->owner->handleSpec(this->slot);
     if (index >= spec.noiseCount) {
@@ -118,70 +109,59 @@ StateData::setDiffusion(Eigen::Ref<const Eigen::MatrixXd> newDiffusion, size_t i
     copyValues(target, newDiffusion);
 }
 
-MutableMatrixView
-StateData::diffusionView(size_t localNoiseIndex)
+MutableMatrixView StateData::diffusionView(size_t localNoiseIndex)
 {
     const MatrixShape& shape = this->owner->handleSpec(this->slot).diffusionTangent;
     return MutableMatrixView(this->owner->activeDiffusionData(this->slot, localNoiseIndex), shape.rows, shape.cols);
 }
 
-ConstMatrixView
-StateData::diffusionView(size_t localNoiseIndex) const
+ConstMatrixView StateData::diffusionView(size_t localNoiseIndex) const
 {
     const MatrixShape& shape = this->owner->handleSpec(this->slot).diffusionTangent;
     return ConstMatrixView(this->owner->activeDiffusionData(this->slot, localNoiseIndex), shape.rows, shape.cols);
 }
 
-double*
-StateData::stateData()
+double* StateData::stateData()
 {
     return this->owner->liveStateData(this->slot);
 }
 
-double*
-StateData::derivativeData()
+double* StateData::derivativeData()
 {
     return this->owner->liveDerivativeData(this->slot);
 }
 
-double*
-StateData::diffusionData(size_t localNoiseIndex)
+double* StateData::diffusionData(size_t localNoiseIndex)
 {
     return this->owner->liveDiffusionData(this->slot, localNoiseIndex);
 }
 
-Eigen::MatrixXd
-StateData::getState() const
+Eigen::MatrixXd StateData::getState() const
 {
     return Eigen::MatrixXd(this->stateView());
 }
 
-Eigen::MatrixXd
-StateData::getStateDeriv() const
+Eigen::MatrixXd StateData::getStateDeriv() const
 {
     return Eigen::MatrixXd(this->derivativeView());
 }
 
-Eigen::MatrixXd
-StateData::getStateDiffusion(size_t index) const
+Eigen::MatrixXd StateData::getStateDiffusion(size_t index) const
 {
     return Eigen::MatrixXd(this->diffusionView(index));
 }
 
-MatrixShape
-StateData::stateShape() const
+MatrixShape StateData::stateShape() const
 {
     return this->viewStateShape;
 }
 
-MatrixShape
-StateData::derivativeShape() const
+MatrixShape StateData::derivativeShape() const
 {
     return this->viewDerivativeShape;
 }
 
-MatrixShape
-StateData::diffusionShape() const
+MatrixShape StateData::diffusionShape() const
 {
     return this->owner->handleSpec(this->slot).diffusionTangent;
 }
