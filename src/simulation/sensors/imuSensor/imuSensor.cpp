@@ -138,6 +138,9 @@ void ImuSensor::Reset(uint64_t CurrentSimNanos [[maybe_unused]])
     aSatBounds(2,0) = -this->senTransMax;
     aSatBounds(2,1) = this->senTransMax;
     this->aSat.setBounds(aSatBounds);
+
+    // the states recorded before a reset are not valid for the next call, which outputs a zero message
+    this->NominalReady = false;
 }
 
 
@@ -160,6 +163,7 @@ void ImuSensor::readInputMessages()
     // velocity of the sensor relative to the center of mass, v_SN_N - v_CN_N
     Eigen::Vector3d v_BN_N = cArray2EigenVector3d(this->StateCurrent.v_BN_N);
     Eigen::Vector3d v_CN_N = cArray2EigenVector3d(this->StateCurrent.v_CN_N);
+    // toRotationMatrix() gives [NB], which maps body to inertial components
     this->current_v_SC_N = v_BN_N - v_CN_N
         + this->current_sigma_BN.toRotationMatrix() * this->current_omega_BN_B.cross(this->sensorPos_B);
 

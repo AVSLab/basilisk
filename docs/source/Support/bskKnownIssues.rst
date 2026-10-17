@@ -21,6 +21,8 @@ Version |release|
   step, so every attitude change between two IMU calls turned the delta v accumulated since the start of the
   simulation into a spurious delta v.
 
+- :ref:`imuSensor` did not discard the state of the previous IMU call in ``Reset()``.
+
 - :ref:`MJSite` left the fields of ``stateOutMsg`` other than the position, velocity, attitude and angular rate
   of the site uninitialized.
 

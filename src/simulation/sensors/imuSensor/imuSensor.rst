@@ -70,7 +70,7 @@ The following points apply:
 .. note::
 
     On the first run the module outputs a zero'd message.  Only on the 2nd run onwards does the sensor
-    have IMU data.
+    have IMU data. The same applies to the first run after a call to ``Reset()``.
 
 Message Connection Descriptions
 -------------------------------
