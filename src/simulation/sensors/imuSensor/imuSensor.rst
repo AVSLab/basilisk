@@ -48,9 +48,11 @@ between two consecutive IMU calls, resolved in the platform frame at the current
 
 where :math:`{}^{N}\mathbf{DV}_{C/N}` is ``TotalAccumDV_CN_N`` of the spacecraft state message and
 :math:`\Delta` is the difference between the current and the previous IMU call. The second term is the change of
-the velocity of the sensor relative to the center of mass. The result does not depend on the attitude at the
-previous call, so a rotation of the spacecraft never turns delta v accumulated earlier into a new delta v, and
-the IMU may run at a slower rate than the dynamics.
+the velocity of the sensor relative to the center of mass. For an offset sensor, this term depends on the
+attitude at both calls through the sensor's rotational velocity. The accumulated center-of-mass delta v is
+differenced in inertial coordinates, so changes in attitude do not turn previously accumulated delta v into a
+spurious increment. Because the calculation uses accumulated values and the states at the IMU calls, the IMU
+may run at a slower rate than the dynamics.
 
 The following points apply:
 
