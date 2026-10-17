@@ -1,2 +1,2 @@
-- Fixed :ref:`spiceInterface` GPS week and seconds of ``spiceTimeOutMsg``, which were computed from TDB instead of atomic time, and its UTC Julian date, which was quantized to 1e-7 day.
+- Fixed :ref:`spiceInterface` GPS week and seconds of ``spiceTimeOutMsg``, which were computed from TDB instead of atomic time, and its UTC Julian date, which was quantized to 1e-7 day, while preserving the SPICE convention of holding the Julian date at midnight during an inserted leap second.
 - Fixed :ref:`spiceInterface` ``GPSSeconds`` integer overflow after GPS week 3550, and held the GPS time outputs at zero with a warning when the simulation starts before the GPS epoch.

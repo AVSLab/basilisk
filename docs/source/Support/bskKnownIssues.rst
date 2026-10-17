@@ -49,7 +49,8 @@ Version |release| (unreleased)
   a few milliseconds, and ``GPSWeek`` and ``GPSRollovers`` could be one week early at a week boundary. ``JulianDateCurrent``
   was read from a SPICE Julian date string, which has at most seven decimals, and was therefore quantized to
   1e-7 day. ``GPSSeconds`` overflowed a 32-bit integer after GPS week 3550, and a simulation start
-  before the GPS epoch produced invalid GPS outputs.
+  before the GPS epoch produced invalid GPS outputs.  The corrected UTC Julian date preserves the SPICE
+  convention of holding at the following midnight during an inserted leap second, avoiding backward jumps.
 
 - GitHub issue 1609: :ref:`keplerianOrbit` returned incorrect eccentric and mean anomalies,
   lost the sign of the flight-path angle, and returned zero rates after construction or stale

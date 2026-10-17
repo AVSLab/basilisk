@@ -846,7 +846,16 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     //! - Compute the current UTC Julian date from the UTC seconds past J2000
     double deltaET; // [s] ET - UTC
     deltet_c(this->J2000Current, "ET", &deltaET);
-    this->julianDateCurrent = julianDateJ2000 + (this->J2000Current - deltaET) / secondsPerDay; // [d]
+    double utcSeconds = this->J2000Current - deltaET; // [s] UTC seconds past J2000
+    double utcDeltaET; // [s] ET - UTC when interpreting utcSeconds as a UTC epoch
+    deltet_c(utcSeconds, "UTC", &utcDeltaET);
+    const double leapSecondThreshold = 0.5; // [s] Distinguish a leap from roundoff in the periodic ET - TAI term.
+    if (utcDeltaET - deltaET > leapSecondThreshold) {
+        // During an inserted second, utcSeconds falls in the first second of the next day,
+        // whose UTC offset is larger. Preserve SPICE JDUTC by holding at that midnight.
+        utcSeconds = std::floor(utcSeconds);
+    }
+    this->julianDateCurrent = julianDateJ2000 + utcSeconds / secondsPerDay; // [d]
     //! Get GPS and Planet data and then write the message outputs. Reconstruction is allowed only
     //! on the planet pass (the raw sim time drives the knot grid; the spacecraft pass stays exact).
     this->computeGPSData();
