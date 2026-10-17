@@ -45,6 +45,8 @@ CSV_FIELDS = (
     "date",
     "pypi_downloads",
     "pypi_pip_downloads",
+    "pypi_uv_downloads",
+    "pypi_wheel_requests",
     "github_clones",
     "github_unique_cloners",
     "github_forks",
@@ -55,6 +57,7 @@ PYPI_MIRROR_INSTALLERS = (
     "z3c.pypimirror",
     "artifactory",
     "devpi",
+    "nexus",
 )
 
 
@@ -109,8 +112,10 @@ def _request_json(url: str, *, token: Optional[str] = None) -> Any:
 def fetch_pypi_history(package_name: str) -> List[Dict[str, Any]]:
     """Return daily counts excluding identifiable non-distribution files.
 
-    Older records without filenames are retained. An absent date remains
-    unknown because the source may have an ingestion gap.
+    Distribution counts retain older records without filenames. The separate
+    wheel-request count requires a known ``.whl`` filename and excludes identified
+    mirrors. An absent date remains unknown because the source may have an
+    ingestion gap.
     """
     if not re.fullmatch(r"[A-Za-z0-9._-]+", package_name):
         raise MetricsError(f"Invalid PyPI package name: {package_name}")
@@ -124,7 +129,9 @@ def fetch_pypi_history(package_name: str) -> List[Dict[str, Any]]:
         SELECT
             date,
             countIf(distribution_or_unknown AND lower(installer) NOT IN ({mirror_names})) AS downloads,
-            countIf(distribution_or_unknown AND lower(installer) = 'pip') AS pip_downloads
+            countIf(distribution_or_unknown AND lower(installer) = 'pip') AS pip_downloads,
+            countIf(distribution_or_unknown AND lower(installer) = 'uv') AS uv_downloads,
+            countIf(endsWith(filename, '.whl') AND lower(installer) NOT IN ({mirror_names})) AS wheel_requests
         FROM pypi.pypi
         WHERE project = {{package:String}}
         GROUP BY date
@@ -149,6 +156,8 @@ def fetch_pypi_history(package_name: str) -> List[Dict[str, Any]]:
                     "date": date.fromisoformat(raw_row["date"]).isoformat(),
                     "pypi_downloads": int(raw_row["downloads"]),
                     "pypi_pip_downloads": int(raw_row["pip_downloads"]),
+                    "pypi_uv_downloads": int(raw_row["uv_downloads"]),
+                    "pypi_wheel_requests": int(raw_row["wheel_requests"]),
                 }
             )
     except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
@@ -232,12 +241,14 @@ def load_history(path: Path) -> List[Dict[str, Any]]:
     rows = []
     with path.open(newline="", encoding="utf-8") as csv_file:
         reader = csv.DictReader(csv_file)
-        if tuple(reader.fieldnames or ()) != CSV_FIELDS:
+        version_three_fields = tuple(field for field in CSV_FIELDS if field != "pypi_wheel_requests")
+        legacy_fields = tuple(field for field in version_three_fields if field != "pypi_uv_downloads")
+        if tuple(reader.fieldnames or ()) not in (CSV_FIELDS, version_three_fields, legacy_fields):
             raise MetricsError(f"Unexpected columns in {path}")
         for raw_row in reader:
             row = _empty_history_row(raw_row["date"])
             for field in CSV_FIELDS[1:]:
-                value = raw_row[field]
+                value = raw_row.get(field)
                 row[field] = int(value) if value else None
             rows.append(row)
     return rows
@@ -259,6 +270,8 @@ def merge_history(
         row = rows_by_date.setdefault(source_row["date"], _empty_history_row(source_row["date"]))
         row["pypi_downloads"] = source_row["pypi_downloads"]
         row["pypi_pip_downloads"] = source_row["pypi_pip_downloads"]
+        row["pypi_uv_downloads"] = source_row.get("pypi_uv_downloads")
+        row["pypi_wheel_requests"] = source_row.get("pypi_wheel_requests")
 
     if github_metrics is not None:
         for source_row in github_metrics["clones"]:
@@ -301,6 +314,35 @@ def _coverage(rows: List[Dict[str, Any]], field: str) -> Dict[str, Optional[str]
     }
 
 
+def _pip_uv_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Sum downloads only on dates with both installer counts available."""
+    observed = [
+        row for row in rows
+        if row.get("pypi_pip_downloads") is not None and row.get("pypi_uv_downloads") is not None
+    ]
+    return {
+        "pip_uv_downloads": sum(
+            row["pypi_pip_downloads"] + row["pypi_uv_downloads"] for row in observed
+        ) if observed else None,
+        "pip_uv_coverage": {
+            **_coverage(observed, "pypi_pip_downloads"),
+            "observed_days": len(observed),
+        },
+    }
+
+
+def _wheel_request_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Sum observed wheel requests without deriving them from broader counts."""
+    observed = [row for row in rows if row.get("pypi_wheel_requests") is not None]
+    return {
+        "wheel_requests": sum(row["pypi_wheel_requests"] for row in observed) if observed else None,
+        "wheel_request_coverage": {
+            **_coverage(observed, "pypi_wheel_requests"),
+            "observed_days": len(observed),
+        },
+    }
+
+
 def build_summary(
     rows: List[Dict[str, Any]],
     package_name: str,
@@ -313,6 +355,7 @@ def build_summary(
     """Build the machine-readable current summary."""
     clone_coverage = _coverage(rows, "github_clones")
     pypi_coverage = _coverage(rows, "pypi_downloads")
+    uv_coverage = _coverage(rows, "pypi_uv_downloads")
     previous_github = (previous_summary or {}).get("github", {})
     clone_window = previous_github.get("current_clone_window", {
         "start": None, "end": None, "clones": None, "unique_cloners": None,
@@ -330,7 +373,7 @@ def build_summary(
         return next((row[field] for row in reversed(rows) if row.get(field) is not None), None)
 
     return {
-        "schema_version": 2,
+        "schema_version": 4,
         "generated_at": generated_at,
         "collection_status": "partial" if any(
             source["status"] == "error" for source in (sources or {}).values()
@@ -349,6 +392,11 @@ def build_summary(
             ) if pypi_coverage["start"] is not None else None,
             "pip_downloads": sum(row["pypi_pip_downloads"] or 0 for row in rows)
             if pypi_coverage["start"] is not None else None,
+            "uv_downloads": sum(row.get("pypi_uv_downloads") or 0 for row in rows)
+            if uv_coverage["start"] is not None else None,
+            "uv_coverage": uv_coverage,
+            **_pip_uv_summary(rows),
+            **_wheel_request_summary(rows),
         },
         "github": {
             "repository": repository,
@@ -522,7 +570,7 @@ def _render_chart_panel(
         ]
     )
 
-    legend_x = plot_left + plot_width - 385
+    legend_x = plot_left + plot_width - (190*len(series) + 5)
     legend_y = plot_top - 29
     for series_index, (field, label, css_class) in enumerate(series):
         item_x = legend_x + 190*series_index
@@ -558,28 +606,44 @@ def render_usage_svg(
     sources: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Render the retained usage history as a self-contained SVG chart."""
+    wheel_summary = _wheel_request_summary(rows)
+    total = wheel_summary["wheel_requests"]
+    coverage = wheel_summary["wheel_request_coverage"]
+    total_label = f"{total:,}" if total is not None else "Unavailable"
+    coverage_label = (
+        f"{coverage['start']} through {coverage['end']} (UTC)"
+        if total is not None else "Awaiting wheel-request history from PyPI"
+    )
+    observed_label = (
+        f"{coverage['observed_days']:,} observed days; missing dates excluded"
+        if total is not None else "Unknown counts are not treated as zero"
+    )
     elements = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         (
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" '
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 920" '
             'role="img" aria-labelledby="chart-title chart-description">'
         ),
         '<title id="chart-title">Basilisk package and repository usage</title>',
         (
-            '<desc id="chart-description">Seven-day trailing means of daily PyPI '
-            'downloads and GitHub clone activity. Only complete windows of seven '
+            '<desc id="chart-description">Recorded requests for known .whl files '
+            'from all clients except identified mirrors, including repeat and partial requests, '
+            'with coverage dates, followed by seven-day trailing means of daily BSK '
+            'wheel requests and GitHub clone activity. Only complete windows of seven '
             'observed days are shown.</desc>'
         ),
         """<style>
             .background { fill: #ffffff; }
+            .total-card { fill: #f6f8fa; stroke: #d8dee4; }
             .chart-frame { fill: none; stroke: #8c959f; stroke-width: 1; }
             .grid-line { stroke: #d8dee4; stroke-width: 1; }
             .axis-tick { stroke: #57606a; stroke-width: 1; }
-            .chart-title, .panel-title, .axis-title, .axis-text, .legend-text {
+            .chart-title, .panel-title, .axis-title, .axis-text, .legend-text, .total-count {
                 fill: #24292f;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             }
             .chart-title { font-size: 22px; font-weight: 600; }
+            .total-count { font-size: 40px; font-weight: 700; }
             .chart-subtitle { fill: #57606a; font-size: 12px; }
             .panel-title { font-size: 16px; font-weight: 600; }
             .axis-title { font-size: 12px; font-weight: 600; }
@@ -591,42 +655,46 @@ def render_usage_svg(
                 stroke-width: 2.5;
                 vector-effect: non-scaling-stroke;
             }
-            .pypi-downloads { stroke: #0969da; }
-            .pip-downloads { stroke: #bf8700; }
+            .wheel-requests { stroke: #0969da; }
             .github-clones { stroke: #1a7f37; }
             .github-unique { stroke: #8250df; }
             @media (prefers-color-scheme: dark) {
                 .background { fill: #0d1117; }
+                .total-card { fill: #161b22; stroke: #30363d; }
                 .chart-frame { stroke: #6e7681; }
                 .grid-line { stroke: #30363d; }
                 .axis-tick { stroke: #8b949e; }
-                .chart-title, .panel-title, .axis-title, .axis-text, .legend-text {
+                .chart-title, .panel-title, .axis-title, .axis-text, .legend-text, .total-count {
                     fill: #e6edf3;
                 }
                 .chart-subtitle { fill: #8b949e; }
-                .pypi-downloads { stroke: #58a6ff; }
-                .pip-downloads { stroke: #d29922; }
+                .wheel-requests { stroke: #58a6ff; }
                 .github-clones { stroke: #3fb950; }
                 .github-unique { stroke: #bc8cff; }
             }
         </style>""",
-        '<rect class="background" width="1000" height="760" />',
+        '<rect class="background" width="1000" height="920" />',
         '<text id="chart-title-text" class="chart-title" x="30" y="34">Basilisk usage</text>',
         (
             '<text class="chart-title chart-subtitle" x="970" y="32" '
             f'text-anchor="end">Updated {html.escape(generated_at)}</text>'
         ),
+        '<rect class="total-card" x="30" y="55" width="940" height="134" rx="10" />',
+        '<text class="panel-title" x="54" y="84">Recorded wheel download requests</text>',
+        f'<text class="total-count" x="54" y="133">{total_label}</text>',
+        '<text class="axis-text" x="54" y="165">Known .whl files; mirrors excluded; repeat and partial requests included</text>',
+        f'<text class="axis-title" x="510" y="110">{html.escape(coverage_label)}</text>',
+        f'<text class="axis-text" x="510" y="133">{observed_label}</text>',
     ]
     elements.extend(
         _render_chart_panel(
             rows,
             [
-                ("pypi_downloads", "Non-mirror", "pypi-downloads"),
-                ("pypi_pip_downloads", "pip", "pip-downloads"),
+                ("pypi_wheel_requests", "BSK wheels", "wheel-requests"),
             ],
-            "Daily PyPI download events — 7-day trailing mean",
-            "Downloads/day",
-            90.0,
+            "Daily BSK wheel download requests — 7-day trailing mean",
+            "Requests/day",
+            250.0,
         )
     )
     elements.extend(
@@ -638,20 +706,20 @@ def render_usage_svg(
             ],
             "Daily GitHub clone activity — 7-day trailing mean",
             "Events/day",
-            425.0,
+            585.0,
         )
     )
     elements.append(
-        '<text class="axis-text" x="30" y="723">'
-        'PyPI: known non-distribution files excluded after a successful refresh; '
-        'older unnamed files remain.</text>'
+        '<text class="axis-text" x="30" y="883">'
+        'Known .whl files only; identified mirrors excluded. '
+        'Counts include repeat and partial requests.</text>'
     )
     freshness = "; ".join(
         f"{name}: {source['status']}; last success {source['last_success_at'] or 'never'}"
         for name, source in (sources or {}).items()
     )
     elements.extend([
-        f'<text class="axis-text" x="30" y="745">{html.escape(freshness)}</text>',
+        f'<text class="axis-text" x="30" y="905">{html.escape(freshness)}</text>',
         "</svg>",
     ])
     return "\n".join(elements) + "\n"
@@ -663,6 +731,16 @@ def render_readme(summary: Dict[str, Any]) -> str:
     github = summary["github"]
     clone_window = github["current_clone_window"]
     pypi_coverage = f"{pypi['coverage']['start']} through {pypi['coverage']['end']}"
+    uv_coverage = f"{pypi['uv_coverage']['start']} through {pypi['uv_coverage']['end']}"
+    pip_uv_coverage = (
+        f"{pypi['pip_uv_coverage']['start']} through {pypi['pip_uv_coverage']['end']}; "
+        f"{pypi['pip_uv_coverage']['observed_days']} observed days"
+    )
+    wheel_coverage = (
+        f"{pypi['wheel_request_coverage']['start']} through {pypi['wheel_request_coverage']['end']}; "
+        f"{pypi['wheel_request_coverage']['observed_days']} observed days"
+        if pypi["wheel_requests"] is not None else "unavailable"
+    )
     tracked_clone_coverage = (
         f"{github['tracked_clone_coverage']['start']} through "
         f"{github['tracked_clone_coverage']['end']}"
@@ -693,11 +771,14 @@ def render_readme(summary: Dict[str, Any]) -> str:
         "",
         "| Metric | Count | Coverage |",
         "|---|---:|---|",
+        f"| Recorded wheel download requests | {count(pypi['wheel_requests'])} | {wheel_coverage} |",
         (
             "| PyPI downloads excluding known mirrors | "
             f"{count(pypi['downloads_excluding_known_mirrors'])} | {pypi_coverage} |"
         ),
         f"| PyPI downloads made by `pip` | {count(pypi['pip_downloads'])} | {pypi_coverage} |",
+        f"| PyPI downloads made by `uv` | {count(pypi['uv_downloads'])} | {uv_coverage} |",
+        f"| Total PyPI downloads made by `pip` or `uv` | {count(pypi['pip_uv_downloads'])} | {pip_uv_coverage} |",
         (
             "| GitHub clone events retained by this tracker | "
             f"{count(github['tracked_clones'])} | {tracked_clone_coverage} |"
@@ -716,18 +797,28 @@ def render_readme(summary: Dict[str, Any]) -> str:
             f"{count(github['release_asset_downloads'])} | cumulative snapshot |"
         ),
         "",
-        "![Daily Basilisk PyPI download and GitHub clone activity](usage.svg)",
+        "![Recorded wheel download requests and daily BSK wheel and GitHub activity](usage.svg)",
         "",
         "`metrics.csv` contains the daily history and `summary.json` contains the latest",
-        "machine-readable totals. `usage.svg` contains the plotted seven-day trends.",
+        "machine-readable totals. `usage.svg` contains the wheel-request total and plotted seven-day trends.",
         "",
         "## Interpretation",
         "",
+        "- The wheel-request total requires a known filename ending in `.whl` and excludes",
+        "  identified mirrors. It includes all other clients, including browsers, Poetry,",
+        "  pip, uv, scripts, and unidentified clients. Source archives, metadata files,",
+        "  signatures, and records without filenames are excluded from this total.",
+        "  The BSK wheels plot uses the same daily counts, shown as seven-day trailing means.",
+        "  Repeat and partial requests may be included; full-file transfers are not verified.",
+        "  Missing dates and legacy dates awaiting wheel backfill are excluded, not counted as zero.",
         "- PyPI counts are file-download events, not verified installations or unique users.",
-        "  The `pip` count selects records whose installer is identified as `pip`.",
-        "- The non-mirror count excludes `bandersnatch`, `z3c.pypimirror`, `Artifactory`,",
-        "  and `devpi`, matching the known-mirror list documented by PyPI Stats.",
-        "- Counts exclude identified non-distribution files, including `.metadata` sidecars.",
+        "  The `pip` and `uv` counts select records identified with those installers.",
+        "  Their combined total sums only dates with both counts available; missing dates",
+        "  and legacy dates awaiting uv backfill are excluded, not treated as zero.",
+        "- Both the non-mirror distribution counts and wheel requests exclude `bandersnatch`, `z3c.pypimirror`,",
+        "  `Artifactory`, and `devpi` (the PyPI Stats mirror list), plus the Nexus repository cache.",
+        "  The broader non-mirror counts include pip, uv, and other clients; do not add them to installer counts.",
+        "- The broader distribution counts exclude identified non-distribution files, including `.metadata` sidecars.",
         "  Older records without filenames remain and may include metadata requests.",
         "  PyPI changed its logging on 2026-08-24; historical counts are not fully comparable.",
         f"  Retained PyPI counting policy: `{pypi['counting_policy']}`.",
@@ -763,7 +854,7 @@ def collect_metrics(
     if summary_path.exists():
         try:
             previous_summary = json.loads(summary_path.read_text(encoding="utf-8"))
-            if not isinstance(previous_summary, dict) or previous_summary.get("schema_version") not in (1, 2):
+            if not isinstance(previous_summary, dict) or previous_summary.get("schema_version") not in (1, 2, 3, 4):
                 raise ValueError("Unknown summary schema")
             for name in ("pypi", "github"):
                 if not isinstance(previous_summary.get(name), dict):
