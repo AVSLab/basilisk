@@ -142,11 +142,13 @@ class UsageMetricsTest(unittest.TestCase):
                 "date": "2026-09-02",
                 "pypi_downloads": 40,
                 "pypi_pip_downloads": 25,
+                "pypi_uv_downloads": 10,
             },
             {
                 "date": "2026-09-03",
                 "pypi_downloads": 50,
                 "pypi_pip_downloads": 30,
+                "pypi_uv_downloads": 15,
             },
         ]
 
@@ -169,6 +171,10 @@ class UsageMetricsTest(unittest.TestCase):
         self.assertEqual(rows[1]["github_clones"], 12)
         self.assertEqual(rows[2]["github_forks"], 133)
         self.assertEqual(rows[2]["github_release_asset_downloads"], 4)
+        self.assertEqual(rows[1]["pypi_uv_downloads"], 10)
+        refreshed = METRICS.merge_history(rows, pypi_rows, None, "2026-09-03")
+        self.assertEqual(refreshed, rows)
+        self.assertEqual(METRICS._pip_uv_summary(refreshed)["pip_uv_downloads"], 80)
 
     def test_summary_does_not_sum_daily_unique_cloners(self):
         """The summary uses GitHub's window-level unique-cloner value."""
@@ -243,6 +249,45 @@ class UsageMetricsTest(unittest.TestCase):
         self.assertIn("file-download events, not verified installations", readme)
         self.assertIn("latest 14 days", readme)
         self.assertIn("automatically generated source ZIP", readme)
+
+    def test_installer_total_uses_shared_observed_dates_and_retains_zero_days(self):
+        """The cumulative box sums raw counts and discloses incomplete coverage."""
+        rows = METRICS.merge_history([], [
+            {"date": "2026-09-01", "pypi_downloads": 900, "pypi_pip_downloads": 800},
+            {"date": "2026-09-02", "pypi_downloads": 2000,
+             "pypi_pip_downloads": 1200, "pypi_uv_downloads": 34},
+            {"date": "2026-09-04", "pypi_downloads": 0,
+             "pypi_pip_downloads": 0, "pypi_uv_downloads": 0},
+        ], None, "2026-09-04")
+        summary = METRICS.build_summary(rows, "bsk", "AVSLab/basilisk", None, "test")
+        pypi = summary["pypi"]
+        self.assertEqual(pypi["pip_uv_downloads"], 1234)
+        self.assertEqual(pypi["uv_downloads"], 34)
+        self.assertEqual(pypi["pip_uv_coverage"], {
+            "start": "2026-09-02", "end": "2026-09-04", "observed_days": 2,
+        })
+        svg = METRICS.render_usage_svg(rows, "test")
+        text = " ".join(ET.fromstring(svg).itertext())
+        self.assertIn("Total pip + uv downloads", text)
+        self.assertIn("1,234", text)
+        self.assertIn("2026-09-02 through 2026-09-04", text)
+        self.assertIn("2 observed days; missing dates excluded", text)
+        self.assertIn("No complete seven-day window", text)
+        self.assertIn("not verified installs or unique users", text)
+        self.assertIn("Total PyPI downloads made by `pip` or `uv` | 1,234", METRICS.render_readme(summary))
+
+    def test_installer_total_distinguishes_unavailable_from_zero(self):
+        """Missing uv history must not masquerade as a zero or pip-only total."""
+        for uv_count, expected in ((None, None), (0, 0)):
+            with self.subTest(uv_count=uv_count):
+                rows = [{**METRICS._empty_history_row("2026-09-03"),
+                         "pypi_downloads": 0, "pypi_pip_downloads": 0,
+                         "pypi_uv_downloads": uv_count}]
+                summary = METRICS.build_summary(rows, "bsk", "AVSLab/basilisk", None, "test")
+                self.assertEqual(summary["pypi"]["pip_uv_downloads"], expected)
+                svg = ET.fromstring(METRICS.render_usage_svg(rows, "test"))
+                total = svg.find("{http://www.w3.org/2000/svg}text[@class='total-count']")
+                self.assertEqual(total.text, "Unavailable" if expected is None else "0")
 
     def test_summary_is_json_serializable(self):
         """The generated summary contains only stable JSON-compatible values."""
@@ -341,6 +386,8 @@ class UsageMetricsTest(unittest.TestCase):
                 for filename in ("bsk.whl", "bsk.tar.gz", "bsk.zip", "", "bsk.whl.metadata", "bsk.whl.asc")
             ] + [
                 ("2026-09-01", "bsk", "uv", "bsk.whl"),
+                ("2026-09-01", "bsk", "UV", "bsk.tar.gz"),
+                ("2026-09-01", "bsk", "uv", "bsk.whl.metadata"),
                 ("2026-09-01", "bsk", "bandersnatch", "bsk.whl"),
                 ("2026-09-01", "another-package", "pip", "other.whl"),
                 ("2026-09-02", "bsk", "pip", "bsk.whl.metadata"),
@@ -360,8 +407,8 @@ class UsageMetricsTest(unittest.TestCase):
                 rows = METRICS.fetch_pypi_history("bsk")
 
         self.assertEqual(rows, [
-            {"date": "2026-09-01", "pypi_downloads": 5, "pypi_pip_downloads": 4},
-            {"date": "2026-09-02", "pypi_downloads": 0, "pypi_pip_downloads": 0},
+            {"date": "2026-09-01", "pypi_downloads": 6, "pypi_pip_downloads": 4, "pypi_uv_downloads": 2},
+            {"date": "2026-09-02", "pypi_downloads": 0, "pypi_pip_downloads": 0, "pypi_uv_downloads": 0},
         ])
 
 
@@ -377,12 +424,14 @@ class SourceFailureTest(unittest.TestCase):
         self.addCleanup(clock.stop)
         clock.start().now.return_value = datetime(2026, 9, 4, tzinfo=timezone.utc)
         self.old_time = self.yesterday + "T00:00:00+00:00"
-        self.pypi_rows = [{"date": self.today, "pypi_downloads": 40, "pypi_pip_downloads": 20}]
+        self.pypi_rows = [{"date": self.today, "pypi_downloads": 40,
+                           "pypi_pip_downloads": 20, "pypi_uv_downloads": 10}]
         self.github = _github_metrics()
         self.github["clones"] = [{"date": self.today, "github_clones": 32, "github_unique_cloners": 10}]
         self.old_rows = [{
             **METRICS._empty_history_row(self.yesterday),
             "pypi_downloads": 100, "pypi_pip_downloads": 50,
+            "pypi_uv_downloads": 30,
             "github_clones": 99, "github_unique_cloners": 20,
             "github_forks": 120, "github_release_asset_downloads": 2,
         }]
@@ -411,6 +460,8 @@ class SourceFailureTest(unittest.TestCase):
         self.assertEqual(summary["collection_status"], "partial")
         self.assertEqual(summary["github"]["tracked_clones"], 131)
         self.assertEqual(summary["pypi"]["downloads_excluding_known_mirrors"], 100)
+        self.assertEqual(summary["pypi"]["pip_uv_downloads"], 80)
+        self.assertEqual(summary["pypi"]["pip_uv_coverage"]["end"], self.yesterday)
         self.assertEqual(summary["sources"]["pypi"]["last_success_at"], self.old_time)
         self.assertEqual(summary["sources"]["github"]["last_success_at"], summary["generated_at"])
         self.assertIsNone(METRICS.load_history(self.output / "metrics.csv")[-1]["pypi_downloads"])
@@ -478,6 +529,8 @@ class SourceFailureTest(unittest.TestCase):
                 self.assertIsNone(summary["sources"][failed_source]["last_success_at"])
                 if failed_source == "pypi":
                     self.assertIsNone(summary["pypi"]["downloads_excluding_known_mirrors"])
+                    self.assertIsNone(summary["pypi"]["uv_downloads"])
+                    self.assertIsNone(summary["pypi"]["pip_uv_downloads"])
                 else:
                     self.assertIsNone(summary["github"]["forks"])
                     self.assertIsNone(summary["github"]["current_clone_window"]["unique_cloners"])
@@ -525,6 +578,31 @@ class SourceFailureTest(unittest.TestCase):
         summary = self.collect(pypi_error=METRICS.MetricsError("offline"))
         self.assertEqual(summary["sources"]["pypi"]["last_success_at"], self.old_time)
         self.assertEqual(summary["pypi"]["counting_policy"], "legacy_unfiltered")
+
+    def test_legacy_csv_and_summary_upgrade_without_inventing_uv_history(self):
+        """Legacy totals remain unknown until a successful historical backfill."""
+        history = self.output / "metrics.csv"
+        history.write_text(
+            "date,pypi_downloads,pypi_pip_downloads,github_clones,github_unique_cloners,"
+            "github_forks,github_release_asset_downloads\n"
+            f"{self.yesterday},100,50,99,20,120,2\n", encoding="utf-8",
+        )
+        legacy = dict(self.previous, schema_version=2)
+        legacy["pypi"] = {key: value for key, value in legacy["pypi"].items() if "uv" not in key}
+        (self.output / "summary.json").write_text(json.dumps(legacy), encoding="utf-8")
+        stale = self.collect(pypi_error=METRICS.MetricsError("offline"))
+        self.assertEqual(stale["schema_version"], 3)
+        self.assertEqual(stale["pypi"]["pip_downloads"], 50)
+        self.assertIsNone(stale["pypi"]["pip_uv_downloads"])
+        self.assertIsNone(METRICS.load_history(history)[0]["pypi_uv_downloads"])
+        self.assertIn("Unavailable", (self.output / "usage.svg").read_text())
+        self.pypi_rows.append({"date": self.yesterday, "pypi_downloads": 100,
+                               "pypi_pip_downloads": 50, "pypi_uv_downloads": 30})
+        refreshed = self.collect()
+        self.assertEqual(refreshed["pypi"]["pip_uv_downloads"], 110)
+        self.assertEqual(refreshed["pypi"]["pip_uv_coverage"]["observed_days"], 2)
+        self.assertEqual(METRICS.load_history(history)[0]["pypi_uv_downloads"], 30)
+        self.assertEqual(self.collect()["pypi"], refreshed["pypi"])
 
 
 @unittest.skipUnless(os.name != "nt" and shutil.which("bash") and shutil.which("git"),

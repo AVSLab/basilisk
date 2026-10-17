@@ -25,8 +25,26 @@ another complete window is available. In particular, ClickPy's lack of records
 for a date does not establish zero downloads: it may reflect an ingestion gap.
 The latest reported day's count may still be partial.
 
+.. note::
+
+   ``pip`` is the Python package installer; its line counts downloads identified
+   as coming from ``pip``. ``Non-mirror`` counts downloads from all clients
+   except known package mirrors, which automatically copy packages from PyPI.
+   It includes ``pip``, ``uv`` (another Python package installer), and other
+   clients. The two lines overlap and must not be added together.
+
+   The **Total pip + uv downloads** box sums recorded downloads from those two
+   installers over the displayed coverage dates. It uses daily counts, not the
+   plotted averages, and updates with each metrics collection. Only dates with
+   both installer counts are included; the box shows the number of observed
+   days, and missing dates remain unknown. These are file downloads, not
+   verified installations or unique users: repeated downloads and automated
+   builds count, while installations served entirely from local caches or
+   private mirrors are not recorded by PyPI. Older records without filenames
+   may also include metadata requests, as described under Interpretation Limits.
+
 .. image:: https://raw.githubusercontent.com/AVSLab/basilisk/usage-metrics/usage.svg
-   :alt: Daily Basilisk PyPI download and GitHub clone activity
+   :alt: Total pip and uv downloads, daily PyPI download trends, and GitHub clone activity
    :width: 100%
    :target: https://github.com/AVSLab/basilisk/tree/usage-metrics
 
@@ -37,28 +55,30 @@ The branch contains the following generated files:
 
 ``metrics.csv``
     One row per UTC date. It contains PyPI download events, downloads made by
-    ``pip``, GitHub clone events and daily unique cloners, and snapshots of the
+    ``pip`` and ``uv``, GitHub clone events and daily unique cloners, and snapshots of the
     current fork and release-asset download counts.
 
 ``summary.json``
     Machine-readable current totals, source coverage dates, and the latest
     successfully retrieved GitHub clone window. Schema version 2 also records
     each source's status, last attempt, last successful collection, and error.
+    Schema version 3 adds ``uv_downloads``, ``uv_coverage``, and the combined
+    ``pip_uv_downloads`` total with ``pip_uv_coverage`` dates and observed-day count.
 
 ``README.md``
     A human-readable summary and the interpretation caveats for each metric.
 
 ``usage.svg``
-    A light- and dark-theme plot of the seven-day trailing means for PyPI
-    downloads and GitHub clone activity.
+    A light- and dark-theme download total box and plot of the seven-day
+    trailing means for PyPI downloads and GitHub clone activity.
 
 PyPI history is read from the public PyPI data replicated by
 `ClickPy <https://clickpy.clickhouse.com/>`__. The non-mirror count excludes
 ``bandersnatch``, ``z3c.pypimirror``, ``Artifactory``, and ``devpi``, matching
 the `PyPI Stats known-mirror list <https://pypistats.org/faqs>`__. The separate
-``pip`` count selects records whose installer is identified as ``pip``.
+``pip`` and ``uv`` counts select records identified with those installers.
 
-Both PyPI counts exclude records with a known filename that does not end in
+All PyPI counts exclude records with a known filename that does not end in
 ``.whl``, ``.tar.gz``, or ``.zip``. This removes identifiable metadata sidecars
 and signatures. Older records without filenames are retained because they
 cannot be reliably classified. A successful collection refreshes returned
@@ -89,10 +109,13 @@ unchanged and fails without publishing. A remote lookup, fetch, or history
 restore failure also stops publication. Only a successful remote lookup that
 confirms the metrics branch is absent permits an initial collection.
 
-The workflow restores both ``metrics.csv`` and ``summary.json``. Version 1
-summaries are accepted and upgraded; if PyPI is unavailable during that upgrade,
-``pypi.counting_policy`` remains ``legacy_unfiltered`` until a successful refresh.
-Normal filtered collections use ``distribution_files_or_unknown_filename``.
+The workflow restores both ``metrics.csv`` and ``summary.json``. Version 1 and 2
+summaries and CSV files without a ``pypi_uv_downloads`` column are accepted and
+upgraded. A successful PyPI collection backfills ``uv`` counts for returned
+historical dates; until then, those counts and the combined total are unavailable.
+If PyPI is unavailable during a version 1 upgrade, ``pypi.counting_policy``
+remains ``legacy_unfiltered`` until a successful refresh. Normal filtered
+collections use ``distribution_files_or_unknown_filename``.
 
 Snapshot Publication
 --------------------
