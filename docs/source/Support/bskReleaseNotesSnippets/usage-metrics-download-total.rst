@@ -1,0 +1,1 @@
+- Clarified the ``pip`` and non-mirror usage plot labels and added a daily updated ``pip`` + ``uv`` download total with coverage dates to :ref:`usageMetrics`.
