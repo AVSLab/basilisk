@@ -189,16 +189,31 @@
     <span class="n">delta_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">DELTA_AT</span> <span class="o">+</span> <span class="mf">32.184</span><span class="p">)</span> <span class="o">/</span> <span class="mf">86400.0</span>
     <span class="k">return</span> <span class="n">jd_utc</span> <span class="o">+</span> <span class="n">delta_t</span>
 
+<div class="viewcode-block" id="frame_bias">
+<a class="viewcode-back" href="../Documentation/utilities/tleHandling.html#tleHandling.frame_bias">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">frame_bias</span><span class="p">():</span>
-    <span class="n">d_alpha</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0146</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>
-    <span class="n">xi</span>      <span class="o">=</span> <span class="o">-</span><span class="mf">0.016617</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>
-    <span class="n">eta</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">0.0068192</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Frame bias matrix from the GCRS to the mean equator and equinox of J2000.</span>
+
+<span class="sd">    Uses the IERS Conventions (2010) form :math:`B = R_1(-\\eta_0) R_2(\\xi_0) R_3(d\\alpha_0)`.</span>
+<span class="sd">    Here :math:`R_i(\\theta)` is the axes (frame) rotation returned by :func:`rot`, which rotates the</span>
+<span class="sd">    coordinate frame by :math:`\\theta` about axis :math:`i` (for example :math:`R_3(\\theta)` has</span>
+<span class="sd">    :math:`+\\sin\\theta` in row 1, column 2); under the vector-rotation convention the same product</span>
+<span class="sd">    reads as the transpose.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: 3x3 rotation matrix that maps GCRS vector components to mean J2000 components.</span>
+<span class="sd">    """</span>
+    <span class="n">d_alpha</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0146</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>  <span class="c1"># [rad] ICRS right ascension offset of the J2000 mean equinox</span>
+    <span class="n">xi</span>      <span class="o">=</span> <span class="o">-</span><span class="mf">0.016617</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>  <span class="c1"># [rad] celestial pole offset in x</span>
+    <span class="n">eta</span>     <span class="o">=</span> <span class="o">-</span><span class="mf">0.0068192</span> <span class="o">*</span> <span class="n">ARCSEC2RAD</span>  <span class="c1"># [rad] celestial pole offset in y</span>
 
     <span class="k">return</span> <span class="p">(</span>
-        <span class="n">rot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">)</span> <span class="o">@</span>
-        <span class="n">rot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">xi</span><span class="p">)</span> <span class="o">@</span>
-        <span class="n">rot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">eta</span><span class="p">)</span>
-    <span class="p">)</span>
+        <span class="n">rot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">eta</span><span class="p">)</span> <span class="o">@</span>
+        <span class="n">rot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">xi</span><span class="p">)</span> <span class="o">@</span>
+        <span class="n">rot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">nutation_iau1980</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
     <span class="c1"># Fundamental arguments (radians) [Source: IERS Technical Note 21 (1992)]</span>
@@ -421,6 +436,18 @@
 
 <span class="c1"># Helper functions: Coordinate conversion; TEME -&gt; J2000/ICRS</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_teme2j2000</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Rotate a TEME state into the Basilisk inertial frame.</span>
+
+<span class="sd">    The rotation chain is equation of equinoxes, IAU 1980 nutation, IAU 1976 precession, and the inverse of</span>
+<span class="sd">    :func:`frame_bias`, so the output is expressed in the GCRF. These are the ICRF-aligned axes that SPICE</span>
+<span class="sd">    calls ``J2000`` and that Basilisk uses as its inertial frame.</span>
+
+<span class="sd">    :param r: TEME position vector [m]</span>
+<span class="sd">    :param v: TEME velocity vector [m/s]</span>
+<span class="sd">    :param epoch: UTC epoch of the state as a ``datetime``</span>
+<span class="sd">    :return: tuple ``(r, v)`` with the GCRF position [m] and velocity [m/s]</span>
+<span class="sd">    """</span>
 
     <span class="n">jd_utc</span> <span class="o">=</span> <span class="n">datetime_to_jd</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
     <span class="n">jd_tt</span>  <span class="o">=</span> <span class="n">utc_to_tt</span><span class="p">(</span><span class="n">jd_utc</span><span class="p">)</span>
