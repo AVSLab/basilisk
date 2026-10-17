@@ -58,7 +58,9 @@ The time output message ``spiceTimeOutMsg`` of type :ref:`SpiceTimeMsgPayload` p
 the following time scales:
 
 - ``J2000Current``: the ephemeris time (TDB) in seconds past J2000.
-- ``JulianDateCurrent``: the UTC Julian date.
+- ``JulianDateCurrent``: the UTC Julian date.  Following the SPICE JDUTC convention, this value is held
+  at the following midnight during an inserted leap second.  Use ``J2000Current`` or the GPS fields to
+  distinguish instants within that second.
 - ``GPSWeek``, ``GPSSeconds`` and ``GPSRollovers``: the GPS week modulo 1024, the seconds of week and the number of
   1024 week rollovers.  GPS time is atomic time (TAI - 19 s) elapsed since the GPS epoch 1980 January 6,
   00:00:00 UTC, and therefore includes the leap seconds introduced since that epoch.  Negative GPS time is not
